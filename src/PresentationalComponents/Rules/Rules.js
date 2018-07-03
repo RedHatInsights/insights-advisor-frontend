@@ -1,4 +1,7 @@
 import React from 'react';
+
+import { PageHeader } from '@red-hat-insights/insights-frontend-components';
+import { PageHeaderTitle } from '@red-hat-insights/insights-frontend-components';
 import { Route, Switch } from 'react-router-dom';
 import asyncComponent from '../../Utilities/asyncComponent';
 
@@ -8,7 +11,9 @@ const ViewRule = asyncComponent(() => import(/* webpackChunkName: "ListRules" */
 const Rules = () => {
     return (
         <React.Fragment>
-            <h1>Rules</h1>
+            <PageHeader>
+                <PageHeaderTitle title='Rules'/>
+            </PageHeader>
             <Switch>
                 <Route exact path='/advisor/rules' component={ListRules} />
                 <Route path='/advisor/rules/:id' component={ViewRule} />
