@@ -1,7 +1,5 @@
-[![Build Status](https://travis-ci.org/RedHatInsights/insights-frontend-starter-app.svg?branch=master)](https://travis-ci.org/RedHatInsights/insights-frontend-starter-app)
-
-# insights-frontend-starter-app
-React.js starter app for Red Hat Insights products that includes Patternfly 3 and Patternfly Next.
+The Insights Advisor front-end app is based off of the [insights-frontend-starter-app](https://github.com/RedHatInsights/insights-frontend-starter-app).  
+#
 
 ## Getting Started
 There is a [comprehensive quick start guide in the Storybook Documentation](https://github.com/RedHatInsights/insights-frontend-storybook/blob/master/src/docs/welcome/quickStart/DOC.md) to setting up an Insights environment complete with:
