@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import './actions.scss';
 
 import { PageHeader } from '@red-hat-insights/insights-frontend-components';
 import { PageHeaderTitle } from '@red-hat-insights/insights-frontend-components';
