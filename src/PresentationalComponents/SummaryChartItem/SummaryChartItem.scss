@@ -1,0 +1,39 @@
+.metrics {
+  font-size: 13px;
+}
+.progress-bars {
+  height:20px;
+  position: relative;
+}
+.bar {
+  background-color: #d9d9d9;
+  border-radius: 8px;
+  display:block;
+  height:6px;
+  position: absolute;
+  top: 3px;
+  left: 0px;
+  width: 100%;
+  z-index: 0;
+}
+.progress-bar {
+  border-radius: 8px;
+  display: block;
+  height: 12px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 1;
+}
+.progress-bar-critical {
+  background-color:#c00;
+}
+.progress-bar-high {
+  background-color:#f39800;
+}
+.progress-bar-medium {
+  background-color:#dec800;
+}
+.progress-bar-low {
+  background-color:#94d400;
+}
