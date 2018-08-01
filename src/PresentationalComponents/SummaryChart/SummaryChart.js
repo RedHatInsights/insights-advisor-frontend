@@ -4,13 +4,11 @@ import SummaryChartItem from '../../PresentationalComponents/SummaryChartItem/Su
 
 const SummaryChart = (props) => {
   return (
-    <React.Fragment>
-      <div className='summary-chart'>
-        <ul>
-          { props.children }
-        </ul>
-      </div>
-    </React.Fragment>
+    <div className='summary-chart'>
+      <ul>
+        { props.children }
+      </ul>
+    </div>
   );
 };
 

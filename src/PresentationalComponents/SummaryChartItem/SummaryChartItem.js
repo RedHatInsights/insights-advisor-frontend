@@ -8,26 +8,24 @@ const SummaryChartItem = (props) => {
   let lowerCaseName = props.name.toString().toLowerCase();
 
   return (
-    <React.Fragment>
-      <li>
-        <div className='metrics'>
-          <strong>{props.name} </strong> 
-          <span className='num'>({percentage}%)</span>
+    <li>
+      <div className='metrics'>
+        <strong>{props.name} </strong> 
+        <span className='num'>({percentage}%)</span>
+      </div>
+      {numIssues > 0 && 
+        <div className='progress-bars'>
+          <div 
+            className={'progress-bar progress-bar-' + lowerCaseName}
+            style={{width: percentage + '%'}}
+          ></div>
+          <div className='bar'></div>
         </div>
-        {numIssues > 0 && 
-          <div className='progress-bars'>
-            <div 
-              className={'progress-bar progress-bar-' + lowerCaseName}
-              style={{width: percentage + '%'}}
-            ></div>
-            <div className='bar'></div>
-          </div>
-          }
-          {numIssues == 0 &&
-            <div className='metrics'>You have no issues of { props.name } severity</div>
-          }
-      </li>
-    </React.Fragment>
+        }
+        {numIssues == 0 &&
+          <div className='metrics'>You have no issues of { props.name } severity</div>
+        }
+    </li>
   );
 };
 

@@ -1,5 +1,7 @@
+@import '../../Utilities.scss';
+
 .metrics {
-  font-size: 13px;
+  @include font-size(13px);
 }
 .progress-bars {
   height:20px;
@@ -8,32 +10,29 @@
 .bar {
   background-color: #d9d9d9;
   border-radius: 8px;
-  display:block;
   height:6px;
   position: absolute;
   top: 3px;
-  left: 0px;
+  left: 0;
   width: 100%;
   z-index: 0;
 }
 .progress-bar {
   border-radius: 8px;
-  display: block;
   height: 12px;
   position: absolute;
-  top: 0px;
-  left: 0px;
   z-index: 1;
 }
 .progress-bar-critical {
-  background-color:#c00;
+  //background-color: var(pf-global--danger-color-foo);
+  background-color: var(--pf-global--danger-color--100);
 }
 .progress-bar-high {
-  background-color:#f39800;
+  background-color: #ec7a08;
 }
 .progress-bar-medium {
-  background-color:#dec800;
+  background-color: var(--pf-global--warning-color--100);
 }
 .progress-bar-low {
-  background-color:#94d400;
+  background-color: var(--pf-global--success-color--100);
 }
