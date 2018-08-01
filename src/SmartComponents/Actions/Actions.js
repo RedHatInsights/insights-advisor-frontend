@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import './actions.scss';
+import '../../App.scss';
 
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Card, CardHeader, CardBody, Grid, GridItem } from '@patternfly/react-core';
 import { PageHeader } from '@red-hat-insights/insights-frontend-components';
 import { PageHeaderTitle } from '@red-hat-insights/insights-frontend-components';
 import { Section } from '@red-hat-insights/insights-frontend-components';
@@ -38,17 +38,17 @@ class Actions extends Component {
                     <Grid gutter='md'>
                         <GridItem span={4}>Donut</GridItem>
                         <GridItem span={4}>
-                            <div className="pf-c-card ">
-                                <div className="pf-c-card__header ">Risk Summary</div>
-                                <div className="pf-c-card__body ">
+                            <Card>
+                                <CardHeader>Risk Summary</CardHeader>
+                                <CardBody>
                                     <SummaryChart>
                                         <SummaryChartItem name={ sevNames[3] } numIssues={ this.state.severity[3] } totalIssues={ this.state.total } />
                                         <SummaryChartItem name={ sevNames[2] } numIssues={ this.state.severity[2] } totalIssues={ this.state.total } />
                                         <SummaryChartItem name={ sevNames[1] } numIssues={ this.state.severity[1] } totalIssues={ this.state.total } />
                                         <SummaryChartItem name={ sevNames[0] } numIssues={ this.state.severity[0] } totalIssues={ this.state.total } />
                                     </SummaryChart>
-                                </div>
-                            </div>
+                                </CardBody>
+                            </Card>
                         </GridItem>
                     </Grid>
                 </Section>
