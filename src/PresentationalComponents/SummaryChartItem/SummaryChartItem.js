@@ -5,26 +5,28 @@ import './SummaryChartItem.scss';
 const SummaryChartItem = (props) => {
   const numIssues = props.numIssues;
   let percentage = ((numIssues / props.totalIssues) * 100).toFixed(1);
-  let lowerCaseName = props.name.toString().toLowerCase();
+  let lowerCaseName = props.name.toLowerCase();
 
   return (
     <li>
-      <div className='metrics'>
-        <strong>{props.name} </strong> 
-        <span className='num'>({percentage}%)</span>
-      </div>
       {numIssues > 0 && 
-        <div className='progress-bars'>
-          <div 
-            className={'progress-bar progress-bar-' + lowerCaseName}
-            style={{width: percentage + '%'}}
-          ></div>
-          <div className='bar'></div>
-        </div>
-        }
-        {numIssues == 0 &&
-          <div className='metrics'>You have no issues of { props.name } severity</div>
-        }
+        <React.Fragment>
+          <div className='metrics'>
+            <strong>{props.name} </strong>
+            <span className='num'>({percentage}%)</span>
+          </div>
+          <div className='progress-bars'>
+            <div
+              className={'progress-bar progress-bar-' + lowerCaseName}
+              style={{width: percentage + '%'}}
+            ></div>
+            <div className='bar'></div>
+          </div>
+        </React.Fragment>
+      }
+      {numIssues == 0 &&
+        <div className='no-errors'><i className='fas fa-check-circle small-spacer green'></i>You have no issues of { lowerCaseName } severity</div>
+      }
     </li>
   );
 };
