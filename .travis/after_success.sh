@@ -7,9 +7,9 @@ if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
     exit 0;
 else
     openssl aes-256-cbc -K $encrypted_3ffe0a89fc80_key -iv $encrypted_3ffe0a89fc80_iv -in advisor.enc -out advisor -d
-    chmod 600 deploy_key
+    chmod 600 advisor
     eval `ssh-agent -s`
-    ssh-add deploy_key
+    ssh-add advisor
 fi
 
 # If current dev branch is master, push to build repo master
