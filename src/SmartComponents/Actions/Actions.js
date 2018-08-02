@@ -9,7 +9,7 @@ import { Section } from '@red-hat-insights/insights-frontend-components';
 import SummaryChart from '../../PresentationalComponents/SummaryChart/SummaryChart.js';
 import SummaryChartItem from '../../PresentationalComponents/SummaryChartItem/SummaryChartItem.js';
 
-const sevNames = [ 'Low', 'Medium', 'High', 'Critical' ];
+const sevNames = ['Low', 'Medium', 'High', 'Critical'];
 
 class Actions extends Component {
     constructor(props) {
@@ -22,9 +22,13 @@ class Actions extends Component {
 
     componentDidMount() {
         // 1=INFO 2=WARN 3=ERROR 4=CRITICAL
-        const response = {"total":9,"severity":{"info":0,"warn":2,"error":3,"critical":4},"category":{"Availability":1,"Security":0,"Stability":1,"Performance":0}};
-        this.setState({ severity: [ response.severity.info, response.severity.warn, response.severity.error, response.severity.critical ] })
-        this.setState({ total: response.total })
+        const response = {
+            total: 9,
+            severity: { info: 0, warn: 2, error: 3, critical: 4 },
+            category: { Availability: 1, Security: 0, Stability: 1, Performance: 0 }
+        };
+        this.setState({ severity: [response.severity.info, response.severity.warn, response.severity.error, response.severity.critical] });
+        this.setState({ total: response.total });
     }
 
     render() {
