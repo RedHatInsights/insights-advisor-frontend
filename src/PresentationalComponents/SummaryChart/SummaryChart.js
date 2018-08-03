@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SummaryChartItem from '../../PresentationalComponents/SummaryChartItem/SummaryChartItem.js';
+import asyncComponent from '../../Utilities/asyncComponent';
+const SummaryChartItem = asyncComponent(() => import('../../PresentationalComponents/SummaryChartItem/SummaryChartItem.js'));
 
 const SummaryChart = (props) => {
     return (
@@ -11,9 +12,7 @@ const SummaryChart = (props) => {
 };
 
 SummaryChart.propTypes = {
-    children: PropTypes.oneOfType([
-        PropTypes.instanceOf(SummaryChartItem)
-    ])
+    children: PropTypes.array
 };
 
 export default SummaryChart;

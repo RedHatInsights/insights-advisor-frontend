@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import asyncComponent from '../../Utilities/asyncComponent';
 import '../../App.scss';
 
 import { Card, CardHeader, CardBody, Grid, GridItem } from '@patternfly/react-core';
-import { PageHeader } from '@red-hat-insights/insights-frontend-components';
-import { PageHeaderTitle } from '@red-hat-insights/insights-frontend-components';
-import { Section } from '@red-hat-insights/insights-frontend-components';
-import SummaryChart from '../../PresentationalComponents/SummaryChart/SummaryChart.js';
-import SummaryChartItem from '../../PresentationalComponents/SummaryChartItem/SummaryChartItem.js';
+import { Section,
+        PageHeader, PageHeaderTitle
+        } from '@red-hat-insights/insights-frontend-components';
+const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/SummaryChart/SummaryChart.js'));
+const SummaryChartItem = asyncComponent(() => import('../../PresentationalComponents/SummaryChartItem/SummaryChartItem.js'));
 
 const sevNames = ['Low', 'Medium', 'High', 'Critical'];
 
