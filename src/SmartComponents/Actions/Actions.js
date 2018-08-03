@@ -46,10 +46,22 @@ class Actions extends Component {
                                 <CardHeader>Risk Summary</CardHeader>
                                 <CardBody>
                                     <SummaryChart>
-                                        <SummaryChartItem name={ sevNames[3] } numIssues={ this.state.severity[3] } totalIssues={ this.state.total } />
-                                        <SummaryChartItem name={ sevNames[2] } numIssues={ this.state.severity[2] } totalIssues={ this.state.total } />
-                                        <SummaryChartItem name={ sevNames[1] } numIssues={ this.state.severity[1] } totalIssues={ this.state.total } />
-                                        <SummaryChartItem name={ sevNames[0] } numIssues={ this.state.severity[0] } totalIssues={ this.state.total } />
+                                        <SummaryChartItem
+                                            name={ sevNames[3] }
+                                            numIssues={ this.state.severity[3] }
+                                            totalIssues={ this.state.total }/>
+                                        <SummaryChartItem
+                                            name={ sevNames[2] }
+                                            numIssues={ this.state.severity[2] }
+                                            totalIssues={ this.state.total }/>
+                                        <SummaryChartItem
+                                            name={ sevNames[1] }
+                                            numIssues={ this.state.severity[1] }
+                                            totalIssues={ this.state.total }/>
+                                        <SummaryChartItem
+                                            name={ sevNames[0] }
+                                            numIssues={ this.state.severity[0] }
+                                            totalIssues={ this.state.total }/>
                                     </SummaryChart>
                                 </CardBody>
                             </Card>
