@@ -51,7 +51,7 @@ rules:
     - unix
   max-len:
     - 2
-    - 130
+    - 150
   new-cap: 2
   no-bitwise: 2
   no-caller: 2
