@@ -21,8 +21,8 @@ import some from 'lodash/some';
 const Actions = asyncComponent(() => import(/* webpackChunkName: "Actions" */ './SmartComponents/Actions/Actions'));
 const Rules = asyncComponent(() => import(/* webpackChunkName: "Rules" */ './PresentationalComponents/Rules/Rules'));
 const paths = {
-    actions: '/advisor/actions',
-    rules: '/advisor/rules'
+    actions: '/actions',
+    rules: '/rules'
 };
 
 type Props = {
