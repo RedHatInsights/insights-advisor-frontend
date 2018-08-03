@@ -54,6 +54,7 @@
     "enzyme-to-json": "^3.3.4",
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
+    "eslint-loader": "^2.1.0",
     "eslint-plugin-react": "^7.9.1",
     "file-loader": "^1.1.11",
     "glob": "^7.1.2",
@@ -95,7 +96,7 @@
     "lint:sass": "stylelint 'src/**/*.scss' --config .stylelint.json",
     "prod": "WEBPACK_SERVE=production webpack-serve --config config/dev.webpack.config.js",
     "server:ctr": "node src/server/generateServerKey.js",
-    "start": "WEBPACK_SERVE=development webpack-serve --config config/dev.webpack.config.js",
+    "start": "WEBPACK_SERVE=development webpack-serve --config config/dev.webpack.config.js && npm run lint",
     "travis:build": "webpack --config config/test.webpack.config.js",
     "travis:verify": "npm-run-all travis:build lint test",
     "verify": "npm-run-all build lint test"
