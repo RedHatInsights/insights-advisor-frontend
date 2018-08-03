@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import asyncComponent from '../../Utilities/asyncComponent';
 import '../../App.scss';
 
 import { Card, CardHeader, CardBody, Grid, GridItem } from '@patternfly/react-core';
-import { PageHeader } from '@red-hat-insights/insights-frontend-components';
-import { PageHeaderTitle } from '@red-hat-insights/insights-frontend-components';
-import { Section } from '@red-hat-insights/insights-frontend-components';
-import SummaryChart from '../../PresentationalComponents/SummaryChart/SummaryChart.js';
-import SummaryChartItem from '../../PresentationalComponents/SummaryChartItem/SummaryChartItem.js';
+import {
+    Section,
+    PageHeader, PageHeaderTitle
+} from '@red-hat-insights/insights-frontend-components';
 
-const sevNames = [ 'Low', 'Medium', 'High', 'Critical' ];
+const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/SummaryChart/SummaryChart.js'));
+const SummaryChartItem = asyncComponent(() => import('../../PresentationalComponents/SummaryChartItem/SummaryChartItem.js'));
+
+const sevNames = ['Low', 'Medium', 'High', 'Critical'];
 
 class Actions extends Component {
     constructor(props) {
@@ -22,9 +25,13 @@ class Actions extends Component {
 
     componentDidMount() {
         // 1=INFO 2=WARN 3=ERROR 4=CRITICAL
-        const response = {"total":9,"severity":{"info":0,"warn":2,"error":3,"critical":4},"category":{"Availability":1,"Security":0,"Stability":1,"Performance":0}};
-        this.setState({ severity: [ response.severity.info, response.severity.warn, response.severity.error, response.severity.critical ] })
-        this.setState({ total: response.total })
+        const response = {
+            total: 9,
+            severity: { info: 0, warn: 2, error: 3, critical: 4 },
+            category: { Availability: 1, Security: 0, Stability: 1, Performance: 0 }
+        };
+        this.setState({ severity: [response.severity.info, response.severity.warn, response.severity.error, response.severity.critical] });
+        this.setState({ total: response.total });
     }
 
     render() {
@@ -42,10 +49,22 @@ class Actions extends Component {
                                 <CardHeader>Risk Summary</CardHeader>
                                 <CardBody>
                                     <SummaryChart>
-                                        <SummaryChartItem name={ sevNames[3] } numIssues={ this.state.severity[3] } totalIssues={ this.state.total } />
-                                        <SummaryChartItem name={ sevNames[2] } numIssues={ this.state.severity[2] } totalIssues={ this.state.total } />
-                                        <SummaryChartItem name={ sevNames[1] } numIssues={ this.state.severity[1] } totalIssues={ this.state.total } />
-                                        <SummaryChartItem name={ sevNames[0] } numIssues={ this.state.severity[0] } totalIssues={ this.state.total } />
+                                        <SummaryChartItem
+                                            name={ sevNames[3] }
+                                            numIssues={ this.state.severity[3] }
+                                            totalIssues={ this.state.total }/>
+                                        <SummaryChartItem
+                                            name={ sevNames[2] }
+                                            numIssues={ this.state.severity[2] }
+                                            totalIssues={ this.state.total }/>
+                                        <SummaryChartItem
+                                            name={ sevNames[1] }
+                                            numIssues={ this.state.severity[1] }
+                                            totalIssues={ this.state.total }/>
+                                        <SummaryChartItem
+                                            name={ sevNames[0] }
+                                            numIssues={ this.state.severity[0] }
+                                            totalIssues={ this.state.total }/>
                                     </SummaryChart>
                                 </CardBody>
                             </Card>
