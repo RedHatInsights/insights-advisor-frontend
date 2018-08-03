@@ -1,7 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import asyncComponent from '../../Utilities/asyncComponent';
-const SummaryChartItem = asyncComponent(() => import('../../PresentationalComponents/SummaryChartItem/SummaryChartItem.js'));
 
 const SummaryChart = (props) => {
     return (

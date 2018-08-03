@@ -4,9 +4,11 @@ import asyncComponent from '../../Utilities/asyncComponent';
 import '../../App.scss';
 
 import { Card, CardHeader, CardBody, Grid, GridItem } from '@patternfly/react-core';
-import { Section,
-        PageHeader, PageHeaderTitle
-        } from '@red-hat-insights/insights-frontend-components';
+import {
+    Section,
+    PageHeader, PageHeaderTitle
+} from '@red-hat-insights/insights-frontend-components';
+
 const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/SummaryChart/SummaryChart.js'));
 const SummaryChartItem = asyncComponent(() => import('../../PresentationalComponents/SummaryChartItem/SummaryChartItem.js'));
 
