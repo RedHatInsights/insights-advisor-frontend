@@ -1,22 +1,29 @@
 def wrapStep(String stepName, Closure step) {
-  println "In wrapStep ${stepName}"
-  try {
-    step(stepName)
-  } catch (e) {
-    notify('FAILED', stepName)
-    throw e
-  }
+    println "In wrapStep ${stepName}"
+    try {
+        step(stepName)
+    } catch (e) {
+        notify('FAILED', stepName)
+        throw e
+    }
 }
 
 node {
-  if (env.BRANCH_NAME =~ /stable\/*/) {
-    wrapStep('clone', { name -> stage(name) { checkout scm } })
-    wrapStep('deploy_advisor', { name -> stage(name) { sh 'rsync -arv -e "ssh -2" * sshacs@unprotected.upload.akamai.com:/114034/insights/platform/advisor/' } })
-  }
+    env.NODEJS_HOME = "${tool 'node-8'}"
+    env.PATH="${env.NODEJS_HOME}/bin:${env.PATH}"
 
-  else if (env.BRANCH_NAME == 'master') {
-    wrapStep('clone', { name -> stage(name) { checkout scm } })
-    wrapStep('deploy_advisor', { name -> stage(name) { sh 'rsync -arv -e "ssh -2" * sshacs@unprotected.upload.akamai.com:/114034/insightsbeta/platform/advisor/' } })
-  }
+    checkout scm
+
+    stage('deploy') {
+        withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'insightsbot',
+                                                     keyFileVariable: 'insightsbot',
+                                                     passphraseVariable: '',
+                                                     usernameVariable: '')]) {
+            sh '''
+                eval `ssh-agent`
+                ssh-add "$insightsbot"
+                ./.jenkins/deploy.sh
+            '''
+        }
+    }
 }
-
