@@ -1,7 +1,7 @@
 language: node_js
 sudo: required
 notifications:
-  email: false
+    email: false
 node_js:
 - '10'
 install:
@@ -11,5 +11,6 @@ script:
 after_success:
 - .travis/after_success.sh
 env:
-  global:
-  - REPO="git@github.com:RedHatInsights/insights-advisor-frontend-build"
+    global:
+    - REPO="git@github.com:RedHatInsights/insights-advisor-frontend-build"
+    - REPO_DIR="insights-advisor-frontend-build"
