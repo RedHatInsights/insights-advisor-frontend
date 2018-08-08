@@ -42,9 +42,10 @@ class ActionsOverview extends Component {
         for (let i = this.state.severity.length - 1; i >= 0; i--) {
             SummaryChartItems.push(
                 <ConditionalLink
+                    key={i}
                     condition={ this.state.severity[i] }
                     wrap={children =>
-                        <Link to= { `/actions/${sevNames[i]}` }>
+                        <Link to= { `/actions/${sevNames[i].toLowerCase()}` }>
                             {children}
                         </Link>
                     }>
