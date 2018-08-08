@@ -1,79 +1,26 @@
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import React from 'react';
+import { withRouter, Route, Switch } from 'react-router-dom';
 import asyncComponent from '../../Utilities/asyncComponent';
-import '../../App.scss';
 
-import { Card, CardHeader, CardBody, Grid, GridItem } from '@patternfly/react-core';
-import {
-    Section,
-    PageHeader, PageHeaderTitle
-} from '@red-hat-insights/insights-frontend-components';
+import { PageHeader, PageHeaderTitle } from '@red-hat-insights/insights-frontend-components';
 
-const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/SummaryChart/SummaryChart.js'));
-const SummaryChartItem = asyncComponent(() => import('../../PresentationalComponents/SummaryChartItem/SummaryChartItem.js'));
+const ActionsOverview = asyncComponent(() => import(/* webpackChunkName: "ActionsOverview" */ './ActionsOverview'));
+const ViewActions = asyncComponent(() => import(/* webpackChunkName: "ListActions" */ './ViewActions'));
+const ListActions = asyncComponent(() => import(/* webpackChunkName: "ListActions" */ './ListActions'));
 
-const sevNames = ['Low', 'Medium', 'High', 'Critical'];
-
-class Actions extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            severity: [],
-            total: 0
-        };
-    }
-
-    componentDidMount() {
-        // 1=INFO 2=WARN 3=ERROR 4=CRITICAL
-        const response = {
-            total: 9,
-            severity: { info: 0, warn: 2, error: 3, critical: 4 },
-            category: { Availability: 1, Security: 0, Stability: 1, Performance: 0 }
-        };
-        this.setState({ severity: [response.severity.info, response.severity.warn, response.severity.error, response.severity.critical] });
-        this.setState({ total: response.total });
-    }
-
-    render() {
-        return (
-            <React.Fragment>
-                <PageHeader>
-                    <PageHeaderTitle title='Actions'/>
-                </PageHeader>
-
-                <Section type='content'>
-                    <Grid gutter='md'>
-                        <GridItem span={4}>Donut</GridItem>
-                        <GridItem span={4}>
-                            <Card>
-                                <CardHeader>Risk Summary</CardHeader>
-                                <CardBody>
-                                    <SummaryChart>
-                                        <SummaryChartItem
-                                            name={ sevNames[3] }
-                                            numIssues={ this.state.severity[3] }
-                                            totalIssues={ this.state.total }/>
-                                        <SummaryChartItem
-                                            name={ sevNames[2] }
-                                            numIssues={ this.state.severity[2] }
-                                            totalIssues={ this.state.total }/>
-                                        <SummaryChartItem
-                                            name={ sevNames[1] }
-                                            numIssues={ this.state.severity[1] }
-                                            totalIssues={ this.state.total }/>
-                                        <SummaryChartItem
-                                            name={ sevNames[0] }
-                                            numIssues={ this.state.severity[0] }
-                                            totalIssues={ this.state.total }/>
-                                    </SummaryChart>
-                                </CardBody>
-                            </Card>
-                        </GridItem>
-                    </Grid>
-                </Section>
-            </React.Fragment>
-        );
-    }
-}
+const Actions = () => {
+    return (
+        <React.Fragment>
+            <PageHeader>
+                <PageHeaderTitle title='Actions'/>
+            </PageHeader>
+            <Switch>
+                <Route exact path='/actions' component={ActionsOverview} />
+                <Route path='/actions/:type' component={ViewActions}/>
+                <Route path='/actions/:type/:id' component={ListActions}/>
+            </Switch>
+        </React.Fragment>
+    );
+};
 
 export default withRouter(Actions);

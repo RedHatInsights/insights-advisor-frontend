@@ -55,7 +55,7 @@ export const Routes = (props: Props) => {
 
     return (
         <Switch>
-            <InsightsRoute exact path={paths.actions} component={Actions} rootClass='actions' />
+            <InsightsRoute path={paths.actions} component={Actions} rootClass='actions' />
             <InsightsRoute path={paths.rules} component={Rules} rootClass='rules' />
 
             {/* Finally, catch all unmatched routes */}
