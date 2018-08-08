@@ -37,6 +37,25 @@ class ActionsOverview extends Component {
     }
 
     render() {
+
+        let SummaryChartItems = [];
+        for (let i = this.state.severity.length - 1; i >= 0; i--) {
+            SummaryChartItems.push(
+                <ConditionalLink
+                    condition={ this.state.severity[i] }
+                    wrap={children =>
+                        <Link to= { `/actions/${sevNames[i]}` }>
+                            {children}
+                        </Link>
+                    }>
+                    <SummaryChartItem
+                        name={ sevNames[i] }
+                        numIssues={ this.state.severity[i] }
+                        totalIssues={ this.state.total }/>
+                </ConditionalLink>
+            );
+        }
+
         return (
             <React.Fragment>
                 <Section type='content'>
@@ -47,58 +66,7 @@ class ActionsOverview extends Component {
                                 <CardHeader>Risk Summary</CardHeader>
                                 <CardBody>
                                     <SummaryChart>
-
-                                        <ConditionalLink
-                                            condition={ this.state.severity[3] }
-                                            wrap={children =>
-                                                <Link to= { `/actions/${sevNames[3]}` }>
-                                                    {children}
-                                                </Link>
-                                            }>
-                                            <SummaryChartItem
-                                                name={ sevNames[3] }
-                                                numIssues={ this.state.severity[3] }
-                                                totalIssues={ this.state.total }/>
-                                        </ConditionalLink>
-
-                                        <ConditionalLink
-                                            condition={ this.state.severity[2] }
-                                            wrap={children =>
-                                                <Link to= { `/actions/${sevNames[2]}` }>
-                                                    {children}
-                                                </Link>
-                                            }>
-                                            <SummaryChartItem
-                                                name={ sevNames[2] }
-                                                numIssues={ this.state.severity[2] }
-                                                totalIssues={ this.state.total }/>
-                                        </ConditionalLink>
-
-                                        <ConditionalLink
-                                            condition={ this.state.severity[1] }
-                                            wrap={children =>
-                                                <Link to= { `/actions/${sevNames[1]}` }>
-                                                    {children}
-                                                </Link>
-                                            }>
-                                            <SummaryChartItem
-                                                name={ sevNames[1] }
-                                                numIssues={ this.state.severity[1] }
-                                                totalIssues={ this.state.total }/>
-                                        </ConditionalLink>
-
-                                        <ConditionalLink
-                                            condition={ this.state.severity[0] }
-                                            wrap={children =>
-                                                <Link to= { `/actions/${sevNames[0]}` }>
-                                                    {children}
-                                                </Link>
-                                            }>
-                                            <SummaryChartItem
-                                                name={ sevNames[0] }
-                                                numIssues={ this.state.severity[0] }
-                                                totalIssues={ this.state.total }/>
-                                        </ConditionalLink>
+                                        { SummaryChartItems }
                                     </SummaryChart>
                                 </CardBody>
                             </Card>

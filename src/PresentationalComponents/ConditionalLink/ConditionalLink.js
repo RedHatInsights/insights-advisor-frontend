@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types';
 
 /**
- * This is a dumb component that only recieves properties from a smart component.
- * Dumb components are usually functions and not classes.
- *
- * @param props the props given by the smart component.
+ * This component conditionally wraps a child based on a condition
+ * If the condition is true, then the component will wrap the child
+ * If the condition is false, the component won't render, but the children will
  */
 
 const ConditionalLink = ({ condition, wrap, children }) => condition ? wrap(children) : children;

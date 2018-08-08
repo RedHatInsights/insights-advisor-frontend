@@ -9,7 +9,6 @@ import {
 } from '@red-hat-insights/insights-frontend-components';
 
 const ViewActions = ({ match }) => {
-
     return (
         <Section type='content'>
             <Card>
