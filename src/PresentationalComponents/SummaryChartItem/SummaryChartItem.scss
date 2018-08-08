@@ -1,5 +1,10 @@
 @import '../../Utilities.scss';
 
+.summary-chart a{
+  color: var(--pf-global--Color--100);
+  text-decoration: none;
+}
+
 .summary-chart li {
   @include rem('margin-bottom', 5px)
 }
