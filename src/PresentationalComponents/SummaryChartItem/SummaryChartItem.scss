@@ -1,4 +1,6 @@
-@import '../../Utilities.scss';
+@import '~@red-hat-insights/insights-frontend-components/Utilities/_variables';
+@import '~@red-hat-insights/insights-frontend-components/Utilities/_mixins';
+
 
 .summary-chart a{
   color: var(--pf-global--Color--100);
@@ -30,20 +32,20 @@
   z-index: 1;
 }
 .progress-bar-critical {
-  background-color: var(--pf-global--danger-color--100);
+  background-color: $ins-color--critical;
 }
 .progress-bar-high {
-  background-color: $risk-summary-orange;
+  background-color: $ins-color--high;
 }
 .progress-bar-medium {
-  background-color: var(--pf-global--warning-color--100);
+  background-color: $ins-color--medium;
 }
 .progress-bar-low {
-  background-color: var(--pf-global--success-color--100);
+  background-color: $ins-color--low;
 }
 .small-spacer {
   margin-right: var(--pf-global--spacer--xs);
 }
 .green {
-  color: var(--pf-global--success-color--200);
+  color: $ins-color--green;
 }

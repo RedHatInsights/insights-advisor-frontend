@@ -8,14 +8,11 @@ import {
     Section
 } from '@red-hat-insights/insights-frontend-components';
 
-const root = document.getElementById('root');
-root.classList.add(`actions__view`);
-
 const ViewActions = ({ match }) => {
     return (
-        <Section type='content'>
+        <Section type='content' className='actions__view'>
             <Card>
-                <CardHeader className='risk__name'> { match.params.type } Risk Actions </CardHeader>
+                <CardHeader className='actions__card'> { match.params.type } Risk Actions </CardHeader>
                 <CardBody>
                 </CardBody>
             </Card>
