@@ -17,7 +17,6 @@ import {
 import mockData from '../../../mockData/medium-risk.json';
 
 document.getElementById('root').classList.add('actions__view');
-const response = JSON.parse(JSON.stringify(mockData));
 
 class ViewActions extends Component {
     constructor(props) {
@@ -39,6 +38,7 @@ class ViewActions extends Component {
     }
 
     componentDidMount() {
+        const response = JSON.parse(JSON.stringify(mockData));
         this.setState({ summary: response.summary });
 
         let rows = [];
