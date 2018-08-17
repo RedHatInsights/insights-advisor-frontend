@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import '../../App.scss';
+import { Link, withRouter } from 'react-router-dom';
 import './_actions.scss';
 import PropTypes from 'prop-types';
 
@@ -15,12 +14,10 @@ import {
     SortDirection,
     Table
 } from '@red-hat-insights/insights-frontend-components';
-import '~@red-hat-insights/insights-frontend-components/Utilities/_all';
 import mockData from '../../../mockData/medium-risk.json';
 
 document.getElementById('root').classList.add('actions__view');
 const response = JSON.parse(JSON.stringify(mockData));
-let rowLinks = [];
 
 class ViewActions extends Component {
     constructor(props) {
@@ -39,39 +36,28 @@ class ViewActions extends Component {
         this.limitRows = this.limitRows.bind(this);
         this.setPage = this.setPage.bind(this);
         this.setPerPage = this.setPerPage.bind(this);
-        this.rowClickHandler = this.rowClickHandler.bind(this);
     }
 
     componentDidMount() {
         this.setState({ summary: response.summary });
 
-        let cells = [];
+        let rows = [];
         for (let i = 0;i < response.rules.length;i++) {
-            rowLinks.push(response.rules[i].rule_id);
-            cells.push(
+            rows.push(
                 { cells: [
-                    <div key={ i }>{ response.rules[i].description }</div>,
-                    <Section key={ i } type='icon-group'>
-                        <Battery label='Likelihood' labelHidden severity={ response.rules[i].rec_likelihood } />
-                    </Section>,
-                    <Section key={ i } type='icon-group'>
-                        <Battery label='Impact' labelHidden severity={ response.rules[i].rec_impact } />
-                    </Section>,
-                    <Section key={ i } type='icon-group'>
-                        <Battery label='Total Risk' labelHidden severity={ response.rules[i].resolution_risk } />
-                    </Section>,
+                    <Link key={ i } to={ `/actions/${this.props.match.params.type}/${response.rules[i].rule_id}` }>
+                        { response.rules[i].description }
+                    </Link>,
+                    <Battery key={ i } label='Likelihood' labelHidden severity={ response.rules[i].rec_likelihood } />,
+                    <Battery key={ i } label='Impact' labelHidden severity={ response.rules[i].rec_impact } />,
+                    <Battery key={ i } label='Total Risk' labelHidden severity={ response.rules[i].resolution_risk } />,
                     <div key={ i }>{ response.rules[i].hitCount }</div>,
                     <Ansible key={ i } unsupported={ response.rules[i].ansible === 1 ? true : false } />
                 ] }
             );
         }
 
-        this.setState({ rows: cells });
-    }
-
-    rowClickHandler(_event, key) {
-        // console.log('/insights/platform/advisor/actions/medium/' + rowLinks[key]);
-        return false;
+        this.setState({ rows });
     }
 
     toggleCol(_event, key, selected) {
@@ -140,7 +126,6 @@ class ViewActions extends Component {
                         header={ this.state.cols }
                         sortBy={ this.state.sortBy }
                         rows={ rows }
-                        onRowClick={ this.rowClickHandler }
                         onSort={ this.onSortChange }
                         footer={
                             <Pagination
