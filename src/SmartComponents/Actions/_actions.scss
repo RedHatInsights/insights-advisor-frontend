@@ -9,6 +9,6 @@
             padding: $ins-padding;
             &:not(:first-of-type) { text-align: center; }
         }
-        tfoot td { padding: 0; }
+        tfoot tr td:first-child { padding: 0; }
     }
 }
