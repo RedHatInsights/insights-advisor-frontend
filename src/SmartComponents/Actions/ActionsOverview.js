@@ -12,8 +12,6 @@ const ConditionalLink = asyncComponent(() => import('../../PresentationalCompone
 
 const sevNames = ['Low', 'Medium', 'High', 'Critical'];
 
-//const ConditionalLink = ({ condition, wrap, children }) => condition ? wrap(children) : children;
-
 class ActionsOverview extends Component {
     constructor(props) {
         super(props);
@@ -24,7 +22,6 @@ class ActionsOverview extends Component {
     }
 
     componentDidMount() {
-        // 1=INFO 2=WARN 3=ERROR 4=CRITICAL
         const response = {
             total: 9,
             severity: { info: 0, warn: 2, error: 3, critical: 4 },
