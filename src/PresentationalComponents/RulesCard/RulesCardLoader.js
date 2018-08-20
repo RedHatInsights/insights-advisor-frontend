@@ -1,0 +1,44 @@
+import React, { Component } from 'react';
+import { Card, CardHeader, CardBody, CardFooter } from '@patternfly/react-core';
+
+import './_RulesCardSkeleton.scss';
+import './_RulesCard.scss';
+
+export default function RulesCardLoader(importComponent) {
+    class AsyncComponent extends Component {
+        constructor(props) {
+            super(props);
+
+            this.state = {
+                component: null
+            };
+        }
+
+        async componentDidMount() {
+            const { default: component } = await importComponent();
+
+            this.setState({
+                component
+            });
+        }
+
+        render() {
+            const C = this.state.component;
+
+            return C ? <C {...this.props} /> :
+                <Card className='ins-c-rules-card ins-c-card__skeleton'>
+                    <CardHeader>
+                        <div className='skeleton skeleton-md'>&nbsp;</div>
+                    </CardHeader>
+                    <CardBody>
+                        <div className='skeleton skeleton-lg'>&nbsp;</div>
+                    </CardBody>
+                    <CardFooter>
+                        <div className='skeleton skeleton-sm'>&nbsp;</div>
+                    </CardFooter>
+                </Card>;
+        }
+    }
+
+    return AsyncComponent;
+}
