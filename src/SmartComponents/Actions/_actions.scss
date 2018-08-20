@@ -1,1 +1,14 @@
-.actions__view .actions__card{ text-transform: capitalize; }
+@import '~@red-hat-insights/insights-frontend-components/Utilities/_variables';
+
+.page__actions.actions__view {
+    .ins-p-page-header__title { text-transform: capitalize; }
+
+    table.rules-table {
+        th:first-child { width: 50%; }
+        td {
+            padding: $ins-padding;
+            &:not(:first-of-type) { text-align: center; }
+        }
+        tfoot tr td:first-child { padding: 0; }
+    }
+}

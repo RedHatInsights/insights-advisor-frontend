@@ -4,17 +4,13 @@ import asyncComponent from '../../Utilities/asyncComponent';
 import '../../App.scss';
 
 import { Card, CardHeader, CardBody, Grid, GridItem } from '@patternfly/react-core';
-import {
-    Section
-} from '@red-hat-insights/insights-frontend-components';
+import {  PageHeader, PageHeaderTitle, Section } from '@red-hat-insights/insights-frontend-components';
 
 const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/SummaryChart/SummaryChart.js'));
 const SummaryChartItem = asyncComponent(() => import('../../PresentationalComponents/SummaryChartItem/SummaryChartItem.js'));
 const ConditionalLink = asyncComponent(() => import('../../PresentationalComponents/ConditionalLink/ConditionalLink.js'));
 
 const sevNames = ['Low', 'Medium', 'High', 'Critical'];
-
-//const ConditionalLink = ({ condition, wrap, children }) => condition ? wrap(children) : children;
 
 class ActionsOverview extends Component {
     constructor(props) {
@@ -26,7 +22,6 @@ class ActionsOverview extends Component {
     }
 
     componentDidMount() {
-        // 1=INFO 2=WARN 3=ERROR 4=CRITICAL
         const response = {
             total: 9,
             severity: { info: 0, warn: 2, error: 3, critical: 4 },
@@ -59,6 +54,9 @@ class ActionsOverview extends Component {
 
         return (
             <React.Fragment>
+                <PageHeader>
+                    <PageHeaderTitle title='Actions'/>
+                </PageHeader>
                 <Section type='content'>
                     <Grid gutter='md'>
                         <GridItem span={4}>Donut</GridItem>
