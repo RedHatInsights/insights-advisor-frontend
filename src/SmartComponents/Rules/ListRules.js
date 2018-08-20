@@ -17,7 +17,7 @@ class ListRules extends React.Component {
                 <RulesCard
                     key = { i }
                     category= { response.rules[i].category }
-                    id= { response.rules[i].rule_id }
+                    description= { response.rules[i].description }
                     summary= { response.rules[i].summary_html }
                     impact = { response.rules[i].rec_impact }
                     likelihood = { response.rules[i].rec_likelihood }

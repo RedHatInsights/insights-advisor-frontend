@@ -19,7 +19,7 @@ import './_RulesCard.scss';
 const RulesCard =
 ({
     category,
-    id,
+    description,
     summary,
     ansible,
     impact,
@@ -39,7 +39,8 @@ const RulesCard =
     let renderHitCount;
     if (hitCount > 0) {
         renderHitCount =
-        <Link to={ `/actions/${category.toLowerCase()}/${id}` } aria-label='No impacted systems'> View Impacted Systems ({ hitCount }) </Link>;
+        <Link to={ `/actions/${category.toLowerCase()}/${description}` }
+            aria-label='No impacted systems'> View Impacted Systems ({ hitCount }) </Link>;
     }
     else {
         renderHitCount = <a disabled aria-label='No impacted systems'> View Impacted Systems (0) </a>;
@@ -50,7 +51,7 @@ const RulesCard =
             <CardHeader>
                 <Split>
                     <SplitItem> { category } &gt; </SplitItem>
-                    <SplitItem> { id } </SplitItem>
+                    <SplitItem> { description } </SplitItem>
                     <SplitItem>
                         <Ansible unsupported = { ansible }/>
                     </SplitItem>
@@ -78,7 +79,7 @@ export default RulesCard;
 
 RulesCard.propTypes = {
     category: propTypes.string,
-    id: propTypes.string,
+    description: propTypes.string,
     summary: propTypes.string,
     ansible: propTypes.number,
     impact: propTypes.number,
