@@ -1,5 +1,5 @@
 import React from 'react';
-import { Section } from '@red-hat-insights/insights-frontend-components';
+import { Section, Pagination } from '@red-hat-insights/insights-frontend-components';
 
 import asyncComponent from '../../PresentationalComponents/RulesCard/RulesCardLoader';
 const RulesCard = asyncComponent(() => import('../../PresentationalComponents/RulesCard/RulesCard.js'));
@@ -8,12 +8,49 @@ import mockData from '../../../mockData/medium-risk.json';
 
 class ListRules extends React.Component {
 
-    render() {
+    constructor(props) {
+        super(props);
+        this.state = {
+            summary: '',
+            itemsPerPage: 10,
+            page: 1,
+            cards: [],
+            things: []
+        };
+        this.limitCards = this.limitCards.bind(this);
+        this.setPage = this.setPage.bind(this);
+        this.setPerPage = this.setPerPage.bind(this);
+    }
+
+    setPage(page) {
+        this.setState({
+            ...this.state,
+            page
+        });
+    }
+
+    setPerPage(amount) {
+        this.setState({
+            ...this.state,
+            itemsPerPage: amount
+        });
+    }
+
+    limitCards() {
+        const { page, itemsPerPage } = this.state;
+        const numberOfItems = this.state.cards.length;
+        const lastPage = Math.ceil(numberOfItems / itemsPerPage);
+        const lastIndex = page === lastPage ? numberOfItems : page * itemsPerPage;
+        const firstIndex = page === 1 ? 0 : page * itemsPerPage - itemsPerPage;
+        return this.state.cards.slice(firstIndex, lastIndex);
+    }
+
+    componentDidMount() {
         const response = JSON.parse(JSON.stringify(mockData));
 
-        let RulesCards = [];
+        let cards = [];
         for (let i = 0; i < response.rules.length; i++) {
-            RulesCards.push(
+            cards.push(
                 <RulesCard
                     key = { i }
                     category= { response.rules[i].category }
@@ -27,11 +64,23 @@ class ListRules extends React.Component {
                     hitCount = { response.rules[i].hitCount }
                 />
             );
-        }
 
+            this.setState({ cards });
+        }
+    }
+
+    render() {
+        const cards = this.limitCards();
         return (
             <Section type='content'>
-                { RulesCards }
+                { cards }
+                <Pagination
+                    numberOfItems={ this.state.cards.length }
+                    onPerPageSelect={ this.setPerPage }
+                    page={ this.state.page }
+                    onSetPage={ this.setPage }
+                    itemsPerPage={ this.state.itemsPerPage }
+                />
             </Section>
         );
 

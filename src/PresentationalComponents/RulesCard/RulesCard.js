@@ -10,10 +10,8 @@ import { Card, CardHeader, CardBody, CardFooter, Split, SplitItem } from '@patte
 import './_RulesCard.scss';
 
 /**
- * This is a dumb component that only recieves properties from a smart component.
- * Dumb components are usually functions and not classes.
- *
- * @param props the props given by the smart component.
+ * This is the card that displays information for the rules as well as links to the proper
+ * url of systems impacted under that rule (if there are systems)
  */
 
 const RulesCard =

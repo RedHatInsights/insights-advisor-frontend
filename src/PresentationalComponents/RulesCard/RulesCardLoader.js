@@ -4,6 +4,12 @@ import { Card, CardHeader, CardBody, CardFooter } from '@patternfly/react-core';
 import './_RulesCardSkeleton.scss';
 import './_RulesCard.scss';
 
+/**
+ * This is the async skeleton loader for the rules card
+ * When this is used, it will generate a fake rules card with blocks of highlighted
+ * CSS to show information is loading.
+ */
+
 export default function RulesCardLoader(importComponent) {
     class AsyncComponent extends Component {
         constructor(props) {
