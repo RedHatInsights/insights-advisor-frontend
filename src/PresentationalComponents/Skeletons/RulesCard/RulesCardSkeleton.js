@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Card, CardHeader, CardBody, CardFooter } from '@patternfly/react-core';
 
-import './_RulesCardSkeleton.scss';
-import './_RulesCard.scss';
+import '../_Skeleton.scss';
+import '../../RulesCard/_RulesCard.scss';
 
 /**
  * This is the async skeleton loader for the rules card
@@ -10,8 +10,8 @@ import './_RulesCard.scss';
  * CSS to show information is loading.
  */
 
-export default function RulesCardLoader(importComponent) {
-    class AsyncComponent extends Component {
+export default function RulesCardSkeleton(importComponent) {
+    class RulesCardSkeleton extends Component {
         constructor(props) {
             super(props);
 
@@ -46,5 +46,5 @@ export default function RulesCardLoader(importComponent) {
         }
     }
 
-    return AsyncComponent;
+    return RulesCardSkeleton;
 }

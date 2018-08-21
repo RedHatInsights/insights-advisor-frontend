@@ -1,8 +1,8 @@
 import React from 'react';
 import { Section, Pagination } from '@red-hat-insights/insights-frontend-components';
 
-import asyncComponent from '../../PresentationalComponents/RulesCard/RulesCardLoader';
-const RulesCard = asyncComponent(() => import('../../PresentationalComponents/RulesCard/RulesCard.js'));
+import rulesCardSkeleton from '../../PresentationalComponents/Skeletons/RulesCard/RulesCardSkeleton.js';
+const RulesCard = rulesCardSkeleton(() => import('../../PresentationalComponents/RulesCard/RulesCard.js'));
 
 import mockData from '../../../mockData/medium-risk.json';
 
@@ -20,29 +20,6 @@ class ListRules extends React.Component {
         this.limitCards = this.limitCards.bind(this);
         this.setPage = this.setPage.bind(this);
         this.setPerPage = this.setPerPage.bind(this);
-    }
-
-    setPage(page) {
-        this.setState({
-            ...this.state,
-            page
-        });
-    }
-
-    setPerPage(amount) {
-        this.setState({
-            ...this.state,
-            itemsPerPage: amount
-        });
-    }
-
-    limitCards() {
-        const { page, itemsPerPage } = this.state;
-        const numberOfItems = this.state.cards.length;
-        const lastPage = Math.ceil(numberOfItems / itemsPerPage);
-        const lastIndex = page === lastPage ? numberOfItems : page * itemsPerPage;
-        const firstIndex = page === 1 ? 0 : page * itemsPerPage - itemsPerPage;
-        return this.state.cards.slice(firstIndex, lastIndex);
     }
 
     componentDidMount() {
@@ -67,6 +44,29 @@ class ListRules extends React.Component {
 
             this.setState({ cards });
         }
+    }
+
+    setPage(page) {
+        this.setState({
+            ...this.state,
+            page
+        });
+    }
+
+    setPerPage(amount) {
+        this.setState({
+            ...this.state,
+            itemsPerPage: amount
+        });
+    }
+
+    limitCards() {
+        const { page, itemsPerPage } = this.state;
+        const numberOfItems = this.state.cards.length;
+        const lastPage = Math.ceil(numberOfItems / itemsPerPage);
+        const lastIndex = page === lastPage ? numberOfItems : page * itemsPerPage;
+        const firstIndex = page === 1 ? 0 : page * itemsPerPage - itemsPerPage;
+        return this.state.cards.slice(firstIndex, lastIndex);
     }
 
     render() {
