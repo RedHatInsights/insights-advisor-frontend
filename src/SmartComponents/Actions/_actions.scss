@@ -1,4 +1,5 @@
 @import '~@red-hat-insights/insights-frontend-components/Utilities/_variables';
+@import '~@red-hat-insights/insights-frontend-components/Utilities/_mixins';
 
 .page__actions.actions__view {
     .ins-p-page-header__title { text-transform: capitalize; }
@@ -10,5 +11,13 @@
             &:not(:first-of-type) { text-align: center; }
         }
         tfoot tr td:first-child { padding: 0; }
+    }
+}
+
+.actions__description { margin: $ins-margin 0; }
+
+@media only screen and (min-width: 768px) {
+    .ins-l-icon-group__vertical > *:not(:first-child) {
+        @include rem('margin-top', 5px);
     }
 }

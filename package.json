@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": false,
   "dependencies": {
-    "@patternfly/react-core": "1.6.0",
+    "@patternfly/react-core": "1.8.1",
     "@red-hat-insights/insights-frontend-components": "^3.4.1",
     "classnames": "^2.2.5",
     "create-react-class": "^15.6.3"

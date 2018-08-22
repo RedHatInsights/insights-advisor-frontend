@@ -30,6 +30,7 @@ class ListRules extends React.Component {
             cards.push(
                 <RulesCard
                     key = { i }
+                    ruleID = { response.rules[i].rule_id }
                     category= { response.rules[i].category }
                     description= { response.rules[i].description }
                     summary= { response.rules[i].summary_html }
