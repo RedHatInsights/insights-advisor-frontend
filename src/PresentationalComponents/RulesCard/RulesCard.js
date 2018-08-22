@@ -25,6 +25,7 @@ const RulesCard =
     totalRisk,
     riskOfChange,
     hitCount,
+    ruleID,
     className,
     ...props
 }) => {
@@ -37,7 +38,7 @@ const RulesCard =
     let renderHitCount;
     if (hitCount > 0) {
         renderHitCount =
-        <Link to={ `/actions/${category.toLowerCase()}/${description}` }
+        <Link to={ `/actions/${category.toLowerCase()}/${ruleID}` }
             aria-label='No impacted systems'> View Impacted Systems ({ hitCount }) </Link>;
     }
     else {
@@ -49,7 +50,7 @@ const RulesCard =
             <CardHeader>
                 <Split>
                     <SplitItem> { category } &gt; </SplitItem>
-                    <SplitItem> { description } </SplitItem>
+                    <SplitItem isMain> { description } </SplitItem>
                     <SplitItem>
                         <Ansible unsupported = { ansible }/>
                     </SplitItem>
@@ -76,6 +77,7 @@ const RulesCard =
 export default RulesCard;
 
 RulesCard.propTypes = {
+    ruleID: propTypes.string,
     category: propTypes.string,
     description: propTypes.string,
     summary: propTypes.string,
