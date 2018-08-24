@@ -36,6 +36,9 @@ class ViewActions extends Component {
     }
 
     componentDidMount() {
+
+        document.getElementById('root').classList.add('actions__view');
+
         const response = JSON.parse(JSON.stringify(mockData));
         this.setState({ summary: response.summary });
 

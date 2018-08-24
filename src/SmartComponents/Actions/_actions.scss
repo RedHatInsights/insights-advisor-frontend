@@ -1,7 +1,7 @@
 @import '~@red-hat-insights/insights-frontend-components/Utilities/_variables';
 @import '~@red-hat-insights/insights-frontend-components/Utilities/_mixins';
 
-.page__actions {
+.page__actions.actions__view {
     .ins-p-page-header__title { text-transform: capitalize; }
 
     table.rules-table {
