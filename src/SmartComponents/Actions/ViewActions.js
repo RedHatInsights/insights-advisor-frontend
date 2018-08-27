@@ -16,8 +16,6 @@ import {
 } from '@red-hat-insights/insights-frontend-components';
 import mockData from '../../../mockData/medium-risk.json';
 
-document.getElementById('root').classList.add('actions__view');
-
 class ViewActions extends Component {
     constructor(props) {
         super(props);
@@ -38,6 +36,9 @@ class ViewActions extends Component {
     }
 
     componentDidMount() {
+
+        document.getElementById('root').classList.add('actions__view');
+
         const response = JSON.parse(JSON.stringify(mockData));
         this.setState({ summary: response.summary });
 
