@@ -12,6 +12,7 @@ const ConditionalLink = asyncComponent(() => import('../../PresentationalCompone
 
 const sevNames = ['Low', 'Medium', 'High', 'Critical'];
 const typeNames = ['Availability', 'Security', 'Stability', 'Performance'];
+// const typeLink = '/actions/';
 
 class ActionsOverview extends Component {
     constructor(props) {
