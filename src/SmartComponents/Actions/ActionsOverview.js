@@ -4,30 +4,33 @@ import asyncComponent from '../../Utilities/asyncComponent';
 import '../../App.scss';
 
 import { Card, CardHeader, CardBody, Grid, GridItem } from '@patternfly/react-core';
-import {  PageHeader, PageHeaderTitle, Section } from '@red-hat-insights/insights-frontend-components';
+import { PageHeader, PageHeaderTitle, Section, Donut } from '@red-hat-insights/insights-frontend-components';
 
 const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/SummaryChart/SummaryChart.js'));
 const SummaryChartItem = asyncComponent(() => import('../../PresentationalComponents/SummaryChartItem/SummaryChartItem.js'));
 const ConditionalLink = asyncComponent(() => import('../../PresentationalComponents/ConditionalLink/ConditionalLink.js'));
 
 const sevNames = ['Low', 'Medium', 'High', 'Critical'];
+const typeNames = ['Availability', 'Security', 'Stability', 'Performance'];
 
 class ActionsOverview extends Component {
     constructor(props) {
         super(props);
         this.state = {
             severity: [],
-            total: 0
+            total: 0,
+            category: []
         };
     }
-
+    /* eslint-disable */
     componentDidMount() {
         const response = {
             total: 9,
             severity: { info: 0, warn: 2, error: 3, critical: 4 },
-            category: { Availability: 1, Security: 0, Stability: 1, Performance: 0 }
+            category: { availability: 7, security: 2, stability: 4, performance: 10 }
         };
         this.setState({ severity: [response.severity.info, response.severity.warn, response.severity.error, response.severity.critical] });
+        this.setState({ category: [response.category.availability, response.category.security, response.category.stability, response.category.performance] });
         this.setState({ total: response.total });
     }
 
@@ -52,6 +55,20 @@ class ActionsOverview extends Component {
             );
         }
 
+        let donutValues = [];
+        let renderDonut = [];
+
+        // Returns NaN while wating for data to load
+        if(this.state.category[1]) {
+            for (let i = 0; i <= this.state.category.length - 1; i++) {
+                donutValues.push([typeNames[i], this.state.category[i]]);
+            }
+            renderDonut.push(
+                <Donut key='advisor-donut' values={donutValues} totalLabel='issues' identifier='advisor-donut' withLegend/>
+            )
+        }
+
+
         return (
             <React.Fragment>
                 <PageHeader>
@@ -59,7 +76,14 @@ class ActionsOverview extends Component {
                 </PageHeader>
                 <Section type='content'>
                     <Grid gutter='md'>
-                        <GridItem span={4}>Donut</GridItem>
+                        <GridItem span={4}>
+                            <Card>
+                                <CardHeader>Category Summary</CardHeader>
+                                <CardBody>
+                                    { renderDonut }
+                                </CardBody>
+                            </Card>
+                        </GridItem>
                         <GridItem span={4}>
                             <Card>
                                 <CardHeader>Risk Summary</CardHeader>
