@@ -22,7 +22,7 @@ class ActionsOverview extends Component {
             category: []
         };
     }
-    /* eslint-disable */
+
     componentDidMount() {
         const response = {
             total: 9,
@@ -30,7 +30,8 @@ class ActionsOverview extends Component {
             category: { availability: 7, security: 2, stability: 4, performance: 10 }
         };
         this.setState({ severity: [response.severity.info, response.severity.warn, response.severity.error, response.severity.critical] });
-        this.setState({ category: [response.category.availability, response.category.security, response.category.stability, response.category.performance] });
+        this.setState({
+            category: [response.category.availability, response.category.security, response.category.stability, response.category.performance] });
         this.setState({ total: response.total });
     }
 
@@ -59,15 +60,15 @@ class ActionsOverview extends Component {
         let renderDonut = [];
 
         // Returns NaN while wating for data to load
-        if(this.state.category[1]) {
+        if (this.state.category[1]) {
             for (let i = 0; i <= this.state.category.length - 1; i++) {
                 donutValues.push([typeNames[i], this.state.category[i]]);
             }
+
             renderDonut.push(
                 <Donut key='advisor-donut' values={donutValues} totalLabel='issues' identifier='advisor-donut' withLegend/>
-            )
+            );
         }
-
 
         return (
             <React.Fragment>
