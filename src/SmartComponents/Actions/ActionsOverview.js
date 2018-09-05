@@ -12,7 +12,7 @@ const ConditionalLink = asyncComponent(() => import('../../PresentationalCompone
 
 const sevNames = ['Low', 'Medium', 'High', 'Critical'];
 const typeNames = ['Availability', 'Security', 'Stability', 'Performance'];
-// const typeLink = '/actions/';
+const typeLink = '/actions/';
 
 class ActionsOverview extends Component {
     constructor(props) {
@@ -67,7 +67,7 @@ class ActionsOverview extends Component {
             }
 
             renderDonut.push(
-                <Donut key='advisor-donut' values={donutValues} totalLabel='issues' identifier='advisor-donut' withLegend/>
+                <Donut key='advisor-donut' values={ donutValues } link={ typeLink } totalLabel='issues' identifier='advisor-donut' withLegend/>
             );
         }
 
