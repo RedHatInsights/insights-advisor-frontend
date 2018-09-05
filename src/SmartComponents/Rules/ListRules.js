@@ -26,24 +26,26 @@ class ListRules extends React.Component {
         const response = JSON.parse(JSON.stringify(mockData));
 
         let cards = [];
-        for (let i = 0; i < response.rules.length; i++) {
-            cards.push(
-                <RulesCard
-                    key = { i }
-                    ruleID = { response.rules[i].rule_id }
-                    category= { response.rules[i].category }
-                    description= { response.rules[i].description }
-                    summary= { response.rules[i].summary_html }
-                    impact = { response.rules[i].rec_impact }
-                    likelihood = { response.rules[i].rec_likelihood }
-                    totalRisk = { response.rules[i].resolution_risk }
-                    riskOfChange = { 3 }
-                    ansible = { response.rules[i].ansible }
-                    hitCount = { response.rules[i].hitCount }
-                />
-            );
+        if (response.rules) {
+            for (let i = 0; i < response.rules.length; i++) {
+                cards.push(
+                    <RulesCard
+                        key = { i }
+                        ruleID = { response.rules[i].rule_id }
+                        category= { response.rules[i].category }
+                        description= { response.rules[i].description }
+                        summary= { response.rules[i].summary_html }
+                        impact = { response.rules[i].rec_impact }
+                        likelihood = { response.rules[i].rec_likelihood }
+                        totalRisk = { response.rules[i].resolution_risk }
+                        riskOfChange = { 3 }
+                        ansible = { response.rules[i].ansible }
+                        hitCount = { response.rules[i].hitCount }
+                    />
+                );
 
-            this.setState({ cards });
+                this.setState({ cards });
+            }
         }
     }
 
