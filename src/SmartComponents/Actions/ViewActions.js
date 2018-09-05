@@ -43,19 +43,21 @@ class ViewActions extends Component {
         this.setState({ summary: response.summary });
 
         let rows = [];
-        for (let i = 0;i < response.rules.length;i++) {
-            rows.push(
-                { cells: [
-                    <Link key={ i } to={ `/actions/${this.props.match.params.type}/${response.rules[i].rule_id}` }>
-                        { response.rules[i].description }
-                    </Link>,
-                    <Battery key={ i } label='Likelihood' labelHidden severity={ response.rules[i].rec_likelihood } />,
-                    <Battery key={ i } label='Impact' labelHidden severity={ response.rules[i].rec_impact } />,
-                    <Battery key={ i } label='Total Risk' labelHidden severity={ response.rules[i].resolution_risk } />,
-                    <div key={ i }>{ response.rules[i].hitCount }</div>,
-                    <Ansible key={ i } unsupported={ response.rules[i].ansible === 1 ? true : false } />
-                ] }
-            );
+        if (response.rules) {
+            for (let i = 0;i < response.rules.length;i++) {
+                rows.push(
+                    { cells: [
+                        <Link key={ i } to={ `/actions/${this.props.match.params.type}/${response.rules[i].rule_id}` }>
+                            { response.rules[i].description }
+                        </Link>,
+                        <Battery key={ i } label='Likelihood' labelHidden severity={ response.rules[i].rec_likelihood } />,
+                        <Battery key={ i } label='Impact' labelHidden severity={ response.rules[i].rec_impact } />,
+                        <Battery key={ i } label='Total Risk' labelHidden severity={ response.rules[i].resolution_risk } />,
+                        <div key={ i }>{ response.rules[i].hitCount }</div>,
+                        <Ansible key={ i } unsupported={ response.rules[i].ansible === 1 ? true : false } />
+                    ] }
+                );
+            }
         }
 
         this.setState({ rows });
