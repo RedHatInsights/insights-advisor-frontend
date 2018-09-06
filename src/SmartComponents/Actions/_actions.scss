@@ -2,7 +2,7 @@
 @import '~@red-hat-insights/insights-frontend-components/Utilities/_mixins';
 
 .page__actions.actions__view {
-    .ins-p-page-header__title { text-transform: capitalize; }
+    .actions__view--title { text-transform: capitalize; }
 
     table.rules-table {
         th:first-child { width: 50%; }

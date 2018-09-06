@@ -119,7 +119,7 @@ class ViewActions extends Component {
         return (
             <React.Fragment>
                 <PageHeader>
-                    <PageHeaderTitle title={ `${this.props.match.params.type} Risk Actions` } />
+                    <PageHeaderTitle className='actions__view--title' title={ `${this.props.match.params.type} Risk Actions` } />
                 </PageHeader>
                 <Main>
                     <Stack gutter='md'>
