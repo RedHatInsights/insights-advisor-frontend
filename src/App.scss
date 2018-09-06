@@ -15,8 +15,8 @@ ul.navigation-secondary {
       span { margin-left: 50px; }
       &:active, &.active{
         background: #f5f5f5;
-        color: $ins-color--blue;
+        color: var(--pf-global--link--Color);
       }
-      &:hover { color: $ins-color--blue; }
+      &:hover { color: var(--pf-global--link--Color); }
     }
   }
