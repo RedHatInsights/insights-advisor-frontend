@@ -77,8 +77,8 @@ class ActionsOverview extends Component {
                     <PageHeaderTitle title='Actions'/>
                 </PageHeader>
                 <Main>
-                    <Grid gutter='md'>
-                        <GridItem span={4}>
+                    <Grid gutter='md' xl={4} sm={6}>
+                        <GridItem>
                             <Card>
                                 <CardHeader>Category Summary</CardHeader>
                                 <CardBody>
@@ -86,7 +86,7 @@ class ActionsOverview extends Component {
                                 </CardBody>
                             </Card>
                         </GridItem>
-                        <GridItem span={4}>
+                        <GridItem>
                             <Card>
                                 <CardHeader>Risk Summary</CardHeader>
                                 <CardBody>
