@@ -21,3 +21,7 @@
         @include rem('margin-top', 5px);
     }
 }
+
+table.impacted-systems-table {
+    margin: $ins-margin 0;
+}

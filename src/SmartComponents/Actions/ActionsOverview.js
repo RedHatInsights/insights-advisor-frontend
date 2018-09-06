@@ -4,7 +4,7 @@ import asyncComponent from '../../Utilities/asyncComponent';
 import '../../App.scss';
 
 import { Card, CardHeader, CardBody, Grid, GridItem } from '@patternfly/react-core';
-import { PageHeader, PageHeaderTitle, Section, Donut } from '@red-hat-insights/insights-frontend-components';
+import { PageHeader, PageHeaderTitle, Donut, Main } from '@red-hat-insights/insights-frontend-components';
 
 const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/SummaryChart/SummaryChart.js'));
 const SummaryChartItem = asyncComponent(() => import('../../PresentationalComponents/SummaryChartItem/SummaryChartItem.js'));
@@ -76,7 +76,7 @@ class ActionsOverview extends Component {
                 <PageHeader>
                     <PageHeaderTitle title='Actions'/>
                 </PageHeader>
-                <Section type='content'>
+                <Main>
                     <Grid gutter='md'>
                         <GridItem span={4}>
                             <Card>
@@ -97,7 +97,7 @@ class ActionsOverview extends Component {
                             </Card>
                         </GridItem>
                     </Grid>
-                </Section>
+                </Main>
             </React.Fragment>
         );
     }

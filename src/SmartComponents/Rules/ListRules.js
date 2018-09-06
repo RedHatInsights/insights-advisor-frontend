@@ -1,5 +1,5 @@
 import React from 'react';
-import { Section, Pagination } from '@red-hat-insights/insights-frontend-components';
+import { Main, Pagination } from '@red-hat-insights/insights-frontend-components';
 
 import rulesCardSkeleton from '../../PresentationalComponents/Skeletons/RulesCard/RulesCardSkeleton.js';
 const RulesCard = rulesCardSkeleton(() => import('../../PresentationalComponents/RulesCard/RulesCard.js'));
@@ -75,7 +75,7 @@ class ListRules extends React.Component {
     render() {
         const cards = this.limitCards();
         return (
-            <Section type='content'>
+            <Main>
                 { cards }
                 <Pagination
                     numberOfItems={ this.state.cards.length }
@@ -84,7 +84,7 @@ class ListRules extends React.Component {
                     onSetPage={ this.setPage }
                     itemsPerPage={ this.state.itemsPerPage }
                 />
-            </Section>
+            </Main>
         );
 
     };
