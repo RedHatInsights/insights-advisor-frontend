@@ -4,14 +4,14 @@ import './_actions.scss';
 import PropTypes from 'prop-types';
 
 import {
-    Section,
     PageHeader,
     PageHeaderTitle,
     Battery,
     Ansible,
     Table,
     SortDirection,
-    Pagination
+    Pagination,
+    Main
 } from '@red-hat-insights/insights-frontend-components';
 
 import {
@@ -134,7 +134,7 @@ class ListActions extends Component {
                 <PageHeader>
                     <PageHeaderTitle title= 'Actions' />
                 </PageHeader>
-                <Section type='content' className='actions__list'>
+                <Main className='actions__list'>
                     <Grid gutter='md'>
                         <GridItem md={8} sm={12}>
                             <Title size='xl'>
@@ -158,8 +158,6 @@ class ListActions extends Component {
                             </Grid>
                         </GridItem>
                     </Grid>
-                </Section>
-                <Section type='content'>
                     <Table
                         className='impacted-systems-table'
                         onItemSelect={ this.toggleCol }
@@ -178,7 +176,7 @@ class ListActions extends Component {
                             />
                         }
                     />
-                </Section>
+                </Main>
             </React.Fragment>
         );
     }
