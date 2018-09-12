@@ -1,13 +1,12 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Routes } from './Routes';
 import './App.scss';
 import * as AppActions from './AppActions';
 
-class App extends React.Component {
-
+class App extends Component {
     componentDidMount () {
         insights.chrome.init();
         insights.chrome.identifyApp('advisor');

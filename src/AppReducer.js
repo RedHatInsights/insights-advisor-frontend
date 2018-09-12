@@ -1,7 +1,7 @@
 import Immutable from 'seamless-immutable';
 import * as ActionTypes from './AppConstants';
 
-// eslint-disable-next-line
+// eslint-disable-next-line new-cap
 const initialState = Immutable({
     criticalRiskRules: {},
     criticalRiskRulesFetchStatus: '',
@@ -17,7 +17,7 @@ const initialState = Immutable({
 
 });
 
-export const AppStore = (state = initialState, action) => {
+export const AdvisorStore = (state = initialState, action) => {
     switch (action.type) {
 
         case `${ActionTypes.MEDIUM_RISK_RULES_FETCH}_PENDING`:

@@ -1,10 +1,12 @@
 import React from 'react';
 import { Main, Pagination } from '@red-hat-insights/insights-frontend-components';
+import PropTypes from 'prop-types';
 
 import rulesCardSkeleton from '../../PresentationalComponents/Skeletons/RulesCard/RulesCardSkeleton.js';
 const RulesCard = rulesCardSkeleton(() => import('../../PresentationalComponents/RulesCard/RulesCard.js'));
 
-import mockData from '../../../mockData/medium-risk.json';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 class ListRules extends React.Component {
 
@@ -23,7 +25,7 @@ class ListRules extends React.Component {
     }
 
     componentDidMount() {
-        const response = JSON.parse(JSON.stringify(mockData));
+        const response = this.props.AdvisorStore.mediumRiskRules;
 
         let cards = [];
         if (response.rules) {
@@ -88,8 +90,22 @@ class ListRules extends React.Component {
         );
 
     };
-};
+}
 
 ListRules.displayName = 'list-rules';
 
-export default ListRules;
+ListRules.propTypes = {
+    AdvisorStore: PropTypes.object
+};
+
+const mapStateToProps = (state, ownProps) => ({
+    ...state,
+    ...ownProps
+});
+
+export default withRouter(
+    connect(
+        mapStateToProps
+    )(ListRules)
+);
+
