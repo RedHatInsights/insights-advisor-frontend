@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Routes } from './Routes';
 import './App.scss';
+import * as AppActions from './AppActions';
 
-class App extends Component {
+class App extends React.Component {
 
     componentDidMount () {
         insights.chrome.init();
@@ -14,6 +15,9 @@ class App extends Component {
 
         this.appNav = insights.chrome.on('APP_NAVIGATION', event => this.props.history.push(`/${event.navId}`));
         this.buildNav = this.props.history.listen(() => insights.chrome.navigation(buildNavigation()));
+
+        this.props.fetchImpactedSystems();
+        this.props.fetchMediumRiskRules();
     }
 
     componentWillUnmount () {
@@ -29,15 +33,20 @@ class App extends Component {
 }
 
 App.propTypes = {
-    history: PropTypes.object
+    history: PropTypes.object,
+    fetchImpactedSystems: PropTypes.func,
+    fetchMediumRiskRules: PropTypes.func
 };
 
-/**
- * withRouter: https://reacttraining.com/react-router/web/api/withRouter
- * connect: https://github.com/reactjs/react-redux/blob/master/docs/api.md
- *          https://reactjs.org/docs/higher-order-components.html
- */
-export default withRouter (connect()(App));
+const mapDispatchToProps = dispatch => ({
+    fetchImpactedSystems: () => dispatch(AppActions.fetchImpactedSystems()),
+    fetchMediumRiskRules: () => dispatch(AppActions.fetchMediumRiskRules())
+});
+
+export default withRouter(connect(
+    null,
+    mapDispatchToProps
+)(App));
 
 function buildNavigation () {
     const currentPath = window.location.pathname.split('/').slice(-1)[0];
