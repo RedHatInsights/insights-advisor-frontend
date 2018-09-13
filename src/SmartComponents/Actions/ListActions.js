@@ -78,7 +78,6 @@ class ListActions extends Component {
     }
 
     onSearch(value) {
-        // TODO: take state.checkInStatus into account when filtering
         const rows = this.state.unfilteredRows.filter(row => row.cells[1].indexOf(value) !== -1);
         this.setState({
             ...this.state,
