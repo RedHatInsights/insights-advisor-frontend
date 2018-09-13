@@ -1,28 +1,28 @@
-import { applyMiddleware, combineReducers, createStore } from 'redux';
+import ReducerRegistry from '@red-hat-insights/insights-frontend-components/Utilities/ReducerRegistry';
 import promiseMiddleware from 'redux-promise-middleware';
-import { compose } from 'redux';
-import { logger } from 'redux-logger';
+import { AdvisorStore } from '../AppReducer';
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(f => f, composeEnhancers(applyMiddleware(promiseMiddleware(), logger)));
+let registry;
 
-class ReducerRegistry {
-    constructor() {
-        this.reducers = {} ;
+export function init (...middleware) {
+    if (registry) {
+        throw new Error('store already initialized');
     }
 
-    getStore() {
-        return store;
-    }
+    registry = new ReducerRegistry({}, [
+        promiseMiddleware(),
+        ...middleware
+    ]);
 
-    changeListener(reducers) {
-        store.replaceReducer(combineReducers({ ...this.reducers, ...reducers }));
-    }
+    registry.register({ AdvisorStore });
 
-    register(newReducers) {
-        this.reducers = { ...this.reducers, ...newReducers };
-        this.changeListener(this.reducers);
-    }
+    return registry;
 }
 
-export default new ReducerRegistry();
+export function getStore () {
+    return registry.getStore();
+}
+
+export function register (...args) {
+    return registry.register(...args);
+}

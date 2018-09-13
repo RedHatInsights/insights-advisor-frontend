@@ -1,11 +1,7 @@
 import * as ActionTypes from './AppConstants';
-import ReducerRegistry from './store/index';
-import { AdvisorStore } from './AppReducer';
 
 import impactedSystemsData from '../mockData/actions-types-ids_impacted-systems';
 import mediumRiskRulesData from '../mockData/medium-risk';
-
-ReducerRegistry.register({ AdvisorStore });
 
 const impactedSystems = () => JSON.parse(JSON.stringify(impactedSystemsData));
 const mediumRiskRules = () => JSON.parse(JSON.stringify(mediumRiskRulesData));

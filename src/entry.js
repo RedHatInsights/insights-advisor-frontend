@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import ReducerRegistry from './store';
+import { init } from './store';
 import App from './App';
 
 ReactDOM.render(
-    <Provider store={ReducerRegistry.getStore()}>
+    <Provider store={init().getStore()}>
         <Router basename='/insights/platform/advisor'>
             <App />
         </Router>
