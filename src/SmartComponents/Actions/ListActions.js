@@ -4,14 +4,15 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import {
+    Ansible,
+    Battery,
+    Main,
     PageHeader,
     PageHeaderTitle,
-    Battery,
-    Ansible,
-    Table,
-    SortDirection,
     Pagination,
-    Main
+    SimpleTableFilter,
+    SortDirection,
+    Table
 } from '@red-hat-insights/insights-frontend-components';
 import {
     Grid,
@@ -26,7 +27,12 @@ class ListActions extends Component {
     constructor(props) {
         super(props);
         this.state = {
+<<<<<<< HEAD
             cols: [ 'Type', 'Name', 'Reported' ],
+=======
+            cols: ['Type', 'Name', 'Reported'],
+            unfilteredRows: [],
+>>>>>>> Add filtering to Impacted Systems table on Rules page.
             rows: [],
             rule: {},
             sortBy: {},
@@ -39,10 +45,12 @@ class ListActions extends Component {
         this.setPage = this.setPage.bind(this);
         this.setPerPage = this.setPerPage.bind(this);
         this.parseProductCode = this.parseProductCode.bind(this);
+        this.onSearch = this.onSearch.bind(this);
     }
 
     componentDidMount() {
         const response = this.props.AdvisorStore.mediumRiskRules;
+        document.getElementById('root').classList.add('actions__list');
 
         let rule = response.rules.find(obj => {
             return obj.rule_id === this.props.match.params.id;
@@ -61,7 +69,21 @@ class ListActions extends Component {
             );
         }
 
+        this.setState({ unfilteredRows: rows });
         this.setState({ rows });
+    }
+
+    componentDidUnMount() {
+        document.getElementById('root').classList.remove('actions__list');
+    }
+
+    onSearch(value) {
+        // TODO: take state.checkInStatus into account when filtering
+        const rows = this.state.unfilteredRows.filter(row => row.cells[1].indexOf(value) !== -1);
+        this.setState({
+            ...this.state,
+            rows
+        });
     }
 
     parseProductCode(productCode) {
@@ -152,6 +174,11 @@ class ListActions extends Component {
                                     <Battery label='Risk Of Change' severity={ 3 }/>
                                 </GridItem>
                             </Grid>
+                        </GridItem>
+                    </Grid>
+                    <Grid gutter='md'>
+                        <GridItem md={2}>
+                            <SimpleTableFilter onFilterChange={this.onSearch} placeholder='Find a system' buttonTitle='Search' />
                         </GridItem>
                     </Grid>
                     <Table

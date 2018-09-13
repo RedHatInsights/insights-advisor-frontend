@@ -14,14 +14,14 @@
     }
 }
 
+.page__actions.actions__list table.impacted-systems-table {
+    margin: $ins-margin 0;
+}
+
 .actions__description { margin: $ins-margin 0; }
 
 @media only screen and (min-width: 768px) {
     .ins-l-icon-group__vertical > *:not(:first-child) {
         @include rem('margin-top', 5px);
     }
-}
-
-table.impacted-systems-table {
-    margin: $ins-margin 0;
 }
