@@ -3,9 +3,11 @@
   "version": "0.2.0",
   "private": false,
   "dependencies": {
-    "@patternfly/patternfly-next": "^1.0.38",
     "@patternfly/react-core": "1.11.1",
-    "@red-hat-insights/insights-frontend-components": "^3.11.0"
+    "@red-hat-insights/insights-frontend-components": "^3.14.3",
+    "@patternfly/patternfly-next": "^1.0.38",
+    "classnames": "^2.2.5",
+    "create-react-class": "^15.6.3"
   },
   "sassIncludes": {
     "patternfly": "node_modules/patternfly/dist/sass",
@@ -42,11 +44,9 @@
     "babel-preset-es2017": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
-    "classnames": "^2.2.5",
     "clean-webpack-plugin": "^0.1.19",
     "connect-history-api-fallback": "^1.5.0",
     "copy-webpack-plugin": "^4.5.1",
-    "create-react-class": "^15.6.3",
     "cross-fetch": "^2.2.0",
     "css-loader": "^0.28.11",
     "d3": "^5.5.0",
