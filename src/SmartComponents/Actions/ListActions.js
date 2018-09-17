@@ -61,8 +61,8 @@ class ListActions extends Component {
                 { cells: [
                     this.parseProductCode(response2.resources[i].product_code),
                     (response2.resources[i].hostname === '' ? response2.resources[i].system_id : response2.resources[i].hostname),
-                    <TimeAgo key={ i } date={ response2.resources[i].created_at } />
-                ] }
+                    <TimeAgo key={ i } date={ response2.resources[i].created_at }/>
+                ]}
             );
         }
 

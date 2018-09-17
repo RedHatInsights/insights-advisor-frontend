@@ -30,9 +30,9 @@ class ActionsOverview extends Component {
             severity: { info: 0, warn: 2, error: 3, critical: 4 },
             category: { availability: 7, security: 2, stability: 4, performance: 10 }
         };
-        this.setState({ severity: [ response.severity.info, response.severity.warn, response.severity.error, response.severity.critical ] });
+        this.setState({ severity: [ response.severity.info, response.severity.warn, response.severity.error, response.severity.critical ]});
         this.setState({
-            category: [ response.category.availability, response.category.security, response.category.stability, response.category.performance ] });
+            category: [ response.category.availability, response.category.security, response.category.stability, response.category.performance ]});
         this.setState({ total: response.total });
     }
 

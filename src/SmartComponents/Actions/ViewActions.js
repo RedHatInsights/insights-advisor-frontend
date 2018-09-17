@@ -61,7 +61,7 @@ class ViewActions extends Component {
                         <Battery key={ i } label='Total Risk' labelHidden severity={ response.rules[i].resolution_risk } />,
                         <div key={ i }>{ response.rules[i].hitCount }</div>,
                         <Ansible key={ i } unsupported={ response.rules[i].ansible === 1 ? true : false } />
-                    ] }
+                    ]}
                 );
             }
         }

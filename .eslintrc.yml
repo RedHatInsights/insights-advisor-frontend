@@ -83,6 +83,7 @@ rules:
     - error
     - always
     - objectsInObjects: false
+      arraysInObjects: false
   one-var:
     - error
     - never
