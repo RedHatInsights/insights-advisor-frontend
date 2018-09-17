@@ -7,7 +7,7 @@ import App from './App';
 import logger from 'redux-logger';
 
 ReactDOM.render(
-    <Provider store={init(logger).getStore()}>
+    <Provider store={ init(logger).getStore() }>
         <Router basename='/insights/platform/advisor'>
             <App />
         </Router>

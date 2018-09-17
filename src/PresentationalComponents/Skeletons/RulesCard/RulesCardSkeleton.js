@@ -31,7 +31,7 @@ export default function RulesCardSkeleton(importComponent) {
         render() {
             const C = this.state.component;
 
-            return C ? <C {...this.props} /> :
+            return C ? <C { ...this.props } /> :
                 <Card className='ins-c-rules-card ins-c-card__skeleton'>
                     <CardHeader>
                         <div className='skeleton skeleton-md'>&nbsp;</div>

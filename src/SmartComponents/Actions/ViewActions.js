@@ -53,35 +53,35 @@ class ViewActions extends Component {
                 rows.push({
                     cells: [
                         <Link
-                            key={i}
-                            to={`/actions/${this.props.match.params.type}/${
+                            key={ i }
+                            to={ `/actions/${this.props.match.params.type }/${
                                 response.rules[i].rule_id
-                            }`}
+                            }` }
                         >
-                            {response.rules[i].description}
+                            { response.rules[i].description }
                         </Link>,
                         <Battery
-                            key={i}
+                            key={ i }
                             label='Likelihood'
                             labelHidden
-                            severity={response.rules[i].rec_likelihood}
+                            severity={ response.rules[i].rec_likelihood }
                         />,
                         <Battery
-                            key={i}
+                            key={ i }
                             label='Impact'
                             labelHidden
-                            severity={response.rules[i].rec_impact}
+                            severity={ response.rules[i].rec_impact }
                         />,
                         <Battery
-                            key={i}
+                            key={ i }
                             label='Total Risk'
                             labelHidden
-                            severity={response.rules[i].resolution_risk}
+                            severity={ response.rules[i].resolution_risk }
                         />,
-                        <div key={i}>{response.rules[i].hitCount}</div>,
+                        <div key={ i }>{ response.rules[i].hitCount }</div>,
                         <Ansible
-                            key={i}
-                            unsupported={response.rules[i].ansible === 1 ? true : false}
+                            key={ i }
+                            unsupported={ response.rules[i].ansible === 1 ? true : false }
                         />
                     ]
                 });
@@ -102,7 +102,7 @@ class ViewActions extends Component {
     }
 
     onSortChange(_event, key, direction) {
-        const sortedRows = sortBy(this.state.rows, [e => e.cells[key]]);
+        const sortedRows = sortBy(this.state.rows, [ e => e.cells[key] ]);
         this.setState({
             ...this.state,
             rows: SortDirection.up === direction ? sortedRows : sortedRows.reverse(),
@@ -143,13 +143,13 @@ class ViewActions extends Component {
                 <PageHeader>
                     <PageHeaderTitle
                         className='actions__view--title'
-                        title={`${this.props.match.params.type} Risk Actions`}
+                        title={ `${this.props.match.params.type} Risk Actions` }
                     />
                 </PageHeader>
                 <Main>
                     <Stack gutter='md'>
                         <StackItem>
-                            <p>{this.state.summary}</p>
+                            <p>{ this.state.summary }</p>
                         </StackItem>
                         <StackItem className='advisor-l-actions__filters'>
               Filters
@@ -157,19 +157,19 @@ class ViewActions extends Component {
                         <StackItem className='advisor-l-actions__table'>
                             <Table
                                 className='rules-table'
-                                onItemSelect={this.toggleCol}
-                                hasCheckbox={false}
-                                header={this.state.cols}
-                                sortBy={this.state.sortBy}
-                                rows={rows}
-                                onSort={this.onSortChange}
+                                onItemSelect={ this.toggleCol }
+                                hasCheckbox={ false }
+                                header={ this.state.cols }
+                                sortBy={ this.state.sortBy }
+                                rows={ rows }
+                                onSort={ this.onSortChange }
                                 footer={
                                     <Pagination
-                                        numberOfItems={this.state.rows.length}
-                                        onPerPageSelect={this.setPerPage}
-                                        page={this.state.page}
-                                        onSetPage={this.setPage}
-                                        itemsPerPage={this.state.itemsPerPage}
+                                        numberOfItems={ this.state.rows.length }
+                                        onPerPageSelect={ this.setPerPage }
+                                        page={ this.state.page }
+                                        onSetPage={ this.setPage }
+                                        itemsPerPage={ this.state.itemsPerPage }
                                     />
                                 }
                             />

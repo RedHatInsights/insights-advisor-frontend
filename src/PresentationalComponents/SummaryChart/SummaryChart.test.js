@@ -14,7 +14,7 @@ describe('SummaryChartItem', () => {
                 <SummaryChartItem
                     name={ 'noIssues' }
                     numIssues={ 0 }
-                    totalIssues={ 4}/>
+                    totalIssues={ 4 }/>
             </SummaryChart>
         ).toJSON();
         expect(renders).toMatchSnapshot;

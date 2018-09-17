@@ -6,7 +6,7 @@ import { init } from './store';
 import App from './App';
 
 ReactDOM.render(
-    <Provider store={init().getStore()}>
+    <Provider store={ init().getStore() }>
         <Router basename='/insights/platform/advisor'>
             <App />
         </Router>

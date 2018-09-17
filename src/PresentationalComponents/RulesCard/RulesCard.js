@@ -57,7 +57,7 @@ const RulesCard =
                 </Split>
             </CardHeader>
             <CardBody>
-                <div dangerouslySetInnerHTML={{ __html: summary }}/>
+                <div dangerouslySetInnerHTML={ { __html: summary } }/>
             </CardBody>
             <CardFooter>
                 <div className='space-between'>

@@ -26,7 +26,7 @@ class ListActions extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            cols: ['Type', 'Name', 'Reported'],
+            cols: [ 'Type', 'Name', 'Reported' ],
             rows: [],
             rule: {},
             sortBy: {},
@@ -57,7 +57,7 @@ class ListActions extends Component {
                     this.parseProductCode(response2[i].product_code),
                     (response2[i].hostname === '' ? response2[i].system_id : response2[i].hostname),
                     <TimeAgo key={ i } date={ response2[i].created_at } />
-                ] }
+                ]}
             );
         }
 
@@ -88,7 +88,7 @@ class ListActions extends Component {
     }
 
     onSortChange(_event, key, direction) {
-        const sortedRows = sortBy(this.state.rows, [e => e.cells[key]]);
+        const sortedRows = sortBy(this.state.rows, [ e => e.cells[key] ]);
         this.setState({
             ...this.state,
             rows: SortDirection.up === direction ? sortedRows : sortedRows.reverse(),
@@ -124,6 +124,7 @@ class ListActions extends Component {
 
     render() {
         const rows = this.limitRows();
+
         return (
             <React.Fragment>
                 <PageHeader>
@@ -131,23 +132,23 @@ class ListActions extends Component {
                 </PageHeader>
                 <Main className='actions__list'>
                     <Grid gutter='md'>
-                        <GridItem md={8} sm={12}>
+                        <GridItem md={ 8 } sm={ 12 }>
                             <Title size='xl'>
                                 { this.state.rule.description }
                             </Title>
-                            <div className='actions__description' dangerouslySetInnerHTML={{ __html: this.state.rule.summary_html }}/>
+                            <div className='actions__description' dangerouslySetInnerHTML={ { __html: this.state.rule.summary_html } }/>
                         </GridItem>
-                        <GridItem md={4} sm={12}>
+                        <GridItem md={ 4 } sm={ 12 }>
                             <Grid gutter='sm' className='actions__detail'>
-                                <GridItem sm={12} md={12}> <Ansible unsupported = { this.state.rule.ansible }/> </GridItem>
-                                <GridItem sm={8} md={12}>
-                                    <Grid className='ins-l-icon-group__vertical' sm={4} md={12}>
+                                <GridItem sm={ 12 } md={ 12 }> <Ansible unsupported = { this.state.rule.ansible }/> </GridItem>
+                                <GridItem sm={ 8 } md={ 12 }>
+                                    <Grid className='ins-l-icon-group__vertical' sm={ 4 } md={ 12 }>
                                         <GridItem> <Battery label='Impact' severity={ this.state.rule.rec_impact }/> </GridItem>
                                         <GridItem> <Battery label='Likelihood' severity={ this.state.rule.rec_likelihood }/> </GridItem>
                                         <GridItem> <Battery label='Total Risk' severity={ this.state.rule.resolution_risk }/> </GridItem>
                                     </Grid>
                                 </GridItem>
-                                <GridItem sm={4} md={12}>
+                                <GridItem sm={ 4 } md={ 12 }>
                                     <Battery label='Risk Of Change' severity={ 3 }/>
                                 </GridItem>
                             </Grid>

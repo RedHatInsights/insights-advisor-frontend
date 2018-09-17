@@ -15,8 +15,8 @@ const Rules = () => {
                 <PageHeaderTitle title='Rules'/>
             </PageHeader>
             <Switch>
-                <Route exact path='/rules' component={ListRules} />
-                <Route path='/rules/:id' component={ViewRule} />
+                <Route exact path='/rules' component={ ListRules } />
+                <Route path='/rules/:id' component={ ViewRule } />
             </Switch>
         </React.Fragment>
     );
