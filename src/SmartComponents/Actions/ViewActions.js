@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import './_actions.scss';
 import PropTypes from 'prop-types';
-
 import { sortBy } from 'lodash';
+import { connect } from 'react-redux';
 import {
     Ansible,
     Battery,
@@ -14,20 +13,22 @@ import {
     Table,
     Main
 } from '@red-hat-insights/insights-frontend-components';
-
-import {
-    Stack,
-    StackItem
-} from '@patternfly/react-core';
-
-import mockData from '../../../mockData/medium-risk.json';
+import { Stack, StackItem } from '@patternfly/react-core';
+import './_actions.scss';
 
 class ViewActions extends Component {
     constructor(props) {
         super(props);
         this.state = {
             summary: '',
-            cols: ['Rule', 'Likelihood', 'Impact', 'Total Risk', 'Systems', 'Ansible'],
+            cols: [
+                'Rule',
+                'Likelihood',
+                'Impact',
+                'Total Risk',
+                'Systems',
+                'Ansible'
+            ],
             rows: [],
             sortBy: {},
             itemsPerPage: 10,
@@ -42,27 +43,48 @@ class ViewActions extends Component {
     }
 
     componentDidMount() {
-
         document.getElementById('root').classList.add('actions__view');
-
-        const response = JSON.parse(JSON.stringify(mockData));
+        const response = this.props.AdvisorStore.mediumRiskRules;
         this.setState({ summary: response.summary });
 
         let rows = [];
         if (response.rules) {
-            for (let i = 0;i < response.rules.length;i++) {
-                rows.push(
-                    { cells: [
-                        <Link key={ i } to={ `/actions/${this.props.match.params.type}/${response.rules[i].rule_id}` }>
-                            { response.rules[i].description }
+            for (let i = 0; i < response.rules.length; i++) {
+                rows.push({
+                    cells: [
+                        <Link
+                            key={i}
+                            to={`/actions/${this.props.match.params.type}/${
+                                response.rules[i].rule_id
+                            }`}
+                        >
+                            {response.rules[i].description}
                         </Link>,
-                        <Battery key={ i } label='Likelihood' labelHidden severity={ response.rules[i].rec_likelihood } />,
-                        <Battery key={ i } label='Impact' labelHidden severity={ response.rules[i].rec_impact } />,
-                        <Battery key={ i } label='Total Risk' labelHidden severity={ response.rules[i].resolution_risk } />,
-                        <div key={ i }>{ response.rules[i].hitCount }</div>,
-                        <Ansible key={ i } unsupported={ response.rules[i].ansible === 1 ? true : false } />
-                    ] }
-                );
+                        <Battery
+                            key={i}
+                            label='Likelihood'
+                            labelHidden
+                            severity={response.rules[i].rec_likelihood}
+                        />,
+                        <Battery
+                            key={i}
+                            label='Impact'
+                            labelHidden
+                            severity={response.rules[i].rec_impact}
+                        />,
+                        <Battery
+                            key={i}
+                            label='Total Risk'
+                            labelHidden
+                            severity={response.rules[i].resolution_risk}
+                        />,
+                        <div key={i}>{response.rules[i].hitCount}</div>,
+                        <Ansible
+                            key={i}
+                            unsupported={response.rules[i].ansible === 1 ? true : false}
+                        />
+                    ]
+                });
             }
         }
 
@@ -119,32 +141,35 @@ class ViewActions extends Component {
         return (
             <React.Fragment>
                 <PageHeader>
-                    <PageHeaderTitle className='actions__view--title' title={ `${this.props.match.params.type} Risk Actions` } />
+                    <PageHeaderTitle
+                        className='actions__view--title'
+                        title={`${this.props.match.params.type} Risk Actions`}
+                    />
                 </PageHeader>
                 <Main>
                     <Stack gutter='md'>
                         <StackItem>
-                            <p>{ this.state.summary }</p>
+                            <p>{this.state.summary}</p>
                         </StackItem>
                         <StackItem className='advisor-l-actions__filters'>
-                            Filters
+              Filters
                         </StackItem>
                         <StackItem className='advisor-l-actions__table'>
                             <Table
                                 className='rules-table'
-                                onItemSelect={ this.toggleCol }
-                                hasCheckbox={ false }
-                                header={ this.state.cols }
-                                sortBy={ this.state.sortBy }
-                                rows={ rows }
-                                onSort={ this.onSortChange }
+                                onItemSelect={this.toggleCol}
+                                hasCheckbox={false}
+                                header={this.state.cols}
+                                sortBy={this.state.sortBy}
+                                rows={rows}
+                                onSort={this.onSortChange}
                                 footer={
                                     <Pagination
-                                        numberOfItems={ this.state.rows.length }
-                                        onPerPageSelect={ this.setPerPage }
-                                        page={ this.state.page }
-                                        onSetPage={ this.setPage }
-                                        itemsPerPage={ this.state.itemsPerPage }
+                                        numberOfItems={this.state.rows.length}
+                                        onPerPageSelect={this.setPerPage}
+                                        page={this.state.page}
+                                        onSetPage={this.setPage}
+                                        itemsPerPage={this.state.itemsPerPage}
                                     />
                                 }
                             />
@@ -153,12 +178,17 @@ class ViewActions extends Component {
                 </Main>
             </React.Fragment>
         );
-    };
-
-};
+    }
+}
 
 ViewActions.propTypes = {
-    match: PropTypes.any
+    match: PropTypes.any,
+    AdvisorStore: PropTypes.object
 };
 
-export default withRouter(ViewActions);
+const mapStateToProps = (state, ownProps) => ({
+    ...state,
+    ...ownProps
+});
+
+export default withRouter(connect(mapStateToProps)(ViewActions));

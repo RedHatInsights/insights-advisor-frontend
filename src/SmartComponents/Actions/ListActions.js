@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import './_actions.scss';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import {
@@ -13,19 +13,14 @@ import {
     Pagination,
     Main
 } from '@red-hat-insights/insights-frontend-components';
-
 import {
     Grid,
     GridItem,
     Title
 } from '@patternfly/react-core';
-
 import { sortBy } from 'lodash';
-
 import TimeAgo from 'react-timeago';
-
-import mockData from '../../../mockData/medium-risk.json';
-import impactedSystemsData from '../../../mockData/actions-types-ids_impacted-systems.json';
+import './_actions.scss';
 
 class ListActions extends Component {
     constructor(props) {
@@ -47,21 +42,21 @@ class ListActions extends Component {
     }
 
     componentDidMount() {
-        const response = JSON.parse(JSON.stringify(mockData));
+        const response = this.props.AdvisorStore.mediumRiskRules;
 
         let rule = response.rules.find(obj => {
             return obj.rule_id === this.props.match.params.id;
         });
         this.setState({ rule });
 
-        const response2 = JSON.parse(JSON.stringify(impactedSystemsData));
+        const response2 = this.props.AdvisorStore.impactedSystems;
         let rows = [];
-        for (let i = 0;i < response2.resources.length;i++) {
+        for (let i = 0;i < response2.length;i++) {
             rows.push(
                 { cells: [
-                    this.parseProductCode(response2.resources[i].product_code),
-                    (response2.resources[i].hostname === '' ? response2.resources[i].system_id : response2.resources[i].hostname),
-                    <TimeAgo key={ i } date={ response2.resources[i].created_at } />
+                    this.parseProductCode(response2[i].product_code),
+                    (response2[i].hostname === '' ? response2[i].system_id : response2[i].hostname),
+                    <TimeAgo key={ i } date={ response2[i].created_at } />
                 ] }
             );
         }
@@ -180,10 +175,21 @@ class ListActions extends Component {
             </React.Fragment>
         );
     }
-};
+}
 
 ListActions.propTypes = {
-    match: PropTypes.any
+    match: PropTypes.any,
+    AdvisorStore: PropTypes.object
 };
 
-export default withRouter(ListActions);
+const mapStateToProps = (state, ownProps) => ({
+    ...state,
+    ...ownProps
+});
+
+export default withRouter(
+    connect(
+        mapStateToProps
+    )(ListActions)
+);
+

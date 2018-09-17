@@ -4,7 +4,7 @@
   "private": false,
   "dependencies": {
     "@patternfly/react-core": "1.11.1",
-    "@red-hat-insights/insights-frontend-components": "^3.11.0",
+    "@red-hat-insights/insights-frontend-components": "^3.14.3",
     "@patternfly/patternfly-next": "^1.0.38",
     "classnames": "^2.2.5",
     "create-react-class": "^15.6.3"
@@ -76,8 +76,10 @@
     "react-test-renderer": "^16.4.2",
     "react-timeago": "^4.1.9",
     "redux": "^3.7.2",
+    "redux-logger": "^3.0.6",
     "redux-promise-middleware": "^5.1.1",
     "sass-loader": "^7.0.1",
+    "seamless-immutable": "^7.1.4",
     "source-map-loader": "^0.2.3",
     "style-loader": "^0.21.0",
     "stylelint": "^9.3.0",
