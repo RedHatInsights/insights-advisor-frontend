@@ -27,7 +27,7 @@ class ViewActions extends Component {
         super(props);
         this.state = {
             summary: '',
-            cols: ['Rule', 'Likelihood', 'Impact', 'Total Risk', 'Systems', 'Ansible'],
+            cols: [ 'Rule', 'Likelihood', 'Impact', 'Total Risk', 'Systems', 'Ansible' ],
             rows: [],
             sortBy: {},
             itemsPerPage: 10,
@@ -80,7 +80,7 @@ class ViewActions extends Component {
     }
 
     onSortChange(_event, key, direction) {
-        const sortedRows = sortBy(this.state.rows, [e => e.cells[key]]);
+        const sortedRows = sortBy(this.state.rows, [ e => e.cells[key] ]);
         this.setState({
             ...this.state,
             rows: SortDirection.up === direction ? sortedRows : sortedRows.reverse(),

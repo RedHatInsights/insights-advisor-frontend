@@ -9,9 +9,9 @@ const ListActions = asyncComponent(() => import(/* webpackChunkName: "ListAction
 const Actions = () => {
     return (
         <Switch>
-            <Route exact path='/actions' component={ActionsOverview} />
-            <Route exact path='/actions/:type' component={ViewActions}/>
-            <Route exact path='/actions/:type/:id' component={ListActions}/>
+            <Route exact path='/actions' component={ ActionsOverview } />
+            <Route exact path='/actions/:type' component={ ViewActions }/>
+            <Route exact path='/actions/:type/:id' component={ ListActions }/>
         </Switch>
     );
 };

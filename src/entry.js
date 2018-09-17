@@ -10,7 +10,7 @@ import App from './App';
  *  https://redux.js.org/advanced/usage-with-react-router
  */
 ReactDOM.render(
-    <Provider store={ReducerRegistry.getStore()}>
+    <Provider store={ ReducerRegistry.getStore() }>
         <Router basename='/insights/platform/advisor'>
             <App />
         </Router>
