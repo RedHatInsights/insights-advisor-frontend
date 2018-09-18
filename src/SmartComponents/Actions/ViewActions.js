@@ -136,6 +136,11 @@ class ViewActions extends Component {
         });
     }
 
+    parseUrlTitle(title = '') {
+        const parsedTitle = title.split('-');
+        return parsedTitle.length > 1 ? `${parsedTitle[0]} ${parsedTitle[1]} Actions` : `${parsedTitle}`;
+    }
+
     render() {
         const rows = this.limitRows();
         return (
@@ -143,7 +148,7 @@ class ViewActions extends Component {
                 <PageHeader>
                     <PageHeaderTitle
                         className='actions__view--title'
-                        title={ `${this.props.match.params.type} Risk Actions` }
+                        title={ this.parseUrlTitle(this.props.match.params.type) }
                     />
                 </PageHeader>
                 <Main>

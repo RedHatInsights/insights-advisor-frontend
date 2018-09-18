@@ -45,7 +45,7 @@ class ActionsOverview extends Component {
                     key={ i }
                     condition={ this.state.severity[i] }
                     wrap={ children =>
-                        <Link to= { `/actions/${sevNames[i].toLowerCase()}` }>
+                        <Link to= { `/actions/${sevNames[i].toLowerCase()}-risk` }>
                             { children }
                         </Link>
                     }>
