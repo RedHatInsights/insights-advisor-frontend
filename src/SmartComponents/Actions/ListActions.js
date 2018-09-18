@@ -173,8 +173,8 @@ class ListActions extends Component {
                         </GridItem>
                     </Grid>
                     <Grid gutter='md'>
-                        <GridItem md={2}>
-                            <SimpleTableFilter onFilterChange={this.onSearch} placeholder='Find a system' buttonTitle='Search' />
+                        <GridItem md={ 2 }>
+                            <SimpleTableFilter onFilterChange={ this.onSearch } placeholder='Find a system' buttonTitle='Search' />
                         </GridItem>
                     </Grid>
                     <Table
