@@ -27,12 +27,8 @@ class ListActions extends Component {
     constructor(props) {
         super(props);
         this.state = {
-<<<<<<< HEAD
             cols: [ 'Type', 'Name', 'Reported' ],
-=======
-            cols: ['Type', 'Name', 'Reported'],
             unfilteredRows: [],
->>>>>>> Add filtering to Impacted Systems table on Rules page.
             rows: [],
             rule: {},
             sortBy: {},
@@ -78,7 +74,8 @@ class ListActions extends Component {
     }
 
     onSearch(value) {
-        const rows = this.state.unfilteredRows.filter(row => row.cells[0].indexOf(value) !== -1 || row.cells[1].indexOf(value) !== -1);
+        // TODO: take state.checkInStatus into account when filtering
+        const rows = this.state.unfilteredRows.filter(row => row.cells[1].indexOf(value) !== -1);
         this.setState({
             ...this.state,
             rows
@@ -126,17 +123,7 @@ class ListActions extends Component {
         const lastPage = Math.ceil(numberOfItems / itemsPerPage);
         const lastIndex = page === lastPage ? numberOfItems : page * itemsPerPage;
         const firstIndex = page === 1 ? 0 : page * itemsPerPage - itemsPerPage;
-
-        switch (this.state.rows.length === 0) {
-            case true:
-                this.setState({
-                    ...this.state,
-                    rows: [{ cells: ['No Results'] }]
-                });
-                break;
-            default:
-                return this.state.rows.slice(firstIndex, lastIndex);
-        }
+        return this.state.rows.slice(firstIndex, lastIndex);
     }
 
     setPage(page) {

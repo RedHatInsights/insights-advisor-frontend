@@ -14,9 +14,11 @@
     }
 }
 
-.page__actions.actions__list table.impacted-systems-table {
-    margin: $ins-margin 0;
+.page__actions.actions__list {
+    table.impacted-systems-table { margin: $ins-margin 0; }
+    div.impacted-systems-filter-input { @include rem('width', 300px); }
 }
+
 
 .actions__description { margin: $ins-margin 0; }
 
