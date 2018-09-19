@@ -74,8 +74,9 @@ class ListActions extends Component {
     }
 
     onSearch(value) {
-        // TODO: take state.checkInStatus into account when filtering
-        const rows = this.state.unfilteredRows.filter(row => row.cells[1].indexOf(value) !== -1);
+        const lowerCaseValue = value.toLowerCase();
+        const rows = this.state.unfilteredRows.filter(row =>  row.cells[0].toLowerCase().indexOf(lowerCaseValue) !== -1 ||
+                                                              row.cells[1].toLowerCase().indexOf(lowerCaseValue) !== -1);
         this.setState({
             ...this.state,
             rows
@@ -123,7 +124,17 @@ class ListActions extends Component {
         const lastPage = Math.ceil(numberOfItems / itemsPerPage);
         const lastIndex = page === lastPage ? numberOfItems : page * itemsPerPage;
         const firstIndex = page === 1 ? 0 : page * itemsPerPage - itemsPerPage;
-        return this.state.rows.slice(firstIndex, lastIndex);
+
+        switch (this.state.rows.length === 0) {
+            case true:
+                this.setState({
+                    ...this.state,
+                    rows: [{ cells: [ 'No Results' ]}]
+                });
+                break;
+            default:
+                return this.state.rows.slice(firstIndex, lastIndex);
+        }
     }
 
     setPage(page) {
@@ -172,11 +183,9 @@ class ListActions extends Component {
                             </Grid>
                         </GridItem>
                     </Grid>
-                    <Grid gutter='md'>
-                        <GridItem md={ 2 }>
-                            <SimpleTableFilter onFilterChange={ this.onSearch } placeholder='Find a system' buttonTitle='Search' />
-                        </GridItem>
-                    </Grid>
+                    <div className='impacted-systems-filter-input'>
+                        <SimpleTableFilter onFilterChange={ this.onSearch } placeholder='Find a system' buttonTitle='Search' />
+                    </div>
                     <Table
                         className='impacted-systems-table'
                         onItemSelect={ this.toggleCol }
