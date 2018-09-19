@@ -4,18 +4,19 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import {
-    PageHeader,
-    PageHeaderTitle,
-    Battery,
     Ansible,
-    Table,
-    SortDirection,
+    Battery,
+    Main,
     Pagination,
-    Main
+    SimpleTableFilter,
+    SortDirection,
+    Table
 } from '@red-hat-insights/insights-frontend-components';
 import {
     Grid,
     GridItem,
+    Stack,
+    StackItem,
     Title
 } from '@patternfly/react-core';
 import { sortBy } from 'lodash';
@@ -27,6 +28,7 @@ class ListActions extends Component {
         super(props);
         this.state = {
             cols: [ 'Type', 'Name', 'Reported' ],
+            unfilteredRows: [],
             rows: [],
             rule: {},
             sortBy: {},
@@ -39,10 +41,12 @@ class ListActions extends Component {
         this.setPage = this.setPage.bind(this);
         this.setPerPage = this.setPerPage.bind(this);
         this.parseProductCode = this.parseProductCode.bind(this);
+        this.onSearch = this.onSearch.bind(this);
     }
 
     componentDidMount() {
         const response = this.props.AdvisorStore.mediumRiskRules;
+        document.getElementById('root').classList.add('actions__list');
 
         let rule = response.rules.find(obj => {
             return obj.rule_id === this.props.match.params.id;
@@ -61,7 +65,22 @@ class ListActions extends Component {
             );
         }
 
+        this.setState({ unfilteredRows: rows });
         this.setState({ rows });
+    }
+
+    componentDidUnMount() {
+        document.getElementById('root').classList.remove('actions__list');
+    }
+
+    onSearch(value) {
+        const lowerCaseValue = value.toLowerCase();
+        const rows = this.state.unfilteredRows.filter(row =>  row.cells[0].toLowerCase().indexOf(lowerCaseValue) !== -1 ||
+                                                              row.cells[1].toLowerCase().indexOf(lowerCaseValue) !== -1);
+        this.setState({
+            ...this.state,
+            rows
+        });
     }
 
     parseProductCode(productCode) {
@@ -105,7 +124,17 @@ class ListActions extends Component {
         const lastPage = Math.ceil(numberOfItems / itemsPerPage);
         const lastIndex = page === lastPage ? numberOfItems : page * itemsPerPage;
         const firstIndex = page === 1 ? 0 : page * itemsPerPage - itemsPerPage;
-        return this.state.rows.slice(firstIndex, lastIndex);
+
+        switch (this.state.rows.length === 0) {
+            case true:
+                this.setState({
+                    ...this.state,
+                    rows: [{ cells: [ 'No Results' ]}]
+                });
+                break;
+            default:
+                return this.state.rows.slice(firstIndex, lastIndex);
+        }
     }
 
     setPage(page) {
@@ -126,54 +155,58 @@ class ListActions extends Component {
         const rows = this.limitRows();
 
         return (
-            <React.Fragment>
-                <PageHeader>
-                    <PageHeaderTitle title= 'Actions' />
-                </PageHeader>
-                <Main className='actions__list'>
-                    <Grid gutter='md'>
-                        <GridItem md={ 8 } sm={ 12 }>
-                            <Title size='xl'>
-                                { this.state.rule.description }
-                            </Title>
-                            <div className='actions__description' dangerouslySetInnerHTML={ { __html: this.state.rule.summary_html } }/>
-                        </GridItem>
-                        <GridItem md={ 4 } sm={ 12 }>
-                            <Grid gutter='sm' className='actions__detail'>
-                                <GridItem sm={ 12 } md={ 12 }> <Ansible unsupported = { this.state.rule.ansible }/> </GridItem>
-                                <GridItem sm={ 8 } md={ 12 }>
-                                    <Grid className='ins-l-icon-group__vertical' sm={ 4 } md={ 12 }>
-                                        <GridItem> <Battery label='Impact' severity={ this.state.rule.rec_impact }/> </GridItem>
-                                        <GridItem> <Battery label='Likelihood' severity={ this.state.rule.rec_likelihood }/> </GridItem>
-                                        <GridItem> <Battery label='Total Risk' severity={ this.state.rule.resolution_risk }/> </GridItem>
-                                    </Grid>
-                                </GridItem>
-                                <GridItem sm={ 4 } md={ 12 }>
-                                    <Battery label='Risk Of Change' severity={ 3 }/>
-                                </GridItem>
-                            </Grid>
-                        </GridItem>
-                    </Grid>
-                    <Table
-                        className='impacted-systems-table'
-                        onItemSelect={ this.toggleCol }
-                        hasCheckbox={ true }
-                        header={ this.state.cols }
-                        sortBy={ this.state.sortBy }
-                        rows={ rows }
-                        onSort={ this.onSortChange }
-                        footer={
-                            <Pagination
-                                numberOfItems={ this.state.rows.length }
-                                onPerPageSelect={ this.setPerPage }
-                                page={ this.state.page }
-                                onSetPage={ this.setPage }
-                                itemsPerPage={ this.state.itemsPerPage }
-                            />
-                        }
-                    />
-                </Main>
-            </React.Fragment>
+            <Main className='actions__list'>
+                <Stack gutter='md'>
+                    <StackItem>
+                        <Grid gutter='md'>
+                            <GridItem md={ 8 } sm={ 12 }>
+                                <Title size='xl'>
+                                    { this.state.rule.description }
+                                </Title>
+                                <div className='actions__description' dangerouslySetInnerHTML={ { __html: this.state.rule.summary_html } }/>
+                            </GridItem>
+                            <GridItem md={ 4 } sm={ 12 }>
+                                <Grid gutter='sm' className='actions__detail'>
+                                    <GridItem sm={ 12 } md={ 12 }> <Ansible unsupported = { this.state.rule.ansible }/> </GridItem>
+                                    <GridItem sm={ 8 } md={ 12 }>
+                                        <Grid className='ins-l-icon-group__vertical' sm={ 4 } md={ 12 }>
+                                            <GridItem> <Battery label='Impact' severity={ this.state.rule.rec_impact }/> </GridItem>
+                                            <GridItem> <Battery label='Likelihood' severity={ this.state.rule.rec_likelihood }/> </GridItem>
+                                            <GridItem> <Battery label='Total Risk' severity={ this.state.rule.resolution_risk }/> </GridItem>
+                                        </Grid>
+                                    </GridItem>
+                                    <GridItem sm={ 4 } md={ 12 }>
+                                        <Battery label='Risk Of Change' severity={ 3 }/>
+                                    </GridItem>
+                                </Grid>
+                            </GridItem>
+                        </Grid>
+                    </StackItem>
+                    <StackItem>
+                        <SimpleTableFilter onFilterChange={ this.onSearch } placeholder='Find a system' buttonTitle='Search' />
+                    </StackItem>
+                    <StackItem>
+                        <Table
+                            className='impacted-systems-table'
+                            onItemSelect={ this.toggleCol }
+                            hasCheckbox={ true }
+                            header={ this.state.cols }
+                            sortBy={ this.state.sortBy }
+                            rows={ rows }
+                            onSort={ this.onSortChange }
+                            footer={
+                                <Pagination
+                                    numberOfItems={ this.state.rows.length }
+                                    onPerPageSelect={ this.setPerPage }
+                                    page={ this.state.page }
+                                    onSetPage={ this.setPage }
+                                    itemsPerPage={ this.state.itemsPerPage }
+                                />
+                            }
+                        />
+                    </StackItem>
+                </Stack>
+            </Main>
         );
     }
 }

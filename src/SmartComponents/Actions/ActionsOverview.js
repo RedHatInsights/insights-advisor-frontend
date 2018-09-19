@@ -79,7 +79,7 @@ class ActionsOverview extends Component {
                 <Main>
                     <Grid gutter='md' xl={ 4 } sm={ 6 }>
                         <GridItem>
-                            <Card>
+                            <Card className='pf-t-light  pf-m-opaque-100'>
                                 <CardHeader>Category Summary</CardHeader>
                                 <CardBody>
                                     { renderDonut }
@@ -87,7 +87,7 @@ class ActionsOverview extends Component {
                             </Card>
                         </GridItem>
                         <GridItem>
-                            <Card>
+                            <Card className='pf-t-light  pf-m-opaque-100'>
                                 <CardHeader>Risk Summary</CardHeader>
                                 <CardBody>
                                     <SummaryChart>
