@@ -9,7 +9,7 @@ import '../../PresentationalComponents/RulesCard/_RulesCard.scss';
 const ViewRule = () => {
     return (
         <Section type='content'>
-            <Card className='ins-c-rules-card ins-c-card__skeleton'>
+            <Card className='ins-c-rules-card ins-c-card__skeleton pf-t-light  pf-m-opaque-100'>
                 <CardHeader>
                     <div className='skeleton skeleton-md'>&nbsp;</div>
                 </CardHeader>
@@ -20,7 +20,7 @@ const ViewRule = () => {
                     <div className='skeleton skeleton-sm'>&nbsp;</div>
                 </CardFooter>
             </Card>
-            <Card className='ins-c-rules-card ins-c-card__skeleton'>
+            <Card className='ins-c-rules-card ins-c-card__skeleton pf-t-light  pf-m-opaque-100'>
                 <CardHeader>
                     <div className='skeleton skeleton-md'>&nbsp;</div>
                 </CardHeader>
@@ -31,7 +31,7 @@ const ViewRule = () => {
                     <div className='skeleton skeleton-sm'>&nbsp;</div>
                 </CardFooter>
             </Card>
-            <Card className='ins-c-rules-card ins-c-card__skeleton'>
+            <Card className='ins-c-rules-card ins-c-card__skeleton pf-t-light  pf-m-opaque-100'>
                 <CardHeader>
                     <div className='skeleton skeleton-md'>&nbsp;</div>
                 </CardHeader>
@@ -42,7 +42,7 @@ const ViewRule = () => {
                     <div className='skeleton skeleton-sm'>&nbsp;</div>
                 </CardFooter>
             </Card>
-            <Card className='ins-c-rules-card ins-c-card__skeleton'>
+            <Card className='ins-c-rules-card ins-c-card__skeleton pf-t-light  pf-m-opaque-100'>
                 <CardHeader>
                     <div className='skeleton skeleton-md'>&nbsp;</div>
                 </CardHeader>

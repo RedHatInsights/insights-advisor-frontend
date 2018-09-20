@@ -32,6 +32,8 @@ const RulesCard =
 
     let rulesCardClasses = classNames(
         'ins-c-rules-card',
+        'pf-t-light',
+        'pf-m-opaque-100',
         className
     );
 
