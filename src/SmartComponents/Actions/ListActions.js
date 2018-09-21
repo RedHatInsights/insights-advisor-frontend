@@ -31,7 +31,9 @@ class ListActions extends Component {
             cols: [ 'Type', 'Name', 'Reported' ],
             unfilteredRows: [],
             rows: [],
-            rule: {},
+            rule: {
+                description: ''
+            },
             sortBy: {},
             itemsPerPage: 10,
             page: 1
