@@ -174,3 +174,10 @@ When setting up the routes, the page content is wrapped with a `.page__{pageName
     - navigate to a new location
 - [withRouter](https://reacttraining.com/react-router/web/api/withRouter)
     - passes updated match, location, and history props to the wrapped component whenever it renders
+
+### Insights Proxy
+[Insights Proxy](https://github.com/RedHatInsights/insights-proxy) is required to run the advisor frontend. **Note An advisor-specific proxy configuration is required for the frontend to communicate to the Advisor API POC**. To run the proxy with advisor-specific configuration run:
+```
+cd /path/to/insights-advisor-frontend
+docker run -e LOCAL_CHROME -v $PWD/config:/config -e PLATFORM -e PORT -e LOCAL_API -e SPANDX_HOST -e SPANDX_PORT --rm -ti --name insightsproxy -p 1337:1337 docker.io/redhatinsights/insights-proxy
+```
