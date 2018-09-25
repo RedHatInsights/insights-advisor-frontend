@@ -10,7 +10,7 @@ const SummaryChartItem = (props) => {
     let barWidth = { width: percentage + '%' };
 
     return (
-        <li widget-type='InsightsSummaryChartItem'>
+        <li widget-type={ `InsightsSummaryChartItem-${props.name}` }>
             { numIssues > 0 &&
             <React.Fragment>
                 <div className='metrics'>

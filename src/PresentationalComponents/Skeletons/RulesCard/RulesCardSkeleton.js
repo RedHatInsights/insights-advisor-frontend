@@ -32,7 +32,7 @@ export default function RulesCardSkeleton(importComponent) {
             const C = this.state.component;
 
             return C ? <C { ...this.props } /> :
-                <Card className='ins-c-rules-card ins-c-card__skeleton' widget-type='InsightsRulesCardSkeleton'>
+                <Card className='ins-c-rules-card ins-c-card__skeleton'>
                     <CardHeader>
                         <div className='skeleton skeleton-md'>&nbsp;</div>
                     </CardHeader>

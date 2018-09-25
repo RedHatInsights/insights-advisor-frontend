@@ -48,7 +48,7 @@ const RulesCard =
     }
 
     return (
-        <Card { ...props } className = { rulesCardClasses } widget-type='InsightsRulesCard'>
+        <Card { ...props } className = { rulesCardClasses }>
             <CardHeader>
                 <Split>
                     <SplitItem> { category } &gt; </SplitItem>
