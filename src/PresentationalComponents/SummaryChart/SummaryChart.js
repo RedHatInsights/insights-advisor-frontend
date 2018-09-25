@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const SummaryChart = (props) => {
     return (
-        <div className='summary-chart'>
+        <div className='summary-chart' widget-type='InsightsSummaryChart'>
             <ul> { props.children } </ul>
         </div>
     );
