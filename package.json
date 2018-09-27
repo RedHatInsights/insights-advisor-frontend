@@ -2,6 +2,12 @@
   "name": "insights-advisor-frontend",
   "version": "0.2.0",
   "private": false,
+  "author": "Red Hat",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RedHatInsights/insights-advisor-frontend.git"
+  },
   "dependencies": {
     "@patternfly/patternfly-next": "^1.0.44",
     "@patternfly/react-core": "1.11.0",
