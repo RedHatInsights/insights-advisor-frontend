@@ -1,4 +1,5 @@
 import * as ActionTypes from './AppConstants';
+import API from './Utilities/Api';
 
 import impactedSystemsData from '../mockData/actions-types-ids_impacted-systems';
 import mediumRiskRulesData from '../mockData/medium-risk';
@@ -16,5 +17,15 @@ export const fetchMediumRiskRules = ()  => ({
     type: ActionTypes.MEDIUM_RISK_RULES_FETCH,
     payload: new Promise(resolve => {
         resolve(mediumRiskRules);
+    })
+});
+export const fetchStats = () => ({
+    type: ActionTypes.STATS_FETCH,
+    payload: new Promise((resolve, reject) => {
+        API.get(ActionTypes.STATS_FETCH_URL)
+        .then(response => {
+            resolve(response.data);
+        })
+        .catch(e => reject(e));
     })
 });

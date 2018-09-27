@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
-import { withRouter, Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import asyncComponent from '../../Utilities/asyncComponent';
-import '../../App.scss';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { Card, CardBody, CardHeader, Grid, GridItem } from '@patternfly/react-core';
+import { Donut, Main, PageHeader, PageHeaderTitle } from '@red-hat-insights/insights-frontend-components';
 
-import { Card, CardHeader, CardBody, Grid, GridItem } from '@patternfly/react-core';
-import { PageHeader, PageHeaderTitle, Donut, Main } from '@red-hat-insights/insights-frontend-components';
+import * as AppActions from '../../AppActions';
+import Loading from '../../PresentationalComponents/Loading/Loading';
+import '../../App.scss';
 
 const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/SummaryChart/SummaryChart.js'));
 const SummaryChartItem = asyncComponent(() => import('../../PresentationalComponents/SummaryChartItem/SummaryChartItem.js'));
@@ -15,7 +19,7 @@ const typeNames = [ 'Availability', 'Security', 'Stability', 'Performance' ];
 const typeLink = '/actions/';
 
 class ActionsOverview extends Component {
-    constructor(props) {
+    constructor (props) {
         super(props);
         this.state = {
             severity: [],
@@ -24,52 +28,49 @@ class ActionsOverview extends Component {
         };
     }
 
-    componentDidMount() {
-        const response = {
-            total: 9,
-            severity: { info: 0, warn: 2, error: 3, critical: 4 },
-            category: { availability: 7, security: 2, stability: 4, performance: 10 }
-        };
-        this.setState({ severity: [ response.severity.info, response.severity.warn, response.severity.error, response.severity.critical ]});
-        this.setState({
-            category: [ response.category.availability, response.category.security, response.category.stability, response.category.performance ]});
-        this.setState({ total: response.total });
+    componentDidMount () {
+        this.props.fetchStats();
     }
 
-    render() {
+    componentDidUpdate(prevProps) {
+        if (this.props.stats !== prevProps.stats) {
+            const rules = this.props.stats.rules;
+            this.setState({ severity: [ rules.severity.Info, rules.severity.Warn, rules.severity.Error, rules.severity.Critical ]});
+            this.setState({
+                category: [ rules.category.Availability, rules.category.Security, rules.category.Stability, rules.category.Performance ]
+            });
+            this.setState({ total: rules.total });
+        }
+    }
 
+    render () {
+        const {
+            statsFetchStatus
+        } = this.props;
+        const renderDonut = (donutValues) =>
+            <Donut key='advisor-donut' values={ donutValues } link={ typeLink } totalLabel='issues' identifier='advisor-donut' withLegend/>;;
+        let donutValues = [];
         let SummaryChartItems = [];
-        for (let i = this.state.severity.length - 1; i >= 0; i--) {
+
+        this.state.severity.map((value, key) => {
             SummaryChartItems.push(
                 <ConditionalLink
-                    key={ i }
-                    condition={ this.state.severity[i] }
+                    key={ key }
+                    condition={ value }
                     wrap={ children =>
-                        <Link to= { `/actions/${sevNames[i].toLowerCase()}-risk` }>
+                        <Link to={ `/actions/${sevNames[key].toLowerCase()}-risk` }>
                             { children }
                         </Link>
                     }>
                     <SummaryChartItem
-                        name={ sevNames[i] }
-                        numIssues={ this.state.severity[i] }
+                        name={ sevNames[key] }
+                        numIssues={ value }
                         totalIssues={ this.state.total }/>
                 </ConditionalLink>
             );
-        }
+        });
 
-        let donutValues = [];
-        let renderDonut = [];
-
-        // Returns NaN while wating for data to load
-        if (this.state.category[1]) {
-            for (let i = 0; i <= this.state.category.length - 1; i++) {
-                donutValues.push([ typeNames[i], this.state.category[i] ]);
-            }
-
-            renderDonut.push(
-                <Donut key='advisor-donut' values={ donutValues } link={ typeLink } totalLabel='issues' identifier='advisor-donut' withLegend/>
-            );
-        }
+        this.state.category.map((value, key) => donutValues.push([ typeNames[key], value ]));
 
         return (
             <React.Fragment>
@@ -77,30 +78,54 @@ class ActionsOverview extends Component {
                     <PageHeaderTitle title='Actions'/>
                 </PageHeader>
                 <Main>
-                    <Grid gutter='md' xl={ 4 } sm={ 6 }>
-                        <GridItem>
-                            <Card className='pf-t-light  pf-m-opaque-100'>
-                                <CardHeader>Category Summary</CardHeader>
-                                <CardBody>
-                                    { renderDonut }
-                                </CardBody>
-                            </Card>
-                        </GridItem>
-                        <GridItem>
-                            <Card className='pf-t-light  pf-m-opaque-100'>
-                                <CardHeader>Risk Summary</CardHeader>
-                                <CardBody>
-                                    <SummaryChart>
-                                        { SummaryChartItems }
-                                    </SummaryChart>
-                                </CardBody>
-                            </Card>
-                        </GridItem>
-                    </Grid>
+                    { statsFetchStatus === 'fulfilled' && (
+                        <Grid gutter='md' xl={ 4 } sm={ 6 }>
+                            <GridItem>
+                                <Card className='pf-t-light  pf-m-opaque-100'>
+                                    <CardHeader>Category Summary</CardHeader>
+                                    <CardBody>
+                                        { renderDonut(donutValues) }
+                                    </CardBody>
+                                </Card>
+                            </GridItem>
+                            <GridItem>
+                                <Card className='pf-t-light  pf-m-opaque-100'>
+                                    <CardHeader>Risk Summary</CardHeader>
+                                    <CardBody>
+                                        <SummaryChart>
+                                            { SummaryChartItems }
+                                        </SummaryChart>
+                                    </CardBody>
+                                </Card>
+                            </GridItem>
+                        </Grid>
+                    ) }
+                    { statsFetchStatus === 'pending' && (<Loading />)
+                    }
                 </Main>
             </React.Fragment>
         );
     }
 }
 
-export default withRouter(ActionsOverview);
+ActionsOverview.propTypes = {
+    fetchStats: PropTypes.func,
+    statsFetchStatus: PropTypes.string,
+    stats: PropTypes.object
+};
+
+const mapStateToProps = (state, ownProps) => ({
+    stats: state.AdvisorStore.stats,
+    statsFetchStatus: state.AdvisorStore.statsFetchStatus,
+    ...ownProps
+});
+
+const mapDispatchToProps = dispatch => ({
+    fetchStats: (url) => dispatch(AppActions.fetchStats(url))
+});
+
+export default withRouter(connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(ActionsOverview));
+
