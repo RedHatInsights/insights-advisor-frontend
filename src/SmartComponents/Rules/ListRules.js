@@ -2,8 +2,11 @@ import React from 'react';
 import { Main, Pagination } from '@red-hat-insights/insights-frontend-components';
 import PropTypes from 'prop-types';
 
+import * as AppActions from '../../AppActions';
+
 import rulesCardSkeleton from '../../PresentationalComponents/Skeletons/RulesCard/RulesCardSkeleton.js';
 const RulesCard = rulesCardSkeleton(() => import('../../PresentationalComponents/RulesCard/RulesCard.js'));
+import Loading from '../../PresentationalComponents/Loading/Loading';
 
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -24,31 +27,39 @@ class ListRules extends React.Component {
         this.setPerPage = this.setPerPage.bind(this);
     }
 
+    // TODO: implement server supported pagination in this component, page_size 1000? wtf yo 😏
     componentDidMount() {
-        const response = this.props.AdvisorStore.mediumRiskRules;
+        this.props.fetchRules({ page_size: 1000 }); // eslint-disable-line camelcase
+    }
 
-        let cards = [];
-        if (response.rules) {
-            for (let i = 0; i < response.rules.length; i++) {
+    componentDidUpdate(prevProps) {
+        const getRandomInt = (max)  => Math.floor(Math.random() * Math.floor(max)) + 1;
+
+        if (this.props.rules !== prevProps.rules) {
+            const rules = this.props.rules.results;
+            let cards = [];
+            rules.map((value, key) => {
                 cards.push(
                     <RulesCard
-                        key = { i }
-                        widget-id= { i }
-                        ruleID = { response.rules[i].rule_id }
-                        category= { response.rules[i].category }
-                        description= { response.rules[i].description }
-                        summary= { response.rules[i].summary_html }
-                        impact = { response.rules[i].rec_impact }
-                        likelihood = { response.rules[i].rec_likelihood }
-                        totalRisk = { response.rules[i].resolution_risk }
-                        riskOfChange = { 3 }
-                        ansible = { response.rules[i].ansible }
-                        hitCount = { response.rules[i].hitCount }
+                        key = { key }
+                        widget-id= { value }
+                        ruleID = { rules[key].rule_id }
+                        category= { rules[key].category.name }
+                        description= { rules[key].description }
+                        summary= { rules[key].summary_html }
+                        // TODO: random numbers gotta go once these attributes are present on api 😏
+                        impact = { rules[key].rec_impact || getRandomInt(4) }
+                        likelihood = { rules[key].rec_likelihood || getRandomInt(4) }
+                        totalRisk = { rules[key].resolution_risk || getRandomInt(4) }
+                        riskOfChange = { rules[key].risk_of_change || getRandomInt(4) }
+                        ansible = { rules[key].ansible }
+                        hitCount = { rules[key].hitCount || getRandomInt(100) }
                     />
                 );
-
-                this.setState({ cards });
             }
+            );
+            this.setState({ cards });
+
         }
     }
 
@@ -76,17 +87,25 @@ class ListRules extends React.Component {
     }
 
     render() {
+        const {
+            rulesFetchStatus
+        } = this.props;
         const cards = this.limitCards();
         return (
             <Main>
-                { cards }
-                <Pagination
-                    numberOfItems={ this.state.cards.length }
-                    onPerPageSelect={ this.setPerPage }
-                    page={ this.state.page }
-                    onSetPage={ this.setPage }
-                    itemsPerPage={ this.state.itemsPerPage }
-                />
+                { rulesFetchStatus === 'fulfilled' && (
+                    <React.Fragment>
+                        { cards }
+                        <Pagination
+                            numberOfItems={ this.state.cards.length }
+                            onPerPageSelect={ this.setPerPage }
+                            page={ this.state.page }
+                            onSetPage={ this.setPage }
+                            itemsPerPage={ this.state.itemsPerPage }
+                        />
+                    </React.Fragment>
+                ) }
+                { rulesFetchStatus === 'pending' && (<Loading />) }
             </Main>
         );
 
@@ -99,14 +118,24 @@ ListRules.propTypes = {
     AdvisorStore: PropTypes.object
 };
 
+ListRules.propTypes = {
+    fetchRules: PropTypes.func,
+    rulesFetchStatus: PropTypes.string,
+    rules: PropTypes.object
+};
+
 const mapStateToProps = (state, ownProps) => ({
+    rules: state.AdvisorStore.rules,
+    rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
     ...state,
     ...ownProps
 });
 
-export default withRouter(
-    connect(
-        mapStateToProps
-    )(ListRules)
-);
+const mapDispatchToProps = dispatch => ({
+    fetchRules: (url) => dispatch(AppActions.fetchRules(url))
+});
 
+export default withRouter(connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(ListRules));
