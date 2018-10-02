@@ -41,7 +41,7 @@ const RulesCard =
     if (hitCount > 0) {
         renderHitCount =
         <Link to={ `/actions/${category.toLowerCase()}/${ruleID}` }
-            aria-label='No impacted systems'> View Impacted Systems ({ hitCount }) </Link>;
+            aria-label={ `${hitCount} impacted system${hitCount > 1 ? 's' : ''}` }> View Impacted Systems ({ hitCount }) </Link>;
     }
     else {
         renderHitCount = <a disabled aria-label='No impacted systems'> View Impacted Systems (0) </a>;
