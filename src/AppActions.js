@@ -29,3 +29,13 @@ export const fetchStats = () => ({
         .catch(e => reject(e));
     })
 });
+export const fetchRules = (options) => ({
+    type: ActionTypes.RULES_FETCH,
+    payload: new Promise((resolve, reject) => {
+        API.get(ActionTypes.RULES_FETCH_URL, {}, options)
+        .then(response => {
+            resolve(response.data);
+        })
+        .catch(e => reject(e));
+    })
+});
