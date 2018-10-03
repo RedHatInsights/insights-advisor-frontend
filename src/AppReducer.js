@@ -7,6 +7,8 @@ const initialState = Immutable({
     mediumRiskRulesFetchStatus: '',
     impactedSystems: [],
     impactedSystemsFetchStatus: '',
+    rule: {},
+    ruleFetchStatus: '',
     rules: {},
     rulesFetchStatus: '',
     stats: {},
@@ -20,7 +22,7 @@ const initialState = Immutable({
 
 export const AdvisorStore = (state = initialState, action) => {
     switch (action.type) {
-
+        //The following two case blocks and constants will be removed when we no longer use mock jsons
         case `${ActionTypes.MEDIUM_RISK_RULES_FETCH}_PENDING`:
             return state.set('mediumRiskRulesFetchStatus', 'pending');
         case `${ActionTypes.MEDIUM_RISK_RULES_FETCH}_FULFILLED`:
@@ -38,6 +40,15 @@ export const AdvisorStore = (state = initialState, action) => {
                 impactedSystemsFetchStatus: 'fulfilled' });
         case `${ActionTypes.IMPACTED_SYSTEMS_FETCH}_REJECTED`:
             return state.set('impactedSystemsFetchStatus', 'rejected');
+
+        case `${ActionTypes.RULE_FETCH}_PENDING`:
+            return state.set('ruleFetchStatus', 'pending');
+        case `${ActionTypes.RULE_FETCH}_FULFILLED`:
+            return Immutable.merge(state, {
+                rule: action.payload,
+                ruleFetchStatus: 'fulfilled' });
+        case `${ActionTypes.RULE_FETCH}_REJECTED`:
+            return state.set('ruleFetchStatus', 'rejected');
 
         case `${ActionTypes.RULES_FETCH}_PENDING`:
             return state.set('rulesFetchStatus', 'pending');

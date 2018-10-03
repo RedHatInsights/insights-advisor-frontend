@@ -39,6 +39,16 @@ export const fetchRules = (options) => ({
         .catch(e => reject(e));
     })
 });
+export const fetchRule = (options) => ({
+    type: ActionTypes.RULE_FETCH,
+    payload: new Promise((resolve, reject) => {
+        API.get(`${ActionTypes.RULES_FETCH_URL}${options.rule_id}/`)
+        .then(response => {
+            resolve(response.data);
+        })
+        .catch(e => reject(e));
+    })
+});
 export const setBreadcrumbs = (breadcrumbObj) => ({
     type: ActionTypes.BREADCRUMBS_SET,
     payload: breadcrumbObj

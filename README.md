@@ -23,8 +23,12 @@ docker run -v $PWD/config:/config --rm --net='host' -p1337:1337 -e PLATFORM=linu
 ## Build app
 1. ```npm install```
 
-2. ```npm run start```
+2. ```npm start```
     - starts webpack bundler and serves the files with webpack dev server
+    
+## Notes for Devs..   
+In order to consume the latest n greatest api work be sure to start your server with the flag `IS_DEV=true`.
+so instead of `npm start` you would run `IS_DEV=true npm start`
 
 ### Testing
 - Travis is used to test the build for this code.
