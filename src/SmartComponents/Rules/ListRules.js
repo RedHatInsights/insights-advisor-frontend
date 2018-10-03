@@ -25,6 +25,7 @@ class ListRules extends React.Component {
 
     componentDidMount() {
         this.props.fetchRules({ page_size: this.state.itemsPerPage  }); // eslint-disable-line camelcase
+        this.props.setBreadcrumbs([{ title: 'Rules', navigate: '/rules' }]);
     }
 
     componentDidUpdate(prevProps) {
@@ -96,19 +97,23 @@ class ListRules extends React.Component {
 ListRules.displayName = 'list-rules';
 
 ListRules.propTypes = {
+    breadcrumbs: PropTypes.array,
     fetchRules: PropTypes.func,
     rulesFetchStatus: PropTypes.string,
-    rules: PropTypes.object
+    rules: PropTypes.object,
+    setBreadcrumbs: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => ({
+    breadcrumbs: state.AdvisorStore.breadcrumbs,
     rules: state.AdvisorStore.rules,
     rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
     ...ownProps
 });
 
 const mapDispatchToProps = dispatch => ({
-    fetchRules: (url) => dispatch(AppActions.fetchRules(url))
+    fetchRules: (url) => dispatch(AppActions.fetchRules(url)),
+    setBreadcrumbs: (obj) => dispatch(AppActions.setBreadcrumbs(obj))
 });
 
 export default routerParams(connect(

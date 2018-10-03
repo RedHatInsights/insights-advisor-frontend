@@ -14,7 +14,8 @@ const initialState = Immutable({
     system: {},
     systemFetchStatus: '',
     systemtype: {},
-    systemtypeFetchStatus: ''
+    systemtypeFetchStatus: '',
+    breadcrumbs: []
 });
 
 export const AdvisorStore = (state = initialState, action) => {
@@ -73,6 +74,11 @@ export const AdvisorStore = (state = initialState, action) => {
                 systemtypeFetchStatus: 'fulfilled' });
         case `${ActionTypes.SYSTEMTYPE_FETCH}_REJECTED`:
             return state.set('systemFetchStatus', 'rejected');
+
+        case ActionTypes.BREADCRUMBS_SET:
+            return Immutable.merge(state, {
+                breadcrumbs: action.payload
+            });
 
         default:
             return state;

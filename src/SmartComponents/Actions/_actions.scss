@@ -1,16 +1,17 @@
 @import '~@red-hat-insights/insights-frontend-components/Utilities/_variables';
 @import '~@red-hat-insights/insights-frontend-components/Utilities/_mixins';
 
-.page__actions.actions__view {
+.page__actions {
     .actions__view--title { text-transform: capitalize; }
-
-    table.rules-table {
-        th:first-child { width: 50%; }
-        td {
-            padding: $ins-padding;
-            &:not(:first-of-type) { text-align: center; }
+    .actions__view {
+        table.rules-table {
+            th:first-child { width: 50%; }
+            td {
+                padding: $ins-padding;
+                &:not(:first-of-type) { text-align: center; }
+            }
+            tfoot tr td:first-child { padding: 0; }
         }
-        tfoot tr td:first-child { padding: 0; }
     }
 }
 
@@ -20,4 +21,10 @@
     .ins-l-icon-group__vertical > *:not(:first-child) {
         @include rem('margin-top', 5px);
     }
+}
+
+ol.ins-breadcrumbs {
+    background-color: #fff;
+    margin-bottom:0;
+    li { text-transform: capitalize; }
 }

@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import {
     Ansible,
     Battery,
+    Breadcrumbs,
     PageHeader,
     PageHeaderTitle,
     Pagination,
@@ -43,6 +44,7 @@ class ViewActions extends Component {
 
         this.setPage = this.setPage.bind(this);
         this.setPerPage = this.setPerPage.bind(this);
+        this.onNavigate = this.onNavigate.bind(this);
     }
 
     componentDidMount() {
@@ -138,11 +140,21 @@ class ViewActions extends Component {
         return parsedTitle.length > 1 ? `${parsedTitle[0]} ${parsedTitle[1]} Actions` : `${parsedTitle}`;
     }
 
+    onNavigate(_event, _item, key) {
+        const { history } = this.props;
+        history.go(-key);
+    }
+
     render() {
-        const { rulesFetchStatus, rules } = this.props;
+        const { rulesFetchStatus, rules, breadcrumbs } = this.props;
 
         return (
             <React.Fragment>
+                <Breadcrumbs
+                    current={ this.parseUrlTitle(this.props.match.params.type) }
+                    items={ breadcrumbs }
+                    onNavigate={ this.onNavigate }
+                />
                 <PageHeader>
                     <PageHeaderTitle
                         className='actions__view--title'
@@ -188,13 +200,20 @@ class ViewActions extends Component {
 }
 
 ViewActions.propTypes = {
-    match: PropTypes.any,
+    breadcrumbs: PropTypes.array,
     fetchRules: PropTypes.func,
+    history: PropTypes.object,
+    match: PropTypes.any,
+    path: PropTypes.string,
+    params: PropTypes.object,
     rulesFetchStatus: PropTypes.string,
     rules: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
+    breadcrumbs: state.AdvisorStore.breadcrumbs,
+    path: state.routerData.path,
+    params: state.routerData.params,
     rules: state.AdvisorStore.rules,
     rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
     ...ownProps
@@ -208,4 +227,3 @@ export default routerParams(connect(
     mapStateToProps,
     mapDispatchToProps
 )(ViewActions));
-
