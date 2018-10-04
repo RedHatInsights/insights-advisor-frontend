@@ -14,6 +14,8 @@ import {
     Main
 } from '@red-hat-insights/insights-frontend-components';
 import { Stack, StackItem } from '@patternfly/react-core';
+import * as AppActions from '../../AppActions';
+import Loading from '../../PresentationalComponents/Loading/Loading';
 import './_actions.scss';
 
 class ViewActions extends Component {
@@ -44,51 +46,59 @@ class ViewActions extends Component {
 
     componentDidMount() {
         document.getElementById('root').classList.add('actions__view');
-        const response = this.props.AdvisorStore.mediumRiskRules;
-        this.setState({ summary: response.summary });
+        // TODO: implement server supported pagination in this component, page_size 1000? wtf yo 😏
+        // TODO: filtering based on route will also be done here, but waiting for api...
+        this.props.fetchRules({ page_size: 1000 }); // eslint-disable-line camelcase
+    }
 
-        let rows = [];
-        if (response.rules) {
-            for (let i = 0; i < response.rules.length; i++) {
+    componentDidUpdate(prevProps) {
+        const getRandomInt = (max) => Math.floor(Math.random() * Math.floor(max)) + 1;
+
+        if (this.props.rules !== prevProps.rules) {
+            const rules = this.props.rules.results;
+            this.setState({ summary: this.props.rules.summary });
+
+            let rows = [];
+            rules.map((value, key) => {
                 rows.push({
                     cells: [
                         <Link
-                            key={ i }
+                            key={ key }
                             to={ `/actions/${this.props.match.params.type }/${
-                                response.rules[i].rule_id
+                                value.rule_id
                             }` }
                         >
-                            { response.rules[i].description }
+                            { value.description }
                         </Link>,
                         <Battery
-                            key={ i }
+                            key={ key }
                             label='Likelihood'
                             labelHidden
-                            severity={ response.rules[i].rec_likelihood }
+                            severity={ value.rec_likelihood  || getRandomInt(4) }
                         />,
                         <Battery
-                            key={ i }
+                            key={ key }
                             label='Impact'
                             labelHidden
-                            severity={ response.rules[i].rec_impact }
+                            severity={ value.rec_impact  || getRandomInt(4) }
                         />,
                         <Battery
-                            key={ i }
+                            key={ key }
                             label='Total Risk'
                             labelHidden
-                            severity={ response.rules[i].resolution_risk }
+                            severity={ value.resolution_risk  || getRandomInt(4) }
                         />,
-                        <div key={ i }>{ response.rules[i].hitCount }</div>,
+                        <div key={ key }>{ value.hitCount  || getRandomInt(100) }</div>,
                         <Ansible
-                            key={ i }
-                            unsupported={ response.rules[i].ansible === 1 ? true : false }
+                            key={ key }
+                            unsupported={ value.ansible }
                         />
                     ]
                 });
-            }
-        }
+            });
 
-        this.setState({ rows });
+            this.setState({ rows });
+        }
     }
 
     toggleCol(_event, key, selected) {
@@ -142,6 +152,9 @@ class ViewActions extends Component {
     }
 
     render() {
+        const {
+            rulesFetchStatus
+        } = this.props;
         const rows = this.limitRows();
         return (
             <React.Fragment>
@@ -159,26 +172,29 @@ class ViewActions extends Component {
                         <StackItem className='advisor-l-actions__filters'>
               Filters
                         </StackItem>
-                        <StackItem className='advisor-l-actions__table'>
-                            <Table
-                                className='rules-table'
-                                onItemSelect={ this.toggleCol }
-                                hasCheckbox={ false }
-                                header={ this.state.cols }
-                                sortBy={ this.state.sortBy }
-                                rows={ rows }
-                                onSort={ this.onSortChange }
-                                footer={
-                                    <Pagination
-                                        numberOfItems={ this.state.rows.length }
-                                        onPerPageSelect={ this.setPerPage }
-                                        page={ this.state.page }
-                                        onSetPage={ this.setPage }
-                                        itemsPerPage={ this.state.itemsPerPage }
-                                    />
-                                }
-                            />
-                        </StackItem>
+                        { rulesFetchStatus === 'fulfilled' && (
+                            <StackItem className='advisor-l-actions__table'>
+                                <Table
+                                    className='rules-table'
+                                    onItemSelect={ this.toggleCol }
+                                    hasCheckbox={ false }
+                                    header={ this.state.cols }
+                                    sortBy={ this.state.sortBy }
+                                    rows={ rows }
+                                    onSort={ this.onSortChange }
+                                    footer={
+                                        <Pagination
+                                            numberOfItems={ this.state.rows.length }
+                                            onPerPageSelect={ this.setPerPage }
+                                            page={ this.state.page }
+                                            onSetPage={ this.setPage }
+                                            itemsPerPage={ this.state.itemsPerPage }
+                                        />
+                                    }
+                                />
+                            </StackItem>
+                        ) }
+                        { rulesFetchStatus === 'pending' && (<Loading />) }
                     </Stack>
                 </Main>
             </React.Fragment>
@@ -188,12 +204,23 @@ class ViewActions extends Component {
 
 ViewActions.propTypes = {
     match: PropTypes.any,
-    AdvisorStore: PropTypes.object
+    fetchRules: PropTypes.func,
+    rulesFetchStatus: PropTypes.string,
+    rules: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
-    ...state,
+    rules: state.AdvisorStore.rules,
+    rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
     ...ownProps
 });
 
-export default withRouter(connect(mapStateToProps)(ViewActions));
+const mapDispatchToProps = dispatch => ({
+    fetchRules: (url) => dispatch(AppActions.fetchRules(url))
+});
+
+export default withRouter(connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(ViewActions));
+
