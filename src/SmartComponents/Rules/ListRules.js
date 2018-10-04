@@ -43,17 +43,17 @@ class ListRules extends React.Component {
                     <RulesCard
                         key = { key }
                         widget-id= { value }
-                        ruleID = { rules[key].rule_id }
-                        category= { rules[key].category.name }
-                        description= { rules[key].description }
-                        summary= { rules[key].summary_html }
+                        ruleID = { value.rule_id }
+                        category= { value.category.name }
+                        description= { value.description }
+                        summary= { value.summary_html }
                         // TODO: random numbers gotta go once these attributes are present on api 😏
-                        impact = { rules[key].rec_impact || getRandomInt(4) }
-                        likelihood = { rules[key].rec_likelihood || getRandomInt(4) }
-                        totalRisk = { rules[key].resolution_risk || getRandomInt(4) }
-                        riskOfChange = { rules[key].risk_of_change || getRandomInt(4) }
-                        ansible = { rules[key].ansible }
-                        hitCount = { rules[key].hitCount || getRandomInt(100) }
+                        impact = { value.rec_impact || getRandomInt(4) }
+                        likelihood = { value.rec_likelihood || getRandomInt(4) }
+                        totalRisk = { value.resolution_risk || getRandomInt(4) }
+                        riskOfChange = { value.risk_of_change || getRandomInt(4) }
+                        ansible = { value.ansible }
+                        hitCount = { value.hitCount || getRandomInt(100) }
                     />
                 );
             }
@@ -127,7 +127,6 @@ ListRules.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
     rules: state.AdvisorStore.rules,
     rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
-    ...state,
     ...ownProps
 });
 
