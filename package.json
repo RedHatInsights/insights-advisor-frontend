@@ -11,7 +11,7 @@
   "dependencies": {
     "@patternfly/patternfly-next": "^1.0.52",
     "@patternfly/react-core": "^1.14.0",
-    "@red-hat-insights/insights-frontend-components": "^3.19.2",
+    "@red-hat-insights/insights-frontend-components": "^3.19.10",
     "classnames": "^2.2.5",
     "create-react-class": "^15.6.3"
   },
