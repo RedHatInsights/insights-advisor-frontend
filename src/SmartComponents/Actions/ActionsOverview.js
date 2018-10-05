@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import asyncComponent from '../../Utilities/asyncComponent';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Card, CardBody, CardHeader, Grid, GridItem } from '@patternfly/react-core';
-import { Donut, Main, PageHeader, PageHeaderTitle } from '@red-hat-insights/insights-frontend-components';
+import { Donut, Main, PageHeader, PageHeaderTitle, routerParams } from '@red-hat-insights/insights-frontend-components';
 
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
@@ -124,7 +124,7 @@ const mapDispatchToProps = dispatch => ({
     fetchStats: (url) => dispatch(AppActions.fetchStats(url))
 });
 
-export default withRouter(connect(
+export default routerParams(connect(
     mapStateToProps,
     mapDispatchToProps
 )(ActionsOverview));

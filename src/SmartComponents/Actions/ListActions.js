@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -226,7 +226,7 @@ const mapStateToProps = (state, ownProps) => ({
     ...ownProps
 });
 
-export default withRouter(
+export default routerParams(
     connect(
         mapStateToProps
     )(ListActions)

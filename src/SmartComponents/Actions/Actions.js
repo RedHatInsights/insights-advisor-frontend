@@ -1,5 +1,6 @@
 import React from 'react';
-import { withRouter, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
+import { routerParams } from '@red-hat-insights/insights-frontend-components';
 import asyncComponent from '../../Utilities/asyncComponent';
 
 const ActionsOverview = asyncComponent(() => import(/* webpackChunkName: "ActionsOverview" */ './ActionsOverview'));
@@ -16,4 +17,4 @@ const Actions = () => {
     );
 };
 
-export default withRouter(Actions);
+export default routerParams(Actions);
