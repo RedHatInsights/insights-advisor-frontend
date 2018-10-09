@@ -29,8 +29,6 @@ class ListRules extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        const getRandomInt = (max)  => Math.floor(Math.random() * Math.floor(max)) + 1;
-
         if (this.props.rules !== prevProps.rules) {
             const rules = this.props.rules.results;
             let cards = [];
@@ -43,13 +41,12 @@ class ListRules extends React.Component {
                         category= { value.category.name }
                         description= { value.description }
                         summary= { value.summary_html }
-                        // TODO: random numbers gotta go once these attributes are present on api 😏
-                        impact = { value.rec_impact || getRandomInt(4) }
-                        likelihood = { value.rec_likelihood || getRandomInt(4) }
-                        totalRisk = { value.resolution_risk || getRandomInt(4) }
-                        riskOfChange = { value.risk_of_change || getRandomInt(4) }
+                        impact = { value.impact.impact }
+                        likelihood = { value.likelihood }
+                        totalRisk = { value.severity }
+                        riskOfChange = { value.resolution_risk }
                         ansible = { value.ansible }
-                        hitCount = { value.hitCount || getRandomInt(100) }
+                        hitCount = { value.impacted_systems }
                     />
                 );
             });
