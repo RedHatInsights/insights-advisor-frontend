@@ -1,15 +1,14 @@
 import React from 'react';
 import { Main, Pagination } from '@red-hat-insights/insights-frontend-components';
 import PropTypes from 'prop-types';
-
-import * as AppActions from '../../AppActions';
-
-import rulesCardSkeleton from '../../PresentationalComponents/Skeletons/RulesCard/RulesCardSkeleton.js';
-const RulesCard = rulesCardSkeleton(() => import('../../PresentationalComponents/RulesCard/RulesCard.js'));
-import Loading from '../../PresentationalComponents/Loading/Loading';
-
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+
+import * as AppActions from '../../AppActions';
+import Loading from '../../PresentationalComponents/Loading/Loading';
+import rulesCardSkeleton from '../../PresentationalComponents/Skeletons/RulesCard/RulesCardSkeleton.js';
+
+const RulesCard = rulesCardSkeleton(() => import('../../PresentationalComponents/RulesCard/RulesCard.js'));
 
 class ListRules extends React.Component {
 
@@ -19,17 +18,14 @@ class ListRules extends React.Component {
             summary: '',
             itemsPerPage: 10,
             page: 1,
-            cards: [],
-            things: []
+            cards: []
         };
-        this.limitCards = this.limitCards.bind(this);
         this.setPage = this.setPage.bind(this);
         this.setPerPage = this.setPerPage.bind(this);
     }
 
-    // TODO: implement server supported pagination in this component, page_size 1000? wtf yo 😏
     componentDidMount() {
-        this.props.fetchRules({ page_size: 1000 }); // eslint-disable-line camelcase
+        this.props.fetchRules({ page_size: this.state.itemsPerPage  }); // eslint-disable-line camelcase
     }
 
     componentDidUpdate(prevProps) {
@@ -56,48 +52,34 @@ class ListRules extends React.Component {
                         hitCount = { value.hitCount || getRandomInt(100) }
                     />
                 );
-            }
-            );
+            });
             this.setState({ cards });
-
         }
     }
 
     setPage(page) {
-        this.setState({
-            ...this.state,
-            page
-        });
+        this.setState(() => ({ page }));
+        this.props.fetchRules({ page, page_size: this.state.itemsPerPage }); // eslint-disable-line camelcase
     }
 
-    setPerPage(amount) {
-        this.setState({
-            ...this.state,
-            itemsPerPage: amount
-        });
-    }
-
-    limitCards() {
-        const { page, itemsPerPage } = this.state;
-        const numberOfItems = this.state.cards.length;
-        const lastPage = Math.ceil(numberOfItems / itemsPerPage);
-        const lastIndex = page === lastPage ? numberOfItems : page * itemsPerPage;
-        const firstIndex = page === 1 ? 0 : page * itemsPerPage - itemsPerPage;
-        return this.state.cards.slice(firstIndex, lastIndex);
+    setPerPage(itemsPerPage) {
+        this.setState(() => ({ itemsPerPage }));
+        this.props.fetchRules({ page_size: itemsPerPage  }); // eslint-disable-line camelcase
     }
 
     render() {
         const {
-            rulesFetchStatus
+            rulesFetchStatus,
+            rules
         } = this.props;
-        const cards = this.limitCards();
+
         return (
             <Main>
                 { rulesFetchStatus === 'fulfilled' && (
                     <React.Fragment>
-                        { cards }
+                        { this.state.cards }
                         <Pagination
-                            numberOfItems={ this.state.cards.length }
+                            numberOfItems={ rules.count }
                             onPerPageSelect={ this.setPerPage }
                             page={ this.state.page }
                             onSetPage={ this.setPage }
@@ -113,10 +95,6 @@ class ListRules extends React.Component {
 }
 
 ListRules.displayName = 'list-rules';
-
-ListRules.propTypes = {
-    AdvisorStore: PropTypes.object
-};
 
 ListRules.propTypes = {
     fetchRules: PropTypes.func,
