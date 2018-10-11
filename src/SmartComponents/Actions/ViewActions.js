@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { routerParams } from '@red-hat-insights/insights-frontend-components';
 import PropTypes from 'prop-types';
 import { sortBy } from 'lodash';
 import { connect } from 'react-redux';
@@ -219,7 +220,7 @@ const mapDispatchToProps = dispatch => ({
     fetchRules: (url) => dispatch(AppActions.fetchRules(url))
 });
 
-export default withRouter(connect(
+export default routerParams(connect(
     mapStateToProps,
     mapDispatchToProps
 )(ViewActions));

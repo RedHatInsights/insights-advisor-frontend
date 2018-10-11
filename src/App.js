@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import { Routes } from './Routes';
 import './App.scss';
@@ -42,7 +42,7 @@ const mapDispatchToProps = dispatch => ({
     fetchMediumRiskRules: () => dispatch(AppActions.fetchMediumRiskRules())
 });
 
-export default withRouter(connect(
+export default routerParams(connect(
     null,
     mapDispatchToProps
 )(App));
