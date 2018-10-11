@@ -37,16 +37,6 @@ const RulesCard =
         className
     );
 
-    let renderHitCount;
-    if (hitCount > 0) {
-        renderHitCount =
-        <Link to={ `/actions/${category.toLowerCase()}/${ruleID}` }
-            aria-label={ `${hitCount} impacted system${hitCount > 1 ? 's' : ''}` }> View Impacted Systems ({ hitCount }) </Link>;
-    }
-    else {
-        renderHitCount = <a disabled aria-label='No impacted systems'> View Impacted Systems (0) </a>;
-    }
-
     return (
         <Card { ...props } className = { rulesCardClasses } widget-type='InsightsRulesCard'>
             <CardHeader>
@@ -69,7 +59,13 @@ const RulesCard =
                         <Battery label='Total Risk' severity={ totalRisk }/>
                         <Battery label='Risk Of Change' severity={ riskOfChange }/>
                     </Section>
-                    { ...renderHitCount }
+                    { hitCount > 0 && (
+                        <Link to={ `/actions/${category.toLowerCase()}/${ruleID}` }
+                            aria-label={ `${hitCount} impacted system${hitCount > 1 ? 's' : ''}` }> View Impacted Systems ({ hitCount }) </Link>
+                    ) }
+                    { hitCount <= 0 && (
+                        <a disabled aria-label='No impacted systems'> View Impacted Systems (0) </a>
+                    ) }
                 </div>
             </CardFooter>
         </Card>
