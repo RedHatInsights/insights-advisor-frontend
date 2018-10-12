@@ -40,16 +40,15 @@ class ViewActions extends Component {
         };
         this.onSortChange = this.onSortChange.bind(this);
         this.toggleCol = this.toggleCol.bind(this);
-        this.limitRows = this.limitRows.bind(this);
+
         this.setPage = this.setPage.bind(this);
         this.setPerPage = this.setPerPage.bind(this);
     }
 
     componentDidMount() {
         document.getElementById('root').classList.add('actions__view');
-        // TODO: implement server supported pagination in this component, page_size 1000? wtf yo 😏
         // TODO: filtering based on route will also be done here, but waiting for api...
-        this.props.fetchRules({ page_size: 1000 }); // eslint-disable-line camelcase
+        this.props.fetchRules({ page_size: this.state.itemsPerPage  }); // eslint-disable-line camelcase
     }
 
     componentDidUpdate(prevProps) {
@@ -124,27 +123,14 @@ class ViewActions extends Component {
         });
     }
 
-    limitRows() {
-        const { page, itemsPerPage } = this.state;
-        const numberOfItems = this.state.rows.length;
-        const lastPage = Math.ceil(numberOfItems / itemsPerPage);
-        const lastIndex = page === lastPage ? numberOfItems : page * itemsPerPage;
-        const firstIndex = page === 1 ? 0 : page * itemsPerPage - itemsPerPage;
-        return this.state.rows.slice(firstIndex, lastIndex);
-    }
-
     setPage(page) {
-        this.setState({
-            ...this.state,
-            page
-        });
+        this.setState(() => ({ page }));
+        this.props.fetchRules({ page, page_size: this.state.itemsPerPage }); // eslint-disable-line camelcase
     }
 
-    setPerPage(amount) {
-        this.setState({
-            ...this.state,
-            itemsPerPage: amount
-        });
+    setPerPage(itemsPerPage) {
+        this.setState(() => ({ itemsPerPage }));
+        this.props.fetchRules({ page_size: itemsPerPage  }); // eslint-disable-line camelcase
     }
 
     parseUrlTitle(title = '') {
@@ -153,10 +139,8 @@ class ViewActions extends Component {
     }
 
     render() {
-        const {
-            rulesFetchStatus
-        } = this.props;
-        const rows = this.limitRows();
+        const { rulesFetchStatus, rules } = this.props;
+
         return (
             <React.Fragment>
                 <PageHeader>
@@ -181,11 +165,11 @@ class ViewActions extends Component {
                                     hasCheckbox={ false }
                                     header={ this.state.cols }
                                     sortBy={ this.state.sortBy }
-                                    rows={ rows }
+                                    rows={ this.state.rows }
                                     onSort={ this.onSortChange }
                                     footer={
                                         <Pagination
-                                            numberOfItems={ this.state.rows.length }
+                                            numberOfItems={ rules.count }
                                             onPerPageSelect={ this.setPerPage }
                                             page={ this.state.page }
                                             onSetPage={ this.setPage }
