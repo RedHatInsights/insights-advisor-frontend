@@ -23,6 +23,7 @@ import {
 } from '@patternfly/react-core';
 import { sortBy } from 'lodash';
 import TimeAgo from 'react-timeago';
+import { onNavigate, parseBreadcrumbs } from '../../Helpers/breadcrumbs.js';
 import './_actions.scss';
 
 class ListActions extends Component {
@@ -46,8 +47,6 @@ class ListActions extends Component {
         this.setPerPage = this.setPerPage.bind(this);
         this.parseProductCode = this.parseProductCode.bind(this);
         this.onSearch = this.onSearch.bind(this);
-        this.parseBreadcrumbs = this.parseBreadcrumbs.bind(this);
-        this.onNavigate = this.onNavigate.bind(this);
     }
 
     componentDidMount() {
@@ -157,29 +156,6 @@ class ListActions extends Component {
         });
     }
 
-    onNavigate(_event, _item, key) {
-        const { history } = this.props;
-        history.go(-key);
-    }
-
-    parseBreadcrumbs(breadcrumbs, params) {
-        if (breadcrumbs[0].navigate === '/rules') {
-            return breadcrumbs;
-        } else {
-            let crumbs = [];
-            crumbs.push({
-                title: breadcrumbs[0].title,
-                navigate: breadcrumbs[0].navigate
-            });
-            crumbs.push({
-                title: params.type.replace('-', ' '),
-                navigate: breadcrumbs[0].navigate + '/' + params.type
-            });
-            return crumbs;
-        }
-
-    }
-
     render() {
         const { breadcrumbs } = this.props;
         const rows = this.limitRows();
@@ -188,8 +164,8 @@ class ListActions extends Component {
             <React.Fragment>
                 <Breadcrumbs
                     current={ this.state.rule.description }
-                    items={ this.parseBreadcrumbs(breadcrumbs, this.props.params) }
-                    onNavigate={ this.onNavigate }
+                    items={ parseBreadcrumbs(breadcrumbs, this.props.params) }
+                    onNavigate={ onNavigate }
                 />
                 <PageHeader>
                     <PageHeaderTitle title={ this.state.rule.description }/>

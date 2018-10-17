@@ -18,6 +18,7 @@ import {
 import { Stack, StackItem } from '@patternfly/react-core';
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
+import { onNavigate } from '../../Helpers/breadcrumbs.js';
 import './_actions.scss';
 
 class ViewActions extends Component {
@@ -44,7 +45,6 @@ class ViewActions extends Component {
 
         this.setPage = this.setPage.bind(this);
         this.setPerPage = this.setPerPage.bind(this);
-        this.onNavigate = this.onNavigate.bind(this);
     }
 
     componentDidMount() {
@@ -140,11 +140,6 @@ class ViewActions extends Component {
         return parsedTitle.length > 1 ? `${parsedTitle[0]} ${parsedTitle[1]} Actions` : `${parsedTitle}`;
     }
 
-    onNavigate(_event, _item, key) {
-        const { history } = this.props;
-        history.go(-key);
-    }
-
     render() {
         const { rulesFetchStatus, rules, breadcrumbs } = this.props;
 
@@ -153,7 +148,7 @@ class ViewActions extends Component {
                 <Breadcrumbs
                     current={ this.parseUrlTitle(this.props.match.params.type) }
                     items={ breadcrumbs }
-                    onNavigate={ this.onNavigate }
+                    onNavigate={ onNavigate }
                 />
                 <PageHeader>
                     <PageHeaderTitle
