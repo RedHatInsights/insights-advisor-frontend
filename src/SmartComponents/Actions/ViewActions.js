@@ -18,7 +18,7 @@ import {
 import { Stack, StackItem } from '@patternfly/react-core';
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
-import { onNavigate } from '../../Helpers/breadcrumbs.js';
+import { onNavigate, buildBreadcrumbs } from '../../Helpers/breadcrumbs.js';
 import './_actions.scss';
 
 class ViewActions extends Component {
@@ -147,7 +147,7 @@ class ViewActions extends Component {
             <React.Fragment>
                 <Breadcrumbs
                     current={ this.parseUrlTitle(this.props.match.params.type) }
-                    items={ breadcrumbs }
+                    items={ breadcrumbs[0] !== undefined ? breadcrumbs : buildBreadcrumbs(this.props.match, 1) }
                     onNavigate={ onNavigate }
                 />
                 <PageHeader>

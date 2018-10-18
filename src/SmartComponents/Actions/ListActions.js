@@ -23,7 +23,7 @@ import {
 } from '@patternfly/react-core';
 import { sortBy } from 'lodash';
 import TimeAgo from 'react-timeago';
-import { onNavigate, parseBreadcrumbs } from '../../Helpers/breadcrumbs.js';
+import { onNavigate, parseBreadcrumbs, buildBreadcrumbs } from '../../Helpers/breadcrumbs.js';
 import './_actions.scss';
 
 class ListActions extends Component {
@@ -164,7 +164,11 @@ class ListActions extends Component {
             <React.Fragment>
                 <Breadcrumbs
                     current={ this.state.rule.description }
-                    items={ parseBreadcrumbs(breadcrumbs, this.props.params) }
+                    items={
+                        breadcrumbs[0] !== undefined ?
+                            parseBreadcrumbs(breadcrumbs, this.props.match.params, 2) :
+                            buildBreadcrumbs(this.props.match, 2)
+                    }
                     onNavigate={ onNavigate }
                 />
                 <PageHeader>
