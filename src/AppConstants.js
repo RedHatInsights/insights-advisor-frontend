@@ -4,6 +4,7 @@ export const SYSTEMTYPE_FETCH = 'SYSTEMTYPE_FETCH';
 export const MEDIUM_RISK_RULES_FETCH = 'MEDIUM_RISK_RULES_FETCH';
 export const IMPACTED_SYSTEMS_FETCH = 'IMPACTED_SYSTEMS_FETCH';
 export const STATS_FETCH = 'STATS_FETCH';
+export const BREADCRUMBS_SET = 'BREADCRUMBS_SET';
 
 export const RULES_FETCH_URL = '/rule/';
 export const STATS_FETCH_URL = '/stats/';

@@ -30,6 +30,7 @@ class ActionsOverview extends Component {
 
     componentDidMount () {
         this.props.fetchStats();
+        this.props.setBreadcrumbs([{ title: 'Actions', navigate: '/actions' }]);
     }
 
     componentDidUpdate(prevProps) {
@@ -109,19 +110,23 @@ class ActionsOverview extends Component {
 }
 
 ActionsOverview.propTypes = {
+    breadcrumbs: PropTypes.array,
     fetchStats: PropTypes.func,
+    setBreadcrumbs: PropTypes.func,
     statsFetchStatus: PropTypes.string,
     stats: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
+    breadcrumbs: state.AdvisorStore.breadcrumbs,
     stats: state.AdvisorStore.stats,
     statsFetchStatus: state.AdvisorStore.statsFetchStatus,
     ...ownProps
 });
 
 const mapDispatchToProps = dispatch => ({
-    fetchStats: (url) => dispatch(AppActions.fetchStats(url))
+    fetchStats: (url) => dispatch(AppActions.fetchStats(url)),
+    setBreadcrumbs: (obj) => dispatch(AppActions.setBreadcrumbs(obj))
 });
 
 export default routerParams(connect(

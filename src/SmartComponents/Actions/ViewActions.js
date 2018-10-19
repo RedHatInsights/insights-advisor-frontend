@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import {
     Ansible,
     Battery,
+    Breadcrumbs,
     PageHeader,
     PageHeaderTitle,
     Pagination,
@@ -17,6 +18,7 @@ import {
 import { Stack, StackItem } from '@patternfly/react-core';
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
+import { onNavigate, buildBreadcrumbs } from '../../Helpers/breadcrumbs.js';
 import './_actions.scss';
 
 class ViewActions extends Component {
@@ -139,10 +141,15 @@ class ViewActions extends Component {
     }
 
     render() {
-        const { rulesFetchStatus, rules } = this.props;
+        const { rulesFetchStatus, rules, breadcrumbs } = this.props;
 
         return (
             <React.Fragment>
+                <Breadcrumbs
+                    current={ this.parseUrlTitle(this.props.match.params.type) }
+                    items={ breadcrumbs[0] !== undefined ? breadcrumbs : buildBreadcrumbs(this.props.match, 1) }
+                    onNavigate={ onNavigate }
+                />
                 <PageHeader>
                     <PageHeaderTitle
                         className='actions__view--title'
@@ -188,13 +195,15 @@ class ViewActions extends Component {
 }
 
 ViewActions.propTypes = {
-    match: PropTypes.any,
+    breadcrumbs: PropTypes.array,
     fetchRules: PropTypes.func,
+    match: PropTypes.any,
     rulesFetchStatus: PropTypes.string,
     rules: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
+    breadcrumbs: state.AdvisorStore.breadcrumbs,
     rules: state.AdvisorStore.rules,
     rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
     ...ownProps
@@ -208,4 +217,3 @@ export default routerParams(connect(
     mapStateToProps,
     mapDispatchToProps
 )(ViewActions));
-

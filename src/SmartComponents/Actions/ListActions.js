@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import {
     Ansible,
     Battery,
+    Breadcrumbs,
     Main,
     Pagination,
     SimpleTableFilter,
@@ -22,6 +23,7 @@ import {
 } from '@patternfly/react-core';
 import { sortBy } from 'lodash';
 import TimeAgo from 'react-timeago';
+import { onNavigate, parseBreadcrumbs, buildBreadcrumbs } from '../../Helpers/breadcrumbs.js';
 import './_actions.scss';
 
 class ListActions extends Component {
@@ -155,10 +157,20 @@ class ListActions extends Component {
     }
 
     render() {
+        const { breadcrumbs } = this.props;
         const rows = this.limitRows();
 
         return (
             <React.Fragment>
+                <Breadcrumbs
+                    current={ this.state.rule.description }
+                    items={
+                        breadcrumbs[0] !== undefined ?
+                            parseBreadcrumbs(breadcrumbs, this.props.match.params, 2) :
+                            buildBreadcrumbs(this.props.match, 2)
+                    }
+                    onNavigate={ onNavigate }
+                />
                 <PageHeader>
                     <PageHeaderTitle title={ this.state.rule.description }/>
                 </PageHeader>
@@ -217,11 +229,13 @@ class ListActions extends Component {
 }
 
 ListActions.propTypes = {
+    breadcrumbs: PropTypes.array,
     match: PropTypes.any,
     AdvisorStore: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
+    breadcrumbs: state.AdvisorStore.breadcrumbs,
     ...state,
     ...ownProps
 });

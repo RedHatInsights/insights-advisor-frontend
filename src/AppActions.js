@@ -39,3 +39,7 @@ export const fetchRules = (options) => ({
         .catch(e => reject(e));
     })
 });
+export const setBreadcrumbs = (breadcrumbObj) => ({
+    type: ActionTypes.BREADCRUMBS_SET,
+    payload: breadcrumbObj
+});
