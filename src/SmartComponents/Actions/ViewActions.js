@@ -197,18 +197,13 @@ class ViewActions extends Component {
 ViewActions.propTypes = {
     breadcrumbs: PropTypes.array,
     fetchRules: PropTypes.func,
-    history: PropTypes.object,
     match: PropTypes.any,
-    path: PropTypes.string,
-    params: PropTypes.object,
     rulesFetchStatus: PropTypes.string,
     rules: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
     breadcrumbs: state.AdvisorStore.breadcrumbs,
-    path: state.routerData.path,
-    params: state.routerData.params,
     rules: state.AdvisorStore.rules,
     rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
     ...ownProps

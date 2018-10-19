@@ -230,17 +230,12 @@ class ListActions extends Component {
 
 ListActions.propTypes = {
     breadcrumbs: PropTypes.array,
-    history: PropTypes.object,
     match: PropTypes.any,
-    path: PropTypes.string,
-    params: PropTypes.object,
     AdvisorStore: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
     breadcrumbs: state.AdvisorStore.breadcrumbs,
-    path: state.routerData.path,
-    params: state.routerData.params,
     ...state,
     ...ownProps
 });
