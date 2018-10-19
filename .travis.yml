@@ -14,3 +14,4 @@ env:
     global:
     - REPO="git@github.com:RedHatInsights/insights-advisor-frontend-build"
     - REPO_DIR="insights-advisor-frontend-build"
+    - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
