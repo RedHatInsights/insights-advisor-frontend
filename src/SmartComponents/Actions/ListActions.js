@@ -4,9 +4,11 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
 import { buildBreadcrumbs, onNavigate, parseBreadcrumbs } from '../../Helpers/breadcrumbs.js';
-import './_actions.scss';
+
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
+import Inventory from '../../PresentationalComponents/Inventory/Inventory';
+import './_actions.scss';
 
 class ListActions extends Component {
     componentDidMount () {
