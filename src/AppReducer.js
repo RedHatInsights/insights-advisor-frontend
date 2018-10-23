@@ -3,10 +3,6 @@ import * as ActionTypes from './AppConstants';
 
 // eslint-disable-next-line new-cap
 const initialState = Immutable({
-    mediumRiskRules: {},
-    mediumRiskRulesFetchStatus: '',
-    impactedSystems: [],
-    impactedSystemsFetchStatus: '',
     rule: {},
     ruleFetchStatus: '',
     rules: {},
@@ -22,25 +18,6 @@ const initialState = Immutable({
 
 export const AdvisorStore = (state = initialState, action) => {
     switch (action.type) {
-        //The following two case blocks and constants will be removed when we no longer use mock jsons
-        case `${ActionTypes.MEDIUM_RISK_RULES_FETCH}_PENDING`:
-            return state.set('mediumRiskRulesFetchStatus', 'pending');
-        case `${ActionTypes.MEDIUM_RISK_RULES_FETCH}_FULFILLED`:
-            return Immutable.merge(state, {
-                mediumRiskRules: action.payload,
-                mediumRiskRulesFetchStatus: 'fulfilled' });
-        case `${ActionTypes.MEDIUM_RISK_RULES_FETCH}_REJECTED`:
-            return state.set('mediumRiskRulesFetchStatus', 'rejected');
-
-        case `${ActionTypes.IMPACTED_SYSTEMS_FETCH}_PENDING`:
-            return state.set('impactedSystemsFetchStatus', 'pending');
-        case `${ActionTypes.IMPACTED_SYSTEMS_FETCH}_FULFILLED`:
-            return Immutable.merge(state, {
-                impactedSystems: action.payload.resources,
-                impactedSystemsFetchStatus: 'fulfilled' });
-        case `${ActionTypes.IMPACTED_SYSTEMS_FETCH}_REJECTED`:
-            return state.set('impactedSystemsFetchStatus', 'rejected');
-
         case `${ActionTypes.RULE_FETCH}_PENDING`:
             return state.set('ruleFetchStatus', 'pending');
         case `${ActionTypes.RULE_FETCH}_FULFILLED`:
