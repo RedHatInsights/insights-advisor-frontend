@@ -1,5 +1,5 @@
 /* global exports */
-const openShiftAppsHost = `https://advisor-api-advisor-ci.1b13.insights.openshiftapps.com/v1`;
+const openShiftAppsHost = `https://access.redhat.com/r/insights/platform/advisor/v1`;
 
 exports.routes = {
     '/rule/': { host: openShiftAppsHost },
