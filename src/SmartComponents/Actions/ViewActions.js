@@ -54,8 +54,6 @@ class ViewActions extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        const getRandomInt = (max) => Math.floor(Math.random() * Math.floor(max)) + 1;
-
         if (this.props.rules !== prevProps.rules) {
             const rules = this.props.rules.results;
             this.setState({ summary: this.props.rules.summary });
@@ -76,21 +74,21 @@ class ViewActions extends Component {
                             key={ key }
                             label='Likelihood'
                             labelHidden
-                            severity={ value.rec_likelihood  || getRandomInt(4) }
+                            severity={ value.likelihood }
                         />,
                         <Battery
                             key={ key }
                             label='Impact'
                             labelHidden
-                            severity={ value.rec_impact  || getRandomInt(4) }
+                            severity={ value.impact.impact }
                         />,
                         <Battery
                             key={ key }
                             label='Total Risk'
                             labelHidden
-                            severity={ value.resolution_risk  || getRandomInt(4) }
+                            severity={ value.severity }
                         />,
-                        <div key={ key }>{ value.hitCount  || getRandomInt(100) }</div>,
+                        <div key={ key }>{ value.impacted_systems }</div>,
                         <Ansible
                             key={ key }
                             unsupported={ value.ansible }

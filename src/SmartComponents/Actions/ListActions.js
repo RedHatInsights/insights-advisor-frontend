@@ -186,13 +186,13 @@ class ListActions extends Component {
                                         <GridItem sm={ 12 } md={ 12 }> <Ansible unsupported = { this.state.rule.ansible }/> </GridItem>
                                         <GridItem sm={ 8 } md={ 12 }>
                                             <Grid className='ins-l-icon-group__vertical' sm={ 4 } md={ 12 }>
-                                                <GridItem> <Battery label='Impact' severity={ this.state.rule.rec_impact }/> </GridItem>
-                                                <GridItem> <Battery label='Likelihood' severity={ this.state.rule.rec_likelihood }/> </GridItem>
-                                                <GridItem> <Battery label='Total Risk' severity={ this.state.rule.resolution_risk }/> </GridItem>
+                                                <GridItem> <Battery label='Impact' severity={ this.state.rule.impact.impact }/> </GridItem>
+                                                <GridItem> <Battery label='Likelihood' severity={ this.state.rule.likelihood }/> </GridItem>
+                                                <GridItem> <Battery label='Total Risk' severity={ this.state.rule.severity }/> </GridItem>
                                             </Grid>
                                         </GridItem>
                                         <GridItem sm={ 4 } md={ 12 }>
-                                            <Battery label='Risk Of Change' severity={ 3 }/>
+                                            <Battery label='Risk Of Change' severity={ this.state.rule.resolution_risk }/>
                                         </GridItem>
                                     </Grid>
                                 </GridItem>
