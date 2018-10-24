@@ -54,7 +54,7 @@ const RulesCard =
             <CardFooter>
                 <div className='space-between'>
                     <Section type='icon-group__with-major'>
-                        <Battery label='Impact' severity={ impact }/>
+                        <Battery label='Impact' severity={ impact.impact }/>
                         <Battery label='Likelihood' severity={ likelihood }/>
                         <Battery label='Total Risk' severity={ totalRisk }/>
                         <Battery label='Risk Of Change' severity={ riskOfChange }/>
