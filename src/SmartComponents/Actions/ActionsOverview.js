@@ -33,7 +33,7 @@ class ActionsOverview extends Component {
         this.props.setBreadcrumbs([{ title: 'Actions', navigate: '/actions' }]);
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate (prevProps) {
         if (this.props.stats !== prevProps.stats) {
             const rules = this.props.stats.rules;
             this.setState({ severity: [ rules.severity.Info, rules.severity.Warn, rules.severity.Error, rules.severity.Critical ]});
@@ -49,7 +49,7 @@ class ActionsOverview extends Component {
             statsFetchStatus
         } = this.props;
         const renderDonut = (donutValues) =>
-            <Donut key='advisor-donut' values={ donutValues } link={ typeLink } totalLabel='issues' identifier='advisor-donut' withLegend/>;;
+            <Donut key='advisor-donut' values={ donutValues } link={ typeLink } totalLabel='issues' identifier='advisor-donut' withLegend/>;
         let donutValues = [];
         let SummaryChartItems = [];
 
@@ -79,30 +79,34 @@ class ActionsOverview extends Component {
                     <PageHeaderTitle title='Actions'/>
                 </PageHeader>
                 <Main>
-                    { statsFetchStatus === 'fulfilled' && (
-                        <Grid gutter='md' xl={ 4 } sm={ 6 }>
-                            <GridItem>
-                                <Card className='pf-t-light  pf-m-opaque-100'>
-                                    <CardHeader>Category Summary</CardHeader>
-                                    <CardBody>
-                                        { renderDonut(donutValues) }
-                                    </CardBody>
-                                </Card>
-                            </GridItem>
-                            <GridItem>
-                                <Card className='pf-t-light  pf-m-opaque-100'>
-                                    <CardHeader>Risk Summary</CardHeader>
-                                    <CardBody>
+                    <Grid gutter='md' xl={ 4 } sm={ 6 }>
+                        <GridItem>
+                            <Card className='pf-t-light  pf-m-opaque-100'>
+                                <CardHeader>Category Summary</CardHeader>
+
+                                <CardBody>
+                                    { statsFetchStatus === 'fulfilled' && (
+                                        renderDonut(donutValues)
+                                    ) }
+                                    { statsFetchStatus === 'pending' && (<Loading/>) }
+                                </CardBody>
+
+                            </Card>
+                        </GridItem>
+                        <GridItem>
+                            <Card className='pf-t-light  pf-m-opaque-100'>
+                                <CardHeader>Risk Summary</CardHeader>
+                                <CardBody>
+                                    { statsFetchStatus === 'fulfilled' && (
                                         <SummaryChart>
                                             { SummaryChartItems }
                                         </SummaryChart>
-                                    </CardBody>
-                                </Card>
-                            </GridItem>
-                        </Grid>
-                    ) }
-                    { statsFetchStatus === 'pending' && (<Loading />)
-                    }
+                                    ) }
+                                    { statsFetchStatus === 'pending' && (<Loading/>) }
+                                </CardBody>
+                            </Card>
+                        </GridItem>
+                    </Grid>
                 </Main>
             </React.Fragment>
         );
