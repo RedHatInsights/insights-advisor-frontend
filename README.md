@@ -27,8 +27,8 @@ docker run -v $PWD/config:/config --rm --net='host' -p1337:1337 -e PLATFORM=linu
     - starts webpack bundler and serves the files with webpack dev server
     
 ## Notes for Devs..   
-In order to consume the latest n greatest api work be sure to start your server with the flag `IS_DEV=true`.
-so instead of `npm start` you would run `IS_DEV=true npm start`
+In order to consume the latest n greatest api work be to clear the prod base url located here https://github.com/RedHatInsights/insights-advisor-frontend/blob/c35ee95ac4f8a85c7e01f208bb25227991cebc36/src/AppConstants.js#L10
+This should read `const BASE_URL = '';`
 
 ### Testing
 - Travis is used to test the build for this code.
