@@ -4,7 +4,6 @@ import { routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import { Routes } from './Routes';
 import './App.scss';
-import * as AppActions from './AppActions';
 
 class App extends Component {
     componentDidMount () {
@@ -14,9 +13,6 @@ class App extends Component {
 
         this.appNav = insights.chrome.on('APP_NAVIGATION', event => this.props.history.push(`/${event.navId}`));
         this.buildNav = this.props.history.listen(() => insights.chrome.navigation(buildNavigation()));
-
-        this.props.fetchImpactedSystems();
-        this.props.fetchMediumRiskRules();
     }
 
     componentWillUnmount () {
@@ -26,25 +22,18 @@ class App extends Component {
 
     render () {
         return (
-            <Routes childProps={ this.props } />
+            <Routes childProps={ this.props }/>
         );
     }
 }
 
 App.propTypes = {
-    history: PropTypes.object,
-    fetchImpactedSystems: PropTypes.func,
-    fetchMediumRiskRules: PropTypes.func
+    history: PropTypes.object
 };
-
-const mapDispatchToProps = dispatch => ({
-    fetchImpactedSystems: () => dispatch(AppActions.fetchImpactedSystems()),
-    fetchMediumRiskRules: () => dispatch(AppActions.fetchMediumRiskRules())
-});
 
 export default routerParams(connect(
     null,
-    mapDispatchToProps
+    null
 )(App));
 
 function buildNavigation () {

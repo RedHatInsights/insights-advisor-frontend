@@ -72,19 +72,22 @@ class ListRules extends React.Component {
 
         return (
             <Main>
-                { rulesFetchStatus === 'fulfilled' && (
-                    <React.Fragment>
-                        { this.state.cards }
-                        <Pagination
-                            numberOfItems={ rules.count }
-                            onPerPageSelect={ this.setPerPage }
-                            page={ this.state.page }
-                            onSetPage={ this.setPage }
-                            itemsPerPage={ this.state.itemsPerPage }
-                        />
-                    </React.Fragment>
-                ) }
-                { rulesFetchStatus === 'pending' && (<Loading />) }
+                <React.Fragment>
+                    { rulesFetchStatus === 'fulfilled' && (
+                        <React.Fragment>
+                            { this.state.cards }
+                            <Pagination
+                                numberOfItems={ rules.count }
+                                onPerPageSelect={ this.setPerPage }
+                                page={ this.state.page }
+                                onSetPage={ this.setPage }
+                                itemsPerPage={ this.state.itemsPerPage }
+                            />
+                        </React.Fragment>
+                    ) }
+                    { rulesFetchStatus === 'pending' && (<Loading />) }
+                </React.Fragment>
+
             </Main>
         );
 

@@ -83,14 +83,12 @@ class ActionsOverview extends Component {
                         <GridItem>
                             <Card className='pf-t-light  pf-m-opaque-100'>
                                 <CardHeader>Category Summary</CardHeader>
-
                                 <CardBody>
                                     { statsFetchStatus === 'fulfilled' && (
                                         renderDonut(donutValues)
                                     ) }
                                     { statsFetchStatus === 'pending' && (<Loading/>) }
                                 </CardBody>
-
                             </Card>
                         </GridItem>
                         <GridItem>

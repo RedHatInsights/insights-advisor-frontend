@@ -3,10 +3,8 @@ import * as ActionTypes from './AppConstants';
 
 // eslint-disable-next-line new-cap
 const initialState = Immutable({
-    mediumRiskRules: {},
-    mediumRiskRulesFetchStatus: '',
-    impactedSystems: [],
-    impactedSystemsFetchStatus: '',
+    rule: {},
+    ruleFetchStatus: '',
     rules: {},
     rulesFetchStatus: '',
     stats: {},
@@ -20,24 +18,14 @@ const initialState = Immutable({
 
 export const AdvisorStore = (state = initialState, action) => {
     switch (action.type) {
-
-        case `${ActionTypes.MEDIUM_RISK_RULES_FETCH}_PENDING`:
-            return state.set('mediumRiskRulesFetchStatus', 'pending');
-        case `${ActionTypes.MEDIUM_RISK_RULES_FETCH}_FULFILLED`:
+        case `${ActionTypes.RULE_FETCH}_PENDING`:
+            return state.set('ruleFetchStatus', 'pending');
+        case `${ActionTypes.RULE_FETCH}_FULFILLED`:
             return Immutable.merge(state, {
-                mediumRiskRules: action.payload,
-                mediumRiskRulesFetchStatus: 'fulfilled' });
-        case `${ActionTypes.MEDIUM_RISK_RULES_FETCH}_REJECTED`:
-            return state.set('mediumRiskRulesFetchStatus', 'rejected');
-
-        case `${ActionTypes.IMPACTED_SYSTEMS_FETCH}_PENDING`:
-            return state.set('impactedSystemsFetchStatus', 'pending');
-        case `${ActionTypes.IMPACTED_SYSTEMS_FETCH}_FULFILLED`:
-            return Immutable.merge(state, {
-                impactedSystems: action.payload.resources,
-                impactedSystemsFetchStatus: 'fulfilled' });
-        case `${ActionTypes.IMPACTED_SYSTEMS_FETCH}_REJECTED`:
-            return state.set('impactedSystemsFetchStatus', 'rejected');
+                rule: action.payload,
+                ruleFetchStatus: 'fulfilled' });
+        case `${ActionTypes.RULE_FETCH}_REJECTED`:
+            return state.set('ruleFetchStatus', 'rejected');
 
         case `${ActionTypes.RULES_FETCH}_PENDING`:
             return state.set('rulesFetchStatus', 'pending');
