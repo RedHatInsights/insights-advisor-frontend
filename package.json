@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@babel/runtime": "7.1.2",
-    "@patternfly/patternfly-next": "1.0.62",
-    "@patternfly/react-core": "1.26.0",
+    "@patternfly/patternfly-next": "1.0.64",
+    "@patternfly/react-core": "1.27.5",
+    "@patternfly/react-icons": "2.5.4",
     "@red-hat-insights/insights-frontend-components": "3.20.11",
     "classnames": "2.2.6",
-    "create-react-class": "15.6.3"
+    "create-react-class": "15.6.3",
+    "lodash": "4.17.11"
   },
   "sassIncludes": {
     "patternfly": "node_modules/patternfly/dist/sass",
@@ -39,7 +41,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.1.2",
-    "@babel/plugin-proposal-decorators": "^7.1.2",
+    "@babel/plugin-proposal-decorators": "7.1.2",
     "@babel/plugin-proposal-object-rest-spread": "7.0.0",
     "@babel/plugin-syntax-dynamic-import": "7.0.0",
     "@babel/plugin-transform-runtime": "7.1.0",
@@ -80,9 +82,10 @@
     "moment": "2.22.2",
     "node-sass": "4.9.4",
     "npm-run-all": "4.1.3",
+    "prop-types": "15.6.2",
     "react": "16.6.0",
     "react-dom": "16.6.0",
-    "react-redux": "5.0.7",
+    "react-redux": "5.1.0",
     "react-router-dom": "4.3.1",
     "react-test-renderer": "16.6.0",
     "react-timeago": "4.1.9",
@@ -98,7 +101,7 @@
     "stylelint-config-recommended-scss": "3.2.0",
     "stylelint-scss": "3.3.2",
     "topojson": "3.0.2",
-    "webpack": "4.22.0",
+    "webpack": "4.23.1",
     "webpack-bundle-analyzer": "3.0.3",
     "webpack-cli": "3.1.2",
     "webpack-serve": "1.0.2",
