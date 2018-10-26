@@ -53,8 +53,8 @@ class ActionsOverview extends Component {
         const renderDonut = (donutValues) =>
             <Donut key='advisor-donut' values={ donutValues } link={ typeLink } totalLabel='issues' identifier='advisor-donut' withLegend/>;
 
-        let SummaryChartItems = this.state.severity.map((value, key) => {
-            return <ConditionalLink
+        let SummaryChartItems = this.state.severity.map((value, key) =>
+            <ConditionalLink
                 key={ key }
                 condition={ value }
                 wrap={ children =>
@@ -66,8 +66,8 @@ class ActionsOverview extends Component {
                     name={ sevNames[key] }
                     numIssues={ value }
                     totalIssues={ this.state.total }/>
-            </ConditionalLink>;
-        });
+            </ConditionalLink>
+        );
 
         return (
             <React.Fragment>

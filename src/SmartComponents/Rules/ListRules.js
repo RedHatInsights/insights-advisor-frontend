@@ -31,8 +31,8 @@ class ListRules extends React.Component {
     componentDidUpdate(prevProps) {
         if (this.props.rules !== prevProps.rules) {
             const rules = this.props.rules.results;
-            const cards = rules.map((value, key) => {
-                return <RulesCard
+            const cards = rules.map((value, key) =>
+                <RulesCard
                     key = { key }
                     widget-id= { value }
                     ruleID = { value.rule_id }
@@ -45,8 +45,8 @@ class ListRules extends React.Component {
                     riskOfChange = { value.resolution_risk }
                     ansible = { value.ansible }
                     hitCount = { value.impacted_systems }
-                />;
-            });
+                />
+            );
             this.setState({ cards });
         }
     }
