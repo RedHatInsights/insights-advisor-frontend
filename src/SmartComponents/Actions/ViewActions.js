@@ -58,9 +58,8 @@ class ViewActions extends Component {
             const rules = this.props.rules.results;
             this.setState({ summary: this.props.rules.summary });
 
-            let rows = [];
-            rules.map((value, key) => {
-                rows.push({
+            let rows = rules.map((value, key) => {
+                return {
                     cells: [
                         <Link
                             key={ key }
@@ -94,7 +93,7 @@ class ViewActions extends Component {
                             unsupported={ value.ansible }
                         />
                     ]
-                });
+                };
             });
 
             this.setState({ rows });

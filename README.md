@@ -1,3 +1,6 @@
+# Insights Advisor Frontend (IAF)
+
+[![Build Status](https://travis-ci.org/RedHatInsights/insights-advisor-frontend.svg?branch=master)](https://travis-ci.org/RedHatInsights/insights-advisor-frontend)
 
 ## Getting Started
 There is a [comprehensive quick start guide in the Storybook Documentation](https://github.com/RedHatInsights/insights-frontend-storybook/blob/master/src/docs/welcome/quickStart/DOC.md) to setting up an Insights environment complete with:
@@ -7,7 +10,7 @@ There is a [comprehensive quick start guide in the Storybook Documentation](http
 
 Note: You will need to set up the Insights environment if you want to develop with the starter app due to the consumption of the chroming service as well as setting up your global/app navigation through the API.
 
-### Insights Proxy
+### Insights Proxy Environment
 [Insights Proxy](https://github.com/RedHatInsights/insights-proxy) is required to run the Advisor frontend. **Note An Advisor-specific proxy configuration is required for the frontend to communicate to the Advisor API POC**. To run the proxy with advisor-specific configuration run:
 ```
 cd /path/to/insights-advisor-frontend
@@ -20,17 +23,17 @@ Linux/Other
 ```
 docker run -v $PWD/config:/config --rm --net='host' -p1337:1337 -e PLATFORM=linux -ti docker.io/redhatinsights/insights-proxy
 ```
-## Build app
+### Build app
 1. ```npm install```
 
 2. ```npm start```
-    - starts webpack bundler and serves the files with webpack dev server
-    
-## Notes for Devs..   
-In order to consume the latest n greatest api work be to clear the prod base url located here https://github.com/RedHatInsights/insights-advisor-frontend/blob/c35ee95ac4f8a85c7e01f208bb25227991cebc36/src/AppConstants.js#L10
-This should read `const BASE_URL = '';`
 
 ### Testing
 - Travis is used to test the build for this code.
     - `npm run test` will run linters and tests
+    
+### Notes for Devs..   
+In order to consume the latest n greatest api work be to clear the [prod base url located here](https://github.com/RedHatInsights/insights-advisor-frontend/blob/master/src/AppConstants.js#L10)
+
+It should read `const BASE_URL = '';`
 
