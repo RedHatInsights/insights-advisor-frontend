@@ -31,24 +31,21 @@ class ListRules extends React.Component {
     componentDidUpdate(prevProps) {
         if (this.props.rules !== prevProps.rules) {
             const rules = this.props.rules.results;
-            let cards = [];
-            rules.map((value, key) => {
-                cards.push(
-                    <RulesCard
-                        key = { key }
-                        widget-id= { value }
-                        ruleID = { value.rule_id }
-                        category= { value.category.name }
-                        description= { value.description }
-                        summary= { value.summary_html }
-                        impact = { value.impact.impact }
-                        likelihood = { value.likelihood }
-                        totalRisk = { value.severity }
-                        riskOfChange = { value.resolution_risk }
-                        ansible = { value.ansible }
-                        hitCount = { value.impacted_systems }
-                    />
-                );
+            const cards = rules.map((value, key) => {
+                return <RulesCard
+                    key = { key }
+                    widget-id= { value }
+                    ruleID = { value.rule_id }
+                    category= { value.category.name }
+                    description= { value.description }
+                    summary= { value.summary_html }
+                    impact = { value.impact.impact }
+                    likelihood = { value.likelihood }
+                    totalRisk = { value.severity }
+                    riskOfChange = { value.resolution_risk }
+                    ansible = { value.ansible }
+                    hitCount = { value.impacted_systems }
+                />;
             });
             this.setState({ cards });
         }
