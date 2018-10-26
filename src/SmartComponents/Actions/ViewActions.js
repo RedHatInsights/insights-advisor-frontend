@@ -19,6 +19,7 @@ import { connect } from 'react-redux';
 import { Stack, StackItem } from '@patternfly/react-core';
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
+import Filters from '../Filters/Filters';
 import { buildBreadcrumbs, onNavigate } from '../../Helpers/breadcrumbs.js';
 import './_actions.scss';
 
@@ -37,10 +38,10 @@ class ViewActions extends Component {
             ],
             rows: [],
             sortBy: {},
-            filters: {},
             itemsPerPage: 10,
             page: 1,
-            things: []
+            things: [],
+            collapsedRiskOfChange: true
         };
         this.onSortChange = this.onSortChange.bind(this);
         this.toggleCol = this.toggleCol.bind(this);
@@ -116,6 +117,10 @@ class ViewActions extends Component {
 
             this.setState({ rows });
         }
+
+        if (this.props.currentFilters !== prevProps.currentFilters) {
+            this.props.fetchRules({ page_size: this.state.itemsPerPage, ...this.props.currentFilters }); // eslint-disable-line camelcase
+        }
     }
 
     toggleCol (_event, key, selected) {
@@ -155,7 +160,7 @@ class ViewActions extends Component {
         return parsedTitle.length > 1 ? `${parsedTitle[0]} ${parsedTitle[1]} Actions` : `${parsedTitle}`;
     }
 
-    render () {
+    render() {
         const { rulesFetchStatus, rules, breadcrumbs } = this.props;
 
         return (
@@ -176,30 +181,36 @@ class ViewActions extends Component {
                         <StackItem>
                             <p>{ this.state.summary }</p>
                         </StackItem>
-                        <StackItem className='advisor-l-actions__filters'>
-                            Filters
-                        </StackItem>
                         { rulesFetchStatus === 'fulfilled' && (
-                            <StackItem className='advisor-l-actions__table'>
-                                <Table
-                                    className='rules-table'
-                                    onItemSelect={ this.toggleCol }
-                                    hasCheckbox={ false }
-                                    header={ this.state.cols }
-                                    sortBy={ this.state.sortBy }
-                                    rows={ this.state.rows }
-                                    onSort={ this.onSortChange }
-                                    footer={
-                                        <Pagination
-                                            numberOfItems={ rules.count }
-                                            onPerPageSelect={ this.setPerPage }
-                                            page={ this.state.page }
-                                            onSetPage={ this.setPage }
-                                            itemsPerPage={ this.state.itemsPerPage }
-                                        />
-                                    }
-                                />
-                            </StackItem>
+                            <React.Fragment>
+                                <StackItem className='advisor-l-actions__filters'>
+                                    <Filters
+                                        history={ history }
+                                        search={ { display: false } }
+                                        totalRisk={ { display: true } }
+                                    />
+                                </StackItem>
+                                <StackItem className='advisor-l-actions__table'>
+                                    <Table
+                                        className='rules-table'
+                                        onItemSelect={ this.toggleCol }
+                                        hasCheckbox={ false }
+                                        header={ this.state.cols }
+                                        sortBy={ this.state.sortBy }
+                                        rows={ this.state.rows }
+                                        onSort={ this.onSortChange }
+                                        footer={
+                                            <Pagination
+                                                numberOfItems={ rules.count }
+                                                onPerPageSelect={ this.setPerPage }
+                                                page={ this.state.page }
+                                                onSetPage={ this.setPage }
+                                                itemsPerPage={ this.state.itemsPerPage }
+                                            />
+                                        }
+                                    />
+                                </StackItem>
+                            </React.Fragment>
                         ) }
                         { rulesFetchStatus === 'pending' && (<Loading/>) }
                     </Stack>
@@ -212,6 +223,7 @@ class ViewActions extends Component {
 ViewActions.propTypes = {
     breadcrumbs: PropTypes.array,
     fetchRules: PropTypes.func,
+    currentFilters: PropTypes.object,
     match: PropTypes.any,
     rulesFetchStatus: PropTypes.string,
     rules: PropTypes.object
@@ -219,6 +231,7 @@ ViewActions.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
     breadcrumbs: state.AdvisorStore.breadcrumbs,
+    currentFilters: state.AdvisorStore.currentFilters, //need to update to not use 'filters' as the keyword in the Store
     rules: state.AdvisorStore.rules,
     rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
     ...ownProps

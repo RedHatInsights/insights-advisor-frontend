@@ -5,6 +5,8 @@ import { applyReducerHash } from '@red-hat-insights/insights-frontend-components
 
 // eslint-disable-next-line new-cap
 const initialState = Immutable({
+    breadcrumbs: [],
+    currentFilters: {},
     rule: {},
     ruleFetchStatus: '',
     rules: {},
@@ -14,8 +16,7 @@ const initialState = Immutable({
     system: {},
     systemFetchStatus: '',
     systemtype: {},
-    systemtypeFetchStatus: '',
-    breadcrumbs: []
+    systemtypeFetchStatus: ''
 });
 
 export const AdvisorStore = (state = initialState, action) => {
@@ -73,6 +74,11 @@ export const AdvisorStore = (state = initialState, action) => {
         case ActionTypes.BREADCRUMBS_SET:
             return Immutable.merge(state, {
                 breadcrumbs: action.payload
+            });
+
+        case ActionTypes.CURRENT_FILTERS_SET:
+            return Immutable.merge(state, {
+                currentFilters: state.currentFilters.merge(action.payload)
             });
 
         default:

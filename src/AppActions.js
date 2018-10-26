@@ -23,3 +23,7 @@ export const setBreadcrumbs = (breadcrumbObj) => ({
     type: ActionTypes.BREADCRUMBS_SET,
     payload: breadcrumbObj
 });
+export const setCurrentFilters = (filterObj) => ({
+    type: ActionTypes.CURRENT_FILTERS_SET,
+    payload: filterObj
+});
