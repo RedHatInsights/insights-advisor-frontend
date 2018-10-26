@@ -48,30 +48,26 @@ class ActionsOverview extends Component {
         const {
             statsFetchStatus
         } = this.props;
+
+        const donutValues = this.state.category.map((value, key) => [ typeNames[key], value ]);
         const renderDonut = (donutValues) =>
             <Donut key='advisor-donut' values={ donutValues } link={ typeLink } totalLabel='issues' identifier='advisor-donut' withLegend/>;
-        let donutValues = [];
-        let SummaryChartItems = [];
 
-        this.state.severity.map((value, key) => {
-            SummaryChartItems.push(
-                <ConditionalLink
-                    key={ key }
-                    condition={ value }
-                    wrap={ children =>
-                        <Link to={ `/actions/${sevNames[key].toLowerCase()}-risk` }>
-                            { children }
-                        </Link>
-                    }>
-                    <SummaryChartItem
-                        name={ sevNames[key] }
-                        numIssues={ value }
-                        totalIssues={ this.state.total }/>
-                </ConditionalLink>
-            );
-        });
-
-        this.state.category.map((value, key) => donutValues.push([ typeNames[key], value ]));
+        const SummaryChartItems = this.state.severity.map((value, key) =>
+            <ConditionalLink
+                key={ key }
+                condition={ value }
+                wrap={ children =>
+                    <Link to={ `/actions/${sevNames[key].toLowerCase()}-risk` }>
+                        { children }
+                    </Link>
+                }>
+                <SummaryChartItem
+                    name={ sevNames[key] }
+                    numIssues={ value }
+                    totalIssues={ this.state.total }/>
+            </ConditionalLink>
+        );
 
         return (
             <React.Fragment>
