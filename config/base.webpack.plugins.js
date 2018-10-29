@@ -93,4 +93,10 @@ const HtmlReplaceWebpackPlugin = new(require('html-replace-webpack-plugin'))([{
 }]);
 plugins.push(HtmlReplaceWebpackPlugin);
 
+/**
+ * HMR
+ */
+const HotModuleReplacementPlugin = new webpack.HotModuleReplacementPlugin();
+plugins.push(HotModuleReplacementPlugin);
+
 module.exports = { plugins };
