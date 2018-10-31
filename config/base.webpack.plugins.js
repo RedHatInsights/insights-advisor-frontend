@@ -99,4 +99,12 @@ plugins.push(HtmlReplaceWebpackPlugin);
 const HotModuleReplacementPlugin = new webpack.HotModuleReplacementPlugin();
 plugins.push(HotModuleReplacementPlugin);
 
+/**
+ * Replaces any instance of RELEASE in js files with config.insightsDeployment value.
+ */
+const Release = new webpack.DefinePlugin({
+    RELEASE: JSON.stringify(config.insightsDeployment)
+});
+plugins.push(Release);
+
 module.exports = { plugins };
