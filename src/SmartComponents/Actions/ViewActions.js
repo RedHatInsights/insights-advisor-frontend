@@ -1,28 +1,28 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { routerParams } from '@red-hat-insights/insights-frontend-components';
-import PropTypes from 'prop-types';
-import { sortBy } from 'lodash';
-import { connect } from 'react-redux';
 import {
     Ansible,
     Battery,
     Breadcrumbs,
+    Main,
     PageHeader,
     PageHeaderTitle,
     Pagination,
+    routerParams,
     SortDirection,
-    Table,
-    Main
+    Table
 } from '@red-hat-insights/insights-frontend-components';
+import PropTypes from 'prop-types';
+import { sortBy } from 'lodash';
+import { connect } from 'react-redux';
 import { Stack, StackItem } from '@patternfly/react-core';
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
-import { onNavigate, buildBreadcrumbs } from '../../Helpers/breadcrumbs.js';
+import { buildBreadcrumbs, onNavigate } from '../../Helpers/breadcrumbs.js';
 import './_actions.scss';
 
 class ViewActions extends Component {
-    constructor(props) {
+    constructor (props) {
         super(props);
         this.state = {
             summary: '',
@@ -36,6 +36,7 @@ class ViewActions extends Component {
             ],
             rows: [],
             sortBy: {},
+            filters: {},
             itemsPerPage: 10,
             page: 1,
             things: []
@@ -47,16 +48,16 @@ class ViewActions extends Component {
         this.setPerPage = this.setPerPage.bind(this);
     }
 
-    componentDidMount() {
+    componentDidMount () {
         document.getElementById('root').classList.add('actions__view');
-        // TODO: filtering based on route will also be done here, but waiting for api...
-        this.props.fetchRules({ page_size: this.state.itemsPerPage  }); // eslint-disable-line camelcase
+        this.props.fetchRules({ page_size: this.state.itemsPerPage, category: this.props.match.params.type }); // eslint-disable-line camelcase
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate (prevProps) {
         if (this.props.rules !== prevProps.rules) {
             const rules = this.props.rules.results;
             this.setState({ summary: this.props.rules.summary });
+            this.setState({ filters: { category: this.props.match.params.type }});
 
             let rows = rules.map((value, key) => {
                 return {
@@ -100,7 +101,7 @@ class ViewActions extends Component {
         }
     }
 
-    toggleCol(_event, key, selected) {
+    toggleCol (_event, key, selected) {
         let { rows, page, itemsPerPage } = this.state;
         const firstIndex = page === 1 ? 0 : page * itemsPerPage - itemsPerPage;
         rows[firstIndex + key].selected = selected;
@@ -110,7 +111,7 @@ class ViewActions extends Component {
         });
     }
 
-    onSortChange(_event, key, direction) {
+    onSortChange (_event, key, direction) {
         const sortedRows = sortBy(this.state.rows, [ e => e.cells[key] ]);
         this.setState({
             ...this.state,
@@ -122,22 +123,22 @@ class ViewActions extends Component {
         });
     }
 
-    setPage(page) {
+    setPage (page) {
         this.setState(() => ({ page }));
-        this.props.fetchRules({ page, page_size: this.state.itemsPerPage }); // eslint-disable-line camelcase
+        this.props.fetchRules({ page, page_size: this.state.itemsPerPage, ...this.state.filters }); // eslint-disable-line camelcase
     }
 
-    setPerPage(itemsPerPage) {
+    setPerPage (itemsPerPage) {
         this.setState(() => ({ itemsPerPage }));
-        this.props.fetchRules({ page_size: itemsPerPage  }); // eslint-disable-line camelcase
+        this.props.fetchRules({ page_size: itemsPerPage, ...this.state.filters }); // eslint-disable-line camelcase
     }
 
-    parseUrlTitle(title = '') {
+    parseUrlTitle (title = '') {
         const parsedTitle = title.split('-');
         return parsedTitle.length > 1 ? `${parsedTitle[0]} ${parsedTitle[1]} Actions` : `${parsedTitle}`;
     }
 
-    render() {
+    render () {
         const { rulesFetchStatus, rules, breadcrumbs } = this.props;
 
         return (
@@ -159,7 +160,7 @@ class ViewActions extends Component {
                             <p>{ this.state.summary }</p>
                         </StackItem>
                         <StackItem className='advisor-l-actions__filters'>
-              Filters
+                            Filters
                         </StackItem>
                         { rulesFetchStatus === 'fulfilled' && (
                             <StackItem className='advisor-l-actions__table'>
@@ -183,7 +184,7 @@ class ViewActions extends Component {
                                 />
                             </StackItem>
                         ) }
-                        { rulesFetchStatus === 'pending' && (<Loading />) }
+                        { rulesFetchStatus === 'pending' && (<Loading/>) }
                     </Stack>
                 </Main>
             </React.Fragment>
