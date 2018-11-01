@@ -35,7 +35,7 @@ class ActionsOverview extends Component {
 
     componentDidUpdate (prevProps) {
         if (this.props.stats !== prevProps.stats) {
-            const rules = this.props.stats.rules;
+            const rules = this.props.stats.reports;
             this.setState({ severity: [ rules.severity.Info, rules.severity.Warn, rules.severity.Error, rules.severity.Critical ]});
             this.setState({
                 category: [ rules.category.Availability, rules.category.Security, rules.category.Stability, rules.category.Performance ]
