@@ -15,13 +15,9 @@ Note: You will need to set up the Insights environment if you want to develop wi
 ```
 cd /path/to/insights-advisor-frontend
 ```
-OSX
+
 ```
-docker run -e LOCAL_CHROME -v $PWD/config:/config -e PLATFORM -e PORT -e LOCAL_API -e SPANDX_HOST -e SPANDX_PORT --rm -ti --name insightsproxy -p 1337:1337 docker.io/redhatinsights/insights-proxy
-```
-Linux/Other
-```
-docker run -v $PWD/config:/config --rm --net='host' -p1337:1337 -e PLATFORM=linux -ti docker.io/redhatinsights/insights-proxy
+docker run -v $PWD/config:/config --rm -ti --name insightsproxy -p 1337:1337 docker.io/redhatinsights/insights-proxy
 ```
 ### Build app
 1. ```npm install```
