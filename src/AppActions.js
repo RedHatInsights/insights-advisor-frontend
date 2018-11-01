@@ -18,7 +18,7 @@ export const setBreadcrumbs = (breadcrumbObj) => ({
     payload: breadcrumbObj
 });
 
-async function fetchData(url) {
-    const response = await API.get(url);
+async function fetchData (url, headers, options) {
+    const response = await API.get(url, headers, options);
     return response.data;
 }
