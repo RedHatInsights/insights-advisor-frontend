@@ -37,3 +37,6 @@ In order to consume the latest n greatest api work be to clear the [prod base ur
 
 It should read `const BASE_URL = '';`
 
+Also you are gonna have to stub the following header `x-rh-identity:{ "identity": { "account_number": "1234567"}}`
+else you'll likely get a bunch of `{"detail":"You do not have permission to perform this action."}`
+
