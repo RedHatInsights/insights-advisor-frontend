@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Ansible, Battery, Breadcrumbs, Main, PageHeader, PageHeaderTitle, routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
+import { Card, CardBody, Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
 import { buildBreadcrumbs, onNavigate, parseBreadcrumbs } from '../../Helpers/breadcrumbs.js';
 
 import * as AppActions from '../../AppActions';
@@ -59,7 +59,11 @@ class ListActions extends Component {
                                     </Grid>
                                 </StackItem>
                                 <StackItem>
-                                    <Inventory/>
+                                    <Card>
+                                        <CardBody>
+                                            <Inventory/>
+                                        </CardBody>
+                                    </Card>
                                 </StackItem>
                             </Stack>
                         ) }
