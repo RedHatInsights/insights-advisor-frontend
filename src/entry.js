@@ -7,7 +7,6 @@ import App from './App';
 
 // exposes webpack variable RELEASE
 /*global RELEASE:true*/
-/*eslint no-undef: "error"*/
 
 ReactDOM.render(
     <Provider store={ init().getStore() }>

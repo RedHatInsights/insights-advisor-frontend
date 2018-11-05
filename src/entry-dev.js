@@ -8,7 +8,6 @@ import logger from 'redux-logger';
 
 // exposes webpack variable RELEASE
 /*global RELEASE:true*/
-/*eslint no-undef: "error"*/
 
 ReactDOM.render(
     <Provider store={ init(logger).getStore() }>
