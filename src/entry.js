@@ -5,9 +5,12 @@ import { Provider } from 'react-redux';
 import { init } from './Store';
 import App from './App';
 
+// exposes webpack variable RELEASE
+/*global RELEASE:true*/
+
 ReactDOM.render(
     <Provider store={ init().getStore() }>
-        <Router basename='/insights/platform/advisor'>
+        <Router basename={ `/${RELEASE}/platform/advisor` }>
             <App />
         </Router>
     </Provider>,
