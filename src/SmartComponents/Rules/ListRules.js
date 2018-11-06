@@ -2,6 +2,7 @@ import React from 'react';
 import { Main, Pagination, routerParams } from '@red-hat-insights/insights-frontend-components';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
@@ -108,10 +109,10 @@ const mapStateToProps = (state, ownProps) => ({
     ...ownProps
 });
 
-const mapDispatchToProps = dispatch => ({
-    fetchRules: (url) => dispatch(AppActions.fetchRules(url)),
-    setBreadcrumbs: (obj) => dispatch(AppActions.setBreadcrumbs(obj))
-});
+const mapDispatchToProps = dispatch => bindActionCreators({
+    fetchRules: (url) => AppActions.fetchRules(url),
+    setBreadcrumbs: (obj) => AppActions.setBreadcrumbs(obj)
+}, dispatch);
 
 export default routerParams(connect(
     mapStateToProps,
