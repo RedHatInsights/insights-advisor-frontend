@@ -33,10 +33,6 @@ docker run -v $PWD/config:/config --rm --net='host' -p1337:1337 -e PLATFORM=linu
     - `npm run test` will run linters and tests
     
 ### Notes for Devs..   
-In order to consume the latest n greatest api work be to clear the [prod base url located here](https://github.com/RedHatInsights/insights-advisor-frontend/blob/master/src/AppConstants.js#L10)
-
-It should read `const BASE_URL = '';`
-
-Also you are gonna have to stub the following header `x-rh-identity:{ "identity": { "account_number": "1234567"}}`
+You are gonna have to stub the following header `x-rh-identity:{ "identity": { "account_number": "1234567"}}`
 else you'll likely get a bunch of `{"detail":"You do not have permission to perform this action."}`
 
