@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@babel/runtime": "7.1.2",
-    "@patternfly/patternfly-next": "1.0.67",
-    "@patternfly/react-core": "1.30.0",
+    "@patternfly/patternfly-next": "1.0.68",
+    "@patternfly/react-core": "1.30.2",
     "@patternfly/react-icons": "2.7.0",
-    "@red-hat-insights/insights-frontend-components": "3.20.11",
+    "@red-hat-insights/insights-frontend-components": "3.20.12",
     "classnames": "2.2.6",
     "create-react-class": "15.6.3",
     "lodash": "4.17.11"
@@ -100,7 +100,7 @@
     "stylelint-config-recommended-scss": "3.2.0",
     "stylelint-scss": "3.3.2",
     "topojson": "3.0.2",
-    "webpack": "4.25.0",
+    "webpack": "4.25.1",
     "webpack-bundle-analyzer": "3.0.3",
     "webpack-cli": "3.1.2",
     "webpack-dev-server": "3.1.10",
@@ -119,5 +119,8 @@
     "travis:build": "NODE_ENV=production webpack --config config/prod.webpack.config.js",
     "travis:verify": "npm-run-all travis:build lint test",
     "verify": "npm-run-all build lint test"
+  },
+  "insights": {
+    "appname": "advisor"
   }
 }
