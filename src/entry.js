@@ -4,6 +4,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { init } from './Store';
 import App from './App';
+import { NotificationsPortal } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 
 // exposes webpack variable RELEASE
 /*global RELEASE:true*/
@@ -11,7 +12,10 @@ import App from './App';
 ReactDOM.render(
     <Provider store={ init().getStore() }>
         <Router basename={ `/${RELEASE}/platform/advisor` }>
-            <App />
+            <React.Fragment>
+                <NotificationsPortal />
+                <App />
+            </React.Fragment>
         </Router>
     </Provider>,
     document.getElementById('root')
