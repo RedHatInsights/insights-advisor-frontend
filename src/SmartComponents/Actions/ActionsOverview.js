@@ -131,4 +131,3 @@ export default routerParams(connect(
     mapStateToProps,
     mapDispatchToProps
 )(ActionsOverview));
-

@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { init } from './Store';
 import App from './App';
 import logger from 'redux-logger';
+import { NotificationsPortal } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 
 // exposes webpack variable RELEASE
 /*global RELEASE:true*/
@@ -12,7 +13,10 @@ import logger from 'redux-logger';
 ReactDOM.render(
     <Provider store={ init(logger).getStore() }>
         <Router basename={ `/${RELEASE}/platform/advisor` }>
-            <App />
+            <React.Fragment>
+                <NotificationsPortal />
+                <App />
+            </React.Fragment>
         </Router>
     </Provider>,
     document.getElementById('root')
