@@ -1,5 +1,7 @@
 import Immutable from 'seamless-immutable';
 import * as ActionTypes from './AppConstants';
+import InventoryRuleList from './PresentationalComponents/Inventory/InventoryRuleList';
+import { applyReducerHash } from '@red-hat-insights/insights-frontend-components/Utilities/ReducerRegistry';
 
 // eslint-disable-next-line new-cap
 const initialState = Immutable({
@@ -23,7 +25,8 @@ export const AdvisorStore = (state = initialState, action) => {
         case `${ActionTypes.RULE_FETCH}_FULFILLED`:
             return Immutable.merge(state, {
                 rule: action.payload,
-                ruleFetchStatus: 'fulfilled' });
+                ruleFetchStatus: 'fulfilled'
+            });
         case `${ActionTypes.RULE_FETCH}_REJECTED`:
             return state.set('ruleFetchStatus', 'rejected');
 
@@ -32,7 +35,8 @@ export const AdvisorStore = (state = initialState, action) => {
         case `${ActionTypes.RULES_FETCH}_FULFILLED`:
             return Immutable.merge(state, {
                 rules: action.payload,
-                rulesFetchStatus: 'fulfilled' });
+                rulesFetchStatus: 'fulfilled'
+            });
         case `${ActionTypes.RULES_FETCH}_REJECTED`:
             return state.set('rulesFetchStatus', 'rejected');
 
@@ -41,7 +45,8 @@ export const AdvisorStore = (state = initialState, action) => {
         case `${ActionTypes.STATS_FETCH}_FULFILLED`:
             return Immutable.merge(state, {
                 stats: action.payload,
-                statsFetchStatus: 'fulfilled' });
+                statsFetchStatus: 'fulfilled'
+            });
         case `${ActionTypes.STATS_FETCH}_REJECTED`:
             return state.set('statsFetchStatus', 'rejected');
 
@@ -50,7 +55,8 @@ export const AdvisorStore = (state = initialState, action) => {
         case `${ActionTypes.SYSTEM_FETCH}_FULFILLED`:
             return Immutable.merge(state, {
                 system: action.payload,
-                systemFetchStatus: 'fulfilled' });
+                systemFetchStatus: 'fulfilled'
+            });
         case `${ActionTypes.SYSTEM_FETCH}_REJECTED`:
             return state.set('systemFetchStatus', 'rejected');
 
@@ -59,7 +65,8 @@ export const AdvisorStore = (state = initialState, action) => {
         case `${ActionTypes.SYSTEMTYPE_FETCH}_FULFILLED`:
             return Immutable.merge(state, {
                 systemtype: action.payload,
-                systemtypeFetchStatus: 'fulfilled' });
+                systemtypeFetchStatus: 'fulfilled'
+            });
         case `${ActionTypes.SYSTEMTYPE_FETCH}_REJECTED`:
             return state.set('systemFetchStatus', 'rejected');
 
@@ -72,3 +79,23 @@ export const AdvisorStore = (state = initialState, action) => {
             return state;
     }
 };
+
+export function entitiesDetailsReducer (ActionTypes) {
+    return applyReducerHash(
+        {
+            [`${ActionTypes.LOAD_ENTITY}_FULFILLED`]: enableApplications
+        },
+        {}
+    );
+}
+
+function enableApplications (state) {
+    return {
+        ...state,
+        loaded: true,
+        activeApps: [
+            { title: 'Configuration Assessment', name: 'configuration_assessment', component: InventoryRuleList }
+
+        ]
+    };
+}

@@ -5,6 +5,7 @@ import * as reactIcons from '@patternfly/react-icons';
 import { registry } from '@red-hat-insights/insights-frontend-components';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import PropTypes from 'prop-types';
+import { entitiesDetailsReducer } from '../../AppReducer';
 
 @registry()
 class Inventory extends React.Component {
@@ -20,7 +21,12 @@ class Inventory extends React.Component {
 
     async fetchInventory () {
         const items = this.props.items;
-        const { inventoryConnector, mergeWithEntities, mergeWithDetail } = await window.insights.loadInventory({
+        const {
+            inventoryConnector,
+            INVENTORY_ACTION_TYPES,
+            mergeWithEntities,
+            mergeWithDetail
+        } = await window.insights.loadInventory({
             react: React,
             reactRouterDom,
             reactCore,
@@ -29,7 +35,7 @@ class Inventory extends React.Component {
 
         this.getRegistry().register({
             ...mergeWithEntities(),
-            ...mergeWithDetail()
+            ...mergeWithDetail(entitiesDetailsReducer(INVENTORY_ACTION_TYPES))
         });
 
         this.setState({

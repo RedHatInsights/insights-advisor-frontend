@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Card, CardHeader, CardBody, CardFooter } from '@patternfly/react-core';
 
 import '../_Skeleton.scss';
-import '../../RulesCard/_RulesCard.scss';
+import '../../Cards/_RulesCard.scss';
 
 /**
  * This is the async skeleton loader for the rules card
