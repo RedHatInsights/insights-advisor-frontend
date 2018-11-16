@@ -1,3 +1,4 @@
+/* eslint camelcase: 0 */
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -50,14 +51,30 @@ class ViewActions extends Component {
 
     componentDidMount () {
         document.getElementById('root').classList.add('actions__view');
-        this.props.fetchRules({ page_size: this.state.itemsPerPage, category: this.props.match.params.type }); // eslint-disable-line camelcase
+        const riskMap = {
+            'critical-risk': 1,
+            'high-risk': 2,
+            'medium-risk': 3,
+            'low-risk': 4
+        };
+        const options = { page_size: this.state.itemsPerPage };
+
+        if (this.props.match.params.type.includes('-risk')) {
+            const risk = riskMap[this.props.match.params.type];
+            this.setState({ filters: { res_risk: risk }});
+            options.res_risk = risk;
+        } else {
+            this.setState({ filters: { category: this.props.match.params.type }});
+            options.category = this.props.match.params.type;
+        }
+
+        this.props.fetchRules(options);
     }
 
     componentDidUpdate (prevProps) {
         if (this.props.rules !== prevProps.rules) {
             const rules = this.props.rules.results;
             this.setState({ summary: this.props.rules.summary });
-            this.setState({ filters: { category: this.props.match.params.type }});
 
             let rows = rules.map((value, key) => {
                 return {
