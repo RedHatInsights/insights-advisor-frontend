@@ -10,7 +10,7 @@ export function init (...middleware) {
     const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
     registry = getRegistry(
         {},
-        [ ...middleware, promiseMiddleware(), notificationsMiddleware() ],
+        [ ...middleware, promiseMiddleware(), notificationsMiddleware({ errorDescriptionKey: 'response.data' }) ],
         composeEnhancers
     );
 
