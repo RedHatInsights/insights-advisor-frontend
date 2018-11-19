@@ -29,6 +29,11 @@ export const fetchRule = (options) => ({
     meta: notificationGenerator('Rule')
 
 });
+export const fetchSystem = (options) => ({
+    type: ActionTypes.SYSTEM_FETCH,
+    payload: fetchData(ActionTypes.SYSTEM_FETCH_URL, {}, options),
+    meta: notificationGenerator('Systems')
+});
 export const setBreadcrumbs = (breadcrumbObj) => ({
     type: ActionTypes.BREADCRUMBS_SET,
     payload: breadcrumbObj
