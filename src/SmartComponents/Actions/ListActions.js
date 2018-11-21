@@ -1,3 +1,4 @@
+/* eslint camelcase: 0 */
 import React, { Component } from 'react';
 import { Ansible, Battery, Breadcrumbs, Main, PageHeader, PageHeaderTitle, routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
@@ -12,12 +13,12 @@ import './_actions.scss';
 
 class ListActions extends Component {
     componentDidMount () {
-        this.props.fetchRule({ rule_id: this.props.match.params.id }); // eslint-disable-line camelcase
+        this.props.fetchRule({ rule_id: this.props.match.params.id });
+        this.props.fetchSystem({ rule_id: this.props.match.params.id });
     }
 
     render () {
-        const { breadcrumbs, ruleFetchStatus, rule } = this.props;
-
+        const { breadcrumbs, ruleFetchStatus, rule, systemFetchStatus, system } = this.props;
         return (
             <React.Fragment>
                 <Breadcrumbs
@@ -52,19 +53,22 @@ class ListActions extends Component {
                                                     </Grid>
                                                 </GridItem>
                                                 <GridItem sm={ 4 } md={ 12 }>
-                                                    <Battery label='Risk Of Change' severity={ rule.resolution_risk  }/>
+                                                    <Battery label='Risk Of Change' severity={ rule.resolution_risk }/>
                                                 </GridItem>
                                             </Grid>
                                         </GridItem>
                                     </Grid>
                                 </StackItem>
-                                <StackItem>
-                                    <Card>
-                                        <CardBody>
-                                            <Inventory/>
-                                        </CardBody>
-                                    </Card>
-                                </StackItem>
+                                { systemFetchStatus === 'fulfilled' && (
+                                    <StackItem>
+                                        <Card>
+                                            <CardBody>
+                                                <Inventory items={ system.results.map(item => item.uuid) }/>
+                                            </CardBody>
+                                        </Card>
+                                    </StackItem>
+                                ) }
+                                { systemFetchStatus === 'pending' && (<Loading/>) }
                             </Stack>
                         ) }
                         { ruleFetchStatus === 'pending' && (<Loading/>) }
@@ -80,19 +84,25 @@ ListActions.propTypes = {
     match: PropTypes.any,
     fetchRule: PropTypes.func,
     ruleFetchStatus: PropTypes.string,
-    rule: PropTypes.object
+    rule: PropTypes.object,
+    fetchSystem: PropTypes.func,
+    systemFetchStatus: PropTypes.string,
+    system: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
     rule: state.AdvisorStore.rule,
     ruleFetchStatus: state.AdvisorStore.ruleFetchStatus,
     breadcrumbs: state.AdvisorStore.breadcrumbs,
+    system: state.AdvisorStore.system,
+    systemFetchStatus: state.AdvisorStore.systemFetchStatus,
     ...state,
     ...ownProps
 });
 
 const mapDispatchToProps = dispatch => ({
-    fetchRule: (url) => dispatch(AppActions.fetchRule(url))
+    fetchRule: (url) => dispatch(AppActions.fetchRule(url)),
+    fetchSystem: (url) => dispatch(AppActions.fetchSystem(url))
 });
 
 export default routerParams(connect(
