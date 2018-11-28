@@ -52,10 +52,10 @@ class ViewActions extends Component {
     componentDidMount () {
         document.getElementById('root').classList.add('actions__view');
         const riskMap = {
-            'critical-risk': 1,
-            'high-risk': 2,
-            'medium-risk': 3,
-            'low-risk': 4
+            'critical-risk': 4,
+            'high-risk': 3,
+            'medium-risk': 2,
+            'low-risk': 1
         };
         const options = { page_size: this.state.itemsPerPage };
 
