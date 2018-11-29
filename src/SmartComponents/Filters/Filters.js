@@ -3,6 +3,7 @@ import { Grid, GridItem } from '@patternfly/react-core';
 import { routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import * as AppActions from '../../AppActions';
+import Search from './Search.js';
 import DropdownSort from './DropdownSort.js';
 import PropTypes from 'prop-types';
 import queryString from 'query-string';
@@ -24,17 +25,28 @@ class Filters extends Component {
     }
 
     render () {
+        const { onPage } = this.props;
+
         return (
             <Grid gutter='sm'>
-                <GridItem md={ 4 } sm={ 4 }>
-                    <DropdownSort
-                        className='dropdownTotalRisk'
-                        title='Sort by Total Risk'
-                        dropdownItems={ [ 'All', 'Low', 'Medium', 'High', 'Critical' ] }
-                        dropdownValues={ [ 'ALL', 'INFO', 'WARN', 'ERROR', 'CRITICAL' ] }
+                <GridItem md={ 8 } sm={ 6 }>
+                    <Search
+                        className='advisorSearch'
+                        placeholder='Find a rule'
                         updateFilters={ this.updateFilters }
                     />
                 </GridItem>
+                { onPage === 'viewactions' && (
+                    <GridItem md={ 4 } sm={ 4 }>
+                        <DropdownSort
+                            className='dropdownTotalRisk'
+                            title='Sort by Total Risk'
+                            dropdownItems={ [ 'All', 'Low', 'Medium', 'High', 'Critical' ] }
+                            dropdownValues={ [ 'ALL', 'INFO', 'WARN', 'ERROR', 'CRITICAL' ] }
+                            updateFilters={ this.updateFilters }
+                        />
+                    </GridItem>
+                ) }
             </Grid>
         );
     }
@@ -42,6 +54,7 @@ class Filters extends Component {
 
 Filters.propTypes = {
     currentFilters: PropTypes.object,
+    onPage: PropTypes.string,
     history: PropTypes.object,
     setCurrentFilters: PropTypes.func
 };

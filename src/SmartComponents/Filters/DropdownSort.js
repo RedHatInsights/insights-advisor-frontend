@@ -23,10 +23,10 @@ class DropdownSort extends Component {
 
         switch (this.props.title) {
             case 'Name' :
-                this.props.updateFilters({ name: selected }, 'name', selected);
+                this.props.updateFilters({ name: selected });
                 break;
             case 'Sort by Total Risk' :
-                this.props.updateFilters({ totalRisk: selected }, 'totalRisk', selected); // eslint-disable-line camelcase
+                this.props.updateFilters({ totalRisk: selected });
                 break;
         }
 

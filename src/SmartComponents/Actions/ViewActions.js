@@ -185,9 +185,8 @@ class ViewActions extends Component {
                             <React.Fragment>
                                 <StackItem className='advisor-l-actions__filters'>
                                     <Filters
+                                        onPage='viewactions'
                                         history={ history }
-                                        search={ { display: false } }
-                                        totalRisk={ { display: true } }
                                     />
                                 </StackItem>
                                 <StackItem className='advisor-l-actions__table'>
