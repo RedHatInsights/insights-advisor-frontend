@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Ansible, Battery, Breadcrumbs, Main, PageHeader, PageHeaderTitle, routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Card, CardBody, Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
 import { buildBreadcrumbs, onNavigate, parseBreadcrumbs } from '../../Helpers/breadcrumbs.js';
 
 import * as AppActions from '../../AppActions';
@@ -40,7 +40,17 @@ class ListActions extends Component {
                                 <StackItem>
                                     <Grid gutter='md'>
                                         <GridItem md={ 8 } sm={ 12 }>
-                                            <div className='actions__description' dangerouslySetInnerHTML={ { __html: rule.summary_html } }/>
+                                            <Grid>
+                                                <GridItem className='actions__description' dangerouslySetInnerHTML={ { __html: rule.summary_html } }/>
+                                                { rule.node_id && (
+                                                    <GridItem>
+                                                        <a href={ `https://access.redhat.com/solutions/${rule.node_id}` }>
+                                                        Knowledgebase Article
+                                                        </a>
+                                                    </GridItem>
+                                                ) }
+                                                <GridItem>Published: { `${(new Date(rule.publish_date)).toLocaleDateString()}` }</GridItem>
+                                            </Grid>
                                         </GridItem>
                                         <GridItem md={ 4 } sm={ 12 }>
                                             <Grid gutter='sm' className='actions__detail'>
@@ -59,16 +69,20 @@ class ListActions extends Component {
                                         </GridItem>
                                     </Grid>
                                 </StackItem>
-                                { systemFetchStatus === 'fulfilled' && (
-                                    <StackItem>
-                                        <Card>
-                                            <CardBody>
+                                <StackItem>
+                                    <Card>
+                                        <CardHeader>
+                                            <strong>Affected Hosts</strong>
+                                        </CardHeader>
+                                        <CardBody>
+                                            { systemFetchStatus === 'fulfilled' && (
+
                                                 <Inventory items={ system.results.map(item => item.uuid) }/>
-                                            </CardBody>
-                                        </Card>
-                                    </StackItem>
-                                ) }
-                                { systemFetchStatus === 'pending' && (<Loading/>) }
+                                            ) }
+                                            { systemFetchStatus === 'pending' && (<Loading/>) }
+                                        </CardBody>
+                                    </Card>
+                                </StackItem>
                             </Stack>
                         ) }
                         { ruleFetchStatus === 'pending' && (<Loading/>) }
