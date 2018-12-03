@@ -230,7 +230,7 @@ ViewActions.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
     breadcrumbs: state.AdvisorStore.breadcrumbs,
-    currentFilters: state.AdvisorStore.currentFilters, //need to update to not use 'filters' as the keyword in the Store
+    currentFilters: state.AdvisorStore.currentFilters,
     rules: state.AdvisorStore.rules,
     rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
     ...ownProps

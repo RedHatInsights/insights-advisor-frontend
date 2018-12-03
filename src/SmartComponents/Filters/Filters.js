@@ -33,6 +33,7 @@ class Filters extends Component {
                     <Search
                         className='advisorSearch'
                         placeholder='Find a rule'
+                        searchTerm={ this.props.currentFilters.search }
                         updateFilters={ this.updateFilters }
                     />
                 </GridItem>

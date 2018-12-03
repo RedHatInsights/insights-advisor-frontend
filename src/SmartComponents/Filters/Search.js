@@ -12,6 +12,10 @@ class Search extends Component {
         this.onChange = this.onChange.bind(this);
     }
 
+    componentDidMount () {
+        document.getElementById('advisorSearch').focus();
+    }
+
     onChange (event) {
         this.props.updateFilters({ search: event.target.value });
         return false;
@@ -22,9 +26,11 @@ class Search extends Component {
         return (
             <Input
                 className={ this.props.className }
+                id='advisorSearch'
                 onChange={ this.onChange }
                 placeholder={ this.props.placeholder }
                 type='text'
+                value={ this.props.searchTerm || '' }
             />
         );
     }
@@ -32,6 +38,7 @@ class Search extends Component {
 Search.propTypes = {
     className: PropTypes.string,
     placeholder: PropTypes.string,
+    searchTerm: PropTypes.string,
     updateFilters: PropTypes.func
 };
 
