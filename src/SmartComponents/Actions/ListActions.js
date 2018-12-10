@@ -1,10 +1,20 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
-import { Ansible, Battery, Breadcrumbs, Main, PageHeader, PageHeaderTitle, routerParams } from '@red-hat-insights/insights-frontend-components';
+import {
+    Ansible,
+    Battery,
+    Breadcrumbs,
+    Main,
+    PageHeader,
+    PageHeaderTitle,
+    routerParams,
+    RemediationButton
+} from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Card, CardBody, CardHeader, Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
 import { buildBreadcrumbs, onNavigate, parseBreadcrumbs } from '../../Helpers/breadcrumbs.js';
+import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
@@ -12,9 +22,36 @@ import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import './_actions.scss';
 
 class ListActions extends Component {
+    constructor(props) {
+        super(props);
+
+        this.getSelectedItems = this.getSelectedItems.bind(this);
+        this.remediationDataProvider = this.remediationDataProvider.bind(this);
+        this.onRemediationCreated = this.onRemediationCreated.bind(this);
+    }
+
     componentDidMount () {
         this.props.fetchRule({ rule_id: this.props.match.params.id });
         this.props.fetchSystem({ rule_id: this.props.match.params.id });
+    }
+
+    getSelectedItems () {
+        if (!this.props.entities || !this.props.entities.loaded) {
+            return [];
+        }
+
+        return this.props.entities.entities.filter(entity => entity.selected).map(entity => entity.id);
+    }
+
+    remediationDataProvider () {
+        return {
+            issues: [{ id: `advisor:${this.props.match.params.id}` }],
+            systems: this.getSelectedItems()
+        };
+    }
+
+    onRemediationCreated (result) {
+        this.props.addNotification(result.getNotification());
     }
 
     render () {
@@ -64,6 +101,11 @@ class ListActions extends Component {
                                                 </GridItem>
                                                 <GridItem sm={ 4 } md={ 12 }>
                                                     <Battery label='Risk Of Change' severity={ rule.resolution_risk }/>
+                                                    <RemediationButton
+                                                        isDisabled = { this.getSelectedItems().length === 0 }
+                                                        dataProvider = { this.remediationDataProvider }
+                                                        onRemediationCreated = { this.onRemediationCreated }
+                                                    />
                                                 </GridItem>
                                             </Grid>
                                         </GridItem>
@@ -101,7 +143,9 @@ ListActions.propTypes = {
     rule: PropTypes.object,
     fetchSystem: PropTypes.func,
     systemFetchStatus: PropTypes.string,
-    system: PropTypes.object
+    system: PropTypes.object,
+    entities: PropTypes.any,
+    addNotification: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -110,13 +154,15 @@ const mapStateToProps = (state, ownProps) => ({
     breadcrumbs: state.AdvisorStore.breadcrumbs,
     system: state.AdvisorStore.system,
     systemFetchStatus: state.AdvisorStore.systemFetchStatus,
+    entities: state.entities,
     ...state,
     ...ownProps
 });
 
 const mapDispatchToProps = dispatch => ({
     fetchRule: (url) => dispatch(AppActions.fetchRule(url)),
-    fetchSystem: (url) => dispatch(AppActions.fetchSystem(url))
+    fetchSystem: (url) => dispatch(AppActions.fetchSystem(url)),
+    addNotification: data => dispatch(addNotification(data))
 });
 
 export default routerParams(connect(

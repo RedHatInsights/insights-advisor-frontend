@@ -13,7 +13,7 @@
     "@patternfly/patternfly-next": "1.0.90",
     "@patternfly/react-core": "1.38.4",
     "@patternfly/react-icons": "2.9.2",
-    "@red-hat-insights/insights-frontend-components": "3.24.0",
+    "@red-hat-insights/insights-frontend-components": "3.25.0",
     "classnames": "2.2.6",
     "create-react-class": "15.6.3",
     "lodash": "4.17.11"
