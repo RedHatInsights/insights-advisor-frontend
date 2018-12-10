@@ -13,7 +13,6 @@ export function init (...middleware) {
         [ ...middleware, promiseMiddleware(), notificationsMiddleware({ errorDescriptionKey: 'response.data' }) ],
         composeEnhancers
     );
-
     registry.register({ AdvisorStore });
     registry.register({ notifications });
 

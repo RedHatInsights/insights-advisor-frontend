@@ -4,7 +4,7 @@ import { Card, CardHeader, CardBody, CardFooter } from '@patternfly/react-core';
 import { Section } from '@red-hat-insights/insights-frontend-components';
 
 import '../../PresentationalComponents/Skeletons/_Skeleton.scss';
-import '../../PresentationalComponents/RulesCard/_RulesCard.scss';
+import '../../PresentationalComponents/Cards/_RulesCard.scss';
 
 const ViewRule = () => {
     return (
