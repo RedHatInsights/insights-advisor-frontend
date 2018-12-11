@@ -118,7 +118,8 @@ class ViewActions extends Component {
             this.setState({ rows });
         }
 
-        if (this.props.currentFilters !== prevProps.currentFilters) {
+        if (this.props.currentFilters !== prevProps.currentFilters ||
+            this.props.currentSort !== prevProps.currentSort) {
             this.props.fetchRules({ page_size: this.state.itemsPerPage, ...this.props.currentFilters }); // eslint-disable-line camelcase
         }
     }
@@ -223,6 +224,7 @@ ViewActions.propTypes = {
     breadcrumbs: PropTypes.array,
     fetchRules: PropTypes.func,
     currentFilters: PropTypes.object,
+    currentSort: PropTypes.object,
     match: PropTypes.any,
     rulesFetchStatus: PropTypes.string,
     rules: PropTypes.object
@@ -231,6 +233,7 @@ ViewActions.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
     breadcrumbs: state.AdvisorStore.breadcrumbs,
     currentFilters: state.AdvisorStore.currentFilters,
+    currentSort: state.AdvisorStore.currentSort,
     rules: state.AdvisorStore.rules,
     rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
     ...ownProps

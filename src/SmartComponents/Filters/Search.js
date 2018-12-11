@@ -5,9 +5,6 @@ import PropTypes from 'prop-types';
 class Search extends Component {
     constructor (props) {
         super(props);
-        this.state = {
-            value: ''
-        };
 
         this.onChange = this.onChange.bind(this);
     }

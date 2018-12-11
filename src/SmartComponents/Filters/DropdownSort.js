@@ -7,39 +7,33 @@ class DropdownSort extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            collapsed: true
+            isCollapsed: true
         };
         this.onSelect = this.onSelect.bind(this);
         this.onToggle = this.onToggle.bind(this);
-        this.decapitalizeFirstLetter = this.decapitalizeFirstLetter.bind(this);
-    }
-
-    decapitalizeFirstLetter(string) {
-        return string.charAt(0).toLowerCase() + string.slice(1);
     }
 
     onSelect(event) {
-        const selected = event.target.getAttribute('value');
+        event.stopPropagation();
+        event.preventDefault();
+        const selectedValue = event.target.getAttribute('value');
+        const seperator = '-';
 
         switch (this.props.title) {
             case 'Name' :
-                this.props.updateFilters({ name: selected });
+                this.props.updateSort({ sortBy: `name${seperator}${selectedValue}` });
                 break;
             case 'Sort by Total Risk' :
-                this.props.updateFilters({ totalRisk: selected });
+                this.props.updateSort({ sortBy: `totalRisk${seperator}${selectedValue}` });
+                // console.warn('here');
                 break;
         }
 
-        this.setState({
-            collapsed: !this.state.collapsed
-        });
-        return false;
+        this.setState({ isCollapsed: true });
     }
 
-    onToggle() {
-        this.setState({
-            collapsed: !this.state.collapsed
-        });
+    onToggle(_event, collapsed) {
+        this.setState({ isCollapsed: collapsed });
     }
 
     render() {
@@ -48,16 +42,15 @@ class DropdownSort extends Component {
         return (
             <Dropdown
                 className={ this.props.className }
-                isCollapsed={ this.state.collapsed }
-                onToggle={ this.onToggle }
+                isCollapsed={ this.state.isCollapsed }
                 onSelect={ this.onSelect }
+                onToggle={ this.onToggle }
                 title={ this.props.title }
             >
                 { dropdownItems.map((item, key) => (
                     <DropdownItem key={ key } value={ dropdownValues[key] }>{ item }</DropdownItem>
                 )) }
             </Dropdown>
-
         );
     }
 }
@@ -67,7 +60,8 @@ DropdownSort.propTypes = {
     dropdownItems: PropTypes.array,
     dropdownValues: PropTypes.array,
     title: PropTypes.string,
-    updateFilters: PropTypes.func
+    updateFilters: PropTypes.func,
+    updateSort: PropTypes.func
 };
 
 export default DropdownSort;

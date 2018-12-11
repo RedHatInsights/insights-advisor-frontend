@@ -27,3 +27,11 @@ export const setCurrentFilters = (filterObj) => ({
     type: ActionTypes.CURRENT_FILTERS_SET,
     payload: filterObj
 });
+export const setCurrentSort = (sortObj) => ({
+    type: ActionTypes.CURRENT_SORT_SET,
+    payload: sortObj
+});
+export const setCurrentUrlParams = (urlObj) => ({
+    type: ActionTypes.CURRENT_URL_PARAMS_SET,
+    payload: urlObj
+});

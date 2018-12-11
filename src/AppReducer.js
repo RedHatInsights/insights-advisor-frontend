@@ -7,6 +7,8 @@ import { applyReducerHash } from '@red-hat-insights/insights-frontend-components
 const initialState = Immutable({
     breadcrumbs: [],
     currentFilters: {},
+    currentSort: {},
+    currentUrlParameters: {},
     rule: {},
     ruleFetchStatus: '',
     rules: {},
@@ -79,6 +81,16 @@ export const AdvisorStore = (state = initialState, action) => {
         case ActionTypes.CURRENT_FILTERS_SET:
             return Immutable.merge(state, {
                 currentFilters: state.currentFilters.merge(action.payload)
+            });
+
+        case ActionTypes.CURRENT_SORT_SET:
+            return Immutable.merge(state, {
+                currentSort: state.currentSort.merge(action.payload)
+            });
+
+        case ActionTypes.CURRENT_URL_PARAMS_SET:
+            return Immutable.merge(state, {
+                currentUrlParameters: state.currentUrlParameters.merge(action.payload)
             });
 
         default:
