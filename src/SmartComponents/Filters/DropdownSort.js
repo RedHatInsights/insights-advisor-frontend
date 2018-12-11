@@ -25,7 +25,6 @@ class DropdownSort extends Component {
                 break;
             case 'Sort by Total Risk' :
                 this.props.updateSort({ sortBy: `totalRisk${seperator}${selectedValue}` });
-                // console.warn('here');
                 break;
         }
 

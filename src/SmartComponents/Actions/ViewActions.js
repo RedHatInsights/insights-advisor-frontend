@@ -40,8 +40,7 @@ class ViewActions extends Component {
             sortBy: {},
             itemsPerPage: 10,
             page: 1,
-            things: [],
-            collapsedRiskOfChange: true
+            things: []
         };
         this.onSortChange = this.onSortChange.bind(this);
         this.toggleCol = this.toggleCol.bind(this);
