@@ -4,19 +4,16 @@ import asyncComponent from '../../Utilities/asyncComponent';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Card, CardBody, CardHeader, Grid, GridItem } from '@patternfly/react-core';
-import { Donut, Main, PageHeader, PageHeaderTitle, routerParams } from '@red-hat-insights/insights-frontend-components';
+import { Main, PageHeader, PageHeaderTitle, routerParams } from '@red-hat-insights/insights-frontend-components';
 
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import '../../App.scss';
 
-const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/SummaryChart/SummaryChart.js'));
-const SummaryChartItem = asyncComponent(() => import('../../PresentationalComponents/SummaryChartItem/SummaryChartItem.js'));
-const ConditionalLink = asyncComponent(() => import('../../PresentationalComponents/ConditionalLink/ConditionalLink.js'));
-
-const sevNames = [ 'Low', 'Medium', 'High', 'Critical' ];
-const typeNames = [ 'Availability', 'Security', 'Stability', 'Performance' ];
-const typeLink = '/actions/';
+const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/SummaryChart/SummaryChart'));
+const SummaryChartItem = asyncComponent(() => import('../../PresentationalComponents/SummaryChartItem/SummaryChartItem'));
+const ConditionalLink = asyncComponent(() => import('../../PresentationalComponents/ConditionalLink/ConditionalLink'));
+const ActionsOverviewDonut = asyncComponent(() => import('../../PresentationalComponents/Charts/ActionsOverviewDonut'));
 
 class ActionsOverview extends Component {
     constructor (props) {
@@ -24,7 +21,8 @@ class ActionsOverview extends Component {
         this.state = {
             severity: [],
             total: 0,
-            category: []
+            category: [],
+            sevNames: [ 'Low', 'Medium', 'High', 'Critical' ]
         };
     }
 
@@ -49,21 +47,17 @@ class ActionsOverview extends Component {
             statsFetchStatus
         } = this.props;
 
-        const donutValues = this.state.category.map((value, key) => [ typeNames[key], value ]);
-        const renderDonut = (donutValues) =>
-            <Donut key='advisor-donut' values={ donutValues } link={ typeLink } totalLabel='issues' identifier='advisor-donut' withLegend/>;
-
         const SummaryChartItems = this.state.severity.map((value, key) =>
             <ConditionalLink
                 key={ key }
                 condition={ value }
                 wrap={ children =>
-                    <Link to={ `/actions/${sevNames[key].toLowerCase()}-risk` }>
+                    <Link to={ `/actions/${this.state.sevNames[key].toLowerCase()}-risk` }>
                         { children }
                     </Link>
                 }>
                 <SummaryChartItem
-                    name={ sevNames[key] }
+                    name={ this.state.sevNames[key] }
                     numIssues={ value }
                     totalIssues={ this.state.total }/>
             </ConditionalLink>
@@ -81,7 +75,7 @@ class ActionsOverview extends Component {
                                 <CardHeader>Category Summary</CardHeader>
                                 <CardBody>
                                     { statsFetchStatus === 'fulfilled' && (
-                                        renderDonut(donutValues)
+                                        <ActionsOverviewDonut category={ this.state.category }/>
                                     ) }
                                     { statsFetchStatus === 'pending' && (<Loading/>) }
                                 </CardBody>

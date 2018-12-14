@@ -21,3 +21,8 @@ ul.navigation-secondary {
       &:hover { color: var(--pf-global--link--Color); }
     }
   }
+
+.chart-inline {
+   svg:not(:root) {
+    overflow: visible; }
+}
