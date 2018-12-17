@@ -87,6 +87,7 @@ class ListActions extends Component {
                                                     </GridItem>
                                                 ) }
                                                 <GridItem>Published: { `${(new Date(rule.publish_date)).toLocaleDateString()}` }</GridItem>
+                                                <GridItem>Tags: { `${rule.tags || 'Not available'}` }</GridItem>
                                             </Grid>
                                         </GridItem>
                                         <GridItem md={ 4 } sm={ 12 }>
