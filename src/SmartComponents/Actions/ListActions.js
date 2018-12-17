@@ -101,12 +101,16 @@ class ListActions extends Component {
                                                 </GridItem>
                                                 <GridItem sm={ 4 } md={ 12 }>
                                                     <Battery label='Risk Of Change' severity={ rule.resolution_risk }/>
-                                                    <RemediationButton
-                                                        isDisabled = { this.getSelectedItems().length === 0 }
-                                                        dataProvider = { this.remediationDataProvider }
-                                                        onRemediationCreated = { this.onRemediationCreated }
-                                                    />
                                                 </GridItem>
+                                                { rule.has_playbook && (
+                                                    <GridItem>
+                                                        <RemediationButton
+                                                            isDisabled = { this.getSelectedItems().length === 0 }
+                                                            dataProvider = { this.remediationDataProvider }
+                                                            onRemediationCreated = { this.onRemediationCreated }
+                                                        />
+                                                    </GridItem>)
+                                                }
                                             </Grid>
                                         </GridItem>
                                     </Grid>
