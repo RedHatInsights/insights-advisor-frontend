@@ -44,7 +44,7 @@ class ListRules extends React.Component {
                     likelihood = { value.likelihood }
                     totalRisk = { value.severity }
                     riskOfChange = { value.resolution_risk }
-                    ansible = { value.ansible }
+                    ansible = { value.has_playbook }
                     hitCount = { value.impacted_systems }
                 />
             );
