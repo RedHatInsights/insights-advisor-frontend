@@ -20,9 +20,7 @@ class InventoryRuleList extends React.Component {
             inventoryRules: []
         };
 
-        this.fetchEntityRules = this.fetchEntityRules.bind(this);
         this.fetchEntityRules();
-        this.expandAll = this.expandAll.bind(this);
     }
 
     async fetchEntityRules () {
