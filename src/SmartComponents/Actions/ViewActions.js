@@ -57,7 +57,7 @@ class ViewActions extends Component {
             'medium-risk': 2,
             'low-risk': 1
         };
-        const options = { page_size: this.state.itemsPerPage };
+        const options = { page_size: this.state.itemsPerPage, impacting: true };
 
         if (this.props.match.params.type.includes('-risk')) {
             const risk = riskMap[this.props.match.params.type];
