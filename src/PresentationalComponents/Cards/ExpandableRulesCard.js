@@ -49,7 +49,7 @@ class ExpandableRulesCard extends React.Component {
                         <SplitItem> { rule.category.name } &gt; </SplitItem>
                         <SplitItem isMain> { rule.description } </SplitItem>
                         <SplitItem>
-                            <Ansible unsupported={ rule.ansible }/>
+                            <Ansible unsupported={ rule.has_playbook }/>
                         </SplitItem>
                     </Split>
                     <Split>
