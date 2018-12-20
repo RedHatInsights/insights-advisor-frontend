@@ -45,7 +45,7 @@ class ListRules extends React.Component {
                     totalRisk = { value.severity }
                     riskOfChange = { value.resolution_risk }
                     ansible = { value.has_playbook }
-                    hitCount = { value.impacted_systems }
+                    hitCount = { value.impacted_systems_count }
                 />
             );
             this.setState({ cards });
