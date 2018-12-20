@@ -9,5 +9,3 @@ export const LOAD_ENTITY = 'LOAD_ENTITY';
 const BASE_URL = '/r/insights/platform/advisor/v1';
 export const RULES_FETCH_URL = `${BASE_URL}/rule/`;
 export const STATS_FETCH_URL = `${BASE_URL}/stats/`;
-export const SYSTEM_FETCH_URL = `${BASE_URL}/system/`;
-export const SYSTEMTYPE_FETCH_URL = `${BASE_URL}/systemtype/`;

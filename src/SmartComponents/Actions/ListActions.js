@@ -140,7 +140,7 @@ class ListActions extends Component {
                                         <CardBody>
                                             { systemFetchStatus === 'fulfilled' && (
 
-                                                <Inventory items={ system.results.map(item => item.uuid) }/>
+                                                <Inventory items={ system.host_ids.map(item => item.uuid) }/>
                                             ) }
                                             { systemFetchStatus === 'pending' && (<Loading/>) }
                                         </CardBody>
