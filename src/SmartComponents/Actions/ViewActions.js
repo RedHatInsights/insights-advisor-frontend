@@ -57,7 +57,7 @@ class ViewActions extends Component {
             'medium-risk': 2,
             'low-risk': 1
         };
-        const options = { page_size: this.state.itemsPerPage, impacting: true };
+        const options = { page_size: this.state.itemsPerPage };
 
         if (this.props.match.params.type.includes('-risk')) {
             const risk = riskMap[this.props.match.params.type];
@@ -66,6 +66,7 @@ class ViewActions extends Component {
         } else {
             this.setState({ filters: { category: this.props.match.params.type }});
             options.category = this.props.match.params.type;
+            options.impacting = true;
         }
 
         this.props.fetchRules(options);
