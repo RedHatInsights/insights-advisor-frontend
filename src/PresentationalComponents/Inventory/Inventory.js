@@ -2,6 +2,7 @@ import React from 'react';
 import * as reactRouterDom from 'react-router-dom';
 import * as reactCore from '@patternfly/react-core';
 import * as reactIcons from '@patternfly/react-icons';
+import { PaginationRow } from 'patternfly-react';
 import { registry as registryDecorator } from '@red-hat-insights/insights-frontend-components';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import PropTypes from 'prop-types';
@@ -24,6 +25,7 @@ class Inventory extends React.Component {
             mergeWithEntities
         } = await insights.loadInventory({
             react: React,
+            pfReact: { PaginationRow },
             reactRouterDom,
             reactCore,
             reactIcons
