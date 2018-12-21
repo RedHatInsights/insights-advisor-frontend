@@ -7,8 +7,8 @@ import {
     Main,
     PageHeader,
     PageHeaderTitle,
-    routerParams,
-    RemediationButton
+    RemediationButton,
+    routerParams
 } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -20,19 +20,35 @@ import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import './_actions.scss';
+import API from '../../Utilities/Api';
 
 class ListActions extends Component {
-    constructor(props) {
-        super(props);
-
-        this.getSelectedItems = this.getSelectedItems.bind(this);
-        this.remediationDataProvider = this.remediationDataProvider.bind(this);
-        this.onRemediationCreated = this.onRemediationCreated.bind(this);
-    }
+    state = {
+        kbaDetails: {}
+    };
 
     componentDidMount () {
         this.props.fetchRule({ rule_id: this.props.match.params.id });
         this.props.fetchSystem({ rule_id: this.props.match.params.id });
+    }
+
+    componentDidUpdate (prevProps) {
+        if (this.props.ruleFetchStatus !== prevProps.ruleFetchStatus && prevProps.ruleFetchStatus === 'fulfilled') {
+            this.fetchKbaDetails();
+        }
+    }
+
+    async fetchKbaDetails () {
+        try {
+            const kbaDetails = (await API.get(`/rs/search?q=id:${this.props.rule.node_id }`)).data.response.docs[0];
+            this.setState({ kbaDetails });
+        } catch (error) {
+            this.props.addNotification({
+                variant: 'danger',
+                dismissable: true,
+                title: '',
+                description: 'KBA fetch failed.'
+            });        }
     }
 
     getSelectedItems () {
@@ -79,10 +95,10 @@ class ListActions extends Component {
                                         <GridItem md={ 8 } sm={ 12 }>
                                             <Grid>
                                                 <GridItem className='actions__description' dangerouslySetInnerHTML={ { __html: rule.summary_html } }/>
-                                                { rule.node_id && (
+                                                { this.state.kbaDetails && (
                                                     <GridItem>
-                                                        <a href={ `https://access.redhat.com/solutions/${rule.node_id}` }>
-                                                        Knowledgebase Article
+                                                        <a href={ this.state.kbaDetails.view_uri }>
+                                                            Knowledgebase Article
                                                         </a>
                                                     </GridItem>
                                                 ) }
@@ -106,9 +122,9 @@ class ListActions extends Component {
                                                 { rule.has_playbook && (
                                                     <GridItem>
                                                         <RemediationButton
-                                                            isDisabled = { this.getSelectedItems().length === 0 }
-                                                            dataProvider = { this.remediationDataProvider }
-                                                            onRemediationCreated = { this.onRemediationCreated }
+                                                            isDisabled={ this.getSelectedItems().length === 0 }
+                                                            dataProvider={ this.remediationDataProvider }
+                                                            onRemediationCreated={ this.onRemediationCreated }
                                                         />
                                                     </GridItem>)
                                                 }
@@ -124,7 +140,7 @@ class ListActions extends Component {
                                         <CardBody>
                                             { systemFetchStatus === 'fulfilled' && (
 
-                                                <Inventory items={ system.results.map(item => item.uuid) }/>
+                                                <Inventory items={ system.host_ids.map(item => item.uuid) }/>
                                             ) }
                                             { systemFetchStatus === 'pending' && (<Loading/>) }
                                         </CardBody>
