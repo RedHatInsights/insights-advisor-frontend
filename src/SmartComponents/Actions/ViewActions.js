@@ -106,7 +106,7 @@ class ViewActions extends Component {
                             labelHidden
                             severity={ value.severity }
                         />,
-                        <div key={ key }>{ value.impacted_systems }</div>,
+                        <div key={ key }>{ value.impacted_systems_count }</div>,
                         <Ansible
                             key={ key }
                             unsupported={ value.has_playbook }
