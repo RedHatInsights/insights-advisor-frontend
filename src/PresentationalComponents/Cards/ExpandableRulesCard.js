@@ -27,9 +27,8 @@ class ExpandableRulesCard extends React.Component {
     }
 
     render () {
-        const {
-            rule
-        } = this.props;
+        const rule = this.props.report.rule;
+        const report = this.props.report;
         const {
             expanded
         } = this.state;
@@ -49,7 +48,7 @@ class ExpandableRulesCard extends React.Component {
                         <SplitItem> { rule.category.name } &gt; </SplitItem>
                         <SplitItem isMain> { rule.description } </SplitItem>
                         <SplitItem>
-                            <Ansible unsupported={ rule.has_playbook }/>
+                            <Ansible unsupported={ !rule.has_playbook }/>
                         </SplitItem>
                     </Split>
                     <Split>
@@ -73,7 +72,7 @@ class ExpandableRulesCard extends React.Component {
                             <Card className='pf-t-light  pf-m-opaque-100'>
                                 <CardHeader> <Icons.BullseyeIcon/> Steps to resolve</CardHeader>
                                 <CardBody>
-                                    { rule.resolution && (<div dangerouslySetInnerHTML={ { __html: rule.resolution.resolution } }/>) }
+                                    { report.resolution && (<div dangerouslySetInnerHTML={ { __html: report.resolution.resolution } }/>) }
                                 </CardBody>
                             </Card>
                         </GridItem>
@@ -114,11 +113,11 @@ class ExpandableRulesCard extends React.Component {
 export default ExpandableRulesCard;
 
 ExpandableRulesCard.defaultProps = {
-    rule: {},
+    report: {},
     isExpanded: true
 };
 
 ExpandableRulesCard.propTypes = {
-    rule: propTypes.object,
+    report: propTypes.object,
     isExpanded: propTypes.bool
 };

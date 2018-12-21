@@ -51,22 +51,21 @@ class ViewActions extends Component {
 
     componentDidMount () {
         document.getElementById('root').classList.add('actions__view');
-        const riskMap = {
+        const severityMap = {
             'critical-risk': 4,
             'high-risk': 3,
             'medium-risk': 2,
             'low-risk': 1
         };
-        const options = { page_size: this.state.itemsPerPage };
+        const options = { page_size: this.state.itemsPerPage, impacting: true };
 
         if (this.props.match.params.type.includes('-risk')) {
-            const risk = riskMap[this.props.match.params.type];
-            this.setState({ filters: { res_risk: risk }});
-            options.res_risk = risk;
+            const severity = severityMap[this.props.match.params.type];
+            this.setState({ filters: { severity }});
+            options.severity = severity;
         } else {
             this.setState({ filters: { category: this.props.match.params.type }});
             options.category = this.props.match.params.type;
-            options.impacting = true;
         }
 
         this.props.fetchRules(options);
@@ -106,7 +105,7 @@ class ViewActions extends Component {
                             labelHidden
                             severity={ value.severity }
                         />,
-                        <div key={ key }>{ value.impacted_systems }</div>,
+                        <div key={ key }>{ value.impacted_systems_count }</div>,
                         <Ansible
                             key={ key }
                             unsupported={ value.has_playbook }

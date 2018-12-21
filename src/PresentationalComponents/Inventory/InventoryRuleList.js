@@ -15,9 +15,9 @@ class InventoryRuleList extends React.Component {
         super(props);
         this.state = {
             expanded: true,
-            inventoryRulesFetchStatus: 'pending',
+            inventoryReportFetchStatus: 'pending',
             entity: this.props.entityDetails.entity,
-            inventoryRules: []
+            inventoryReport: {}
         };
 
         this.fetchEntityRules();
@@ -25,10 +25,10 @@ class InventoryRuleList extends React.Component {
 
     async fetchEntityRules () {
         try {
-            const inventoryRules = (await API.get(`${SYSTEM_FETCH_URL}${this.state.entity.canonical_facts['machine-id']}/`)).data;
+            const inventoryReport = (await API.get(`${SYSTEM_FETCH_URL}${this.state.entity.canonical_facts['machine-id']}/reports`)).data;
             this.setState({
-                inventoryRules,
-                inventoryRulesFetchStatus: 'fulfilled'
+                inventoryReport,
+                inventoryReportFetchStatus: 'fulfilled'
             });
         } catch (error) {
             this.props.addNotification({
@@ -38,25 +38,30 @@ class InventoryRuleList extends React.Component {
                 description: 'Inventory item rule fetch failed.'
             });
             this.setState({
-                inventoryRulesFetchStatus: 'failed'
+                inventoryReportFetchStatus: 'failed'
             });
         }
     }
 
-    expandAll () {
-        this.setState({ expanded: !this.state.expanded });
+    expandAll (expanded) {
+        this.setState({ expanded: !expanded });
     }
 
     render () {
-        const { inventoryRules, inventoryRulesFetchStatus, expanded } = this.state;
+        const { inventoryReport, inventoryReportFetchStatus, expanded } = this.state;
         return (
             <>
                 <div className="pf-u-display-flex pf-u-flex-direction-row-reverse">
-                    <a onClick={ this.expandAll } rel="noopener">{ (expanded ? `Collapse All` : `Expand All`) }</a>
+                    <a onClick={ e => {
+                        e.preventDefault();
+                        this.expandAll(this.state.expanded);
+                    } } rel="noopener">{ (expanded ? `Collapse All` : `Expand All`) }</a>
                 </div>
-                {inventoryRulesFetchStatus === 'pending' && (<Loading/>)}
-                {inventoryRulesFetchStatus === 'fulfilled' && (
-                    inventoryRules.map((rule, key) => <ExpandableRulesCard key={ key } rule={ rule } isExpanded={ expanded }/>)
+                {inventoryReportFetchStatus === 'pending' && (<Loading/>)}
+                {inventoryReportFetchStatus === 'fulfilled' && (
+                    inventoryReport.active_reports.map((report, key) =>
+                        <ExpandableRulesCard key={ key } report={ report } isExpanded={ expanded }/>
+                    )
                 )}
             </>
         );
