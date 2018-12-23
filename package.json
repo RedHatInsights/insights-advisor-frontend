@@ -16,7 +16,8 @@
     "@red-hat-insights/insights-frontend-components": "3.27.1",
     "classnames": "2.2.6",
     "create-react-class": "15.6.3",
-    "lodash": "4.17.11"
+    "lodash": "4.17.11",
+    "patternfly-react": "^2.28.2"
   },
   "sassIncludes": {
     "patternfly": "node_modules/patternfly/dist/sass",

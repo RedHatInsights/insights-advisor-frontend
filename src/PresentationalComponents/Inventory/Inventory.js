@@ -5,6 +5,7 @@ import * as reactIcons from '@patternfly/react-icons';
 import { registry as registryDecorator } from '@red-hat-insights/insights-frontend-components';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import PropTypes from 'prop-types';
+import { PaginationRow } from 'patternfly-react';
 
 @registryDecorator()
 class Inventory extends React.Component {
@@ -26,7 +27,8 @@ class Inventory extends React.Component {
             react: React,
             reactRouterDom,
             reactCore,
-            reactIcons
+            reactIcons,
+            pfReact: { PaginationRow }
         });
 
         this.getRegistry().register({
