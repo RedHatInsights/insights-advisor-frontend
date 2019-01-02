@@ -57,12 +57,12 @@ class InventoryRuleList extends React.Component {
                         this.expandAll(this.state.expanded);
                     } } rel="noopener">{ (expanded ? `Collapse All` : `Expand All`) }</a>
                 </div>
-                {inventoryReportFetchStatus === 'pending' && (<Loading/>)}
-                {inventoryReportFetchStatus === 'fulfilled' && (
+                { inventoryReportFetchStatus === 'pending' && (<Loading/>) }
+                { inventoryReportFetchStatus === 'fulfilled' && (
                     inventoryReport.active_reports.map((report, key) =>
                         <ExpandableRulesCard key={ key } report={ report } isExpanded={ expanded }/>
                     )
-                )}
+                ) }
             </>
         );
     }
