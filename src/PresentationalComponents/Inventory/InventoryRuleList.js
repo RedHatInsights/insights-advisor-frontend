@@ -17,7 +17,8 @@ class InventoryRuleList extends React.Component {
             expanded: true,
             inventoryReportFetchStatus: 'pending',
             entity: this.props.entityDetails.entity,
-            inventoryReport: {}
+            inventoryReport: {},
+            kbaDetails: []
         };
 
         this.fetchEntityRules();
@@ -30,6 +31,10 @@ class InventoryRuleList extends React.Component {
                 inventoryReport,
                 inventoryReportFetchStatus: 'fulfilled'
             });
+
+            const kbaIds = inventoryReport.active_reports.map(report => report.rule.node_id).join(` OR `);
+
+            this.fetchKbaDetails(kbaIds);
         } catch (error) {
             this.props.addNotification({
                 variant: 'danger',
@@ -43,12 +48,25 @@ class InventoryRuleList extends React.Component {
         }
     }
 
+    async fetchKbaDetails (kbaIds) {
+        try {
+            const kbaDetails = (await API.get(`/rs/search?q=id:(${kbaIds})&fl=view_uri,id,publishedTitle`)).data.response.docs;
+            this.setState({ kbaDetails });
+        } catch (error) {
+            this.props.addNotification({
+                variant: 'danger',
+                dismissable: true,
+                title: '',
+                description: 'KBA fetch failed.'
+            });        }
+    }
+
     expandAll (expanded) {
         this.setState({ expanded: !expanded });
     }
 
     render () {
-        const { inventoryReport, inventoryReportFetchStatus, expanded } = this.state;
+        const { inventoryReport, inventoryReportFetchStatus, expanded, kbaDetails } = this.state;
         return (
             <>
                 <div className="pf-u-display-flex pf-u-flex-direction-row-reverse">
@@ -57,12 +75,12 @@ class InventoryRuleList extends React.Component {
                         this.expandAll(this.state.expanded);
                     } } rel="noopener">{ (expanded ? `Collapse All` : `Expand All`) }</a>
                 </div>
-                {inventoryReportFetchStatus === 'pending' && (<Loading/>)}
-                {inventoryReportFetchStatus === 'fulfilled' && (
+                { inventoryReportFetchStatus === 'pending' && (<Loading/>) }
+                { inventoryReportFetchStatus === 'fulfilled' && (
                     inventoryReport.active_reports.map((report, key) =>
-                        <ExpandableRulesCard key={ key } report={ report } isExpanded={ expanded }/>
+                        <ExpandableRulesCard key={ key } report={ report } isExpanded={ expanded } kbaDetails={ kbaDetails }/>
                     )
-                )}
+                ) }
             </>
         );
     }

@@ -11,7 +11,8 @@ class ExpandableRulesCard extends React.Component {
     constructor (props) {
         super(props);
         this.state = {
-            expanded: true
+            expanded: true,
+            kbaDetail: {}
         };
         this.toggleExpanded = this.toggleExpanded.bind(this);
     }
@@ -19,6 +20,10 @@ class ExpandableRulesCard extends React.Component {
     componentDidUpdate (prevProps) {
         if (this.props.isExpanded !== prevProps.isExpanded) {
             this.setState({ expanded: this.props.isExpanded });
+        }
+
+        if (this.props.kbaDetails !== prevProps.kbaDetails) {
+            this.setState({ kbaDetail: this.props.kbaDetails.filter(article => article.id === this.props.report.rule.node_id) });
         }
     }
 
@@ -30,7 +35,8 @@ class ExpandableRulesCard extends React.Component {
         const rule = this.props.report.rule;
         const report = this.props.report;
         const {
-            expanded
+            expanded,
+            kbaDetail
         } = this.state;
 
         let rulesCardClasses = classNames(
@@ -78,7 +84,7 @@ class ExpandableRulesCard extends React.Component {
                         </GridItem>
                         <GridItem>
                             <Icons.LightbulbIcon/><strong>Related Knowledgebase articles: </strong>
-                            <a href={ `https://access.redhat.com/solutions/${rule.node_id}` } rel="noopener">Add article name here!</a>
+                            <a href={ `${kbaDetail.view_uri}` } rel="noopener">`${ kbaDetail.publishedTitle }`</a>
                         </GridItem>
                         <div>
                             <List>
@@ -114,10 +120,12 @@ export default ExpandableRulesCard;
 
 ExpandableRulesCard.defaultProps = {
     report: {},
-    isExpanded: true
+    isExpanded: true,
+    kbaDetails: []
 };
 
 ExpandableRulesCard.propTypes = {
     report: propTypes.object,
-    isExpanded: propTypes.bool
+    isExpanded: propTypes.bool,
+    kbaDetails: propTypes.array
 };
