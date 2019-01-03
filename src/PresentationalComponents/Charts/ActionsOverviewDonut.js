@@ -11,6 +11,43 @@ class AdvisorOverviewDonut extends React.Component {
             theme={ theme }
             height={ 200 }
             width={ 200 }
+            events={ [{
+                target: 'data',
+                eventHandlers: {
+                    onClick: () => {
+                        return [
+                            {
+                                target: 'data',
+                                mutation: (props) => {
+                                    this.props.history.push(`/actions/${props.datum.xName.toLowerCase()}`);
+                                }
+                            }
+                        ];
+                    },
+                    onMouseOver: () => {
+                        return [{
+                            mutation: (props) => {
+                                return {
+                                    style: Object.assign({}, props.style, { fill: 'tomato', cursor: 'pointer' })
+                                };
+                            }
+                        }, {
+                            target: 'labels',
+                            mutation: () => ({ active: true })
+                        }];
+                    },
+                    onMouseOut: () => {
+                        return [{
+                            mutation: () => {
+                                return null;
+                            }
+                        }, {
+                            target: 'labels',
+                            mutation: () => ({ active: false })
+                        }];
+                    }
+                }
+            }] }
         />
     );
 
@@ -20,7 +57,18 @@ class AdvisorOverviewDonut extends React.Component {
             itemsPerRow={ 2 }
             events={ [
                 {
-                    target: 'labels', eventHandlers: { onClick: this.legendClick }
+                    target: 'labels', eventHandlers: {
+                        onClick: this.legendClick,
+                        onMouseOver: () => {
+                            return [{
+                                mutation: (props) => {
+                                    return {
+                                        style: Object.assign({}, props.style, { cursor: 'pointer' })
+                                    };
+                                }
+                            }];
+                        }
+                    }
                 }] }
             theme={ theme }
         />
@@ -30,7 +78,7 @@ class AdvisorOverviewDonut extends React.Component {
         return [{
             target: 'labels',
             mutation: (props) => {
-                this.props.history.push(`/actions/${props.datum.name.split(' ')[0].toLocaleLowerCase()}`);
+                this.props.history.push(`/actions/${props.datum.name.split(' ')[0].toLowerCase()}`);
             }
         }];
     };
