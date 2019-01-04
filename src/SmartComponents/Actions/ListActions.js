@@ -72,6 +72,7 @@ class ListActions extends Component {
 
     render () {
         const { breadcrumbs, ruleFetchStatus, rule, systemFetchStatus, system } = this.props;
+        const { kbaDetails } = this.state;
         return (
             <React.Fragment>
                 <Breadcrumbs
@@ -95,9 +96,9 @@ class ListActions extends Component {
                                         <GridItem md={ 8 } sm={ 12 }>
                                             <Grid>
                                                 <GridItem className='actions__description' dangerouslySetInnerHTML={ { __html: rule.summary_html } }/>
-                                                { this.state.kbaDetails && (
+                                                { kbaDetails && (
                                                     <GridItem>
-                                                        <a href={ this.state.kbaDetails.view_uri }>
+                                                        <a href={ kbaDetails.view_uri }>
                                                             Knowledgebase Article
                                                         </a>
                                                     </GridItem>
