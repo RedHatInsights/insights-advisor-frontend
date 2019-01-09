@@ -56,7 +56,7 @@ class ListActions extends Component {
             return [];
         }
 
-        return this.props.entities.entities.filter(entity => entity.selected).map(entity => entity.id);
+        return this.props.entities.rows.filter(entity => entity.selected).map(entity => entity.id);
     }
 
     remediationDataProvider () {
