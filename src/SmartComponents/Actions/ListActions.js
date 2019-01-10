@@ -18,6 +18,7 @@ import { addNotification } from '@red-hat-insights/insights-frontend-components/
 
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
+import Failed from '../../PresentationalComponents/Loading/Failed';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import './_actions.scss';
 import API from '../../Utilities/Api';
@@ -149,6 +150,7 @@ class ListActions extends Component {
                             </Stack>
                         ) }
                         { ruleFetchStatus === 'pending' && (<Loading/>) }
+                        { ruleFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
                     </React.Fragment>
                 </Main>
             </React.Fragment>
