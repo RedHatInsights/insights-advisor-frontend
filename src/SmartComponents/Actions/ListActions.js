@@ -25,7 +25,8 @@ import API from '../../Utilities/Api';
 
 class ListActions extends Component {
     state = {
-        kbaDetails: {}
+        kbaDetails: {},
+        kbaDetailsLoading: false
     };
 
     componentDidMount () {
@@ -33,8 +34,9 @@ class ListActions extends Component {
         this.props.fetchSystem({ rule_id: this.props.match.params.id });
     }
 
-    componentDidUpdate (prevProps) {
-        if (this.props.ruleFetchStatus !== prevProps.ruleFetchStatus && prevProps.ruleFetchStatus === 'fulfilled') {
+    componentDidUpdate () {
+        if (this.props.ruleFetchStatus === 'fulfilled' && !this.state.kbaDetailsLoading) {
+            this.setState({ kbaDetailsLoading: true });
             this.fetchKbaDetails();
         }
     }
@@ -49,7 +51,8 @@ class ListActions extends Component {
                 dismissable: true,
                 title: '',
                 description: 'KBA fetch failed.'
-            });        }
+            });
+        }
     }
 
     getSelectedItems () {
@@ -73,6 +76,7 @@ class ListActions extends Component {
 
     render () {
         const { breadcrumbs, ruleFetchStatus, rule, systemFetchStatus, system } = this.props;
+        const { kbaDetails } = this.state;
         return (
             <React.Fragment>
                 <Breadcrumbs
@@ -96,9 +100,9 @@ class ListActions extends Component {
                                         <GridItem md={ 8 } sm={ 12 }>
                                             <Grid>
                                                 <GridItem className='actions__description' dangerouslySetInnerHTML={ { __html: rule.summary_html } }/>
-                                                { this.state.kbaDetails && (
+                                                { kbaDetails.view_uri && (
                                                     <GridItem>
-                                                        <a href={ this.state.kbaDetails.view_uri }>
+                                                        <a href={ kbaDetails.view_uri }>
                                                             Knowledgebase Article
                                                         </a>
                                                     </GridItem>
