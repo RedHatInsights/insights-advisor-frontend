@@ -19,6 +19,7 @@ import { connect } from 'react-redux';
 import { Stack, StackItem } from '@patternfly/react-core';
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
+import Failed from '../../PresentationalComponents/Loading/Failed';
 import { buildBreadcrumbs, onNavigate } from '../../Helpers/breadcrumbs.js';
 import './_actions.scss';
 
@@ -202,6 +203,7 @@ class ViewActions extends Component {
                             </StackItem>
                         ) }
                         { rulesFetchStatus === 'pending' && (<Loading/>) }
+                        { rulesFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
                     </Stack>
                 </Main>
             </React.Fragment>
