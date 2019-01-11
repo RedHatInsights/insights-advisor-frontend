@@ -65,7 +65,10 @@ class ListActions extends Component {
 
     remediationDataProvider () {
         return {
-            issues: [{ id: `advisor:${this.props.match.params.id}` }],
+            issues: [{
+                id: `advisor:${this.props.match.params.id}`,
+                description: this.props.rule.description
+            }],
             systems: this.getSelectedItems()
         };
     }
