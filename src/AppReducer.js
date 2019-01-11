@@ -1,7 +1,7 @@
 import Immutable from 'seamless-immutable';
 import * as ActionTypes from './AppConstants';
 import { applyReducerHash } from '@red-hat-insights/insights-frontend-components/Utilities/ReducerRegistry';
-import { Advisor } from '@red-hat-insights/insights-frontend-components';
+import { Advisor, Vulnerabilities } from '@red-hat-insights/insights-frontend-components';
 
 // eslint-disable-next-line new-cap
 const initialState = Immutable({
@@ -94,7 +94,8 @@ function enableApplications (state) {
         ...state,
         loaded: true,
         activeApps: [
-            { title: 'Configuration Assessment', name: 'configuration_assessment', component: Advisor }
+            { title: 'Configuration Assessment', name: 'configuration_assessment', component: Advisor },
+            { title: 'Vulnerabilities', name: 'vulnerabilities', component: Vulnerabilities }
 
         ]
     };
