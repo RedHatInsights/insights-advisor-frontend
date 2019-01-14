@@ -6,6 +6,7 @@ import classNames from 'classnames';
 
 import { Ansible, Battery, Section } from '@red-hat-insights/insights-frontend-components';
 import { Card, CardHeader, CardBody, CardFooter, Split, SplitItem } from '@patternfly/react-core';
+import ReactMarkdown from 'react-markdown/with-html';
 
 import './_RulesCard.scss';
 
@@ -49,7 +50,7 @@ const RulesCard =
                 </Split>
             </CardHeader>
             <CardBody>
-                <div dangerouslySetInnerHTML={ { __html: summary } }/>
+                <ReactMarkdown source={ summary } escapeHtml={ false }/>
             </CardBody>
             <CardFooter>
                 <div className='space-between'>
