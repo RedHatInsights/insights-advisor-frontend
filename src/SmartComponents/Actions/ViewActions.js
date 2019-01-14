@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import {
     Ansible,
     Battery,
-    Breadcrumbs,
     Main,
     PageHeader,
     PageHeaderTitle,
@@ -20,7 +19,7 @@ import { Stack, StackItem } from '@patternfly/react-core';
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
-import { buildBreadcrumbs, onNavigate } from '../../Helpers/breadcrumbs.js';
+import Breadcrumbs, { buildBreadcrumbs } from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import './_actions.scss';
 
 class ViewActions extends Component {
@@ -164,7 +163,6 @@ class ViewActions extends Component {
                 <Breadcrumbs
                     current={ this.parseUrlTitle(this.props.match.params.type) }
                     items={ breadcrumbs[0] !== undefined ? breadcrumbs : buildBreadcrumbs(this.props.match, 1) }
-                    onNavigate={ onNavigate }
                 />
                 <PageHeader>
                     <PageHeaderTitle

@@ -22,9 +22,3 @@
         @include rem('margin-top', 5px);
     }
 }
-
-ol.ins-breadcrumbs {
-    background-color: #fff;
-    margin-bottom:0;
-    li { text-transform: capitalize; }
-}

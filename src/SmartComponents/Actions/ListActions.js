@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import {
     Ansible,
     Battery,
-    Breadcrumbs,
     Main,
     PageHeader,
     PageHeaderTitle,
@@ -13,7 +12,7 @@ import {
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Card, CardBody, CardHeader, Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
-import { buildBreadcrumbs, onNavigate, parseBreadcrumbs } from '../../Helpers/breadcrumbs.js';
+import Breadcrumbs, { buildBreadcrumbs, parseBreadcrumbs } from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 import ReactMarkdown from 'react-markdown/with-html';
 
@@ -90,7 +89,6 @@ class ListActions extends Component {
                             parseBreadcrumbs(breadcrumbs, this.props.match.params, 2) :
                             buildBreadcrumbs(this.props.match, 2)
                     }
-                    onNavigate={ onNavigate }
                 />
                 <PageHeader>
                     <PageHeaderTitle title={ rule.description || '' }/>
