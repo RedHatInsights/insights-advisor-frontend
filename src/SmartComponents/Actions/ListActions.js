@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import { Card, CardBody, CardHeader, Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
 import { buildBreadcrumbs, onNavigate, parseBreadcrumbs } from '../../Helpers/breadcrumbs.js';
 import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
+import ReactMarkdown from 'react-markdown/with-html';
 
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
@@ -99,7 +100,9 @@ class ListActions extends Component {
                                     <Grid gutter='md'>
                                         <GridItem md={ 8 } sm={ 12 }>
                                             <Grid>
-                                                <GridItem className='actions__description' dangerouslySetInnerHTML={ { __html: rule.summary_html } }/>
+                                                <GridItem className='actions__description'>
+                                                    <ReactMarkdown source={ rule.summary }   escapeHtml={ false }/>
+                                                </GridItem>
                                                 { kbaDetails.view_uri && (
                                                     <GridItem>
                                                         <a href={ kbaDetails.view_uri }>

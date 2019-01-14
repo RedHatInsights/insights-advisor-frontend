@@ -39,7 +39,7 @@ class ListRules extends React.Component {
                     ruleID = { value.rule_id }
                     category= { value.category.name }
                     description= { value.description }
-                    summary= { value.summary_html }
+                    summary= { value.summary }
                     impact = { value.impact.impact }
                     likelihood = { value.likelihood }
                     totalRisk = { value.severity }
