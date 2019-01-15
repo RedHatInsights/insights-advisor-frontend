@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@babel/runtime": "7.2.0",
-    "@patternfly/patternfly-next": "1.0.123",
-    "@patternfly/react-core": "1.45.4",
+    "@patternfly/patternfly-next": "^1.0.124",
+    "@patternfly/react-core": "^1.47.0",
     "@patternfly/react-icons": "2.9.7",
-    "@red-hat-insights/insights-frontend-components": "3.32.4",
+    "@red-hat-insights/insights-frontend-components": "^3.32.5",
     "classnames": "2.2.6",
     "create-react-class": "15.6.3",
     "lodash": "4.17.11"
