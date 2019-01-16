@@ -1,7 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
-import { BASE_URL_PATH } from '../../AppConstants';
 import './_breadcrumbs.scss';
 
 export function buildBreadcrumbs(match, hops) {
@@ -39,9 +39,11 @@ export function parseBreadcrumbs(breadcrumbs, params, hops) {
 const Breadcrumbs = ({ items, current }) => (
     <Breadcrumb>
         { items.map((oneLink, key) => (
-            <BreadcrumbItem key={ key } to={ `${BASE_URL_PATH}${oneLink.navigate}` }>{ oneLink.title }</BreadcrumbItem>
+            <BreadcrumbItem key={ key }>
+                <Link to={ oneLink.navigate }>{ oneLink.title }</Link>
+            </BreadcrumbItem>
         )) }
-        <BreadcrumbItem to='#' isActive>{ current }</BreadcrumbItem>
+        <BreadcrumbItem isActive>{ current }</BreadcrumbItem>
     </Breadcrumb>
 );
 

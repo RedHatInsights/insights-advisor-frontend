@@ -5,7 +5,6 @@ export const SYSTEMTYPE_FETCH = 'SYSTEMTYPE_FETCH';
 export const STATS_FETCH = 'STATS_FETCH';
 export const BREADCRUMBS_SET = 'BREADCRUMBS_SET';
 export const LOAD_ENTITY = 'LOAD_ENTITY';
-export const BASE_URL_PATH = '/insights/platform/advisor';
 
 const BASE_URL = '/r/insights/platform/advisor/v1';
 export const RULES_FETCH_URL = `${BASE_URL}/rule/`;
