@@ -102,7 +102,11 @@ class ListActions extends Component {
                                         <GridItem md={ 8 } sm={ 12 }>
                                             <Grid>
                                                 <GridItem className='actions__description'>
-                                                    <ReactMarkdown source={ rule.summary }   escapeHtml={ false }/>
+                                                    {
+                                                        typeof rule.summary === 'string' &&
+                                                        Boolean(rule.summary) &&
+                                                        <ReactMarkdown source={ rule.summary } escapeHtml={ false }/>
+                                                    }
                                                 </GridItem>
                                                 { kbaDetails.view_uri && (
                                                     <GridItem>

@@ -50,7 +50,11 @@ const RulesCard =
                 </Split>
             </CardHeader>
             <CardBody>
-                <ReactMarkdown source={ summary } escapeHtml={ false }/>
+                {
+                    typeof summary === 'string' &&
+                    Boolean(summary) &&
+                    <ReactMarkdown source={ summary } escapeHtml={ false }/>
+                }
             </CardBody>
             <CardFooter>
                 <div className='space-between'>
