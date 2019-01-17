@@ -82,15 +82,15 @@ class ListActions extends Component {
         const { kbaDetails } = this.state;
         return (
             <React.Fragment>
-                <Breadcrumbs
-                    current={ rule.description || '' }
-                    items={
-                        breadcrumbs[0] !== undefined ?
-                            parseBreadcrumbs(breadcrumbs, this.props.match.params, 2) :
-                            buildBreadcrumbs(this.props.match, 2)
-                    }
-                />
                 <PageHeader>
+                    <Breadcrumbs
+                        current={ rule.description || '' }
+                        items={
+                            breadcrumbs[0] !== undefined ?
+                                parseBreadcrumbs(breadcrumbs, this.props.match.params, 2) :
+                                buildBreadcrumbs(this.props.match, 2)
+                        }
+                    />
                     <PageHeaderTitle title={ rule.description || '' }/>
                 </PageHeader>
                 <Main className='actions__list'>
