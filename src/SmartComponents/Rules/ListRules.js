@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import * as AppActions from '../../AppActions';
+import { SYSTEM_TYPES } from '../../AppConstants';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import rulesCardSkeleton from '../../PresentationalComponents/Skeletons/RulesCard/RulesCardSkeleton.js';
 
@@ -43,7 +44,7 @@ class ListRules extends React.Component {
                     impact = { value.impact.impact }
                     likelihood = { value.likelihood }
                     totalRisk = { value.severity }
-                    riskOfChange = { value.resolution_risk }
+                    riskOfChange = { value.resolution_set.find(resolution => resolution.system_type === SYSTEM_TYPES.rhel).resolution_risk.risk }
                     ansible = { value.has_playbook }
                     hitCount = { value.impacted_systems_count }
                 />

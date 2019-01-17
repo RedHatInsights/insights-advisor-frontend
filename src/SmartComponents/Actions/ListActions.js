@@ -1,14 +1,6 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
-import {
-    Ansible,
-    Battery,
-    Main,
-    PageHeader,
-    PageHeaderTitle,
-    RemediationButton,
-    routerParams
-} from '@red-hat-insights/insights-frontend-components';
+import { Ansible, Battery, Main, PageHeader, PageHeaderTitle, RemediationButton, routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Card, CardBody, CardHeader, Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
@@ -17,6 +9,7 @@ import { addNotification } from '@red-hat-insights/insights-frontend-components/
 import ReactMarkdown from 'react-markdown/with-html';
 
 import * as AppActions from '../../AppActions';
+import { SYSTEM_TYPES } from '../../AppConstants';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
@@ -130,7 +123,12 @@ class ListActions extends Component {
                                                     </Grid>
                                                 </GridItem>
                                                 <GridItem sm={ 4 } md={ 12 }>
-                                                    <Battery label='Risk Of Change' severity={ rule.resolution_risk }/>
+                                                    <Battery
+                                                        label='Risk Of Change'
+                                                        severity={ rule.resolution_set.find(resolution =>
+                                                            resolution.system_type === SYSTEM_TYPES.rhel).resolution_risk.risk
+                                                        }
+                                                    />
                                                 </GridItem>
                                                 { rule.has_playbook && (
                                                     <GridItem>
