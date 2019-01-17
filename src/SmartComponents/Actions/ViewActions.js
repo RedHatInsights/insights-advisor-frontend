@@ -160,11 +160,11 @@ class ViewActions extends Component {
 
         return (
             <React.Fragment>
-                <Breadcrumbs
-                    current={ this.parseUrlTitle(this.props.match.params.type) }
-                    items={ breadcrumbs[0] !== undefined ? breadcrumbs : buildBreadcrumbs(this.props.match, 1) }
-                />
                 <PageHeader>
+                    <Breadcrumbs
+                        current={ this.parseUrlTitle(this.props.match.params.type) }
+                        items={ breadcrumbs[0] !== undefined ? breadcrumbs : buildBreadcrumbs(this.props.match, 1) }
+                    />
                     <PageHeaderTitle
                         className='actions__view--title'
                         title={ this.parseUrlTitle(this.props.match.params.type) }
