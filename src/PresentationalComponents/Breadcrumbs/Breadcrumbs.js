@@ -4,36 +4,27 @@ import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 import './_breadcrumbs.scss';
 
-export function buildBreadcrumbs(match, hops) {
-    let breadcrumbs = [];
-    breadcrumbs.push({
-        title: match.path.split('/')[1],
-        navigate: '/' + match.path.split('/')[1]
-    });
-    return parseBreadcrumbs(breadcrumbs, match.params, hops);
-}
+export function buildBreadcrumbs(match, options) {
+    let crumbs = [];
 
-export function parseBreadcrumbs(breadcrumbs, params, hops) {
-    if (breadcrumbs[0].navigate === '/rules') {
-        return breadcrumbs;
-    } else {
-        let crumbs = [];
-        if (hops >= 1) {
-            crumbs.push({
-                title: breadcrumbs[0].title,
-                navigate: breadcrumbs[0].navigate
-            });
+    // add actions/rules base breadcrumb
+    if (match.params.type !== undefined) {
+        if (options.breadcrumbs[0].navigate !== undefined) {
+            crumbs.push(options.breadcrumbs[0]);
+        } else {
+            crumbs.push({ title: 'Actions', navigate: '/actions' });
         }
-
-        if (hops === 2) {
-            crumbs.push({
-                title: params.type.replace('-', ' '),
-                navigate: breadcrumbs[0].navigate + '/' + params.type
-            });
-        }
-
-        return crumbs;
     }
+
+    // add :type breadcrumb (exception: Rules based breadcrumbs)
+    if (match.params.id !== undefined && crumbs[0].title !== 'Rules') {
+        crumbs.push({
+            title: match.params.type.replace('-', ' '),
+            navigate: crumbs[0].navigate + '/' + match.params.type
+        });
+    }
+
+    return crumbs;
 }
 
 const Breadcrumbs = ({ items, current }) => (
@@ -43,12 +34,12 @@ const Breadcrumbs = ({ items, current }) => (
                 <Link to={ oneLink.navigate }>{ oneLink.title }</Link>
             </BreadcrumbItem>
         )) }
-        <BreadcrumbItem isActive>{ current }</BreadcrumbItem>
+        <BreadcrumbItem to='' isActive>{ current }</BreadcrumbItem>
     </Breadcrumb>
 );
 
 Breadcrumbs.propTypes = {
-    items: PropTypes.arrayOf(PropTypes.any),
+    items: PropTypes.array,
     current: PropTypes.string
 };
 
