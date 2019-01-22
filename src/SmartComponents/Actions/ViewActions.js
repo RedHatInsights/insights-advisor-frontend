@@ -163,7 +163,7 @@ class ViewActions extends Component {
                 <PageHeader>
                     <Breadcrumbs
                         current={ this.parseUrlTitle(this.props.match.params.type) }
-                        items={ buildBreadcrumbs(this.props.match, { breadcrumbs }) }
+                        items={ breadcrumbs[0] !== undefined ? breadcrumbs : buildBreadcrumbs(this.props.match, 1) }
                     />
                     <PageHeaderTitle
                         className='actions__view--title'

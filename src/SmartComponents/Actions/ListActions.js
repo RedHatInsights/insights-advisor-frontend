@@ -4,7 +4,7 @@ import { Ansible, Battery, Main, PageHeader, PageHeaderTitle, RemediationButton,
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Card, CardBody, CardHeader, Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
-import Breadcrumbs, { buildBreadcrumbs } from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
+import Breadcrumbs, { buildBreadcrumbs, parseBreadcrumbs } from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 import ReactMarkdown from 'react-markdown/with-html';
 
@@ -78,7 +78,11 @@ class ListActions extends Component {
                 <PageHeader>
                     <Breadcrumbs
                         current={ rule.description || '' }
-                        items={ buildBreadcrumbs(this.props.match, { breadcrumbs }) }
+                        items={
+                            breadcrumbs[0] !== undefined ?
+                                parseBreadcrumbs(breadcrumbs, this.props.match.params, 2) :
+                                buildBreadcrumbs(this.props.match, 2)
+                        }
                     />
                     <PageHeaderTitle title={ rule.description || '' }/>
                 </PageHeader>
