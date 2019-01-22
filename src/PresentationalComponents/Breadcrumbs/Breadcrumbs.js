@@ -16,8 +16,9 @@ export function buildBreadcrumbs(match, options) {
 
     // add :type breadcrumb (exception: Rules based breadcrumbs)
     if (match.params.id !== undefined && crumbs[0].title !== 'Rules') {
+        const title = match.params.type.indexOf('-') > -1 ? `${match.params.type.replace('-', ' ')} Actions` : match.params.type ;
         crumbs.push({
-            title: match.params.type.replace('-', ' '),
+            title,
             navigate: crumbs[0].navigate + '/' + match.params.type
         });
     }
