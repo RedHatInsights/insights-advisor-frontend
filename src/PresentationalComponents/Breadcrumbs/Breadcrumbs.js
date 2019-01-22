@@ -8,12 +8,10 @@ export function buildBreadcrumbs(match, options) {
     let crumbs = [];
 
     // add actions/rules base breadcrumb
-    if (match.params.type !== undefined) {
-        if (options.breadcrumbs[0].navigate !== undefined) {
-            crumbs.push(options.breadcrumbs[0]);
-        } else {
-            crumbs.push({ title: 'Actions', navigate: '/actions' });
-        }
+    if (options === undefined || options.breadcrummbs === undefined || options.breadcrumbs[0] === undefined) {
+        crumbs.push({ title: 'Actions', navigate: '/actions' });
+    } else {
+        crumbs.push(options.breadcrumbs[0]);
     }
 
     // add :type breadcrumb (exception: Rules based breadcrumbs)
@@ -21,6 +19,13 @@ export function buildBreadcrumbs(match, options) {
         crumbs.push({
             title: match.params.type.replace('-', ' '),
             navigate: crumbs[0].navigate + '/' + match.params.type
+        });
+    }
+
+    if (match.params.inventoryId !== undefined) {
+        crumbs.push({
+            title: match.params.id,
+            navigate: crumbs[0].navigate + '/' + crumbs[1].navigate + '/' + match.params.id
         });
     }
 
