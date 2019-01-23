@@ -110,7 +110,7 @@ class ListActions extends Component {
                                         </GridItem>
                                         <GridItem md={ 4 } sm={ 12 }>
                                             <Grid gutter='sm' className='actions__detail'>
-                                                <GridItem sm={ 12 } md={ 12 }> <Ansible unsupported={ rule.has_playbook }/> </GridItem>
+                                                <GridItem sm={ 12 } md={ 12 }> <Ansible unsupported={ !rule.has_playbook }/> </GridItem>
                                                 <GridItem sm={ 8 } md={ 12 }>
                                                     <Grid className='ins-l-icon-group__vertical' sm={ 4 } md={ 12 }>
                                                         <GridItem> <Battery label='Impact' severity={ rule.impact.impact }/> </GridItem>
