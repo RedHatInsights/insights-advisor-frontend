@@ -19,13 +19,13 @@ class Inventory extends React.Component {
 
     async fetchInventory () {
         const items = this.props.items;
-        const pagination = await PaginationRow;
+        const pagination = await{ PaginationRow };
         const {
             inventoryConnector,
             mergeWithEntities
         } = await insights.loadInventory({
             react: React,
-            pfReact: { PaginationRow: pagination },
+            pfReact: pagination,
             reactRouterDom,
             reactCore,
             reactIcons
