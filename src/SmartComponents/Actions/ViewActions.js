@@ -108,7 +108,7 @@ class ViewActions extends Component {
                         <div key={ key }>{ value.impacted_systems_count }</div>,
                         <Ansible
                             key={ key }
-                            unsupported={ value.has_playbook }
+                            unsupported={ !value.has_playbook }
                         />
                     ]
                 };
