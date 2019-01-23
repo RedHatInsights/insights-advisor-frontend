@@ -9,23 +9,23 @@ import PropTypes from 'prop-types';
 
 @registryDecorator()
 class Inventory extends React.Component {
-    constructor (props) {
-        super(props);
-        this.state = {
-            Inventory: () => <Loading/>
-        };
+    state = {
+        Inventory: () => <Loading/>
+    };
 
+    componentWillMount () {
         this.fetchInventory();
     }
 
     async fetchInventory () {
         const items = this.props.items;
+        const pagination = await{ PaginationRow };
         const {
             inventoryConnector,
             mergeWithEntities
         } = await insights.loadInventory({
             react: React,
-            pfReact: { PaginationRow },
+            pfReact: pagination,
             reactRouterDom,
             reactCore,
             reactIcons

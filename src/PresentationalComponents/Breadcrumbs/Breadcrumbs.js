@@ -26,7 +26,7 @@ export function buildBreadcrumbs(match, options) {
     if (match.params.inventoryId !== undefined) {
         crumbs.push({
             title: match.params.id,
-            navigate: crumbs[0].navigate + '/' + crumbs[1].navigate + '/' + match.params.id
+            navigate: crumbs[1].navigate + '/' + match.params.id
         });
     }
 

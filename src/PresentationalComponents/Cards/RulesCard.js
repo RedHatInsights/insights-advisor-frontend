@@ -45,7 +45,7 @@ const RulesCard =
                     <SplitItem> { category } &gt; </SplitItem>
                     <SplitItem isMain> { description } </SplitItem>
                     <SplitItem>
-                        <Ansible unsupported = { ansible }/>
+                        <Ansible unsupported = { !ansible }/>
                     </SplitItem>
                 </Split>
             </CardHeader>
