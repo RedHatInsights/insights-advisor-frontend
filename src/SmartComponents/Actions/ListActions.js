@@ -48,7 +48,7 @@ class ListActions extends Component {
         }
     }
 
-    getSelectedItems () {
+    getSelectedItems = () => {
         if (!this.props.entities || !this.props.entities.loaded) {
             return [];
         }
@@ -56,17 +56,17 @@ class ListActions extends Component {
         return this.props.entities.rows.filter(entity => entity.selected).map(entity => entity.id);
     }
 
-    remediationDataProvider () {
+    remediationDataProvider = () => {
         return {
             issues: [{
-                id: `advisor:${this.props.match.params.id}`,
+                id: `advisor:${this.props.rule.rule_id}`,
                 description: this.props.rule.description
             }],
             systems: this.getSelectedItems()
         };
     }
 
-    onRemediationCreated (result) {
+    onRemediationCreated = result => {
         this.props.addNotification(result.getNotification());
     }
 
