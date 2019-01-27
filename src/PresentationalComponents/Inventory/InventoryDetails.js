@@ -24,12 +24,11 @@ class InventoryDetails extends React.Component {
             reactCore,
             reactIcons
         });
-        const { InventoryDetailHead, AppInfo, VulnerabilitiesStore } = inventoryConnector();
+        const { InventoryDetailHead, AppInfo } = inventoryConnector();
 
         this.getRegistry().register({
             ...mergeWithDetail(entitiesDetailsReducer(INVENTORY_ACTION_TYPES))
         });
-        VulnerabilitiesStore && this.getRegistry().register({ VulnerabilitiesStore });
         this.setState({
             InventoryDetail: InventoryDetailHead, AppInfo
         });
