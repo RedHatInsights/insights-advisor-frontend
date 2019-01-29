@@ -84,7 +84,7 @@ RulesCard.propTypes = {
     category: propTypes.string,
     description: propTypes.string,
     summary: propTypes.string,
-    ansible: propTypes.number,
+    ansible: propTypes.bool,
     impact: propTypes.number,
     likelihood: propTypes.number,
     totalRisk: propTypes.number,
