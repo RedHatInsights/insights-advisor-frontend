@@ -4,6 +4,8 @@ import { withRouter } from 'react-router-dom';
 import { ChartDonut, ChartLabel, ChartLegend, ChartTheme } from '@patternfly/react-charts';
 import { Grid, GridItem } from '@patternfly/react-core';
 
+import './ActionsOverviewDonut.scss';
+
 class AdvisorOverviewDonut extends React.Component {
     getChart = (theme, typeNames) => <ChartDonut
         data={ this.props.category.map((value, key) => ({ x: typeNames[key], y: value, label: `${typeNames[key]}: ${value}` })) }
@@ -69,6 +71,8 @@ class AdvisorOverviewDonut extends React.Component {
             }] }
         theme={ theme }
         gutter={ 0 }
+        width={ 60 }
+        height={ 60 }
     />;
 
     legendClick = () => {
