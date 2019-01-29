@@ -11,9 +11,9 @@
   "dependencies": {
     "@babel/runtime": "7.3.1",
     "@patternfly/patternfly-next": "1.0.166",
-    "@patternfly/react-core": "1.49.6",
+    "@patternfly/react-core": "1.50.0",
     "@patternfly/react-icons": "2.10.1",
-    "@red-hat-insights/insights-frontend-components": "3.33.35",
+    "@red-hat-insights/insights-frontend-components": "3.33.40",
     "classnames": "2.2.6",
     "create-react-class": "15.6.3",
     "lodash": "4.17.11"
@@ -63,7 +63,7 @@
     "copy-webpack-plugin": "4.6.0",
     "cross-fetch": "3.0.0",
     "css-loader": "2.1.0",
-    "d3": "5.7.0",
+    "d3": "5.8.0",
     "enzyme": "3.8.0",
     "enzyme-adapter-react-16": "1.8.0",
     "enzyme-to-json": "3.3.5",
