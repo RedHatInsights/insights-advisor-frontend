@@ -67,8 +67,8 @@ class ActionsOverview extends Component {
                    <PageHeaderTitle title='Actions'/>
                </PageHeader>
                <Main>
-                   <Grid gutter='md' xl={ 4 } sm={ 6 }>
-                       <GridItem xl={ 6 } lg={ 7 } md={ 10 } sm={ 10 }>
+                   <Grid gutter='lg' xl={ 5 } lg={ 8 } md={ 2 } sm={ 1 }>
+                       <GridItem  xl={ 5 } lg={ 6 } md={ 9 } sm={ 6 }>
                            <Card className='pf-t-light  pf-m-opaque-100'>
                                <CardHeader>Category Summary</CardHeader>
                                <CardBody>
@@ -79,7 +79,7 @@ class ActionsOverview extends Component {
                                </CardBody>
                            </Card>
                        </GridItem>
-                       <GridItem xl={ 6 } lg={ 5 } md={ 10 }>
+                       <GridItem xl={ 3 } lg={ 4 } md={ 5 } sm={ 4 }>
                            <Card className='pf-t-light  pf-m-opaque-100'>
                                <CardHeader>Risk Summary</CardHeader>
                                <CardBody>
