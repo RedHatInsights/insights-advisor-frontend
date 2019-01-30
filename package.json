@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@babel/runtime": "7.3.1",
-    "@patternfly/patternfly-next": "1.0.166",
-    "@patternfly/react-core": "1.50.0",
-    "@patternfly/react-icons": "2.10.1",
-    "@red-hat-insights/insights-frontend-components": "3.33.40",
+    "@patternfly/patternfly-next": "1.0.168",
+    "@patternfly/react-core": "1.51.3",
+    "@patternfly/react-icons": "2.10.3",
+    "@red-hat-insights/insights-frontend-components": "3.33.44",
     "classnames": "2.2.6",
     "create-react-class": "15.6.3",
     "lodash": "4.17.11"
@@ -51,7 +51,7 @@
     "@babel/preset-flow": "7.0.0",
     "@babel/preset-react": "7.0.0",
     "@patternfly/react-charts": "1.2.7",
-    "acorn": "6.0.5",
+    "acorn": "6.0.6",
     "axios": "0.18.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": " 10.0.1",
