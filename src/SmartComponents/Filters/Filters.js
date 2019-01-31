@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Grid, GridItem } from '@patternfly/react-core';
-import { routerParams, SimpleTableFilter } from '@red-hat-insights/insights-frontend-components';
+import { Grid, GridItem, TextInput } from '@patternfly/react-core';
+import { routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import debounce from 'lodash/debounce';
@@ -39,11 +39,12 @@ class Filters extends Component {
 
     render () {
         const { rules } = this.props;
+        const { text } = this.state;
 
         return (
             <Grid className='advisorFilters' gutter={ 'md' }>
                 <GridItem span={ 4 }>
-                    <SimpleTableFilter onFilterChange={ value => this.changeFilterValue(value) } buttonTitle={ null } />
+                    <TextInput value={ text } onChange={ this.changeFilterValue } aria-label='Search' />
                 </GridItem>
                 <GridItem span={ 6 } />
                 <GridItem className='results' span={ 2 }>
