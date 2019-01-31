@@ -34,7 +34,7 @@ class Filters extends Component {
                 },
                 this.apply
             ),
-        400
+        800
     );
 
     render () {
