@@ -178,36 +178,34 @@ class ViewActions extends Component {
                         <StackItem>
                             <p>{ this.state.summary }</p>
                         </StackItem>
+                        <StackItem className='advisor-l-actions__filters' xl={ 12 } lg={ 12 } md={ 12 } xs={ 12 }>
+                            <Filters
+                                apply={ this.applyFilters }
+                                history={ history }
+                                match={ this.props.match }
+                            />
+                        </StackItem>
                         { rulesFetchStatus === 'fulfilled' && (
-                            <React.Fragment>
-                                <StackItem className='advisor-l-actions__filters' xl={ 12 } lg={ 12 } md={ 12 } xs={ 12 }>
-                                    <Filters
-                                        apply={ this.applyFilters }
-                                        history={ history }
-                                        match={ this.props.match }
-                                    />
-                                </StackItem>
-                                <StackItem className='advisor-l-actions__table'>
-                                    <Table
-                                        className='rules-table'
-                                        onItemSelect={ this.toggleCol }
-                                        hasCheckbox={ false }
-                                        header={ this.state.cols }
-                                        sortBy={ this.state.sortBy }
-                                        rows={ this.state.rows }
-                                        onSort={ this.onSortChange }
-                                        footer={
-                                            <Pagination
-                                                numberOfItems={ rules.count }
-                                                onPerPageSelect={ this.setPerPage }
-                                                page={ this.state.page }
-                                                onSetPage={ this.setPage }
-                                                itemsPerPage={ this.state.itemsPerPage }
-                                            />
-                                        }
-                                    />
-                                </StackItem>
-                            </React.Fragment>
+                            <StackItem className='advisor-l-actions__table'>
+                                <Table
+                                    className='rules-table'
+                                    onItemSelect={ this.toggleCol }
+                                    hasCheckbox={ false }
+                                    header={ this.state.cols }
+                                    sortBy={ this.state.sortBy }
+                                    rows={ this.state.rows }
+                                    onSort={ this.onSortChange }
+                                    footer={
+                                        <Pagination
+                                            numberOfItems={ rules.count }
+                                            onPerPageSelect={ this.setPerPage }
+                                            page={ this.state.page }
+                                            onSetPage={ this.setPage }
+                                            itemsPerPage={ this.state.itemsPerPage }
+                                        />
+                                    }
+                                />
+                            </StackItem>
                         ) }
                         { rulesFetchStatus === 'pending' && (<Loading/>) }
                         { rulesFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
