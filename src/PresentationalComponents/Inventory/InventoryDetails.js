@@ -8,6 +8,7 @@ import { Main, PageHeader, registry as registryDecorator, routerParams } from '@
 import { entitiesDetailsReducer } from '../../AppReducer';
 import Breadcrumbs, { buildBreadcrumbs } from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import Loading from '../../PresentationalComponents/Loading/Loading';
+import '@red-hat-insights/insights-frontend-components/components/Advisor.css';
 
 @registryDecorator()
 class InventoryDetails extends React.Component {
