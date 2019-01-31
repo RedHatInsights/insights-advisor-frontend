@@ -44,7 +44,7 @@ class Filters extends Component {
         return (
             <Grid className='advisorFilters' gutter={ 'md' }>
                 <GridItem span={ 4 }>
-                    <TextInput value={ text } onChange={ this.changeFilterValue } aria-label='Search' />
+                    <TextInput value={ text } type='search' onChange={ this.changeFilterValue } aria-label='Search' />
                 </GridItem>
                 <GridItem span={ 6 } />
                 <GridItem className='results' span={ 2 }>
