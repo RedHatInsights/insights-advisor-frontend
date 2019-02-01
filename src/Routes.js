@@ -1,4 +1,4 @@
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, matchPath } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import asyncComponent from './Utilities/asyncComponent';
@@ -25,23 +25,24 @@ const paths = {
     rules: '/rules'
 };
 
-type Props = {
-    childProps: any
-};
-
 const InsightsRoute = ({ component: Component, rootClass, ...rest }) => {
     const root = document.getElementById('root');
     root.removeAttribute('class');
     root.classList.add(`page__${rootClass}`, 'pf-l-page__main');
     root.setAttribute('role', 'main');
 
-    return (<Component { ...rest } />);
+    return <Route { ...rest } component={ Component } />;
 };
 
 InsightsRoute.propTypes = {
     component: PropTypes.func,
     rootClass: PropTypes.string
 };
+
+function checkPaths(routes) {
+    return some(Object
+    .values(routes), route => matchPath(location.href, { path: `${document.baseURI}platform/advisor${route}` }));
+}
 
 /**
  * the Switch component changes routes depending on the path.
@@ -51,16 +52,23 @@ InsightsRoute.propTypes = {
  *      path - https://prod.foo.redhat.com:1337/insights/advisor/rules
  *      component - component to be rendered when a route has been chosen.
  */
-export const Routes = (props: Props) => {
-    const path = props.childProps.location.pathname;
+export const Routes = ({ childProps: { history }}) => {
+    if (!checkPaths(paths)) {
+        history.push(paths.actions);
+    }
 
     return (
         <Switch>
             <InsightsRoute path={ paths.actions } component={ Actions } rootClass='actions' />
             <InsightsRoute path={ paths.rules } component={ Rules } rootClass='rules' />
-
-            { /* Finally, catch all unmatched routes */ }
-            <Route render={ () => some(paths, p => p === path) ? null : (<Redirect to={ paths.actions } />) }/>
         </Switch>
     );
+};
+
+Routes.propTypes = {
+    childProps: PropTypes.shape({
+        history: PropTypes.shape({
+            push: PropTypes.func
+        })
+    })
 };
