@@ -1,3 +1,4 @@
+/* eslint camelcase: 0 */
 import React, { Component } from 'react';
 import { Main, Pagination, routerParams } from '@red-hat-insights/insights-frontend-components';
 import PropTypes from 'prop-types';
@@ -7,16 +8,16 @@ import { Checkbox, Stack, StackItem } from '@patternfly/react-core';
 
 import * as AppActions from '../../AppActions';
 import { SYSTEM_TYPES } from '../../AppConstants';
+import Filters from '../Filters/Filters';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import rulesCardSkeleton from '../../PresentationalComponents/Skeletons/RulesCard/RulesCardSkeleton.js';
-import '@patternfly/patternfly/utilities/Display/display.css';
-import '@patternfly/patternfly/utilities/Flex/flex.css';
+import '@patternfly/patternfly/utilities/Display/display.scss';
+import '@patternfly/patternfly/utilities/Flex/flex.scss';
 
 const RulesCard = rulesCardSkeleton(() => import('../../PresentationalComponents/Cards/RulesCard.js'));
 
 class ListRules extends Component {
     state = {
-        showRulesWithHits: true,
         summary: '',
         itemsPerPage: 10,
         page: 1,
@@ -24,8 +25,9 @@ class ListRules extends Component {
     };
 
     componentDidMount () {
+        this.props.setFilters({ page: 1, page_size: 10, impacting: true, text: undefined });
         this.props.setBreadcrumbs([{ title: 'Rules', navigate: '/rules' }]);
-        this.props.fetchRules({ page_size: this.state.itemsPerPage, impacting: this.state.showRulesWithHits }); // eslint-disable-line camelcase
+        this.props.fetchRules({ page: 1, page_size: 10, impacting: true });
     }
 
     componentDidUpdate (prevProps) {
@@ -52,46 +54,60 @@ class ListRules extends Component {
     }
 
     toggleRulesWithHits = (showRulesWithHits) => {
-        this.setState({ showRulesWithHits });
-        this.props.fetchRules({ page_size: this.state.itemsPerPage, impacting: showRulesWithHits }); // eslint-disable-line camelcase
+        this.props.setFilters({ ...this.props.filters, impacting: showRulesWithHits });
+        this.props.fetchRules({
+            page_size: this.state.itemsPerPage,
+            ...this.props.filters,
+            impacting: showRulesWithHits
+        });
     };
 
     setPage = (page) => {
-        this.setState(() => ({ page }));
-        this.props.fetchRules({ page, page_size: this.state.itemsPerPage }); // eslint-disable-line camelcase
+        this.props.setFilters({ ...this.props.filters, page });
+        this.props.fetchRules({ ...this.props.filters, page });
     };
 
     setPerPage = (itemsPerPage) => {
-        this.setState(() => ({ itemsPerPage }));
-        this.props.fetchRules({ page_size: itemsPerPage }); // eslint-disable-line camelcase
+        this.props.setFilters({ ...this.props.filters, page_size: itemsPerPage });
+        this.props.fetchRules({ ...this.props.filters, page_size: itemsPerPage });
     };
 
     render () {
-        const { rulesFetchStatus, rules } = this.props;
+        const { rulesFetchStatus, rules, filters } = this.props;
         return (
             <Main>
                 <Stack gutter='md'>
-                    <StackItem className='pf-u-display-flex pf-u-flex-direction-row-reverse'>
-                        <Checkbox
-                            label="Show Rules With Hits"
-                            isChecked={ this.state.showRulesWithHits }
-                            onChange={ this.toggleRulesWithHits }
-                            aria-label="InsightsRulesHideHits"
-                            id="InsightsRulesHideHits"
-                        />
+                    <StackItem className='advisor-l-actions__filters'>
+                        <Filters
+                            externalFilters={ {
+                                impacting: this.state.showRulesWithHits,
+                                itemsPerPage: this.state.itemsPerPage,
+                                page: this.state.page
+                            } }
+                            match={ this.props.match }
+                            searchPlaceholder='Find a Rule'
+                        >
+                            <Checkbox
+                                label="Show Rules With Hits"
+                                isChecked={ filters.impacting }
+                                onChange={ this.toggleRulesWithHits }
+                                aria-label="InsightsRulesHideHits"
+                                id="InsightsRulesHideHits"
+                            />
+                        </Filters>
                     </StackItem>
                     <StackItem>
                         { rulesFetchStatus === 'fulfilled' &&
-                            <>
-                                { this.state.cards }
-                                <Pagination
-                                    numberOfItems={ rules.count }
-                                    onPerPageSelect={ this.setPerPage }
-                                    page={ this.state.page }
-                                    onSetPage={ this.setPage }
-                                    itemsPerPage={ this.state.itemsPerPage }
-                                />
-                            </>
+                        <>
+                            { this.state.cards }
+                            <Pagination
+                                numberOfItems={ rules.count }
+                                onPerPageSelect={ this.setPerPage }
+                                onSetPage={ this.setPage }
+                                page={ filters.page }
+                                itemsPerPage={ filters.page_size }
+                            />
+                        </>
                         }
                         { rulesFetchStatus === 'pending' && (<Loading/>) }
                     </StackItem>
@@ -106,13 +122,17 @@ ListRules.displayName = 'list-rules';
 ListRules.propTypes = {
     breadcrumbs: PropTypes.array,
     fetchRules: PropTypes.func,
+    match: PropTypes.object,
     rulesFetchStatus: PropTypes.string,
     rules: PropTypes.object,
-    setBreadcrumbs: PropTypes.func
+    setBreadcrumbs: PropTypes.func,
+    filters: PropTypes.object,
+    setFilters: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => ({
     breadcrumbs: state.AdvisorStore.breadcrumbs,
+    filters: state.AdvisorStore.filters,
     rules: state.AdvisorStore.rules,
     rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
     ...ownProps
@@ -120,7 +140,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     fetchRules: (url) => AppActions.fetchRules(url),
-    setBreadcrumbs: (obj) => AppActions.setBreadcrumbs(obj)
+    setBreadcrumbs: (obj) => AppActions.setBreadcrumbs(obj),
+    setFilters: (filters) => AppActions.setFilters(filters)
 }, dispatch);
 
 export default routerParams(connect(
