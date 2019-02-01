@@ -72,6 +72,7 @@ class Filters extends Component {
 }
 
 Filters.propTypes = {
+    fetchRules: PropTypes.func,
     history: PropTypes.object,
     itemsPerPage: PropTypes.number,
     match: PropTypes.object,
