@@ -17,6 +17,8 @@ import { sortBy } from 'lodash';
 import { connect } from 'react-redux';
 import { Stack, StackItem } from '@patternfly/react-core';
 import * as AppActions from '../../AppActions';
+import { SEVERITY_MAP } from '../../AppConstants';
+import Filters from '../Filters/Filters';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import Breadcrumbs, { buildBreadcrumbs } from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
@@ -35,15 +37,16 @@ class ViewActions extends Component {
                 'Systems',
                 'Ansible'
             ],
+            filters: {},
             rows: [],
             sortBy: {},
-            filters: {},
             itemsPerPage: 10,
             page: 1,
             things: []
         };
         this.onSortChange = this.onSortChange.bind(this);
         this.toggleCol = this.toggleCol.bind(this);
+        this.applyFilters = this.applyFilters.bind(this);
 
         this.setPage = this.setPage.bind(this);
         this.setPerPage = this.setPerPage.bind(this);
@@ -51,17 +54,12 @@ class ViewActions extends Component {
 
     componentDidMount () {
         document.getElementById('root').classList.add('actions__view');
-        const severityMap = {
-            'critical-risk': 4,
-            'high-risk': 3,
-            'medium-risk': 2,
-            'low-risk': 1
-        };
         const options = { page_size: this.state.itemsPerPage, impacting: true };
 
         if (this.props.match.params.type.includes('-risk')) {
-            const severity = severityMap[this.props.match.params.type];
+            const severity = SEVERITY_MAP[this.props.match.params.type];
             this.setState({ filters: { severity }});
+
             options.severity = severity;
         } else {
             this.setState({ filters: { category: this.props.match.params.type }});
@@ -155,6 +153,11 @@ class ViewActions extends Component {
         return parsedTitle.length > 1 ? `${parsedTitle[0]} ${parsedTitle[1]} Actions` : `${parsedTitle}`;
     }
 
+    applyFilters (filters) {
+        this.setState(() => ({ filters }));
+        this.props.fetchRules({ page: this.state.page, page_size: this.state.itemsPerPage, ...filters });
+    }
+
     render () {
         const { rulesFetchStatus, rules, breadcrumbs } = this.props;
 
@@ -175,30 +178,36 @@ class ViewActions extends Component {
                         <StackItem>
                             <p>{ this.state.summary }</p>
                         </StackItem>
-                        <StackItem className='advisor-l-actions__filters'>
-                            Filters
-                        </StackItem>
                         { rulesFetchStatus === 'fulfilled' && (
-                            <StackItem className='advisor-l-actions__table'>
-                                <Table
-                                    className='rules-table'
-                                    onItemSelect={ this.toggleCol }
-                                    hasCheckbox={ false }
-                                    header={ this.state.cols }
-                                    sortBy={ this.state.sortBy }
-                                    rows={ this.state.rows }
-                                    onSort={ this.onSortChange }
-                                    footer={
-                                        <Pagination
-                                            numberOfItems={ rules.count }
-                                            onPerPageSelect={ this.setPerPage }
-                                            page={ this.state.page }
-                                            onSetPage={ this.setPage }
-                                            itemsPerPage={ this.state.itemsPerPage }
-                                        />
-                                    }
-                                />
-                            </StackItem>
+                            <React.Fragment>
+                                <StackItem className='advisor-l-actions__filters' xl={ 12 } lg={ 12 } md={ 12 } xs={ 12 }>
+                                    <Filters
+                                        apply={ this.applyFilters }
+                                        history={ history }
+                                        match={ this.props.match }
+                                    />
+                                </StackItem>
+                                <StackItem className='advisor-l-actions__table'>
+                                    <Table
+                                        className='rules-table'
+                                        onItemSelect={ this.toggleCol }
+                                        hasCheckbox={ false }
+                                        header={ this.state.cols }
+                                        sortBy={ this.state.sortBy }
+                                        rows={ this.state.rows }
+                                        onSort={ this.onSortChange }
+                                        footer={
+                                            <Pagination
+                                                numberOfItems={ rules.count }
+                                                onPerPageSelect={ this.setPerPage }
+                                                page={ this.state.page }
+                                                onSetPage={ this.setPage }
+                                                itemsPerPage={ this.state.itemsPerPage }
+                                            />
+                                        }
+                                    />
+                                </StackItem>
+                            </React.Fragment>
                         ) }
                         { rulesFetchStatus === 'pending' && (<Loading/>) }
                         { rulesFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
