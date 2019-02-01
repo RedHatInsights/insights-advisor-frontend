@@ -7,6 +7,7 @@ import { Checkbox, Stack, StackItem } from '@patternfly/react-core';
 
 import * as AppActions from '../../AppActions';
 import { SYSTEM_TYPES } from '../../AppConstants';
+import Filters from '../Filters/Filters';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import rulesCardSkeleton from '../../PresentationalComponents/Skeletons/RulesCard/RulesCardSkeleton.js';
 import '@patternfly/patternfly-next/utilities/Display/display.css';
@@ -80,6 +81,14 @@ class ListRules extends Component {
                             id="InsightsRulesHideHits"
                         />
                     </StackItem>
+                    <StackItem className='advisor-l-actions__filters' xl={ 12 } lg={ 12 } md={ 12 } xs={ 12 }>
+                        <Filters
+                            history={ history }
+                            itemsPerPage={ this.state.itemsPerPage }
+                            match={ this.props.match }
+                            page={ this.state.page }
+                        />
+                    </StackItem>
                     <StackItem>
                         { rulesFetchStatus === 'fulfilled' &&
                             <>
@@ -106,6 +115,7 @@ ListRules.displayName = 'list-rules';
 ListRules.propTypes = {
     breadcrumbs: PropTypes.array,
     fetchRules: PropTypes.func,
+    match: PropTypes.object,
     rulesFetchStatus: PropTypes.string,
     rules: PropTypes.object,
     setBreadcrumbs: PropTypes.func
