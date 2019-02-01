@@ -153,11 +153,6 @@ class ViewActions extends Component {
         return parsedTitle.length > 1 ? `${parsedTitle[0]} ${parsedTitle[1]} Actions` : `${parsedTitle}`;
     }
 
-    applyFilters (filters) {
-        this.setState(() => ({ filters }));
-        this.props.fetchRules({ page: this.state.page, page_size: this.state.itemsPerPage, ...filters });
-    }
-
     render () {
         const { rulesFetchStatus, rules, breadcrumbs } = this.props;
 
@@ -180,9 +175,10 @@ class ViewActions extends Component {
                         </StackItem>
                         <StackItem className='advisor-l-actions__filters' xl={ 12 } lg={ 12 } md={ 12 } xs={ 12 }>
                             <Filters
-                                apply={ this.applyFilters }
                                 history={ history }
+                                itemsPerPage={ this.state.itemsPerPage }
                                 match={ this.props.match }
+                                page={ this.state.page }
                             />
                         </StackItem>
                         { rulesFetchStatus === 'fulfilled' && (
