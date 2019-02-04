@@ -3,7 +3,7 @@ import { Main, Pagination, routerParams } from '@red-hat-insights/insights-front
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Checkbox, Stack, StackItem } from '@patternfly/react-core';
+import { Checkbox, Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
 
 import * as AppActions from '../../AppActions';
 import { SYSTEM_TYPES } from '../../AppConstants';
@@ -72,22 +72,29 @@ class ListRules extends Component {
         return (
             <Main>
                 <Stack gutter='md'>
-                    <StackItem className='pf-u-display-flex pf-u-flex-direction-row-reverse'>
-                        <Checkbox
-                            label="Show Rules With Hits"
-                            isChecked={ this.state.showRulesWithHits }
-                            onChange={ this.toggleRulesWithHits }
-                            aria-label="InsightsRulesHideHits"
-                            id="InsightsRulesHideHits"
-                        />
-                    </StackItem>
                     <StackItem className='advisor-l-actions__filters' xl={ 12 } lg={ 12 } md={ 12 } xs={ 12 }>
-                        <Filters
-                            history={ history }
-                            itemsPerPage={ this.state.itemsPerPage }
-                            match={ this.props.match }
-                            page={ this.state.page }
-                        />
+                        <Grid>
+                            <GridItem span={ 7 }>
+                                <Filters
+                                    itemsPerPage={ this.state.itemsPerPage }
+                                    match={ this.props.match }
+                                    page={ this.state.page }
+                                />
+                            </GridItem>
+                            <GridItem span={ 3 } className='pf-u-display-flex pf-u-flex-direction-row-reverse pf-u-flex-align-content-center'>
+                                <Checkbox
+                                    label="Show Rules With Hits"
+                                    isChecked={ this.state.showRulesWithHits }
+                                    onChange={ this.toggleRulesWithHits }
+                                    aria-label="InsightsRulesHideHits"
+                                    id="InsightsRulesHideHits"
+                                />
+                            </GridItem>
+                            <GridItem span={ 2 } className='pf-u-display-flex pf-u-flex-direction-row-reverse pf-u-align-self-center'>
+                                { rules.count === undefined && (<Loading />) }
+                                { rules.count !== undefined && `${rules.count} result${rules.count !== 1 ? 's' : ''}` }
+                            </GridItem>
+                        </Grid>
                     </StackItem>
                     <StackItem>
                         { rulesFetchStatus === 'fulfilled' &&
