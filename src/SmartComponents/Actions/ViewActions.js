@@ -15,14 +15,13 @@ import {
 import PropTypes from 'prop-types';
 import { sortBy } from 'lodash';
 import { connect } from 'react-redux';
-import { Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
+import { Stack, StackItem } from '@patternfly/react-core';
 import * as AppActions from '../../AppActions';
 import { SEVERITY_MAP } from '../../AppConstants';
 import Filters from '../Filters/Filters';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import Breadcrumbs, { buildBreadcrumbs } from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
-import '@patternfly/patternfly-next/utilities/Flex/flex.css';
 import './_actions.scss';
 
 class ViewActions extends Component {
@@ -47,6 +46,7 @@ class ViewActions extends Component {
         };
         this.onSortChange = this.onSortChange.bind(this);
         this.toggleCol = this.toggleCol.bind(this);
+        this.applyFilters = this.applyFilters.bind(this);
 
         this.setPage = this.setPage.bind(this);
         this.setPerPage = this.setPerPage.bind(this);
@@ -174,20 +174,12 @@ class ViewActions extends Component {
                             <p>{ this.state.summary }</p>
                         </StackItem>
                         <StackItem className='advisor-l-actions__filters' xl={ 12 } lg={ 12 } md={ 12 } xs={ 12 }>
-                            <Grid>
-                                <GridItem span={ 7 }>
-                                    <Filters
-                                        itemsPerPage={ this.state.itemsPerPage }
-                                        match={ this.props.match }
-                                        page={ this.state.page }
-                                    />
-                                </GridItem>
-                                <GridItem span={ 3 } />
-                                <GridItem span={ 2 } className='pf-u-display-flex pf-u-flex-direction-row-reverse pf-u-align-self-center'>
-                                    { rules.count === undefined && (<Loading />) }
-                                    { rules.count !== undefined && `${rules.count} result${rules.count !== 1 ? 's' : ''}` }
-                                </GridItem>
-                            </Grid>
+                            <Filters
+                                history={ history }
+                                itemsPerPage={ this.state.itemsPerPage }
+                                match={ this.props.match }
+                                page={ this.state.page }
+                            />
                         </StackItem>
                         { rulesFetchStatus === 'fulfilled' && (
                             <StackItem className='advisor-l-actions__table'>
