@@ -61,8 +61,9 @@ class Filters extends Component {
                 <GridItem span={ 4 }>
                     <TextInput aria-label='Search' onChange={ this.changeFilterValue } type='search' value={ text } />
                 </GridItem>
-                <GridItem span={ 6 } />
-                <GridItem className='results' span={ 2 }>
+                <GridItem span={ 6 } >
+                    { this.props.children }
+                </GridItem>                <GridItem className='results' span={ 2 }>
                     { rules.count === undefined && (<Loading/>) }
                     { rules.count !== undefined && `${rules.count} result${rules.count !== 1 ? 's' : ''}` }
                 </GridItem>
@@ -77,7 +78,8 @@ Filters.propTypes = {
     itemsPerPage: PropTypes.number,
     match: PropTypes.object,
     page: PropTypes.number,
-    rules: PropTypes.object
+    rules: PropTypes.object,
+    children: PropTypes.any
 };
 
 const mapStateToProps = (state, ownProps) => ({
