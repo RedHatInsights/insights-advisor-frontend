@@ -72,22 +72,23 @@ class ListRules extends Component {
         return (
             <Main>
                 <Stack gutter='md'>
-                    <StackItem className='pf-u-display-flex pf-u-flex-direction-row-reverse'>
-                        <Checkbox
-                            label="Show Rules With Hits"
-                            isChecked={ this.state.showRulesWithHits }
-                            onChange={ this.toggleRulesWithHits }
-                            aria-label="InsightsRulesHideHits"
-                            id="InsightsRulesHideHits"
-                        />
-                    </StackItem>
-                    <StackItem className='advisor-l-actions__filters' xl={ 12 } lg={ 12 } md={ 12 } xs={ 12 }>
+                    <StackItem className='advisor-l-actions__filters'>
                         <Filters
                             history={ history }
                             itemsPerPage={ this.state.itemsPerPage }
                             match={ this.props.match }
                             page={ this.state.page }
-                        />
+                        >
+                            <div className='pf-u-display-flex pf-u-flex-direction-row-reverse'>
+                                <Checkbox
+                                    label="Show Rules With Hits"
+                                    isChecked={ this.state.showRulesWithHits }
+                                    onChange={ this.toggleRulesWithHits }
+                                    aria-label="InsightsRulesHideHits"
+                                    id="InsightsRulesHideHits"
+                                />
+                            </div>
+                        </Filters>
                     </StackItem>
                     <StackItem>
                         { rulesFetchStatus === 'fulfilled' &&
