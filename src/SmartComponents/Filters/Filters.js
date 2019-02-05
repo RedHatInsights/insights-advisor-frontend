@@ -4,7 +4,6 @@ import { routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as AppActions from '../../AppActions';
-import Loading from '../../PresentationalComponents/Loading/Loading';
 import PropTypes from 'prop-types';
 import debounce from 'lodash/debounce';
 import { SEVERITY_MAP } from '../../AppConstants';
@@ -64,7 +63,7 @@ class Filters extends Component {
                 <GridItem span={ 6 } >
                     { this.props.children }
                 </GridItem>                <GridItem className='results' span={ 2 }>
-                    { rules.count === undefined && (<Loading/>) }
+                    { rules.count === undefined && ('Loading...') }
                     { rules.count !== undefined && `${rules.count} result${rules.count !== 1 ? 's' : ''}` }
                 </GridItem>
             </Grid>
