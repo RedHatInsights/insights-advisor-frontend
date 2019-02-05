@@ -74,10 +74,12 @@ class ListRules extends Component {
                 <Stack gutter='md'>
                     <StackItem className='advisor-l-actions__filters'>
                         <Filters
-                            history={ history }
-                            itemsPerPage={ this.state.itemsPerPage }
+                            externalFilters={ {
+                                impacting: this.state.showRulesWithHits,
+                                itemsPerPage: this.state.itemsPerPage,
+                                page: this.state.page
+                            } }
                             match={ this.props.match }
-                            page={ this.state.page }
                         >
                             <div className='pf-u-display-flex pf-u-flex-direction-row-reverse'>
                                 <Checkbox

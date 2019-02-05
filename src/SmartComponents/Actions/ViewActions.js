@@ -46,7 +46,6 @@ class ViewActions extends Component {
         };
         this.onSortChange = this.onSortChange.bind(this);
         this.toggleCol = this.toggleCol.bind(this);
-        this.applyFilters = this.applyFilters.bind(this);
 
         this.setPage = this.setPage.bind(this);
         this.setPerPage = this.setPerPage.bind(this);
@@ -175,10 +174,12 @@ class ViewActions extends Component {
                         </StackItem>
                         <StackItem className='advisor-l-actions__filters' xl={ 12 } lg={ 12 } md={ 12 } xs={ 12 }>
                             <Filters
-                                history={ history }
-                                itemsPerPage={ this.state.itemsPerPage }
+                                externalFilters={ {
+                                    impacting: true,
+                                    itemsPerPage: this.state.itemsPerPage,
+                                    page: this.state.page
+                                } }
                                 match={ this.props.match }
-                                page={ this.state.page }
                             />
                         </StackItem>
                         { rulesFetchStatus === 'fulfilled' && (
