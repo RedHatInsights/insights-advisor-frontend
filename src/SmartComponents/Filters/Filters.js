@@ -7,6 +7,7 @@ import * as AppActions from '../../AppActions';
 import PropTypes from 'prop-types';
 import debounce from 'lodash/debounce';
 import { SEVERITY_MAP } from '../../AppConstants';
+import DropdownFilters from './DropdownFilters.js';
 import '@patternfly/patternfly-next/utilities/Flex/flex.css';
 
 class Filters extends Component {
@@ -36,7 +37,7 @@ class Filters extends Component {
         this.props.fetchRules({ ...this.props.externalFilters, ...this.state.filters }); // eslint-disable-line camelcase
     };
 
-    changeFilterValue = debounce(
+    changeSearchValue = debounce(
         value =>
             this.setState(
                 {
@@ -47,16 +48,34 @@ class Filters extends Component {
         800
     );
 
+    addFilter = (key, value) => {
+        let filter = {};
+        filter[key] = value;
+        this.setState({ filters: { filter, ...this.state.filters }}, this.apply);
+    }
+
+    removeFilter = (key) => {
+        // probably have to copy this.state.filters with Object.assign, delete, then update state
+        this.setState(delete this.state.filters[key], this.apply);
+    }
+
     render () {
-        const { children, rules } = this.props;
+        const { children, match, rules } = this.props;
         const { text } = this.state.filters.text;
 
         return (
             <Grid className='advisorFilters'>
                 <GridItem span={ 4 }>
-                    <TextInput aria-label='Search' onChange={ this.changeFilterValue } type='search' value={ text } />
+                    <TextInput aria-label='Search' onChange={ this.changeSearchValue } type='search' value={ text } />
                 </GridItem>
-                <GridItem span={ 6 } >{ children }</GridItem>
+                { match.params.type === undefined && <GridItem span={ 3 } >
+                    <DropdownFilters
+                        addFilter={ this.addFilter }
+                        className='advisorDropdownFilters'
+                        removeFilter={ this.removeFilter }
+                    />
+                </GridItem> }
+                <GridItem span={ 3 } >{ children }</GridItem>
                 <GridItem span={ 2 } className='pf-u-display-flex pf-u-flex-direction-row-reverse pf-u-flex-align-content-center'>
                     { rules.count === undefined && ('Loading...') }
                     { rules.count !== undefined && `${rules.count} result${rules.count !== 1 ? 's' : ''}` }
