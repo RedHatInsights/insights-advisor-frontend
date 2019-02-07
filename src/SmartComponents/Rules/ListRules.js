@@ -9,6 +9,7 @@ import * as AppActions from '../../AppActions';
 import { SYSTEM_TYPES } from '../../AppConstants';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import rulesCardSkeleton from '../../PresentationalComponents/Skeletons/RulesCard/RulesCardSkeleton.js';
+import debounce from 'lodash/debounce';
 import '@patternfly/patternfly/utilities/Display/display.css';
 import '@patternfly/patternfly/utilities/Flex/flex.css';
 
@@ -56,9 +57,20 @@ class ListRules extends Component {
         this.props.fetchRules({ page_size: this.state.itemsPerPage, impacting: showRulesWithHits }); // eslint-disable-line camelcase
     };
 
-    setPage = (page) => {
-        this.setState(() => ({ page }));
-        this.props.fetchRules({ page, page_size: this.state.itemsPerPage }); // eslint-disable-line camelcase
+    setPage = (page, textInput) => {
+        if (textInput) {
+            this.setState(
+                () => ({ page }),
+                debounce(() => this.setPage(page), 800)
+            );
+        } else {
+            this.setState(() => ({ page }));
+            this.props.fetchRules({
+                page: this.state.page,
+                page_size: this.state.itemsPerPage, // eslint-disable-line camelcase
+                impacting: this.state.showRulesWithHits // eslint-disable-line camelcase
+            });
+        }
     };
 
     setPerPage = (itemsPerPage) => {
