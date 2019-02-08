@@ -107,6 +107,7 @@ class ActionsOverview extends Component {
 }
 
 ActionsOverview.propTypes = {
+    match: PropTypes.object,
     breadcrumbs: PropTypes.array,
     fetchStats: PropTypes.func,
     setBreadcrumbs: PropTypes.func,
