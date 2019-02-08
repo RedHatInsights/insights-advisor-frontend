@@ -104,7 +104,7 @@ class ViewActions extends Component {
                             key={ key }
                             label='Total Risk'
                             labelHidden
-                            severity={ value.severity }
+                            severity={ value.total_risk }
                         />,
                         <div key={ key }>{ value.impacted_systems_count }</div>,
                         <Ansible
