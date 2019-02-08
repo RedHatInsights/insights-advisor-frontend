@@ -77,7 +77,7 @@ class Breadcrumbs extends React.Component {
                                 <Link to={ oneLink.navigate }>{ oneLink.title }</Link>
                             </BreadcrumbItem>
                         )) }
-                        <BreadcrumbItem to='' isActive>{ this.props.current }</BreadcrumbItem>
+                        <BreadcrumbItem isActive>{ this.props.current }</BreadcrumbItem>
                     </Breadcrumb>
                 ) }
                 { ruleFetchStatus === 'pending' && ('Loading...') }
