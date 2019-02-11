@@ -42,7 +42,7 @@ class ActionsOverview extends Component {
        }
    }
 
-     summaryChart = (totalRisk) => Object.entries(totalRisk).map(([ key, value ]) => {
+     summaryChart = (totalRisk, totalIssues) => Object.entries(totalRisk).map(([ key, value ]) => {
          const riskName = invert(SEVERITY_MAP)[key];
          const normalizedRiskName = capitalize(riskName.split('-')[0]);
 
@@ -57,7 +57,7 @@ class ActionsOverview extends Component {
              <SummaryChartItem
                  name={ normalizedRiskName }
                  numIssues={ value }
-                 totalIssues={ 5 }/>
+                 totalIssues={ totalIssues }/>
          </ConditionalLink>;
      });
 
@@ -66,7 +66,7 @@ class ActionsOverview extends Component {
              statsFetchStatus
          } = this.props;
 
-         const { totalRisk, category } = this.state;
+         const { totalRisk, category, total } = this.state;
 
          return (
              <React.Fragment>
@@ -92,7 +92,7 @@ class ActionsOverview extends Component {
                                  <CardBody>
                                      { statsFetchStatus === 'fulfilled' && (
                                          <SummaryChart>
-                                             { this.summaryChart(totalRisk) }
+                                             { this.summaryChart(totalRisk, total) }
                                          </SummaryChart>
                                      ) }
                                      { statsFetchStatus === 'pending' && (<Loading/>) }
