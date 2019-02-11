@@ -42,7 +42,7 @@ class ActionsOverview extends Component {
        }
    }
 
-     summaryChart = Object.entries(this.state.totalRisk).map(([ key, value ]) => {
+     summaryChart = (totalRisk) => Object.entries(totalRisk).map(([ key, value ]) => {
          const riskName = invert(SEVERITY_MAP)[key];
          const normalizedRiskName = capitalize(riskName.split('-')[0]);
 
@@ -66,6 +66,8 @@ class ActionsOverview extends Component {
              statsFetchStatus
          } = this.props;
 
+         const { totalRisk, category } = this.state;
+
          return (
              <React.Fragment>
                  <PageHeader>
@@ -78,7 +80,7 @@ class ActionsOverview extends Component {
                                  <CardHeader>Category Summary</CardHeader>
                                  <CardBody>
                                      { statsFetchStatus === 'fulfilled' && (
-                                         <ActionsOverviewDonut category={ this.state.category }/>
+                                         <ActionsOverviewDonut category={ category }/>
                                      ) }
                                      { statsFetchStatus === 'pending' && (<Loading/>) }
                                  </CardBody>
@@ -90,7 +92,7 @@ class ActionsOverview extends Component {
                                  <CardBody>
                                      { statsFetchStatus === 'fulfilled' && (
                                          <SummaryChart>
-                                             { this.summaryChart }
+                                             { this.summaryChart(totalRisk) }
                                          </SummaryChart>
                                      ) }
                                      { statsFetchStatus === 'pending' && (<Loading/>) }
