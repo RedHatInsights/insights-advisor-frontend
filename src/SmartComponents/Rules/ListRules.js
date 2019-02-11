@@ -42,7 +42,7 @@ class ListRules extends Component {
                     summary={ value.summary }
                     impact={ value.impact.impact }
                     likelihood={ value.likelihood }
-                    totalRisk={ value.severity }
+                    totalRisk={ value.total_risk }
                     riskOfChange={ value.resolution_set.find(resolution => resolution.system_type === SYSTEM_TYPES.rhel).resolution_risk.risk }
                     ansible={ value.has_playbook }
                     hitCount={ value.impacted_systems_count }

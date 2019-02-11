@@ -115,7 +115,7 @@ class ListActions extends Component {
                                                     <Grid className='ins-l-icon-group__vertical' sm={ 4 } md={ 12 }>
                                                         <GridItem> <Battery label='Impact' severity={ rule.impact.impact }/> </GridItem>
                                                         <GridItem> <Battery label='Likelihood' severity={ rule.likelihood }/> </GridItem>
-                                                        <GridItem> <Battery label='Total Risk' severity={ rule.severity }/> </GridItem>
+                                                        <GridItem> <Battery label='Total Risk' severity={ rule.total_risk }/> </GridItem>
                                                     </Grid>
                                                 </GridItem>
                                                 <GridItem sm={ 4 } md={ 12 }>

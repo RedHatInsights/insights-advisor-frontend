@@ -5,9 +5,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Card, CardBody, CardHeader, Grid, GridItem } from '@patternfly/react-core';
 import { Main, PageHeader, PageHeaderTitle, routerParams } from '@red-hat-insights/insights-frontend-components';
+import { invert, capitalize } from 'lodash';
 
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
+import { SEVERITY_MAP } from '../../AppConstants';
+
 import '../../App.scss';
 
 const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/SummaryChart/SummaryChart'));
@@ -17,10 +20,9 @@ const ActionsOverviewDonut = asyncComponent(() => import('../../PresentationalCo
 
 class ActionsOverview extends Component {
    state = {
-       severity: [],
+       totalRisk: {},
        total: 0,
-       category: [],
-       sevNames: [ 'Low', 'Medium', 'High', 'Critical' ]
+       category: []
    };
 
    async componentDidMount () {
@@ -32,7 +34,7 @@ class ActionsOverview extends Component {
    componentDidUpdate (prevProps) {
        if (this.props.stats !== prevProps.stats) {
            const rules = this.props.stats.rules;
-           this.setState({ severity: [ rules.severity.Info, rules.severity.Warn, rules.severity.Error, rules.severity.Critical ]});
+           this.setState({ totalRisk: rules.total_risk });
            this.setState({
                category: [ rules.category.Availability, rules.category.Security, rules.category.Stability, rules.category.Performance ]
            });
@@ -40,63 +42,68 @@ class ActionsOverview extends Component {
        }
    }
 
-   render () {
-       const {
-           statsFetchStatus
-       } = this.props;
+     summaryChart = (totalRisk) => Object.entries(totalRisk).map(([ key, value ]) => {
+         const riskName = invert(SEVERITY_MAP)[key];
+         const normalizedRiskName = capitalize(riskName.split('-')[0]);
 
-       const SummaryChartItems = this.state.severity.map((value, key) =>
-           <ConditionalLink
-               key={ key }
-               condition={ value }
-               wrap={ children =>
-                   <Link to={ `/actions/${this.state.sevNames[key].toLowerCase()}-risk` }>
-                       { children }
-                   </Link>
-               }>
-               <SummaryChartItem
-                   name={ this.state.sevNames[key] }
-                   numIssues={ value }
-                   totalIssues={ this.state.total }/>
-           </ConditionalLink>
-       );
+         return  <ConditionalLink
+             key={ key }
+             condition={ value }
+             wrap={ children =>
+                 <Link to={ `/actions/${riskName}` }>
+                     { children }
+                 </Link>
+             }>
+             <SummaryChartItem
+                 name={ normalizedRiskName }
+                 numIssues={ value }
+                 totalIssues={ 5 }/>
+         </ConditionalLink>;
+     });
 
-       return (
-           <React.Fragment>
-               <PageHeader>
-                   <PageHeaderTitle title='Actions'/>
-               </PageHeader>
-               <Main>
-                   <Grid gutter='lg' xl={ 5 } lg={ 8 } md={ 2 } sm={ 1 }>
-                       <GridItem  xl={ 5 } lg={ 6 } md={ 9 } sm={ 6 }>
-                           <Card className='pf-t-light  pf-m-opaque-100'>
-                               <CardHeader>Category Summary</CardHeader>
-                               <CardBody>
-                                   { statsFetchStatus === 'fulfilled' && (
-                                       <ActionsOverviewDonut category={ this.state.category }/>
-                                   ) }
-                                   { statsFetchStatus === 'pending' && (<Loading/>) }
-                               </CardBody>
-                           </Card>
-                       </GridItem>
-                       <GridItem xl={ 3 } lg={ 4 } md={ 5 } sm={ 4 }>
-                           <Card className='pf-t-light  pf-m-opaque-100'>
-                               <CardHeader>Risk Summary</CardHeader>
-                               <CardBody>
-                                   { statsFetchStatus === 'fulfilled' && (
-                                       <SummaryChart>
-                                           { SummaryChartItems }
-                                       </SummaryChart>
-                                   ) }
-                                   { statsFetchStatus === 'pending' && (<Loading/>) }
-                               </CardBody>
-                           </Card>
-                       </GridItem>
-                   </Grid>
-               </Main>
-           </React.Fragment>
-       );
-   }
+     render () {
+         const {
+             statsFetchStatus
+         } = this.props;
+
+         const { totalRisk, category } = this.state;
+
+         return (
+             <React.Fragment>
+                 <PageHeader>
+                     <PageHeaderTitle title='Actions'/>
+                 </PageHeader>
+                 <Main>
+                     <Grid gutter='lg' xl={ 5 } lg={ 8 } md={ 2 } sm={ 1 }>
+                         <GridItem  xl={ 5 } lg={ 6 } md={ 9 } sm={ 6 }>
+                             <Card className='pf-t-light  pf-m-opaque-100'>
+                                 <CardHeader>Category Summary</CardHeader>
+                                 <CardBody>
+                                     { statsFetchStatus === 'fulfilled' && (
+                                         <ActionsOverviewDonut category={ category }/>
+                                     ) }
+                                     { statsFetchStatus === 'pending' && (<Loading/>) }
+                                 </CardBody>
+                             </Card>
+                         </GridItem>
+                         <GridItem xl={ 3 } lg={ 4 } md={ 5 } sm={ 4 }>
+                             <Card className='pf-t-light  pf-m-opaque-100'>
+                                 <CardHeader>Risk Summary</CardHeader>
+                                 <CardBody>
+                                     { statsFetchStatus === 'fulfilled' && (
+                                         <SummaryChart>
+                                             { this.summaryChart(totalRisk) }
+                                         </SummaryChart>
+                                     ) }
+                                     { statsFetchStatus === 'pending' && (<Loading/>) }
+                                 </CardBody>
+                             </Card>
+                         </GridItem>
+                     </Grid>
+                 </Main>
+             </React.Fragment>
+         );
+     }
 }
 
 ActionsOverview.propTypes = {
