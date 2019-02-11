@@ -13,14 +13,14 @@ import {
     Table
 } from '@red-hat-insights/insights-frontend-components';
 import PropTypes from 'prop-types';
-import { sortBy, debounce } from 'lodash';
+import { debounce, sortBy } from 'lodash';
 import { connect } from 'react-redux';
 import { Stack, StackItem } from '@patternfly/react-core';
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import Breadcrumbs, { buildBreadcrumbs } from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
-import { RULE_CATEGORIES } from '../../AppConstants';
+import { RULE_CATEGORIES, SEVERITY_MAP } from '../../AppConstants';
 
 import './_actions.scss';
 
@@ -53,18 +53,12 @@ class ViewActions extends Component {
 
     componentDidMount () {
         document.getElementById('root').classList.add('actions__view');
-        const severityMap = {
-            'critical-risk': 4,
-            'high-risk': 3,
-            'medium-risk': 2,
-            'low-risk': 1
-        };
         const options = { page_size: this.state.itemsPerPage, impacting: true };
 
         if (this.props.match.params.type.includes('-risk')) {
-            const severity = severityMap[this.props.match.params.type];
-            this.setState({ filters: { severity }});
-            options.severity = severity;
+            const totalRisk = SEVERITY_MAP[this.props.match.params.type];
+            this.setState({ filters: { total_risk: totalRisk }});
+            options.total_risk = totalRisk;
         } else {
             this.setState({ filters: { category: RULE_CATEGORIES[this.props.match.params.type] }});
             options.category = RULE_CATEGORIES[this.props.match.params.type];
@@ -83,7 +77,7 @@ class ViewActions extends Component {
                     cells: [
                         <Link
                             key={ key }
-                            to={ `/actions/${this.props.match.params.type }/${
+                            to={ `/actions/${this.props.match.params.type}/${
                                 value.rule_id
                             }` }
                         >
