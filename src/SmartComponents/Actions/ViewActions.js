@@ -13,14 +13,15 @@ import {
     Table
 } from '@red-hat-insights/insights-frontend-components';
 import PropTypes from 'prop-types';
-import { sortBy } from 'lodash';
+import { sortBy, debounce } from 'lodash';
 import { connect } from 'react-redux';
 import { Stack, StackItem } from '@patternfly/react-core';
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import Breadcrumbs, { buildBreadcrumbs } from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
-import debounce from 'lodash/debounce';
+import { RULE_CATEGORIES } from '../../AppConstants';
+
 import './_actions.scss';
 
 class ViewActions extends Component {
@@ -65,8 +66,8 @@ class ViewActions extends Component {
             this.setState({ filters: { severity }});
             options.severity = severity;
         } else {
-            this.setState({ filters: { category: this.props.match.params.type }});
-            options.category = this.props.match.params.type;
+            this.setState({ filters: { category: RULE_CATEGORIES[this.props.match.params.type] }});
+            options.category = RULE_CATEGORIES[this.props.match.params.type];
         }
 
         this.props.fetchRules(options);
