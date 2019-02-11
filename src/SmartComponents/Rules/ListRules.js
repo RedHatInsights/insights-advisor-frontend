@@ -9,8 +9,8 @@ import * as AppActions from '../../AppActions';
 import { SYSTEM_TYPES } from '../../AppConstants';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import rulesCardSkeleton from '../../PresentationalComponents/Skeletons/RulesCard/RulesCardSkeleton.js';
-import '@patternfly/patternfly-next/utilities/Display/display.css';
-import '@patternfly/patternfly-next/utilities/Flex/flex.css';
+import '@patternfly/patternfly/utilities/Display/display.css';
+import '@patternfly/patternfly/utilities/Flex/flex.css';
 
 const RulesCard = rulesCardSkeleton(() => import('../../PresentationalComponents/Cards/RulesCard.js'));
 
