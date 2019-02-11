@@ -20,6 +20,7 @@ import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import Breadcrumbs, { buildBreadcrumbs } from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
+import debounce from 'lodash/debounce';
 import './_actions.scss';
 
 class ViewActions extends Component {
@@ -140,10 +141,21 @@ class ViewActions extends Component {
         });
     }
 
-    setPage (page) {
-        this.setState(() => ({ page }));
-        this.props.fetchRules({ page, page_size: this.state.itemsPerPage, ...this.state.filters }); // eslint-disable-line camelcase
-    }
+    setPage = (page, textInput) => {
+        if (textInput) {
+            this.setState(
+                () => ({ page }),
+                debounce(() => this.setPage(page), 800)
+            );
+        } else {
+            this.setState(() => ({ page }));
+            this.props.fetchRules({
+                page: this.state.page,
+                page_size: this.state.itemsPerPage, // eslint-disable-line camelcase
+                impacting: true // eslint-disable-line camelcase
+            });
+        }
+    };
 
     setPerPage (itemsPerPage) {
         this.setState(() => ({ itemsPerPage }));
