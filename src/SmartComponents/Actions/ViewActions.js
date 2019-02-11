@@ -34,7 +34,7 @@ class ViewActions extends Component {
                 'Likelihood',
                 'Impact',
                 'Total Risk',
-                'Systems',
+                'Systems Exposed',
                 'Ansible'
             ],
             rows: [],
