@@ -12,3 +12,9 @@ export const STATS_FETCH_URL = `${BASE_URL}/stats/`;
 export const SYSTEM_FETCH_URL = `${BASE_URL}/system/`;
 
 export const SYSTEM_TYPES = { rhel: 105 };
+export const RULE_CATEGORIES = {
+    availability: 1,
+    security: 2,
+    stability: 3,
+    performance: 4
+};
