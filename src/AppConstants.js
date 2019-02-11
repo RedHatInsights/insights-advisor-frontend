@@ -18,3 +18,9 @@ export const RULE_CATEGORIES = {
     stability: 3,
     performance: 4
 };
+export const SEVERITY_MAP = {
+    'critical-risk': 4,
+    'high-risk': 3,
+    'medium-risk': 2,
+    'low-risk': 1
+};
