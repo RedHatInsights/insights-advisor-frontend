@@ -75,13 +75,16 @@ class ListActions extends Component {
         const { kbaDetails } = this.state;
         return (
             <React.Fragment>
-                <PageHeader>
-                    <Breadcrumbs
-                        current={ rule.description || '' }
-                        match={ match }
-                    />
-                    <PageHeaderTitle title={ rule.description || '' }/>
-                </PageHeader>
+                { ruleFetchStatus === 'fulfilled' && (
+                    <PageHeader>
+                        <Breadcrumbs
+                            current={ rule.description || '' }
+                            match={ match }
+                        />
+                        <PageHeaderTitle title={ rule.description || '' }/>
+                    </PageHeader>
+                ) }
+                { ruleFetchStatus === 'pending' && (<Loading/>) }
                 <Main className='actions__list'>
                     <React.Fragment>
                         { ruleFetchStatus === 'fulfilled' && (
