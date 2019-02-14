@@ -19,7 +19,7 @@ import { Stack, StackItem } from '@patternfly/react-core';
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
-import Breadcrumbs, { buildBreadcrumbs } from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
+import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { RULE_CATEGORIES, SEVERITY_MAP } from '../../AppConstants';
 import Filters from '../../PresentationalComponents/Filters/Filters';
 
@@ -157,14 +157,14 @@ class ViewActions extends Component {
     };
 
     render () {
-        const { rulesFetchStatus, rules, breadcrumbs } = this.props;
+        const { rulesFetchStatus, rules } = this.props;
         const { localFilters, pageSize, page, impacting } = this.state;
         return (
             <React.Fragment>
                 <PageHeader>
                     <Breadcrumbs
                         current={ this.parseUrlTitle(this.props.match.params.type) }
-                        items={ buildBreadcrumbs(this.props.match, { breadcrumbs }) }
+                        match={ this.props.match }
                     />
                     <PageHeaderTitle
                         className='actions__view--title'
@@ -217,7 +217,6 @@ class ViewActions extends Component {
 }
 
 ViewActions.propTypes = {
-    breadcrumbs: PropTypes.array,
     fetchRules: PropTypes.func,
     match: PropTypes.any,
     rulesFetchStatus: PropTypes.string,
@@ -226,7 +225,6 @@ ViewActions.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-    breadcrumbs: state.AdvisorStore.breadcrumbs,
     rules: state.AdvisorStore.rules,
     rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
     filters: state.AdvisorStore.filters,

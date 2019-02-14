@@ -1,52 +1,113 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
+import { routerParams } from '@red-hat-insights/insights-frontend-components';
+import { connect } from 'react-redux';
+import * as AppActions from '../../AppActions';
 import PropTypes from 'prop-types';
 import './_breadcrumbs.scss';
 
-export function buildBreadcrumbs(match, options) {
-    let crumbs = [];
+class Breadcrumbs extends React.Component {
+    state = {
+        items: [],
+        ruleDescriptionLoaded: false
+    };
 
-    // add actions/rules base breadcrumb
-    if (options === undefined || options.breadcrummbs === undefined || options.breadcrumbs[0] === undefined) {
-        crumbs.push({ title: 'Actions', navigate: '/actions' });
-    } else {
-        crumbs.push(options.breadcrumbs[0]);
+    componentDidMount () {
+        if (this.props.match.params.inventoryId !== undefined) {
+            this.props.fetchRule({ rule_id: this.props.match.params.id }); // eslint-disable-line camelcase
+        } else {
+            this.buildBreadcrumbs();
+        }
     }
 
-    // add :type breadcrumb (exception: Rules based breadcrumbs)
-    if (match.params.id !== undefined && crumbs[0].title !== 'Rules') {
-        const title = match.params.type.indexOf('-') > -1 ? `${match.params.type.replace('-', ' ')} Actions` : match.params.type ;
-        crumbs.push({
-            title,
-            navigate: crumbs[0].navigate + '/' + match.params.type
-        });
+    componentDidUpdate () {
+        if (this.props.ruleFetchStatus === 'fulfilled' && !this.state.ruleDescriptionLoaded) {
+            this.setState({ ruleDescriptionLoaded: true });
+            this.buildBreadcrumbs();
+        }
     }
 
-    if (match.params.inventoryId !== undefined) {
-        crumbs.push({
-            title: match.params.id,
-            navigate: crumbs[1].navigate + '/' + match.params.id
-        });
+    getReadableType = (type) => (
+        type.indexOf('-') > -1 ? `${type.replace('-', ' ')} Actions` : type
+    );
+
+    buildBreadcrumbs () {
+        const { breadcrumbs, match } = this.props;
+        let crumbs = [];
+
+        // add actions/rules base breadcrumb
+        if (match.params.type !== undefined) {
+            if (breadcrumbs[0] !== undefined) {
+                crumbs.push(breadcrumbs[0]);
+            } else {
+                const title = match.url.split('/')[1];
+                crumbs.push({ title, navigate: `/${title}` });
+            }
+        }
+
+        // add :type breadcrumb (exception: Rules based breadcrumbs)
+        if (match.params.type !== undefined && match.params.id !== undefined && crumbs[0].title !== 'Rules') {
+            const title = this.getReadableType(match.params.type);
+            crumbs.push({
+                title,
+                navigate: crumbs[0].navigate + '/' + match.params.type
+            });
+        }
+
+        if (match.params.id !== undefined && match.params.inventoryId !== undefined) {
+            crumbs.push({
+                title: this.props.rule.description,
+                navigate: crumbs[1].navigate + '/' + match.params.id
+            });
+        }
+
+        this.setState({ items: crumbs });
     }
 
-    return crumbs;
+    render () {
+        const { ruleFetchStatus } = this.props;
+        const { items } = this.state;
+        return (
+            <React.Fragment>
+                { (ruleFetchStatus === 'fulfilled' || items.length > 0) && (
+                    <Breadcrumb>
+                        { items.map((oneLink, key) => (
+                            <BreadcrumbItem key={ key }>
+                                <Link to={ oneLink.navigate }>{ oneLink.title }</Link>
+                            </BreadcrumbItem>
+                        )) }
+                        <BreadcrumbItem isActive>{ this.props.current }</BreadcrumbItem>
+                    </Breadcrumb>
+                ) }
+                { ruleFetchStatus === 'pending' && ('Loading...') }
+            </React.Fragment>
+        );
+    }
 }
 
-const Breadcrumbs = ({ items, current }) => (
-    <Breadcrumb>
-        { items.map((oneLink, key) => (
-            <BreadcrumbItem key={ key }>
-                <Link to={ oneLink.navigate }>{ oneLink.title }</Link>
-            </BreadcrumbItem>
-        )) }
-        <BreadcrumbItem to='' isActive>{ current }</BreadcrumbItem>
-    </Breadcrumb>
-);
-
 Breadcrumbs.propTypes = {
-    items: PropTypes.array,
-    current: PropTypes.string
+    breadcrumbs: PropTypes.arrayOf(Object),
+    current: PropTypes.string,
+    fetchRule: PropTypes.func,
+    match: PropTypes.object,
+    rule: PropTypes.object,
+    ruleFetchStatus: PropTypes.string
 };
 
-export default Breadcrumbs;
+const mapStateToProps = (state, ownProps) => ({
+    breadcrumbs: state.AdvisorStore.breadcrumbs,
+    rule: state.AdvisorStore.rule,
+    ruleFetchStatus: state.AdvisorStore.ruleFetchStatus,
+    ...state,
+    ...ownProps
+});
+
+const mapDispatchToProps = dispatch => ({
+    fetchRule: (url) => dispatch(AppActions.fetchRule(url))
+});
+
+export default routerParams(connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Breadcrumbs));
