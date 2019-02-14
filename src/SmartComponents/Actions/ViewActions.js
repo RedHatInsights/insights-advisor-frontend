@@ -19,48 +19,40 @@ import { Stack, StackItem } from '@patternfly/react-core';
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
-import Breadcrumbs, { buildBreadcrumbs } from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
+import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { RULE_CATEGORIES, SEVERITY_MAP } from '../../AppConstants';
+import Filters from '../../PresentationalComponents/Filters/Filters';
 
 import './_actions.scss';
 
 class ViewActions extends Component {
-    constructor (props) {
-        super(props);
-        this.state = {
-            summary: '',
-            cols: [
-                'Rule',
-                'Likelihood',
-                'Impact',
-                'Total Risk',
-                'Systems Exposed',
-                'Ansible'
-            ],
-            rows: [],
-            sortBy: {},
-            filters: {},
-            itemsPerPage: 10,
-            page: 1,
-            things: []
-        };
-        this.onSortChange = this.onSortChange.bind(this);
-        this.toggleCol = this.toggleCol.bind(this);
-
-        this.setPage = this.setPage.bind(this);
-        this.setPerPage = this.setPerPage.bind(this);
-    }
+    state = {
+        summary: '',
+        cols: [
+            'Rule',
+            'Likelihood',
+            'Impact',
+            'Total Risk',
+            'Systems Exposed',
+            'Ansible'
+        ],
+        rows: [],
+        sortBy: {},
+        localFilters: {},
+        impacting: true,
+        pageSize: 10,
+        page: 1
+    };
 
     componentDidMount () {
-        document.getElementById('root').classList.add('actions__view');
-        const options = { page_size: this.state.itemsPerPage, impacting: true };
+        const options = { page: this.state.page, page_size: this.state.pageSize, impacting: this.state.impacting };
 
         if (this.props.match.params.type.includes('-risk')) {
             const totalRisk = SEVERITY_MAP[this.props.match.params.type];
-            this.setState({ filters: { total_risk: totalRisk }});
+            this.setState({ localFilters: { total_risk: totalRisk }});
             options.total_risk = totalRisk;
         } else {
-            this.setState({ filters: { category: RULE_CATEGORIES[this.props.match.params.type] }});
+            this.setState({ localFilters: { category: RULE_CATEGORIES[this.props.match.params.type] }});
             options.category = RULE_CATEGORIES[this.props.match.params.type];
         }
 
@@ -114,17 +106,17 @@ class ViewActions extends Component {
         }
     }
 
-    toggleCol (_event, key, selected) {
-        let { rows, page, itemsPerPage } = this.state;
-        const firstIndex = page === 1 ? 0 : page * itemsPerPage - itemsPerPage;
+    toggleCol = (_event, key, selected) => {
+        let { rows, page, pageSize } = this.state;
+        const firstIndex = page === 1 ? 0 : page * pageSize - pageSize;
         rows[firstIndex + key].selected = selected;
         this.setState({
             ...this.state,
             rows
         });
-    }
+    };
 
-    onSortChange (_event, key, direction) {
+    onSortChange = (_event, key, direction) => {
         const sortedRows = sortBy(this.state.rows, [ e => e.cells[key] ]);
         this.setState({
             ...this.state,
@@ -134,43 +126,45 @@ class ViewActions extends Component {
                 direction
             }
         });
-    }
+    };
 
-    setPage = (page, textInput) => {
+    setPage = (newPage, textInput) => {
         if (textInput) {
             this.setState(
-                () => ({ page }),
-                debounce(() => this.setPage(page), 800)
+                () => ({ page: newPage }),
+                debounce(() => this.setPage(newPage), 800)
             );
         } else {
-            this.setState(() => ({ page }));
+            this.setState({ page: newPage });
             this.props.fetchRules({
-                page: this.state.page,
-                page_size: this.state.itemsPerPage, // eslint-disable-line camelcase
-                impacting: true // eslint-disable-line camelcase
+                ...this.props.filters,
+                page: newPage,
+                page_size: this.state.pageSize,
+                impacting: this.state.impacting,
+                ...this.state.localFilters
             });
         }
     };
 
-    setPerPage (itemsPerPage) {
-        this.setState(() => ({ itemsPerPage }));
-        this.props.fetchRules({ page_size: itemsPerPage, ...this.state.filters }); // eslint-disable-line camelcase
-    }
+    setPerPage = (pageSize) => {
+        this.setState({ pageSize });
+        this.props.fetchRules({ ...this.props.filters, page: 1, page_size: pageSize, impacting: this.state.impacting, ...this.state.localFilters });
+    };
 
-    parseUrlTitle (title = '') {
+    parseUrlTitle = (title = '') => {
         const parsedTitle = title.split('-');
         return parsedTitle.length > 1 ? `${parsedTitle[0]} ${parsedTitle[1]} Actions` : `${parsedTitle}`;
-    }
+    };
 
     render () {
-        const { rulesFetchStatus, rules, breadcrumbs } = this.props;
-
+        const { rulesFetchStatus, rules } = this.props;
+        const { localFilters, pageSize, page, impacting } = this.state;
         return (
             <React.Fragment>
                 <PageHeader>
                     <Breadcrumbs
                         current={ this.parseUrlTitle(this.props.match.params.type) }
-                        items={ buildBreadcrumbs(this.props.match, { breadcrumbs }) }
+                        match={ this.props.match }
                     />
                     <PageHeaderTitle
                         className='actions__view--title'
@@ -183,7 +177,13 @@ class ViewActions extends Component {
                             <p>{ this.state.summary }</p>
                         </StackItem>
                         <StackItem className='advisor-l-actions__filters'>
-                            Filters
+                            <Filters
+                                fetchAction={ (filters) => this.props.fetchRules({ ...filters, pageSize, page, impacting, ...localFilters }) }
+                                searchPlaceholder='Find a Rule'
+                                resultsCount={ rules.count }
+                                hideCategories={ localFilters.total_risk ? [ 'total_risk' ] : [ 'category' ] }
+                            >
+                            </Filters>
                         </StackItem>
                         { rulesFetchStatus === 'fulfilled' && (
                             <StackItem className='advisor-l-actions__table'>
@@ -199,9 +199,9 @@ class ViewActions extends Component {
                                         <Pagination
                                             numberOfItems={ rules.count }
                                             onPerPageSelect={ this.setPerPage }
-                                            page={ this.state.page }
+                                            page={ page }
                                             onSetPage={ this.setPage }
-                                            itemsPerPage={ this.state.itemsPerPage }
+                                            itemsPerPage={ pageSize }
                                         />
                                     }
                                 />
@@ -217,23 +217,21 @@ class ViewActions extends Component {
 }
 
 ViewActions.propTypes = {
-    breadcrumbs: PropTypes.array,
     fetchRules: PropTypes.func,
     match: PropTypes.any,
     rulesFetchStatus: PropTypes.string,
-    rules: PropTypes.object
+    rules: PropTypes.object,
+    filters: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
-    breadcrumbs: state.AdvisorStore.breadcrumbs,
     rules: state.AdvisorStore.rules,
     rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
+    filters: state.AdvisorStore.filters,
     ...ownProps
 });
 
-const mapDispatchToProps = dispatch => ({
-    fetchRules: (url) => dispatch(AppActions.fetchRules(url))
-});
+const mapDispatchToProps = dispatch => ({ fetchRules: (url) => dispatch(AppActions.fetchRules(url)) });
 
 export default routerParams(connect(
     mapStateToProps,

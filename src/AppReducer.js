@@ -15,7 +15,8 @@ const initialState = Immutable({
     systemFetchStatus: '',
     systemtype: {},
     systemtypeFetchStatus: '',
-    breadcrumbs: []
+    breadcrumbs: [],
+    filters: {}
 });
 
 export const AdvisorStore = (state = initialState, action) => {
@@ -73,6 +74,11 @@ export const AdvisorStore = (state = initialState, action) => {
         case ActionTypes.BREADCRUMBS_SET:
             return Immutable.merge(state, {
                 breadcrumbs: action.payload
+            });
+
+        case ActionTypes.FILTERS_SET:
+            return Immutable.merge(state, {
+                filters: action.payload
             });
 
         default:

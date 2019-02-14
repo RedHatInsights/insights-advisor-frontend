@@ -1,0 +1,22 @@
+.pf-c-dropdown.dropdownTotalRisk li {
+  list-style-type: none;
+}
+
+.pf-c-dropdown.dropdownFilters {
+  width: 100%;
+
+  div {
+    padding: 2px;
+  }
+}
+
+.pf-c-dropdown__menu-item {
+  &:hover {
+    background-color: inherit !important;
+    outline: inherit !important;
+  }
+  &:focus {
+    background-color: inherit !important;
+    outline: inherit !important;
+  }
+}
