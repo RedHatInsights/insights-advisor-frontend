@@ -28,10 +28,10 @@ export const SEVERITY_MAP = {
 export const FILTER_CATEGORIES = [
     {
         title: 'Total Risk', urlParam: 'total_risk', values: [
-            { label: 'Is an incident', value: '4' },
-            { label: 'Critical', value: '3' },
-            { label: 'High', value: '2' },
-            { label: 'Medium', value: '1' }
+            { label: 'Critical', value: '4' },
+            { label: 'High', value: '3' },
+            { label: 'Medium', value: '2' },
+            { label: 'Low', value: '1' }
         ]
     },
     {
