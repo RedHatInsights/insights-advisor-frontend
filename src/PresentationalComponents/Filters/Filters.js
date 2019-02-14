@@ -29,7 +29,7 @@ class Filters extends Component {
     };
 
     removeFilter = (key, value) => {
-        const newFilter = { [key]: this.props.filters[key].split(',').filter(item => item !== value).join(',') };
+        const newFilter = { [key]: this.props.filters[key].split(',').filter(item => Number(item) !== Number(value)).join(',') };
 
         if (newFilter[key].length) {
             this.props.setFilters({ ...this.props.filters, ...newFilter });
