@@ -16,8 +16,8 @@ class CheckboxFilter extends Component {
     handleChange = checked => {
         this.setState({ checked: !this.state.checked });
         this.props.addRemoveFilters(
-            event.target.value,
-            event.target.getAttribute('param'),
+            this.props.value,
+            this.props.param,
             checked
         );
     };

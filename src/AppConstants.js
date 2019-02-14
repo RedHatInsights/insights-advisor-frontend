@@ -25,3 +25,37 @@ export const SEVERITY_MAP = {
     'medium-risk': 2,
     'low-risk': 1
 };
+export const FILTER_CATEGORIES = [
+    {
+        title: 'Total Risk', urlParam: 'total_risk', values: [
+            { label: 'Is an incident', value: '4' },
+            { label: 'Critical', value: '3' },
+            { label: 'High', value: '2' },
+            { label: 'Medium', value: '1' }
+        ]
+    },
+    {
+        title: 'Impact', urlParam: 'impact', values: [
+            { label: 'Critical', value: '4' },
+            { label: 'High', value: '3' },
+            { label: 'Medium', value: '2' },
+            { label: 'Low', value: '1' }
+        ]
+    },
+    {
+        title: 'Likelihood', urlParam: 'likelihood', values: [
+            { label: 'Critical', value: '4' },
+            { label: 'High', value: '3' },
+            { label: 'Medium', value: '2' },
+            { label: 'Low', value: '1' }
+        ]
+    },
+    {
+        title: 'Category', urlParam: 'category', values: [
+            { label: 'Availability', value: `${RULE_CATEGORIES.availability}` },
+            { label: 'Performance', value: `${RULE_CATEGORIES.performance}` },
+            { label: 'Stability', value: `${RULE_CATEGORIES.stability}` },
+            { label: 'Security', value: `${RULE_CATEGORIES.security}` }
+        ]
+    }
+];

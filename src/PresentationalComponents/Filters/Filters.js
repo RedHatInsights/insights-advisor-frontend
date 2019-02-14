@@ -35,7 +35,7 @@ class Filters extends Component {
             this.props.setFilters({ ...this.props.filters, ...newFilter });
             this.props.fetchAction({ ...this.props.filters, ...newFilter });
         } else {
-            const filter = Object.assign({}, this.props.filters);
+            const filter = { ...this.props.filters };
             delete filter[key];
             this.props.setFilters(filter);
             this.props.fetchAction(filter);
