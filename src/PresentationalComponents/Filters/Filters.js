@@ -23,7 +23,7 @@ class Filters extends Component {
     );
 
     addFilter = (param, value) => {
-        const newFilter = this.props.filters[param] ? { [param]: `${this.props.filters[param]}, ${value}` } : { [param]: value };
+        const newFilter = this.props.filters[param] ? { [param]: `${this.props.filters[param]},${value}` } : { [param]: value };
         this.props.setFilters({ ...this.props.filters, ...newFilter });
         this.props.fetchAction({ ...this.props.filters, ...newFilter });
     };
