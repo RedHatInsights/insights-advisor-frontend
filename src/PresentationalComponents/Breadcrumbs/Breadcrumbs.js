@@ -51,15 +51,25 @@ class Breadcrumbs extends React.Component {
             const title = this.getReadableType(match.params.type);
             crumbs.push({
                 title,
-                navigate: crumbs[0].navigate + '/' + match.params.type
+                navigate: `${crumbs[0].navigate}/${match.params.type}`
             });
         }
 
+        // add :id breadcrumb
         if (match.params.id !== undefined && match.params.inventoryId !== undefined) {
-            crumbs.push({
-                title: this.props.rule.description,
-                navigate: crumbs[1].navigate + '/' + match.params.id
-            });
+            const title = this.props.rule.description;
+            if (crumbs[1] !== undefined) {
+                crumbs.push({
+                    title,
+                    navigate: `${crumbs[1].navigate}/${match.params.id}`
+                });
+            } else {
+                // build breadcrumb from beginning if Rule-based
+                crumbs.push({
+                    title,
+                    navigate: `/${match.url.split('/')[1]}/${match.params.type}/${match.params.id}`
+                });
+            }
         }
 
         this.setState({ items: crumbs });
