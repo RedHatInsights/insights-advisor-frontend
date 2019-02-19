@@ -4,7 +4,7 @@ import { Ansible, Battery, Main, PageHeader, PageHeaderTitle, RemediationButton,
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Card, CardBody, CardHeader, Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
-import Breadcrumbs, { buildBreadcrumbs } from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
+import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 import ReactMarkdown from 'react-markdown/with-html';
 
@@ -22,7 +22,8 @@ class ListActions extends Component {
         kbaDetailsLoading: false
     };
 
-    componentDidMount () {
+    async componentDidMount () {
+        await insights.chrome.auth.getUser();
         this.props.fetchRule({ rule_id: this.props.match.params.id });
         this.props.fetchSystem({ rule_id: this.props.match.params.id });
     }
@@ -71,17 +72,20 @@ class ListActions extends Component {
     }
 
     render () {
-        const { breadcrumbs, ruleFetchStatus, rule, systemFetchStatus, system } = this.props;
+        const { match, ruleFetchStatus, rule, systemFetchStatus, system } = this.props;
         const { kbaDetails } = this.state;
         return (
             <React.Fragment>
-                <PageHeader>
-                    <Breadcrumbs
-                        current={ rule.description || '' }
-                        items={ buildBreadcrumbs(this.props.match, { breadcrumbs }) }
-                    />
-                    <PageHeaderTitle title={ rule.description || '' }/>
-                </PageHeader>
+                { ruleFetchStatus === 'fulfilled' && (
+                    <PageHeader>
+                        <Breadcrumbs
+                            current={ rule.description || '' }
+                            match={ match }
+                        />
+                        <PageHeaderTitle title={ rule.description || '' }/>
+                    </PageHeader>
+                ) }
+                { ruleFetchStatus === 'pending' && (<Loading/>) }
                 <Main className='actions__list'>
                     <React.Fragment>
                         { ruleFetchStatus === 'fulfilled' && (
@@ -165,7 +169,6 @@ class ListActions extends Component {
 }
 
 ListActions.propTypes = {
-    breadcrumbs: PropTypes.array,
     match: PropTypes.any,
     fetchRule: PropTypes.func,
     ruleFetchStatus: PropTypes.string,
@@ -180,7 +183,6 @@ ListActions.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
     rule: state.AdvisorStore.rule,
     ruleFetchStatus: state.AdvisorStore.ruleFetchStatus,
-    breadcrumbs: state.AdvisorStore.breadcrumbs,
     system: state.AdvisorStore.system,
     systemFetchStatus: state.AdvisorStore.systemFetchStatus,
     entities: state.entities,

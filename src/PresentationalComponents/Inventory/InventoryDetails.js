@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Main, PageHeader, registry as registryDecorator, routerParams } from '@red-hat-insights/insights-frontend-components';
 import { entitiesDetailsReducer } from '../../AppReducer';
-import Breadcrumbs, { buildBreadcrumbs } from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
+import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import '@red-hat-insights/insights-frontend-components/components/Advisor.css';
 
@@ -42,13 +42,13 @@ class InventoryDetails extends React.Component {
 
     render () {
         const { InventoryDetail, AppInfo } = this.state;
-        const { breadcrumbs, entity } = this.props;
+        const { entity } = this.props;
         return (
             <>
                 <PageHeader className="pf-m-light ins-inventory-detail">
                     { entity && <Breadcrumbs
                         current={ entity.display_name || entity.id }
-                        items={ buildBreadcrumbs(this.props.match, { breadcrumbs }) }
+                        match={ this.props.match }
                     /> }
                     { InventoryDetail && <InventoryDetail hideBack/> }
                 </PageHeader>
@@ -72,14 +72,12 @@ InventoryDetails.propTypes = {
     history: PropTypes.object,
     entity: PropTypes.object,
     addAlert: PropTypes.func,
-    breadcrumbs: PropTypes.array,
     match: PropTypes.any
 };
 
 function mapStateToProps (store) {
     return {
-        entity: store.entityDetails && store.entityDetails.entity,
-        breadcrumbs: store.AdvisorStore.breadcrumbs
+        entity: store.entityDetails && store.entityDetails.entity
     };
 }
 
