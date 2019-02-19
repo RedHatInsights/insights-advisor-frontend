@@ -26,7 +26,8 @@ class ListRules extends Component {
         impacting: true
     };
 
-    componentDidMount () {
+    async componentDidMount () {
+        await insights.chrome.auth.getUser();
         this.props.setBreadcrumbs([{ title: 'Rules', navigate: '/rules' }]);
         this.props.fetchRules({ page: this.state.page, page_size: this.state.pageSize, impacting: this.state.impacting });
     }

@@ -44,7 +44,8 @@ class ViewActions extends Component {
         page: 1
     };
 
-    componentDidMount () {
+    async componentDidMount () {
+        await insights.chrome.auth.getUser();
         const options = { page: this.state.page, page_size: this.state.pageSize, impacting: this.state.impacting };
 
         if (this.props.match.params.type.includes('-risk')) {
