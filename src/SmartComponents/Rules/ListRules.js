@@ -12,8 +12,6 @@ import { SYSTEM_TYPES } from '../../AppConstants';
 import Filters from '../../PresentationalComponents/Filters/Filters';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import rulesCardSkeleton from '../../PresentationalComponents/Skeletons/RulesCard/RulesCardSkeleton.js';
-import '@patternfly/patternfly/utilities/Display/display.scss';
-import '@patternfly/patternfly/utilities/Flex/flex.scss';
 
 const RulesCard = rulesCardSkeleton(() => import('../../PresentationalComponents/Cards/RulesCard.js'));
 
