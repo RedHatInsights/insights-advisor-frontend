@@ -33,8 +33,9 @@ class ListRules extends Component {
     componentDidUpdate (prevProps) {
         if (this.props.rules !== prevProps.rules) {
             const rules = this.props.rules.results;
-            const cards = rules.map((value, key) =>
-                <RulesCard
+            const cards = rules.map((value, key) => {
+                const resolution_risk = value.resolution_set.find(resolution => resolution.system_type === SYSTEM_TYPES.rhel);
+                return <RulesCard
                     key={ key }
                     widget-id={ value }
                     ruleID={ value.rule_id }
@@ -44,11 +45,11 @@ class ListRules extends Component {
                     impact={ value.impact.impact }
                     likelihood={ value.likelihood }
                     totalRisk={ value.total_risk }
-                    riskOfChange={ value.resolution_set.find(resolution => resolution.system_type === SYSTEM_TYPES.rhel).resolution_risk.risk }
+                    riskOfChange={ resolution_risk ? resolution_risk.resolution_risk.risk : 0 }
                     ansible={ value.has_playbook }
                     hitCount={ value.impacted_systems_count }
-                />
-            );
+                />;
+            });
             this.setState({ cards });
         }
     }
