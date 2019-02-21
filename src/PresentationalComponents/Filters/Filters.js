@@ -45,7 +45,7 @@ class Filters extends Component {
     render () {
         const { children, searchPlaceholder, filters, resultsCount, hideCategories } = this.props;
         return (
-            <Toolbar className='pf-u-justify-content-space-between pf-u-ml-xl pf-u-my-md'>
+            <Toolbar className='pf-u-ml-xl pf-u-my-md'>
                 <ToolbarGroup>
                     <ToolbarItem className='pf-u-mr-xl'>
                         <TextInput
@@ -64,11 +64,7 @@ class Filters extends Component {
                         />
                     </ToolbarItem>
                 </ToolbarGroup>
-                <ToolbarGroup>
-                    <ToolbarItem>
-                        { children }
-                    </ToolbarItem>
-                </ToolbarGroup>
+                { children }
                 <ToolbarSection aria-label="toolbar-results">
                     <ToolbarGroup>
                         <ToolbarItem>

@@ -4,7 +4,7 @@ import { Main, Pagination, routerParams } from '@red-hat-insights/insights-front
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Checkbox, Stack, StackItem } from '@patternfly/react-core';
+import { Checkbox, FormSelect, FormSelectOption, Stack, StackItem, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import debounce from 'lodash/debounce';
 
 import * as AppActions from '../../AppActions';
@@ -12,6 +12,7 @@ import { SYSTEM_TYPES } from '../../AppConstants';
 import Filters from '../../PresentationalComponents/Filters/Filters';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import rulesCardSkeleton from '../../PresentationalComponents/Skeletons/RulesCard/RulesCardSkeleton.js';
+import './_rules.scss';
 
 const RulesCard = rulesCardSkeleton(() => import('../../PresentationalComponents/Cards/RulesCard.js'));
 
@@ -21,7 +22,8 @@ class ListRules extends Component {
         pageSize: 10,
         page: 1,
         cards: [],
-        impacting: true
+        impacting: true,
+        totalRiskSort: ''
     };
 
     async componentDidMount () {
@@ -59,6 +61,7 @@ class ListRules extends Component {
         this.props.fetchRules({
             ...this.props.filters,
             page_size: this.state.pageSize,
+            sort: this.state.totalRiskSort,
             impacting: showRulesWithHits
         });
     };
@@ -71,14 +74,43 @@ class ListRules extends Component {
             );
         } else {
             this.setState({ page: newPage });
-            this.props.fetchRules({ ...this.props.filters, page: newPage, page_size: this.state.pageSize, impacting: this.state.impacting });
+            this.props.fetchRules({
+                ...this.props.filters,
+                page: newPage,
+                page_size: this.state.pageSize,
+                impacting: this.state.impacting,
+                sort: this.state.totalRiskSort
+            });
         }
     };
 
     setPerPage = (pageSize) => {
         this.setState({ pageSize });
-        this.props.fetchRules({ ...this.props.filters, page: 1, page_size: pageSize, impacting: this.state.impacting });
+        this.props.fetchRules({
+            ...this.props.filters,
+            page: 1,
+            page_size: pageSize,
+            impacting: this.state.impacting,
+            sort: this.state.totalRiskSort
+        });
     };
+
+    onTotalRiskSortChange = (totalRiskSort) => {
+        this.setState({ totalRiskSort });
+        this.props.fetchRules({
+            ...this.props.filters,
+            page: 1,
+            page_size: this.state.pageSize,
+            impacting: this.state.impacting,
+            sort: totalRiskSort
+        });
+    }
+
+    totalRiskSortOptions = [
+        { value: '', label: 'Sort By Total Risk', disabled: true },
+        { value: 'total_risk', label: 'Ascending', disabled: false },
+        { value: '-total_risk', label: 'Descending', disabled: false }
+    ]
 
     render () {
         const { rulesFetchStatus, rules } = this.props;
@@ -92,13 +124,35 @@ class ListRules extends Component {
                             searchPlaceholder='Find a Rule'
                             resultsCount={ rules.count }
                         >
-                            <Checkbox
-                                label="Show Rules With Hits"
-                                isChecked={ impacting }
-                                onChange={ this.toggleRulesWithHits }
-                                aria-label="InsightsRulesHideHits"
-                                id="InsightsRulesHideHits"
-                            />
+                            <ToolbarGroup>
+                                <ToolbarItem>
+                                    <FormSelect
+                                        value={ this.state.totalRiskSort }
+                                        onChange={ this.onTotalRiskSortChange }
+                                        aria-label='Total Risk Sort'
+                                    >
+                                        { this.totalRiskSortOptions.map((option, index) => (
+                                            <FormSelectOption
+                                                isDisabled={ option.disabled }
+                                                key={ index }
+                                                value={ option.value }
+                                                label={ option.label }
+                                            />
+                                        )) }
+                                    </FormSelect>
+                                </ToolbarItem>
+                            </ToolbarGroup>
+                            <ToolbarGroup className='rulesHideHitsGroup'>
+                                <ToolbarItem>
+                                    <Checkbox
+                                        label="Show Rules With Hits"
+                                        isChecked={ impacting }
+                                        onChange={ this.toggleRulesWithHits }
+                                        aria-label="InsightsRulesHideHits"
+                                        id="InsightsRulesHideHits"
+                                    />
+                                </ToolbarItem>
+                            </ToolbarGroup>
                         </Filters>
                     </StackItem>
                     <StackItem>
