@@ -23,13 +23,18 @@ class ListRules extends Component {
         page: 1,
         cards: [],
         impacting: true,
-        totalRiskSort: ''
+        totalRiskSort: '-total_risk'
     };
 
     async componentDidMount () {
         await insights.chrome.auth.getUser();
         this.props.setBreadcrumbs([{ title: 'Rules', navigate: '/rules' }]);
-        this.props.fetchRules({ page: this.state.page, page_size: this.state.pageSize, impacting: this.state.impacting });
+        this.props.fetchRules({
+            page: this.state.page,
+            page_size: this.state.pageSize,
+            impacting: this.state.impacting,
+            sort: this.state.totalRiskSort
+        });
     }
 
     componentDidUpdate (prevProps) {
@@ -142,7 +147,7 @@ class ListRules extends Component {
                                     </FormSelect>
                                 </ToolbarItem>
                             </ToolbarGroup>
-                            <ToolbarGroup className='rulesHideHitsGroup'>
+                            <ToolbarGroup>
                                 <ToolbarItem>
                                     <Checkbox
                                         label="Show Rules With Hits"
