@@ -31,7 +31,7 @@ class ViewActions extends Component {
         summary: '',
         cols: [
             'Rule',
-            { title: 'Liklihood', transforms: [ sortable ]},
+            { title: 'Likelihood', transforms: [ sortable ]},
             { title: 'Impact', transforms: [ sortable ]},
             { title: 'Total Risk', transforms: [ sortable ]},
             'Systems Exposed',
@@ -67,8 +67,8 @@ class ViewActions extends Component {
             this.setState({ summary: this.props.rules.summary });
 
             let rows = rules.map((value, key) => {
-                return {
-                    cells: [
+                return [
+                    <>
                         <Link
                             key={ key }
                             to={ `/actions/${this.props.match.params.type}/${
@@ -76,32 +76,32 @@ class ViewActions extends Component {
                             }` }
                         >
                             { value.description }
-                        </Link>,
-                        <Battery
-                            key={ key }
-                            label='Likelihood'
-                            labelHidden
-                            severity={ value.likelihood }
-                        />,
-                        <Battery
-                            key={ key }
-                            label='Impact'
-                            labelHidden
-                            severity={ value.impact.impact }
-                        />,
-                        <Battery
-                            key={ key }
-                            label='Total Risk'
-                            labelHidden
-                            severity={ value.total_risk }
-                        />,
-                        <div key={ key }>{ value.impacted_systems_count }</div>,
-                        <Ansible
-                            key={ key }
-                            unsupported={ !value.has_playbook }
-                        />
-                    ]
-                };
+                        </Link>
+                    </>,
+                    <Battery
+                        key={ key }
+                        label='Likelihood'
+                        labelHidden
+                        severity={ value.likelihood }
+                    />,
+                    <Battery
+                        key={ key }
+                        label='Impact'
+                        labelHidden
+                        severity={ value.impact.impact }
+                    />,
+                    <Battery
+                        key={ key }
+                        label='Total Risk'
+                        labelHidden
+                        severity={ value.total_risk }
+                    />,
+                    <div key={ key }>{ value.impacted_systems_count }</div>,
+                    <Ansible
+                        key={ key }
+                        unsupported={ !value.has_playbook }
+                    />
+                ];
             });
 
             this.setState({ rows });
