@@ -198,13 +198,15 @@ class ViewActions extends Component {
                             </Table> }
                             { rulesFetchStatus === 'pending' && (<Loading/>) }
                             { rulesFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
-                            <Pagination
-                                numberOfItems={ rules.count }
-                                onPerPageSelect={ this.setPerPage }
-                                page={ page }
-                                onSetPage={ this.setPage }
-                                itemsPerPage={ pageSize }
-                            />
+                            <TableToolbar>
+                                <Pagination
+                                    numberOfItems={ rules.count }
+                                    onPerPageSelect={ this.setPerPage }
+                                    page={ page }
+                                    onSetPage={ this.setPage }
+                                    itemsPerPage={ pageSize }
+                                />
+                            </TableToolbar>
                         </StackItem>
                     </Stack>
                 </Main>

@@ -1,6 +1,6 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
-import { Main, Pagination, routerParams } from '@red-hat-insights/insights-frontend-components';
+import { Main, Pagination, routerParams, TableToolbar } from '@red-hat-insights/insights-frontend-components';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -105,13 +105,16 @@ class ListRules extends Component {
                         { rulesFetchStatus === 'fulfilled' &&
                         <>
                             { this.state.cards }
-                            <Pagination
-                                numberOfItems={ rules.count }
-                                onPerPageSelect={ this.setPerPage }
-                                onSetPage={ this.setPage }
-                                page={ page }
-                                itemsPerPage={ pageSize }
-                            />
+                            <TableToolbar>
+                                <Pagination
+                                    useNext
+                                    numberOfItems={ rules.count }
+                                    onPerPageSelect={ this.setPerPage }
+                                    onSetPage={ this.setPage }
+                                    page={ page }
+                                    itemsPerPage={ pageSize }
+                                />
+                            </TableToolbar>
                         </>
                         }
                         { rulesFetchStatus === 'pending' && (<Loading/>) }
