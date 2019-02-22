@@ -1,6 +1,6 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
-import { Main, Pagination, routerParams } from '@red-hat-insights/insights-frontend-components';
+import { Main, Pagination, routerParams, TableToolbar } from '@red-hat-insights/insights-frontend-components';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -12,8 +12,6 @@ import { SYSTEM_TYPES } from '../../AppConstants';
 import Filters from '../../PresentationalComponents/Filters/Filters';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import rulesCardSkeleton from '../../PresentationalComponents/Skeletons/RulesCard/RulesCardSkeleton.js';
-import '@patternfly/patternfly/utilities/Display/display.scss';
-import '@patternfly/patternfly/utilities/Flex/flex.scss';
 
 const RulesCard = rulesCardSkeleton(() => import('../../PresentationalComponents/Cards/RulesCard.js'));
 
@@ -35,8 +33,9 @@ class ListRules extends Component {
     componentDidUpdate (prevProps) {
         if (this.props.rules !== prevProps.rules) {
             const rules = this.props.rules.results;
-            const cards = rules.map((value, key) =>
-                <RulesCard
+            const cards = rules.map((value, key) => {
+                const resolution_risk = value.resolution_set.find(resolution => resolution.system_type === SYSTEM_TYPES.rhel);
+                return <RulesCard
                     key={ key }
                     widget-id={ value }
                     ruleID={ value.rule_id }
@@ -46,11 +45,11 @@ class ListRules extends Component {
                     impact={ value.impact.impact }
                     likelihood={ value.likelihood }
                     totalRisk={ value.total_risk }
-                    riskOfChange={ value.resolution_set.find(resolution => resolution.system_type === SYSTEM_TYPES.rhel).resolution_risk.risk }
+                    riskOfChange={ resolution_risk ? resolution_risk.resolution_risk.risk : 0 }
                     ansible={ value.has_playbook }
                     hitCount={ value.impacted_systems_count }
-                />
-            );
+                />;
+            });
             this.setState({ cards });
         }
     }
@@ -106,13 +105,16 @@ class ListRules extends Component {
                         { rulesFetchStatus === 'fulfilled' &&
                         <>
                             { this.state.cards }
-                            <Pagination
-                                numberOfItems={ rules.count }
-                                onPerPageSelect={ this.setPerPage }
-                                onSetPage={ this.setPage }
-                                page={ page }
-                                itemsPerPage={ pageSize }
-                            />
+                            <TableToolbar>
+                                <Pagination
+                                    useNext
+                                    numberOfItems={ rules.count }
+                                    onPerPageSelect={ this.setPerPage }
+                                    onSetPage={ this.setPage }
+                                    page={ page }
+                                    itemsPerPage={ pageSize }
+                                />
+                            </TableToolbar>
                         </>
                         }
                         { rulesFetchStatus === 'pending' && (<Loading/>) }
