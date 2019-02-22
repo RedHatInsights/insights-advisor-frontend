@@ -9,13 +9,14 @@ import {
     PageHeaderTitle,
     Pagination,
     routerParams,
-    SortDirection,
-    Table
+    TableToolbar
 } from '@red-hat-insights/insights-frontend-components';
 import PropTypes from 'prop-types';
-import { debounce, sortBy } from 'lodash';
+import { debounce } from 'lodash';
 import { connect } from 'react-redux';
 import { Stack, StackItem } from '@patternfly/react-core';
+import { sortable, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
+
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
@@ -30,9 +31,9 @@ class ViewActions extends Component {
         summary: '',
         cols: [
             'Rule',
-            'Likelihood',
-            'Impact',
-            'Total Risk',
+            { title: 'Liklihood', transforms: [ sortable ]},
+            { title: 'Impact', transforms: [ sortable ]},
+            { title: 'Total Risk', transforms: [ sortable ]},
             'Systems Exposed',
             'Ansible'
         ],
@@ -107,25 +108,28 @@ class ViewActions extends Component {
         }
     }
 
-    toggleCol = (_event, key, selected) => {
-        let { rows, page, pageSize } = this.state;
-        const firstIndex = page === 1 ? 0 : page * pageSize - pageSize;
-        rows[firstIndex + key].selected = selected;
-        this.setState({
-            ...this.state,
-            rows
-        });
-    };
+    onSort = (_event, index, direction) => {
+        const attrIndex = {
+            1: 'likelihood',
+            2: 'impact',
+            3: 'total_risk'
+        };
+        const orderParam = `${direction === 'asc' ? '' : '-'}${attrIndex[index]}`;
 
-    onSortChange = (_event, key, direction) => {
-        const sortedRows = sortBy(this.state.rows, [ e => e.cells[key] ]);
         this.setState({
-            ...this.state,
-            rows: SortDirection.up === direction ? sortedRows : sortedRows.reverse(),
             sortBy: {
-                index: key,
+                index,
                 direction
-            }
+            },
+            localFilters: { ...this.state.localFilters, sort: orderParam }
+        });
+        this.props.fetchRules({
+            ...this.props.filters,
+            page: 1,
+            page_size: this.state.pageSize,
+            impacting: this.state.impacting,
+            ...this.state.localFilters,
+            sort: orderParam
         });
     };
 
@@ -159,7 +163,7 @@ class ViewActions extends Component {
 
     render () {
         const { rulesFetchStatus, rules } = this.props;
-        const { localFilters, pageSize, page, impacting } = this.state;
+        const { localFilters, pageSize, page, impacting, sortBy, cols, rows } = this.state;
         return (
             <React.Fragment>
                 <PageHeader>
@@ -177,39 +181,31 @@ class ViewActions extends Component {
                         <StackItem>
                             <p>{ this.state.summary }</p>
                         </StackItem>
-                        <StackItem className='advisor-l-actions__filters'>
-                            <Filters
-                                fetchAction={ (filters) => this.props.fetchRules({ ...filters, pageSize, page, impacting, ...localFilters }) }
-                                searchPlaceholder='Find a Rule'
-                                resultsCount={ rules.count }
-                                hideCategories={ localFilters.total_risk ? [ 'total_risk' ] : [ 'category' ] }
-                            >
-                            </Filters>
+                        <StackItem>
+                            <TableToolbar>
+                                <Filters
+                                    fetchAction={ (filters) => this.props.fetchRules({ ...filters, pageSize, page, impacting, ...localFilters }) }
+                                    searchPlaceholder='Find a Rule'
+                                    resultsCount={ rules.count }
+                                    hideCategories={ localFilters.total_risk ? [ 'total_risk' ] : [ 'category' ] }
+                                >
+                                </Filters>
+                            </TableToolbar>
+                            { rulesFetchStatus === 'fulfilled' &&
+                            <Table variant={ TableVariant.compact } sortBy={ sortBy } onSort={ this.onSort } cells={ cols } rows={ rows }>
+                                <TableHeader/>
+                                <TableBody/>
+                            </Table> }
+                            { rulesFetchStatus === 'pending' && (<Loading/>) }
+                            { rulesFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
+                            <Pagination
+                                numberOfItems={ rules.count }
+                                onPerPageSelect={ this.setPerPage }
+                                page={ page }
+                                onSetPage={ this.setPage }
+                                itemsPerPage={ pageSize }
+                            />
                         </StackItem>
-                        { rulesFetchStatus === 'fulfilled' && (
-                            <StackItem className='advisor-l-actions__table'>
-                                <Table
-                                    className='rules-table'
-                                    onItemSelect={ this.toggleCol }
-                                    hasCheckbox={ false }
-                                    header={ this.state.cols }
-                                    sortBy={ this.state.sortBy }
-                                    rows={ this.state.rows }
-                                    onSort={ this.onSortChange }
-                                    footer={
-                                        <Pagination
-                                            numberOfItems={ rules.count }
-                                            onPerPageSelect={ this.setPerPage }
-                                            page={ page }
-                                            onSetPage={ this.setPage }
-                                            itemsPerPage={ pageSize }
-                                        />
-                                    }
-                                />
-                            </StackItem>
-                        ) }
-                        { rulesFetchStatus === 'pending' && (<Loading/>) }
-                        { rulesFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
                     </Stack>
                 </Main>
             </React.Fragment>
