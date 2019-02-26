@@ -39,7 +39,8 @@ class ViewActions extends Component {
         ],
         rows: [],
         sortBy: {},
-        localFilters: {},
+        sort: 'rule_id',
+        urlFilters: {},
         impacting: true,
         pageSize: 10,
         page: 1
@@ -51,10 +52,10 @@ class ViewActions extends Component {
 
         if (this.props.match.params.type.includes('-risk')) {
             const totalRisk = SEVERITY_MAP[this.props.match.params.type];
-            this.setState({ localFilters: { total_risk: totalRisk }});
+            this.setState({ urlFilters: { total_risk: totalRisk }});
             options.total_risk = totalRisk;
         } else {
-            this.setState({ localFilters: { category: RULE_CATEGORIES[this.props.match.params.type] }});
+            this.setState({ urlFilters: { category: RULE_CATEGORIES[this.props.match.params.type] }});
             options.category = RULE_CATEGORIES[this.props.match.params.type];
         }
 
@@ -121,14 +122,13 @@ class ViewActions extends Component {
                 index,
                 direction
             },
-            localFilters: { ...this.state.localFilters, sort: orderParam }
+            sort: orderParam
         });
         this.props.fetchRules({
             ...this.props.filters,
             page: 1,
             page_size: this.state.pageSize,
             impacting: this.state.impacting,
-            ...this.state.localFilters,
             sort: orderParam
         });
     };
@@ -146,14 +146,14 @@ class ViewActions extends Component {
                 page: newPage,
                 page_size: this.state.pageSize,
                 impacting: this.state.impacting,
-                ...this.state.localFilters
+                sort: this.state.sort
             });
         }
     };
 
     setPerPage = (pageSize) => {
         this.setState({ pageSize });
-        this.props.fetchRules({ ...this.props.filters, page: 1, page_size: pageSize, impacting: this.state.impacting, ...this.state.localFilters });
+        this.props.fetchRules({ ...this.props.filters, page: 1, page_size: pageSize, impacting: this.state.impacting, sort: this.state.sort });
     };
 
     parseUrlTitle = (title = '') => {
@@ -163,7 +163,7 @@ class ViewActions extends Component {
 
     render () {
         const { rulesFetchStatus, rules } = this.props;
-        const { localFilters, pageSize, page, impacting, sortBy, cols, rows } = this.state;
+        const { urlFilters, sort, pageSize, page, impacting, sortBy, cols, rows } = this.state;
         return (
             <React.Fragment>
                 <PageHeader>
@@ -184,10 +184,10 @@ class ViewActions extends Component {
                         <StackItem>
                             <TableToolbar>
                                 <Filters
-                                    fetchAction={ (filters) => this.props.fetchRules({ ...filters, pageSize, page, impacting, ...localFilters }) }
+                                    fetchAction={ (filters) => this.props.fetchRules({ ...filters, pageSize, page, impacting, sort }) }
                                     searchPlaceholder='Find a Rule'
                                     resultsCount={ rules.count }
-                                    hideCategories={ localFilters.total_risk ? [ 'total_risk' ] : [ 'category' ] }
+                                    externalFilters={ urlFilters }
                                 >
                                 </Filters>
                             </TableToolbar>
