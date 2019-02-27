@@ -14,7 +14,7 @@ import {
 import PropTypes from 'prop-types';
 import { debounce } from 'lodash';
 import { connect } from 'react-redux';
-import { Stack, StackItem } from '@patternfly/react-core';
+import { Checkbox, Stack, StackItem } from '@patternfly/react-core';
 import { sortable, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 
 import * as AppActions from '../../AppActions';
@@ -47,8 +47,9 @@ class ViewActions extends Component {
     };
 
     async componentDidMount () {
+        const { page, pageSize, impacting } = this.state;
         await insights.chrome.auth.getUser();
-        const options = { page: this.state.page, page_size: this.state.pageSize, impacting: this.state.impacting };
+        const options = { page, page_size: pageSize, impacting };
 
         if (this.props.match.params.type.includes('-risk')) {
             const totalRisk = SEVERITY_MAP[this.props.match.params.type];
@@ -122,7 +123,8 @@ class ViewActions extends Component {
                 index,
                 direction
             },
-            sort: orderParam
+            sort: orderParam,
+            page: 1
         });
         this.props.fetchRules({
             ...this.props.filters,
@@ -152,13 +154,24 @@ class ViewActions extends Component {
     };
 
     setPerPage = (pageSize) => {
+        const { impacting, sort, page } = this.state;
         this.setState({ pageSize });
-        this.props.fetchRules({ ...this.props.filters, page: 1, page_size: pageSize, impacting: this.state.impacting, sort: this.state.sort });
+        this.props.fetchRules({ ...this.props.filters, page, page_size: pageSize, impacting, sort });
     };
 
     parseUrlTitle = (title = '') => {
         const parsedTitle = title.split('-');
         return parsedTitle.length > 1 ? `${parsedTitle[0]} ${parsedTitle[1]} Actions` : `${parsedTitle}`;
+    };
+
+    toggleRulesWithHits = (showRulesWithHits) => {
+        const { pageSize } = this.state;
+        this.setState({ impacting: showRulesWithHits });
+        this.props.fetchRules({
+            ...this.props.filters,
+            page_size: pageSize,
+            impacting: showRulesWithHits
+        });
     };
 
     render () {
@@ -189,6 +202,13 @@ class ViewActions extends Component {
                                     resultsCount={ rules.count }
                                     externalFilters={ urlFilters }
                                 >
+                                    <Checkbox
+                                        label="Show Rules With Hits"
+                                        isChecked={ impacting }
+                                        onChange={ this.toggleRulesWithHits }
+                                        aria-label="InsightsRulesHideHits"
+                                        id="InsightsRulesHideHits"
+                                    />
                                 </Filters>
                             </TableToolbar>
                             { rulesFetchStatus === 'fulfilled' &&
