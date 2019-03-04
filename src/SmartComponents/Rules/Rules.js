@@ -6,7 +6,6 @@ import { Route, Switch } from 'react-router-dom';
 import asyncComponent from '../../Utilities/asyncComponent';
 
 const ListRules = asyncComponent(() => import(/* webpackChunkName: "ListRules" */ './ListRules'));
-const ViewRule = asyncComponent(() => import(/* webpackChunkName: "ListRules" */ './ViewRule'));
 
 const Rules = () => {
     return (
@@ -16,7 +15,6 @@ const Rules = () => {
             </PageHeader>
             <Switch>
                 <Route exact path='/rules' component={ ListRules } />
-                <Route path='/rules/:id' component={ ViewRule } />
             </Switch>
         </React.Fragment>
     );
