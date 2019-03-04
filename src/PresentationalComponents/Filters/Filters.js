@@ -14,6 +14,13 @@ class Filters extends Component {
         this.props.setFilters({ });
     }
 
+    componentDidUpdate (prevProps) {
+        if (this.props.externalFilters !== prevProps.externalFilters) {
+            const filterKey = Object.keys(this.props.externalFilters)[0];
+            this.props.setFilters({ [filterKey]: `${this.props.externalFilters[filterKey]}` });
+        }
+    }
+
     changeSearchValue = debounce(
         value => {
             this.props.setFilters({ ...this.props.filters, text: value });
@@ -89,7 +96,8 @@ Filters.propTypes = {
     searchPlaceholder: PropTypes.string,
     filters: PropTypes.object,
     setFilters: PropTypes.func,
-    fetchAction: PropTypes.func
+    fetchAction: PropTypes.func,
+    externalFilters: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
