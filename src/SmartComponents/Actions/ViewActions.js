@@ -69,41 +69,44 @@ class ViewActions extends Component {
             this.setState({ summary: this.props.rules.summary });
 
             let rows = rules.map((value, key) => {
-                return [
-                    <>
-                        <Link
-                            key={ key }
-                            to={ `/actions/${this.props.match.params.type}/${
-                                value.rule_id
-                            }` }
-                        >
-                            { value.description }
-                        </Link>
-                    </>,
-                    <Battery
-                        key={ key }
-                        label='Likelihood'
-                        labelHidden
-                        severity={ value.likelihood }
-                    />,
-                    <Battery
-                        key={ key }
-                        label='Impact'
-                        labelHidden
-                        severity={ value.impact.impact }
-                    />,
-                    <Battery
-                        key={ key }
-                        label='Total Risk'
-                        labelHidden
-                        severity={ value.total_risk }
-                    />,
-                    <div key={ key }>{ value.impacted_systems_count }</div>,
-                    <Ansible
-                        key={ key }
-                        unsupported={ !value.has_playbook }
-                    />
-                ];
+                return {
+                    cells: [
+                        <>
+                            <Link
+                                key={ key }
+                                to={ `/actions/${this.props.match.params.type}/${
+                                    value.rule_id
+                                }` }
+                            >
+                                { value.description }
+                            </Link>
+                        </>,
+                        <div className="pf-m-center" key={ key }>
+                            <Battery
+                                label='Likelihood'
+                                labelHidden
+                                severity={ value.likelihood }
+                            /></div>,
+                        <div className="pf-m-center" key={ key }>
+                            <Battery
+                                label='Impact'
+                                labelHidden
+                                severity={ value.impact.impact }
+                            />
+                        </div>,
+                        <div className="pf-m-center" key={ key }>
+                            <Battery
+                                label='Total Risk'
+                                labelHidden
+                                severity={ value.total_risk }
+                            />
+                        </div>,
+                        <div key={ key }>{ value.impacted_systems_count }</div>,
+                        <div className="pf-m-center" key={ key }>
+                            <Ansible unsupported={ !value.has_playbook }/>
+                        </div>
+                    ]
+                };
             });
 
             this.setState({ rows });
