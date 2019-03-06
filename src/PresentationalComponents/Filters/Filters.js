@@ -1,6 +1,6 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
-import { TextInput, Toolbar, ToolbarGroup, ToolbarItem, ToolbarSection } from '@patternfly/react-core';
+import { TextInput, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -50,9 +50,9 @@ class Filters extends Component {
     };
 
     render () {
-        const { children, searchPlaceholder, filters, resultsCount, hideCategories } = this.props;
+        const { children, searchPlaceholder, filters, hideCategories } = this.props;
         return (
-            <Toolbar className='pf-u-justify-content-space-between pf-u-ml-xl pf-u-my-md'>
+            <>
                 <ToolbarGroup>
                     <ToolbarItem className='pf-u-mr-xl'>
                         <TextInput
@@ -76,15 +76,7 @@ class Filters extends Component {
                         { children }
                     </ToolbarItem>
                 </ToolbarGroup>
-                <ToolbarSection aria-label="toolbar-results">
-                    <ToolbarGroup>
-                        <ToolbarItem>
-                            { resultsCount === undefined && ('Loading...') }
-                            { resultsCount !== undefined && `${resultsCount} result${resultsCount !== 1 ? 's' : ''}` }
-                        </ToolbarItem>
-                    </ToolbarGroup>
-                </ToolbarSection>
-            </Toolbar>
+                </>
         );
     }
 }
@@ -92,7 +84,6 @@ class Filters extends Component {
 Filters.propTypes = {
     children: PropTypes.any,
     hideCategories: PropTypes.array,
-    resultsCount: PropTypes.number,
     searchPlaceholder: PropTypes.string,
     filters: PropTypes.object,
     setFilters: PropTypes.func,
