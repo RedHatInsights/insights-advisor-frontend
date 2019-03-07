@@ -1,19 +1,17 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
-import { Ansible, Battery, Main, PageHeader, PageHeaderTitle, RemediationButton, routerParams } from '@red-hat-insights/insights-frontend-components';
+import { Main, PageHeader, PageHeaderTitle, RemediationButton, routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Card, CardBody, CardHeader, Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader } from '@patternfly/react-core';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
-import ReactMarkdown from 'react-markdown/with-html';
 
 import * as AppActions from '../../AppActions';
-import { SYSTEM_TYPES } from '../../AppConstants';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
-import API from '../../Utilities/Api';
+import RuleDetails from '../../PresentationalComponents/RuleDetails/RuleDetails';
 
 class ListActions extends Component {
     state = {
@@ -25,27 +23,6 @@ class ListActions extends Component {
         await insights.chrome.auth.getUser();
         this.props.fetchRule({ rule_id: this.props.match.params.id });
         this.props.fetchSystem({ rule_id: this.props.match.params.id });
-    }
-
-    componentDidUpdate () {
-        if (this.props.ruleFetchStatus === 'fulfilled' && !this.state.kbaDetailsLoading) {
-            this.setState({ kbaDetailsLoading: true });
-            this.fetchKbaDetails();
-        }
-    }
-
-    async fetchKbaDetails () {
-        try {
-            const kbaDetails = (await API.get(`/rs/search?q=id:${this.props.rule.node_id }`)).data.response.docs[0];
-            this.setState({ kbaDetails });
-        } catch (error) {
-            this.props.addNotification({
-                variant: 'danger',
-                dismissable: true,
-                title: '',
-                description: 'KBA fetch failed.'
-            });
-        }
     }
 
     getSelectedItems = () => {
@@ -72,91 +49,47 @@ class ListActions extends Component {
 
     render () {
         const { match, ruleFetchStatus, rule, systemFetchStatus, system } = this.props;
-        const { kbaDetails } = this.state;
         return (
             <React.Fragment>
                 { ruleFetchStatus === 'fulfilled' && (
+                    <>
                     <PageHeader>
                         <Breadcrumbs
                             current={ rule.description || '' }
                             match={ match }
                         />
                         <PageHeaderTitle title={ rule.description || '' }/>
+                        <p>Publish Date: { `${(new Date(rule.publish_date)).toLocaleDateString()}` }</p>
                     </PageHeader>
+                    <Main className='pf-m-light pf-u-pt-sm'>
+                        <RuleDetails rule={ rule }>
+                            { rule.has_playbook && (
+                                <RemediationButton
+                                    isDisabled={ this.getSelectedItems().length === 0 }
+                                    dataProvider={ this.remediationDataProvider }
+                                    onRemediationCreated={ this.onRemediationCreated }
+                                />
+                            ) }
+                        </RuleDetails>
+                    </Main>
+                </>
                 ) }
                 { ruleFetchStatus === 'pending' && (<Loading/>) }
                 <Main>
                     <React.Fragment>
                         { ruleFetchStatus === 'fulfilled' && (
-                            <Stack gutter='md'>
-                                <StackItem>
-                                    <Grid gutter='md'>
-                                        <GridItem md={ 8 } sm={ 12 }>
-                                            <Grid>
-                                                <GridItem>
-                                                    {
-                                                        typeof rule.summary === 'string' &&
-                                                        Boolean(rule.summary) &&
-                                                        <ReactMarkdown source={ rule.summary } escapeHtml={ false }/>
-                                                    }
-                                                </GridItem>
-                                                { kbaDetails.view_uri && (
-                                                    <GridItem>
-                                                        <a href={ kbaDetails.view_uri }>
-                                                            Knowledgebase Article
-                                                        </a>
-                                                    </GridItem>
-                                                ) }
-                                                <GridItem>Published: { `${(new Date(rule.publish_date)).toLocaleDateString()}` }</GridItem>
-                                                <GridItem>Tags: { `${rule.tags || 'Not available'}` }</GridItem>
-                                            </Grid>
-                                        </GridItem>
-                                        <GridItem md={ 4 } sm={ 12 }>
-                                            <Grid gutter='sm'>
-                                                <GridItem sm={ 12 } md={ 12 }> <Ansible unsupported={ !rule.has_playbook }/> </GridItem>
-                                                <GridItem sm={ 8 } md={ 12 }>
-                                                    <Grid className='ins-l-icon-group__vertical' sm={ 4 } md={ 12 }>
-                                                        <GridItem> <Battery label='Impact' severity={ rule.impact.impact }/> </GridItem>
-                                                        <GridItem> <Battery label='Likelihood' severity={ rule.likelihood }/> </GridItem>
-                                                        <GridItem> <Battery label='Total Risk' severity={ rule.total_risk }/> </GridItem>
-                                                    </Grid>
-                                                </GridItem>
-                                                <GridItem sm={ 4 } md={ 12 }>
-                                                    <Battery
-                                                        label='Risk Of Change'
-                                                        severity={ rule.resolution_set.find(resolution =>
-                                                            resolution.system_type === SYSTEM_TYPES.rhel).resolution_risk.risk
-                                                        }
-                                                    />
-                                                </GridItem>
-                                                { rule.has_playbook && (
-                                                    <GridItem>
-                                                        <RemediationButton
-                                                            isDisabled={ this.getSelectedItems().length === 0 }
-                                                            dataProvider={ this.remediationDataProvider }
-                                                            onRemediationCreated={ this.onRemediationCreated }
-                                                        />
-                                                    </GridItem>)
-                                                }
-                                            </Grid>
-                                        </GridItem>
-                                    </Grid>
-                                </StackItem>
-                                <StackItem>
-                                    <Card>
-                                        <CardHeader>
-                                            <strong>Affected Hosts</strong>
-                                        </CardHeader>
-                                        <CardBody>
-                                            { systemFetchStatus === 'fulfilled' && (
+                            <Card>
+                                <CardHeader>
+                                    <strong>Affected Hosts</strong>
+                                </CardHeader>
+                                <CardBody>
+                                    { systemFetchStatus === 'fulfilled' && (
 
-                                                <Inventory items={ system.host_ids }/>
-                                            ) }
-                                            { systemFetchStatus === 'pending' && (<Loading/>) }
-                                        </CardBody>
-                                    </Card>
-                                </StackItem>
-                            </Stack>
+                                        <Inventory items={ system.host_ids }/>
+                                    ) }
+                                    { systemFetchStatus === 'pending' && (<Loading/>) }
+                                </CardBody>
+                            </Card>
                         ) }
                         { ruleFetchStatus === 'pending' && (<Loading/>) }
                         { ruleFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
