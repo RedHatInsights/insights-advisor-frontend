@@ -80,7 +80,7 @@ class RulesTable extends Component {
                         </div>,
                         <div key={ key }>{ value.impacted_systems_count }</div>,
                         <div className="pf-m-center" key={ key }>
-                            <Ansible unsupported={ !value.has_playbook }/>
+                            <Ansible unsupported={ !value.playbook_count }/>
                         </div>
                     ]
                 };
