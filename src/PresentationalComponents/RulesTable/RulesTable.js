@@ -163,11 +163,10 @@ class RulesTable extends Component {
                     <p>{ this.state.summary }</p>
                 </StackItem>
                 <StackItem>
-                    <TableToolbar>
+                    <TableToolbar className='pf-u-justify-content-space-between' results={ rules.count }>
                         <Filters
                             fetchAction={ (filters) => this.props.fetchRules({ ...filters, pageSize, page, impacting, sort }) }
                             searchPlaceholder='Find a Rule'
-                            resultsCount={ rules.count }
                             externalFilters={ urlFilters }
                         >
                             <Checkbox
@@ -186,7 +185,7 @@ class RulesTable extends Component {
                     </Table> }
                     { rulesFetchStatus === 'pending' && (<Loading/>) }
                     { rulesFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
-                    <TableToolbar>
+                    <TableToolbar className='pf-c-pagination'>
                         <Pagination
                             numberOfItems={ rules.count || 0 }
                             onPerPageSelect={ this.setPerPage }
