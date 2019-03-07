@@ -21,8 +21,8 @@ class RulesTable extends Component {
             { title: 'Likelihood', transforms: [ sortable ]},
             { title: 'Impact', transforms: [ sortable ]},
             { title: 'Total Risk', transforms: [ sortable ]},
-            'Systems Exposed',
-            'Ansible'
+            { title: 'Systems Exposed', transforms: [ sortable ]},
+            { title: 'Ansible', transforms: [ sortable ]}
         ],
         rows: [],
         sortBy: {},
@@ -80,7 +80,7 @@ class RulesTable extends Component {
                         </div>,
                         <div key={ key }>{ value.impacted_systems_count }</div>,
                         <div className="pf-m-center" key={ key }>
-                            <Ansible unsupported={ !value.has_playbook }/>
+                            <Ansible unsupported={ !value.playbook_count }/>
                         </div>
                     ]
                 };
@@ -94,7 +94,9 @@ class RulesTable extends Component {
         const attrIndex = {
             1: 'likelihood',
             2: 'impact',
-            3: 'total_risk'
+            3: 'total_risk',
+            4: 'impacted_count',
+            5: 'playbook_count'
         };
         const orderParam = `${direction === 'asc' ? '' : '-'}${attrIndex[index]}`;
 
