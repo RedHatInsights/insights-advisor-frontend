@@ -146,9 +146,10 @@ class RulesTable extends Component {
 
     toggleRulesWithHits = (showRulesWithHits) => {
         const { pageSize } = this.state;
-        this.setState({ impacting: showRulesWithHits });
+        this.setState({ impacting: showRulesWithHits, page: 1 });
         this.props.fetchRules({
             ...this.props.filters,
+            page: 1,
             page_size: pageSize,
             impacting: showRulesWithHits
         });
