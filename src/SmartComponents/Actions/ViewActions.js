@@ -31,7 +31,7 @@ class ListActions extends Component {
         }
 
         return this.props.entities.rows.filter(entity => entity.selected).map(entity => entity.id);
-    }
+    };
 
     remediationDataProvider = () => {
         return {
@@ -41,11 +41,11 @@ class ListActions extends Component {
             }],
             systems: this.getSelectedItems()
         };
-    }
+    };
 
     onRemediationCreated = result => {
         this.props.addNotification(result.getNotification());
-    }
+    };
 
     render () {
         const { match, ruleFetchStatus, rule, systemFetchStatus, system } = this.props;
@@ -53,26 +53,26 @@ class ListActions extends Component {
             <React.Fragment>
                 { ruleFetchStatus === 'fulfilled' && (
                     <>
-                    <PageHeader>
-                        <Breadcrumbs
-                            current={ rule.description || '' }
-                            match={ match }
-                        />
-                        <PageHeaderTitle title={ rule.description || '' }/>
-                        <p>Publish Date: { `${(new Date(rule.publish_date)).toLocaleDateString()}` }</p>
-                    </PageHeader>
-                    <Main className='pf-m-light pf-u-pt-sm'>
-                        <RuleDetails rule={ rule }>
-                            { rule.has_playbook && (
-                                <RemediationButton
-                                    isDisabled={ this.getSelectedItems().length === 0 }
-                                    dataProvider={ this.remediationDataProvider }
-                                    onRemediationCreated={ this.onRemediationCreated }
-                                />
-                            ) }
-                        </RuleDetails>
-                    </Main>
-                </>
+                        <PageHeader>
+                            <Breadcrumbs
+                                current={ rule.description || '' }
+                                match={ match }
+                            />
+                            <PageHeaderTitle title={ rule.description || '' }/>
+                            <p>Publish Date: { `${(new Date(rule.publish_date)).toLocaleDateString()}` }</p>
+                        </PageHeader>
+                        <Main className='pf-m-light pf-u-pt-sm'>
+                            <RuleDetails rule={ rule }>
+                                { rule.playbook_count && (
+                                    <RemediationButton
+                                        isDisabled={ this.getSelectedItems().length === 0 }
+                                        dataProvider={ this.remediationDataProvider }
+                                        onRemediationCreated={ this.onRemediationCreated }
+                                    />
+                                ) }
+                            </RuleDetails>
+                        </Main>
+                    </>
                 ) }
                 { ruleFetchStatus === 'pending' && (<Loading/>) }
                 <Main>
