@@ -1,6 +1,6 @@
 /* eslint max-len: 0 */
 import React, { Component } from 'react';
-import { Battery, Shield } from '@red-hat-insights/insights-frontend-components';
+import { Battery, Shield, Reboot } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -116,9 +116,7 @@ class RuleDetails extends Component {
                             </div>
                             <p>{ AppConstants.RISK_OF_CHANGE_DESC[this.ruleResolutionRisk(rule)] }</p>
                         </GridItem>
-                        { rule.reboot_required && (<GridItem>
-                            <span className='ins-sev-clr-4'>Restart Required</span>
-                        </GridItem>) }
+                        { rule.reboot_required && <Reboot red/> }
                     </Grid>
                 </GridItem>
             </Grid>
