@@ -25,7 +25,8 @@ class RuleDetails extends Component {
     async fetchKbaDetails () {
         try {
             this.setState({ kbaDetailsLoading: true });
-            const kbaDetails = (await API.get(`/rs/search?q=id:${this.props.rule.node_id}`)).data.response.docs[0];
+            const kbaDetails = (await API.get(`/rs/search?q=id:${this.props.rule.node_id}`,
+                { Accept: 'application/vnd.redhat.solr+json' })).data.response.docs[0];
             this.setState({ kbaDetails });
         } catch (error) {
             this.props.addNotification({
