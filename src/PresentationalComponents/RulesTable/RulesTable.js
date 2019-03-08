@@ -12,6 +12,7 @@ import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import Filters from '../../PresentationalComponents/Filters/Filters';
+import RuleDetails from '../RuleDetails/RuleDetails';
 
 class RulesTable extends Component {
     state = {
@@ -49,44 +50,52 @@ class RulesTable extends Component {
             this.setState({ summary: this.props.rules.summary });
 
             let rows = rules.map((value, key) => {
+                const parent = key * 2;
                 const linkTo = `/actions/${value.category.name.toLowerCase()}/${value.rule_id}`;
-
-                return {
-                    cells: [
-                        <>
-                            <Link key={ key } to={ linkTo }>
-                                { value.description }
-                            </Link>
-                        </>,
-                        <div className="pf-m-center" key={ key }>
-                            <Battery
-                                label='Likelihood'
-                                labelHidden
-                                severity={ value.likelihood }
-                            /></div>,
-                        <div className="pf-m-center" key={ key }>
-                            <Battery
-                                label='Impact'
-                                labelHidden
-                                severity={ value.impact.impact }
-                            />
-                        </div>,
-                        <div className="pf-m-center" key={ key }>
-                            <Battery
-                                label='Total Risk'
-                                labelHidden
-                                severity={ value.total_risk }
-                            />
-                        </div>,
-                        <div key={ key }>{ value.impacted_systems_count }</div>,
-                        <div className="pf-m-center" key={ key }>
-                            <Ansible unsupported={ !value.playbook_count }/>
-                        </div>
-                    ]
-                };
+                return [
+                    {
+                        isOpen: false,
+                        rule: value,
+                        cells: [
+                            <>
+                                <Link key={ key } to={ linkTo }>
+                                    { value.description }
+                                </Link>
+                            </>,
+                            <div className="pf-m-center" key={ key }>
+                                <Battery
+                                    label='Likelihood'
+                                    labelHidden
+                                    severity={ value.likelihood }
+                                /></div>,
+                            <div className="pf-m-center" key={ key }>
+                                <Battery
+                                    label='Impact'
+                                    labelHidden
+                                    severity={ value.impact.impact }
+                                />
+                            </div>,
+                            <div className="pf-m-center" key={ key }>
+                                <Battery
+                                    label='Total Risk'
+                                    labelHidden
+                                    severity={ value.total_risk }
+                                />
+                            </div>,
+                            <div key={ key }>{ value.impacted_systems_count }</div>,
+                            <div className="pf-m-center" key={ key }>
+                                <Ansible unsupported={ !value.playbook_count }/>
+                            </div>
+                        ]
+                    },
+                    {
+                        parent,
+                        cells: [ <div key={ `child-${key}` }>{ 'Loading...' }</div> ]
+                    }
+                ];
             });
 
-            this.setState({ rows });
+            this.setState({ rows: rows.flat() });
         }
     }
 
@@ -157,6 +166,22 @@ class RulesTable extends Component {
         });
     };
 
+    handleOnCollapse = (event, rowId, isOpen) => {
+        const rows = [ ...this.state.rows ];
+        rows[rowId] = { ...rows[rowId], isOpen };
+        const content = isOpen ? <RuleDetails rule={ rows[rowId].rule }/> : 'Loading...';
+
+        rows[rowId + 1] = {
+            ...rows[rowId + 1], cells: [ <div key={ `child-${rowId}` }>
+                { content }
+            </div> ]
+        };
+
+        this.setState({
+            rows
+        });
+    };
+
     render () {
         const { rulesFetchStatus, rules } = this.props;
         const { urlFilters, sort, pageSize, page, impacting, sortBy, cols, rows } = this.state;
@@ -182,7 +207,9 @@ class RulesTable extends Component {
                         </Filters>
                     </TableToolbar>
                     { rulesFetchStatus === 'fulfilled' &&
-                    <Table variant={ TableVariant.compact } sortBy={ sortBy } onSort={ this.onSort } cells={ cols } rows={ rows }>
+                    <Table variant={ TableVariant.compact }
+                        onCollapse={ this.handleOnCollapse } sortBy={ sortBy } onSort={ this.onSort } cells={ cols }
+                        rows={ rows }>
                         <TableHeader/>
                         <TableBody/>
                     </Table> }
