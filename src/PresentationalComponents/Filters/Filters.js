@@ -11,20 +11,25 @@ import DropdownFilters from './DropdownFilters.js';
 
 class Filters extends Component {
     componentWillUnmount () {
-        this.props.setFilters({ });
+        this.props.setFilters({});
     }
 
     componentDidUpdate (prevProps) {
         if (this.props.externalFilters !== prevProps.externalFilters) {
             const filterKey = Object.keys(this.props.externalFilters)[0];
-            this.props.setFilters({ [filterKey]: `${this.props.externalFilters[filterKey]}` });
+            if (filterKey) {
+                this.props.setFilters({ [filterKey]: `${this.props.externalFilters[filterKey]}` });
+            }
         }
     }
 
     changeSearchValue = debounce(
         value => {
-            this.props.setFilters({ ...this.props.filters, text: value });
-            this.props.fetchAction({ ...this.props.filters, text: value });
+            const filter = { ...this.props.filters };
+            const text = value.length ? { text: value } : {};
+            delete filter.text;
+            this.props.setFilters({ ...filter, ...text });
+            this.props.fetchAction({ ...filter, ...text });
         },
         800
     );
@@ -76,7 +81,7 @@ class Filters extends Component {
                         { children }
                     </ToolbarItem>
                 </ToolbarGroup>
-                </>
+            </>
         );
     }
 }
