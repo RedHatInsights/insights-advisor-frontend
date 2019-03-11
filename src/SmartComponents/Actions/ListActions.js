@@ -25,7 +25,7 @@ class ViewActions extends Component {
 
     parseUrlTitle = (title = '') => {
         const parsedTitle = title.split('-');
-        return parsedTitle.length > 1 ? `${parsedTitle[0]} ${parsedTitle[1]} Actions` : `${parsedTitle}`;
+        return parsedTitle.length > 1 ? `${capitalize(parsedTitle[0])} ${capitalize(parsedTitle[1])} Actions` : `${capitalize(parsedTitle)}`;
     };
 
     render () {
@@ -39,7 +39,7 @@ class ViewActions extends Component {
                         match={ this.props.match }
                     />
                     <PageHeaderTitle
-                        title={ capitalize(this.parseUrlTitle(this.props.match.params.type)) }
+                        title={ this.parseUrlTitle(this.props.match.params.type) }
                     />
                 </PageHeader>
                 <RulesTable impacting={ impacting } urlFilters={ urlFilters }/>
