@@ -13,8 +13,8 @@ import { SEVERITY_MAP } from '../../AppConstants';
 
 import '../../App.scss';
 
-const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/SummaryChart/SummaryChart'));
-const SummaryChartItem = asyncComponent(() => import('../../PresentationalComponents/SummaryChartItem/SummaryChartItem'));
+const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/Charts/SummaryChart/SummaryChart'));
+const SummaryChartItem = asyncComponent(() => import('../../PresentationalComponents/Charts/SummaryChart/SummaryChartItem'));
 const ConditionalLink = asyncComponent(() => import('../../PresentationalComponents/ConditionalLink/ConditionalLink'));
 const ActionsOverviewDonut = asyncComponent(() => import('../../PresentationalComponents/Charts/ActionsOverviewDonut'));
 

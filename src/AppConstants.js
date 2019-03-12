@@ -1,3 +1,4 @@
+/* eslint max-len: 0 */
 export const RULE_FETCH = 'RULE_FETCH';
 export const RULES_FETCH = 'RULES_FETCH';
 export const SYSTEM_FETCH = 'SYSTEM_FETCH';
@@ -59,3 +60,13 @@ export const FILTER_CATEGORIES = [
         ]
     }
 ];
+export const RISK_OF_CHANGE_DESC = {
+    1: 'The change takes very little time to implement and there is minimal impact to system operations.',
+    2: 'Typically, these changes do not require that a system be taken offline.',
+    3: 'These will likely require an outage window.',
+    4: 'The change takes a significant amount of time and planning to execute, and will impact the system and business operations of the host due to downtime.'
+};
+export const IMPACT_LABEL = { 1: 'Low', 2: 'Medium', 3: 'High', 4: 'Critcal' };
+export const LIKELIHOOD_LABEL = { 1: 'Low', 2: 'Medium', 3: 'High', 4: 'Critcal' };
+export const RISK_OF_CHANGE_LABEL = { 1: 'Low', 2: 'Moderate', 3: 'Moderate', 4: 'High' };
+export const TOTAL_RISK_LABEL = { 1: 'Very Low', 2: 'Low', 3: 'Moderate', 4: 'High' };
