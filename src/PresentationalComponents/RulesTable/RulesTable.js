@@ -12,6 +12,7 @@ import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import Filters from '../../PresentationalComponents/Filters/Filters';
+import RuleDetails from '../RuleDetails/RuleDetails';
 
 class RulesTable extends Component {
     state = {
@@ -21,8 +22,8 @@ class RulesTable extends Component {
             { title: 'Likelihood', transforms: [ sortable ]},
             { title: 'Impact', transforms: [ sortable ]},
             { title: 'Total Risk', transforms: [ sortable ]},
-            'Systems Exposed',
-            'Ansible'
+            { title: 'Systems Exposed', transforms: [ sortable ]},
+            { title: 'Ansible', transforms: [ sortable ]}
         ],
         rows: [],
         sortBy: {},
@@ -49,44 +50,52 @@ class RulesTable extends Component {
             this.setState({ summary: this.props.rules.summary });
 
             let rows = rules.map((value, key) => {
+                const parent = key * 2;
                 const linkTo = `/actions/${value.category.name.toLowerCase()}/${value.rule_id}`;
-
-                return {
-                    cells: [
-                        <>
-                            <Link key={ key } to={ linkTo }>
-                                { value.description }
-                            </Link>
-                        </>,
-                        <div className="pf-m-center" key={ key }>
-                            <Battery
-                                label='Likelihood'
-                                labelHidden
-                                severity={ value.likelihood }
-                            /></div>,
-                        <div className="pf-m-center" key={ key }>
-                            <Battery
-                                label='Impact'
-                                labelHidden
-                                severity={ value.impact.impact }
-                            />
-                        </div>,
-                        <div className="pf-m-center" key={ key }>
-                            <Battery
-                                label='Total Risk'
-                                labelHidden
-                                severity={ value.total_risk }
-                            />
-                        </div>,
-                        <div key={ key }>{ value.impacted_systems_count }</div>,
-                        <div className="pf-m-center" key={ key }>
-                            <Ansible unsupported={ !value.has_playbook }/>
-                        </div>
-                    ]
-                };
+                return [
+                    {
+                        isOpen: false,
+                        rule: value,
+                        cells: [
+                            <>
+                                <Link key={ key } to={ linkTo }>
+                                    { value.description }
+                                </Link>
+                            </>,
+                            <div className="pf-m-center" key={ key }>
+                                <Battery
+                                    label='Likelihood'
+                                    labelHidden
+                                    severity={ value.likelihood }
+                                /></div>,
+                            <div className="pf-m-center" key={ key }>
+                                <Battery
+                                    label='Impact'
+                                    labelHidden
+                                    severity={ value.impact.impact }
+                                />
+                            </div>,
+                            <div className="pf-m-center" key={ key }>
+                                <Battery
+                                    label='Total Risk'
+                                    labelHidden
+                                    severity={ value.total_risk }
+                                />
+                            </div>,
+                            <div key={ key }>{ value.impacted_systems_count }</div>,
+                            <div className="pf-m-center" key={ key }>
+                                <Ansible unsupported={ !value.playbook_count }/>
+                            </div>
+                        ]
+                    },
+                    {
+                        parent,
+                        cells: [ <div key={ `child-${key}` }>{ 'Loading...' }</div> ]
+                    }
+                ];
             });
 
-            this.setState({ rows });
+            this.setState({ rows: rows.flat() });
         }
     }
 
@@ -94,7 +103,9 @@ class RulesTable extends Component {
         const attrIndex = {
             1: 'likelihood',
             2: 'impact',
-            3: 'total_risk'
+            3: 'total_risk',
+            4: 'impacted_count',
+            5: 'playbook_count'
         };
         const orderParam = `${direction === 'asc' ? '' : '-'}${attrIndex[index]}`;
 
@@ -146,11 +157,28 @@ class RulesTable extends Component {
 
     toggleRulesWithHits = (showRulesWithHits) => {
         const { pageSize } = this.state;
-        this.setState({ impacting: showRulesWithHits });
+        this.setState({ impacting: showRulesWithHits, page: 1 });
         this.props.fetchRules({
             ...this.props.filters,
+            page: 1,
             page_size: pageSize,
             impacting: showRulesWithHits
+        });
+    };
+
+    handleOnCollapse = (event, rowId, isOpen) => {
+        const rows = [ ...this.state.rows ];
+        rows[rowId] = { ...rows[rowId], isOpen };
+        const content = isOpen ? <RuleDetails rule={ rows[rowId].rule }/> : 'Loading...';
+
+        rows[rowId + 1] = {
+            ...rows[rowId + 1], cells: [ <div key={ `child-${rowId}` }>
+                { content }
+            </div> ]
+        };
+
+        this.setState({
+            rows
         });
     };
 
@@ -163,11 +191,10 @@ class RulesTable extends Component {
                     <p>{ this.state.summary }</p>
                 </StackItem>
                 <StackItem>
-                    <TableToolbar>
+                    <TableToolbar className='pf-u-justify-content-space-between' results={ rules.count }>
                         <Filters
                             fetchAction={ (filters) => this.props.fetchRules({ ...filters, pageSize, page, impacting, sort }) }
                             searchPlaceholder='Find a Rule'
-                            resultsCount={ rules.count }
                             externalFilters={ urlFilters }
                         >
                             <Checkbox
@@ -180,13 +207,15 @@ class RulesTable extends Component {
                         </Filters>
                     </TableToolbar>
                     { rulesFetchStatus === 'fulfilled' &&
-                    <Table variant={ TableVariant.compact } sortBy={ sortBy } onSort={ this.onSort } cells={ cols } rows={ rows }>
+                    <Table variant={ TableVariant.compact }
+                        onCollapse={ this.handleOnCollapse } sortBy={ sortBy } onSort={ this.onSort } cells={ cols }
+                        rows={ rows }>
                         <TableHeader/>
                         <TableBody/>
                     </Table> }
                     { rulesFetchStatus === 'pending' && (<Loading/>) }
                     { rulesFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
-                    <TableToolbar>
+                    <TableToolbar className='pf-c-pagination'>
                         <Pagination
                             numberOfItems={ rules.count || 0 }
                             onPerPageSelect={ this.setPerPage }
