@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { ChartDonut, ChartLabel, ChartLegend, ChartTheme } from '@patternfly/react-charts';
+import { ChartDonut, ChartLabel, ChartLegend } from '@patternfly/react-charts';
 import { Grid, GridItem } from '@patternfly/react-core';
+import AdvisorDonutTheme from './ActionsOverviewDonutTheme.js';
 
 import './ActionsOverviewDonut.scss';
 
@@ -53,7 +54,7 @@ class AdvisorOverviewDonut extends React.Component {
 
     getLegend = (theme, typeNames) => <ChartLegend
         data={ this.props.category.map((value, key) => ({ name: `${typeNames[key]} (${value})` })) }
-        itemsPerRow={ 2 }
+        itemsPerRow={ 1 }
         events={ [
             {
                 target: 'labels', eventHandlers: {
@@ -73,6 +74,7 @@ class AdvisorOverviewDonut extends React.Component {
         gutter={ 0 }
         width={ 60 }
         height={ 60 }
+        y={ 30 }
     />;
 
     legendClick = () => {
@@ -85,41 +87,51 @@ class AdvisorOverviewDonut extends React.Component {
     };
 
     render () {
+        const { className } = this.props;
         const label = <svg
             className="chart-label"
             height={ 1 }
         >
             <ChartLabel
-                style={ { fontSize: 20 } }
-                text={ this.props.category.length ? `${this.props.category.reduce((sum, curr) => sum + curr)} Issues` : '' }
+                style={ { fontSize: 25 } }
+                text={ this.props.category.length ? `${this.props.category.reduce((sum, curr) => sum + curr)}` : '' }
                 textAnchor="middle"
                 verticalAnchor="middle"
-                x={ 20 }
-                y={ 1 }
+                x={ 88 }
+                y={ 66 }
+            />
+            <ChartLabel
+                style={ { fill: '#bbbbbb' } }
+                text='Total hits'
+                textAnchor='middle'
+                verticalAnchor='middle'
+                x={ 88 }
+                y={ 89 }
             />
 
         </svg>;
-        const typeNames = [ 'Availability', 'Security', 'Stability', 'Performance' ];
+        const typeNames = [ 'Availability', 'Stability', 'Performance', 'Security' ];
 
         return (
-            <Grid gutter="lg">
-                <GridItem lg={ 1 }/>
-                <GridItem lg={ 10 }>
-                    <div className="chart-inline">
-                        <div className="chart-container" key='advisor-donut'>
+            <div className={ `chart-inline ${className}` }>
+                <Grid>
+                    <GridItem span={ 6 }>
+                        <div className="chart-container">
                             { label }
-                            { this.getChart(ChartTheme.light.blue, typeNames) }
+                            { this.getChart(AdvisorDonutTheme, typeNames) }
                         </div>
-                        { this.getLegend(ChartTheme.light.blue, typeNames) }
-                    </div>
-                </GridItem>
-                <GridItem lg={ 1 }/>
-            </Grid>
+                    </GridItem>
+                    <GridItem span={ 6 }>
+                        { this.getLegend(AdvisorDonutTheme, typeNames) }
+                    </GridItem>
+                </Grid>
+            </div>
         );
     }
 }
 
 AdvisorOverviewDonut.propTypes = {
+    className: PropTypes.string,
     category: PropTypes.array,
     history: PropTypes.object
 
