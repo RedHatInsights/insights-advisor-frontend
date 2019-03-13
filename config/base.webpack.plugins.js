@@ -44,7 +44,7 @@ plugins.push(SourceMapsPlugin);
  * Cleans distribution folder.
  * @type {[type]}
  */
-const CleanWebpackPlugin = new (require('clean-webpack-plugin'))([ 'dist' ]);
+const CleanWebpackPlugin = new (require('clean-webpack-plugin'));
 plugins.push(CleanWebpackPlugin);
 
 /**

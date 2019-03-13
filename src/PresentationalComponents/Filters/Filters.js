@@ -1,6 +1,6 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
-import { TextInput, Toolbar, ToolbarGroup, ToolbarItem, ToolbarSection } from '@patternfly/react-core';
+import { TextInput, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -11,13 +11,25 @@ import DropdownFilters from './DropdownFilters.js';
 
 class Filters extends Component {
     componentWillUnmount () {
-        this.props.setFilters({ });
+        this.props.setFilters({});
+    }
+
+    componentDidUpdate (prevProps) {
+        if (this.props.externalFilters !== prevProps.externalFilters) {
+            const filterKey = Object.keys(this.props.externalFilters)[0];
+            if (filterKey) {
+                this.props.setFilters({ [filterKey]: `${this.props.externalFilters[filterKey]}` });
+            }
+        }
     }
 
     changeSearchValue = debounce(
         value => {
-            this.props.setFilters({ ...this.props.filters, text: value });
-            this.props.fetchAction({ ...this.props.filters, text: value });
+            const filter = { ...this.props.filters };
+            const text = value.length ? { text: value } : {};
+            delete filter.text;
+            this.props.setFilters({ ...filter, ...text });
+            this.props.fetchAction({ ...filter, ...text });
         },
         800
     );
@@ -43,9 +55,9 @@ class Filters extends Component {
     };
 
     render () {
-        const { children, searchPlaceholder, filters, resultsCount, hideCategories } = this.props;
+        const { children, searchPlaceholder, filters, hideCategories } = this.props;
         return (
-            <Toolbar className='pf-u-justify-content-space-between pf-u-ml-xl pf-u-my-md'>
+            <>
                 <ToolbarGroup>
                     <ToolbarItem className='pf-u-mr-xl'>
                         <TextInput
@@ -69,15 +81,7 @@ class Filters extends Component {
                         { children }
                     </ToolbarItem>
                 </ToolbarGroup>
-                <ToolbarSection aria-label="toolbar-results">
-                    <ToolbarGroup>
-                        <ToolbarItem>
-                            { resultsCount === undefined && ('Loading...') }
-                            { resultsCount !== undefined && `${resultsCount} result${resultsCount !== 1 ? 's' : ''}` }
-                        </ToolbarItem>
-                    </ToolbarGroup>
-                </ToolbarSection>
-            </Toolbar>
+            </>
         );
     }
 }
@@ -85,11 +89,11 @@ class Filters extends Component {
 Filters.propTypes = {
     children: PropTypes.any,
     hideCategories: PropTypes.array,
-    resultsCount: PropTypes.number,
     searchPlaceholder: PropTypes.string,
     filters: PropTypes.object,
     setFilters: PropTypes.func,
-    fetchAction: PropTypes.func
+    fetchAction: PropTypes.func,
+    externalFilters: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({

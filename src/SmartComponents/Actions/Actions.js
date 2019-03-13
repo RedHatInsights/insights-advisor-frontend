@@ -13,8 +13,8 @@ const Actions = () => {
     return (
         <Switch>
             <Route exact path='/actions' component={ ActionsOverview } />
-            <Route exact path='/actions/:type' component={ ViewActions }/>
-            <Route exact path='/actions/:type/:id' component={ ListActions }/>
+            <Route exact path='/actions/:type' component={ ListActions }/>
+            <Route exact path='/actions/:type/:id' component={ ViewActions }/>
             <Route path='/actions/:type/:id/:inventoryId/' component={ InventoryDetails }/>
         </Switch>
     );

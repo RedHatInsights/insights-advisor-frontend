@@ -1,5 +1,5 @@
 import SummaryChart from './SummaryChart';
-import SummaryChartItem from '../SummaryChartItem/SummaryChartItem';
+import SummaryChartItem from './SummaryChartItem';
 
 import renderer from 'react-test-renderer';
 
