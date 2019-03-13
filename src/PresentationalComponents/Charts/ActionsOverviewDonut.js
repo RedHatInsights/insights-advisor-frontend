@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
-import { ChartDonut, ChartLabel, ChartLegend } from '@patternfly/react-charts';
+import { ChartDonut, ChartLabel, ChartLegend, ChartTheme } from '@patternfly/react-charts';
 import { Grid, GridItem } from '@patternfly/react-core';
-import AdvisorDonutTheme from './ActionsOverviewDonutTheme.js';
 
 import './ActionsOverviewDonut.scss';
 
@@ -93,7 +92,7 @@ class AdvisorOverviewDonut extends React.Component {
             height={ 1 }
         >
             <ChartLabel
-                style={ { fontSize: 25 } }
+                style={ { fontSize: 20 } }
                 text={ this.props.category.length ? `${this.props.category.reduce((sum, curr) => sum + curr)}` : '' }
                 textAnchor="middle"
                 verticalAnchor="middle"
@@ -101,14 +100,13 @@ class AdvisorOverviewDonut extends React.Component {
                 y={ 66 }
             />
             <ChartLabel
-                style={ { fill: '#bbbbbb' } }
+                style={ { fill: '#bbb' } }
                 text='Total hits'
                 textAnchor='middle'
                 verticalAnchor='middle'
                 x={ 88 }
                 y={ 89 }
             />
-
         </svg>;
         const typeNames = [ 'Availability', 'Stability', 'Performance', 'Security' ];
 
@@ -118,11 +116,11 @@ class AdvisorOverviewDonut extends React.Component {
                     <GridItem span={ 6 }>
                         <div className="chart-container">
                             { label }
-                            { this.getChart(AdvisorDonutTheme, typeNames) }
+                            { this.getChart(ChartTheme.light.multi, typeNames) }
                         </div>
                     </GridItem>
                     <GridItem span={ 6 }>
-                        { this.getLegend(AdvisorDonutTheme, typeNames) }
+                        { this.getLegend(ChartTheme.light.multi, typeNames) }
                     </GridItem>
                 </Grid>
             </div>
