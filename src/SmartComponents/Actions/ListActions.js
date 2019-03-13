@@ -25,7 +25,7 @@ class ViewActions extends Component {
 
     parseUrlTitle = (title = '') => {
         const parsedTitle = title.split('-');
-        return parsedTitle.length > 1 ? `${capitalize(parsedTitle[0])} ${capitalize(parsedTitle[1])} Actions` : `${capitalize(parsedTitle)}`;
+        return parsedTitle.length > 1 ? `${capitalize(parsedTitle[0])} ${capitalize(parsedTitle[1])} Actions` : `${capitalize(parsedTitle[0])}`;
     };
 
     render () {
