@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Ansible, Battery, Main, Pagination, routerParams, TableToolbar } from '@red-hat-insights/insights-frontend-components';
 import PropTypes from 'prop-types';
-import { debounce } from 'lodash';
+import { debounce, flatten } from 'lodash';
 import { connect } from 'react-redux';
 import { Checkbox, Stack, StackItem } from '@patternfly/react-core';
 import { sortable, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
@@ -95,7 +95,7 @@ class RulesTable extends Component {
                 ];
             });
 
-            this.setState({ rows: rows.flat() });
+            this.setState({ rows: flatten(rows) });
         }
     }
 
