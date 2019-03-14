@@ -1,8 +1,6 @@
 {
   "presets": [
-    ["@babel/env", {
-      "shippedProposals": true
-    }],
+    "@babel/env",
     "@babel/react",
     "@babel/flow"
   ],
