@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import asyncComponent from '../../Utilities/asyncComponent';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Card, CardBody, CardHeader, Grid, GridItem } from '@patternfly/react-core';
+import { Grid, GridItem, Title } from '@patternfly/react-core';
 import { Main, PageHeader, PageHeaderTitle, routerParams } from '@red-hat-insights/insights-frontend-components';
 import { invert, capitalize } from 'lodash';
 
@@ -28,7 +28,7 @@ class ActionsOverview extends Component {
    async componentDidMount () {
        await insights.chrome.auth.getUser();
        this.props.fetchStats();
-       this.props.setBreadcrumbs([{ title: 'Actions', navigate: '/actions' }]);
+       this.props.setBreadcrumbs([{ title: 'Overview', navigate: '/actions' }]);
    }
 
    componentDidUpdate (prevProps) {
@@ -36,7 +36,7 @@ class ActionsOverview extends Component {
            const rules = this.props.stats.rules;
            this.setState({ totalRisk: rules.total_risk });
            this.setState({
-               category: [ rules.category.Availability, rules.category.Security, rules.category.Stability, rules.category.Performance ]
+               category: [ rules.category.Availability, rules.category.Stability, rules.category.Performance, rules.category.Security ]
            });
            this.setState({ total: rules.total });
        }
@@ -69,39 +69,32 @@ class ActionsOverview extends Component {
          const { totalRisk, category, total } = this.state;
 
          return (
-             <React.Fragment>
-                 <PageHeader>
-                     <PageHeaderTitle title='Actions'/>
-                 </PageHeader>
-                 <Main>
-                     <Grid gutter='lg' xl={ 5 } lg={ 8 } md={ 2 } sm={ 1 }>
-                         <GridItem  xl={ 5 } lg={ 6 } md={ 9 } sm={ 6 }>
-                             <Card className='pf-t-light  pf-m-opaque-100'>
-                                 <CardHeader>Category Summary</CardHeader>
-                                 <CardBody>
-                                     { statsFetchStatus === 'fulfilled' && (
-                                         <ActionsOverviewDonut category={ category }/>
-                                     ) }
-                                     { statsFetchStatus === 'pending' && (<Loading/>) }
-                                 </CardBody>
-                             </Card>
-                         </GridItem>
-                         <GridItem xl={ 3 } lg={ 4 } md={ 5 } sm={ 4 }>
-                             <Card className='pf-t-light  pf-m-opaque-100'>
-                                 <CardHeader>Risk Summary</CardHeader>
-                                 <CardBody>
-                                     { statsFetchStatus === 'fulfilled' && (
-                                         <SummaryChart>
-                                             { this.summaryChart(totalRisk, total) }
-                                         </SummaryChart>
-                                     ) }
-                                     { statsFetchStatus === 'pending' && (<Loading/>) }
-                                 </CardBody>
-                             </Card>
-                         </GridItem>
-                     </Grid>
-                 </Main>
-             </React.Fragment>
+            <>
+                <PageHeader>
+                    <PageHeaderTitle title='Overview'/>
+                </PageHeader>
+                <Main className='pf-m-light pf-u-box-shadow-md-bottom'>
+                    <Grid gutter='lg'>
+                        <GridItem className='pf-u-pr-xl-on-xl pf-u-mr-xl-on-xl' xl={ 4 } lg={ 4 } md={ 8 } sm={ 8 }>
+                            <Title size='lg' headingLevel='h3'>Risk Summary</Title>
+                            { statsFetchStatus === 'fulfilled' && (
+                                <SummaryChart className='pf-u-mt-md'>
+                                    { this.summaryChart(totalRisk, total) }
+                                </SummaryChart>
+                            ) }
+                            { statsFetchStatus === 'pending' && (<Loading/>) }
+                        </GridItem>
+                        <GridItem xl={ 6 } lg={ 7 } md={ 11 } sm={ 8 }>
+                            <Title size='lg' headingLevel='h3'>Rule hits by category</Title>
+                            { statsFetchStatus === 'fulfilled' && (
+                                <ActionsOverviewDonut category={ category } className='pf-u-mt-md'/>
+                            ) }
+                            { statsFetchStatus === 'pending' && (<Loading/>) }
+                        </GridItem>
+                    </Grid>
+                </Main>
+                <Main>&nbsp;</Main>
+             </>
          );
      }
 }
