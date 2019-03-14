@@ -101,11 +101,11 @@ class RulesTable extends Component {
 
     onSort = (_event, index, direction) => {
         const attrIndex = {
-            1: 'likelihood',
-            2: 'impact',
-            3: 'total_risk',
-            4: 'impacted_count',
-            5: 'playbook_count'
+            2: 'likelihood',
+            3: 'impact',
+            4: 'total_risk',
+            5: 'impacted_count',
+            6: 'playbook_count'
         };
         const orderParam = `${direction === 'asc' ? '' : '-'}${attrIndex[index]}`;
 
