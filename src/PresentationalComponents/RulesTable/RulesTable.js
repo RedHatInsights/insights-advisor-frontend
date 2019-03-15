@@ -3,16 +3,19 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Ansible, Battery, Main, Pagination, routerParams, TableToolbar } from '@red-hat-insights/insights-frontend-components';
 import PropTypes from 'prop-types';
-import { debounce } from 'lodash';
+import { debounce, flatten } from 'lodash';
 import { connect } from 'react-redux';
-import { Checkbox, Stack, StackItem } from '@patternfly/react-core';
+import { Badge, Checkbox, Stack, StackItem } from '@patternfly/react-core';
 import { sortable, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
+import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import Filters from '../../PresentationalComponents/Filters/Filters';
 import RuleDetails from '../RuleDetails/RuleDetails';
+import API from '../../Utilities/Api';
+import { BASE_URL } from '../../AppConstants';
 
 class RulesTable extends Component {
     state = {
@@ -58,9 +61,12 @@ class RulesTable extends Component {
                         rule: value,
                         cells: [
                             <>
-                                <Link key={ key } to={ linkTo }>
-                                    { value.description }
-                                </Link>
+                                { value.reports_shown ?
+                                    <Link key={ key } to={ linkTo }>
+                                        { value.description }
+                                    </Link>
+                                    : <span key={ key }> <Badge isRead>Inactive</Badge> { value.description }</span>
+                                }
                             </>,
                             <div className="pf-m-center" key={ key }>
                                 <Battery
@@ -82,7 +88,7 @@ class RulesTable extends Component {
                                     severity={ value.total_risk }
                                 />
                             </div>,
-                            <div key={ key }>{ value.impacted_systems_count }</div>,
+                            <div key={ key }> { value.reports_shown ? `${value.impacted_systems_count}` : 'N/A' }</div>,
                             <div className="pf-m-center" key={ key }>
                                 <Ansible unsupported={ !value.playbook_count }/>
                             </div>
@@ -95,17 +101,17 @@ class RulesTable extends Component {
                 ];
             });
 
-            this.setState({ rows: rows.flat() });
+            this.setState({ rows: flatten(rows) });
         }
     }
 
     onSort = (_event, index, direction) => {
         const attrIndex = {
-            1: 'likelihood',
-            2: 'impact',
-            3: 'total_risk',
-            4: 'impacted_count',
-            5: 'playbook_count'
+            2: 'likelihood',
+            3: 'impact',
+            4: 'total_risk',
+            5: 'impacted_count',
+            6: 'playbook_count'
         };
         const orderParam = `${direction === 'asc' ? '' : '-'}${attrIndex[index]}`;
 
@@ -182,6 +188,40 @@ class RulesTable extends Component {
         });
     };
 
+    hideReports = async (rowId) => {
+        const rule = this.state.rows[rowId].rule;
+        try {
+            await API.post(`${BASE_URL}/ack/`, { rule_id: rule.rule_id });
+
+            this.props.fetchRules({
+                ...this.props.filters,
+                page: 1,
+                page_size: this.state.pageSize,
+                impacting: this.state.impacting
+            });
+        } catch (error) {
+            this.props.addNotification({
+                variant: 'danger',
+                dismissable: true,
+                title: rule.reports_shown ? 'Disabling reports failed' : 'Enabling reports failed',
+                description: `For rule: ${rule.description}`
+            });
+        }
+    };
+
+    actionResolver = (rowData, { rowIndex }) => {
+        const rule = this.state.rows[rowIndex].rule ? this.state.rows[rowIndex].rule : null;
+        return rule && rule.reports_shown ?
+            [{
+                title: 'Hide Reports',
+                onClick: (event, rowId) => this.hideReports(rowId)
+            }]
+            : [{
+                title: 'Show Reports',
+                onClick: (event, rowId) => this.hideReports(rowId)
+            }];
+    };
+
     render () {
         const { rulesFetchStatus, rules } = this.props;
         const { urlFilters, sort, pageSize, page, impacting, sortBy, cols, rows } = this.state;
@@ -207,9 +247,9 @@ class RulesTable extends Component {
                         </Filters>
                     </TableToolbar>
                     { rulesFetchStatus === 'fulfilled' &&
-                    <Table variant={ TableVariant.compact }
-                        onCollapse={ this.handleOnCollapse } sortBy={ sortBy } onSort={ this.onSort } cells={ cols }
-                        rows={ rows }>
+                    <Table aria-label={ 'rule-table' } variant={ TableVariant.compact }
+                        actionResolver={ this.actionResolver } onCollapse={ this.handleOnCollapse } sortBy={ sortBy }
+                        onSort={ this.onSort } cells={ cols } rows={ rows }>
                         <TableHeader/>
                         <TableBody/>
                     </Table> }
@@ -236,7 +276,9 @@ RulesTable.propTypes = {
     rules: PropTypes.object,
     filters: PropTypes.object,
     impacting: PropTypes.bool,
-    urlFilters: PropTypes.object
+    urlFilters: PropTypes.object,
+    addNotification: PropTypes.func
+
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -246,7 +288,10 @@ const mapStateToProps = (state, ownProps) => ({
     ...ownProps
 });
 
-const mapDispatchToProps = dispatch => ({ fetchRules: (url) => dispatch(AppActions.fetchRules(url)) });
+const mapDispatchToProps = dispatch => ({
+    fetchRules: (url) => dispatch(AppActions.fetchRules(url)),
+    addNotification: data => dispatch(addNotification(data))
+});
 
 export default routerParams(connect(
     mapStateToProps,
