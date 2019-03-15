@@ -207,7 +207,7 @@ class RulesTable extends Component {
                         </Filters>
                     </TableToolbar>
                     { rulesFetchStatus === 'fulfilled' &&
-                    <Table variant={ TableVariant.compact }
+                    <Table aria-label={ 'rule-table' } variant={ TableVariant.compact }
                         onCollapse={ this.handleOnCollapse } sortBy={ sortBy } onSort={ this.onSort } cells={ cols }
                         rows={ rows }>
                         <TableHeader/>
