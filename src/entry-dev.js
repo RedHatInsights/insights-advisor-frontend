@@ -12,7 +12,7 @@ import { NotificationsPortal } from '@red-hat-insights/insights-frontend-compone
 
 ReactDOM.render(
     <Provider store={ init(logger).getStore() }>
-        <Router basename={ `/${RELEASE}/platform/advisor` }>
+        <Router basename={ `${RELEASE ? `/${RELEASE}` : ''}/insights` }>
             <React.Fragment>
                 <NotificationsPortal />
                 <App />
