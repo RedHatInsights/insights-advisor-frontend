@@ -8,7 +8,7 @@ export const BREADCRUMBS_SET = 'BREADCRUMBS_SET';
 export const LOAD_ENTITY = 'LOAD_ENTITY';
 export const FILTERS_SET = 'FILTERS_SET';
 
-const BASE_URL = '/r/insights/platform/advisor/v1';
+export const BASE_URL = '/r/insights/platform/advisor/v1';
 export const RULES_FETCH_URL = `${BASE_URL}/rule/`;
 export const STATS_FETCH_URL = `${BASE_URL}/stats/`;
 export const SYSTEM_FETCH_URL = `${BASE_URL}/system/`;
@@ -28,7 +28,7 @@ export const SEVERITY_MAP = {
 };
 export const FILTER_CATEGORIES = [
     {
-        title: 'Total Risk', urlParam: 'total_risk', values: [
+        type: 'checkbox', title: 'Total Risk', urlParam: 'total_risk', values: [
             { label: 'Critical', value: '4' },
             { label: 'High', value: '3' },
             { label: 'Medium', value: '2' },
@@ -36,7 +36,7 @@ export const FILTER_CATEGORIES = [
         ]
     },
     {
-        title: 'Impact', urlParam: 'impact', values: [
+        type: 'checkbox', title: 'Impact', urlParam: 'impact', values: [
             { label: 'Critical', value: '4' },
             { label: 'High', value: '3' },
             { label: 'Medium', value: '2' },
@@ -44,7 +44,7 @@ export const FILTER_CATEGORIES = [
         ]
     },
     {
-        title: 'Likelihood', urlParam: 'likelihood', values: [
+        type: 'checkbox', title: 'Likelihood', urlParam: 'likelihood', values: [
             { label: 'Critical', value: '4' },
             { label: 'High', value: '3' },
             { label: 'Medium', value: '2' },
@@ -52,11 +52,18 @@ export const FILTER_CATEGORIES = [
         ]
     },
     {
-        title: 'Category', urlParam: 'category', values: [
+        type: 'checkbox', title: 'Category', urlParam: 'category', values: [
             { label: 'Availability', value: `${RULE_CATEGORIES.availability}` },
             { label: 'Performance', value: `${RULE_CATEGORIES.performance}` },
             { label: 'Stability', value: `${RULE_CATEGORIES.stability}` },
             { label: 'Security', value: `${RULE_CATEGORIES.security}` }
+        ]
+    },
+    {
+        type: 'radio', title: 'Rule Status', urlParam: 'reports_shown', values: [
+            { label: 'All', value: undefined },
+            { label: 'Enabled', value: true },
+            { label: 'Disabled', value: false }
         ]
     }
 ];
