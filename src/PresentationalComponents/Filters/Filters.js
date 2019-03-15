@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import * as AppActions from '../../AppActions';
 import PropTypes from 'prop-types';
 import debounce from 'lodash/debounce';
-import DropdownFilters from './DropdownFilters.js';
+import FilterDropdown from './FilterDropdown.js';
 
 class Filters extends Component {
     componentWillUnmount () {
@@ -34,8 +34,17 @@ class Filters extends Component {
         800
     );
 
-    addFilter = (param, value) => {
-        const newFilter = this.props.filters[param] ? { [param]: `${this.props.filters[param]},${value}` } : { [param]: value };
+    addFilter = (param, value, type) => {
+        let newFilter;
+        switch (type) {
+            case 'checkbox':
+                newFilter = this.props.filters[param] ? { [param]: `${this.props.filters[param]},${value}` } : { [param]: value };
+                break;
+            case 'radio':
+                newFilter = { [param]: value };
+                break;
+        }
+
         this.props.setFilters({ ...this.props.filters, ...newFilter });
         this.props.fetchAction({ ...this.props.filters, ...newFilter });
     };
@@ -68,7 +77,7 @@ class Filters extends Component {
                             placeholder={ searchPlaceholder }/>
                     </ToolbarItem>
                     <ToolbarItem className='pf-u-mr-md'>
-                        <DropdownFilters
+                        <FilterDropdown
                             filters={ filters }
                             addFilter={ this.addFilter }
                             removeFilter={ this.removeFilter }
