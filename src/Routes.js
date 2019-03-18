@@ -1,4 +1,4 @@
-import { Route, Switch, matchPath } from 'react-router-dom';
+import { matchPath, Route, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import asyncComponent from './Utilities/asyncComponent';
@@ -29,10 +29,9 @@ const InsightsRoute = ({ component: Component, rootClass, ...rest }) => {
     const root = document.getElementById('root');
     root.removeAttribute('class');
     root.classList.add(`page__${rootClass}`, 'pf-c-page__main');
-    root.classList.add(`page__${rootClass}`, 'pf-l-page__main');
     root.setAttribute('role', 'main');
 
-    return <Route { ...rest } component={ Component } />;
+    return <Route { ...rest } component={ Component }/>;
 };
 
 InsightsRoute.propTypes = {
@@ -40,9 +39,9 @@ InsightsRoute.propTypes = {
     rootClass: PropTypes.string
 };
 
-function checkPaths(routes) {
+function checkPaths (routes) {
     return some(Object
-    .values(routes), route => matchPath(location.href, { path: `${document.baseURI}platform/advisor${route}` }));
+    .values(routes), route => matchPath(location.href, { path: `${document.baseURI}insights${route}` }));
 }
 
 /**
@@ -60,8 +59,8 @@ export const Routes = ({ childProps: { history }}) => {
 
     return (
         <Switch>
-            <InsightsRoute path={ paths.actions } component={ Actions } rootClass='actions' />
-            <InsightsRoute path={ paths.rules } component={ Rules } rootClass='rules' />
+            <InsightsRoute path={ paths.actions } component={ Actions } rootClass='actions'/>
+            <InsightsRoute path={ paths.rules } component={ Rules } rootClass='rules'/>
         </Switch>
     );
 };
