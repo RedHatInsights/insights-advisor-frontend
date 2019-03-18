@@ -2,17 +2,24 @@ import React, { Component } from 'react';
 import { Dropdown, DropdownToggle } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
-import CheckboxFilter from './CheckboxFilter.js';
+import FilterInput from './FilterInput.js';
 import { FILTER_CATEGORIES } from '../../AppConstants';
 import './_dropdown.scss';
 
-class DropdownFilters extends Component {
+class FilterDropdown extends Component {
     state = {
         isOpen: false
     };
 
-    addRemoveFilters = (selectedValue, filterName, isChecked) => {
-        isChecked ? this.props.addFilter(filterName, selectedValue) : this.props.removeFilter(filterName, selectedValue);
+    addRemoveFilters = (selectedValue, filterName, type, isChecked) => {
+        switch (type) {
+            case 'checkbox':
+                isChecked ? this.props.addFilter(filterName, selectedValue, type) : this.props.removeFilter(filterName, selectedValue);
+                break;
+            case 'radio':
+                this.props.addFilter(filterName, selectedValue, type);
+                break;
+        }
     };
 
     onToggle = isOpen => {
@@ -37,18 +44,19 @@ class DropdownFilters extends Component {
                         <div key={ `${data.urlParam}${index}` } className='filterTitle'>
                             { data.title }
                             { (data.values.map((item, key) => (
-                                <CheckboxFilter
+                                <FilterInput
                                     key={ `check${index}${key}` }
                                     aria-label={ item.label }
                                     id={ `${data.urlParam}${key}` }
                                     label={ item.label }
                                     addRemoveFilters={ this.addRemoveFilters }
                                     param={ data.urlParam }
+                                    type={ data.type }
                                     value={ item.value }
                                     filters={ filters }
                                 />
                             ))) }
-                            { (index !== 3 && <br/>) }
+                            { (index !== (FILTER_CATEGORIES.length - 1) && <br/>) }
                         </div>) }
                 </div>
             </Dropdown>
@@ -56,15 +64,15 @@ class DropdownFilters extends Component {
     }
 }
 
-DropdownFilters.propTypes = {
+FilterDropdown.propTypes = {
     addFilter: PropTypes.func,
     removeFilter: PropTypes.func,
     hideCategories: PropTypes.array,
     filters: PropTypes.object
 };
 
-DropdownFilters.defaultProps = {
+FilterDropdown.defaultProps = {
     hideCategories: []
 };
 
-export default DropdownFilters;
+export default FilterDropdown;

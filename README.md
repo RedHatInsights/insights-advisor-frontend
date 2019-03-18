@@ -10,19 +10,13 @@ There is a [comprehensive quick start guide in the Storybook Documentation](http
 
 Note: You will need to set up the Insights environment if you want to develop with the starter app due to the consumption of the chroming service as well as setting up your global/app navigation through the API.
 
-### Insights Proxy Environment
-[Insights Proxy](https://github.com/RedHatInsights/insights-proxy) is required to run the Advisor frontend. **Note An Advisor-specific proxy configuration is required for the frontend to communicate to the Advisor API POC**. To run the proxy with advisor-specific configuration run:
+## Running locally
+Have [insights-proxy](https://github.com/RedHatInsights/insights-proxy) installed under PROXY_PATH
+
+```shell
+SPANDX_CONFIG="./config/spandx.config.js" bash $PROXY_PATH/scripts/run.sh
 ```
-cd /path/to/insights-advisor-frontend
-```
-OSX
-```
-docker run -e LOCAL_CHROME -v $PWD/config:/config -e PLATFORM -e PORT -e LOCAL_API -e SPANDX_HOST -e SPANDX_PORT --rm -ti --name insightsproxy -p 1337:1337 docker.io/redhatinsights/insights-proxy
-```
-Linux/Other
-```
-docker run -v $PWD/config:/config --rm --net='host' -p1337:1337 -e PLATFORM=linux -ti docker.io/redhatinsights/insights-proxy
-```
+
 ### Build app
 1. ```npm install```
 
