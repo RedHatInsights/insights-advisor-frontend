@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === 'production' && betaBranch) {
     release = 'beta';
 }
 
-const publicPath = `${deploymentEnv}/insights/`;
+const publicPath = `/${deploymentEnv}/insights/`;
 
 module.exports = {
     paths: {
