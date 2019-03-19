@@ -10,7 +10,7 @@ import './App.scss';
 class App extends Component {
     componentDidMount () {
         insights.chrome.init();
-        insights.chrome.identifyApp('advisor');
+        insights.chrome.identifyApp('insights');
         this.appNav = insights.chrome.on('APP_NAVIGATION', event => {
             if (!matchPath(location.href, { path: `${document.baseURI}insights/${event.navId}` })) {
                 this.props.history.push(`/${event.navId}`);
