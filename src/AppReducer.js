@@ -100,7 +100,7 @@ function enableApplications (state) {
         ...state,
         loaded: true,
         activeApps: [
-            { title: 'Configuration Assessment', name: 'configuration_assessment', component: Advisor }
+            { title: 'Insights', name: 'insights', component: Advisor }
         ]
     };
 }
