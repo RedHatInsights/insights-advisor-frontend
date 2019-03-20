@@ -23,18 +23,20 @@ class RuleDetails extends Component {
     }
 
     async fetchKbaDetails () {
-        try {
-            this.setState({ kbaDetailsLoading: true });
-            const kbaDetails = (await API.get(`/rs/search?q=id:${this.props.rule.node_id}`,
-                { Accept: 'application/vnd.redhat.solr+json' })).data.response.docs[0];
-            this.setState({ kbaDetails });
-        } catch (error) {
-            this.props.addNotification({
-                variant: 'danger',
-                dismissable: true,
-                title: '',
-                description: 'KBA fetch failed.'
-            });
+        if (this.props.rule.node_id) {
+            try {
+                this.setState({ kbaDetailsLoading: true });
+                const kbaDetails = (await API.get(`https://access.redhat.com/rs/search?q=id:${this.props.rule.node_id}`,
+                    { Accept: 'application/vnd.redhat.solr+json' })).data.response.docs[0];
+                this.setState({ kbaDetails });
+            } catch (error) {
+                this.props.addNotification({
+                    variant: 'danger',
+                    dismissable: true,
+                    title: '',
+                    description: 'KBA fetch failed.'
+                });
+            }
         }
     }
 
