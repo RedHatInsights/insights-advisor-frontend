@@ -6,15 +6,20 @@ import { init } from './Store';
 import App from './App';
 import { NotificationsPortal } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 
-// exposes webpack variable RELEASE
-/*global RELEASE:true*/
+const pathName = window.location.pathname.split('/');
+pathName.shift();
+
+let release = '/';
+if (pathName[0] === 'beta') {
+    release = `/beta/${pathName.shift()}`;
+}
 
 ReactDOM.render(
     <Provider store={ init().getStore() }>
-        <Router basename={ `${RELEASE ? `/${RELEASE}` : ''}/insights` }>
+        <Router basename={ `${release}${pathName[0]}` }>
             <React.Fragment>
-                <NotificationsPortal />
-                <App />
+                <NotificationsPortal/>
+                <App/>
             </React.Fragment>
         </Router>
     </Provider>,
