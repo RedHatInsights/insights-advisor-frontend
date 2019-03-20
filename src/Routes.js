@@ -39,9 +39,9 @@ InsightsRoute.propTypes = {
     rootClass: PropTypes.string
 };
 
-function checkPaths (routes) {
+function checkPaths (routes, app) {
     return some(Object
-    .values(routes), route => matchPath(location.href, { path: `${document.baseURI}insights${route}` }));
+    .values(routes), route => matchPath(location.href, { path: `${document.baseURI}${app}${route}` }));
 }
 
 /**
@@ -53,7 +53,14 @@ function checkPaths (routes) {
  *      component - component to be rendered when a route has been chosen.
  */
 export const Routes = ({ childProps: { history }}) => {
-    if (!checkPaths(paths)) {
+    const pathName = window.location.pathname.split('/');
+    pathName.shift();
+
+    if (pathName[0] === 'beta') {
+        pathName.shift();
+    }
+
+    if (!checkPaths(paths, pathName[0])) {
         history.push(paths.actions);
     }
 
