@@ -73,7 +73,7 @@ export const RISK_OF_CHANGE_DESC = {
     3: 'These will likely require an outage window.',
     4: 'The change takes a significant amount of time and planning to execute, and will impact the system and business operations of the host due to downtime.'
 };
-export const IMPACT_LABEL = { 1: 'Low', 2: 'Medium', 3: 'High', 4: 'Critcal' };
-export const LIKELIHOOD_LABEL = { 1: 'Low', 2: 'Medium', 3: 'High', 4: 'Critcal' };
+export const IMPACT_LABEL = { 1: 'Low', 2: 'Medium', 3: 'High', 4: 'Critical' };
+export const LIKELIHOOD_LABEL = { 1: 'Low', 2: 'Medium', 3: 'High', 4: 'Critical' };
 export const RISK_OF_CHANGE_LABEL = { 1: 'Low', 2: 'Moderate', 3: 'Moderate', 4: 'High' };
 export const TOTAL_RISK_LABEL = { 1: 'Very Low', 2: 'Low', 3: 'Moderate', 4: 'High' };
