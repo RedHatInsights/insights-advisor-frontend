@@ -1,45 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './SummaryChartItem.scss';
+import { Link } from 'react-router-dom';
+import { Battery } from '@red-hat-insights/insights-frontend-components';
+import { Split, SplitItem, StackItem } from '@patternfly/react-core';
 
 const SummaryChartItem = (props) => {
-    const numIssues = props.numIssues;
-    let percentage = ((numIssues / props.totalIssues) * 100).toFixed(1);
-    let lowerCaseName = props.name.toLowerCase();
-
-    let barWidth = { width: percentage + '%' };
+    const { numIssues, name, riskName } = props;
+    const returnLink = (children) => <Link to={ `/actions/${riskName}` }> { children } </Link>;
 
     return (
-        <li widget-type='InsightsSummaryChartItem' widget-id={ props.name }>
-            { numIssues > 0 &&
-            <React.Fragment>
-                <div className='metrics'>
-                    <strong>{ props.name } </strong>
-                    <span className='num'>({ percentage }%)</span>
-                </div>
-                <div className='progress-bars'>
-                    <div
-                        className= { 'progress-bar progress-bar-' + lowerCaseName }
-                        style= { barWidth }
-                    ></div>
-                    <div className='bar'></div>
-                </div>
-            </React.Fragment>
-            }
-            { numIssues === 0 &&
-            <div className='no-errors'>
-                <i className='fas fa-check-circle small-spacer green'></i>
-                You have no issues of { lowerCaseName } severity
-            </div>
-            }
-        </li>
+        <StackItem widget-type='InsightsSummaryChartItem' widget-id={ name }>
+            <Split style={ { alignItems: 'flex-end' } }>
+                <SplitItem className='pf-u-pr-md'>
+                    { returnLink(<Battery label={ riskName } severity={ name.toLowerCase() } labelHidden={ true }/>) }
+                </SplitItem>
+                <SplitItem className='pf-u-text-align-right pf-u-pl-sm' >
+                    { returnLink(`${numIssues} ${name} affecting ${props.affectedSystems} systems`) }
+                </SplitItem>
+            </Split>
+        </StackItem>
     );
 };
 
 SummaryChartItem.propTypes = {
+    affectedSystems: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
-    totalIssues: PropTypes.number.isRequired,
-    numIssues: PropTypes.number.isRequired
+    numIssues: PropTypes.number.isRequired,
+    riskName: PropTypes.string.isRequired
 };
 
 export default SummaryChartItem;
