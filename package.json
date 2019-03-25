@@ -15,7 +15,7 @@
     "@patternfly/react-core": "2.3.6",
     "@patternfly/react-icons": "3.2.0",
     "@patternfly/react-table": "1.1.1",
-    "@red-hat-insights/insights-frontend-components": "3.39.5",
+    "@red-hat-insights/insights-frontend-components": "3.40.1",
     "classnames": "2.2.6",
     "create-react-class": "15.6.3",
     "lodash": "4.17.11"
