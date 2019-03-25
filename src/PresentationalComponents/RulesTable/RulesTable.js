@@ -191,7 +191,12 @@ class RulesTable extends Component {
     hideReports = async (rowId) => {
         const rule = this.state.rows[rowId].rule;
         try {
-            await API.post(`${BASE_URL}/ack/`, { rule_id: rule.rule_id });
+            if (rule.reports_shown) {
+                await API.post(`${BASE_URL}/ack/`, { rule_id: rule.rule_id });
+
+            } else {
+                await API.delete(`${BASE_URL}/ack/${rule.rule_id}/`);
+            }
 
             this.props.fetchRules({
                 ...this.props.filters,
