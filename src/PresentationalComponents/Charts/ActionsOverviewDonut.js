@@ -87,10 +87,7 @@ class AdvisorOverviewDonut extends React.Component {
 
     render () {
         const { className } = this.props;
-        const label = <svg
-            className="chart-label"
-            height={ 1 }
-        >
+        const label = <svg className="chart-label" height={ 1 }>
             <ChartLabel
                 style={ { fontSize: 20 } }
                 text={ this.props.category.length ? `${this.props.category.reduce((sum, curr) => sum + curr)}` : '' }
@@ -110,21 +107,17 @@ class AdvisorOverviewDonut extends React.Component {
         </svg>;
         const typeNames = [ 'Availability', 'Stability', 'Performance', 'Security' ];
 
-        return (
-            <div className={ `chart-inline ${className}` }>
-                <Grid>
-                    <GridItem span={ 6 }>
-                        <div className="chart-container">
-                            { label }
-                            { this.getChart(ChartTheme.light.multi, typeNames) }
-                        </div>
-                    </GridItem>
-                    <GridItem span={ 6 }>
-                        { this.getLegend(ChartTheme.light.multi, typeNames) }
-                    </GridItem>
-                </Grid>
-            </div>
-        );
+        return <Grid className={ `chart-inline ${className}` }>
+            <GridItem span={ 6 }>
+                <div className="chart-container">
+                    { label }
+                    { this.getChart(ChartTheme.light.multi, typeNames) }
+                </div>
+            </GridItem>
+            <GridItem aria-label="Chart legend" span={ 6 }>
+                { this.getLegend(ChartTheme.light.multi, typeNames) }
+            </GridItem>
+        </Grid>;
     }
 }
 
