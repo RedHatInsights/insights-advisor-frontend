@@ -16,5 +16,10 @@ export default {
         return axios.post(url, data, {
             headers
         });
+    },
+    delete(url, data = {}, headers = {}) {
+        return axios.delete(url, data, {
+            headers
+        });
     }
 };
