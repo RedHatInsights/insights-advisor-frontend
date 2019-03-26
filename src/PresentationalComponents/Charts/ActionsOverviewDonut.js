@@ -107,17 +107,19 @@ class AdvisorOverviewDonut extends React.Component {
         </svg>;
         const typeNames = [ 'Availability', 'Stability', 'Performance', 'Security' ];
 
-        return <Grid className={ `chart-inline ${className}` }>
-            <GridItem span={ 6 }>
-                <div className="chart-container">
-                    { label }
-                    { this.getChart(ChartTheme.light.multi, typeNames) }
-                </div>
-            </GridItem>
-            <GridItem aria-label="Chart legend" span={ 6 }>
-                { this.getLegend(ChartTheme.light.multi, typeNames) }
-            </GridItem>
-        </Grid>;
+        return <div className={ `chart-inline ${className}` }>
+            <Grid>
+                <GridItem span={ 6 }>
+                    <div className="chart-container">
+                        { label }
+                        { this.getChart(ChartTheme.light.multi, typeNames) }
+                    </div>
+                </GridItem>
+                <GridItem aria-label="Chart legend" span={ 6 }>
+                    { this.getLegend(ChartTheme.light.multi, typeNames) }
+                </GridItem>
+            </Grid>
+        </div>;
     }
 }
 
