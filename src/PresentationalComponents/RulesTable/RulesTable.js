@@ -227,9 +227,18 @@ class RulesTable extends Component {
             }];
     };
 
+    fetchAction = (filters) => {
+        const { sort, pageSize, impacting } = this.state;
+        this.setState({
+            page: 1
+        });
+        this.props.fetchRules({ ...filters, pageSize, page: 1, impacting, sort });
+
+    };
+
     render () {
         const { rulesFetchStatus, rules } = this.props;
-        const { urlFilters, sort, pageSize, page, impacting, sortBy, cols, rows } = this.state;
+        const { urlFilters, pageSize, page, impacting, sortBy, cols, rows } = this.state;
         return <Main>
             <Stack gutter='md'>
                 <StackItem>
@@ -238,7 +247,7 @@ class RulesTable extends Component {
                 <StackItem>
                     <TableToolbar className='pf-u-justify-content-space-between' results={ rules.count }>
                         <Filters
-                            fetchAction={ (filters) => this.props.fetchRules({ ...filters, pageSize, page, impacting, sort }) }
+                            fetchAction={ this.fetchAction }
                             searchPlaceholder='Find a Rule'
                             externalFilters={ urlFilters }
                         >
