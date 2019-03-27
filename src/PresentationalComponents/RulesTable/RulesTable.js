@@ -218,11 +218,11 @@ class RulesTable extends Component {
         const rule = this.state.rows[rowIndex].rule ? this.state.rows[rowIndex].rule : null;
         return rule && rule.reports_shown ?
             [{
-                title: 'Hide Reports',
+                title: 'Disable Rule',
                 onClick: (event, rowId) => this.hideReports(rowId)
             }]
             : [{
-                title: 'Show Reports',
+                title: 'Enable Rule',
                 onClick: (event, rowId) => this.hideReports(rowId)
             }];
     };
