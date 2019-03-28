@@ -63,13 +63,11 @@ class ListActions extends Component {
                         </PageHeader>
                         <Main className='pf-m-light pf-u-pt-sm'>
                             <RuleDetails rule={ rule }>
-                                { rule.playbook_count.length && (
-                                    <RemediationButton
-                                        isDisabled={ this.getSelectedItems().length === 0 }
-                                        dataProvider={ this.remediationDataProvider }
-                                        onRemediationCreated={ this.onRemediationCreated }
-                                    />
-                                ) }
+                                { rule.playbook_count > 0 && <RemediationButton
+                                    isDisabled={ this.getSelectedItems().length === 0 }
+                                    dataProvider={ this.remediationDataProvider }
+                                    onRemediationCreated={ this.onRemediationCreated }
+                                /> }
                             </RuleDetails>
                         </Main>
                     </>
