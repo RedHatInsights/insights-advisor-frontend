@@ -86,11 +86,12 @@ class AdvisorOverviewDonut extends React.Component {
     };
 
     render () {
-        const { className } = this.props;
+        const { className, category } = this.props;
+        const totalHits = category.reduce((sum, curr) => sum + curr);
         const label = <svg className="chart-label" height={ 1 }>
             <ChartLabel
                 style={ { fontSize: 20 } }
-                text={ this.props.category.length ? `${this.props.category.reduce((sum, curr) => sum + curr)}` : '' }
+                text={ totalHits }
                 textAnchor="middle"
                 verticalAnchor="middle"
                 x={ 88 }
@@ -107,7 +108,7 @@ class AdvisorOverviewDonut extends React.Component {
         </svg>;
         const typeNames = [ 'Availability', 'Stability', 'Performance', 'Security' ];
 
-        return <div className={ `chart-inline ${className}` }>
+        return <>{ totalHits ? <div className={ `chart-inline ${className}` }>
             <Grid>
                 <GridItem span={ 6 }>
                     <div className="chart-container">
@@ -119,7 +120,9 @@ class AdvisorOverviewDonut extends React.Component {
                     { this.getLegend(ChartTheme.light.multi, typeNames) }
                 </GridItem>
             </Grid>
-        </div>;
+        </div>
+            : <p> style={ { marginTop: 18 } }{ `Your connected systems have no categorized rule hits.` }</p>
+        }</>;
     }
 }
 
