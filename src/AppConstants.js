@@ -13,7 +13,7 @@ export const RULES_FETCH_URL = `${BASE_URL}/rule/`;
 export const STATS_FETCH_URL = `${BASE_URL}/stats/`;
 export const SYSTEM_FETCH_URL = `${BASE_URL}/system/`;
 
-export const SYSTEM_TYPES = { rhel: 105 };
+export const SYSTEM_TYPES = { rhel: 105, ocp: 325 };
 export const RULE_CATEGORIES = {
     availability: 1,
     security: 2,

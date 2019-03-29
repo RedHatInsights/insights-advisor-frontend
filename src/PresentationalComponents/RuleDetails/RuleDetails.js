@@ -41,12 +41,16 @@ class RuleDetails extends Component {
     }
 
     ruleResolutionRisk = (rule) => {
-        return (rule.resolution_set.find(resolution => resolution.system_type === AppConstants.SYSTEM_TYPES.rhel).resolution_risk.risk);
+        const resolution = rule.resolution_set.find(resolution => resolution.system_type ===
+            AppConstants.SYSTEM_TYPES.rhel ||
+            AppConstants.SYSTEM_TYPES.ocp);
+        return resolution ? resolution.resolution_risk.risk : undefined;
     };
 
     render () {
         const { children, className, rule } = this.props;
         const { kbaDetails } = this.state;
+        const resolutionRisk = this.ruleResolutionRisk(rule);
         return (
             <Grid gutter='md' className={ className }>
                 <GridItem md={ 8 } sm={ 12 }>
@@ -106,18 +110,18 @@ class RuleDetails extends Component {
                                 <div className='pf-u-display-inline-flex'>
                                     <Shield
                                         hasTooltip={ false }
-                                        impact={ this.ruleResolutionRisk(rule) }
+                                        impact={ resolutionRisk }
                                         size={ 'md' }
-                                        title={ AppConstants.RISK_OF_CHANGE_LABEL[this.ruleResolutionRisk(rule)] || 'Undefined' }
+                                        title={ AppConstants.RISK_OF_CHANGE_LABEL[resolutionRisk] || 'Undefined' }
                                     />
                                 </div>
                                 <div className='pf-u-display-inline-flex'>
-                                    <span className={ `label pf-u-pl-sm ins-sev-clr-${this.ruleResolutionRisk(rule)}` }>
-                                        { AppConstants.RISK_OF_CHANGE_LABEL[this.ruleResolutionRisk(rule)] || 'Undefined' }
+                                    <span className={ `label pf-u-pl-sm ins-sev-clr-${resolutionRisk}` }>
+                                        { AppConstants.RISK_OF_CHANGE_LABEL[resolutionRisk] || 'Undefined' }
                                     </span>
                                 </div>
                             </div>
-                            <p>{ AppConstants.RISK_OF_CHANGE_DESC[this.ruleResolutionRisk(rule)] }</p>
+                            <p>{ AppConstants.RISK_OF_CHANGE_DESC[resolutionRisk] }</p>
                         </GridItem>
                         { rule.reboot_required && <Reboot red/> }
                     </Grid>
