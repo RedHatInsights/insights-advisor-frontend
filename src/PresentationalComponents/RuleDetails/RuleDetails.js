@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { Grid, GridItem } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 import ReactMarkdown from 'react-markdown/with-html';
 
@@ -65,7 +66,7 @@ class RuleDetails extends Component {
                         { kbaDetails.view_uri && (
                             <GridItem className='pf-u-pb-md'>
                                 <a href={ kbaDetails.view_uri }>
-                                    Knowledgebase Article
+                                    Knowledgebase Article <ExternalLinkAltIcon size='sm'/>
                                 </a>
                             </GridItem>
                         ) }
