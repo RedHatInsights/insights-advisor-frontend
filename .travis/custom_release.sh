@@ -3,7 +3,7 @@ set -e
 set -x
 
 if [ "${TRAVIS_BRANCH}" = "master" ]; then
-    for env in ci qa
+    for env in ci qa prod
     do
         echo
         echo
@@ -14,7 +14,7 @@ if [ "${TRAVIS_BRANCH}" = "master" ]; then
 fi
 
 if [ "${TRAVIS_BRANCH}" = "master-stable" ]; then
-    for env in ci qa
+    for env in ci qa prod
     do
         echo
         echo
