@@ -1,11 +1,11 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Ansible, Battery, Main, Pagination, routerParams, TableToolbar } from '@red-hat-insights/insights-frontend-components';
+import { Ansible, Battery, Main, routerParams, TableToolbar } from '@red-hat-insights/insights-frontend-components';
 import PropTypes from 'prop-types';
 import { debounce, flatten } from 'lodash';
 import { connect } from 'react-redux';
-import { Badge, Checkbox, Stack, StackItem } from '@patternfly/react-core';
+import { Badge, Checkbox, Stack, StackItem, Pagination } from '@patternfly/react-core';
 import { sortable, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 
@@ -34,7 +34,7 @@ class RulesTable extends Component {
         urlFilters: {},
         impacting: false,
         limit: 10,
-        offset: 1
+        offset: 0
     };
 
     async componentDidMount () {
@@ -133,18 +133,21 @@ class RulesTable extends Component {
         });
     };
 
-    setPage = (newPage, textInput) => {
+    onSetPage = (_event, page) => {
+        console.warn(_event);
+
         const { impacting, sort, limit } = this.state;
-        if (textInput) {
+        const pageNumber = page * limit - limit;
+        if (false) {
             this.setState(
                 () => ({ offset: newPage }),
                 debounce(() => this.setPage(newPage), 800)
             );
         } else {
-            this.setState({ offset: newPage });
+            this.setState({ offset: pageNumber });
             this.props.fetchRules({
                 ...this.props.filters,
-                offset: newPage,
+                offset: pageNumber,
                 limit,
                 impacting,
                 sort
@@ -152,8 +155,9 @@ class RulesTable extends Component {
         }
     };
 
-    setPerPage = (limit) => {
+    onPerPageSelect = (_event, limit) => {
         const { impacting, sort, offset } = this.state;
+
         this.setState({ limit });
         this.props.fetchRules({ ...this.props.filters, offset, limit, impacting, sort });
     };
@@ -240,14 +244,15 @@ class RulesTable extends Component {
 
     render () {
         const { rulesFetchStatus, rules } = this.props;
-        const { urlFilters, limit, offset, impacting, sortBy, cols, rows } = this.state;
+        const { urlFilters, offset, limit, impacting, sortBy, cols, rows } = this.state;
+        const page = offset / limit + 1;
         return <Main>
             <Stack gutter='md'>
                 <StackItem>
                     <p>{ this.state.summary }</p>
                 </StackItem>
                 <StackItem>
-                    <TableToolbar className='pf-u-justify-content-space-between' results={ rules.meta.count }>
+                    <TableToolbar className='pf-u-justify-content-space-between' results={ rules.meta ? rules.meta.count : 0 }>
                         <Filters
                             fetchAction={ this.fetchAction }
                             searchPlaceholder='Find a Rule'
@@ -273,11 +278,12 @@ class RulesTable extends Component {
                     { rulesFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
                     <TableToolbar className='pf-c-pagination'>
                         <Pagination
-                            numberOfItems={ rules.meta.count || 0 }
-                            onPerPageSelect={ this.setPerPage }
-                            page={ offset }
-                            onSetPage={ this.setPage }
-                            itemsPerPage={ limit }
+                            itemCount={ rules.meta ? rules.meta.count : 0 }
+                            onPerPageSelect={ this.onPerPageSelect }
+                            onSetPage={ this.onSetPage }
+                            page = { page }
+                            itemsStart={ offset }
+                            perPage={ limit }
                         />
                     </TableToolbar>
                 </StackItem>
