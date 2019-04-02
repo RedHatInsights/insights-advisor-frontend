@@ -33,15 +33,15 @@ class RulesTable extends Component {
         sort: 'rule_id',
         urlFilters: {},
         impacting: false,
-        pageSize: 10,
-        page: 1
+        limit: 10,
+        offset: 1
     };
 
     async componentDidMount () {
-        const { page, pageSize } = this.state;
+        const { offset, limit } = this.state;
         const impacting = this.props.impacting || this.state.impacting;
         await insights.chrome.auth.getUser();
-        const options = { page, page_size: pageSize, impacting, ...this.props.urlFilters || {}};
+        const options = { offset, limit, impacting, ...this.props.urlFilters || {}};
 
         this.props.fetchRules(options);
         this.setState({ impacting, urlFilters: this.props.urlFilters || {}});
@@ -49,8 +49,8 @@ class RulesTable extends Component {
 
     componentDidUpdate (prevProps) {
         if (this.props.rules !== prevProps.rules) {
-            const rules = this.props.rules.results;
-            this.setState({ summary: this.props.rules.summary });
+            const rules = this.props.rules.data;
+            this.setState({ summary: this.props.rules.data.summary });
 
             let rows = rules.map((value, key) => {
                 const parent = key * 2;
@@ -106,6 +106,7 @@ class RulesTable extends Component {
     }
 
     onSort = (_event, index, direction) => {
+        const { impacting, limit } = this.state;
         const attrIndex = {
             2: 'likelihood',
             3: 'impact',
@@ -121,39 +122,40 @@ class RulesTable extends Component {
                 direction
             },
             sort: orderParam,
-            page: 1
+            offset: 1
         });
         this.props.fetchRules({
             ...this.props.filters,
-            page: 1,
-            page_size: this.state.pageSize,
-            impacting: this.state.impacting,
+            offset: 1,
+            limit,
+            impacting,
             sort: orderParam
         });
     };
 
     setPage = (newPage, textInput) => {
+        const { impacting, sort, limit } = this.state;
         if (textInput) {
             this.setState(
-                () => ({ page: newPage }),
+                () => ({ offset: newPage }),
                 debounce(() => this.setPage(newPage), 800)
             );
         } else {
-            this.setState({ page: newPage });
+            this.setState({ offset: newPage });
             this.props.fetchRules({
                 ...this.props.filters,
-                page: newPage,
-                page_size: this.state.pageSize,
-                impacting: this.state.impacting,
-                sort: this.state.sort
+                offset: newPage,
+                limit,
+                impacting,
+                sort
             });
         }
     };
 
-    setPerPage = (pageSize) => {
-        const { impacting, sort, page } = this.state;
-        this.setState({ pageSize });
-        this.props.fetchRules({ ...this.props.filters, page, page_size: pageSize, impacting, sort });
+    setPerPage = (limit) => {
+        const { impacting, sort, offset } = this.state;
+        this.setState({ limit });
+        this.props.fetchRules({ ...this.props.filters, offset, limit, impacting, sort });
     };
 
     parseUrlTitle = (title = '') => {
@@ -162,12 +164,12 @@ class RulesTable extends Component {
     };
 
     toggleRulesWithHits = (showRulesWithHits) => {
-        const { pageSize } = this.state;
-        this.setState({ impacting: showRulesWithHits, page: 1 });
+        const { limit } = this.state;
+        this.setState({ impacting: showRulesWithHits, offset: 1 });
         this.props.fetchRules({
             ...this.props.filters,
-            page: 1,
-            page_size: pageSize,
+            offset: 1,
+            limit,
             impacting: showRulesWithHits
         });
     };
@@ -200,8 +202,8 @@ class RulesTable extends Component {
 
             this.props.fetchRules({
                 ...this.props.filters,
-                page: 1,
-                page_size: this.state.pageSize,
+                offset: 1,
+                limit: this.state.limit,
                 impacting: this.state.impacting
             });
         } catch (error) {
@@ -228,24 +230,24 @@ class RulesTable extends Component {
     };
 
     fetchAction = (filters) => {
-        const { sort, pageSize, impacting } = this.state;
+        const { sort, limit, impacting } = this.state;
         this.setState({
-            page: 1
+            offset: 1
         });
-        this.props.fetchRules({ ...filters, pageSize, page: 1, impacting, sort });
+        this.props.fetchRules({ ...filters, limit, offset: 1, impacting, sort });
 
     };
 
     render () {
         const { rulesFetchStatus, rules } = this.props;
-        const { urlFilters, pageSize, page, impacting, sortBy, cols, rows } = this.state;
+        const { urlFilters, limit, offset, impacting, sortBy, cols, rows } = this.state;
         return <Main>
             <Stack gutter='md'>
                 <StackItem>
                     <p>{ this.state.summary }</p>
                 </StackItem>
                 <StackItem>
-                    <TableToolbar className='pf-u-justify-content-space-between' results={ rules.count }>
+                    <TableToolbar className='pf-u-justify-content-space-between' results={ rules.meta.count }>
                         <Filters
                             fetchAction={ this.fetchAction }
                             searchPlaceholder='Find a Rule'
@@ -271,11 +273,11 @@ class RulesTable extends Component {
                     { rulesFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
                     <TableToolbar className='pf-c-pagination'>
                         <Pagination
-                            numberOfItems={ rules.count || 0 }
+                            numberOfItems={ rules.meta.count || 0 }
                             onPerPageSelect={ this.setPerPage }
-                            page={ page }
+                            page={ offset }
                             onSetPage={ this.setPage }
-                            itemsPerPage={ pageSize }
+                            itemsPerPage={ limit }
                         />
                     </TableToolbar>
                 </StackItem>
