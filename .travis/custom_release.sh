@@ -2,14 +2,25 @@
 set -e
 set -x
 
-if [[ "${TRAVIS_BRANCH}" = "master" ]]; then
-    .travis/release.sh "ci-beta"
-    .travis/release.sh "qa-beta"
+# for now in chrome... push everywhere (but prod) when master updates
+if [ "${TRAVIS_BRANCH}" = "master" ]; then
+    for env in ci qa
+    do
+        echo
+        echo
+        echo "PUSHING ${env}-beta"
+        rm -rf ./dist
+        .travis/release.sh "${env}-beta"
+    done
+fi
 
-elif [[ "${TRAVIS_BRANCH}" = "master-stable" ]]; then
-    .travis/release.sh "ci-stable"
-    .travis/release.sh "qa-stable"
-
-elif [[ "${TRAVIS_BRANCH}" = "prod-beta" || "${TRAVIS_BRANCH}" = "prod-stable" ]]; then
-    .travis/release.sh "${TRAVIS_BRANCH}"
+if [ "${TRAVIS_BRANCH}" = "master-stable" ]; then
+    for env in ci qa
+    do
+        echo
+        echo
+        echo "PUSHING ${env}-beta"
+        rm -rf ./dist
+        .travis/release.sh "${env}-stable"
+    done
 fi
