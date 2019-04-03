@@ -127,6 +127,6 @@
     "verify": "npm-run-all build lint test"
   },
   "insights": {
-    "appname": "advisor"
+    "appname": "insights"
   }
 }
