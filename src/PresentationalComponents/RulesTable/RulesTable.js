@@ -134,20 +134,18 @@ class RulesTable extends Component {
     };
 
     onSetPage = (_event, page) => {
-        console.warn(_event);
-
         const { impacting, sort, limit } = this.state;
-        const pageNumber = page * limit - limit;
-        if (false) {
+        const offset = typeof _event === 'object' ? page * limit - limit : _event * limit - limit;
+        if (typeof _event === 'object') {
             this.setState(
-                () => ({ offset: newPage }),
-                debounce(() => this.setPage(newPage), 800)
+                () => ({ offset }),
+                debounce(() => this.onSetPage(page), 800)
             );
         } else {
-            this.setState({ offset: pageNumber });
+            this.setState({ offset });
             this.props.fetchRules({
                 ...this.props.filters,
-                offset: pageNumber,
+                offset,
                 limit,
                 impacting,
                 sort
@@ -246,13 +244,14 @@ class RulesTable extends Component {
         const { rulesFetchStatus, rules } = this.props;
         const { urlFilters, offset, limit, impacting, sortBy, cols, rows } = this.state;
         const page = offset / limit + 1;
+        const results = rules.meta ? rules.meta.count : 0;
         return <Main>
             <Stack gutter='md'>
                 <StackItem>
                     <p>{ this.state.summary }</p>
                 </StackItem>
                 <StackItem>
-                    <TableToolbar className='pf-u-justify-content-space-between' results={ rules.meta ? rules.meta.count : 0 }>
+                    <TableToolbar className='pf-u-justify-content-space-between' results={ results }>
                         <Filters
                             fetchAction={ this.fetchAction }
                             searchPlaceholder='Find a Rule'
@@ -278,7 +277,7 @@ class RulesTable extends Component {
                     { rulesFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
                     <TableToolbar className='pf-c-pagination'>
                         <Pagination
-                            itemCount={ rules.meta ? rules.meta.count : 0 }
+                            itemCount={ results }
                             onPerPageSelect={ this.onPerPageSelect }
                             onSetPage={ this.onSetPage }
                             page = { page }
