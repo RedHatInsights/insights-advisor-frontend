@@ -29,7 +29,7 @@ const SummaryChart = (props) => {
     return <Stack
         style={ { marginTop: 18 } }
         aria-label='Rule hits by severity' widget-type='InsightsSummaryChart'>
-        { rulesWithHits.filter(Boolean).length ?
+        { rulesWithHits.filter(Boolean).length > 0 ?
             <>
                 { rulesWithHits }
                 { noHits.length &&
