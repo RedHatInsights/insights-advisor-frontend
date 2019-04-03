@@ -14,7 +14,8 @@ const ActionsOverviewDonut = asyncComponent(() => import('../../PresentationalCo
 
 class ActionsOverview extends Component {
     state = {
-        totalRisk: {},
+        rulesTotalRisk: {},
+        reportsTotalRisk: {},
         total: 0,
         category: []
     };
@@ -28,7 +29,7 @@ class ActionsOverview extends Component {
     componentDidUpdate (prevProps) {
         if (this.props.stats !== prevProps.stats) {
             const rules = this.props.stats.rules;
-            this.setState({ totalRisk: rules.total_risk });
+            this.setState({ rulesTotalRisk: rules.total_risk, reportsTotalRisk: this.props.stats.reports.total_risk });
             this.setState({
                 category: [ rules.category.Availability, rules.category.Stability, rules.category.Performance, rules.category.Security ]
             });
@@ -40,9 +41,7 @@ class ActionsOverview extends Component {
         const {
             statsFetchStatus
         } = this.props;
-
-        const { totalRisk, category, total } = this.state;
-
+        const { rulesTotalRisk, reportsTotalRisk, category } = this.state;
         return <>
             <PageHeader>
                 <PageHeaderTitle title='Overview'/>
@@ -52,7 +51,7 @@ class ActionsOverview extends Component {
                     <GalleryItem>
                         <Title size='lg' headingLevel='h3'>Rule hits by severity</Title>
                         { statsFetchStatus === 'fulfilled' && (
-                            <SummaryChart totalRisk={ totalRisk } totalIssues={ total }/>
+                            <SummaryChart rulesTotalRisk={ rulesTotalRisk } reportsTotalRisk={ reportsTotalRisk }/>
                         ) }
                         { statsFetchStatus === 'pending' && (<Loading/>) }
                     </GalleryItem>
