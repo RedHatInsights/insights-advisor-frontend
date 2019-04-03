@@ -32,7 +32,7 @@ const SummaryChart = (props) => {
         { rulesWithHits.filter(Boolean).length > 0 ?
             <>
                 { rulesWithHits }
-                { noHits.length &&
+                { noHits.length > 0 &&
                 <StackItem className="disabled border-top">
                     <p>{ noHits }</p>
                 </StackItem>
