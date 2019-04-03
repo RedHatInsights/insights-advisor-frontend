@@ -121,7 +121,7 @@ class AdvisorOverviewDonut extends React.Component {
                 </GridItem>
             </Grid>
         </div>
-            : <p> style={ { marginTop: 18 } }{ `Your connected systems have no categorized rule hits.` }</p>
+            : <p style={ { marginTop: 18 } }>{ `Your connected systems have no categorized rule hits.` }</p>
         }</>;
     }
 }
