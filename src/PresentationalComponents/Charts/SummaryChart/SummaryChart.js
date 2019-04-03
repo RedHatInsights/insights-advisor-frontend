@@ -10,7 +10,7 @@ const SummaryChartItem = asyncComponent(() => import('./SummaryChartItem'));
 
 const SummaryChart = (props) => {
     const noHits = [];
-    const hitsBuilder = (totalRisk, totalIssues) => Object.entries(totalRisk).map(([ key, value ]) => {
+    const hitsBuilder = (rulesTotalRisk, totalIssues) => Object.entries(rulesTotalRisk).map(([ key, value ]) => {
         const riskName = invert(SEVERITY_MAP)[key];
         const normalizedRiskName = capitalize(riskName.split('-')[0]);
         if (value) {
@@ -19,12 +19,12 @@ const SummaryChart = (props) => {
                 riskName={ riskName }
                 name={ normalizedRiskName }
                 numIssues={ value }
-                affectedSystems={ totalIssues }/>;
+                affectedSystems={ totalIssues[key] }/>;
         } else {
             noHits.push(`No ${normalizedRiskName.toLocaleLowerCase()} hits.`);
         }
     });
-    const rulesWithHits = hitsBuilder(props.totalRisk, props.totalIssues).reverse();
+    const rulesWithHits = hitsBuilder(props.rulesTotalRisk, props.reportsTotalRisk).reverse();
 
     return <Stack
         style={ { marginTop: 18 } }
@@ -44,8 +44,8 @@ const SummaryChart = (props) => {
 };
 
 SummaryChart.propTypes = {
-    totalRisk: PropTypes.object,
-    totalIssues: PropTypes.number
+    rulesTotalRisk: PropTypes.object,
+    reportsTotalRisk: PropTypes.object
 };
 
 export default SummaryChart;
