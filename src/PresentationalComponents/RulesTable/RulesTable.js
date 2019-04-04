@@ -122,11 +122,11 @@ class RulesTable extends Component {
                 direction
             },
             sort: orderParam,
-            offset: 1
+            offset: 0
         });
         this.props.fetchRules({
             ...this.props.filters,
-            offset: 1,
+            offset: 0,
             limit,
             impacting,
             sort: orderParam
@@ -167,10 +167,10 @@ class RulesTable extends Component {
 
     toggleRulesWithHits = (showRulesWithHits) => {
         const { limit } = this.state;
-        this.setState({ impacting: showRulesWithHits, offset: 1 });
+        this.setState({ impacting: showRulesWithHits, offset: 0 });
         this.props.fetchRules({
             ...this.props.filters,
-            offset: 1,
+            offset: 0,
             limit,
             impacting: showRulesWithHits
         });
@@ -204,7 +204,7 @@ class RulesTable extends Component {
 
             this.props.fetchRules({
                 ...this.props.filters,
-                offset: 1,
+                offset: 0,
                 limit: this.state.limit,
                 impacting: this.state.impacting
             });
@@ -234,9 +234,9 @@ class RulesTable extends Component {
     fetchAction = (filters) => {
         const { sort, limit, impacting } = this.state;
         this.setState({
-            offset: 1
+            offset: 0
         });
-        this.props.fetchRules({ ...filters, limit, offset: 1, impacting, sort });
+        this.props.fetchRules({ ...filters, limit, offset: 0, impacting, sort });
 
     };
 
