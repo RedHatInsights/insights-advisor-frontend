@@ -1,14 +1,13 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
 import { TextInput, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { routerParams } from '@red-hat-insights/insights-frontend-components';
+import { routerParams, FilterDropdown } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { FILTER_CATEGORIES } from '../../AppConstants';
 import * as AppActions from '../../AppActions';
 import PropTypes from 'prop-types';
 import debounce from 'lodash/debounce';
-import FilterDropdown from './FilterDropdown.js';
 
 class Filters extends Component {
     componentWillUnmount () {
@@ -83,7 +82,7 @@ class Filters extends Component {
                             addFilter={ this.addFilter }
                             removeFilter={ this.removeFilter }
                             hideCategories={ hideCategories }
-                            filterCategories={ FILTER_CATEGORIES }
+                            filterCategories = { FILTER_CATEGORIES }
                         />
                     </ToolbarItem>
                 </ToolbarGroup>
