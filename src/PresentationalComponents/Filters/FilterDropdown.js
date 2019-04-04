@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { Dropdown, DropdownToggle } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
-
 import FilterInput from './FilterInput.js';
-import { FILTER_CATEGORIES } from '../../AppConstants';
 import './_dropdown.scss';
 
 class FilterDropdown extends Component {
@@ -29,7 +27,7 @@ class FilterDropdown extends Component {
     };
 
     render () {
-        const { hideCategories, filters } = this.props;
+        const { hideCategories, filters, filterCategories } = this.props;
         const { isOpen } = this.state;
 
         return (
@@ -39,7 +37,7 @@ class FilterDropdown extends Component {
                 isOpen={ isOpen }
             >
                 <div>
-                    { FILTER_CATEGORIES.map((data, index) =>
+                    { filterCategories.map((data, index) =>
                         !hideCategories.includes(data.urlParam) &&
                         <div key={ `${data.urlParam}${index}` } className='filterTitle'>
                             { data.title }
@@ -56,7 +54,7 @@ class FilterDropdown extends Component {
                                     filters={ filters }
                                 />
                             ))) }
-                            { (index !== (FILTER_CATEGORIES.length - 1) && <br/>) }
+                            { (index !== (filterCategories.length - 1) && <br/>) }
                         </div>) }
                 </div>
             </Dropdown>
@@ -68,11 +66,27 @@ FilterDropdown.propTypes = {
     addFilter: PropTypes.func,
     removeFilter: PropTypes.func,
     hideCategories: PropTypes.array,
-    filters: PropTypes.object
+    filters: PropTypes.object,
+    filterCategories: PropTypes.arrayOf(
+        PropTypes.shape({
+            title: PropTypes.string,
+            type: PropTypes.type,
+            urlParam: PropTypes.string,
+            values: PropTypes.arrayOf(
+                PropTypes.shape({
+                    label: PropTypes.string,
+                    value: PropTypes.any
+                })
+            )
+        })
+    )
 };
 
 FilterDropdown.defaultProps = {
-    hideCategories: []
+    addFilter: Function.prototype,
+    removeFilter: Function.prototype,
+    hideCategories: [],
+    filters: {}
 };
 
 export default FilterDropdown;

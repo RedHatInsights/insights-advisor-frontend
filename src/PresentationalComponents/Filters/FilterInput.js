@@ -71,12 +71,22 @@ FilterInput.propTypes = {
     addRemoveFilters: PropTypes.func,
     className: PropTypes.string,
     currentPage: PropTypes.string,
-    id: PropTypes.string,
-    label: PropTypes.string,
+    id: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
     param: PropTypes.string,
-    value: PropTypes.string,
+    value: PropTypes.any,
     filters: PropTypes.object,
     type: PropTypes.string
+};
+
+FilterInput.defaultProps = {
+    addRemoveFilters: Function.prototype,
+    className: null,
+    currentPage: null,
+    param: null,
+    filters: {},
+    type: 'checkbox',
+    value: undefined
 };
 
 export default FilterInput;
