@@ -1,4 +1,4 @@
-import { matchPath, Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import asyncComponent from './Utilities/asyncComponent';
@@ -18,11 +18,9 @@ import some from 'lodash/some';
  *         see the difference with DashboardMap and InventoryDeployments.
  *
  */
-const Actions = asyncComponent(() => import(/* webpackChunkName: "Actions" */ './SmartComponents/Actions/Actions'));
-const Rules = asyncComponent(() => import(/* webpackChunkName: "Rules" */ './SmartComponents/Rules/Rules'));
-const paths = {
-    actions: '/actions',
-    rules: '/rules'
+
+type Props = {
+    childProps: any
 };
 
 const InsightsRoute = ({ component: Component, rootClass, ...rest }) => {
@@ -31,7 +29,7 @@ const InsightsRoute = ({ component: Component, rootClass, ...rest }) => {
     root.classList.add(`page__${rootClass}`, 'pf-c-page__main');
     root.setAttribute('role', 'main');
 
-    return <Route { ...rest } component={ Component }/>;
+    return (<Route { ...rest } component={ Component } />);
 };
 
 InsightsRoute.propTypes = {
@@ -39,10 +37,13 @@ InsightsRoute.propTypes = {
     rootClass: PropTypes.string
 };
 
-function checkPaths (routes, app) {
-    return some(Object
-    .values(routes), route => matchPath(location.href, { path: `${document.baseURI}${app}${route}` }));
-}
+const Actions = asyncComponent(() => import(/* webpackChunkName: "SamplePage" */ './SmartComponents/Actions/Actions'));
+const Rules   = asyncComponent(() => import(/* webpackChunkName: "Rules" */ './SmartComponents/Rules/Rules'));
+
+const paths = {
+    actions: '/actions',
+    rules: '/rules'
+};
 
 /**
  * the Switch component changes routes depending on the path.
@@ -52,30 +53,16 @@ function checkPaths (routes, app) {
  *      path - https://prod.foo.redhat.com:1337/insights/advisor/rules
  *      component - component to be rendered when a route has been chosen.
  */
-export const Routes = ({ childProps: { history }}) => {
-    const pathName = window.location.pathname.split('/');
-    pathName.shift();
-
-    if (pathName[0] === 'beta') {
-        pathName.shift();
-    }
-
-    if (!checkPaths(paths, pathName[0])) {
-        history.push(paths.actions);
-    }
+export const Routes = (props: Props) => {
+    const path = props.childProps.location.pathname;
 
     return (
         <Switch>
-            <InsightsRoute path={ paths.actions } component={ Actions } rootClass='actions'/>
+            <InsightsRoute path={ paths.samplepage } component={ Actions } rootClass='samplepage'/>
             <InsightsRoute path={ paths.rules } component={ Rules } rootClass='rules'/>
+
+            { /* Finally, catch all unmatched routes */ }
+            <Route render={ () => some(paths, p => p === path) ? null : (<Redirect to={ paths.actions }/>) }/>
         </Switch>
     );
-};
-
-Routes.propTypes = {
-    childProps: PropTypes.shape({
-        history: PropTypes.shape({
-            push: PropTypes.func
-        })
-    })
 };
