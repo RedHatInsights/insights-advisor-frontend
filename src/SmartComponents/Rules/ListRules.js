@@ -13,7 +13,7 @@ class ListRules extends Component {
         this.props.setBreadcrumbs([{ title: 'Rules', navigate: '/rules' }]);
     }
 
-    render = () => <RulesTable/>;
+    render = () => <RulesTable impacting={ true }/>;
 }
 
 ListRules.displayName = 'list-rules';
