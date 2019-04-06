@@ -1,9 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { routerParams } from '@red-hat-insights/insights-frontend-components';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { matchPath } from 'react-router-dom';
-
 import { Routes } from './Routes';
 import './App.scss';
 
@@ -11,20 +9,20 @@ class App extends Component {
     componentDidMount () {
         insights.chrome.init();
         insights.chrome.identifyApp('insights');
-        this.appNav = insights.chrome.on('APP_NAVIGATION', event => {
-            if (!matchPath(location.href, { path: `${document.baseURI}insights/${event.navId}` })) {
-                this.props.history.push(`/${event.navId}`);
-            }
-        });
+        insights.chrome.navigation(buildNavigation());
+
+        this.appNav = insights.chrome.on('APP_NAVIGATION', event => this.props.history.push(`/${event.navId}`));
+        this.buildNav = this.props.history.listen(() => insights.chrome.navigation(buildNavigation()));
     }
 
     componentWillUnmount () {
         this.appNav();
+        this.buildNav();
     }
 
     render () {
         return (
-            <Routes childProps={ this.props }/>
+            <Routes childProps={ this.props } />
         );
     }
 }
@@ -33,7 +31,24 @@ App.propTypes = {
     history: PropTypes.object
 };
 
-export default routerParams(connect(
-    null,
-    null
-)(App));
+/**
+ * withRouter: https://reacttraining.com/react-router/web/api/withRouter
+ * connect: https://github.com/reactjs/react-redux/blob/master/docs/api.md
+ *          https://reactjs.org/docs/higher-order-components.html
+ */
+export default withRouter (connect()(App));
+
+function buildNavigation () {
+    const currentPath = window.location.pathname.split('/').slice(-1)[0];
+
+    return [{
+        title: 'Actions',
+        id: 'actions'
+    }, {
+        title: 'Rules',
+        id: 'rules'
+    }].map(item => ({
+        ...item,
+        active: item.id === currentPath
+    }));
+}

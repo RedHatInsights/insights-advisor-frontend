@@ -37,10 +37,10 @@ InsightsRoute.propTypes = {
     rootClass: PropTypes.string
 };
 
-const Actions = asyncComponent(() => import(/* webpackChunkName: "SamplePage" */ './SmartComponents/Actions/Actions'));
+const Actions = asyncComponent(() => import(/* webpackChunkName: "Actions" */ './SmartComponents/Actions/Actions'));
 const Rules   = asyncComponent(() => import(/* webpackChunkName: "Rules" */ './SmartComponents/Rules/Rules'));
 
-const paths = {
+const pathsMap = {
     actions: '/actions',
     rules: '/rules'
 };
@@ -55,11 +55,12 @@ const paths = {
  */
 export const Routes = (props: Props) => {
     const path = props.childProps.location.pathname;
+    const paths = Object.values(pathsMap);
 
     return (
         <Switch>
-            <InsightsRoute path={ paths.samplepage } component={ Actions } rootClass='samplepage'/>
-            <InsightsRoute path={ paths.rules } component={ Rules } rootClass='rules'/>
+            <InsightsRoute path={ pathsMap.samplepage } component={ Actions } rootClass='actions'/>
+            <InsightsRoute path={ pathsMap.rules } component={ Rules } rootClass='rules'/>
 
             { /* Finally, catch all unmatched routes */ }
             <Route render={ () => some(paths, p => p === path) ? null : (<Redirect to={ paths.actions }/>) }/>
