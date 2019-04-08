@@ -87,7 +87,7 @@ class AdvisorOverviewDonut extends React.Component {
 
     render () {
         const { className, category } = this.props;
-        const totalHits = category.reduce((sum, curr) => sum + curr);
+        const totalHits = category.length ? category.reduce((sum, curr) => sum + curr) : 0;
         const label = <svg className="chart-label" height={ 1 }>
             <ChartLabel
                 style={ { fontSize: 20 } }

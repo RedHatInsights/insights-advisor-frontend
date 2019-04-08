@@ -9,7 +9,9 @@ function getBaseName(pathname) {
         release = `/beta/`;
     }
 
-    return `${release}${pathName[0]}/${pathName[1]}`;
+    // Most apps need this to be the first *two* elements
+    // Insights needs only one
+    return `${release}${pathName[0]}`;
 }
 
 export default getBaseName;
