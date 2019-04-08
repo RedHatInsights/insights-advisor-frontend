@@ -1,8 +1,7 @@
-import { matchPath, Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import asyncComponent from './Utilities/asyncComponent';
-import some from 'lodash/some';
 
 /**
  * Aysnc imports of components
@@ -31,18 +30,13 @@ const InsightsRoute = ({ component: Component, rootClass, ...rest }) => {
     root.classList.add(`page__${rootClass}`, 'pf-c-page__main');
     root.setAttribute('role', 'main');
 
-    return <Route { ...rest } component={ Component }/>;
+    return (<Route { ...rest } component={ Component } />);
 };
 
 InsightsRoute.propTypes = {
     component: PropTypes.func,
     rootClass: PropTypes.string
 };
-
-function checkPaths (routes, app) {
-    return some(Object
-    .values(routes), route => matchPath(location.href, { path: `${document.baseURI}${app}${route}` }));
-}
 
 /**
  * the Switch component changes routes depending on the path.
@@ -52,30 +46,11 @@ function checkPaths (routes, app) {
  *      path - https://prod.foo.redhat.com:1337/insights/advisor/rules
  *      component - component to be rendered when a route has been chosen.
  */
-export const Routes = ({ childProps: { history }}) => {
-    const pathName = window.location.pathname.split('/');
-    pathName.shift();
+export const Routes = () =>
+    <Switch>
+        <InsightsRoute path={ paths.actions } component={ Actions } rootClass='actions/'/>
+        <InsightsRoute path={ paths.rules } component={ Rules } rootClass='rules'/>
 
-    if (pathName[0] === 'beta') {
-        pathName.shift();
-    }
-
-    if (!checkPaths(paths, pathName[0])) {
-        history.push(paths.actions);
-    }
-
-    return (
-        <Switch>
-            <InsightsRoute path={ paths.actions } component={ Actions } rootClass='actions'/>
-            <InsightsRoute path={ paths.rules } component={ Rules } rootClass='rules'/>
-        </Switch>
-    );
-};
-
-Routes.propTypes = {
-    childProps: PropTypes.shape({
-        history: PropTypes.shape({
-            push: PropTypes.func
-        })
-    })
-};
+        { /* Finally, catch all unmatched routes */ }
+        <Redirect path='*' to={ `${paths.actions}` } push/>
+    </Switch> ;
