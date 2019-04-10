@@ -13,7 +13,7 @@ import Failed from '../../PresentationalComponents/Loading/Failed';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import RuleDetails from '../../PresentationalComponents/RuleDetails/RuleDetails';
 
-class ListActions extends Component {
+class OverviewDetails extends Component {
     state = {
         kbaDetails: {},
         kbaDetailsLoading: false
@@ -98,7 +98,7 @@ class ListActions extends Component {
     }
 }
 
-ListActions.propTypes = {
+OverviewDetails.propTypes = {
     match: PropTypes.any,
     fetchRule: PropTypes.func,
     ruleFetchStatus: PropTypes.string,
@@ -129,4 +129,4 @@ const mapDispatchToProps = dispatch => ({
 export default routerParams(connect(
     mapStateToProps,
     mapDispatchToProps
-)(ListActions));
+)(OverviewDetails));

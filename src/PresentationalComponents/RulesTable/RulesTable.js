@@ -54,7 +54,7 @@ class RulesTable extends Component {
 
             let rows = rules.map((value, key) => {
                 const parent = key * 2;
-                const linkTo = `/actions/${value.category.name.toLowerCase()}/${value.rule_id}`;
+                const linkTo = `/overview/${value.category.name.toLowerCase()}/${value.rule_id}`;
                 return [
                     {
                         isOpen: false,

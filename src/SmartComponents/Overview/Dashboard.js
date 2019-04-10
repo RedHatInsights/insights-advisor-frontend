@@ -10,9 +10,9 @@ import Loading from '../../PresentationalComponents/Loading/Loading';
 import '../../App.scss';
 
 const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/Charts/SummaryChart/SummaryChart'));
-const ActionsOverviewDonut = asyncComponent(() => import('../../PresentationalComponents/Charts/ActionsOverviewDonut'));
+const OverviewDonut = asyncComponent(() => import('../../PresentationalComponents/Charts/OverviewDonut'));
 
-class ActionsOverview extends Component {
+class OverviewDashboard extends Component {
     state = {
         rulesTotalRisk: {},
         reportsTotalRisk: {},
@@ -23,7 +23,7 @@ class ActionsOverview extends Component {
     async componentDidMount () {
         await insights.chrome.auth.getUser();
         this.props.fetchStats();
-        this.props.setBreadcrumbs([{ title: 'Overview', navigate: '/actions' }]);
+        this.props.setBreadcrumbs([{ title: 'Overview', navigate: '/overview' }]);
     }
 
     componentDidUpdate (prevProps) {
@@ -58,7 +58,7 @@ class ActionsOverview extends Component {
                     <GalleryItem>
                         <Title size='lg' headingLevel='h3'>Rule hits by category</Title>
                         { statsFetchStatus === 'fulfilled' && (
-                            <ActionsOverviewDonut category={ category } className='pf-u-mt-md'/>
+                            <OverviewDonut category={ category } className='pf-u-mt-md'/>
                         ) }
                         { statsFetchStatus === 'pending' && (<Loading/>) }
                     </GalleryItem>
@@ -69,7 +69,7 @@ class ActionsOverview extends Component {
     }
 }
 
-ActionsOverview.propTypes = {
+OverviewDashboard.propTypes = {
     match: PropTypes.object,
     breadcrumbs: PropTypes.array,
     fetchStats: PropTypes.func,
@@ -93,4 +93,4 @@ const mapDispatchToProps = dispatch => ({
 export default routerParams(connect(
     mapStateToProps,
     mapDispatchToProps
-)(ActionsOverview));
+)(OverviewDashboard));

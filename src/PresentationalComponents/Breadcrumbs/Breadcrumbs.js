@@ -29,14 +29,14 @@ class Breadcrumbs extends React.Component {
     }
 
     getReadableType = (type) => (
-        type.indexOf('-') > -1 ? `${type.replace('-', ' ')} Actions` : type
+        type.indexOf('-') > -1 ? `${type.replace('-', ' ')} Overview` : type
     );
 
     buildBreadcrumbs () {
         const { breadcrumbs, match } = this.props;
         let crumbs = [];
 
-        // add actions/rules base breadcrumb
+        // add overview/rules base breadcrumb
         if (match.params.type !== undefined) {
             if (breadcrumbs[0] !== undefined) {
                 crumbs.push(breadcrumbs[0]);
