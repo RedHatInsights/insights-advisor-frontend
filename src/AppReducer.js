@@ -9,8 +9,10 @@ const initialState = Immutable({
     ruleFetchStatus: '',
     rules: {},
     rulesFetchStatus: '',
-    stats: {},
-    statsFetchStatus: '',
+    statsRules: {},
+    statsRulesFetchStatus: '',
+    statsSystems: {},
+    statsSystemsFetchStatus: '',
     system: {},
     systemFetchStatus: '',
     systemtype: {},
@@ -41,15 +43,25 @@ export const AdvisorStore = (state = initialState, action) => {
         case `${ActionTypes.RULES_FETCH}_REJECTED`:
             return state.set('rulesFetchStatus', 'rejected');
 
-        case `${ActionTypes.STATS_FETCH}_PENDING`:
-            return state.set('statsFetchStatus', 'pending');
-        case `${ActionTypes.STATS_FETCH}_FULFILLED`:
+        case `${ActionTypes.STATS_RULES_FETCH}_PENDING`:
+            return state.set('statsRulesFetchStatus', 'pending');
+        case `${ActionTypes.STATS_RULES_FETCH}_FULFILLED`:
             return Immutable.merge(state, {
-                stats: action.payload,
-                statsFetchStatus: 'fulfilled'
+                statsRules: action.payload,
+                statsRulesFetchStatus: 'fulfilled'
             });
-        case `${ActionTypes.STATS_FETCH}_REJECTED`:
-            return state.set('statsFetchStatus', 'rejected');
+        case `${ActionTypes.STATS_RULES_FETCH}_REJECTED`:
+            return state.set('statsRulesFetchStatus', 'rejected');
+
+        case `${ActionTypes.STATS_SYSTEMS_FETCH}_PENDING`:
+            return state.set('statsSystemsFetchStatus', 'pending');
+        case `${ActionTypes.STATS_SYSTEMS_FETCH}_FULFILLED`:
+            return Immutable.merge(state, {
+                statsSystems: action.payload,
+                statsSystemsFetchStatus: 'fulfilled'
+            });
+        case `${ActionTypes.STATS_SYSTEMS_FETCH}_REJECTED`:
+            return state.set('statsSystemsFetchStatus', 'rejected');
 
         case `${ActionTypes.SYSTEM_FETCH}_PENDING`:
             return state.set('systemFetchStatus', 'pending');

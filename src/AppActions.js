@@ -3,9 +3,13 @@ import API from './Utilities/Api';
 
 const fetchData = async (url, headers, options) => (await API.get(url, headers, options)).data;
 
-export const fetchStats = () => ({
-    type: ActionTypes.STATS_FETCH,
-    payload: fetchData(ActionTypes.STATS_FETCH_URL)
+export const fetchStatsRules = () => ({
+    type: ActionTypes.STATS_RULES_FETCH,
+    payload: fetchData(ActionTypes.STATS_RULES_FETCH_URL)
+});
+export const fetchStatsSystems = () => ({
+    type: ActionTypes.STATS_SYSTEMS_FETCH,
+    payload: fetchData(ActionTypes.STATS_SYSTEMS_FETCH_URL)
 });
 export const fetchRules = (options) => ({
     type: ActionTypes.RULES_FETCH,
