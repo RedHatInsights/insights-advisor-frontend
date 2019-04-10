@@ -8,7 +8,7 @@ import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs'
 import { RULE_CATEGORIES, SEVERITY_MAP } from '../../AppConstants';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 
-class ViewActions extends Component {
+class OverviewList extends Component {
     state = {
         urlFilters: {},
         impacting: true
@@ -48,8 +48,8 @@ class ViewActions extends Component {
     }
 }
 
-ViewActions.propTypes = {
+OverviewList.propTypes = {
     match: PropTypes.any
 };
 
-export default ViewActions;
+export default OverviewList;

@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { ChartDonut, ChartLabel, ChartLegend, ChartTheme } from '@patternfly/react-charts';
 import { Grid, GridItem } from '@patternfly/react-core';
 
-import './ActionsOverviewDonut.scss';
+import './OverviewDonut.scss';
 
 class AdvisorOverviewDonut extends React.Component {
     getChart = (theme, typeNames) => <ChartDonut
@@ -20,7 +20,7 @@ class AdvisorOverviewDonut extends React.Component {
                         {
                             target: 'data',
                             mutation: (props) => {
-                                this.props.history.push(`/actions/${props.datum.xName.toLowerCase()}`);
+                                this.props.history.push(`/overview/${props.datum.xName.toLowerCase()}`);
                             }
                         }
                     ];
@@ -80,7 +80,7 @@ class AdvisorOverviewDonut extends React.Component {
         return [{
             target: 'labels',
             mutation: (props) => {
-                this.props.history.push(`/actions/${props.datum.name.split(' ')[0].toLowerCase()}`);
+                this.props.history.push(`/overview/${props.datum.name.split(' ')[0].toLowerCase()}`);
             }
         }];
     };

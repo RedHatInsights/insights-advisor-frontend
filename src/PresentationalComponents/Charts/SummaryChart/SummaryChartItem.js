@@ -6,7 +6,7 @@ import { Split, SplitItem, StackItem } from '@patternfly/react-core';
 
 const SummaryChartItem = (props) => {
     const { numIssues, name, riskName } = props;
-    const returnLink = (children) => <Link to={ `/actions/${riskName}` }> { children } </Link>;
+    const returnLink = (children) => <Link to={ `/overview/${riskName}` }> { children } </Link>;
 
     return (
         <StackItem widget-type='InsightsSummaryChartItem' widget-id={ name }>

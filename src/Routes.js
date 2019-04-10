@@ -17,10 +17,10 @@ import asyncComponent from './Utilities/asyncComponent';
  *         see the difference with DashboardMap and InventoryDeployments.
  *
  */
-const Actions = asyncComponent(() => import(/* webpackChunkName: "Actions" */ './SmartComponents/Actions/Actions'));
+const Overview = asyncComponent(() => import(/* webpackChunkName: "Overview" */ './SmartComponents/Overview/Overview'));
 const Rules = asyncComponent(() => import(/* webpackChunkName: "Rules" */ './SmartComponents/Rules/Rules'));
 const paths = {
-    actions: '/actions',
+    overview: '/overview',
     rules: '/rules'
 };
 
@@ -48,9 +48,9 @@ InsightsRoute.propTypes = {
  */
 export const Routes = () =>
     <Switch>
-        <InsightsRoute path={ paths.actions } component={ Actions } rootClass='actions/'/>
+        <InsightsRoute path={ paths.overview } component={ Overview } rootClass='overview/'/>
         <InsightsRoute path={ paths.rules } component={ Rules } rootClass='rules'/>
 
         { /* Finally, catch all unmatched routes */ }
-        <Redirect path='*' to={ `${paths.actions}` } push/>
+        <Redirect path='*' to={ `${paths.overview}` } push/>
     </Switch> ;
