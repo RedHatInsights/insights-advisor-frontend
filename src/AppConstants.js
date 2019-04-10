@@ -3,15 +3,15 @@ export const RULE_FETCH = 'RULE_FETCH';
 export const RULES_FETCH = 'RULES_FETCH';
 export const SYSTEM_FETCH = 'SYSTEM_FETCH';
 export const SYSTEMTYPE_FETCH = 'SYSTEMTYPE_FETCH';
-export const STATS_FETCH = 'STATS_FETCH';
+export const STATS_RULES_FETCH = 'STATS_RULES_FETCH';
+export const STATS_SYSTEMS_FETCH = 'STATS_SYSTEMS_FETCH';
 export const BREADCRUMBS_SET = 'BREADCRUMBS_SET';
-export const LOAD_ENTITY = 'LOAD_ENTITY';
 export const FILTERS_SET = 'FILTERS_SET';
 
 export const BASE_URL = '/api/insights/v1';
 export const RULES_FETCH_URL = `${BASE_URL}/rule/`;
-export const STATS_FETCH_URL = `${BASE_URL}/stats/`;
-export const SYSTEM_FETCH_URL = `${BASE_URL}/system/`;
+export const STATS_RULES_FETCH_URL = `${BASE_URL}/stats/rules/`;
+export const STATS_SYSTEMS_FETCH_URL = `${BASE_URL}/stats/systems/`;
 
 export const SYSTEM_TYPES = { rhel: 105, ocp: 325 };
 export const RULE_CATEGORIES = {

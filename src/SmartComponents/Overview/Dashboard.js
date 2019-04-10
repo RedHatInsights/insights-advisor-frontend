@@ -22,24 +22,28 @@ class OverviewDashboard extends Component {
 
     async componentDidMount () {
         await insights.chrome.auth.getUser();
-        this.props.fetchStats();
+        this.props.fetchStatsRules();
+        this.props.fetchStatsSystems();
         this.props.setBreadcrumbs([{ title: 'Overview', navigate: '/overview' }]);
     }
 
     componentDidUpdate (prevProps) {
-        if (this.props.stats !== prevProps.stats) {
-            const rules = this.props.stats.rules;
-            this.setState({ rulesTotalRisk: rules.total_risk, reportsTotalRisk: this.props.stats.reports.total_risk });
+        if (this.props.statsRules !== prevProps.statsRules) {
+            const rules = this.props.statsRules;
             this.setState({
                 category: [ rules.category.Availability, rules.category.Stability, rules.category.Performance, rules.category.Security ]
             });
             this.setState({ total: rules.total });
         }
+
+        if (this.props.statsSystems !== prevProps.statsSystems) {
+            this.setState({ rulesTotalRisk: this.props.statsRules.total_risk, reportsTotalRisk: this.props.statsSystems.total_risk });
+        }
     }
 
     render () {
         const {
-            statsFetchStatus
+            statsRulesFetchStatus, statsSystemsFetchStatus
         } = this.props;
         const { rulesTotalRisk, reportsTotalRisk, category } = this.state;
         return <>
@@ -50,17 +54,18 @@ class OverviewDashboard extends Component {
                 <Gallery gutter="lg">
                     <GalleryItem>
                         <Title size='lg' headingLevel='h3'>Rule hits by severity</Title>
-                        { statsFetchStatus === 'fulfilled' && (
+                        { statsRulesFetchStatus === 'fulfilled' && statsSystemsFetchStatus === 'fulfilled' ? (
                             <SummaryChart rulesTotalRisk={ rulesTotalRisk } reportsTotalRisk={ reportsTotalRisk }/>
-                        ) }
-                        { statsFetchStatus === 'pending' && (<Loading/>) }
+                        )
+                            : (<Loading/>)
+                        }
                     </GalleryItem>
                     <GalleryItem>
                         <Title size='lg' headingLevel='h3'>Rule hits by category</Title>
-                        { statsFetchStatus === 'fulfilled' && (
+                        { statsRulesFetchStatus === 'fulfilled' ? (
                             <OverviewDonut category={ category } className='pf-u-mt-md'/>
-                        ) }
-                        { statsFetchStatus === 'pending' && (<Loading/>) }
+                        )
+                            : (<Loading/>) }
                     </GalleryItem>
                 </Gallery>
             </Main>
@@ -72,21 +77,28 @@ class OverviewDashboard extends Component {
 OverviewDashboard.propTypes = {
     match: PropTypes.object,
     breadcrumbs: PropTypes.array,
-    fetchStats: PropTypes.func,
     setBreadcrumbs: PropTypes.func,
-    statsFetchStatus: PropTypes.string,
-    stats: PropTypes.object
+    statsRulesFetchStatus: PropTypes.string,
+    statsRules: PropTypes.object,
+    fetchStatsRules: PropTypes.func,
+    statsSystemsFetchStatus: PropTypes.string,
+    statsSystems: PropTypes.object,
+    fetchStatsSystems: PropTypes.func
+
 };
 
 const mapStateToProps = (state, ownProps) => ({
     breadcrumbs: state.AdvisorStore.breadcrumbs,
-    stats: state.AdvisorStore.stats,
-    statsFetchStatus: state.AdvisorStore.statsFetchStatus,
+    statsRules: state.AdvisorStore.statsRules,
+    statsRulesFetchStatus: state.AdvisorStore.statsRulesFetchStatus,
+    statsSystems: state.AdvisorStore.statsSystems,
+    statsSystemsFetchStatus: state.AdvisorStore.statsSystemsFetchStatus,
     ...ownProps
 });
 
 const mapDispatchToProps = dispatch => ({
-    fetchStats: (url) => dispatch(AppActions.fetchStats(url)),
+    fetchStatsRules: (url) => dispatch(AppActions.fetchStatsRules(url)),
+    fetchStatsSystems: (url) => dispatch(AppActions.fetchStatsSystems(url)),
     setBreadcrumbs: (obj) => dispatch(AppActions.setBreadcrumbs(obj))
 });
 
