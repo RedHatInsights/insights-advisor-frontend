@@ -78,7 +78,7 @@ class ListActions extends Component {
                         { ruleFetchStatus === 'fulfilled' && (
                             <Card>
                                 <CardHeader>
-                                    <strong>Affected Hosts</strong>
+                                    <strong>Affected Systems</strong>
                                 </CardHeader>
                                 <CardBody>
                                     { systemFetchStatus === 'fulfilled' && (
