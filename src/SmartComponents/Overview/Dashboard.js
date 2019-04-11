@@ -14,8 +14,6 @@ const OverviewDonut = asyncComponent(() => import('../../PresentationalComponent
 
 class OverviewDashboard extends Component {
     state = {
-        rulesTotalRisk: {},
-        reportsTotalRisk: {},
         total: 0,
         category: []
     };
@@ -35,17 +33,13 @@ class OverviewDashboard extends Component {
             });
             this.setState({ total: rules.total });
         }
-
-        if (this.props.statsSystems !== prevProps.statsSystems) {
-            this.setState({ rulesTotalRisk: this.props.statsRules.total_risk, reportsTotalRisk: this.props.statsSystems.total_risk });
-        }
     }
 
     render () {
         const {
-            statsRulesFetchStatus, statsSystemsFetchStatus
+            statsRulesFetchStatus, statsSystemsFetchStatus, statsRules, statsSystems
         } = this.props;
-        const { rulesTotalRisk, reportsTotalRisk, category } = this.state;
+        const { category } = this.state;
         return <>
             <PageHeader>
                 <PageHeaderTitle title='Overview'/>
@@ -55,7 +49,7 @@ class OverviewDashboard extends Component {
                     <GalleryItem>
                         <Title size='lg' headingLevel='h3'>Rule hits by severity</Title>
                         { statsRulesFetchStatus === 'fulfilled' && statsSystemsFetchStatus === 'fulfilled' ? (
-                            <SummaryChart rulesTotalRisk={ rulesTotalRisk } reportsTotalRisk={ reportsTotalRisk }/>
+                            <SummaryChart rulesTotalRisk={ statsRules.total_risk } reportsTotalRisk={ statsSystems.total_risk }/>
                         )
                             : (<Loading/>)
                         }
