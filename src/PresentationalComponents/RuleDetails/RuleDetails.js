@@ -70,12 +70,6 @@ class RuleDetails extends Component {
                                 </a>
                             </GridItem>
                         ) }
-                        { rule.tags && (
-                            <GridItem>
-                                Find Other Rules Related To:<br/>
-                                { rule.tags.replace(/ /g, ', ') }
-                            </GridItem>
-                        ) }
                     </Grid>
                 </GridItem>
                 <GridItem md={ 4 } sm={ 12 }>
