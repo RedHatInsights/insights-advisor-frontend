@@ -99,7 +99,7 @@ class RuleDetails extends Component {
                                 { `The impact of the problem would be ${AppConstants.IMPACT_LABEL[rule.impact.impact] || 'Undefined'} if it occurred.` }
                             </p>
                         </GridItem>
-                        <GridItem sm={ 4 } md={ 12 } className='pf-l-flex'>
+                        <GridItem sm={ 4 } md={ 12 }>
                             <div>Risk of Change</div>
                             <div className='pf-u-display-inline-flex pf-m-align-center pf-u-pb-sm pf-u-pt-sm'>
                                 <div className='pf-u-display-inline-flex'>
