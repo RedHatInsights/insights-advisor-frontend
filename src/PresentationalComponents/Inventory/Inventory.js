@@ -45,13 +45,15 @@ class Inventory extends React.Component {
         const { Inventory, items } = this.state;
 
         return (
-            <Inventory items={ items } />
+            <Inventory items={ items }>{ this.props.children }</Inventory>
         );
     }
 }
 
 Inventory.propTypes = {
-    items: PropTypes.array
+    items: PropTypes.array,
+    children: PropTypes.any
+
 };
 
 export default Inventory;

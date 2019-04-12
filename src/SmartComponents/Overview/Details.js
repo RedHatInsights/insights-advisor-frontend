@@ -62,13 +62,7 @@ class OverviewDetails extends Component {
                             <p>Publish Date: { `${(new Date(rule.publish_date)).toLocaleDateString()}` }</p>
                         </PageHeader>
                         <Main className='pf-m-light pf-u-pt-sm'>
-                            <RuleDetails rule={ rule }>
-                                { rule.playbook_count > 0 && <RemediationButton
-                                    isDisabled={ this.getSelectedItems().length === 0 }
-                                    dataProvider={ this.remediationDataProvider }
-                                    onRemediationCreated={ this.onRemediationCreated }
-                                /> }
-                            </RuleDetails>
+                            <RuleDetails rule={ rule } />
                         </Main>
                     </>
                 ) }
@@ -83,7 +77,13 @@ class OverviewDetails extends Component {
                                 <CardBody>
                                     { systemFetchStatus === 'fulfilled' && (
 
-                                        <Inventory items={ system.host_ids }/>
+                                        <Inventory items={ system.host_ids }>
+                                            { rule.playbook_count > 0 && <RemediationButton
+                                                isDisabled={ this.getSelectedItems().length === 0 }
+                                                dataProvider={ this.remediationDataProvider }
+                                                onRemediationCreated={ this.onRemediationCreated }
+                                            /> }
+                                        </Inventory>
                                     ) }
                                     { systemFetchStatus === 'pending' && (<Loading/>) }
                                 </CardBody>
