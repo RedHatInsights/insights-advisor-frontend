@@ -21,7 +21,7 @@ const SummaryChart = (props) => {
                 numIssues={ value }
                 affectedSystems={ totalIssues[key] }/>;
         } else {
-            noHits.push(`No ${normalizedRiskName.toLocaleLowerCase()} hits.`);
+            noHits.push(`No ${normalizedRiskName.toLocaleLowerCase()} hits. `);
         }
     });
     const rulesWithHits = hitsBuilder(props.rulesTotalRisk, props.reportsTotalRisk).reverse();
