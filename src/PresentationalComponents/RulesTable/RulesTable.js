@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { Badge, Checkbox, Stack, StackItem, Pagination } from '@patternfly/react-core';
 import { sortable, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
+import moment from 'moment';
 
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
@@ -22,10 +23,9 @@ class RulesTable extends Component {
         summary: '',
         cols: [
             'Rule',
-            { title: 'Likelihood', transforms: [ sortable ]},
-            { title: 'Impact', transforms: [ sortable ]},
+            { title: 'Added', transforms: [ sortable ]},
             { title: 'Total Risk', transforms: [ sortable ]},
-            { title: 'Systems Exposed', transforms: [ sortable ]},
+            { title: 'Systems', transforms: [ sortable ]},
             { title: 'Ansible', transforms: [ sortable ]}
         ],
         rows: [],
@@ -69,17 +69,7 @@ class RulesTable extends Component {
                                 }
                             </>,
                             <div className="pf-m-center" key={ key }>
-                                <Battery
-                                    label='Likelihood'
-                                    labelHidden
-                                    severity={ value.likelihood }
-                                /></div>,
-                            <div className="pf-m-center" key={ key }>
-                                <Battery
-                                    label='Impact'
-                                    labelHidden
-                                    severity={ value.impact.impact }
-                                />
+                                { moment(value.created_at).fromNow() }
                             </div>,
                             <div className="pf-m-center" key={ key }>
                                 <Battery
@@ -108,11 +98,10 @@ class RulesTable extends Component {
     onSort = (_event, index, direction) => {
         const { impacting, limit } = this.state;
         const attrIndex = {
-            2: 'likelihood',
-            3: 'impact',
-            4: 'total_risk',
-            5: 'impacted_count',
-            6: 'playbook_count'
+            2: 'created_at',
+            3: 'total_risk',
+            4: 'impacted_count',
+            5: 'playbook_count'
         };
         const orderParam = `${direction === 'asc' ? '' : '-'}${attrIndex[index]}`;
 
@@ -255,11 +244,12 @@ class RulesTable extends Component {
                     <p>{ this.state.summary }</p>
                 </StackItem>
                 <StackItem>
-                    <TableToolbar className='pf-u-justify-content-space-between' results={ results }>
+                    <TableToolbar className='pf-u-justify-content-space-between'>
                         <Filters
                             fetchAction={ this.fetchAction }
-                            searchPlaceholder='Find a Rule'
+                            searchPlaceholder='Find a rule...'
                             externalFilters={ urlFilters }
+                            results={ results }
                         >
                             <Checkbox
                                 label="Show Rules With Hits"
