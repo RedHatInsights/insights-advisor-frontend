@@ -220,6 +220,10 @@ class RulesTable extends Component {
 
     actionResolver = (rowData, { rowIndex }) => {
         const rule = this.state.rows[rowIndex].rule ? this.state.rows[rowIndex].rule : null;
+        if (rowIndex % 2 !== 0) {
+            return null;
+        }
+
         return rule && rule.reports_shown ?
             [{
                 title: 'Disable Rule',
