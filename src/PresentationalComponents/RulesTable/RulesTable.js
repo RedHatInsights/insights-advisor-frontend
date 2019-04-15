@@ -1,14 +1,15 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Ansible, Battery, Main, routerParams, TableToolbar } from '@red-hat-insights/insights-frontend-components';
+import { Battery, Main, routerParams, TableToolbar } from '@red-hat-insights/insights-frontend-components';
 import PropTypes from 'prop-types';
 import { debounce, flatten } from 'lodash';
 import { connect } from 'react-redux';
-import { Badge, Checkbox, Stack, StackItem, Pagination } from '@patternfly/react-core';
+import { Badge, Checkbox, Pagination, Stack, StackItem } from '@patternfly/react-core';
 import { sortable, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 import moment from 'moment';
+import { CheckIcon } from '@patternfly/react-icons';
 
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
@@ -16,7 +17,7 @@ import Failed from '../../PresentationalComponents/Loading/Failed';
 import Filters from '../../PresentationalComponents/Filters/Filters';
 import RuleDetails from '../RuleDetails/RuleDetails';
 import API from '../../Utilities/Api';
-import { BASE_URL } from '../../AppConstants';
+import { ANSIBLE_ICON, BASE_URL } from '../../AppConstants';
 
 class RulesTable extends Component {
     state = {
@@ -26,7 +27,7 @@ class RulesTable extends Component {
             { title: 'Added', transforms: [ sortable ]},
             { title: 'Total Risk', transforms: [ sortable ]},
             { title: 'Systems', transforms: [ sortable ]},
-            { title: 'Ansible', transforms: [ sortable ]}
+            { title: <span className='ansibleCol'>{ ANSIBLE_ICON } Ansible</span>, transforms: [ sortable ]}
         ],
         rows: [],
         sortBy: {},
@@ -79,8 +80,8 @@ class RulesTable extends Component {
                                 />
                             </div>,
                             <div key={ key }> { value.reports_shown ? `${value.impacted_systems_count}` : 'N/A' }</div>,
-                            <div className="pf-m-center" key={ key }>
-                                <Ansible unsupported={ !value.playbook_count }/>
+                            <div className="pf-m-center " key={ key }>
+                                { value.playbook_count ? <CheckIcon className='ansibleCheck'/> : null }
                             </div>
                         ]
                     },
@@ -274,7 +275,7 @@ class RulesTable extends Component {
                             itemCount={ results }
                             onPerPageSelect={ this.onPerPageSelect }
                             onSetPage={ this.onSetPage }
-                            page = { page }
+                            page={ page }
                             itemsStart={ offset }
                             perPage={ limit }
                         />
