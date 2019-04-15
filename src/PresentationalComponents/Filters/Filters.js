@@ -85,8 +85,6 @@ class Filters extends Component {
                             filterCategories = { FILTER_CATEGORIES }
                         />
                     </ToolbarItem>
-                </ToolbarGroup>
-                <ToolbarGroup>
                     <ToolbarItem>
                         { children }
                     </ToolbarItem>
