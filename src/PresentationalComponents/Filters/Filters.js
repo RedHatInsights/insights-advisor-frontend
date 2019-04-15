@@ -1,13 +1,14 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
-import { TextInput, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { routerParams, FilterDropdown } from '@red-hat-insights/insights-frontend-components';
+import { InputGroup, InputGroupText, TextInput, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { FilterDropdown, routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { FILTER_CATEGORIES } from '../../AppConstants';
 import * as AppActions from '../../AppActions';
 import PropTypes from 'prop-types';
 import debounce from 'lodash/debounce';
+import { SearchIcon } from '@patternfly/react-icons';
 
 class Filters extends Component {
     componentWillUnmount () {
@@ -64,17 +65,22 @@ class Filters extends Component {
     };
 
     render () {
-        const { children, searchPlaceholder, filters, hideCategories } = this.props;
+        const { children, searchPlaceholder, filters, hideCategories, results } = this.props;
         return (
             <>
                 <ToolbarGroup>
                     <ToolbarItem className='pf-u-mr-xl'>
-                        <TextInput
-                            aria-label='Search'
-                            onChange={ this.changeSearchValue }
-                            type='search'
-                            value={ undefined }
-                            placeholder={ searchPlaceholder }/>
+                        <InputGroup>
+                            <TextInput
+                                aria-label='Search'
+                                onChange={ this.changeSearchValue }
+                                type='search'
+                                value={ undefined }
+                                placeholder={ searchPlaceholder }/>
+                            <InputGroupText style={ { borderLeft: 0 } }>
+                                <SearchIcon/>
+                            </InputGroupText>
+                        </InputGroup>
                     </ToolbarItem>
                     <ToolbarItem className='pf-u-mr-md'>
                         <FilterDropdown
@@ -82,11 +88,16 @@ class Filters extends Component {
                             addFilter={ this.addFilter }
                             removeFilter={ this.removeFilter }
                             hideCategories={ hideCategories }
-                            filterCategories = { FILTER_CATEGORIES }
+                            filterCategories={ FILTER_CATEGORIES }
                         />
                     </ToolbarItem>
                     <ToolbarItem>
                         { children }
+                    </ToolbarItem>
+                </ToolbarGroup>
+                <ToolbarGroup>
+                    <ToolbarItem>
+                        { results === 1 ? `${results} rule` : `${results} rules` }
                     </ToolbarItem>
                 </ToolbarGroup>
             </>
@@ -101,7 +112,8 @@ Filters.propTypes = {
     filters: PropTypes.object,
     setFilters: PropTypes.func,
     fetchAction: PropTypes.func,
-    externalFilters: PropTypes.object
+    externalFilters: PropTypes.object,
+    results: PropTypes.number
 };
 
 const mapStateToProps = (state, ownProps) => ({
