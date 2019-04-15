@@ -65,7 +65,7 @@ class RulesTable extends Component {
                                     <Link key={ key } to={ linkTo }>
                                         { value.description }
                                     </Link>
-                                    : <span key={ key }> <Badge isRead>Inactive</Badge> { value.description }</span>
+                                    : <span key={ key }> <Badge isRead>Disabled</Badge> { value.description }</span>
                                 }
                             </>,
                             <div className="pf-m-center" key={ key }>
