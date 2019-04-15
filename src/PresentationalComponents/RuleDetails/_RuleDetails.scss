@@ -1,7 +1,29 @@
-.pf-l-grid__item.pf-m-12-col-on-sm.pf-m-4-col-on-md .pf-l-grid__item.pf-u-pb-md  {
-    border-bottom: .01rem solid #ccc;
+.pf-l-grid__item.pf-m-12-col-on-sm.pf-m-4-col-on-md .pf-l-grid__item.pf-u-pb-md {
+  border-bottom: .01rem solid #ccc;
 }
-.ins-sev-clr-1 { color: var(--pf-global--Color--200); }
-.ins-sev-clr-2 { color: var(--pf-global--warning-color--100); }
-.ins-sev-clr-3 { color: var(--ins-color--orange); }
-.ins-sev-clr-4 { color: var(--pf-global--danger-color--100); }
+
+.ins-sev-clr-1 {
+  color: var(--pf-global--Color--200);
+}
+
+.ins-sev-clr-2 {
+  color: var(--pf-global--warning-color--100);
+}
+
+.ins-sev-clr-3 {
+  color: var(--ins-color--orange);
+}
+
+.ins-sev-clr-4 {
+  color: var(--pf-global--danger-color--100);
+}
+
+.ansibleCol {
+  svg {
+    vertical-align: text-bottom;
+  }
+}
+
+.ansibleCheck {
+  color: var(--pf-global--success-color--200)
+}
