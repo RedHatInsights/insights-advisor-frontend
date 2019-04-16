@@ -1,4 +1,6 @@
 /* eslint max-len: 0 */
+import React from 'react';
+
 export const RULE_FETCH = 'RULE_FETCH';
 export const RULES_FETCH = 'RULES_FETCH';
 export const SYSTEM_FETCH = 'SYSTEM_FETCH';
