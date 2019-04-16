@@ -17,9 +17,9 @@ class OverviewList extends Component {
     async componentDidMount () {
         if (this.props.match.params.type.includes('-risk')) {
             const totalRisk = SEVERITY_MAP[this.props.match.params.type];
-            this.setState({ urlFilters: { total_risk: totalRisk }});
+            this.setState({ urlFilters: { total_risk: `${totalRisk}` }});
         } else {
-            this.setState({ urlFilters: { category: RULE_CATEGORIES[this.props.match.params.type] }});
+            this.setState({ urlFilters: { category: `${RULE_CATEGORIES[this.props.match.params.type]}` }});
         }
     }
 
@@ -42,7 +42,7 @@ class OverviewList extends Component {
                         title={ this.parseUrlTitle(this.props.match.params.type) }
                     />
                 </PageHeader>
-                <RulesTable impacting={ impacting } urlFilters={ urlFilters }/>
+                <RulesTable impacting={ impacting } externalFilters={ urlFilters }/>
             </React.Fragment>
         );
     }
