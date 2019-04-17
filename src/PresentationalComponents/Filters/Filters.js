@@ -17,10 +17,7 @@ class Filters extends Component {
 
     componentDidUpdate (prevProps) {
         if (this.props.externalFilters !== prevProps.externalFilters) {
-            const filterKey = Object.keys(this.props.externalFilters)[0];
-            if (filterKey) {
-                this.props.setFilters({ [filterKey]: `${this.props.externalFilters[filterKey]}` });
-            }
+            this.props.setFilters(this.props.externalFilters);
         }
     }
 

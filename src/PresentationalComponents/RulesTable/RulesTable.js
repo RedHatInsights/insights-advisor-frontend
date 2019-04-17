@@ -5,7 +5,7 @@ import { Battery, Main, routerParams, TableToolbar } from '@red-hat-insights/ins
 import PropTypes from 'prop-types';
 import { debounce, flatten } from 'lodash';
 import { connect } from 'react-redux';
-import { Badge, Checkbox, Pagination, Stack, StackItem } from '@patternfly/react-core';
+import { Badge, Button, Checkbox, Pagination, Stack, StackItem } from '@patternfly/react-core';
 import { sortable, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 import moment from 'moment';
@@ -18,6 +18,7 @@ import Filters from '../../PresentationalComponents/Filters/Filters';
 import RuleDetails from '../RuleDetails/RuleDetails';
 import API from '../../Utilities/Api';
 import { ANSIBLE_ICON, BASE_URL } from '../../AppConstants';
+import MessageState from '../MessageState/MessageState';
 
 class RulesTable extends Component {
     state = {
@@ -32,20 +33,22 @@ class RulesTable extends Component {
         rows: [],
         sortBy: {},
         sort: 'rule_id',
-        urlFilters: {},
+        externalFilters: {},
         impacting: false,
         limit: 10,
-        offset: 0
+        offset: 0,
+        reports_shown: true
     };
 
     async componentDidMount () {
-        const { offset, limit } = this.state;
+        const { offset, limit, reports_shown } = this.state;
         const impacting = this.props.impacting || this.state.impacting;
         await insights.chrome.auth.getUser();
-        const options = { offset, limit, impacting, ...this.props.urlFilters || {}};
+        const options = { offset, limit, impacting, reports_shown, ...this.props.externalFilters || {}};
+        /* eslint-disable camelcase */
 
         this.props.fetchRules(options);
-        this.setState({ impacting, urlFilters: this.props.urlFilters || {}});
+        this.setState({ impacting, externalFilters: { ...this.props.externalFilters, reports_shown }});
     }
 
     componentDidUpdate (prevProps) {
@@ -53,46 +56,67 @@ class RulesTable extends Component {
             const rules = this.props.rules.data;
             this.setState({ summary: this.props.rules.data.summary });
 
-            let rows = rules.map((value, key) => {
-                const parent = key * 2;
-                const linkTo = `/overview/${value.category.name.toLowerCase()}/${value.rule_id}`;
-                return [
-                    {
-                        isOpen: false,
-                        rule: value,
-                        cells: [
-                            <>
-                                { value.reports_shown ?
-                                    <Link key={ key } to={ linkTo }>
-                                        { value.description }
-                                    </Link>
-                                    : <span key={ key }> <Badge isRead>Disabled</Badge> { value.description }</span>
-                                }
-                            </>,
-                            <div className="pf-m-center" key={ key }>
-                                { moment(value.created_at).fromNow() }
-                            </div>,
-                            <div className="pf-m-center" key={ key }>
-                                <Battery
-                                    label='Total Risk'
-                                    labelHidden
-                                    severity={ value.total_risk }
-                                />
-                            </div>,
-                            <div key={ key }> { value.reports_shown ? `${value.impacted_systems_count}` : 'N/A' }</div>,
-                            <div className="pf-m-center " key={ key }>
-                                { value.playbook_count ? <CheckIcon className='ansibleCheck'/> : null }
-                            </div>
-                        ]
-                    },
-                    {
-                        parent,
-                        cells: [ <div key={ `child-${key}` }>{ 'Loading...' }</div> ]
-                    }
-                ];
-            });
-
-            this.setState({ rows: flatten(rows) });
+            if (rules.length === 0) {
+                this.setState({
+                    rows: [{
+                        cells: [{
+                            title: (
+                                <MessageState icon={ CheckIcon } title='No rule hits'
+                                    text={ `None of your connected systems are affected by
+                                    ${this.props.filters.reports_shown ? 'enabled rules.' : 'any known rules.'}` }>
+                                    { this.props.filters.reports_shown && <Button variant="link" style={ { paddingTop: 24 } } onClick={ () => {
+                                        this.props.setFilters({ ...this.props.filters, reports_shown: undefined });
+                                        this.fetchAction({ ...this.props.filters, reports_shown: undefined });
+                                    }
+                                    }>
+                                        Include disabled rules
+                                    </Button> }
+                                </MessageState>),
+                            props: { colSpan: 5 }
+                        }]
+                    }]
+                });
+            } else {
+                let rows = rules.map((value, key) => {
+                    const parent = key * 2;
+                    const linkTo = `/overview/${value.category.name.toLowerCase()}/${value.rule_id}`;
+                    return [
+                        {
+                            isOpen: false,
+                            rule: value,
+                            cells: [
+                                <>
+                                    { value.reports_shown ?
+                                        <Link key={ key } to={ linkTo }>
+                                            { value.description }
+                                        </Link>
+                                        : <span key={ key }> <Badge isRead>Disabled</Badge> { value.description }</span>
+                                    }
+                                </>,
+                                <div className="pf-m-center" key={ key }>
+                                    { moment(value.created_at).fromNow() }
+                                </div>,
+                                <div className="pf-m-center" key={ key }>
+                                    <Battery
+                                        label='Total Risk'
+                                        labelHidden
+                                        severity={ value.total_risk }
+                                    />
+                                </div>,
+                                <div key={ key }> { value.reports_shown ? `${value.impacted_systems_count}` : 'N/A' }</div>,
+                                <div className="pf-m-center " key={ key }>
+                                    { value.playbook_count ? <CheckIcon className='ansibleCheck'/> : null }
+                                </div>
+                            ]
+                        },
+                        {
+                            parent,
+                            cells: [ <div key={ `child-${key}` }>{ 'Loading...' }</div> ]
+                        }
+                    ];
+                });
+                this.setState({ rows: flatten(rows) });
+            }
         }
     }
 
@@ -210,7 +234,7 @@ class RulesTable extends Component {
 
     actionResolver = (rowData, { rowIndex }) => {
         const rule = this.state.rows[rowIndex].rule ? this.state.rows[rowIndex].rule : null;
-        if (rowIndex % 2 !== 0) {
+        if (rowIndex % 2 !== 0 || !rule) {
             return null;
         }
 
@@ -236,7 +260,7 @@ class RulesTable extends Component {
 
     render () {
         const { rulesFetchStatus, rules } = this.props;
-        const { urlFilters, offset, limit, impacting, sortBy, cols, rows } = this.state;
+        const { externalFilters, offset, limit, impacting, sortBy, cols, rows } = this.state;
         const page = offset / limit + 1;
         const results = rules.meta ? rules.meta.count : 0;
         return <Main>
@@ -249,7 +273,7 @@ class RulesTable extends Component {
                         <Filters
                             fetchAction={ this.fetchAction }
                             searchPlaceholder='Find a rule...'
-                            externalFilters={ urlFilters }
+                            externalFilters={ externalFilters }
                             results={ results }
                         >
                             <Checkbox
@@ -292,8 +316,9 @@ RulesTable.propTypes = {
     rules: PropTypes.object,
     filters: PropTypes.object,
     impacting: PropTypes.bool,
-    urlFilters: PropTypes.object,
-    addNotification: PropTypes.func
+    externalFilters: PropTypes.object,
+    addNotification: PropTypes.func,
+    setFilters: PropTypes.func
 
 };
 
@@ -306,7 +331,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = dispatch => ({
     fetchRules: (url) => dispatch(AppActions.fetchRules(url)),
-    addNotification: data => dispatch(addNotification(data))
+    addNotification: data => dispatch(addNotification(data)),
+    setFilters: (filters) => dispatch(AppActions.setFilters(filters))
 });
 
 export default routerParams(connect(
