@@ -1,20 +1,24 @@
+/* eslint camelcase: 0 */
 import React, { Component } from 'react';
 import asyncComponent from '../../Utilities/asyncComponent';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Gallery, GalleryItem, Title } from '@patternfly/react-core';
+import { Button, Gallery, GalleryItem, Title } from '@patternfly/react-core';
 import { Main, PageHeader, PageHeaderTitle, routerParams } from '@red-hat-insights/insights-frontend-components';
+import { global_primary_color_100 } from '@patternfly/react-tokens';
 
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import '../../App.scss';
+import MessageState from '../../PresentationalComponents/MessageState/MessageState';
+import { ChartSpikeIcon } from '@patternfly/react-icons';
 
 const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/Charts/SummaryChart/SummaryChart'));
 const OverviewDonut = asyncComponent(() => import('../../PresentationalComponents/Charts/OverviewDonut'));
 
 class OverviewDashboard extends Component {
     state = {
-        total: 0,
+        total: -1,
         category: []
     };
 
@@ -39,31 +43,48 @@ class OverviewDashboard extends Component {
         const {
             statsRulesFetchStatus, statsSystemsFetchStatus, statsRules, statsSystems
         } = this.props;
-        const { category } = this.state;
+        const { category, total } = this.state;
         return <>
             <PageHeader>
                 <PageHeaderTitle title='Overview'/>
             </PageHeader>
-            <Main className='pf-m-light'>
-                <Gallery gutter="lg">
-                    <GalleryItem>
-                        <Title size='lg' headingLevel='h3'>Rule hits by severity</Title>
-                        { statsRulesFetchStatus === 'fulfilled' && statsSystemsFetchStatus === 'fulfilled' ? (
-                            <SummaryChart rulesTotalRisk={ statsRules.total_risk } reportsTotalRisk={ statsSystems.total_risk }/>
-                        )
-                            : (<Loading/>)
-                        }
-                    </GalleryItem>
-                    <GalleryItem>
-                        <Title size='lg' headingLevel='h3'>Rule hits by category</Title>
-                        { statsRulesFetchStatus === 'fulfilled' ? (
-                            <OverviewDonut category={ category } className='pf-u-mt-md'/>
-                        )
-                            : (<Loading/>) }
-                    </GalleryItem>
-                </Gallery>
-            </Main>
-            <Main>&nbsp;</Main>
+            { total !== 0 ?
+                <>
+                    <Main className='pf-m-light'>
+                        <Gallery gutter="lg">
+                            <GalleryItem>
+                                <Title size='lg' headingLevel='h3'>Rule hits by severity</Title>
+                                { statsRulesFetchStatus === 'fulfilled' && statsSystemsFetchStatus === 'fulfilled' ? (
+                                    <SummaryChart rulesTotalRisk={ statsRules.total_risk } reportsTotalRisk={ statsSystems.total_risk }/>
+                                )
+                                    : (<Loading/>)
+                                }
+                            </GalleryItem>
+                            <GalleryItem>
+                                <Title size='lg' headingLevel='h3'>Rule hits by category</Title>
+                                { statsRulesFetchStatus === 'fulfilled' ? (
+                                    <OverviewDonut category={ category } className='pf-u-mt-md'/>
+                                )
+                                    : (<Loading/>) }
+                            </GalleryItem>
+                        </Gallery>
+                    </Main>
+                    <Main>&nbsp;</Main>
+                </>
+                : <Main>
+                    <MessageState
+                        iconStyle={ { color: global_primary_color_100.value } }
+                        icon={ ChartSpikeIcon }
+                        title='Get started with Red Hat Insights'
+                        text={ `With predictive analytics, avoid problems and unplanned
+                         downtime in your Red Hat environment. Red Hat Insights is
+                        included with your Red Hat Enterprise Linux subscription` }
+                    >
+                        <Button component="a" href="https://access.redhat.com/insights/getting-started/" target="_blank" variant="primary">
+                            Try it free
+                        </Button>
+                    </MessageState>
+                </Main> }
         </>;
     }
 }
