@@ -17,11 +17,7 @@ class Filters extends Component {
 
     componentDidUpdate (prevProps) {
         if (this.props.externalFilters !== prevProps.externalFilters) {
-            let filters = {};
-            Object.entries(this.props.externalFilters).forEach(
-                ([ key, value ]) =>  filters[key] = value
-            );
-            this.props.setFilters(filters);
+            this.props.setFilters(this.props.externalFilters);
         }
     }
 
