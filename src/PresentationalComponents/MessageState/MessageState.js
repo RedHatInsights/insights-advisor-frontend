@@ -1,7 +1,6 @@
 import React from 'react';
 import { EmptyState, EmptyStateBody, EmptyStateIcon, EmptyStateVariant, Title } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
-
 import { CubesIcon } from '@patternfly/react-icons';
 
 const MessageState = ({ children, icon, iconStyle, text, title, variant })  => (
