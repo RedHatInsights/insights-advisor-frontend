@@ -80,7 +80,7 @@ class OverviewDashboard extends Component {
                             downtime in your Red Hat environment. Red Hat Insights is<br/>
                             included with your Red Hat Enterprise Linux subscription</span> }>
                         <Button component="a" href="https://access.redhat.com/insights/getting-started/" target="_blank" variant="primary">
-                            Try it free
+                            Get started
                         </Button>
                     </MessageState>
                 </Main> }
