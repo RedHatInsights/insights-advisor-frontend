@@ -21,7 +21,7 @@ MessageState.propTypes = {
     children: PropTypes.any,
     icon: PropTypes.any,
     iconStyle: PropTypes.any,
-    text: PropTypes.string,
+    text: PropTypes.any,
     title: PropTypes.string,
     variant: PropTypes.any
 };
@@ -29,7 +29,6 @@ MessageState.propTypes = {
 MessageState.defaultProps = {
     icon: CubesIcon,
     title: '',
-    text: '',
     variant: EmptyStateVariant.full
 };
 
