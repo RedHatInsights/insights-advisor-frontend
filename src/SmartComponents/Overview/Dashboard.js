@@ -76,9 +76,9 @@ class OverviewDashboard extends Component {
                         iconStyle={ { color: global_primary_color_100.value } }
                         icon={ ChartSpikeIcon }
                         title='Get started with Red Hat Insights'
-                        text={ [ <p key='1'>With predictive analytics, avoid problems and unplanned</p>,
-                            <p key='2'>downtime in your Red Hat environment. Red Hat Insights is</p>,
-                            <p key='3'>included with your Red Hat Enterprise Linux subscription</p> ] }>
+                        text={ <span key='1'>With predictive analytics, avoid problems and unplanned<br/>
+                            downtime in your Red Hat environment. Red Hat Insights is<br/>
+                            included with your Red Hat Enterprise Linux subscription</span> }>
                         <Button component="a" href="https://access.redhat.com/insights/getting-started/" target="_blank" variant="primary">
                             Try it free
                         </Button>
