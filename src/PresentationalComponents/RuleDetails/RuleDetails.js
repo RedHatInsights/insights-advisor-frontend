@@ -95,8 +95,10 @@ class RuleDetails extends Component {
                                 </div>
                             </div>
                             <p>
-                                { `The likelihood that this will be a problem is ${AppConstants.LIKELIHOOD_LABEL[rule.likelihood] || 'Undefined'}. ` }
-                                { `The impact of the problem would be ${AppConstants.IMPACT_LABEL[rule.impact.impact] || 'Undefined'} if it occurred.` }
+                               The <strong>likelihood</strong> that this will be a problem is
+                                { ` ${AppConstants.LIKELIHOOD_LABEL[rule.likelihood] || 'Undefined'}. ` }
+                               The <strong>impact</strong> of the problem would be
+                                { ` ${AppConstants.IMPACT_LABEL[rule.impact.impact] || 'Undefined'} if it occurred.` }
                             </p>
                         </GridItem>
                         <GridItem sm={ 4 } md={ 12 }>
