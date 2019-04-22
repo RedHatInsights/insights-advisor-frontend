@@ -3,15 +3,16 @@ import React, { Component } from 'react';
 import asyncComponent from '../../Utilities/asyncComponent';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Button, Gallery, GalleryItem, Title } from '@patternfly/react-core';
+import { Button, Gallery, GalleryItem, Level, LevelItem, Title } from '@patternfly/react-core';
 import { Main, PageHeader, PageHeaderTitle, routerParams } from '@red-hat-insights/insights-frontend-components';
-import { global_primary_color_100 } from '@patternfly/react-tokens';
+import { global_Color_100, global_primary_color_100 } from '@patternfly/react-tokens';
+import { ChartSpikeIcon } from '@patternfly/react-icons';
 
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import '../../App.scss';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
-import { ChartSpikeIcon } from '@patternfly/react-icons';
+import { ANSIBLE_MARK_ICON, GLOBAL_ECONSYSTEM_ICON, SERVER_STACK_ICON } from '../../AppSvgs';
 
 const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/Charts/SummaryChart/SummaryChart'));
 const OverviewDonut = asyncComponent(() => import('../../PresentationalComponents/Charts/OverviewDonut'));
@@ -69,7 +70,56 @@ class OverviewDashboard extends Component {
                             </GalleryItem>
                         </Gallery>
                     </Main>
-                    <Main>&nbsp;</Main>
+                    <Main>
+                        <Main className='pf-m-light'>
+                            <Title size='2xl' headingLevel='h1'>Get started with Red Hat Insights</Title>
+                            <Level>
+                                <LevelItem style={ { maxWidth: '400px' } }>
+                                    <MessageState
+                                        iconStyle={ { color: global_Color_100.value } }
+                                        icon={ () => SERVER_STACK_ICON }
+                                        title='Connect your first systems'
+                                        text={ <span key='1'>Connect at least 10 systems to get a better<br/>
+                            awareness of issues and optimizations<br/>
+                            identified across your infastructure</span> }>
+                                        <Button component="a" href="https://access.redhat.com/products/red-hat-insights#getstarted"
+                                            target="_blank" variant="link">
+                                            Learn how to connect a system to insights
+                                        </Button>
+                                    </MessageState>
+                                </LevelItem>
+                                <LevelItem style={ { maxWidth: '400px' } }>
+                                    <MessageState
+                                        iconStyle={ { color: global_Color_100.value } }
+                                        icon={ () => ANSIBLE_MARK_ICON  }
+                                        title='Remediate Insights findings with Ansible'
+                                        text={ <span key='1'>Easily generate an Ansible playbook to<br/>
+                            quickly and effectively remediate Insights <br/> findings</span> }>
+                                        <Button component="a" href="https://cloud.redhat.com/insights/remediations"
+                                            target="_blank" variant="link">
+                                            Get started with Insights and Ansible Playbooks
+                                        </Button>
+                                    </MessageState>
+                                </LevelItem>
+                                <LevelItem style={ { maxWidth: '400px' } }>
+                                    <MessageState
+                                        iconStyle={ { color: global_Color_100.value } }
+                                        icon={ () => GLOBAL_ECONSYSTEM_ICON }
+                                        title='Deploy Insights at scale'
+                                        text={ <span key='1'>Get more out of Insights with more systems.<br/>
+                            Quickly connect systems with <a rel="noopener noreferrer" target="_blank"
+                                                href="https://galaxy.ansible.com/redhatinsights/insights-client">Ansible</a> <br/> or
+                                            <a rel="noopener noreferrer" target="_blank"
+                                                href="https://forge.puppetlabs.com/lphiri/access_insights_client"> Puppet</a></span> }>
+                                        <Button component="a" href="https://access.redhat.com/insights/getting-started/"
+                                            target="_blank" variant="secondary">
+                                            Download Ansible Playbook
+                                        </Button>
+                                    </MessageState>
+                                </LevelItem>
+                            </Level>
+                        </Main>
+                    </Main>
                 </>
                 : <Main>
                     <MessageState
