@@ -93,7 +93,7 @@ class RulesTable extends Component {
                                         : <span key={ key }> <Badge isRead>Disabled</Badge> { value.description }</span>
                                     }
                                 </>,
-                                <div className="pf-m-center" key={ key }>
+                                <div key={ key }>
                                     { moment(value.created_at).fromNow() }
                                 </div>,
                                 <div className="pf-m-center" key={ key }>
