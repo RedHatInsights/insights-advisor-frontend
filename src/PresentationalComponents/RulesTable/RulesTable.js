@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { debounce, flatten } from 'lodash';
 import { connect } from 'react-redux';
 import { Badge, Button, Checkbox, Pagination, Stack, StackItem } from '@patternfly/react-core';
-import { sortable, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
+import { cellWidth, sortable, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 import moment from 'moment';
 import { CheckIcon } from '@patternfly/react-icons';
@@ -25,7 +25,7 @@ class RulesTable extends Component {
         summary: '',
         cols: [
             'Rule',
-            { title: 'Added', transforms: [ sortable ]},
+            { title: 'Added', transforms: [ sortable, cellWidth(15) ]},
             { title: 'Total Risk', transforms: [ sortable ]},
             { title: 'Systems', transforms: [ sortable ]},
             { title: <span className='ansibleCol'>{ ANSIBLE_ICON } Ansible</span>, transforms: [ sortable ]}
