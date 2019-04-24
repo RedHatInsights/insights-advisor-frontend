@@ -65,7 +65,7 @@ class RuleDetails extends Component {
                         </GridItem>
                         { kbaDetails.view_uri && (
                             <GridItem className='pf-u-pb-md'>
-                                <a href={ kbaDetails.view_uri }>
+                                <a rel="noopener noreferrer" target="_blank" href={ kbaDetails.view_uri }>
                                     Knowledgebase Article <ExternalLinkAltIcon size='sm'/>
                                 </a>
                             </GridItem>
