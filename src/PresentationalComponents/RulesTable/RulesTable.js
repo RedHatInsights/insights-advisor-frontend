@@ -299,7 +299,6 @@ class RulesTable extends Component {
                             onPerPageSelect={ this.onPerPageSelect }
                             onSetPage={ this.onSetPage }
                             page={ page }
-                            itemsStart={ offset }
                             perPage={ limit }
                         />
                     </TableToolbar>
