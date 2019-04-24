@@ -17,7 +17,8 @@ import Failed from '../../PresentationalComponents/Loading/Failed';
 import Filters from '../../PresentationalComponents/Filters/Filters';
 import RuleDetails from '../RuleDetails/RuleDetails';
 import API from '../../Utilities/Api';
-import { ANSIBLE_ICON, BASE_URL } from '../../AppConstants';
+import { BASE_URL } from '../../AppConstants';
+import { ANSIBLE_ICON } from '../../AppSvgs';
 import MessageState from '../MessageState/MessageState';
 
 class RulesTable extends Component {
@@ -45,8 +46,6 @@ class RulesTable extends Component {
         const impacting = this.props.impacting || this.state.impacting;
         await insights.chrome.auth.getUser();
         const options = { offset, limit, impacting, reports_shown, ...this.props.externalFilters || {}};
-        /* eslint-disable camelcase */
-
         this.props.fetchRules(options);
         this.setState({ impacting, externalFilters: { ...this.props.externalFilters, reports_shown }});
     }

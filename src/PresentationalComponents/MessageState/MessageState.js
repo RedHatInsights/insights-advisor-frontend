@@ -9,7 +9,7 @@ const MessageState = ({ children, icon, iconStyle, text, title, variant })  => (
         <Title headingLevel="h5" size="lg">
             { title }
         </Title>
-        <EmptyStateBody>
+        <EmptyStateBody style={ { marginBottom: '16px' } }>
             { text }
         </EmptyStateBody>
         { children }
