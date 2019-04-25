@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import asyncComponent from '../../Utilities/asyncComponent';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Button, Gallery, GalleryItem, Level, LevelItem, Title } from '@patternfly/react-core';
+import { Button, Level, LevelItem, Title } from '@patternfly/react-core';
 import { Main, PageHeader, PageHeaderTitle, routerParams } from '@red-hat-insights/insights-frontend-components';
 import { global_Color_100, global_primary_color_100 } from '@patternfly/react-tokens';
 import { ChartSpikeIcon } from '@patternfly/react-icons';
@@ -13,6 +13,7 @@ import Loading from '../../PresentationalComponents/Loading/Loading';
 import '../../App.scss';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { ANSIBLE_MARK_ICON, GLOBAL_ECONSYSTEM_ICON, SERVER_STACK_ICON } from '../../AppSvgs';
+import './Dashboard.scss';
 
 const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/Charts/SummaryChart/SummaryChart'));
 const OverviewDonut = asyncComponent(() => import('../../PresentationalComponents/Charts/OverviewDonut'));
@@ -51,24 +52,25 @@ class OverviewDashboard extends Component {
             </PageHeader>
             { total !== 0 ?
                 <>
-                    <Main className='pf-m-light'>
-                        <Gallery gutter="lg">
-                            <GalleryItem>
+                    <Main className='pf-m-light mainPaddingOverride'>
+                        <Level className='levelItemAlignOverride'>
+                            <LevelItem>
                                 <Title size='lg' headingLevel='h3'>Rule hits by severity</Title>
                                 { statsRulesFetchStatus === 'fulfilled' && statsSystemsFetchStatus === 'fulfilled' ? (
                                     <SummaryChart rulesTotalRisk={ statsRules.total_risk } reportsTotalRisk={ statsSystems.total_risk }/>
                                 )
                                     : (<Loading/>)
                                 }
-                            </GalleryItem>
-                            <GalleryItem>
+                            </LevelItem>
+                            <LevelItem>
                                 <Title size='lg' headingLevel='h3'>Rule hits by category</Title>
                                 { statsRulesFetchStatus === 'fulfilled' ? (
                                     <OverviewDonut category={ category } className='pf-u-mt-md'/>
                                 )
                                     : (<Loading/>) }
-                            </GalleryItem>
-                        </Gallery>
+                            </LevelItem>
+                            <LevelItem>&nbsp;</LevelItem>
+                        </Level>
                     </Main>
                     <Main>
                         <Main className='pf-m-light'>
@@ -91,7 +93,7 @@ class OverviewDashboard extends Component {
                                 <LevelItem style={ { maxWidth: '400px' } }>
                                     <MessageState
                                         iconStyle={ { color: global_Color_100.value } }
-                                        icon={ () => ANSIBLE_MARK_ICON  }
+                                        icon={ () => ANSIBLE_MARK_ICON }
                                         title='Remediate Insights findings with Ansible'
                                         text={ <span key='1'>Easily generate an Ansible playbook to<br/>
                             quickly and effectively remediate Insights <br/> findings</span> }>
