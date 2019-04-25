@@ -95,7 +95,7 @@ class RulesTable extends Component {
                                 <div key={ key }>
                                     { moment(value.created_at).fromNow() }
                                 </div>,
-                                <div className="pf-m-center" key={ key }>
+                                <div className="pf-m-center" key={ key } style={ { verticalAlign: 'top' } }>
                                     <Battery
                                         label='Total Risk'
                                         labelHidden
@@ -192,7 +192,7 @@ class RulesTable extends Component {
     handleOnCollapse = (event, rowId, isOpen) => {
         const rows = [ ...this.state.rows ];
         rows[rowId] = { ...rows[rowId], isOpen };
-        const content = isOpen ? <RuleDetails rule={ rows[rowId].rule }/> : 'Loading...';
+        const content = isOpen ? <Main className='pf-m-light'><RuleDetails rule={ rows[rowId].rule }/></Main> : 'Loading...';
 
         rows[rowId + 1] = {
             ...rows[rowId + 1], cells: [ <div key={ `child-${rowId}` }>
