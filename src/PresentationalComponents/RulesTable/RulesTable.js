@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { debounce, flatten } from 'lodash';
 import { connect } from 'react-redux';
 import { Badge, Button, Checkbox, Pagination, Stack, StackItem } from '@patternfly/react-core';
-import { cellWidth, sortable, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
+import { cellWidth, sortable, Table, TableBody, TableHeader } from '@patternfly/react-table';
 import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 import moment from 'moment';
 import { CheckIcon } from '@patternfly/react-icons';
@@ -285,7 +285,7 @@ class RulesTable extends Component {
                         </Filters>
                     </TableToolbar>
                     { rulesFetchStatus === 'fulfilled' &&
-                    <Table aria-label={ 'rule-table' } variant={ TableVariant.compact }
+                    <Table aria-label={ 'rule-table' }
                         actionResolver={ this.actionResolver } onCollapse={ this.handleOnCollapse } sortBy={ sortBy }
                         onSort={ this.onSort } cells={ cols } rows={ rows }>
                         <TableHeader/>
