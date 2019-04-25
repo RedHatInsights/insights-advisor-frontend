@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { debounce, flatten } from 'lodash';
 import { connect } from 'react-redux';
 import { Badge, Button, Checkbox, Pagination, Stack, StackItem } from '@patternfly/react-core';
-import { cellWidth, sortable, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
+import { cellWidth, sortable, Table, TableBody, TableHeader } from '@patternfly/react-table';
 import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 import moment from 'moment';
 import { CheckIcon } from '@patternfly/react-icons';
@@ -95,7 +95,7 @@ class RulesTable extends Component {
                                 <div key={ key }>
                                     { moment(value.created_at).fromNow() }
                                 </div>,
-                                <div className="pf-m-center" key={ key }>
+                                <div className="pf-m-center" key={ key } style={ { verticalAlign: 'top' } }>
                                     <Battery
                                         label='Total Risk'
                                         labelHidden
@@ -192,7 +192,7 @@ class RulesTable extends Component {
     handleOnCollapse = (event, rowId, isOpen) => {
         const rows = [ ...this.state.rows ];
         rows[rowId] = { ...rows[rowId], isOpen };
-        const content = isOpen ? <RuleDetails rule={ rows[rowId].rule }/> : 'Loading...';
+        const content = isOpen ? <Main className='pf-m-light'><RuleDetails rule={ rows[rowId].rule }/></Main> : 'Loading...';
 
         rows[rowId + 1] = {
             ...rows[rowId + 1], cells: [ <div key={ `child-${rowId}` }>
@@ -285,7 +285,7 @@ class RulesTable extends Component {
                         </Filters>
                     </TableToolbar>
                     { rulesFetchStatus === 'fulfilled' &&
-                    <Table aria-label={ 'rule-table' } variant={ TableVariant.compact }
+                    <Table aria-label={ 'rule-table' }
                         actionResolver={ this.actionResolver } onCollapse={ this.handleOnCollapse } sortBy={ sortBy }
                         onSort={ this.onSort } cells={ cols } rows={ rows }>
                         <TableHeader/>
