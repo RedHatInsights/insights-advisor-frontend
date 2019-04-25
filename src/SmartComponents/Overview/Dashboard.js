@@ -13,6 +13,7 @@ import Loading from '../../PresentationalComponents/Loading/Loading';
 import '../../App.scss';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { ANSIBLE_MARK_ICON, GLOBAL_ECONSYSTEM_ICON, SERVER_STACK_ICON } from '../../AppSvgs';
+import './Dashboard.scss';
 
 const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/Charts/SummaryChart/SummaryChart'));
 const OverviewDonut = asyncComponent(() => import('../../PresentationalComponents/Charts/OverviewDonut'));
@@ -51,8 +52,8 @@ class OverviewDashboard extends Component {
             </PageHeader>
             { total !== 0 ?
                 <>
-                    <Main className='pf-m-light'>
-                        <Level>
+                    <Main className='pf-m-light mainPaddingOverride'>
+                        <Level className='levelItemAlignOverride'>
                             <LevelItem>
                                 <Title size='lg' headingLevel='h3'>Rule hits by severity</Title>
                                 { statsRulesFetchStatus === 'fulfilled' && statsSystemsFetchStatus === 'fulfilled' ? (
