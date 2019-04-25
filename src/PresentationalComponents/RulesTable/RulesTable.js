@@ -93,7 +93,7 @@ class RulesTable extends Component {
                                     }
                                 </>,
                                 <div key={ key }>
-                                    { moment(value.created_at).fromNow() }
+                                    { moment(value.publish_date).fromNow() }
                                 </div>,
                                 <div className="pf-m-center" key={ key } style={ { verticalAlign: 'top' } }>
                                     <Battery
@@ -122,7 +122,7 @@ class RulesTable extends Component {
     onSort = (_event, index, direction) => {
         const { impacting, limit } = this.state;
         const attrIndex = {
-            2: 'created_at',
+            2: 'publish_date',
             3: 'total_risk',
             4: 'impacted_count',
             5: 'playbook_count'
