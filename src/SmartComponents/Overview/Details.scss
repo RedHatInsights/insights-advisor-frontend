@@ -1,0 +1,5 @@
+@import '~@red-hat-insights/insights-frontend-components/Utilities/_variables';
+
+.titlePaddingOverride{
+  padding-bottom: var(--pf-global--spacer--sm);
+}

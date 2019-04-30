@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Main, PageHeader, PageHeaderTitle, RemediationButton, routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Card, CardBody, Title } from '@patternfly/react-core';
+import { Title } from '@patternfly/react-core';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 
@@ -12,6 +12,8 @@ import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import RuleDetails from '../../PresentationalComponents/RuleDetails/RuleDetails';
+
+import './Details.scss';
 
 class OverviewDetails extends Component {
     state = {
@@ -71,22 +73,18 @@ class OverviewDetails extends Component {
                     <React.Fragment>
                         { ruleFetchStatus === 'fulfilled' && (
                             <>
-                                <Title headingLevel="h3" size="2xl"> Affected systems</Title>
-                                <Card>
-                                    <CardBody>
-                                        { systemFetchStatus === 'fulfilled' && (
+                                <Title headingLevel="h3" size="2xl" className='titlePaddingOverride'> Affected systems</Title>
+                                { systemFetchStatus === 'fulfilled' && (
 
-                                            <Inventory items={ system.host_ids }>
-                                                { rule.playbook_count > 0 && <RemediationButton
-                                                    isDisabled={ this.getSelectedItems().length === 0 }
-                                                    dataProvider={ this.remediationDataProvider }
-                                                    onRemediationCreated={ this.onRemediationCreated }
-                                                /> }
-                                            </Inventory>
-                                        ) }
-                                        { systemFetchStatus === 'pending' && (<Loading/>) }
-                                    </CardBody>
-                                </Card>
+                                    <Inventory items={ system.host_ids }>
+                                        { rule.playbook_count > 0 && <RemediationButton
+                                            isDisabled={ this.getSelectedItems().length === 0 }
+                                            dataProvider={ this.remediationDataProvider }
+                                            onRemediationCreated={ this.onRemediationCreated }
+                                        /> }
+                                    </Inventory>
+                                ) }
+                                { systemFetchStatus === 'pending' && (<Loading/>) }
                             </>
                         ) }
                         { ruleFetchStatus === 'pending' && (<Loading/>) }
