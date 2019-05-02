@@ -37,15 +37,36 @@ class Inventory extends React.Component {
 
         this.setState({
             Inventory: inventoryConnector().InventoryTable,
-            items
+            items: [ ...items.slice(0, 50) ],
+            page: 1,
+            total: items.length,
+            pageSize: 50
+        });
+    }
+
+    onRefresh = ({ page, per_page: perPage })  => {
+        const { items } = this.props;
+
+        this.setState({
+            page,
+            perPage,
+            items: [ ...items.slice(page - 1 * perPage, page * perPage) ]
         });
     }
 
     render () {
-        const { Inventory, items } = this.state;
+        const { Inventory, items, page, total, pageSize } = this.state;
 
         return (
-            <Inventory items={ items }>{ this.props.children }</Inventory>
+            <Inventory
+                items={ items }
+                onRefresh={ this.onRefresh }
+                page={ page }
+                total={ total }
+                perPage={ pageSize }
+            >
+                { this.props.children }
+            </Inventory>
         );
     }
 }
