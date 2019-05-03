@@ -50,7 +50,7 @@ class Inventory extends React.Component {
         this.setState({
             page,
             perPage,
-            items: [ ...items.slice(page - 1 * perPage, page * perPage) ]
+            items: [ ...items.slice((page - 1) * perPage, page * perPage) ]
         });
     }
 
