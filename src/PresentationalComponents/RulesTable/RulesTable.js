@@ -84,33 +84,34 @@ class RulesTable extends Component {
                             isOpen: false,
                             rule: value,
                             cells: [
-                                <>
+                                { title: <React.Fragment>
                                     { value.reports_shown ?
                                         <Link key={ key } to={ linkTo }>
                                             { value.description }
                                         </Link>
                                         : <span key={ key }> <Badge isRead>Disabled</Badge> { value.description }</span>
                                     }
-                                </>,
-                                <div key={ key }>
+                                </React.Fragment> },
+                                { title: <div key={ key }>
                                     { moment(value.publish_date).fromNow() }
-                                </div>,
-                                <div className="pf-m-center" key={ key } style={ { verticalAlign: 'top' } }>
+                                </div> },
+                                { title: <div className="pf-m-center" key={ key } style={ { verticalAlign: 'top' } }>
                                     <Battery
                                         label='Total Risk'
                                         labelHidden
                                         severity={ value.total_risk }
                                     />
-                                </div>,
-                                <div key={ key }> { value.reports_shown ? `${value.impacted_systems_count}` : 'N/A' }</div>,
-                                <div className="pf-m-center " key={ key }>
+                                </div> },
+                                { title: <div key={ key }> { value.reports_shown ? `${value.impacted_systems_count}` : 'N/A' }</div> },
+                                { title: <div className="pf-m-center " key={ key }>
                                     { value.playbook_count ? <CheckIcon className='ansibleCheck'/> : null }
-                                </div>
+                                </div> }
                             ]
                         },
                         {
                             parent,
-                            cells: [ <div key={ `child-${key}` }>{ 'Loading...' }</div> ]
+                            fullWidth: true,
+                            cells: [{ title: <div key={ `child-${key}` }>{ 'Loading...' }</div> }]
                         }
                     ];
                 });
@@ -195,9 +196,11 @@ class RulesTable extends Component {
         const content = isOpen ? <Main className='pf-m-light'><RuleDetails rule={ rows[rowId].rule }/></Main> : 'Loading...';
 
         rows[rowId + 1] = {
-            ...rows[rowId + 1], cells: [ <div key={ `child-${rowId}` }>
-                { content }
-            </div> ]
+            ...rows[rowId + 1], cells: [{
+                title: <div key={ `child-${rowId}` }>
+                    { content }
+                </div>
+            }]
         };
 
         this.setState({
