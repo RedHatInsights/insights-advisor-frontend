@@ -1,45 +1,16 @@
 /* eslint max-len: 0 */
 import React, { Component } from 'react';
-import { Battery, Shield, Reboot } from '@red-hat-insights/insights-frontend-components';
+import { Battery, Reboot, Shield } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
 import ReactMarkdown from 'react-markdown/with-html';
 
 import * as AppConstants from '../../AppConstants';
-import API from '../../Utilities/Api';
 import './_RuleDetails.scss';
 
 class RuleDetails extends Component {
-    state = {
-        kbaDetails: {},
-        kbaDetailsLoading: false
-    };
-
-    componentDidMount () {
-        this.fetchKbaDetails();
-    }
-
-    async fetchKbaDetails () {
-        if (this.props.rule.node_id) {
-            try {
-                this.setState({ kbaDetailsLoading: true });
-                const kbaDetails = (await API.get(`https://access.redhat.com/rs/search?q=id:${this.props.rule.node_id}`,
-                    { Accept: 'application/vnd.redhat.solr+json' })).data.response.docs[0];
-                this.setState({ kbaDetails });
-            } catch (error) {
-                this.props.addNotification({
-                    variant: 'danger',
-                    dismissable: true,
-                    title: '',
-                    description: 'KBA fetch failed.'
-                });
-            }
-        }
-    }
 
     ruleResolutionRisk = (rule) => {
         const resolution = rule.resolution_set.find(resolution => resolution.system_type ===
@@ -50,7 +21,6 @@ class RuleDetails extends Component {
 
     render () {
         const { children, className, rule } = this.props;
-        const { kbaDetails } = this.state;
         const resolutionRisk = this.ruleResolutionRisk(rule);
         return (
             <Grid gutter='md' className={ className }>
@@ -63,9 +33,9 @@ class RuleDetails extends Component {
                                 <ReactMarkdown source={ rule.summary } escapeHtml={ false }/>
                             }
                         </GridItem>
-                        { kbaDetails.view_uri && (
+                        { rule.node_id && (
                             <GridItem className='pf-u-pb-md'>
-                                <a rel="noopener noreferrer" target="_blank" href={ kbaDetails.view_uri }>
+                                <a rel="noopener noreferrer" target="_blank" href={ `https://access.redhat.com/node/${rule.node_id}` }>
                                     Knowledgebase Article <ExternalLinkAltIcon size='sm'/>
                                 </a>
                             </GridItem>
@@ -95,9 +65,9 @@ class RuleDetails extends Component {
                                 </div>
                             </div>
                             <p>
-                               The <strong>likelihood</strong> that this will be a problem is
+                                The <strong>likelihood</strong> that this will be a problem is
                                 { ` ${AppConstants.LIKELIHOOD_LABEL[rule.likelihood] || 'Undefined'}. ` }
-                               The <strong>impact</strong> of the problem would be
+                                The <strong>impact</strong> of the problem would be
                                 { ` ${AppConstants.IMPACT_LABEL[rule.impact.impact] || 'Undefined'} if it occurred.` }
                             </p>
                         </GridItem>
@@ -129,17 +99,12 @@ class RuleDetails extends Component {
 }
 
 RuleDetails.propTypes = {
-    addNotification: PropTypes.func,
     children: PropTypes.any,
     className: PropTypes.string,
     rule: PropTypes.object
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
-    addNotification: data => addNotification(data)
-}, dispatch);
-
 export default connect(
     null,
-    mapDispatchToProps
+    null
 )(RuleDetails);
