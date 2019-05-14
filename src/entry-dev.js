@@ -6,7 +6,7 @@ import { init } from './Store';
 import App from './App';
 import logger from 'redux-logger';
 import getBaseName from './Utilities/getBaseName';
-import { NotificationsPortal } from '@red-hat-insights/insights-frontend-components/components/Notifications';
+import { NotificationsPortal } from '@redhat-cloud-services/frontend-components-notifications';
 
 ReactDOM.render(
     <Provider store={ init(logger).getStore() }>

@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { PageHeader } from '@red-hat-insights/insights-frontend-components';
-import { PageHeaderTitle } from '@red-hat-insights/insights-frontend-components';
+import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
 import { Route, Switch } from 'react-router-dom';
 import asyncComponent from '../../Utilities/asyncComponent';
 

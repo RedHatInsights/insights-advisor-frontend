@@ -1,13 +1,14 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Battery, Main, routerParams, TableToolbar } from '@red-hat-insights/insights-frontend-components';
+import { Battery, Main, TableToolbar } from '@redhat-cloud-services/frontend-components';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import PropTypes from 'prop-types';
 import { debounce, flatten } from 'lodash';
 import { connect } from 'react-redux';
 import { Badge, Button, Checkbox, Pagination, Stack, StackItem } from '@patternfly/react-core';
 import { cellWidth, sortable, Table, TableBody, TableHeader } from '@patternfly/react-table';
-import { addNotification } from '@red-hat-insights/insights-frontend-components/components/Notifications';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import moment from 'moment';
 import { CheckIcon } from '@patternfly/react-icons';
 

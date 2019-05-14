@@ -4,11 +4,13 @@ import * as reactCore from '@patternfly/react-core';
 import * as reactIcons from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Main, PageHeader, registry as registryDecorator, routerParams } from '@red-hat-insights/insights-frontend-components';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import registryDecorator from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
+import { Main, PageHeader } from '@redhat-cloud-services/frontend-components';
 import { entitiesDetailsReducer } from '../../AppReducer';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import Loading from '../../PresentationalComponents/Loading/Loading';
-import '@red-hat-insights/insights-frontend-components/components/Advisor.css';
+import '@redhat-cloud-services/frontend-components-inventory-insights/index.css';
 
 @registryDecorator()
 class InventoryDetails extends React.Component {

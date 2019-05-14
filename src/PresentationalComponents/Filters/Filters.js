@@ -1,7 +1,8 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
 import { InputGroup, InputGroupText, TextInput, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { FilterDropdown, routerParams } from '@red-hat-insights/insights-frontend-components';
+import { FilterDropdown } from '@redhat-cloud-services/frontend-components';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { FILTER_CATEGORIES } from '../../AppConstants';
