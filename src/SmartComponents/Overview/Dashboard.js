@@ -113,7 +113,7 @@ class OverviewDashboard extends Component {
                                                 href="https://galaxy.ansible.com/redhatinsights/insights-client">Ansible</a> <br/> or
                                             <a rel="noopener noreferrer" target="_blank"
                                                 href="https://forge.puppetlabs.com/lphiri/access_insights_client"> Puppet</a></span> }>
-                                        <Button component="a" href="https://access.redhat.com/insights/getting-started/"
+                                        <Button component="a" href="https://galaxy.ansible.com/redhatinsights/insights-client"
                                             target="_blank" variant="secondary">
                                             Download Ansible Playbook
                                         </Button>
