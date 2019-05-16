@@ -4,7 +4,8 @@ import asyncComponent from '../../Utilities/asyncComponent';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Button, Level, LevelItem, Title } from '@patternfly/react-core';
-import { Main, PageHeader, PageHeaderTitle, routerParams } from '@red-hat-insights/insights-frontend-components';
+import { Main, PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { global_Color_100, global_primary_color_100 } from '@patternfly/react-tokens';
 import { ChartSpikeIcon } from '@patternfly/react-icons';
 

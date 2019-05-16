@@ -1,6 +1,6 @@
 /* eslint max-len: 0 */
 import React, { Component } from 'react';
-import { Battery, Reboot, Shield } from '@red-hat-insights/insights-frontend-components';
+import { Battery, Reboot, Shield } from '@redhat-cloud-services/frontend-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Grid, GridItem } from '@patternfly/react-core';

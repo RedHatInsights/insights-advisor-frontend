@@ -1,7 +1,7 @@
 import Immutable from 'seamless-immutable';
 import * as ActionTypes from './AppConstants';
-import { applyReducerHash } from '@red-hat-insights/insights-frontend-components/Utilities/ReducerRegistry';
-import { Advisor } from '@red-hat-insights/insights-frontend-components';
+import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
+import Advisor from '@redhat-cloud-services/frontend-components-inventory-insights';
 
 // eslint-disable-next-line new-cap
 const initialState = Immutable({

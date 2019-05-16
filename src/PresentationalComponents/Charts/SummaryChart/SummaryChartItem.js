@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Battery } from '@red-hat-insights/insights-frontend-components';
+import { Battery } from '@redhat-cloud-services/frontend-components';
 import { Split, SplitItem, StackItem } from '@patternfly/react-core';
 
 const SummaryChartItem = (props) => {

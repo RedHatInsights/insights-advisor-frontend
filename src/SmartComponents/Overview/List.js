@@ -1,6 +1,6 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
-import { PageHeader, PageHeaderTitle } from '@red-hat-insights/insights-frontend-components';
+import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
 import PropTypes from 'prop-types';
 import { capitalize } from '@patternfly/react-core';
 

@@ -1,7 +1,7 @@
 import promiseMiddleware from 'redux-promise-middleware';
 import { compose } from 'redux';
-import { getRegistry } from '@red-hat-insights/insights-frontend-components';
-import { notifications, notificationsMiddleware } from '@red-hat-insights/insights-frontend-components/components/Notifications';
+import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
+import { notifications, notificationsMiddleware } from '@redhat-cloud-services/frontend-components-notifications';
 import { AdvisorStore } from '../AppReducer';
 
 let registry;
