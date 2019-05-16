@@ -1,7 +1,7 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
-import RemediationButton from '@redhat-cloud-services/frontend-components-remediations';
+import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
 import { Main, PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
