@@ -34,7 +34,7 @@ class RulesTable extends Component {
         ],
         rows: [],
         sortBy: {},
-        sort: 'rule_id',
+        sort: '-publish_date',
         externalFilters: {},
         impacting: false,
         limit: 10,
@@ -43,10 +43,11 @@ class RulesTable extends Component {
     };
 
     async componentDidMount () {
-        const { offset, limit, reports_shown } = this.state;
+        const { offset, limit, reports_shown, sort } = this.state;
         const impacting = this.props.impacting || this.state.impacting;
         await insights.chrome.auth.getUser();
-        const options = { offset, limit, impacting, reports_shown, ...this.props.externalFilters || {}};
+        const options = { offset, limit, impacting, reports_shown, sort, ...this.props.externalFilters || {}};
+        this.onSort(null, 2, 'desc');
         this.props.fetchRules(options);
         this.setState({ impacting, externalFilters: { ...this.props.externalFilters, reports_shown }});
     }
