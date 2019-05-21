@@ -273,7 +273,7 @@ class RulesTable extends Component {
                     <p>{ this.state.summary }</p>
                 </StackItem>
                 <StackItem>
-                    <TableToolbar className='pf-u-justify-content-space-between'>
+                    <TableToolbar style={ { justifyContent: 'space-between' } }>
                         <Filters
                             fetchAction={ this.fetchAction }
                             searchPlaceholder='Find a rule...'
