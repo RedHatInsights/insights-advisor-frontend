@@ -36,19 +36,17 @@ class RulesTable extends Component {
         sortBy: {},
         sort: '-publish_date',
         externalFilters: {},
-        impacting: false,
+        impacting: true,
         limit: 10,
         offset: 0,
         reports_shown: true
     };
 
     async componentDidMount () {
-        const { offset, limit, reports_shown, sort } = this.state;
+        const { reports_shown } = this.state;
         const impacting = this.props.impacting || this.state.impacting;
         await insights.chrome.auth.getUser();
-        const options = { offset, limit, impacting, reports_shown, sort, ...this.props.externalFilters || {}};
         this.onSort(null, 2, 'desc');
-        this.props.fetchRules(options);
         this.setState({ impacting, externalFilters: { ...this.props.externalFilters, reports_shown }});
     }
 
@@ -86,28 +84,36 @@ class RulesTable extends Component {
                             isOpen: false,
                             rule: value,
                             cells: [
-                                { title: <React.Fragment>
-                                    { value.reports_shown ?
-                                        <Link key={ key } to={ linkTo }>
-                                            { value.description }
-                                        </Link>
-                                        : <span key={ key }> <Badge isRead>Disabled</Badge> { value.description }</span>
-                                    }
-                                </React.Fragment> },
-                                { title: <div key={ key }>
-                                    { moment(value.publish_date).fromNow() }
-                                </div> },
-                                { title: <div className="pf-m-center" key={ key } style={ { verticalAlign: 'top' } }>
-                                    <Battery
-                                        label='Total Risk'
-                                        labelHidden
-                                        severity={ value.total_risk }
-                                    />
-                                </div> },
+                                {
+                                    title: <React.Fragment>
+                                        { value.reports_shown ?
+                                            <Link key={ key } to={ linkTo }>
+                                                { value.description }
+                                            </Link>
+                                            : <span key={ key }> <Badge isRead>Disabled</Badge> { value.description }</span>
+                                        }
+                                    </React.Fragment>
+                                },
+                                {
+                                    title: <div key={ key }>
+                                        { moment(value.publish_date).fromNow() }
+                                    </div>
+                                },
+                                {
+                                    title: <div className="pf-m-center" key={ key } style={ { verticalAlign: 'top' } }>
+                                        <Battery
+                                            label='Total Risk'
+                                            labelHidden
+                                            severity={ value.total_risk }
+                                        />
+                                    </div>
+                                },
                                 { title: <div key={ key }> { value.reports_shown ? `${value.impacted_systems_count}` : 'N/A' }</div> },
-                                { title: <div className="pf-m-center " key={ key }>
-                                    { value.playbook_count ? <CheckIcon className='ansibleCheck'/> : null }
-                                </div> }
+                                {
+                                    title: <div className="pf-m-center " key={ key }>
+                                        { value.playbook_count ? <CheckIcon className='ansibleCheck'/> : null }
+                                    </div>
+                                }
                             ]
                         },
                         {
@@ -259,7 +265,6 @@ class RulesTable extends Component {
             offset: 0
         });
         this.props.fetchRules({ ...filters, limit, offset: 0, impacting, sort });
-
     };
 
     render () {
