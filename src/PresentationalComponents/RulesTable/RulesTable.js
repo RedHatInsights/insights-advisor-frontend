@@ -44,10 +44,9 @@ class RulesTable extends Component {
 
     async componentDidMount () {
         const { reports_shown } = this.state;
-        const impacting = this.props.impacting || this.state.impacting;
         await insights.chrome.auth.getUser();
+        this.setState({ externalFilters: { ...this.props.externalFilters, reports_shown }});
         this.onSort(null, 2, 'desc');
-        this.setState({ impacting, externalFilters: { ...this.props.externalFilters, reports_shown }});
     }
 
     componentDidUpdate (prevProps) {
@@ -323,7 +322,6 @@ RulesTable.propTypes = {
     rulesFetchStatus: PropTypes.string,
     rules: PropTypes.object,
     filters: PropTypes.object,
-    impacting: PropTypes.bool,
     externalFilters: PropTypes.object,
     addNotification: PropTypes.func,
     setFilters: PropTypes.func
