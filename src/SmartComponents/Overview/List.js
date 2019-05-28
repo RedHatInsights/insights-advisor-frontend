@@ -10,8 +10,7 @@ import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 
 class OverviewList extends Component {
     state = {
-        urlFilters: {},
-        impacting: true
+        urlFilters: {}
     };
 
     async componentDidMount () {
@@ -29,7 +28,7 @@ class OverviewList extends Component {
     };
 
     render () {
-        const { urlFilters, impacting } = this.state;
+        const { urlFilters } = this.state;
 
         return (
             <React.Fragment>
@@ -42,7 +41,7 @@ class OverviewList extends Component {
                         title={ this.parseUrlTitle(this.props.match.params.type) }
                     />
                 </PageHeader>
-                <RulesTable impacting={ impacting } externalFilters={ urlFilters }/>
+                <RulesTable externalFilters={ urlFilters }/>
             </React.Fragment>
         );
     }
