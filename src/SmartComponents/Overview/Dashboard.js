@@ -53,9 +53,9 @@ class OverviewDashboard extends Component {
             </PageHeader>
             { total !== 0 ?
                 <>
-                    <Main className='pf-m-light mainPaddingOverride ins-test'>
+                    <Main className='pf-m-light mainPaddingOverride'>
                         <Level className='levelAlignOverride'>
-                            <LevelItem className='levelItemPaddingOverride ins-test'>
+                            <LevelItem className='levelItemPaddingOverride'>
                                 <Title size='lg' headingLevel='h3'>Rule hits by severity</Title>
                                 { statsRulesFetchStatus === 'fulfilled' && statsSystemsFetchStatus === 'fulfilled' ? (
                                     <SummaryChart rulesTotalRisk={ statsRules.total_risk } reportsTotalRisk={ statsSystems.total_risk }/>
