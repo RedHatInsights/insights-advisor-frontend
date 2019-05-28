@@ -53,7 +53,7 @@ class OverviewDashboard extends Component {
             </PageHeader>
             { total !== 0 ?
                 <>
-                    <Main className='pf-m-light mainPaddingOverride'>
+                    <Main className='pf-m-light mainPaddingOverride ins-test'>
                         <Level className='levelAlignOverride'>
                             <LevelItem className='levelItemPaddingOverride'>
                                 <Title size='lg' headingLevel='h3'>Rule hits by severity</Title>
