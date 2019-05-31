@@ -44,8 +44,8 @@ plugins.push(SourceMapsPlugin);
  * Cleans distribution folder.
  * @type {[type]}
  */
-const CleanWebpackPlugin = new (require('clean-webpack-plugin'));
-plugins.push(CleanWebpackPlugin);
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+plugins.push(new CleanWebpackPlugin());
 
 /**
  * Selects the specific lodash functions.
