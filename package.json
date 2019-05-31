@@ -17,10 +17,10 @@
     "@patternfly/react-table": "2.5.11",
     "@patternfly/react-tokens": "2.5.1",
     "@redhat-cloud-services/frontend-components": "0.0.5",
-    "@redhat-cloud-services/frontend-components-inventory-insights": "0.1.0",
+    "@redhat-cloud-services/frontend-components-inventory-insights": "0.1.1",
     "@redhat-cloud-services/frontend-components-notifications": "0.0.5",
     "@redhat-cloud-services/frontend-components-remediations": "0.0.3",
-    "@redhat-cloud-services/frontend-components-utilities": "0.0.6",
+    "@redhat-cloud-services/frontend-components-utilities": "0.0.7",
     "classnames": "2.2.6",
     "create-react-class": "15.6.3",
     "lodash": "4.17.11"
