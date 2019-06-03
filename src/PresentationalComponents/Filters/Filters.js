@@ -1,6 +1,6 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
-import { InputGroup, InputGroupText, TextInput, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { Button, ButtonVariant, InputGroup, TextInput, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { FilterDropdown } from '@redhat-cloud-services/frontend-components';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { connect } from 'react-redux';
@@ -69,15 +69,13 @@ class Filters extends Component {
                 <ToolbarGroup>
                     <ToolbarItem className='pf-u-mr-xl'>
                         <InputGroup>
-                            <TextInput
-                                aria-label='Search'
-                                onChange={ this.changeSearchValue }
-                                type='search'
-                                value={ undefined }
-                                placeholder={ searchPlaceholder }/>
-                            <InputGroupText style={ { borderLeft: 0 } }>
+                            <TextInput name='search-input' aria-label='Search'
+                                id='insights-search-input' type='search' value={ undefined }
+                                placeholder={ searchPlaceholder } onChange={ this.changeSearchValue }
+                            />
+                            <Button variant={ ButtonVariant.tertiary } aria-label='search button for search input'>
                                 <SearchIcon/>
-                            </InputGroupText>
+                            </Button>
                         </InputGroup>
                     </ToolbarItem>
                     <ToolbarItem className='pf-u-mr-md'>
