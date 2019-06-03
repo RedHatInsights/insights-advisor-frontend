@@ -1,18 +1,8 @@
-.chart-container{
-  height: 200px !important;
-  .VictoryContainer {
-    left: -12px;
-    top: -36px;
-  }
+.donut-chart-container{
+  height:200px;
+  width: 200px;
 }
 
-.chart-inline {
-  svg:not(:root) {
-    overflow: visible; }
-    .pf-l-grid {
-      width: 400px;
-      .pf-l-grid__item {
-        width: 200px;
-      }
-    }
+.donut-chart-inline{
+  display: inline-flex;
 }
