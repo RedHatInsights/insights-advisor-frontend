@@ -26,7 +26,7 @@ class RulesTable extends Component {
     state = {
         summary: '',
         cols: [
-            'Rule',
+            { title: 'Rule', transforms: [ sortable ]},
             { title: 'Added', transforms: [ sortable, cellWidth(15) ]},
             { title: 'Total Risk', transforms: [ sortable ]},
             { title: 'Systems', transforms: [ sortable ]},
@@ -76,7 +76,6 @@ class RulesTable extends Component {
                 });
             } else {
                 let rows = rules.map((value, key) => {
-                    const parent = key * 2;
                     const linkTo = `/overview/${value.category.name.toLowerCase()}/${value.rule_id}`;
                     return [
                         {
@@ -116,9 +115,9 @@ class RulesTable extends Component {
                             ]
                         },
                         {
-                            parent,
+                            parent: key * 2,
                             fullWidth: true,
-                            cells: [{ title: <div key={ `child-${key}` }>{ 'Loading...' }</div> }]
+                            cells: [{ title: <Main className='pf-m-light'> <RuleDetails rule={ value }/></Main> }]
                         }
                     ];
                 });
@@ -130,6 +129,7 @@ class RulesTable extends Component {
     onSort = (_event, index, direction) => {
         const { impacting, limit } = this.state;
         const attrIndex = {
+            1: 'description',
             2: 'publish_date',
             3: 'total_risk',
             4: 'impacted_count',
@@ -200,19 +200,7 @@ class RulesTable extends Component {
     handleOnCollapse = (event, rowId, isOpen) => {
         const rows = [ ...this.state.rows ];
         rows[rowId] = { ...rows[rowId], isOpen };
-        const content = isOpen ? <Main className='pf-m-light'><RuleDetails rule={ rows[rowId].rule }/></Main> : 'Loading...';
-
-        rows[rowId + 1] = {
-            ...rows[rowId + 1], cells: [{
-                title: <div key={ `child-${rowId}` }>
-                    { content }
-                </div>
-            }]
-        };
-
-        this.setState({
-            rows
-        });
+        this.setState({ rows });
     };
 
     hideReports = async (rowId) => {
