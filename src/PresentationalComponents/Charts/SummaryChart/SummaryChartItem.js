@@ -15,7 +15,7 @@ const SummaryChartItem = (props) => {
                     { returnLink(<Battery label={ riskName } severity={ name.toLowerCase() } labelHidden={ true }/>) }
                 </SplitItem>
                 <SplitItem className='pf-u-text-align-right pf-u-pl-sm' >
-                    { returnLink(`${numIssues} ${name} affecting ${props.affectedSystems} systems`) }
+                    { returnLink(`${numIssues} ${name} affecting ${props.affectedSystems.toLocaleString()} systems`) }
                 </SplitItem>
             </Split>
         </StackItem>
