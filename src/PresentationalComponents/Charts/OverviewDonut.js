@@ -70,7 +70,7 @@ class AdvisorOverviewDonut extends React.Component {
                     responsive={ false }
                     themeColor={ ChartThemeColor.multi }
                     themeVariant={ ChartThemeVariant.light }
-                />;
+                />
             </div>
             : <p style={ { marginTop: 18 } }>{ `Your connected systems have no categorized rule hits.` }</p>
         }</>;

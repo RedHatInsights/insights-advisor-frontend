@@ -106,7 +106,9 @@ class RulesTable extends Component {
                                         />
                                     </div>
                                 },
-                                { title: <div key={ key }> { value.reports_shown ? `${value.impacted_systems_count}` : 'N/A' }</div> },
+                                { title: <div key={ key }> { value.reports_shown ?
+                                    `${value.impacted_systems_count.toLocaleString()}`
+                                    : 'N/A' }</div> },
                                 {
                                     title: <div className="pf-m-center " key={ key }>
                                         { value.playbook_count ? <CheckIcon className='ansibleCheck'/> : null }
