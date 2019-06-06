@@ -10,3 +10,4 @@ module.exports = {
     ...webpackConfig,
     plugins
 };
+
