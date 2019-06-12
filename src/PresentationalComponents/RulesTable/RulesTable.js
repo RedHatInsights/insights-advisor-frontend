@@ -281,6 +281,13 @@ class RulesTable extends Component {
                                 aria-label="InsightsRulesHideHits"
                                 id="InsightsRulesHideHits"
                             />
+                            <Pagination
+                                itemCount={ results }
+                                onPerPageSelect={ this.onPerPageSelect }
+                                onSetPage={ this.onSetPage }
+                                page={ page }
+                                perPage={ limit }
+                            />
                         </Filters>
                     </TableToolbar>
                     { rulesFetchStatus === 'fulfilled' &&
