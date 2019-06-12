@@ -63,7 +63,9 @@ class Filters extends Component {
     };
 
     render () {
-        const { children, searchPlaceholder, filters, hideCategories, results } = this.props;
+        const { children, searchPlaceholder, filters, hideCategories } = this.props;
+        const previousChildren = React.Children.toArray(children);
+        const lastChild = previousChildren.pop();
         return (
             <>
                 <ToolbarGroup>
@@ -88,12 +90,12 @@ class Filters extends Component {
                         />
                     </ToolbarItem>
                     <ToolbarItem>
-                        { children }
+                        { React.Children.map(previousChildren, child => <ToolbarItem> { child } </ToolbarItem>) }
                     </ToolbarItem>
                 </ToolbarGroup>
                 <ToolbarGroup>
                     <ToolbarItem>
-                        { results === 1 ? `${results} rule` : `${results} rules` }
+                        { lastChild }
                     </ToolbarItem>
                 </ToolbarGroup>
             </>
