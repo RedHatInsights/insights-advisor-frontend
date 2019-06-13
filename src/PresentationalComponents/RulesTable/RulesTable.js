@@ -35,18 +35,15 @@ class RulesTable extends Component {
         rows: [],
         sortBy: {},
         sort: '-publish_date',
-        externalFilters: {},
-        impacting: true,
+        impacting: this.props.filters.impacting,
         limit: 10,
         offset: 0,
-        reports_shown: true,
+        reports_shown: this.props.filters.reports_shown,
         isKebabOpen: false
     };
 
     async componentDidMount () {
-        const { reports_shown } = this.state;
         await insights.chrome.auth.getUser();
-        this.setState({ externalFilters: { ...this.props.externalFilters, reports_shown }});
         this.onSort(null, 2, 'desc');
     }
 
@@ -191,14 +188,15 @@ class RulesTable extends Component {
         return parsedTitle.length > 1 ? `${parsedTitle[0]} ${parsedTitle[1]} Actions` : `${parsedTitle}`;
     };
 
-    toggleRulesWithHits = (showRulesWithHits) => {
+    toggleRulesWithHits = (impacting) => {
         const { limit } = this.state;
-        this.setState({ impacting: showRulesWithHits, offset: 0 });
+        this.props.setFilters({ ...this.props.filters, impacting });
+        this.setState({ impacting, offset: 0 });
         this.props.fetchRules({
             ...this.props.filters,
             offset: 0,
             limit,
-            impacting: showRulesWithHits
+            impacting
         });
     };
 
@@ -274,7 +272,7 @@ class RulesTable extends Component {
 
     render () {
         const { rulesFetchStatus, rules } = this.props;
-        const { externalFilters, offset, limit, impacting, sortBy, cols, rows, isKebabOpen } = this.state;
+        const { offset, limit, impacting, sortBy, cols, rows, isKebabOpen } = this.state;
         const page = offset / limit + 1;
         const results = rules.meta ? rules.meta.count : 0;
         return <Main>
@@ -287,7 +285,6 @@ class RulesTable extends Component {
                         <Filters
                             fetchAction={ this.fetchAction }
                             searchPlaceholder='Find a rule...'
-                            externalFilters={ externalFilters }
                             results={ results }
                         >
                             <Dropdown
@@ -350,10 +347,9 @@ RulesTable.propTypes = {
     rulesFetchStatus: PropTypes.string,
     rules: PropTypes.object,
     filters: PropTypes.object,
-    externalFilters: PropTypes.object,
     addNotification: PropTypes.func,
-    setFilters: PropTypes.func
-
+    setFilters: PropTypes.func,
+    history: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({

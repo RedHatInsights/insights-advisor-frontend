@@ -13,16 +13,6 @@ import { SearchIcon } from '@patternfly/react-icons';
 import FilterChips from './FilterChips';
 
 class Filters extends Component {
-    componentWillUnmount () {
-        this.props.setFilters({});
-    }
-
-    componentDidUpdate (prevProps) {
-        if (this.props.externalFilters !== prevProps.externalFilters) {
-            this.props.setFilters(this.props.externalFilters);
-        }
-    }
-
     changeSearchValue = debounce(
         value => {
             const filter = { ...this.props.filters };
@@ -64,7 +54,7 @@ class Filters extends Component {
     };
 
     removeAllFilters = () => {
-        const defaultFilters = { reports_shown: true };
+        const defaultFilters = { impacting: true, reports_shown: true };
         this.props.setFilters(defaultFilters);
         this.props.fetchAction(defaultFilters);
     };
@@ -124,7 +114,6 @@ Filters.propTypes = {
     filters: PropTypes.object,
     setFilters: PropTypes.func,
     fetchAction: PropTypes.func,
-    externalFilters: PropTypes.object,
     results: PropTypes.number
 };
 

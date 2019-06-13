@@ -6,8 +6,10 @@ import { FILTER_CATEGORIES } from '../../AppConstants';
 class FilterChips extends Component {
     render () {
         const { filters } = this.props;
-        const prunedFilters = Object.entries(filters);
-        prunedFilters.shift();
+        const localFilters = { ...filters };
+        delete localFilters.impacting;
+        delete localFilters.reports_shown;
+        const prunedFilters = Object.entries(localFilters);
 
         return prunedFilters.length > 0 &&
             <>

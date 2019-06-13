@@ -1,16 +1,27 @@
+/* eslint camelcase: 0 */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
 import { ChartDonut, ChartLegend, ChartThemeColor, ChartThemeVariant } from '@patternfly/react-charts';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import { connect } from 'react-redux';
 
 import './OverviewDonut.scss';
+import * as AppActions from '../../AppActions';
+import { RULE_CATEGORIES } from '../../AppConstants';
 
-class AdvisorOverviewDonut extends React.Component {
+class OverviewDonut extends React.Component {
+    setFilters = category => {
+        const categoryNum = `${RULE_CATEGORIES[category]}`;
+        this.props.setFilters({ category: categoryNum, reports_shown: true, impacting: true });
+    };
+
     legendClick = () => {
         return [{
             target: 'labels',
             mutation: (props) => {
-                this.props.history.push(`/overview/${props.datum.name.split(' ')[0].toLowerCase()}`);
+                const category = props.datum.name.split(' ')[0].toLowerCase();
+                this.setFilters(category);
+                this.props.history.push(`/overview/${category}`);
             }
         }];
     };
@@ -33,8 +44,10 @@ class AdvisorOverviewDonut extends React.Component {
                                     return [
                                         {
                                             target: 'data',
-                                            mutation: (props) => {
-                                                this.props.history.push(`/overview/${props.datum.xName.toLowerCase()}`);
+                                            mutation: props => {
+                                                const category = props.datum.xName.toLowerCase();
+                                                this.setFilters(category);
+                                                this.props.history.push(`/overview/${category}`);
                                             }
                                         }
                                     ];
@@ -77,15 +90,23 @@ class AdvisorOverviewDonut extends React.Component {
     }
 }
 
-AdvisorOverviewDonut.propTypes = {
+OverviewDonut.propTypes = {
     className: PropTypes.string,
     category: PropTypes.array,
-    history: PropTypes.object
+    history: PropTypes.object,
+    setFilters: PropTypes.func
 
 };
 
-AdvisorOverviewDonut.defaultProps = {
+OverviewDonut.defaultProps = {
     category: []
 };
 
-export default withRouter(AdvisorOverviewDonut);
+const mapDispatchToProps = dispatch => ({
+    setFilters: (filters) => dispatch(AppActions.setFilters(filters))
+});
+
+export default routerParams(connect(
+    null,
+    mapDispatchToProps
+)(OverviewDonut));
