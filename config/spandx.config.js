@@ -1,5 +1,5 @@
 /* global exports */
-const host = `https://ci.cloud.paas.upshift.redhat.com`;
+const host = `https://ci.cloud.paas.psi.redhat.com`;
 const localhost = (process.env.PLATFORM === 'linux') ? 'localhost' : 'host.docker.internal';
 
 exports.routes = {
