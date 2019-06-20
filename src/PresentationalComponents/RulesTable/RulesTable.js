@@ -261,7 +261,7 @@ class RulesTable extends Component {
 
     onKebabSelect = async (event) => {
         try {
-            await API.get(`${BASE_URL}/export/hosts_and_rules/`, { data: event.target.value });
+            await API.get(`${BASE_URL}/export/hits.${event.target.value}/`);
         } catch (error) {
             this.props.addNotification({
                 variant: 'danger',
