@@ -259,6 +259,7 @@ class RulesTable extends Component {
 
     onKebabSelect = async (event) => {
         try {
+            this.setState({ isKebabOpen: false });
             await API.get(`${BASE_URL}/export/hits.${event.target.value}/`);
         } catch (error) {
             this.props.addNotification({
