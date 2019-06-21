@@ -1,6 +1,6 @@
 /* eslint camelcase: 0 */
 import React, { Component } from 'react';
-import { Button, ButtonVariant, InputGroup, TextInput, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { Button, ButtonVariant, InputGroup, TextInput, ToolbarGroup, ToolbarItem, ToolbarSection } from '@patternfly/react-core';
 import { FilterDropdown } from '@redhat-cloud-services/frontend-components';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { connect } from 'react-redux';
@@ -10,6 +10,7 @@ import * as AppActions from '../../AppActions';
 import PropTypes from 'prop-types';
 import debounce from 'lodash/debounce';
 import { SearchIcon } from '@patternfly/react-icons';
+import FilterChips from './FilterChips';
 
 class Filters extends Component {
     componentWillUnmount () {
@@ -62,10 +63,17 @@ class Filters extends Component {
         }
     };
 
+    removeAllFilters = () => {
+        const defaultFilters = { reports_shown: true };
+        this.props.setFilters(defaultFilters);
+        this.props.fetchAction(defaultFilters);
+    };
+
     render () {
         const { children, searchPlaceholder, filters, hideCategories } = this.props;
         const previousChildren = React.Children.toArray(children);
         const lastChild = previousChildren.pop();
+
         return (
             <>
                 <ToolbarGroup>
@@ -96,6 +104,14 @@ class Filters extends Component {
                         { lastChild }
                     </ToolbarItem>
                 </ToolbarGroup>
+                <ToolbarSection aria-label="Filter Chips Section">
+                    <ToolbarGroup>
+                        <ToolbarItem>
+                            <FilterChips filters={ filters } fetchAction={ this.props.fetchAction } removeFilter={ this.removeFilter }
+                                removeAllFilters={ this.removeAllFilters }/>
+                        </ToolbarItem>
+                    </ToolbarGroup>
+                </ToolbarSection>
             </>
         );
     }
