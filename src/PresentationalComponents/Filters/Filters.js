@@ -97,9 +97,7 @@ class Filters extends Component {
                             filterCategories={ FILTER_CATEGORIES }
                         />
                     </ToolbarItem>
-                    <ToolbarItem>
-                        { React.Children.map(previousChildren, child => <ToolbarItem> { child } </ToolbarItem>) }
-                    </ToolbarItem>
+                    { React.Children.map(previousChildren, child => <ToolbarItem> { child } </ToolbarItem>) }
                 </ToolbarGroup>
                 <ToolbarGroup>
                     <ToolbarItem>

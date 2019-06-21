@@ -6,7 +6,7 @@ import routerParams from '@redhat-cloud-services/frontend-components-utilities/f
 import PropTypes from 'prop-types';
 import { debounce, flatten } from 'lodash';
 import { connect } from 'react-redux';
-import { Badge, Button, Checkbox, Pagination, Stack, StackItem } from '@patternfly/react-core';
+import { Badge, Button, Checkbox, Dropdown, DropdownItem, DropdownPosition, KebabToggle, Pagination, Stack, StackItem } from '@patternfly/react-core';
 import { cellWidth, sortable, Table, TableBody, TableHeader } from '@patternfly/react-table';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import moment from 'moment';
@@ -39,7 +39,8 @@ class RulesTable extends Component {
         impacting: true,
         limit: 10,
         offset: 0,
-        reports_shown: true
+        reports_shown: true,
+        isKebabOpen: false
     };
 
     async componentDidMount () {
@@ -258,9 +259,22 @@ class RulesTable extends Component {
         this.props.fetchRules({ ...filters, limit, offset: 0, impacting, sort });
     };
 
+    onKebabSelect = async (event) => {
+        try {
+            await API.get(`${BASE_URL}/export/hits.${event.target.value}/`);
+        } catch (error) {
+            this.props.addNotification({
+                variant: 'danger',
+                dismissable: true,
+                title: 'Data export failed',
+                description: ``
+            });
+        }
+    };
+
     render () {
         const { rulesFetchStatus, rules } = this.props;
-        const { externalFilters, offset, limit, impacting, sortBy, cols, rows } = this.state;
+        const { externalFilters, offset, limit, impacting, sortBy, cols, rows, isKebabOpen } = this.state;
         const page = offset / limit + 1;
         const results = rules.meta ? rules.meta.count : 0;
         return <Main>
@@ -276,6 +290,21 @@ class RulesTable extends Component {
                             externalFilters={ externalFilters }
                             results={ results }
                         >
+                            <Dropdown
+                                onSelect={ this.onKebabSelect }
+                                position={ DropdownPosition.left }
+                                toggle={ <KebabToggle onToggle={ isOpen => {this.setState({ isKebabOpen: isOpen });} }/> }
+                                isOpen={ isKebabOpen }
+                                isPlain
+                                dropdownItems={ [
+                                    <DropdownItem value='json' component="button" key="export json" aria-label='export data json'>
+                                        Export as JSON
+                                    </DropdownItem>,
+                                    <DropdownItem value='csv' component="button" key="export csv" aria-label='export data csv'>
+                                        Export as CSV
+                                    </DropdownItem>
+                                ] }
+                            />
                             <Checkbox
                                 label="Show Rules With Hits"
                                 isChecked={ impacting }
