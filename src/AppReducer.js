@@ -1,3 +1,4 @@
+/* eslint camelcase: 0 */
 import Immutable from 'seamless-immutable';
 import * as ActionTypes from './AppConstants';
 import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
@@ -18,7 +19,7 @@ const initialState = Immutable({
     systemtype: {},
     systemtypeFetchStatus: '',
     breadcrumbs: [],
-    filters: {}
+    filters: { impacting: true, reports_shown: true }
 });
 
 export const AdvisorStore = (state = initialState, action) => {

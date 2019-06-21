@@ -5,31 +5,15 @@ import PropTypes from 'prop-types';
 import { capitalize } from '@patternfly/react-core';
 
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
-import { RULE_CATEGORIES, SEVERITY_MAP } from '../../AppConstants';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 
 class OverviewList extends Component {
-    state = {
-        urlFilters: {}
-    };
-
-    async componentDidMount () {
-        if (this.props.match.params.type.includes('-risk')) {
-            const totalRisk = SEVERITY_MAP[this.props.match.params.type];
-            this.setState({ urlFilters: { total_risk: `${totalRisk}` }});
-        } else {
-            this.setState({ urlFilters: { category: `${RULE_CATEGORIES[this.props.match.params.type]}` }});
-        }
-    }
-
     parseUrlTitle = (title = '') => {
         const parsedTitle = title.split('-');
         return parsedTitle.length > 1 ? `${capitalize(parsedTitle[0])} ${capitalize(parsedTitle[1])} Actions` : `${capitalize(parsedTitle[0])}`;
     };
 
     render () {
-        const { urlFilters } = this.state;
-
         return (
             <React.Fragment>
                 <PageHeader>
@@ -41,7 +25,7 @@ class OverviewList extends Component {
                         title={ this.parseUrlTitle(this.props.match.params.type) }
                     />
                 </PageHeader>
-                <RulesTable externalFilters={ urlFilters }/>
+                <RulesTable/>
             </React.Fragment>
         );
     }
