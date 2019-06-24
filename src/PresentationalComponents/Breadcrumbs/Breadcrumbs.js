@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
@@ -7,35 +7,15 @@ import * as AppActions from '../../AppActions';
 import PropTypes from 'prop-types';
 import './_breadcrumbs.scss';
 
-class Breadcrumbs extends React.Component {
-    state = {
-        items: [],
-        ruleDescriptionLoaded: false
-    };
-
-    componentDidMount () {
-        if (this.props.match.params.inventoryId !== undefined) {
-            this.props.fetchRule({ rule_id: this.props.match.params.id }); // eslint-disable-line camelcase
-        } else {
-            this.buildBreadcrumbs();
-        }
-    }
-
-    componentDidUpdate () {
-        if (this.props.ruleFetchStatus === 'fulfilled' && !this.state.ruleDescriptionLoaded) {
-            this.setState({ ruleDescriptionLoaded: true });
-            this.buildBreadcrumbs();
-        }
-    }
-
-    getReadableType = (type) => (
+const Breadcrumbs = (props) => {
+    const [ items, setItems ] = useState([]);
+    const [ ruleDescriptionLoaded, setRuleDescription ] = useState(false);
+    const getReadableType = (type) => (
         type.indexOf('-') > -1 ? `${type.replace('-', ' ')} Overview` : type
     );
-
-    buildBreadcrumbs () {
-        const { breadcrumbs, match } = this.props;
+    const { breadcrumbs, current, fetchRule, match, ruleFetchStatus, rule } = props;
+    const buildBreadcrumbs = useCallback(() => {
         let crumbs = [];
-
         // add overview/rules base breadcrumb
         if (match.params.type !== undefined) {
             if (breadcrumbs[0] !== undefined) {
@@ -48,7 +28,7 @@ class Breadcrumbs extends React.Component {
 
         // add :type breadcrumb (exception: Rules based breadcrumbs)
         if (match.params.type !== undefined && match.params.id !== undefined && crumbs[0].title !== 'Rules') {
-            const title = this.getReadableType(match.params.type);
+            const title = getReadableType(match.params.type);
             crumbs.push({
                 title,
                 navigate: `${crumbs[0].navigate}/${match.params.type}`
@@ -57,7 +37,7 @@ class Breadcrumbs extends React.Component {
 
         // add :id breadcrumb
         if (match.params.id !== undefined && match.params.inventoryId !== undefined) {
-            const title = this.props.rule.description;
+            const title = rule.description;
             if (crumbs[1] !== undefined) {
                 crumbs.push({
                     title,
@@ -72,29 +52,40 @@ class Breadcrumbs extends React.Component {
             }
         }
 
-        this.setState({ items: crumbs });
-    }
+        setItems(crumbs);
+    }, [ breadcrumbs, match.params.id, match.params.inventoryId, match.params.type, match.url, rule.description ]);
 
-    render () {
-        const { ruleFetchStatus } = this.props;
-        const { items } = this.state;
-        return (
-            <React.Fragment>
-                { (ruleFetchStatus === 'fulfilled' || items.length > 0) && (
-                    <Breadcrumb>
-                        { items.map((oneLink, key) => (
-                            <BreadcrumbItem key={ key }>
-                                <Link to={ oneLink.navigate }>{ oneLink.title }</Link>
-                            </BreadcrumbItem>
-                        )) }
-                        <BreadcrumbItem isActive>{ this.props.current }</BreadcrumbItem>
-                    </Breadcrumb>
-                ) }
-                { ruleFetchStatus === 'pending' && ('Loading...') }
-            </React.Fragment>
-        );
-    }
-}
+    useEffect(() => {
+        if (match.params.inventoryId !== undefined) {
+            fetchRule({ rule_id: match.params.id }); // eslint-disable-line camelcase
+        } else {
+            buildBreadcrumbs();
+        }
+    }, [ buildBreadcrumbs, fetchRule, match.params.id, match.params.inventoryId ]);
+
+    useEffect(() => {
+        if (ruleFetchStatus === 'fulfilled' && !ruleDescriptionLoaded) {
+            setRuleDescription(true);
+            buildBreadcrumbs();
+        }
+    }, [ buildBreadcrumbs, ruleFetchStatus, ruleDescriptionLoaded ]);
+
+    return (
+        <React.Fragment>
+            { (ruleFetchStatus === 'fulfilled' || items.length > 0) && (
+                <Breadcrumb>
+                    { items.map((oneLink, key) => (
+                        <BreadcrumbItem key={ key }>
+                            <Link to={ oneLink.navigate }>{ oneLink.title }</Link>
+                        </BreadcrumbItem>
+                    )) }
+                    <BreadcrumbItem isActive>{ current }</BreadcrumbItem>
+                </Breadcrumb>
+            ) }
+            { ruleFetchStatus === 'pending' && ('Loading...') }
+        </React.Fragment>
+    );
+};
 
 Breadcrumbs.propTypes = {
     breadcrumbs: PropTypes.arrayOf(Object),
