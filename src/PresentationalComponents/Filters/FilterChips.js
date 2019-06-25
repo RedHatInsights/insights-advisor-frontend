@@ -7,6 +7,7 @@ class FilterChips extends Component {
     render () {
         const { filters } = this.props;
         const localFilters = { ...filters };
+        delete localFilters.text;
         delete localFilters.impacting;
         delete localFilters.reports_shown;
         const prunedFilters = Object.entries(localFilters);
