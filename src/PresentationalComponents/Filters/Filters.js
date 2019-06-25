@@ -1,5 +1,5 @@
 /* eslint camelcase: 0 */
-import React, { Component } from 'react';
+import React from 'react';
 import { Button, ButtonVariant, InputGroup, TextInput, ToolbarGroup, ToolbarItem, ToolbarSection } from '@patternfly/react-core';
 import { FilterDropdown } from '@redhat-cloud-services/frontend-components';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
@@ -12,100 +12,96 @@ import debounce from 'lodash/debounce';
 import { SearchIcon } from '@patternfly/react-icons';
 import FilterChips from './FilterChips';
 
-class Filters extends Component {
-    changeSearchValue = debounce(
+const Filters = (props) => {
+    const changeSearchValue = debounce(
         value => {
-            const filter = { ...this.props.filters };
+            const filter = { ...props.filters };
             const text = value.length ? { text: value } : {};
             delete filter.text;
-            this.props.setFilters({ ...filter, ...text });
-            this.props.fetchAction({ ...filter, ...text });
+            props.setFilters({ ...filter, ...text });
+            props.fetchAction({ ...filter, ...text });
         },
         800
     );
 
-    addFilter = (param, value, type) => {
+    const addFilter = (param, value, type) => {
         let newFilter;
         switch (type) {
             case 'checkbox':
-                newFilter = this.props.filters[param] ? { [param]: `${this.props.filters[param]},${value}` } : { [param]: value };
+                newFilter = props.filters[param] ? { [param]: `${props.filters[param]},${value}` } : { [param]: value };
                 break;
             case 'radio':
                 newFilter = { [param]: value };
                 break;
         }
 
-        this.props.setFilters({ ...this.props.filters, ...newFilter });
-        this.props.fetchAction({ ...this.props.filters, ...newFilter });
+        props.setFilters({ ...props.filters, ...newFilter });
+        props.fetchAction({ ...props.filters, ...newFilter });
     };
 
-    removeFilter = (key, value) => {
-        const newFilter = { [key]: this.props.filters[key].split(',').filter(item => Number(item) !== Number(value)).join(',') };
+    const removeFilter = (key, value) => {
+        const newFilter = { [key]: props.filters[key].split(',').filter(item => Number(item) !== Number(value)).join(',') };
 
         if (newFilter[key].length) {
-            this.props.setFilters({ ...this.props.filters, ...newFilter });
-            this.props.fetchAction({ ...this.props.filters, ...newFilter });
+            props.setFilters({ ...props.filters, ...newFilter });
+            props.fetchAction({ ...props.filters, ...newFilter });
         } else {
-            const filter = { ...this.props.filters };
+            const filter = { ...props.filters };
             delete filter[key];
-            this.props.setFilters(filter);
-            this.props.fetchAction(filter);
+            props.setFilters(filter);
+            props.fetchAction(filter);
         }
     };
 
-    removeAllFilters = () => {
+    const removeAllFilters = () => {
         const defaultFilters = { impacting: true, reports_shown: true };
-        this.props.setFilters(defaultFilters);
-        this.props.fetchAction(defaultFilters);
+        props.setFilters(defaultFilters);
+        props.fetchAction(defaultFilters);
     };
 
-    render () {
-        const { children, searchPlaceholder, filters, hideCategories } = this.props;
-        const previousChildren = React.Children.toArray(children);
-        const lastChild = previousChildren.pop();
+    const { children, searchPlaceholder, filters, hideCategories } = props;
+    const previousChildren = React.Children.toArray(children);
+    const lastChild = previousChildren.pop();
 
-        return (
-            <>
-                <ToolbarGroup>
-                    <ToolbarItem className='pf-u-mr-xl'>
-                        <InputGroup>
-                            <TextInput name='search-input' aria-label='Search'
-                                id='insights-search-input' type='search' value={ undefined }
-                                placeholder={ searchPlaceholder } onChange={ this.changeSearchValue }
-                            />
-                            <Button variant={ ButtonVariant.tertiary } aria-label='search button for search input'>
-                                <SearchIcon/>
-                            </Button>
-                        </InputGroup>
-                    </ToolbarItem>
-                    <ToolbarItem className='pf-u-mr-md'>
-                        <FilterDropdown
-                            filters={ filters }
-                            addFilter={ this.addFilter }
-                            removeFilter={ this.removeFilter }
-                            hideCategories={ hideCategories }
-                            filterCategories={ FILTER_CATEGORIES }
-                        />
-                    </ToolbarItem>
-                    { React.Children.map(previousChildren, child => <ToolbarItem> { child } </ToolbarItem>) }
-                </ToolbarGroup>
-                <ToolbarGroup>
-                    <ToolbarItem>
-                        { lastChild }
-                    </ToolbarItem>
-                </ToolbarGroup>
-                <ToolbarSection aria-label="Filter Chips Section">
-                    <ToolbarGroup>
-                        <ToolbarItem>
-                            <FilterChips filters={ filters } fetchAction={ this.props.fetchAction } removeFilter={ this.removeFilter }
-                                removeAllFilters={ this.removeAllFilters }/>
-                        </ToolbarItem>
-                    </ToolbarGroup>
-                </ToolbarSection>
-            </>
-        );
-    }
-}
+    return <>
+        <ToolbarGroup>
+            <ToolbarItem className='pf-u-mr-xl'>
+                <InputGroup>
+                    <TextInput name='search-input' aria-label='Search'
+                        id='insights-search-input' type='search' value={ undefined }
+                        placeholder={ searchPlaceholder } onChange={ changeSearchValue }
+                    />
+                    <Button variant={ ButtonVariant.tertiary } aria-label='search button for search input'>
+                        <SearchIcon/>
+                    </Button>
+                </InputGroup>
+            </ToolbarItem>
+            <ToolbarItem className='pf-u-mr-md'>
+                <FilterDropdown
+                    filters={ filters }
+                    addFilter={ addFilter }
+                    removeFilter={ removeFilter }
+                    hideCategories={ hideCategories }
+                    filterCategories={ FILTER_CATEGORIES }
+                />
+            </ToolbarItem>
+            { React.Children.map(previousChildren, child => <ToolbarItem> { child } </ToolbarItem>) }
+        </ToolbarGroup>
+        <ToolbarGroup>
+            <ToolbarItem>
+                { lastChild }
+            </ToolbarItem>
+        </ToolbarGroup>
+        <ToolbarSection aria-label="Filter Chips Section">
+            <ToolbarGroup>
+                <ToolbarItem>
+                    <FilterChips filters={ filters } fetchAction={ props.fetchAction } removeFilter={ removeFilter }
+                        removeAllFilters={ removeAllFilters }/>
+                </ToolbarItem>
+            </ToolbarGroup>
+        </ToolbarSection>
+    </>;
+};
 
 Filters.propTypes = {
     children: PropTypes.any,
