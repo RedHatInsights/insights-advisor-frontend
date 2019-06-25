@@ -5,6 +5,8 @@ settings:
 env:
   browser: true
   es6: true
+plugins:
+  - 'react-hooks'
 extends:
   - 'eslint:recommended'
   - 'prettier'
@@ -57,8 +59,8 @@ rules:
     - children: true
     - allowMultiline: false
     - spacing:
-      - objectLiterals:
-        - never
+        - objectLiterals:
+            - never
   key-spacing: 2
   keyword-spacing: 2
   linebreak-style:
@@ -118,3 +120,7 @@ rules:
   yoda:
     - error
     - never
+  react-hooks/rules-of-hooks:
+    - error
+  react-hooks/exhaustive-deps:
+    - warn
