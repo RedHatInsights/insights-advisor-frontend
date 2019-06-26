@@ -257,20 +257,6 @@ class RulesTable extends Component {
         this.props.fetchRules({ ...filters, limit, offset: 0, impacting, sort });
     };
 
-    onKebabSelect = async (event) => {
-        try {
-            this.setState({ isKebabOpen: false });
-            await API.get(`${BASE_URL}/export/hits.${event.target.value}/`);
-        } catch (error) {
-            this.props.addNotification({
-                variant: 'danger',
-                dismissable: true,
-                title: 'Data export failed',
-                description: ``
-            });
-        }
-    };
-
     render () {
         const { rulesFetchStatus, rules } = this.props;
         const { offset, limit, impacting, sortBy, cols, rows, isKebabOpen } = this.state;
@@ -289,16 +275,18 @@ class RulesTable extends Component {
                             results={ results }
                         >
                             <Dropdown
-                                onSelect={ this.onKebabSelect }
                                 position={ DropdownPosition.left }
                                 toggle={ <KebabToggle onToggle={ isOpen => {this.setState({ isKebabOpen: isOpen });} }/> }
+                                onSelect={ () => {this.setState({ isKebabOpen: false });} }
                                 isOpen={ isKebabOpen }
                                 isPlain
                                 dropdownItems={ [
-                                    <DropdownItem value='json' component="button" key="export json" aria-label='export data json'>
+                                    <DropdownItem value='json' href={ `${BASE_URL}/export/hits.json/` } key="export json"
+                                        aria-label='export data json'>
                                         Export as JSON
                                     </DropdownItem>,
-                                    <DropdownItem value='csv' component="button" key="export csv" aria-label='export data csv'>
+                                    <DropdownItem value='csv' href={ `${BASE_URL}/export/hits.csv/` } key="export csv"
+                                        aria-label='export data csv'>
                                         Export as CSV
                                     </DropdownItem>
                                 ] }
