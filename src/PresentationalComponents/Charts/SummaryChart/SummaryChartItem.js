@@ -14,7 +14,7 @@ const SummaryChartItem = (props) => {
     const setFilters = () => {
         const totalRisk = `${SEVERITY_MAP[riskName]}`;
         props.setFilters({ total_risk: totalRisk, reports_shown: true, impacting: true });
-        props.history.push(`/overview/${riskName}`);
+        props.history.push(`/rules`);
     };
 
     const returnLink = (children) => <Button variant="link" onClick={ setFilters }>{ children }</Button>;

@@ -189,7 +189,7 @@ const RulesTable = (props) => {
                             cells: [
                                 {
                                     title: value.reports_shown ?
-                                        <Link key={ key } to={ `/overview/${value.category.name.toLowerCase()}/${value.rule_id}` }>
+                                        <Link key={ key } to={ `/rules/${value.rule_id}` }>
                                             { value.description }
                                         </Link>
                                         : <span key={ key }> <Badge isRead>Disabled</Badge> { value.description }</span>
