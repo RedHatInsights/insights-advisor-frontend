@@ -21,7 +21,7 @@ const OverviewDonut = (props) => {
             mutation: (data) => {
                 const category = data.datum.name.split(' ')[0].toLowerCase();
                 setFilters(category);
-                props.history.push(`/overview/${category}`);
+                props.history.push(`/rules`);
             }
         }];
     };
@@ -46,7 +46,7 @@ const OverviewDonut = (props) => {
                                         mutation: data => {
                                             const category = data.datum.xName.toLowerCase();
                                             setFilters(category);
-                                            props.history.push(`/overview/${category}`);
+                                            props.history.push(`/rules`);
                                         }
                                     }
                                 ];

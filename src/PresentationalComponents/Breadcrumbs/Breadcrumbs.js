@@ -3,57 +3,37 @@ import { Link } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { connect } from 'react-redux';
-import * as AppActions from '../../AppActions';
 import PropTypes from 'prop-types';
+
+import * as AppActions from '../../AppActions';
 import './_breadcrumbs.scss';
 
 const Breadcrumbs = (props) => {
     const [ items, setItems ] = useState([]);
     const [ ruleDescriptionLoaded, setRuleDescription ] = useState(false);
-    const getReadableType = (type) => (
-        type.indexOf('-') > -1 ? `${type.replace('-', ' ')} Overview` : type
-    );
     const { breadcrumbs, current, fetchRule, match, ruleFetchStatus, rule } = props;
     const buildBreadcrumbs = useCallback(() => {
         let crumbs = [];
-        // add overview/rules base breadcrumb
-        if (match.params.type !== undefined) {
-            if (breadcrumbs[0] !== undefined) {
-                crumbs.push(breadcrumbs[0]);
-            } else {
-                const title = match.url.split('/')[1];
-                crumbs.push({ title, navigate: `/${title}` });
-            }
-        }
 
-        // add :type breadcrumb (exception: Rules based breadcrumbs)
-        if (match.params.type !== undefined && match.params.id !== undefined && crumbs[0].title !== 'Rules') {
-            const title = getReadableType(match.params.type);
-            crumbs.push({
-                title,
-                navigate: `${crumbs[0].navigate}/${match.params.type}`
-            });
+        // add rules base breadcrumb
+        if (breadcrumbs[0] !== undefined) {
+            crumbs.push(breadcrumbs[0]);
+        } else {
+            const title = match.url.split('/')[1];
+            crumbs.push({ title, navigate: `/${title}` });
         }
 
         // add :id breadcrumb
         if (match.params.id !== undefined && match.params.inventoryId !== undefined) {
             const title = rule.description;
-            if (crumbs[1] !== undefined) {
-                crumbs.push({
-                    title,
-                    navigate: `${crumbs[1].navigate}/${match.params.id}`
-                });
-            } else {
-                // build breadcrumb from beginning if Rule-based
-                crumbs.push({
-                    title,
-                    navigate: `/${match.url.split('/')[1]}/${match.params.type}/${match.params.id}`
-                });
-            }
+            crumbs.push({
+                title,
+                navigate: `/${match.url.split('/')[1]}/${match.params.id}`
+            });
         }
 
         setItems(crumbs);
-    }, [ breadcrumbs, match.params.id, match.params.inventoryId, match.params.type, match.url, rule.description ]);
+    }, [ breadcrumbs, match.params.id, match.params.inventoryId, match.url, rule.description ]);
 
     useEffect(() => {
         if (match.params.inventoryId !== undefined) {
