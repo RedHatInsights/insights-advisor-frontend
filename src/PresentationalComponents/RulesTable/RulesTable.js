@@ -270,7 +270,7 @@ const RulesTable = (props) => {
                             id="InsightsRulesHideHits"
                         />
                         <Pagination
-                            itemCount={ results || 10 }
+                            itemCount={ results }
                             onPerPageSelect={ onPerPageSelect }
                             onSetPage={ onSetPage }
                             page={ (offset / limit + 1) }
@@ -289,7 +289,7 @@ const RulesTable = (props) => {
                 { rulesFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
                 <TableToolbar className='pf-c-pagination'>
                     <Pagination
-                        itemCount={ results || 10 }
+                        itemCount={ results }
                         onPerPageSelect={ onPerPageSelect }
                         onSetPage={ onSetPage }
                         page={ (offset / limit + 1) }
