@@ -9,8 +9,8 @@ import * as AppActions from '../../AppActions';
 import './_breadcrumbs.scss';
 
 const Breadcrumbs = (props) => {
-    const [ items, setItems ] = useState([]);
-    const [ ruleDescriptionLoaded, setRuleDescription ] = useState(false);
+    const [items, setItems] = useState([]);
+    const [ruleDescriptionLoaded, setRuleDescription] = useState(false);
     const { breadcrumbs, current, fetchRule, match, ruleFetchStatus, rule } = props;
     const buildBreadcrumbs = useCallback(() => {
         let crumbs = [];
@@ -33,7 +33,7 @@ const Breadcrumbs = (props) => {
         }
 
         setItems(crumbs);
-    }, [ breadcrumbs, match.params.id, match.params.inventoryId, match.url, rule.description ]);
+    }, [breadcrumbs, match.params.id, match.params.inventoryId, match.url, rule.description]);
 
     useEffect(() => {
         if (match.params.inventoryId !== undefined) {
@@ -41,14 +41,14 @@ const Breadcrumbs = (props) => {
         } else {
             buildBreadcrumbs();
         }
-    }, [ buildBreadcrumbs, fetchRule, match.params.id, match.params.inventoryId ]);
+    }, [buildBreadcrumbs, fetchRule, match.params.id, match.params.inventoryId]);
 
     useEffect(() => {
         if (ruleFetchStatus === 'fulfilled' && !ruleDescriptionLoaded) {
             setRuleDescription(true);
             buildBreadcrumbs();
         }
-    }, [ buildBreadcrumbs, ruleFetchStatus, ruleDescriptionLoaded ]);
+    }, [buildBreadcrumbs, ruleFetchStatus, ruleDescriptionLoaded]);
 
     return (
         <React.Fragment>

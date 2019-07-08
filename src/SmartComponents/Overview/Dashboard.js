@@ -36,7 +36,7 @@ class OverviewDashboard extends Component {
         if (this.props.statsRules !== prevProps.statsRules) {
             const rules = this.props.statsRules;
             this.setState({
-                category: [ rules.category.Availability, rules.category.Stability, rules.category.Performance, rules.category.Security ]
+                category: [rules.category.Availability, rules.category.Stability, rules.category.Performance, rules.category.Security]
             });
             this.setState({ total: rules.total });
         }

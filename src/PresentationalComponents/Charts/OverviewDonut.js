@@ -28,7 +28,7 @@ const OverviewDonut = (props) => {
 
     const { className, category } = props;
     const totalHits = category.length ? category.reduce((sum, curr) => sum + curr) : 0;
-    const typeNames = [ 'Availability', 'Stability', 'Performance', 'Security' ];
+    const typeNames = ['Availability', 'Stability', 'Performance', 'Security'];
 
     return <>{ totalHits ?
         <div className={ `donut-chart-inline ${className}` }>
