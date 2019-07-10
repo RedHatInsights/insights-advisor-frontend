@@ -25,21 +25,21 @@ import debounce from '../../Utilities/Debounce';
 
 const RulesTable = (props) => {
     const { rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification } = props;
-    const [ summary, setSummary ] = useState('');
-    const [ cols ] = useState([
-        { title: 'Rule', transforms: [ sortable ]},
-        { title: 'Added', transforms: [ sortable, cellWidth(15) ]},
-        { title: 'Total Risk', transforms: [ sortable ]},
-        { title: 'Systems', transforms: [ sortable ]},
-        { title: <span className='ansibleCol'>{ ANSIBLE_ICON } Ansible</span>, transforms: [ sortable ]}
+    const [summary, setSummary] = useState('');
+    const [cols] = useState([
+        { title: 'Rule', transforms: [sortable] },
+        { title: 'Added', transforms: [sortable, cellWidth(15)] },
+        { title: 'Total Risk', transforms: [sortable] },
+        { title: 'Systems', transforms: [sortable] },
+        { title: <span className='ansibleCol'>{ANSIBLE_ICON} Ansible</span>, transforms: [sortable] }
     ]);
-    const [ rows, setRows ] = useState([]);
-    const [ sortBy, setSortBy ] = useState({});
-    const [ sort, setSort ] = useState('-publish_date');
-    const [ impacting, setImpacting ] = useState(filters.impacting);
-    const [ limit, setLimit ] = useState(10);
-    const [ offset, setOffset ] = useState(0);
-    const [ isKebabOpen, setIsKebabOpen ] = useState(false);
+    const [rows, setRows] = useState([]);
+    const [sortBy, setSortBy] = useState({});
+    const [sort, setSort] = useState('-publish_date');
+    const [impacting, setImpacting] = useState(filters.impacting);
+    const [limit, setLimit] = useState(10);
+    const [offset, setOffset] = useState(0);
+    const [isKebabOpen, setIsKebabOpen] = useState(false);
     const results = rules.meta ? rules.meta.count : 0;
     const debouncedOffset = debounce(offset, 800);
 
@@ -64,7 +64,7 @@ const RulesTable = (props) => {
             impacting,
             sort: orderParam
         });
-    }, [ fetchRules, filters, impacting, limit ]);
+    }, [fetchRules, filters, impacting, limit]);
 
     const onSetPage = (_event, pageNumber) => {
         const newOffset = pageNumber * limit - limit;
@@ -89,7 +89,7 @@ const RulesTable = (props) => {
     };
 
     const handleOnCollapse = (event, rowId, isOpen) => {
-        const collapseRows = [ ...rows ];
+        const collapseRows = [...rows];
         collapseRows[rowId] = { ...collapseRows[rowId], isOpen };
         setRows(collapseRows);
     };
@@ -140,7 +140,7 @@ const RulesTable = (props) => {
     const fetchAction = useCallback((filters) => {
         setOffset(0);
         fetchRules({ ...filters, limit, offset: 0, impacting, sort });
-    }, [ fetchRules, impacting, limit, sort ]);
+    }, [fetchRules, impacting, limit, sort]);
 
     useEffect(() => {
         fetchRules({
@@ -150,13 +150,13 @@ const RulesTable = (props) => {
             impacting,
             sort
         });
-    }, [ debouncedOffset ]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [debouncedOffset]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (!rows.length) {
             onSort(null, 2, 'desc');
         }
-    }, [ onSort, rows ]);
+    }, [onSort, rows]);
 
     useEffect(() => {
         if (rules.data) {
@@ -167,14 +167,13 @@ const RulesTable = (props) => {
                         title: (
                             <MessageState icon={ CheckIcon } title='No rule hits'
                                 text={ `None of your connected systems are affected by
-                                    ${filters.reports_shown ? 'enabled rules.' : 'any known rules.'}` }>
-                                { filters.reports_shown && <Button variant="link" style={ { paddingTop: 24 } } onClick={ () => {
+                                    ${ filters.reports_shown ? 'enabled rules.' : 'any known rules.'}` }>
+                                {filters.reports_shown && <Button variant="link" style={ { paddingTop: 24 } } onClick={ () => {
                                     setFilters({ ...filters, reports_shown: undefined });
                                     fetchAction({ ...filters, reports_shown: undefined });
-                                }
-                                }>
-                                        Include disabled rules
-                                </Button> }
+                                } }>
+                                    Include disabled rules
+                                </Button>}
                             </MessageState>),
                         props: { colSpan: 5 }
                     }]
@@ -190,14 +189,14 @@ const RulesTable = (props) => {
                                 {
                                     title: value.reports_shown ?
                                         <Link key={ key } to={ `/rules/${value.rule_id}` }>
-                                            { value.description }
+                                            {value.description}
                                         </Link>
-                                        : <span key={ key }> <Badge isRead>Disabled</Badge> { value.description }</span>
+                                        : <span key={ key }> <Badge isRead>Disabled</Badge> {value.description}</span>
 
                                 },
                                 {
                                     title: <div key={ key }>
-                                        { moment(value.publish_date).fromNow() }
+                                        {moment(value.publish_date).fromNow()}
                                     </div>
                                 },
                                 {
@@ -210,13 +209,13 @@ const RulesTable = (props) => {
                                     </div>
                                 },
                                 {
-                                    title: <div key={ key }> { value.reports_shown ?
+                                    title: <div key={ key }> {value.reports_shown ?
                                         `${value.impacted_systems_count.toLocaleString()}`
-                                        : 'N/A' }</div>
+                                        : 'N/A'}</div>
                                 },
                                 {
                                     title: <div className="pf-m-center " key={ key }>
-                                        { value.playbook_count ? <CheckIcon className='ansibleCheck'/> : null }
+                                        {value.playbook_count ? <CheckIcon className='ansibleCheck' /> : null}
                                     </div>
                                 }
                             ]
@@ -224,19 +223,19 @@ const RulesTable = (props) => {
                         {
                             parent: key * 2,
                             fullWidth: true,
-                            cells: [{ title: <Main className='pf-m-light'> <RuleDetails rule={ value }/></Main> }]
+                            cells: [{ title: <Main className='pf-m-light'> <RuleDetails rule={ value } /></Main> }]
                         }
                     ];
                 });
                 setRows(flatten(rows));
             }
         }
-    }, [ fetchAction, filters, rules, setFilters ]);
+    }, [fetchAction, filters, rules, setFilters]);
 
     return <Main>
         <Stack gutter='md'>
             <StackItem>
-                <p>{ summary }</p>
+                <p>{summary}</p>
             </StackItem>
             <StackItem>
                 <TableToolbar style={ { justifyContent: 'space-between' } }>
@@ -247,8 +246,8 @@ const RulesTable = (props) => {
                     >
                         <Dropdown
                             position={ DropdownPosition.left }
-                            toggle={ <KebabToggle onToggle={ isOpen => {setIsKebabOpen(isOpen);} }/> }
-                            onSelect={ () => {setIsKebabOpen(false);} }
+                            toggle={ <KebabToggle onToggle={ isOpen => { setIsKebabOpen(isOpen); } } /> }
+                            onSelect={ () => { setIsKebabOpen(false); } }
                             isOpen={ isKebabOpen }
                             isPlain
                             dropdownItems={ [
@@ -278,15 +277,15 @@ const RulesTable = (props) => {
                         />
                     </Filters>
                 </TableToolbar>
-                { rulesFetchStatus === 'fulfilled' &&
-                <Table aria-label={ 'rule-table' }
-                    actionResolver={ actionResolver } onCollapse={ handleOnCollapse } sortBy={ sortBy }
-                    onSort={ onSort } cells={ cols } rows={ rows }>
-                    <TableHeader/>
-                    <TableBody/>
-                </Table> }
-                { rulesFetchStatus === 'pending' && (<Loading/>) }
-                { rulesFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
+                {rulesFetchStatus === 'fulfilled' &&
+                    <Table aria-label={ 'rule-table' }
+                        actionResolver={ actionResolver } onCollapse={ handleOnCollapse } sortBy={ sortBy }
+                        onSort={ onSort } cells={ cols } rows={ rows }>
+                        <TableHeader />
+                        <TableBody />
+                    </Table>}
+                {rulesFetchStatus === 'pending' && (<Loading />)}
+                {rulesFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` } />)}
                 <TableToolbar className='pf-c-pagination'>
                     <Pagination
                         itemCount={ results }

@@ -36,7 +36,7 @@ class Inventory extends React.Component {
 
         this.setState({
             Inventory: inventoryConnector().InventoryTable,
-            items: [ ...items.slice(0, 50) ],
+            items: [...items.slice(0, 50)],
             page: 1,
             total: items.length,
             pageSize: 50
@@ -49,7 +49,7 @@ class Inventory extends React.Component {
         this.setState({
             page,
             pageSize: perPage,
-            items: [ ...items.slice((page - 1) * perPage, page * perPage) ]
+            items: [...items.slice((page - 1) * perPage, page * perPage)]
         });
     }
 

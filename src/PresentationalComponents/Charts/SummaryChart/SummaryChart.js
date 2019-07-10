@@ -10,7 +10,7 @@ const SummaryChartItem = asyncComponent(() => import('./SummaryChartItem'));
 
 const SummaryChart = (props) => {
     const noHits = [];
-    const hitsBuilder = (rulesTotalRisk, totalIssues) => Object.entries(rulesTotalRisk).map(([ key, value ]) => {
+    const hitsBuilder = (rulesTotalRisk, totalIssues) => Object.entries(rulesTotalRisk).map(([key, value]) => {
         const riskName = invert(SEVERITY_MAP)[key];
         const normalizedRiskName = capitalize(riskName.split('-')[0]);
         if (value) {
