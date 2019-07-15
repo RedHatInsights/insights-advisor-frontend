@@ -22,7 +22,7 @@ const SummaryChartItem = (props) => {
     return <StackItem widget-type='InsightsSummaryChartItem' widget-id={ name }>
         <Split style={ { alignItems: 'flex-end' } }>
             <SplitItem className='pf-u-pr-md'>
-                { returnLink(<Battery label={ riskName } severity={ name.toLowerCase() } labelHidden={ true }/>) }
+                { returnLink(<Battery label={ riskName } severity={ riskName } labelHidden={ true }/>) }
             </SplitItem>
             <SplitItem className='pf-u-text-align-right pf-u-pl-sm'>
                 { returnLink(`${numIssues} ${name} affecting ${props.affectedSystems.toLocaleString()} systems`) }
