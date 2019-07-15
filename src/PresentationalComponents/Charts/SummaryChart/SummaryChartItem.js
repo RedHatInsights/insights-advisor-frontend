@@ -12,7 +12,7 @@ import { SEVERITY_MAP } from '../../../AppConstants';
 const SummaryChartItem = (props) => {
     const { numIssues, name, riskName } = props;
     const setFilters = () => {
-        const totalRisk = `${SEVERITY_MAP[riskName]}`;
+        const totalRisk = `${SEVERITY_MAP[`${riskName}-risk`]}`;
         props.setFilters({ total_risk: totalRisk, reports_shown: true, impacting: true });
         props.history.push(`/rules`);
     };
