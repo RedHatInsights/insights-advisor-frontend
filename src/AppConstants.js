@@ -30,24 +30,24 @@ export const FILTER_CATEGORIES = [
     {
         type: 'checkbox', title: 'Total Risk', urlParam: 'total_risk', values: [
             { label: 'Critical', value: '4' },
-            { label: 'High', value: '3' },
-            { label: 'Medium', value: '2' },
+            { label: 'Important', value: '3' },
+            { label: 'Moderate', value: '2' },
             { label: 'Low', value: '1' }
         ]
     },
     {
         type: 'checkbox', title: 'Impact', urlParam: 'impact', values: [
             { label: 'Critical', value: '4' },
-            { label: 'High', value: '3' },
-            { label: 'Medium', value: '2' },
+            { label: 'Important', value: '3' },
+            { label: 'Moderate', value: '2' },
             { label: 'Low', value: '1' }
         ]
     },
     {
         type: 'checkbox', title: 'Likelihood', urlParam: 'likelihood', values: [
             { label: 'Critical', value: '4' },
-            { label: 'High', value: '3' },
-            { label: 'Medium', value: '2' },
+            { label: 'Important', value: '3' },
+            { label: 'Moderate', value: '2' },
             { label: 'Low', value: '1' }
         ]
     },
@@ -73,7 +73,7 @@ export const RISK_OF_CHANGE_DESC = {
     3: 'These will likely require an outage window.',
     4: 'The change takes a significant amount of time and planning to execute, and will impact the system and business operations of the host due to downtime.'
 };
-export const IMPACT_LABEL = { 1: 'Low', 2: 'Medium', 3: 'High', 4: 'Critical' };
-export const LIKELIHOOD_LABEL = { 1: 'Low', 2: 'Medium', 3: 'High', 4: 'Critical' };
-export const RISK_OF_CHANGE_LABEL = { 1: 'Low', 2: 'Moderate', 3: 'Moderate', 4: 'High' };
-export const TOTAL_RISK_LABEL = { 1: 'Very Low', 2: 'Low', 3: 'Moderate', 4: 'High' };
+export const IMPACT_LABEL = { 1: 'Low', 2: 'Moderate', 3: 'Important', 4: 'Critical' };
+export const LIKELIHOOD_LABEL = { 1: 'Low', 2: 'Moderate', 3: 'Important', 4: 'Critical' };
+export const RISK_OF_CHANGE_LABEL = { 1: 'Low', 2: 'Moderate', 3: 'Important', 4: 'Critical' };
+export const TOTAL_RISK_LABEL = { 1: 'Low', 2: 'Moderate', 3: 'Important', 4: 'Critical' };
