@@ -75,5 +75,5 @@ export const RISK_OF_CHANGE_DESC = {
 };
 export const IMPACT_LABEL = { 1: 'Low', 2: 'Moderate', 3: 'Important', 4: 'Critical' };
 export const LIKELIHOOD_LABEL = { 1: 'Low', 2: 'Moderate', 3: 'Important', 4: 'Critical' };
-export const RISK_OF_CHANGE_LABEL = { 1: 'Low', 2: 'Moderate', 3: 'Important', 4: 'Critical' };
+export const RISK_OF_CHANGE_LABEL = { 1: 'Very Low', 2: 'Low', 3: 'Moderate', 4: 'High' };
 export const TOTAL_RISK_LABEL = { 1: 'Low', 2: 'Moderate', 3: 'Important', 4: 'Critical' };
