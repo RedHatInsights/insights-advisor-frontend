@@ -9,10 +9,10 @@
     "url": "https://github.com/RedHatInsights/insights-advisor-frontend.git"
   },
   "dependencies": {
-    "@babel/runtime": "7.5.4",
+    "@babel/runtime": "7.5.5",
     "@patternfly/react-charts": "4.4.7",
     "@patternfly/react-core": "3.58.1",
-    "@patternfly/react-icons": "3.10.10",
+    "@patternfly/react-icons": "3.10.12",
     "@patternfly/react-table": "2.13.43",
     "@patternfly/react-tokens": "2.6.5",
     "@redhat-cloud-services/frontend-components": "0.0.7",
@@ -26,7 +26,7 @@
     "react-dom": "16.8.6",
     "react-markdown": "4.1.0",
     "react-redux": "5.1.0",
-    "react-router-dom": "4.3.1",
+    "react-router-dom": "5.0.1",
     "redux": "4.0.4",
     "redux-logger": "3.0.6",
     "redux-promise-middleware": "6.1.1"
@@ -48,14 +48,14 @@
     }
   },
   "devDependencies": {
-    "@babel/core": "7.5.4",
-    "@babel/plugin-proposal-class-properties": "7.5.0",
+    "@babel/core": "7.5.5",
+    "@babel/plugin-proposal-class-properties": "7.5.5",
     "@babel/plugin-proposal-decorators": "7.4.4",
-    "@babel/plugin-proposal-object-rest-spread": "7.5.4",
+    "@babel/plugin-proposal-object-rest-spread": "7.5.5",
     "@babel/plugin-syntax-dynamic-import": "7.2.0",
     "@babel/plugin-transform-async-to-generator": "7.5.0",
-    "@babel/plugin-transform-runtime": "7.5.0",
-    "@babel/preset-env": "7.5.4",
+    "@babel/plugin-transform-runtime": "7.5.5",
+    "@babel/preset-env": "7.5.5",
     "@babel/preset-flow": "7.0.0",
     "@babel/preset-react": "7.0.0",
     "@redhat-cloud-services/frontend-components-config": "0.0.9",
@@ -82,8 +82,8 @@
     "seamless-immutable": "7.1.4",
     "stylelint": "10.1.0",
     "stylelint-config-recommended-scss": "3.3.0",
-    "stylelint-scss": "3.9.1",
-    "webpack": "4.35.3",
+    "stylelint-scss": "3.9.2",
+    "webpack": "4.36.1",
     "webpack-bundle-analyzer": "3.3.2",
     "webpack-cli": "3.3.6",
     "webpack-dev-server": "3.7.2"
