@@ -18,6 +18,18 @@ class App extends Component {
         });
     }
 
+    componentDidUpdate(prevProps) {
+        if (this.props !== prevProps) {
+            if (this.props.location.pathname === '/overview') {
+                insights.chrome.appNavClick({ id: 'overview' });
+            }
+
+            if (this.props.location.pathname === '/rules') {
+                insights.chrome.appNavClick({ id: 'rules' });
+            }
+        }
+    }
+
     componentWillUnmount () {
         this.appNav();
     }
@@ -30,6 +42,7 @@ class App extends Component {
 }
 
 App.propTypes = {
+    location: PropTypes.object,
     history: PropTypes.object
 };
 
