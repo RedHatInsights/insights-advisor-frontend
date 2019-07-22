@@ -20,11 +20,8 @@ class App extends Component {
 
     componentDidUpdate(prevProps) {
         if (this.props !== prevProps) {
-            if (this.props.location.pathname === '/overview') {
-                insights.chrome.appNavClick({ id: 'overview' });
-            }
-
-            if (this.props.location.pathname === '/rules') {
+            const baseComponentUrl = location.href.slice(location.href.indexOf('insights/')).split('/')[1];
+            if (baseComponentUrl === 'rules') {
                 insights.chrome.appNavClick({ id: 'rules' });
             }
         }
