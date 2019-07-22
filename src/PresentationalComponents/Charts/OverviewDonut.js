@@ -55,7 +55,7 @@ const OverviewDonut = (props) => {
                     }] }
                     title={ `${totalHits}` }
                     subTitle="Total Hits"
-                    themeColor={ ChartThemeColor.multi }
+                    themeColor={ ChartThemeColor.multiOrdered }
                     themeVariant={ ChartThemeVariant.light }
                 />
             </div>
@@ -80,7 +80,7 @@ const OverviewDonut = (props) => {
                 height={ 200 }
                 y={ 40 }
                 responsive={ false }
-                themeColor={ ChartThemeColor.multi }
+                themeColor={ ChartThemeColor.multiOrdered }
                 themeVariant={ ChartThemeVariant.light }
             />
         </div>
