@@ -83,7 +83,7 @@
     "stylelint": "10.1.0",
     "stylelint-config-recommended-scss": "3.3.0",
     "stylelint-scss": "3.9.2",
-    "webpack": "4.36.1",
+    "webpack": "4.37.0",
     "webpack-bundle-analyzer": "3.3.2",
     "webpack-cli": "3.3.6",
     "webpack-dev-server": "3.7.2"
