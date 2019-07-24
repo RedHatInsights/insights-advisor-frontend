@@ -34,6 +34,13 @@ export const FILTER_CATEGORIES = [
             { label: 'Moderate', value: '2' },
             { label: 'Low', value: '1' }
         ]
+    }, {
+        type: 'checkbox', title: 'Risk of Change', urlParam: 'resolution_risk', values: [
+            { label: 'High', value: '4' },
+            { label: 'Moderate', value: '3' },
+            { label: 'Low', value: '2' },
+            { label: 'Very Low', value: '1' }
+        ]
     },
     {
         type: 'checkbox', title: 'Impact', urlParam: 'impact', values: [
