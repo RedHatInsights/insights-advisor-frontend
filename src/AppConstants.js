@@ -35,7 +35,7 @@ export const FILTER_CATEGORIES = [
             { label: 'Low', value: '1' }
         ]
     }, {
-        type: 'checkbox', title: 'Risk of Change', urlParam: 'resolution_risk', values: [
+        type: 'checkbox', title: 'Risk of Change', urlParam: 'res_risk', values: [
             { label: 'High', value: '4' },
             { label: 'Moderate', value: '3' },
             { label: 'Low', value: '2' },
