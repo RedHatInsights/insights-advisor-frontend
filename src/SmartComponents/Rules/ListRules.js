@@ -3,7 +3,7 @@ import routerParams from '@redhat-cloud-services/frontend-components-utilities/f
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
+import { PageHeader, PageHeaderTitle, Main } from '@redhat-cloud-services/frontend-components';
 
 import * as AppActions from '../../AppActions';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
@@ -18,7 +18,10 @@ class ListRules extends Component {
         <PageHeader>
             <PageHeaderTitle title='Rules'/>
         </PageHeader>
-        <RulesTable/></>;
+        <Main>
+            <RulesTable/>
+        </Main>
+        </>;
 }
 
 ListRules.displayName = 'list-rules';

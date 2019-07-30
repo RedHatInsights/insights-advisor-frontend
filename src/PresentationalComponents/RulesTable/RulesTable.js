@@ -8,7 +8,7 @@ import { flatten } from 'lodash';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Badge, Button, Checkbox, Dropdown, DropdownItem, DropdownPosition, KebabToggle, Pagination, Stack, StackItem } from '@patternfly/react-core';
+import { Badge, Button, Checkbox, Dropdown, DropdownItem, DropdownPosition, KebabToggle, Pagination } from '@patternfly/react-core';
 import { cellWidth, sortable, Table, TableBody, TableHeader } from '@patternfly/react-table';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 
@@ -25,7 +25,6 @@ import debounce from '../../Utilities/Debounce';
 
 const RulesTable = (props) => {
     const { rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification } = props;
-    const [summary, setSummary] = useState('');
     const [cols] = useState([
         { title: 'Rule', transforms: [sortable] },
         { title: 'Added', transforms: [sortable, cellWidth(15)] },
@@ -160,18 +159,17 @@ const RulesTable = (props) => {
 
     useEffect(() => {
         if (rules.data) {
-            setSummary(rules.data.summary);
             if (rules.data.length === 0) {
                 setRows([{
                     cells: [{
                         title: (
-                            <MessageState icon={ CheckIcon } title='No rule hits'
-                                text={ `None of your connected systems are affected by
-                                    ${ filters.reports_shown ? 'enabled rules.' : 'any known rules.'}` }>
-                                {filters.reports_shown && <Button variant="link" style={ { paddingTop: 24 } } onClick={ () => {
+                            <MessageState icon={CheckIcon} title='No rule hits'
+                                text={`None of your connected systems are affected by
+                                    ${ filters.reports_shown ? 'enabled rules.' : 'any known rules.'}`}>
+                                {filters.reports_shown && <Button variant="link" style={{ paddingTop: 24 }} onClick={() => {
                                     setFilters({ ...filters, reports_shown: undefined });
                                     fetchAction({ ...filters, reports_shown: undefined });
-                                } }>
+                                }}>
                                     Include disabled rules
                                 </Button>}
                             </MessageState>),
@@ -188,33 +186,33 @@ const RulesTable = (props) => {
                             cells: [
                                 {
                                     title: value.reports_shown ?
-                                        <Link key={ key } to={ `/rules/${value.rule_id}` }>
+                                        <Link key={key} to={`/rules/${value.rule_id}`}>
                                             {value.description}
                                         </Link>
-                                        : <span key={ key }> <Badge isRead>Disabled</Badge> {value.description}</span>
+                                        : <span key={key}> <Badge isRead>Disabled</Badge> {value.description}</span>
 
                                 },
                                 {
-                                    title: <div key={ key }>
+                                    title: <div key={key}>
                                         {moment(value.publish_date).fromNow()}
                                     </div>
                                 },
                                 {
-                                    title: <div className="pf-m-center" key={ key } style={ { verticalAlign: 'top' } }>
+                                    title: <div className="pf-m-center" key={key} style={{ verticalAlign: 'top' }}>
                                         <Battery
                                             label='Total Risk'
                                             labelHidden
-                                            severity={ value.total_risk }
+                                            severity={value.total_risk}
                                         />
                                     </div>
                                 },
                                 {
-                                    title: <div key={ key }> {value.reports_shown ?
+                                    title: <div key={key}> {value.reports_shown ?
                                         `${value.impacted_systems_count.toLocaleString()}`
                                         : 'N/A'}</div>
                                 },
                                 {
-                                    title: <div className="pf-m-center " key={ key }>
+                                    title: <div className="pf-m-center " key={key}>
                                         {value.playbook_count ? <CheckIcon className='ansibleCheck' /> : null}
                                     </div>
                                 }
@@ -223,7 +221,7 @@ const RulesTable = (props) => {
                         {
                             parent: key * 2,
                             fullWidth: true,
-                            cells: [{ title: <Main className='pf-m-light'> <RuleDetails rule={ value } /></Main> }]
+                            cells: [{ title: <Main className='pf-m-light'> <RuleDetails rule={value} /></Main> }]
                         }
                     ];
                 });
@@ -232,72 +230,65 @@ const RulesTable = (props) => {
         }
     }, [fetchAction, filters, rules, setFilters]);
 
-    return <Main>
-        <Stack gutter='md'>
-            <StackItem>
-                <p>{summary}</p>
-            </StackItem>
-            <StackItem>
-                <TableToolbar style={ { justifyContent: 'space-between' } }>
-                    <Filters
-                        fetchAction={ fetchAction }
-                        searchPlaceholder='Find a rule...'
-                        results={ results }
-                    >
-                        <Dropdown
-                            position={ DropdownPosition.left }
-                            toggle={ <KebabToggle onToggle={ isOpen => { setIsKebabOpen(isOpen); } } /> }
-                            onSelect={ () => { setIsKebabOpen(false); } }
-                            isOpen={ isKebabOpen }
-                            isPlain
-                            dropdownItems={ [
-                                <DropdownItem value='json' href={ `${BASE_URL}/export/hits.json/` } key="export json"
-                                    aria-label='export data json'>
-                                    Export as JSON
-                                </DropdownItem>,
-                                <DropdownItem value='csv' href={ `${BASE_URL}/export/hits.csv/` } key="export csv"
-                                    aria-label='export data csv'>
-                                    Export as CSV
-                                </DropdownItem>
-                            ] }
-                        />
-                        <Checkbox
-                            label="Show Rules With Hits"
-                            isChecked={ impacting }
-                            onChange={ toggleRulesWithHits }
-                            aria-label="InsightsRulesHideHits"
-                            id="InsightsRulesHideHits"
-                        />
-                        <Pagination
-                            itemCount={ results }
-                            onPerPageSelect={ onPerPageSelect }
-                            onSetPage={ onSetPage }
-                            page={ (offset / limit + 1) }
-                            perPage={ limit }
-                        />
-                    </Filters>
-                </TableToolbar>
-                {rulesFetchStatus === 'fulfilled' &&
-                    <Table aria-label={ 'rule-table' }
-                        actionResolver={ actionResolver } onCollapse={ handleOnCollapse } sortBy={ sortBy }
-                        onSort={ onSort } cells={ cols } rows={ rows }>
-                        <TableHeader />
-                        <TableBody />
-                    </Table>}
-                {rulesFetchStatus === 'pending' && (<Loading />)}
-                {rulesFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` } />)}
-                <TableToolbar className='pf-c-pagination'>
-                    <Pagination
-                        itemCount={ results }
-                        onPerPageSelect={ onPerPageSelect }
-                        onSetPage={ onSetPage }
-                        page={ (offset / limit + 1) }
-                        perPage={ limit }
-                    />
-                </TableToolbar>
-            </StackItem>
-        </Stack>
-    </Main>;
+    return <>
+        <TableToolbar style={{ justifyContent: 'space-between' }}>
+            <Filters
+                fetchAction={fetchAction}
+                searchPlaceholder='Find a rule...'
+                results={results}
+            >
+                <Dropdown
+                    position={DropdownPosition.left}
+                    toggle={<KebabToggle onToggle={isOpen => { setIsKebabOpen(isOpen); }} />}
+                    onSelect={() => { setIsKebabOpen(false); }}
+                    isOpen={isKebabOpen}
+                    isPlain
+                    dropdownItems={[
+                        <DropdownItem value='json' href={`${BASE_URL}/export/hits.json/`} key="export json"
+                            aria-label='export data json'>
+                            Export as JSON
+                        </DropdownItem>,
+                        <DropdownItem value='csv' href={`${BASE_URL}/export/hits.csv/`} key="export csv"
+                            aria-label='export data csv'>
+                            Export as CSV
+                        </DropdownItem>
+                    ]}
+                />
+                <Checkbox
+                    label="Show Rules With Hits"
+                    isChecked={impacting}
+                    onChange={toggleRulesWithHits}
+                    aria-label="InsightsRulesHideHits"
+                    id="InsightsRulesHideHits"
+                />
+                <Pagination
+                    itemCount={results}
+                    onPerPageSelect={onPerPageSelect}
+                    onSetPage={onSetPage}
+                    page={(offset / limit + 1)}
+                    perPage={limit}
+                />
+            </Filters>
+        </TableToolbar>
+        {rulesFetchStatus === 'fulfilled' &&
+            <Table aria-label={'rule-table'}
+                actionResolver={actionResolver} onCollapse={handleOnCollapse} sortBy={sortBy}
+                onSort={onSort} cells={cols} rows={rows}>
+                <TableHeader />
+                <TableBody />
+            </Table>}
+        {rulesFetchStatus === 'pending' && (<Loading />)}
+        {rulesFetchStatus === 'failed' && (<Failed message={`There was an error fetching rules list.`} />)}
+        <TableToolbar className='pf-c-pagination'>
+            <Pagination
+                itemCount={results}
+                onPerPageSelect={onPerPageSelect}
+                onSetPage={onSetPage}
+                page={(offset / limit + 1)}
+                perPage={limit}
+            />
+        </TableToolbar>
+    </>;
 };
 
 RulesTable.propTypes = {
