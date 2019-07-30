@@ -26,7 +26,6 @@ class OverviewDashboard extends Component {
     };
 
     async componentDidMount () {
-        await insights.chrome.auth.getUser();
         this.props.fetchStatsRules();
         this.props.fetchStatsSystems();
         this.props.setBreadcrumbs([{ title: 'Overview', navigate: '/overview' }]);
