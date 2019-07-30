@@ -24,7 +24,6 @@ class OverviewDetails extends Component {
     };
 
     async componentDidMount () {
-        await insights.chrome.auth.getUser();
         this.props.fetchRule({ rule_id: this.props.match.params.id });
         this.props.fetchSystem({ rule_id: this.props.match.params.id });
     }

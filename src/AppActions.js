@@ -1,7 +1,11 @@
 import * as ActionTypes from './AppConstants';
 import API from './Utilities/Api';
 
-const fetchData = async (url, headers, options) => (await API.get(url, headers, options)).data;
+const fetchData = async (url, headers, options) => {
+    await insights.chrome.auth.getUser();
+    const response = await API.get(url, headers, options);
+    return response.data;
+};
 
 export const fetchStatsRules = () => ({
     type: ActionTypes.STATS_RULES_FETCH,

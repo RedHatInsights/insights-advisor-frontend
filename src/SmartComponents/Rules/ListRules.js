@@ -10,7 +10,6 @@ import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 
 class ListRules extends Component {
     async componentDidMount () {
-        await insights.chrome.auth.getUser();
         this.props.setBreadcrumbs([{ title: 'Rules', navigate: '/rules' }]);
     }
 
