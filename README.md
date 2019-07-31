@@ -31,6 +31,33 @@ The same will happen with action against master-stable, it will automatically re
 The prod-beta and prod-stable environments are updated by a deliberate push, (to each branch)
 
 ### Nuggets and Tidbits
+##### Running the Frontend against a particular Insights API branch
+To start the Insights API against a particular branch in the insights-advisor-api git repo use the `scripts/setup_insights_api.sh` script, like so ...
+
+``` shell
+[insights-advisor-frontend]$ ./scripts/setup_insights_api.sh
+Usage: ./scripts/setup_insights_api.sh <branch>|-c
+Start an Insights API environment (as a set of containers) from <branch> in the insights-advisor-api git repo
+
+    <branch> : checkout <branch> and start the containers
+    -c       : stop and cleanup the containers
+
+[insights-advisor-frontend]$ ./scripts/setup_insights_api.sh stat_time_series
+...
+Running 'git clone --branch stat_time_series --single-branch git@github.com:RedHatInsights/insights-advisor-api.git /tmp/insights-advisor-api' ...
+...
+
+Finished setting up Insights API environment.
+The Insights API is available at http://localhost:8000/api/insights/v1/
+The Insights Frontend is available at https://ci.foo.redhat.com:1337
+```
+
+This starts a few containers related to the Insights API as well as an insights-proxy container.
+
+Make sure to still perform steps 1, 3 and 4 above.  That is, `npm install` and `npm start`.  Running `scripts/setup_insights_api.sh` essentially replaces step 2.
+
+Use docker commands, eg `docker ps` and `docker logs -f <container_name>` to access the logs from the API or other containers.
+
 ##### Start insights-proxy directly with docker
 If you are running linux and have docker installed, you can skip the installation of the insights-proxy and run it directly with:
 ``` shell
