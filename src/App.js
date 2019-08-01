@@ -25,7 +25,6 @@ class App extends Component {
                 overview() { insights.chrome.appNavClick({ id: 'overview' });},
                 rules() { insights.chrome.appNavClick({ id: 'rules' });}
             };
-            console.error(appNavClick[baseComponentUrl]);
             appNavClick[baseComponentUrl]();
         }
     }
