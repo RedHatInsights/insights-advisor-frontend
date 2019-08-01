@@ -8,7 +8,7 @@ import { Routes } from './Routes';
 import './App.scss';
 
 class App extends Component {
-    componentDidMount () {
+    componentDidMount() {
         insights.chrome.init();
         insights.chrome.identifyApp('insights');
         this.appNav = insights.chrome.on('APP_NAVIGATION', event => {
@@ -21,19 +21,22 @@ class App extends Component {
     componentDidUpdate(prevProps) {
         if (this.props !== prevProps) {
             const baseComponentUrl = location.href.slice(location.href.indexOf('insights/')).split('/')[1];
-            if (baseComponentUrl === 'rules') {
-                insights.chrome.appNavClick({ id: 'rules' });
-            }
+            const appNavClick = {
+                overview() { insights.chrome.appNavClick({ id: 'overview' });},
+                rules() { insights.chrome.appNavClick({ id: 'rules' });}
+            };
+            console.error(appNavClick[baseComponentUrl]);
+            appNavClick[baseComponentUrl]();
         }
     }
 
-    componentWillUnmount () {
+    componentWillUnmount() {
         this.appNav();
     }
 
-    render () {
+    render() {
         return (
-            <Routes childProps={ this.props }/>
+            <Routes childProps={this.props} />
         );
     }
 }
