@@ -29,3 +29,12 @@ The follow six branches are used by IF
 A push or merge to master will automatically release to ci-beta and qa-beta
 The same will happen with action against master-stable, it will automatically release to ci-stable and qa-stable
 The prod-beta and prod-stable environments are updated by a deliberate push, (to each branch)
+
+### Nuggets and Tidbits
+##### Start insights-proxy directly with docker
+If you are running linux and have docker installed, you can skip the installation of the insights-proxy and run it directly with:
+``` shell
+ docker run -v $PWD/config:/config --rm --net='host' -p1337:1337 -e PLATFORM=linux -ti docker.io/redhatinsights/insights-proxy
+```
+#### Running against a local API
+Set `apiHost` in the spandx.config.js to http://127.0.0.1:8000
