@@ -8,7 +8,10 @@ import { flatten } from 'lodash';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Badge, Button, Checkbox, Dropdown, DropdownItem, DropdownPosition, KebabToggle, Pagination } from '@patternfly/react-core';
+import {
+    Badge, Button, Checkbox, Dropdown, DropdownItem, DropdownPosition, KebabToggle,
+    Pagination, PaginationVariant
+} from '@patternfly/react-core';
 import { cellWidth, sortable, Table, TableBody, TableHeader } from '@patternfly/react-table';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 
@@ -140,6 +143,17 @@ const RulesTable = (props) => {
     }, [fetchRules, impacting, limit, sort]);
 
     useEffect(() => {
+        setOffset(0);
+        fetchRules({
+            ...filters,
+            offset,
+            limit,
+            impacting,
+            sort
+        });
+    }, [fetchRules, filters, impacting, limit, offset, sort]);
+
+    useEffect(() => {
         if (!rows.length) {
             onSort(null, 2, 'desc');
         }
@@ -218,65 +232,63 @@ const RulesTable = (props) => {
         }
     }, [fetchAction, filters, rules, setFilters]);
 
+    const renderPagination = (location) => <Pagination
+        itemCount={results}
+        perPage={limit}
+        page={(offset / limit + 1)}
+        onSetPage={onSetPage}
+        onPerPageSelect={onPerPageSelect}
+        widgetId={`pagination-options-menu-${location === 'bottom' ? 'bottom' : 'top'}`}
+        variant={location === 'bottom' ? PaginationVariant.bottom : null}
+    />;
+
     return <>
-        <TableToolbar style={{ justifyContent: 'space-between' }}>
-            <Filters
-                fetchAction={fetchAction}
-                searchPlaceholder='Find a rule...'
-                results={results}
-            >
-                <Dropdown
-                    position={DropdownPosition.left}
-                    toggle={<KebabToggle onToggle={isOpen => { setIsKebabOpen(isOpen); }} />}
-                    onSelect={() => { setIsKebabOpen(false); }}
-                    isOpen={isKebabOpen}
-                    isPlain
-                    dropdownItems={[
-                        <DropdownItem value='json' href={`${BASE_URL}/export/hits.json/`} key="export json"
-                            aria-label='export data json'>
-                            Export as JSON
-                        </DropdownItem>,
-                        <DropdownItem value='csv' href={`${BASE_URL}/export/hits.csv/`} key="export csv"
-                            aria-label='export data csv'>
-                            Export as CSV
-                        </DropdownItem>
-                    ]}
-                />
-                <Checkbox
-                    label="Show Rules With Hits"
-                    isChecked={impacting}
-                    onChange={toggleRulesWithHits}
-                    aria-label="InsightsRulesHideHits"
-                    id="InsightsRulesHideHits"
-                />
-                <Pagination
-                    itemCount={results}
-                    onPerPageSelect={onPerPageSelect}
-                    onSetPage={onSetPage}
-                    page={(offset / limit + 1)}
-                    perPage={limit}
-                />
-            </Filters>
-        </TableToolbar>
-        {rulesFetchStatus === 'fulfilled' &&
-            <Table aria-label={'rule-table'}
-                actionResolver={actionResolver} onCollapse={handleOnCollapse} sortBy={sortBy}
-                onSort={onSort} cells={cols} rows={rows}>
-                <TableHeader />
-                <TableBody />
-            </Table>}
-        {rulesFetchStatus === 'pending' && (<Loading />)}
-        {rulesFetchStatus === 'failed' && (<Failed message={`There was an error fetching rules list.`} />)}
-        <TableToolbar className='pf-c-pagination'>
-            <Pagination
-                itemCount={results}
-                onPerPageSelect={onPerPageSelect}
-                onSetPage={onSetPage}
-                page={(offset / limit + 1)}
-                perPage={limit}
+    <TableToolbar style={{ justifyContent: 'space-between' }}>
+        <Filters
+            fetchAction={fetchAction}
+            searchPlaceholder='Find a rule...'
+            results={results}
+        >
+            <Dropdown
+                position={DropdownPosition.left}
+                toggle={<KebabToggle onToggle={isOpen => { setIsKebabOpen(isOpen); }} />}
+                onSelect={() => { setIsKebabOpen(false); }}
+                isOpen={isKebabOpen}
+                isPlain
+                dropdownItems={[
+                    <DropdownItem value='json' href={`${BASE_URL}/export/hits.json/`} key="export json"
+                        aria-label='export data json'>
+                        Export as JSON
+                    </DropdownItem>,
+                    <DropdownItem value='csv' href={`${BASE_URL}/export/hits.csv/`} key="export csv"
+                        aria-label='export data csv'>
+                        Export as CSV
+                    </DropdownItem>
+                ]}
             />
-        </TableToolbar>
-    </>;
+            <Checkbox
+                label="Show Rules With Hits"
+                isChecked={impacting}
+                onChange={toggleRulesWithHits}
+                aria-label="InsightsRulesHideHits"
+                id="InsightsRulesHideHits"
+            />
+            {renderPagination()}
+        </Filters>
+    </TableToolbar>
+    {rulesFetchStatus === 'fulfilled' &&
+        <Table aria-label={'rule-table'}
+            actionResolver={actionResolver} onCollapse={handleOnCollapse} sortBy={sortBy}
+            onSort={onSort} cells={cols} rows={rows}>
+            <TableHeader />
+            <TableBody />
+        </Table>}
+    {rulesFetchStatus === 'pending' && (<Loading />)}
+    {rulesFetchStatus === 'failed' && (<Failed message={`There was an error fetching rules list.`} />)}
+    <TableToolbar>
+        {renderPagination('bottom')}
+    </TableToolbar>
+</>;
 };
 
 RulesTable.propTypes = {
