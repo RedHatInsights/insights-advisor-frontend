@@ -21,7 +21,6 @@ import { BASE_URL } from '../../AppConstants';
 import { ANSIBLE_ICON } from '../../AppSvgs';
 import MessageState from '../MessageState/MessageState';
 import RuleDetails from '../RuleDetails/RuleDetails';
-import debounce from '../../Utilities/Debounce';
 
 const RulesTable = (props) => {
     const { rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification } = props;
@@ -40,7 +39,6 @@ const RulesTable = (props) => {
     const [offset, setOffset] = useState(0);
     const [isKebabOpen, setIsKebabOpen] = useState(false);
     const results = rules.meta ? rules.meta.count : 0;
-    const debouncedOffset = debounce(offset, 800);
 
     const onSort = useCallback((_event, index, direction) => {
         const attrIndex = {
@@ -140,16 +138,6 @@ const RulesTable = (props) => {
         setOffset(0);
         fetchRules({ ...filters, limit, offset: 0, impacting, sort });
     }, [fetchRules, impacting, limit, sort]);
-
-    useEffect(() => {
-        fetchRules({
-            ...filters,
-            offset,
-            limit,
-            impacting,
-            sort
-        });
-    }, [debouncedOffset]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (!rows.length) {
