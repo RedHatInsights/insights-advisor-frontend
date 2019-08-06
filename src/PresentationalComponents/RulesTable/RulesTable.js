@@ -52,19 +52,10 @@ const RulesTable = (props) => {
             5: 'playbook_count'
         };
         const orderParam = `${direction === 'asc' ? '' : '-'}${attrIndex[index]}`;
-
         setSortBy({ index, direction });
         setSort(orderParam);
         setOffset(0);
-
-        fetchRules({
-            ...filters,
-            offset: 0,
-            limit,
-            impacting,
-            sort: orderParam
-        });
-    }, [fetchRules, filters, impacting, limit]);
+    }, [setSort, setSortBy, setOffset]);
 
     const onSetPage = (_event, pageNumber) => {
         const newOffset = pageNumber * limit - limit;
@@ -73,19 +64,12 @@ const RulesTable = (props) => {
 
     const onPerPageSelect = (_event, limit) => {
         setLimit(limit);
-        fetchRules({ ...filters, offset, limit, impacting, sort });
     };
 
     const toggleRulesWithHits = (impacting) => {
         setFilters({ ...filters, impacting });
         setImpacting(impacting);
         setOffset(0);
-        fetchRules({
-            ...filters,
-            offset: 0,
-            limit,
-            impacting
-        });
     };
 
     const handleOnCollapse = (event, rowId, isOpen) => {
@@ -137,13 +121,11 @@ const RulesTable = (props) => {
             }];
     };
 
-    const fetchAction = useCallback((filters) => {
+    const fetchAction = useCallback(() => {
         setOffset(0);
-        fetchRules({ ...filters, limit, offset: 0, impacting, sort });
-    }, [fetchRules, impacting, limit, sort]);
+    }, []);
 
     useEffect(() => {
-        setOffset(0);
         fetchRules({
             ...filters,
             offset,
@@ -157,7 +139,7 @@ const RulesTable = (props) => {
         if (!rows.length) {
             onSort(null, 2, 'desc');
         }
-    }, [onSort, rows]);
+    }, [onSort, rows.length]);
 
     useEffect(() => {
         if (rules.data) {
@@ -170,7 +152,7 @@ const RulesTable = (props) => {
                                     ${ filters.reports_shown ? 'enabled rules.' : 'any known rules.'}`}>
                                 {filters.reports_shown && <Button variant="link" style={{ paddingTop: 24 }} onClick={() => {
                                     setFilters({ ...filters, reports_shown: undefined });
-                                    fetchAction({ ...filters, reports_shown: undefined });
+                                    fetchAction();
                                 }}>
                                     Include disabled rules
                                 </Button>}
