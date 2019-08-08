@@ -26,7 +26,7 @@ import MessageState from '../MessageState/MessageState';
 import RuleDetails from '../RuleDetails/RuleDetails';
 
 const RulesTable = (props) => {
-    const { rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification } = props;
+    const { rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, history } = props;
     const [cols] = useState([
         { title: 'Rule', transforms: [sortable] },
         { title: 'Added', transforms: [sortable, cellWidth(15)] },
@@ -41,6 +41,8 @@ const RulesTable = (props) => {
     const [limit, setLimit] = useState(10);
     const [offset, setOffset] = useState(0);
     const [isKebabOpen, setIsKebabOpen] = useState(false);
+    const [filterBuilding, setFilterBuilding] = useState(true);
+
     const results = rules.meta ? rules.meta.count : 0;
 
     const onSort = useCallback((_event, index, direction) => {
@@ -126,14 +128,37 @@ const RulesTable = (props) => {
     }, []);
 
     useEffect(() => {
-        fetchRules({
-            ...filters,
-            offset,
-            limit,
-            impacting,
-            sort
+        if (history.location.search) {
+            const searchParams = new URLSearchParams(history.location.search);
+            const paramsObject = Array.from(searchParams).reduce((acc, [key, value]) => ({
+                ...acc, [key]: (value === 'true' || value === 'false') ? JSON.parse(value) : value
+            }), {});
+            setImpacting(paramsObject.impacting);
+            setFilters({ ...paramsObject });
+        }
+
+        setFilterBuilding(false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        const queryString = Object.keys(filters).map(key => key + '=' + filters[key]).join('&');
+        history.push({
+            search: `?${queryString}`
         });
-    }, [fetchRules, filters, impacting, limit, offset, sort]);
+    }, [filters, history]);
+
+    useEffect(() => {
+        if (!filterBuilding) {
+            fetchRules({
+                ...filters,
+                offset,
+                limit,
+                sort
+            });
+        }
+
+    }, [fetchRules, filterBuilding, filters, limit, offset, sort]);
 
     useEffect(() => {
         if (!rows.length) {
@@ -225,52 +250,52 @@ const RulesTable = (props) => {
     />;
 
     return <>
-    <TableToolbar style={{ justifyContent: 'space-between' }}>
-        <Filters
-            fetchAction={fetchAction}
-            searchPlaceholder='Find a rule...'
-            results={results}
-        >
-            <Dropdown
-                position={DropdownPosition.left}
-                toggle={<KebabToggle onToggle={isOpen => { setIsKebabOpen(isOpen); }} />}
-                onSelect={() => { setIsKebabOpen(false); }}
-                isOpen={isKebabOpen}
-                isPlain
-                dropdownItems={[
-                    <DropdownItem value='json' href={`${BASE_URL}/export/hits.json/`} key="export json"
-                        aria-label='export data json'>
-                        Export as JSON
-                    </DropdownItem>,
-                    <DropdownItem value='csv' href={`${BASE_URL}/export/hits.csv/`} key="export csv"
-                        aria-label='export data csv'>
-                        Export as CSV
-                    </DropdownItem>
-                ]}
-            />
-            <Checkbox
-                label="Show Rules With Hits"
-                isChecked={impacting}
-                onChange={toggleRulesWithHits}
-                aria-label="InsightsRulesHideHits"
-                id="InsightsRulesHideHits"
-            />
-            {renderPagination()}
-        </Filters>
-    </TableToolbar>
-    {rulesFetchStatus === 'fulfilled' &&
-        <Table aria-label={'rule-table'}
-            actionResolver={actionResolver} onCollapse={handleOnCollapse} sortBy={sortBy}
-            onSort={onSort} cells={cols} rows={rows}>
-            <TableHeader />
-            <TableBody />
-        </Table>}
-    {rulesFetchStatus === 'pending' && (<Loading />)}
-    {rulesFetchStatus === 'failed' && (<Failed message={`There was an error fetching rules list.`} />)}
-    <TableToolbar>
-        {renderPagination('bottom')}
-    </TableToolbar>
-</>;
+        <TableToolbar style={{ justifyContent: 'space-between' }}>
+            <Filters
+                fetchAction={fetchAction}
+                searchPlaceholder='Find a rule...'
+                results={results}
+            >
+                <Dropdown
+                    position={DropdownPosition.left}
+                    toggle={<KebabToggle onToggle={isOpen => { setIsKebabOpen(isOpen); }} />}
+                    onSelect={() => { setIsKebabOpen(false); }}
+                    isOpen={isKebabOpen}
+                    isPlain
+                    dropdownItems={[
+                        <DropdownItem value='json' href={`${BASE_URL}/export/hits.json/`} key="export json"
+                            aria-label='export data json'>
+                            Export as JSON
+                        </DropdownItem>,
+                        <DropdownItem value='csv' href={`${BASE_URL}/export/hits.csv/`} key="export csv"
+                            aria-label='export data csv'>
+                            Export as CSV
+                        </DropdownItem>
+                    ]}
+                />
+                <Checkbox
+                    label="Show Rules With Hits"
+                    isChecked={impacting}
+                    onChange={toggleRulesWithHits}
+                    aria-label="InsightsRulesHideHits"
+                    id="InsightsRulesHideHits"
+                />
+                {renderPagination()}
+            </Filters>
+        </TableToolbar>
+        {rulesFetchStatus === 'fulfilled' &&
+            <Table aria-label={'rule-table'}
+                actionResolver={actionResolver} onCollapse={handleOnCollapse} sortBy={sortBy}
+                onSort={onSort} cells={cols} rows={rows}>
+                <TableHeader />
+                <TableBody />
+            </Table>}
+        {rulesFetchStatus === 'pending' && (<Loading />)}
+        {rulesFetchStatus === 'failed' && (<Failed message={`There was an error fetching rules list.`} />)}
+        <TableToolbar>
+            {renderPagination('bottom')}
+        </TableToolbar>
+    </>;
 };
 
 RulesTable.propTypes = {
