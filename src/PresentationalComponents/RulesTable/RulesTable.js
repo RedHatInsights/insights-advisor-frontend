@@ -133,8 +133,13 @@ const RulesTable = (props) => {
             const paramsObject = Array.from(searchParams).reduce((acc, [key, value]) => ({
                 ...acc, [key]: (value === 'true' || value === 'false') ? JSON.parse(value) : value
             }), {});
+            let showAllRules = {};
+            if (paramsObject.reports_shown === 'undefined') {
+                showAllRules = { reports_shown: undefined };
+            }
+
             setImpacting(paramsObject.impacting);
-            setFilters({ ...paramsObject });
+            setFilters({ ...paramsObject, ...showAllRules });
         }
 
         setFilterBuilding(false);
