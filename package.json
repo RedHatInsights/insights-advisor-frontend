@@ -21,6 +21,7 @@
     "@redhat-cloud-services/frontend-components-remediations": "0.0.3",
     "@redhat-cloud-services/frontend-components-utilities": "0.0.8",
     "classnames": "2.2.6",
+    "pluralize": "8.0.0",
     "react": "16.9.0",
     "react-content-loader": "4.2.2",
     "react-dom": "16.9.0",

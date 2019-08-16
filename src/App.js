@@ -22,7 +22,8 @@ class App extends Component {
         if (this.props !== prevProps) {
             const baseComponentUrl = location.href.slice(location.href.indexOf('insights/')).split('/')[1];
             const appNavClick = {
-                rules() { insights.chrome.appNavClick({ id: 'rules' }); }
+                topics() { insights.chrome.appNavClick({ id: 'topics' });},
+                rules() { insights.chrome.appNavClick({ id: 'rules' });}
             };
             if (appNavClick[baseComponentUrl]) {
                 appNavClick[baseComponentUrl]();

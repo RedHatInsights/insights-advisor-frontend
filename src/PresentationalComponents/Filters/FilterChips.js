@@ -9,6 +9,7 @@ const FilterChips = (props) => {
     delete localFilters.text;
     delete localFilters.impacting;
     delete localFilters.reports_shown;
+    delete localFilters.topic;
     const prunedFilters = Object.entries(localFilters);
 
     return prunedFilters.length > 0 && <>

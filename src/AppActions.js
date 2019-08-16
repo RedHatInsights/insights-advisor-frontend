@@ -35,3 +35,11 @@ export const setFilters = (filters) => ({
     type: ActionTypes.FILTERS_SET,
     payload: filters
 });
+export const fetchTopics = () => ({
+    type: ActionTypes.TOPICS_FETCH,
+    payload: fetchData(ActionTypes.TOPICS_FETCH_URL)
+});
+export const fetchTopic = (options) => ({
+    type: ActionTypes.TOPIC_FETCH,
+    payload: fetchData(`${ActionTypes.TOPICS_FETCH_URL}${options.topic_id}/`)
+});

@@ -19,9 +19,11 @@ import asyncComponent from './Utilities/asyncComponent';
  */
 const Overview = asyncComponent(() => import(/* webpackChunkName: "Overview" */ './SmartComponents/Overview/Overview'));
 const Rules = asyncComponent(() => import(/* webpackChunkName: "Rules" */ './SmartComponents/Rules/Rules'));
+const Topics = asyncComponent(() => import(/* webpackChunkName: "Topics" */ './SmartComponents/Topics/Topics'));
 const paths = {
     overview: '/overview',
-    rules: '/rules'
+    rules: '/rules',
+    topics: '/topics'
 };
 
 const InsightsRoute = ({ component: Component, rootClass, ...rest }) => {
@@ -50,6 +52,7 @@ export const Routes = () =>
     <Switch>
         <InsightsRoute path={ paths.overview } component={ Overview } rootClass='overview/'/>
         <InsightsRoute path={ paths.rules } component={ Rules } rootClass='rules'/>
+        <InsightsRoute path={ paths.topics } component={ Topics } rootClass='topics'/>
 
         { /* Finally, catch all unmatched routes */ }
         <Redirect path='*' to={ `${paths.overview}` } push/>

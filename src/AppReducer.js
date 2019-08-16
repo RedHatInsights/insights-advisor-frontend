@@ -19,7 +19,11 @@ const initialState = Immutable({
     systemtype: {},
     systemtypeFetchStatus: '',
     breadcrumbs: [],
-    filters: { impacting: true, reports_shown: true }
+    filters: { impacting: true, reports_shown: true },
+    topic: {},
+    topicFetchStatus: '',
+    topics: [],
+    topicsFetchStatus: ''
 });
 
 export const AdvisorStore = (state = initialState, action) => {
@@ -94,12 +98,32 @@ export const AdvisorStore = (state = initialState, action) => {
                 filters: action.payload
             });
 
+        case `${ActionTypes.TOPIC_FETCH}_PENDING`:
+            return state.set('topicFetchStatus', 'pending');
+        case `${ActionTypes.TOPIC_FETCH}_FULFILLED`:
+            return Immutable.merge(state, {
+                topic: action.payload,
+                topicFetchStatus: 'fulfilled'
+            });
+        case `${ActionTypes.TOPIC_FETCH}_REJECTED`:
+            return state.set('topicFetchStatus', 'rejected');
+
+        case `${ActionTypes.TOPICS_FETCH}_PENDING`:
+            return state.set('topicsFetchStatus', 'pending');
+        case `${ActionTypes.TOPICS_FETCH}_FULFILLED`:
+            return Immutable.merge(state, {
+                topics: action.payload,
+                topicsFetchStatus: 'fulfilled'
+            });
+        case `${ActionTypes.TOPICS_FETCH}_REJECTED`:
+            return state.set('topicsFetchStatus', 'rejected');
+
         default:
             return state;
     }
 };
 
-export function entitiesDetailsReducer (ActionTypes) {
+export function entitiesDetailsReducer(ActionTypes) {
     return applyReducerHash(
         {
             [`${ActionTypes.LOAD_ENTITY}_FULFILLED`]: enableApplications
@@ -108,7 +132,7 @@ export function entitiesDetailsReducer (ActionTypes) {
     );
 }
 
-function enableApplications (state) {
+function enableApplications(state) {
     return {
         ...state,
         loaded: true,
