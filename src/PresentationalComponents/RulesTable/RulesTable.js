@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Battery, Main, TableToolbar } from '@redhat-cloud-services/frontend-components';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import PropTypes from 'prop-types';
-import { CheckIcon } from '@patternfly/react-icons';
+import { CheckIcon,  ExportIcon } from '@patternfly/react-icons';
 import { flatten } from 'lodash';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
@@ -270,11 +270,11 @@ const RulesTable = (props) => {
                     dropdownItems={[
                         <DropdownItem value='json' href={`${BASE_URL}/export/hits.json/`} key="export json"
                             aria-label='export data json'>
-                            Export as JSON
+                            <ExportIcon /> Export as JSON
                         </DropdownItem>,
                         <DropdownItem value='csv' href={`${BASE_URL}/export/hits.csv/`} key="export csv"
                             aria-label='export data csv'>
-                            Export as CSV
+                            <ExportIcon /> Export as CSV
                         </DropdownItem>
                     ]}
                 />
