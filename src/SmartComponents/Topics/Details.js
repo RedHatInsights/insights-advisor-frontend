@@ -25,11 +25,10 @@ const Details = (props) => {
     const { match, fetchTopic, setFilters, topic, topicFetchStatus } = props;
     useEffect(() => {
         fetchTopic({ topic_id: props.match.params.id });
-        setFilters({ impacting: true, reports_shown: true, topic: props.match.params.id });
-        return () => setFilters({ impacting: true, reports_shown: true });
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fetchTopic, topic.slug]);
+        return () => {
+            setFilters({ impacting: true, reports_shown: true });
+        };
+    }, [fetchTopic, props.match.params.id, setFilters]);
 
     return <>
         <PageHeader>

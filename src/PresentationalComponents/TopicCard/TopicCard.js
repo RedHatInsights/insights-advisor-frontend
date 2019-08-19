@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -6,11 +7,14 @@ import {
 import { StarIcon } from '@patternfly/react-icons';
 import pluralize from 'pluralize';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import { connect } from 'react-redux';
+
+import * as AppActions from '../../AppActions';
 
 import './_TopicCard.scss';
 
 const TopicCard = (props) => {
-    const { topic } = props;
+    const { topic, setFilters, history } = props;
 
     return <GalleryItem>
         <Card>
@@ -36,7 +40,10 @@ const TopicCard = (props) => {
                     <StackItem>
                         <Level className='nowrap'>
                             <LevelItem>
-                                <Button variant="link" onClick={() => props.history.push(`/topics/${topic.slug}/`)}>
+                                <Button variant="link" onClick={() => {
+                                    setFilters({ impacting: true, reports_shown: true, topic: topic.slug });
+                                    history.push(`/topics/${topic.slug}/`);
+                                }}>
                                     Learn more
                                 </Button>
                             </LevelItem>
@@ -54,7 +61,15 @@ const TopicCard = (props) => {
 
 TopicCard.propTypes = {
     topic: PropTypes.object,
-    history: PropTypes.object
+    history: PropTypes.object,
+    setFilters: PropTypes.func
 };
 
-export default routerParams(TopicCard);
+const mapDispatchToProps = dispatch => ({
+    setFilters: (filters) => dispatch(AppActions.setFilters(filters))
+});
+
+export default routerParams(connect(
+    null,
+    mapDispatchToProps
+)(TopicCard));
