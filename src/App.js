@@ -12,7 +12,9 @@ class App extends Component {
         insights.chrome.init();
         insights.chrome.identifyApp('insights');
         this.appNav = insights.chrome.on('APP_NAVIGATION', event => {
-            if (!matchPath(location.href, { path: `${document.baseURI}insights/${event.navId}` })) {
+            if (location.pathname.indexOf(event.navId) === -1 &&
+                !matchPath(location.href, { path: `${document.baseURI}insights/${event.navId}` })
+            ) {
                 this.props.history.push(`/${event.navId}`);
             }
         });
@@ -20,7 +22,7 @@ class App extends Component {
 
     componentDidUpdate(prevProps) {
         if (this.props !== prevProps) {
-            const baseComponentUrl = location.href.slice(location.href.indexOf('insights/')).split('/')[1];
+            const baseComponentUrl = location.pathname.slice(location.pathname.indexOf('insights/')).split('/')[1];
             const appNavClick = {
                 topics() { insights.chrome.appNavClick({ id: 'topics' });},
                 rules() { insights.chrome.appNavClick({ id: 'rules' });}
