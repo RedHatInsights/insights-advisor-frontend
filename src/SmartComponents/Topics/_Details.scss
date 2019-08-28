@@ -1,0 +1,11 @@
+@import '~@redhat-cloud-services/frontend-components-utilities/files/Utilities/_variables';
+
+
+.pf-c-label.labelOverride {
+    vertical-align: middle;
+    margin-left: 20px;
+}
+
+.textOverride {
+    margin-top: var(--pf-global--spacer--md);
+}
