@@ -32,13 +32,14 @@ const List = (props) => {
 
     const renderTopics = () => <>
         {topicsFetchStatus === '' || topicsFetchStatus === 'pending' && <Loading />}
-        {topicsFetchStatus === 'fulfilled' &&
+        {topicsFetchStatus === 'fulfilled' && topics.length > 0 &&
             <Gallery gutter="lg">
                 {buildTopicList()}
             </Gallery>
         }
-        {topicsFetchStatus === 'failed' || topicsFetchStatus === 'rejected' && <MessageState icon={TimesCircleIcon}
-            title='There was an issue fetching topics' text={`Either no topics presently exist or there is an issue presenting them.`} />
+        {topicsFetchStatus === 'failed' || topicsFetchStatus === 'rejected' || (topicsFetchStatus === 'fulfilled' && topics.length === 0) &&
+            <MessageState icon={TimesCircleIcon} title='There was an issue fetching topics'
+                text={`Either no topics presently exist or there is an issue presenting them.`} />
         }
     </>;
 
