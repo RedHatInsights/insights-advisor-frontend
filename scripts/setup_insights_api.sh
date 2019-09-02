@@ -33,7 +33,6 @@ REPO_LOCAL_DIR="/tmp/insights-advisor-api"
 
 API_CONTAINER=advisor_api_for_frontend
 DB_CONTAINER=advisor_db_for_frontend
-CONTENT_SERVER_CONTAINER=content_server_for_frontend
 PROXY_CONTAINER=insights_proxy_for_frontend
 CONTAINER_NETWORK=advisor_api_net_for_frontend
 
@@ -43,7 +42,7 @@ TMP_SPANDX_CONFIG="/tmp/${SPANDX_CONFIG}"
 
 # Remove the containers and repos to start fresh
 echo_bold "Cleaning up any existing advisor containers ..."
-docker rm -f $PROXY_CONTAINER $API_CONTAINER $CONTENT_SERVER_CONTAINER $DB_CONTAINER 2>/dev/null
+docker rm -f $PROXY_CONTAINER $API_CONTAINER $DB_CONTAINER 2>/dev/null
 docker rmi -f $API_CONTAINER 2>/dev/null
 docker network rm $CONTAINER_NETWORK 2>/dev/null
 rm -f $TMP_SPANDX_CONFIG
@@ -53,12 +52,14 @@ rm -rf $REPO_LOCAL_DIR
 # Check which host ports we should connect the containers to
 API_PORT=$(check_port 8000)
 DB_PORT=$(check_port 5432)
-CONTENT_SERVER_PORT=$(check_port 8080)
 PROXY_PORT=$(check_port 1337)
 
 API_URL="http://localhost:${API_PORT}/api/insights/v1/"
-IMPORT_CONTENT_URL="http://localhost:${API_PORT}/private/import_content/"
 FRONTEND_URL="https://ci.foo.redhat.com:${PROXY_PORT}"
+IMPORT_CONTENT_URL="http://localhost:${API_PORT}/private/import_content/"
+CONTENT_SERVER="http://content-server-advisor-ci.5a9f.insights-dev.openshiftapps.com"
+TEST_DATA_URL="${CONTENT_SERVER}/testdata/"
+TEST_DATA_FIXTURE=540155_test_data.json
 
 # Download the insights-advisor-api repo and checkout the specified branch
 BRANCH=$ARG
@@ -77,21 +78,21 @@ docker build -t $API_CONTAINER $REPO_LOCAL_DIR
 echo_bold "Starting the advisor containers ..."
 docker network create $CONTAINER_NETWORK
 
-docker run -d --name $CONTENT_SERVER_CONTAINER -p ${CONTENT_SERVER_PORT}:8080 --network $CONTAINER_NETWORK \
-       quay.io/mhuth/content-server
-
 docker run -d --name $DB_CONTAINER -p ${DB_PORT}:5432 --network $CONTAINER_NETWORK \
        -e POSTGRESQL_USER=insightsapi -e POSTGRESQL_PASSWORD=InsightsData -e POSTGRESQL_DATABASE=insightsapi \
        registry.access.redhat.com/rhscl/postgresql-10-rhel7
 
 docker run -d --name $API_CONTAINER -p ${API_PORT}:8000 --network $CONTAINER_NETWORK \
-       -e ADVISOR_CONTENT_URL="http://${CONTENT_SERVER_CONTAINER}:8080/content" \
-       -e ADVISOR_CONTENT_CONFIG_URL="http://${CONTENT_SERVER_CONTAINER}:8080/config" \
+       -e ADVISOR_CONTENT_URL="${CONTENT_SERVER}/content" \
+       -e ADVISOR_CONTENT_CONFIG_URL="${CONTENT_SERVER}/config" \
        -e ADVISOR_DB_HOST=$DB_CONTAINER -e USE_DJANGO_WEBSERVER=true \
        -e ADVISOR_ENV=prod -e LOG_LEVEL=INFO \
        $API_CONTAINER /bin/bash -c "sleep 5 && \
                    advisor/manage.py migrate --noinput && \
                    advisor/manage.py loaddata rulesets rule_categories system_types && \
+                   (curl -sS ${TEST_DATA_URL} -o advisor/api/fixtures/${TEST_DATA_FIXTURE} && \
+                   advisor/manage.py loaddata $TEST_DATA_FIXTURE || \
+                   advisor/manage.py loaddata upload_sources basic_test_data) && \
                    ./app.sh"
 
 echo_bold "Importing the content into the API in the background ..."
@@ -124,5 +125,6 @@ docker run -d --name $PROXY_CONTAINER --net='host' -p $PROXY_PORT:1337 \
        docker.io/redhatinsights/insights-proxy
 
 echo_bold "Finished setting up Insights API environment."
-echo "The Insights API is available at ${API_URL}"
-echo "The Insights Frontend is available at ${FRONTEND_URL}"
+echo "Don't forget to run 'npm install' and 'npm start' to start the frontend."
+echo "The Insights Frontend URL is ${FRONTEND_URL}"
+echo "The Insights API URL is ${API_URL}"
