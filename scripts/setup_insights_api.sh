@@ -94,8 +94,8 @@ docker run -d --name $API_CONTAINER -p ${API_PORT}:8000 --network $CONTAINER_NET
                    advisor/manage.py loaddata rulesets rule_categories system_types && \
                    ./app.sh"
 
-# Import the content
-if [[ "$(type curl 2>/dev/null)" ]]; then
+echo_bold "Importing the content into the API in the background ..."
+(if [[ "$(type curl 2>/dev/null)" ]]; then
     IMPORT_WITH="curl -s"
 elif [[ "$(type wget 2>/dev/null)" ]]; then
     IMPORT_WITH="wget -q"
@@ -106,7 +106,6 @@ fi
 
 if [[ "$IMPORT_WITH" ]]; then
   TRIES=1
-  echo_bold "Importing the content into the API ..."
   while [[ ! $(${IMPORT_WITH} ${IMPORT_CONTENT_URL}) ]]; do
       if [[ ${TRIES} -eq 3 ]]; then
           echo_bold "Unsuccessfully tried ${TRIES} times to import the content automatically into the API."
@@ -116,7 +115,7 @@ if [[ "$IMPORT_WITH" ]]; then
       sleep 10
       ((TRIES++))
   done
-fi
+fi) &
 
 echo_bold "Starting insights-proxy container  ..."
 sed "s|apiHost = .*$|apiHost = \`http://localhost:${API_PORT}\`;|" $REPO_SPANDX_CONFIG > $TMP_SPANDX_CONFIG
