@@ -154,7 +154,7 @@ export default defineMessages({
     rulesDetailsTotalriskBody: {
         id: 'rulesdetails.totalriskbody',
         description: 'Text explaining the total risk value of this rule',
-        defaultMessage: ` The <strong>likelihood</strong> that this will be a problem is
+        defaultMessage: `The <strong>likelihood</strong> that this will be a problem is
         {likelihood}. The <strong>impact</strong> of the problem would be
         {impact} if it occurred.` },
     rulesDetailsRiskofchangeBody: {
@@ -308,5 +308,10 @@ export default defineMessages({
         id: 'topicslist.notopics.body',
         description: 'Topics list, no topics body',
         defaultMessage: 'Either no topics presently exist or there is an issue presenting them.'
+    },
+    remediate: {
+        id: 'remediate',
+        description: 'Remediate',
+        defaultMessage: 'Remediate'
     }
 });

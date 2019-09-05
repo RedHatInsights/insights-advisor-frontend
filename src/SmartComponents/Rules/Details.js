@@ -9,6 +9,8 @@ import { Title } from '@patternfly/react-core';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { injectIntl } from 'react-intl';
+import { AnsibeTowerIcon } from '@patternfly/react-icons';
+import { global_BackgroundColor_100 } from '@patternfly/react-tokens';
 
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
@@ -85,7 +87,10 @@ class OverviewDetails extends Component {
                                             isDisabled={this.getSelectedItems().length === 0}
                                             dataProvider={this.remediationDataProvider}
                                             onRemediationCreated={this.onRemediationCreated}
-                                        />}
+                                        >
+                                            <AnsibeTowerIcon size='sm' color={global_BackgroundColor_100.value} />
+                                            &nbsp;{intl.formatMessage(messages.remediate)}
+                                        </RemediationButton>}
                                     </Inventory>
                                 )}
                                 {systemFetchStatus === 'pending' && (<Loading />)}

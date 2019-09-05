@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Battery, Main, TableToolbar } from '@redhat-cloud-services/frontend-components';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import PropTypes from 'prop-types';
-import { CheckIcon, ExportIcon } from '@patternfly/react-icons';
+import { AnsibeTowerIcon, CheckIcon, ExportIcon } from '@patternfly/react-icons';
 import { flatten } from 'lodash';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
@@ -22,7 +22,6 @@ import Failed from '../../PresentationalComponents/Loading/Failed';
 import Filters from '../../PresentationalComponents/Filters/Filters';
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
-import { ANSIBLE_ICON } from '../../AppSvgs';
 import MessageState from '../MessageState/MessageState';
 import RuleDetails from '../RuleDetails/RuleDetails';
 import messages from '../../Messages';
@@ -35,7 +34,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         { title: intl.formatMessage(messages.rulesTableColumnTitleSystems), transforms: [sortable] },
         {
             title: <span className='ansibleCol'>
-                {ANSIBLE_ICON} {intl.formatMessage(messages.rulesTableColumnTitleAnsible)}
+                <AnsibeTowerIcon size='md' /> {intl.formatMessage(messages.rulesTableColumnTitleAnsible)}
             </span>, transforms: [sortable]
         }
     ]);

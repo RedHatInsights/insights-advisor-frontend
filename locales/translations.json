@@ -22,7 +22,7 @@
   "rulestable.fetchrules.error": "There was an error fetching rules list.",
   "loading": "Loading...",
   "summarychart.nohits": "Your connected systems have no rule hits.",
-  "summarychart.item": "{numIssues} {name} affecting {affectedSystems} {affectedSystems,plural,one{system} other{systems}}",
+  "summarychart.item": "{numIssues} {name} affecting {affectedSystems} {affectedSystems, plural, one {system} other {systems}}",
   "summarychart.itemnohits": "No {severity} hits.",
   "overviewchart.nohits": "Your connected systems have no categorized rule hits.",
   "overviewchart.totalhits": "Total Hits",
@@ -34,7 +34,7 @@
   "undefined": "Undefined",
   "topiccard.learnmorelink": "Learn more",
   "recommended": "Recommended",
-  "topiccard.systemsaffected": "{systems} {systems,plural,one{system} other{systems}} affected",
+  "topiccard.systemsaffected": "{systems} {systems, plural, one {system} other {systems}} affected",
   "overview": "Overview",
   "overview.categorychart.title": "Rule hits by category",
   "overview.severitychart.title": "Rule hits by severity",
@@ -58,5 +58,6 @@
   "topicdetails.nodetails.body": "There exist no further details for this topic.",
   "title.topics": "Topics",
   "topicslist.notopics.title": "There was an issue fetching topics",
-  "topicslist.notopics.body": "Either no topics presently exist or there is an issue presenting them."
+  "topicslist.notopics.body": "Either no topics presently exist or there is an issue presenting them.",
+  "remediate": "Remediate"
 }
