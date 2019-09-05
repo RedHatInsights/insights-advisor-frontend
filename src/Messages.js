@@ -307,6 +307,6 @@ export default defineMessages({
     topicsListNotopicsBody: {
         id: 'topicslist.notopics.body',
         description: 'Topics list, no topics body',
-        defaultMessage: 'There was an issue fetching topics.'
+        defaultMessage: 'Either no topics presently exist or there is an issue presenting them.'
     }
 });

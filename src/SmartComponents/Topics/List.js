@@ -40,8 +40,8 @@ const List = ({ topics, topicsFetchStatus, fetchTopics, setBreadcrumbs, intl }) 
         }
         {topicsFetchStatus === 'failed' || topicsFetchStatus === 'rejected' || (topicsFetchStatus === 'fulfilled' && topics.length === 0) &&
             <MessageState icon={TimesCircleIcon}
-                title={intl.formatMessage(messages.topicDetailslNodetailsTitle)}
-                text={intl.formatMessage(messages.topicDetailslNodetailsBody)} />
+                title={intl.formatMessage(messages.topicsListNotopicsTitle)}
+                text={intl.formatMessage(messages.topicsListNotopicsBody)} />
         }
     </>;
 
