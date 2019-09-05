@@ -78,11 +78,11 @@ class OverviewDetails extends Component {
                                 { systemFetchStatus === 'fulfilled' && (
 
                                     <Inventory items={ system.host_ids }>
-                                        { rule.playbook_count > 0 && <RemediationButton
+                                        <RemediationButton
                                             isDisabled={ this.getSelectedItems().length === 0 }
                                             dataProvider={ this.remediationDataProvider }
                                             onRemediationCreated={ this.onRemediationCreated }
-                                        /> }
+                                        />
                                     </Inventory>
                                 ) }
                                 { systemFetchStatus === 'pending' && (<Loading/>) }
