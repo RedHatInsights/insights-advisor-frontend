@@ -12,10 +12,9 @@ import debounce from '../../Utilities/Debounce';
 import { SearchIcon } from '@patternfly/react-icons';
 import FilterChips from './FilterChips';
 
-const Filters = (props) => {
+const Filters = ({ children, searchPlaceholder, filters, hideCategories, setFilters, fetchAction }) => {
     const [searchText, setSearchText] = useState('');
     const debouncedSearchText = debounce(searchText, 800);
-    const { children, searchPlaceholder, filters, hideCategories, setFilters, fetchAction } = props;
     const previousChildren = React.Children.toArray(children);
     const lastChild = previousChildren.pop();
 
@@ -67,7 +66,7 @@ const Filters = (props) => {
         delete filter.text;
         setFilters({ ...filter, ...text });
         fetchAction({ ...filter, ...text });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearchText]);
 
     return <>

@@ -4,14 +4,15 @@ import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { injectIntl } from 'react-intl';
 
 import * as AppActions from '../../AppActions';
 import './_breadcrumbs.scss';
+import messages from '../../Messages';
 
-const Breadcrumbs = (props) => {
+const Breadcrumbs = ({ breadcrumbs, current, fetchRule, match, ruleFetchStatus, rule, intl }) => {
     const [items, setItems] = useState([]);
     const [ruleDescriptionLoaded, setRuleDescription] = useState(false);
-    const { breadcrumbs, current, fetchRule, match, ruleFetchStatus, rule } = props;
     const buildBreadcrumbs = useCallback(() => {
         let crumbs = [];
 
@@ -62,7 +63,7 @@ const Breadcrumbs = (props) => {
                     <BreadcrumbItem isActive>{ current }</BreadcrumbItem>
                 </Breadcrumb>
             ) }
-            { ruleFetchStatus === 'pending' && ('Loading...') }
+            { ruleFetchStatus === 'pending' && intl.formatMessage(messages.loading)}
         </React.Fragment>
     );
 };
@@ -73,7 +74,8 @@ Breadcrumbs.propTypes = {
     fetchRule: PropTypes.func,
     match: PropTypes.object,
     rule: PropTypes.object,
-    ruleFetchStatus: PropTypes.string
+    ruleFetchStatus: PropTypes.string,
+    intl: PropTypes.any
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -88,7 +90,7 @@ const mapDispatchToProps = dispatch => ({
     fetchRule: (url) => dispatch(AppActions.fetchRule(url))
 });
 
-export default routerParams(connect(
+export default injectIntl(routerParams(connect(
     mapStateToProps,
     mapDispatchToProps
-)(Breadcrumbs));
+)(Breadcrumbs)));

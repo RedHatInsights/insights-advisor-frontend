@@ -7,18 +7,19 @@ import { Gallery } from '@patternfly/react-core';
 import { Main } from '@redhat-cloud-services/frontend-components';
 import { groupBy, sortBy, reverse } from 'lodash';
 import { TimesCircleIcon } from '@patternfly/react-icons';
+import { injectIntl } from 'react-intl';
 
 import * as AppActions from '../../AppActions';
 import TopicCard from '../../PresentationalComponents/TopicCard/TopicCard';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
+import messages from '../../Messages';
 
-const List = (props) => {
-    const { topics, topicsFetchStatus, fetchTopics, setBreadcrumbs } = props;
-
+const List = ({ topics, topicsFetchStatus, fetchTopics, setBreadcrumbs, intl }) => {
     useEffect(() => {
-        setBreadcrumbs([{ title: 'Topics', navigate: '/topics' }]);
+        setBreadcrumbs([{ title: intl.formatMessage(messages.topicsTitle), navigate: '/topics' }]);
         fetchTopics();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchTopics, setBreadcrumbs]);
 
     const buildTopicList = () => {
@@ -38,14 +39,15 @@ const List = (props) => {
             </Gallery>
         }
         {topicsFetchStatus === 'failed' || topicsFetchStatus === 'rejected' || (topicsFetchStatus === 'fulfilled' && topics.length === 0) &&
-            <MessageState icon={TimesCircleIcon} title='There was an issue fetching topics'
-                text={`Either no topics presently exist or there is an issue presenting them.`} />
+            <MessageState icon={TimesCircleIcon}
+                title={intl.formatMessage(messages.topicDetailslNodetailsTitle)}
+                text={intl.formatMessage(messages.topicDetailslNodetailsBody)} />
         }
     </>;
 
     return <>
         <PageHeader>
-            <PageHeaderTitle title='Topics' />
+            <PageHeaderTitle title={intl.formatMessage(messages.topicsTitle)} />
         </PageHeader>
         <Main>
             {renderTopics()}
@@ -58,7 +60,8 @@ List.propTypes = {
     setBreadcrumbs: PropTypes.func,
     fetchTopics: PropTypes.func,
     topicsFetchStatus: PropTypes.string,
-    topics: PropTypes.array
+    topics: PropTypes.array,
+    intl: PropTypes.any
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -72,7 +75,7 @@ const mapDispatchToProps = dispatch => ({
     fetchTopics: () => dispatch(AppActions.fetchTopics())
 });
 
-export default routerParams(connect(
+export default injectIntl(routerParams(connect(
     mapStateToProps,
     mapDispatchToProps
-)(List));
+)(List)));

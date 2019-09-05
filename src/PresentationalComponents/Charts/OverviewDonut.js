@@ -4,15 +4,17 @@ import PropTypes from 'prop-types';
 import { ChartDonut, ChartLegend, ChartThemeColor, ChartThemeVariant } from '@patternfly/react-charts';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { connect } from 'react-redux';
+import { injectIntl } from 'react-intl';
 
 import './OverviewDonut.scss';
 import * as AppActions from '../../AppActions';
 import { RULE_CATEGORIES } from '../../AppConstants';
+import messages from '../../Messages';
 
-const OverviewDonut = (props) => {
-    const setFilters = category => {
+const OverviewDonut = ({ className, category, setFilters, history, intl }) => {
+    const setDonutFilters = category => {
         const categoryNum = `${RULE_CATEGORIES[category]}`;
-        props.setFilters({ category: categoryNum, reports_shown: true, impacting: true });
+        setFilters({ category: categoryNum, reports_shown: true, impacting: true });
     };
 
     const legendClick = () => {
@@ -20,13 +22,12 @@ const OverviewDonut = (props) => {
             target: 'labels',
             mutation: (data) => {
                 const category = data.datum.name.split(' ')[0].toLowerCase();
-                setFilters(category);
-                props.history.push(`/rules`);
+                setDonutFilters(category);
+                history.push(`/rules`);
             }
         }];
     };
 
-    const { className, category } = props;
     const totalHits = category.length ? category.reduce((sum, curr) => sum + curr) : 0;
     const typeNames = ['Availability', 'Stability', 'Performance', 'Security'];
 
@@ -34,7 +35,7 @@ const OverviewDonut = (props) => {
         <div className={ `donut-chart-inline ${className}` }>
             <div className="donut-chart-container">
                 <ChartDonut
-                    data={ props.category.map((value, key) => ({ x: typeNames[key], y: value, label: `${typeNames[key]}: ${value}` })) }
+                    data={ category.map((value, key) => ({ x: typeNames[key], y: value, label: `${typeNames[key]}: ${value}` })) }
                     labels={ datum => `${datum.x}: ${datum.y}` }
                     events={ [{
                         target: 'data',
@@ -45,8 +46,8 @@ const OverviewDonut = (props) => {
                                         target: 'data',
                                         mutation: data => {
                                             const category = data.datum.xName.toLowerCase();
-                                            setFilters(category);
-                                            props.history.push(`/rules`);
+                                            setDonutFilters(category);
+                                            history.push(`/rules`);
                                         }
                                     }
                                 ];
@@ -54,13 +55,13 @@ const OverviewDonut = (props) => {
                         }
                     }] }
                     title={ `${totalHits}` }
-                    subTitle="Total Hits"
+                    subTitle={intl.formatMessage(messages.overviewChartTotalHits)}
                     themeColor={ ChartThemeColor.multiOrdered }
                     themeVariant={ ChartThemeVariant.light }
                 />
             </div>
             <ChartLegend
-                data={ props.category.map((value, key) => ({ name: `${typeNames[key]} (${value})` })) }
+                data={ category.map((value, key) => ({ name: `${typeNames[key]} (${value})` })) }
                 events={ [
                     {
                         target: 'labels', eventHandlers: {
@@ -84,7 +85,7 @@ const OverviewDonut = (props) => {
                 themeVariant={ ChartThemeVariant.light }
             />
         </div>
-        : <p style={ { marginTop: 18 } }>{ `Your connected systems have no categorized rule hits.` }</p>
+        : <p style={ { marginTop: 18 } }>{ intl.formatMessage(messages.overviewChartNoHits) }</p>
     }</>;
 };
 
@@ -92,7 +93,8 @@ OverviewDonut.propTypes = {
     className: PropTypes.string,
     category: PropTypes.array,
     history: PropTypes.object,
-    setFilters: PropTypes.func
+    setFilters: PropTypes.func,
+    intl: PropTypes.any
 
 };
 
@@ -104,7 +106,7 @@ const mapDispatchToProps = dispatch => ({
     setFilters: (filters) => dispatch(AppActions.setFilters(filters))
 });
 
-export default routerParams(connect(
+export default injectIntl(routerParams(connect(
     null,
     mapDispatchToProps
-)(OverviewDonut));
+)(OverviewDonut)));

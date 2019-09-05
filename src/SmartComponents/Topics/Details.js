@@ -12,23 +12,24 @@ import {
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { StarIcon, TimesCircleIcon } from '@patternfly/react-icons';
+import { injectIntl } from 'react-intl';
 
 import * as AppActions from '../../AppActions';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
+import messages from '../../Messages';
 
 import './_Details.scss';
 
-const Details = (props) => {
-    const { match, fetchTopic, setFilters, topic, topicFetchStatus } = props;
+const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl }) => {
     useEffect(() => {
-        fetchTopic({ topic_id: props.match.params.id });
+        fetchTopic({ topic_id: match.params.id });
         return () => {
             setFilters({ impacting: true, reports_shown: true });
         };
-    }, [fetchTopic, props.match.params.id, setFilters]);
+    }, [fetchTopic, match.params.id, setFilters]);
 
     return <>
         <PageHeader>
@@ -39,15 +40,17 @@ const Details = (props) => {
             {topicFetchStatus === 'fulfilled' &&
                 <>
                     <Title size="2xl" className='titleOverride'>
-                        {topic.name}{topic.featured && <Label className='labelOverride'><StarIcon /> Recommended</Label>}
+                        {topic.name}{topic.featured && <Label className='labelOverride'><StarIcon />
+                            {intl.formatMessage(messages.recommended)}
+                        </Label>}
                     </Title>
                     <TextContent className='textOverride'>
                         <Text component={TextVariants.p}>
                             <Truncate
                                 text={topic.description}
                                 length={600}
-                                expandText='Read more'
-                                collapseText='Read less'
+                                expandText={intl.formatMessage(messages.readmore)}
+                                collapseText={intl.formatMessage(messages.readless)}
                                 inline
                             />
                         </Text>
@@ -62,8 +65,9 @@ const Details = (props) => {
                     <Title headingLevel="h3" size="2xl" className='titlePaddingOverride'> Rules</Title>
                     <RulesTable />
                 </>}
-                {topicFetchStatus === 'failed' || topicFetchStatus === 'rejected' && <MessageState icon={TimesCircleIcon} title='No details for topic'
-                    text={`There exist no further details for this topic.`} />}
+                {topicFetchStatus === 'failed' || topicFetchStatus === 'rejected' &&
+                    <MessageState icon={TimesCircleIcon} title={intl.formatMessage(messages.topicDetailslNodetailsTitle)}
+                        text={intl.formatMessage(messages.topicDetailslNodetailsBody)} />}
             </>
         </Main>
     </>;
@@ -74,7 +78,8 @@ Details.propTypes = {
     fetchTopic: PropTypes.func,
     topic: PropTypes.object,
     topicFetchStatus: PropTypes.string,
-    setFilters: PropTypes.func
+    setFilters: PropTypes.func,
+    intl: PropTypes.any
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -89,7 +94,7 @@ const mapDispatchToProps = dispatch => ({
     setFilters: (filters) => dispatch(AppActions.setFilters(filters))
 });
 
-export default routerParams(connect(
+export default injectIntl(routerParams(connect(
     mapStateToProps,
     mapDispatchToProps
-)(Details));
+)(Details)));

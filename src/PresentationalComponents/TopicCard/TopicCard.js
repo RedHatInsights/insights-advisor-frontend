@@ -5,16 +5,16 @@ import {
     Card, CardHeader, CardBody, Button, Title, Stack, StackItem, GalleryItem, Text, TextContent, TextVariants, Level, LevelItem, Label
 } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
-import pluralize from 'pluralize';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { connect } from 'react-redux';
+import { injectIntl } from 'react-intl';
 
 import * as AppActions from '../../AppActions';
+import messages from '../../Messages';
 
 import './_TopicCard.scss';
 
-const TopicCard = (props) => {
-    const { topic, setFilters, history } = props;
+const TopicCard = ({ topic, setFilters, history, intl }) => {
 
     return <GalleryItem>
         <Card>
@@ -33,7 +33,7 @@ const TopicCard = (props) => {
                     <StackItem>
                         <TextContent>
                             <Text component={TextVariants.small}>
-                                {pluralize('system', topic.impacted_systems_count, true)} affected
+                                {intl.formatMessage(messages.topicCardSystemsaffected, { systems: topic.impacted_systems_count })}
                             </Text>
                         </TextContent>
                     </StackItem>
@@ -44,32 +44,32 @@ const TopicCard = (props) => {
                                     setFilters({ impacting: true, reports_shown: true, topic: topic.slug });
                                     history.push(`/topics/${topic.slug}/`);
                                 }}>
-                                    Learn more
+                                    {intl.formatMessage(messages.topicCardLearnMoreLink)}
                                 </Button>
                             </LevelItem>
                             {topic.featured && <LevelItem>
-                                <Label> <StarIcon /> Recommended</Label>
+                                <Label> <StarIcon />&nbsp;{intl.formatMessage(messages.recommended)}</Label>
                             </LevelItem>}
                         </Level>
                     </StackItem>
                 </Stack>
             </CardBody>
         </Card>
-
     </GalleryItem>;
 };
 
 TopicCard.propTypes = {
     topic: PropTypes.object,
     history: PropTypes.object,
-    setFilters: PropTypes.func
+    setFilters: PropTypes.func,
+    intl: PropTypes.any
 };
 
 const mapDispatchToProps = dispatch => ({
     setFilters: (filters) => dispatch(AppActions.setFilters(filters))
 });
 
-export default routerParams(connect(
+export default injectIntl(routerParams(connect(
     null,
     mapDispatchToProps
-)(TopicCard));
+)(TopicCard)));

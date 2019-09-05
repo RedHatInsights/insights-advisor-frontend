@@ -8,12 +8,14 @@ import PropTypes from 'prop-types';
 import { Title } from '@patternfly/react-core';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
+import { injectIntl } from 'react-intl';
 
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import RuleDetails from '../../PresentationalComponents/RuleDetails/RuleDetails';
+import messages from '../../Messages';
 
 import './Details.scss';
 
@@ -23,7 +25,7 @@ class OverviewDetails extends Component {
         kbaDetailsLoading: false
     };
 
-    async componentDidMount () {
+    async componentDidMount() {
         this.props.fetchRule({ rule_id: this.props.match.params.id });
         this.props.fetchSystem({ rule_id: this.props.match.params.id });
     }
@@ -50,46 +52,47 @@ class OverviewDetails extends Component {
         this.props.addNotification(result.getNotification());
     };
 
-    render () {
-        const { match, ruleFetchStatus, rule, systemFetchStatus, system } = this.props;
+    render() {
+        const { match, ruleFetchStatus, rule, systemFetchStatus, system, intl } = this.props;
         return (
             <React.Fragment>
-                { ruleFetchStatus === 'fulfilled' && (
+                {ruleFetchStatus === 'fulfilled' && (
                     <>
                         <PageHeader>
                             <Breadcrumbs
-                                current={ rule.description || '' }
-                                match={ match }
+                                current={rule.description || ''}
+                                match={match}
                             />
-                            <PageHeaderTitle title={ rule.description || '' }/>
-                            <p>Publish Date: { `${(new Date(rule.publish_date)).toLocaleDateString()}` }</p>
+                            <PageHeaderTitle title={rule.description || ''} />
+                            <p>{intl.formatMessage(messages.rulesDetailsPubishdate, { date: (new Date(rule.publish_date)).toLocaleDateString() })}</p>
                         </PageHeader>
                         <Main className='pf-m-light pf-u-pt-sm'>
-                            <RuleDetails rule={ rule }/>
+                            <RuleDetails rule={rule} />
                         </Main>
                     </>
-                ) }
-                { ruleFetchStatus === 'pending' && (<Loading/>) }
+                )}
+                {ruleFetchStatus === 'pending' && (<Loading />)}
                 <Main>
                     <React.Fragment>
-                        { ruleFetchStatus === 'fulfilled' && (
+                        {ruleFetchStatus === 'fulfilled' && (
                             <>
-                                <Title headingLevel="h3" size="2xl" className='titlePaddingOverride'> Affected systems</Title>
-                                { systemFetchStatus === 'fulfilled' && (
-
-                                    <Inventory items={ system.host_ids }>
-                                        { rule.playbook_count > 0 && <RemediationButton
-                                            isDisabled={ this.getSelectedItems().length === 0 }
-                                            dataProvider={ this.remediationDataProvider }
-                                            onRemediationCreated={ this.onRemediationCreated }
-                                        /> }
+                                <Title headingLevel="h3" size="2xl" className='titlePaddingOverride'>
+                                    {intl.formatMessage(messages.affectedSystems)}
+                                </Title>
+                                {systemFetchStatus === 'fulfilled' && (
+                                    <Inventory items={system.host_ids}>
+                                        {rule.playbook_count > 0 && <RemediationButton
+                                            isDisabled={this.getSelectedItems().length === 0}
+                                            dataProvider={this.remediationDataProvider}
+                                            onRemediationCreated={this.onRemediationCreated}
+                                        />}
                                     </Inventory>
-                                ) }
-                                { systemFetchStatus === 'pending' && (<Loading/>) }
+                                )}
+                                {systemFetchStatus === 'pending' && (<Loading />)}
                             </>
-                        ) }
-                        { ruleFetchStatus === 'pending' && (<Loading/>) }
-                        { ruleFetchStatus === 'failed' && (<Failed message={ `There was an error fetching rules list.` }/>) }
+                        )}
+                        {ruleFetchStatus === 'pending' && (<Loading />)}
+                        {ruleFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.rulesTableFetchRulesError)} />)}
                     </React.Fragment>
                 </Main>
             </React.Fragment>
@@ -106,7 +109,8 @@ OverviewDetails.propTypes = {
     systemFetchStatus: PropTypes.string,
     system: PropTypes.object,
     entities: PropTypes.any,
-    addNotification: PropTypes.func.isRequired
+    addNotification: PropTypes.func.isRequired,
+    intl: PropTypes.any
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -125,7 +129,7 @@ const mapDispatchToProps = dispatch => ({
     addNotification: data => dispatch(addNotification(data))
 });
 
-export default routerParams(connect(
+export default injectIntl(routerParams(connect(
     mapStateToProps,
     mapDispatchToProps
-)(OverviewDetails));
+)(OverviewDetails)));
