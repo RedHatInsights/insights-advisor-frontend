@@ -19,7 +19,7 @@ fi
 
 function check_port () {
     local port=$1
-    while ss -tln | grep -q $port; do
+    while lsof -P -iTCP -sTCP:LISTEN | grep -q $port; do
       ((port++))
     done
     echo $port
