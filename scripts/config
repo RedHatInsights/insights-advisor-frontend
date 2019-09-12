@@ -1,0 +1,5 @@
+Host github.com
+  User git
+  Hostname github.com
+  IdentityFile /opt/app-root/src/.ssh/keyfile
+  StrictHostKeyChecking no
