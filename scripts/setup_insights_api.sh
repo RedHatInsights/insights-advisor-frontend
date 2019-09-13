@@ -6,6 +6,7 @@ if [[ -z $ARG ]]; then
     echo "Start an Insights API environment (as a set of containers) from <branch> in the insights-advisor-api git repo"
     echo
     echo "    <branch> : checkout <branch> and start the containers"
+    echo "    -u       : runs git pull to get latest code for the checked-out branch (containers must be running)"
     echo "    -c       : stop and cleanup the containers"
     exit 1
 fi
@@ -39,6 +40,17 @@ CONTAINER_NETWORK=advisor_api_net_for_frontend
 SPANDX_CONFIG="spandx.config.js"
 REPO_SPANDX_CONFIG="./config/${SPANDX_CONFIG}"
 TMP_SPANDX_CONFIG="/tmp/${SPANDX_CONFIG}"
+
+if [[ "$ARG" == "-u" ]]; then
+    if ! docker ps | grep -q $API_CONTAINER; then
+        echo "The $API_CONTAINER container must be running to use the -u option"
+        exit 1
+    fi
+    # pull the latest changes from origin/$BRANCH
+    # Note that this fails if commits are amended and force pushed (merge conflicts)
+    docker exec $API_CONTAINER git pull
+    exit $?
+fi
 
 # Remove the containers and repos to start fresh
 echo_bold "Cleaning up any existing advisor containers ..."
@@ -94,6 +106,12 @@ docker run -d --name $API_CONTAINER -p ${API_PORT}:8000 --network $CONTAINER_NET
                    advisor/manage.py loaddata $TEST_DATA_FIXTURE || \
                    advisor/manage.py loaddata upload_sources basic_test_data) && \
                    ./app.sh"
+
+# Add user's ~/.ssh directory to the Advisor container for running git pull from within it
+docker cp ~/.ssh $API_CONTAINER:/opt/app-root/src/
+docker exec --user 0 $API_CONTAINER /bin/bash -c "chown -R 1001:0 /opt/app-root/src/.ssh"
+docker exec $API_CONTAINER /bin/bash -c "git config --global user.email user@example.com && \
+                                         git config --global user.name 'User Name'"
 
 echo_bold "Importing the content into the API in the background ..."
 (if [[ "$(type curl 2>/dev/null)" ]]; then
