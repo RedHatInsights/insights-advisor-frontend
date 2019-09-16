@@ -35,6 +35,7 @@
     "undefined": "Undefined",
     "topiccard.learnmorelink": "Learn more",
     "recommended": "Recommended",
+    "featured": "Featured",
     "topiccard.systemsaffected": "{systems} {systems, plural, one {system} other {systems}} affected",
     "overview": "Overview",
     "overview.categorychart.title": "Rule hits by category",

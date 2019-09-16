@@ -48,7 +48,7 @@ const TopicCard = ({ topic, setFilters, history, intl }) => {
                                 </Button>
                             </LevelItem>
                             {topic.featured && <LevelItem>
-                                <Label> <StarIcon />&nbsp;{intl.formatMessage(messages.recommended)}</Label>
+                                <Label> <StarIcon />&nbsp;{intl.formatMessage(messages.featured)}</Label>
                             </LevelItem>}
                         </Level>
                     </StackItem>
