@@ -41,7 +41,7 @@ const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl 
                 <>
                     <Title size="2xl" className='titleOverride'>
                         {topic.name}{topic.featured && <Label className='labelOverride'><StarIcon />
-                            {intl.formatMessage(messages.recommended)}
+                            {intl.formatMessage(messages.featured)}
                         </Label>}
                     </Title>
                     <TextContent className='textOverride'>
