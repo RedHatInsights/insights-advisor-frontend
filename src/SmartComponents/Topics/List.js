@@ -71,7 +71,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    setBreadcrumbs: (obj) => AppActions.setBreadcrumbs(obj),
+    setBreadcrumbs: (obj) => dispatch(AppActions.setBreadcrumbs(obj)),
     fetchTopics: () => dispatch(AppActions.fetchTopics())
 });
 
