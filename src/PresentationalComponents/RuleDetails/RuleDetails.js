@@ -64,7 +64,7 @@ const RuleDetails = ({ children, className, rule, intl }) => {
                     </div>
                     <p>{intl.formatMessage(messages.rulesDetailsTotalriskBody, {
                         likelihood: AppConstants.LIKELIHOOD_LABEL[rule.likelihood] || intl.formatMessage(messages.undefined),
-                        impact: AppConstants.IMPACT_LABEL[rule.impact.impact] || intl.formatMessage(messages.undefined),
+                        impact: (rule.impact && AppConstants.IMPACT_LABEL[rule.impact.impact]) || intl.formatMessage(messages.undefined),
                         strong(str) { return <strong>{str}</strong>; }
                     })}</p>
                 </GridItem>
