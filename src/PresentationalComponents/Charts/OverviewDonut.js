@@ -36,7 +36,7 @@ const OverviewDonut = ({ className, category, setFilters, history, intl }) => {
             <div className="donut-chart-container">
                 <ChartDonut
                     data={ category.map((value, key) => ({ x: typeNames[key], y: value, label: `${typeNames[key]}: ${value}` })) }
-                    labels={ datum => `${datum.x}: ${datum.y}` }
+                    labels={ ({ datum }) => `${datum.x}: ${datum.y}` }
                     events={ [{
                         target: 'data',
                         eventHandlers: {

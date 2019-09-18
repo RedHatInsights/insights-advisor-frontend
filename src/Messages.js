@@ -177,6 +177,11 @@ export default defineMessages({
         description: 'Recommended',
         defaultMessage: 'Recommended'
     },
+    featured: {
+        id: 'featured',
+        description: 'Featured',
+        defaultMessage: 'Featured'
+    },
     topicCardSystemsaffected: {
         id: 'topiccard.systemsaffected',
         description: 'Topic card, systems affected text',
