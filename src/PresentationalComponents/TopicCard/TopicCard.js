@@ -6,15 +6,13 @@ import {
 } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
-import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 
-import * as AppActions from '../../AppActions';
 import messages from '../../Messages';
 
 import './_TopicCard.scss';
 
-const TopicCard = ({ topic, setFilters, history, intl }) => {
+const TopicCard = ({ topic, history, intl }) => {
 
     return <GalleryItem>
         <Card>
@@ -41,7 +39,6 @@ const TopicCard = ({ topic, setFilters, history, intl }) => {
                         <Level className='nowrap'>
                             <LevelItem>
                                 <Button variant="link" onClick={() => {
-                                    setFilters({ impacting: true, reports_shown: true, topic: topic.slug });
                                     history.push(`/topics/${topic.slug}/`);
                                 }}>
                                     {intl.formatMessage(messages.topicCardLearnMoreLink)}
@@ -61,15 +58,7 @@ const TopicCard = ({ topic, setFilters, history, intl }) => {
 TopicCard.propTypes = {
     topic: PropTypes.object,
     history: PropTypes.object,
-    setFilters: PropTypes.func,
     intl: PropTypes.any
 };
 
-const mapDispatchToProps = dispatch => ({
-    setFilters: (filters) => dispatch(AppActions.setFilters(filters))
-});
-
-export default injectIntl(routerParams(connect(
-    null,
-    mapDispatchToProps
-)(TopicCard)));
+export default injectIntl(routerParams((TopicCard)));

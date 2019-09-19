@@ -153,7 +153,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     useEffect(() => {
         const queryString = Object.keys(filters).map(key => key + '=' + filters[key]).join('&');
-        history.push({
+        history.replace({
             search: `?${queryString}`
         });
     }, [filters, history]);
