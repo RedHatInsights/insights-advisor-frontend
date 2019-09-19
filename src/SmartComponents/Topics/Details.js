@@ -69,7 +69,7 @@ const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl,
             <>
                 {topicFetchStatus === '' || topicFetchStatus === 'pending' || topicFetchStatus === 'fulfilled' && <>
                     <Title headingLevel="h3" size="2xl" className='titlePaddingOverride'> Rules</Title>
-                    <RulesTable />
+                    {filters.topic && <RulesTable />}
                 </>}
                 {topicFetchStatus === 'failed' || topicFetchStatus === 'rejected' &&
                     <MessageState icon={TimesCircleIcon} title={intl.formatMessage(messages.topicDetailslNodetailsTitle)}
