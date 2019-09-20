@@ -52,13 +52,17 @@ if [[ "$ARG" == "-u" ]]; then
     exit $?
 fi
 
-# Remove the containers and repos to start fresh
-echo_bold "Cleaning up any existing advisor containers ..."
-docker rm -f $PROXY_CONTAINER $API_CONTAINER $DB_CONTAINER 2>/dev/null
-docker rmi -f $API_CONTAINER 2>/dev/null
-docker network rm $CONTAINER_NETWORK 2>/dev/null
-rm -f $TMP_SPANDX_CONFIG
-rm -rf $REPO_LOCAL_DIR
+function clean_up()
+{
+    # Remove the containers and repos to start fresh
+    echo_bold "Cleaning up any existing advisor containers ..."
+    docker rm -f $PROXY_CONTAINER $API_CONTAINER $DB_CONTAINER 2>/dev/null
+    docker rmi -f $API_CONTAINER 2>/dev/null
+    docker network rm $CONTAINER_NETWORK 2>/dev/null
+    rm -f $TMP_SPANDX_CONFIG
+    rm -rf $REPO_LOCAL_DIR
+}
+clean_up
 [[ "$ARG" == "-c" ]] && exit 0
 
 # Check which host ports we should connect the containers to
@@ -79,7 +83,7 @@ CMD="git clone --branch $BRANCH --single-branch $API_REPO $REPO_LOCAL_DIR"
 echo_bold "Running '$CMD' ..."
 if ! $CMD; then
     echo_bold "Problems cloning insights-advisor-api repo and checking out branch '$BRANCH'."
-    echo "Please ensure branch '$BRANCH' exists and try running git clone manually."
+    echo "Please ensure branch '$BRANCH' exists."
     exit 1
 fi
 
@@ -106,6 +110,13 @@ docker run -d --name $API_CONTAINER -p ${API_PORT}:8000 --network $CONTAINER_NET
                    advisor/manage.py loaddata $TEST_DATA_FIXTURE || \
                    advisor/manage.py loaddata upload_sources basic_test_data) && \
                    ./app.sh"
+
+# Check that API container is running
+if ! docker ps | grep -q $API_CONTAINER; then
+    echo_bold "Problem starting $API_CONTAINER.  Exiting ..."
+    clean_up
+    exit 1
+fi
 
 # Add user's ~/.ssh directory to the Advisor container for running git pull from within it
 docker cp ~/.ssh $API_CONTAINER:/opt/app-root/src/
