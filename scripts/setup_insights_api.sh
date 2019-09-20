@@ -19,7 +19,7 @@ fi
 
 function check_port () {
     local port=$1
-    while ss -tln | grep -q $port; do
+    while lsof -P -iTCP -sTCP:LISTEN | grep -q $port; do
       ((port++))
     done
     echo $port
@@ -138,8 +138,12 @@ fi) &
 
 echo_bold "Starting insights-proxy container  ..."
 sed "s|apiHost = .*$|apiHost = \`http://localhost:${API_PORT}\`;|" $REPO_SPANDX_CONFIG > $TMP_SPANDX_CONFIG
-docker run -d --name $PROXY_CONTAINER --net='host' -p $PROXY_PORT:1337 \
-       -e PLATFORM=linux -v $TMP_SPANDX_CONFIG:/config/spandx.config.js \
+# Check what platform we are running on, ie Linux or Mac or ?
+PLATFORM=$(uname -s | tr '[A-Z]' '[a-z'])
+[[ $PLATFORM == 'linux' ]] && USE_HOST_NET='--net=host' || USE_HOST_NET=''
+docker run -d --name $PROXY_CONTAINER -p $PROXY_PORT:1337 \
+       -e PLATFORM=$PLATFORM $USE_HOST_NET \
+       -v $TMP_SPANDX_CONFIG:/config/spandx.config.js \
        docker.io/redhatinsights/insights-proxy
 
 echo_bold "Finished setting up Insights API environment."
