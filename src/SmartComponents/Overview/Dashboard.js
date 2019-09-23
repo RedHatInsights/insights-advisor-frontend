@@ -134,7 +134,7 @@ class OverviewDashboard extends Component {
                         text={<span key='1'>
                             {intl.formatMessage(messages.overviewActionCallNoSystemsBody, { break() { return <br />; } })}
                         </span>}>
-                        <Button component="a" href="https://access.redhat.com/products/red-hat-insights/#getstarted"
+                        <Button component="a" href="https://access.redhat.com/products/red-hat-insights#getstarted"
                             target="_blank" variant="primary">
                             {intl.formatMessage(messages.overviewActionCallNoSystemsAction)}
                         </Button>
