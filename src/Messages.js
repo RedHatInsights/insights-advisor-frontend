@@ -318,5 +318,20 @@ export default defineMessages({
         id: 'remediate',
         description: 'Remediate',
         defaultMessage: 'Remediate'
+    },
+    selectAll: {
+        id: 'selectAll',
+        description: 'Bulk select all items in a table with number',
+        defaultMessage: 'Select all ({items} items)'
+    },
+    selectPage: {
+        id: 'selectPage',
+        description: 'Bulk select all visible items in table, with number',
+        defaultMessage: 'Select page ({items} items)'
+    },
+    selectNone: {
+        id: 'selectNone',
+        description: 'Bulk deselect all',
+        defaultMessage: 'Select none (0 items)'
     }
 });

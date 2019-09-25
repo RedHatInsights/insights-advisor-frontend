@@ -60,5 +60,8 @@
   "title.topics": "Topics",
   "topicslist.notopics.title": "There was an issue fetching topics",
   "topicslist.notopics.body": "Either no topics presently exist or there is an issue presenting them.",
-  "remediate": "Remediate"
+  "remediate": "Remediate",
+  "selectAll": "Select all ({items} items)",
+  "selectPage": "Select page ({items} items)",
+  "selectNone": "Select none (0 items)"
 }

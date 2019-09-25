@@ -2,10 +2,10 @@
 import React, { Component } from 'react';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
-import { Main, PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
+import { Main, PageHeader, PageHeaderTitle, BulkSelect } from '@redhat-cloud-services/frontend-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Title } from '@patternfly/react-core';
+import { Title, ToolbarItem, ToolbarGroup } from '@patternfly/react-core';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { injectIntl } from 'react-intl';
@@ -24,20 +24,31 @@ import './Details.scss';
 class OverviewDetails extends Component {
     state = {
         kbaDetails: {},
-        kbaDetailsLoading: false
+        kbaDetailsLoading: false,
+        selected: false,
+        selectedEntities: 0
     };
 
     async componentDidMount() {
         this.props.fetchRule({ rule_id: this.props.match.params.id });
         this.props.fetchSystem({ rule_id: this.props.match.params.id });
+        this.setState({ selectedEntities: this.getSelectedItems().length });
+    }
+    componentDidUpdate(prevProps) {
+        if (this.props !== prevProps) {
+            this.setState({ selectedEntities: this.getSelectedItems().length });
+        }
     }
 
     getSelectedItems = () => {
-        if (!this.props.entities || !this.props.entities.loaded) {
+        const { entities, system } = this.props;
+        if (!entities || !entities.loaded) {
             return [];
         }
 
-        return this.props.entities.rows.filter(entity => entity.selected).map(entity => entity.id);
+        return this.state.selectedEntities === system.host_ids.length ?
+            system.host_ids
+            : entities.rows.filter(entity => entity.selected).map(entity => entity.id);
     };
 
     remediationDataProvider = () => {
@@ -54,8 +65,27 @@ class OverviewDetails extends Component {
         this.props.addNotification(result.getNotification());
     };
 
+    bulkOnClick = (selected, selectedEntities) => {
+        this.setState({ selected, selectedEntities });
+        this.props.selectEntity({ selected });
+    }
+
     render() {
-        const { match, ruleFetchStatus, rule, systemFetchStatus, system, intl } = this.props;
+        const { match, ruleFetchStatus, rule, systemFetchStatus, system, intl, entities } = this.props;
+        const { selected, selectedEntities } = this.state;
+        const bulkSelectMenuItems = [{
+            title: intl.formatMessage(messages.selectNone),
+            onClick: () => this.bulkOnClick(false, 0)
+        },
+        {
+            title: intl.formatMessage(messages.selectPage, { items: entities && entities.count || 0 }),
+            onClick: () => this.bulkOnClick(true, entities && entities.count || 0)
+        },
+        {
+            title: intl.formatMessage(messages.selectAll, { items: system && system.host_ids && system.host_ids.length || 0 }),
+            onClick: () => this.bulkOnClick(true, system && system.host_ids && system.host_ids.length || 0)
+        }];
+
         return (
             <React.Fragment>
                 {ruleFetchStatus === 'fulfilled' && (
@@ -77,24 +107,35 @@ class OverviewDetails extends Component {
                 <Main>
                     <React.Fragment>
                         {ruleFetchStatus === 'fulfilled' && (
-                            <>
+                            <React.Fragment>
                                 <Title headingLevel="h3" size="2xl" className='titlePaddingOverride'>
                                     {intl.formatMessage(messages.affectedSystems)}
                                 </Title>
                                 {systemFetchStatus === 'fulfilled' && (
-                                    <Inventory items={system.host_ids}>
-                                        {rule.playbook_count > 0 && <RemediationButton
-                                            isDisabled={this.getSelectedItems().length === 0}
-                                            dataProvider={this.remediationDataProvider}
-                                            onRemediationCreated={this.onRemediationCreated}
-                                        >
-                                            <AnsibeTowerIcon size='sm' color={global_BackgroundColor_100.value} />
-                                            &nbsp;{intl.formatMessage(messages.remediate)}
-                                        </RemediationButton>}
+                                    <Inventory tableProps={{ canSelectAll: false }} items={system.host_ids}>
+                                        {rule.playbook_count > 0 &&
+                                            <ToolbarGroup>
+                                                <ToolbarItem className='pf-u-mr-sm'>
+                                                    <BulkSelect count={selectedEntities}
+                                                        items={bulkSelectMenuItems}
+                                                        checked={selected} />
+                                                </ToolbarItem>
+                                                <ToolbarItem>
+                                                    <RemediationButton
+                                                        isDisabled={selectedEntities === 0}
+                                                        dataProvider={this.remediationDataProvider}
+                                                        onRemediationCreated={this.onRemediationCreated}
+                                                    >
+                                                        <AnsibeTowerIcon size='sm' color={global_BackgroundColor_100.value} />
+                                                        &nbsp;{intl.formatMessage(messages.remediate)}
+                                                    </RemediationButton>
+                                                </ToolbarItem>
+                                            </ToolbarGroup>
+                                        }
                                     </Inventory>
                                 )}
                                 {systemFetchStatus === 'pending' && (<Loading />)}
-                            </>
+                            </React.Fragment>
                         )}
                         {ruleFetchStatus === 'pending' && (<Loading />)}
                         {ruleFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.rulesTableFetchRulesError)} />)}
@@ -115,7 +156,8 @@ OverviewDetails.propTypes = {
     system: PropTypes.object,
     entities: PropTypes.any,
     addNotification: PropTypes.func.isRequired,
-    intl: PropTypes.any
+    intl: PropTypes.any,
+    selectEntity: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -131,7 +173,8 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = dispatch => ({
     fetchRule: (url) => dispatch(AppActions.fetchRule(url)),
     fetchSystem: (url) => dispatch(AppActions.fetchSystem(url)),
-    addNotification: data => dispatch(addNotification(data))
+    addNotification: data => dispatch(addNotification(data)),
+    selectEntity: (payload) => dispatch({ type: 'SELECT_ENTITY', payload })
 });
 
 export default injectIntl(routerParams(connect(
