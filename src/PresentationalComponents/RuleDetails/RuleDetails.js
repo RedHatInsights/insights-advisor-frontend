@@ -65,7 +65,7 @@ const RuleDetails = ({ children, className, rule, intl }) => {
                     <p>{intl.formatMessage(messages.rulesDetailsTotalriskBody, {
                         likelihood: AppConstants.LIKELIHOOD_LABEL[rule.likelihood] || intl.formatMessage(messages.undefined),
                         impact: (rule.impact && AppConstants.IMPACT_LABEL[rule.impact.impact]) || intl.formatMessage(messages.undefined),
-                        strong(str) { return <strong>{str}</strong>; }
+                        strong(str) { return <strong key={str}>{str}</strong>; }
                     })}</p>
                 </GridItem>
                 <GridItem sm={4} md={12}>
