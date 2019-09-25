@@ -10,14 +10,14 @@ import PropTypes from 'prop-types';
 @registryDecorator()
 class Inventory extends React.Component {
     state = {
-        Inventory: () => <Loading/>
+        Inventory: () => <Loading />
     };
 
-    componentWillMount () {
+    componentWillMount() {
         this.fetchInventory();
     }
 
-    async fetchInventory () {
+    async fetchInventory() {
         const items = this.props.items;
         const {
             inventoryConnector,
@@ -43,7 +43,7 @@ class Inventory extends React.Component {
         });
     }
 
-    onRefresh = ({ page, per_page: perPage })  => {
+    onRefresh = ({ page, per_page: perPage }) => {
         const { items } = this.props;
 
         this.setState({
@@ -53,18 +53,20 @@ class Inventory extends React.Component {
         });
     }
 
-    render () {
+    render() {
         const { Inventory, items, page, total, pageSize } = this.state;
+        const { children, tableProps } = this.props;
 
         return (
             <Inventory
-                items={ items }
-                onRefresh={ this.onRefresh }
-                page={ page }
-                total={ total }
-                perPage={ pageSize }
+                items={items}
+                onRefresh={this.onRefresh}
+                page={page}
+                total={total}
+                perPage={pageSize}
+                tableProps={tableProps}
             >
-                { this.props.children }
+                {children}
             </Inventory>
         );
     }
@@ -72,8 +74,8 @@ class Inventory extends React.Component {
 
 Inventory.propTypes = {
     items: PropTypes.array,
-    children: PropTypes.any
-
+    children: PropTypes.any,
+    tableProps: PropTypes.any
 };
 
 export default Inventory;
