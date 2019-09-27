@@ -333,5 +333,10 @@ export default defineMessages({
         id: 'selectNone',
         description: 'Bulk deselect all',
         defaultMessage: 'Select none (0 items)'
+    },
+    topicRelatedToRule: {
+        id: 'topicRelatedToRule',
+        description: 'Identifying the list of topics that include this rule',
+        defaultMessage: 'Topics related to this rule:'
     }
 });
