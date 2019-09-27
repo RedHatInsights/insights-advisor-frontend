@@ -63,5 +63,6 @@
   "remediate": "Remediate",
   "selectAll": "Select all ({items} items)",
   "selectPage": "Select page ({items} items)",
-  "selectNone": "Select none (0 items)"
+  "selectNone": "Select none (0 items)",
+  "topicRelatedToRule": "Topics related to this rule:"
 }
