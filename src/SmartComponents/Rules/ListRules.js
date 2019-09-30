@@ -15,14 +15,14 @@ class ListRules extends Component {
         this.props.setBreadcrumbs([{ title: this.props.intl.formatMessage(messages.rulesTitle), navigate: '/rules' }]);
     }
 
-    render = () => <>
-            <PageHeader>
-                <PageHeaderTitle title={this.props.intl.formatMessage(messages.rulesTitle)} />
-            </PageHeader>
-            <Main>
-                <RulesTable />
-            </Main>
-        </>;
+    render = () => <React.Fragment>
+        <PageHeader>
+            <PageHeaderTitle title={this.props.intl.formatMessage(messages.rulesTitle)} />
+        </PageHeader>
+        <Main>
+            <RulesTable />
+        </Main>
+    </React.Fragment>;
 }
 
 ListRules.displayName = 'list-rules';
