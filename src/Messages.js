@@ -215,8 +215,8 @@ export default defineMessages({
     overviewConnectsystemsBody: {
         id: 'overview.connectsystems.body',
         description: 'Overview, body for connecting first systems',
-        defaultMessage: `Connect at least 10 systems to get a better <break></break>
-        awareness of issues and optimizations <break></break>
+        defaultMessage: `Connect at least 10 systems to get a better
+        awareness of issues and optimizations
         identified across your infastructure`
     },
     overviewConnectsystemsAction: {
@@ -232,8 +232,8 @@ export default defineMessages({
     overviewRemediateBody: {
         id: 'overview.remediate.body',
         description: 'Overview, body for remediate',
-        defaultMessage: `Easily generate an Ansible playbook to <break></break>
-        quickly and effectively remediate Insights <break></break> findings`
+        defaultMessage: `Easily generate an Ansible playbook to 
+        quickly and effectively remediate Insights findings`
     },
     overviewRemediateAction: {
         id: 'overview.remediate.action',
@@ -248,9 +248,9 @@ export default defineMessages({
     overviewDeployBody: {
         id: 'overview.deploy.body',
         description: 'Overview, body for deploy',
-        defaultMessage: `Get more out of Insights with more systems. <break></break>
-        Quickly connect systems with <linkansible> Ansible </linkansible> <break></break>
-            or <linkpuppet> Puppet </linkpuppet>`
+        defaultMessage: `Get more out of Insights with more systems.
+        Quickly connect systems with <linkansible> Ansible </linkansible>
+        or <linkpuppet> Puppet </linkpuppet>`
     },
     overviewDeployAction: {
         id: 'overview.deploy.action',

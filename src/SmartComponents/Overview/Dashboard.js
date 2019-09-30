@@ -84,9 +84,9 @@ class OverviewDashboard extends Component {
                                         iconStyle={{ color: global_Color_100.value }}
                                         icon={() => SERVER_STACK_ICON}
                                         title={intl.formatMessage(messages.overviewConnectsystemsTitle)}
-                                        text={<span key='1'>Connect at least 10 systems to get a better<br/>
-                                        awareness of issues and optimizations<br/>
-                                        identified across your infastructure</span> }>
+                                        text={<span key='1'>
+                                            {intl.formatMessage(messages.overviewConnectsystemsBody)}
+                                        </span>}>
                                         <Button component="a" href="https://access.redhat.com/products/red-hat-insights#getstarted"
                                             target="_blank" variant="link">
                                             {intl.formatMessage(messages.overviewConnectsystemsAction)}
@@ -98,8 +98,9 @@ class OverviewDashboard extends Component {
                                         iconStyle={{ color: global_Color_100.value }}
                                         icon={() => ANSIBLE_MARK_ICON}
                                         title={intl.formatMessage(messages.overviewRemediateTitle)}
-                                        text={<span key='1'>Easily generate an Ansible playbook to<br/>
-                                        quickly and effectively remediate Insights <br/> findings</span> }>
+                                        text={<span key='1'>
+                                            {intl.formatMessage(messages.overviewRemediateBody)}
+                                        </span>}>
                                         <Button component="a" href="https://cloud.redhat.com/insights/remediations"
                                             target="_blank" variant="link">
                                             {intl.formatMessage(messages.overviewRemediateAction)}
@@ -111,11 +112,18 @@ class OverviewDashboard extends Component {
                                         iconStyle={{ color: global_Color_100.value }}
                                         icon={() => GLOBAL_ECONSYSTEM_ICON}
                                         title={intl.formatMessage(messages.overviewDeployTitle)}
-                                        text={<span key='1'>Get more out of Insights with more systems.<br/>
-                                        Quickly connect systems with <a rel="noopener noreferrer" target="_blank"
-                                                href="https://galaxy.ansible.com/redhatinsights/insights-client">Ansible</a> <br/> or
-                                            <a rel="noopener noreferrer" target="_blank"
-                                                href="https://forge.puppetlabs.com/lphiri/access_insights_client"> Puppet</a></span>}>
+                                        text={<span key='1'>
+                                            {intl.formatMessage(messages.overviewDeployBody, {
+                                                linkansible(link) {
+                                                    return <a rel="noopener noreferrer" target="_blank"
+                                                        href="https://galaxy.ansible.com/redhatinsights/insights-client">{link}</a>;
+                                                },
+                                                linkpuppet(link) {
+                                                    return <a rel="noopener noreferrer" target="_blank"
+                                                        href="https://forge.puppetlabs.com/lphiri/access_insights_client">{link}</a>;
+                                                }
+                                            })}
+                                        </span>}>
                                         <Button component="a" href="https://galaxy.ansible.com/redhatinsights/insights-client"
                                             target="_blank" variant="secondary">
                                             {intl.formatMessage(messages.overviewDeployAction)}
