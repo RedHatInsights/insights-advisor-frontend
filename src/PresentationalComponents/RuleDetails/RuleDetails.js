@@ -6,12 +6,14 @@ import { Grid, GridItem } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import ReactMarkdown from 'react-markdown/with-html';
 import { injectIntl } from 'react-intl';
+import { compact, intersection } from 'lodash';
+import { Link } from 'react-router-dom';
 
 import * as AppConstants from '../../AppConstants';
 import './_RuleDetails.scss';
 import messages from '../../Messages';
 
-const RuleDetails = ({ children, className, rule, intl }) => {
+const RuleDetails = ({ children, className, rule, intl, topics }) => {
     const ruleResolutionRisk = (rule) => {
         const resolution = rule.resolution_set.find(resolution => resolution.system_type ===
             AppConstants.SYSTEM_TYPES.rhel ||
@@ -20,6 +22,17 @@ const RuleDetails = ({ children, className, rule, intl }) => {
     };
 
     const resolutionRisk = ruleResolutionRisk(rule);
+
+    const topicLinks = () => topics && topics.map(topic =>
+        intersection(topic.tags.split(' '), rule.tags.split(' ')).length ?
+            <React.Fragment key={topic.slug}>
+                <Link to={`/topics/${topic.slug}`}>
+                    {`${topic.name} (${topic.impacted_systems_count})`}
+                </Link>
+                &nbsp;
+            </React.Fragment>
+            : null
+    );
 
     return <Grid gutter='md' className={className}>
         <GridItem md={8} sm={12}>
@@ -38,6 +51,13 @@ const RuleDetails = ({ children, className, rule, intl }) => {
                         </a>
                     </GridItem>
                 )}
+                {topics && rule.tags && compact(topicLinks()).length > 0 &&
+                    <GridItem>
+                        {intl.formatMessage(messages.topicRelatedToRule)}
+                        <br />
+                        {topicLinks()}
+                    </GridItem>
+                }
             </Grid>
         </GridItem>
         <GridItem md={4} sm={12}>
@@ -97,7 +117,8 @@ RuleDetails.propTypes = {
     children: PropTypes.any,
     className: PropTypes.string,
     rule: PropTypes.object,
-    intl: PropTypes.any
+    intl: PropTypes.any,
+    topics: PropTypes.array
 };
 
 export default injectIntl(RuleDetails);

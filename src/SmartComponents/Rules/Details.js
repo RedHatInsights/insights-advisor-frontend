@@ -32,6 +32,7 @@ class OverviewDetails extends Component {
     async componentDidMount() {
         this.props.fetchRule({ rule_id: this.props.match.params.id });
         this.props.fetchSystem({ rule_id: this.props.match.params.id });
+        this.props.fetchTopics();
         this.setState({ selectedEntities: this.getSelectedItems().length });
     }
     componentDidUpdate(prevProps) {
@@ -71,7 +72,7 @@ class OverviewDetails extends Component {
     }
 
     render() {
-        const { match, ruleFetchStatus, rule, systemFetchStatus, system, intl, entities } = this.props;
+        const { match, ruleFetchStatus, rule, systemFetchStatus, system, intl, entities, topics, topicsFetchStatus } = this.props;
         const { selected, selectedEntities } = this.state;
         const bulkSelectMenuItems = [{
             title: intl.formatMessage(messages.selectNone),
@@ -88,8 +89,8 @@ class OverviewDetails extends Component {
 
         return (
             <React.Fragment>
-                {ruleFetchStatus === 'fulfilled' && (
-                    <>
+                {ruleFetchStatus === 'fulfilled' && topicsFetchStatus === 'fulfilled' && (
+                    <React.Fragment>
                         <PageHeader>
                             <Breadcrumbs
                                 current={rule.description || ''}
@@ -99,9 +100,9 @@ class OverviewDetails extends Component {
                             <p>{intl.formatMessage(messages.rulesDetailsPubishdate, { date: (new Date(rule.publish_date)).toLocaleDateString() })}</p>
                         </PageHeader>
                         <Main className='pf-m-light pf-u-pt-sm'>
-                            <RuleDetails rule={rule} />
+                            <RuleDetails rule={rule} topics={topics} />
                         </Main>
-                    </>
+                    </React.Fragment>
                 )}
                 {ruleFetchStatus === 'pending' && (<Loading />)}
                 <Main>
@@ -157,7 +158,10 @@ OverviewDetails.propTypes = {
     entities: PropTypes.any,
     addNotification: PropTypes.func.isRequired,
     intl: PropTypes.any,
-    selectEntity: PropTypes.func
+    selectEntity: PropTypes.func,
+    fetchTopics: PropTypes.func,
+    topicsFetchStatus: PropTypes.string,
+    topics: PropTypes.array
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -166,6 +170,8 @@ const mapStateToProps = (state, ownProps) => ({
     system: state.AdvisorStore.system,
     systemFetchStatus: state.AdvisorStore.systemFetchStatus,
     entities: state.entities,
+    topics: state.AdvisorStore.topics,
+    topicsFetchStatus: state.AdvisorStore.topicsFetchStatus,
     ...state,
     ...ownProps
 });
@@ -174,7 +180,8 @@ const mapDispatchToProps = dispatch => ({
     fetchRule: (url) => dispatch(AppActions.fetchRule(url)),
     fetchSystem: (url) => dispatch(AppActions.fetchSystem(url)),
     addNotification: data => dispatch(addNotification(data)),
-    selectEntity: (payload) => dispatch({ type: 'SELECT_ENTITY', payload })
+    selectEntity: (payload) => dispatch({ type: 'SELECT_ENTITY', payload }),
+    fetchTopics: () => dispatch(AppActions.fetchTopics())
 });
 
 export default injectIntl(routerParams(connect(
