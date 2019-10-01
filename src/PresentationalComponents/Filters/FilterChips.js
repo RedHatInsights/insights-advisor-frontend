@@ -15,7 +15,7 @@ const FilterChips = ({ filters, removeFilter, removeAllFilters, intl }) => {
     const prunedFilters = Object.entries(localFilters);
 
     return prunedFilters.length > 0 && <>
-        <ChipGroup withToolbar>
+        <ChipGroup withToolbar numChips={4}>
             {prunedFilters.map(item => {
                 const category = FILTER_CATEGORIES.find(category => category.urlParam === item[0]);
                 return <ChipGroupToolbarItem key={item[0]} categoryName={category.title}>
