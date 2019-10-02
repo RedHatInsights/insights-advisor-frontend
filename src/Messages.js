@@ -227,7 +227,7 @@ export default defineMessages({
     overviewRemediateTitle: {
         id: 'overview.remediate.title',
         description: 'Overview, title for remediate',
-        defaultMessage: 'Remediate Insights findings with Ansibles'
+        defaultMessage: 'Remediate Insights findings with Ansible'
     },
     overviewRemediateBody: {
         id: 'overview.remediate.body',
