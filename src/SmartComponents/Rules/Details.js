@@ -89,7 +89,7 @@ class OverviewDetails extends Component {
 
         return (
             <React.Fragment>
-                {ruleFetchStatus === 'fulfilled' && topicsFetchStatus === 'fulfilled' && (
+                {ruleFetchStatus === 'fulfilled' && (
                     <React.Fragment>
                         <PageHeader>
                             <Breadcrumbs
