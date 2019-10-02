@@ -72,7 +72,7 @@ class OverviewDetails extends Component {
     }
 
     render() {
-        const { match, ruleFetchStatus, rule, systemFetchStatus, system, intl, entities, topics, topicsFetchStatus } = this.props;
+        const { match, ruleFetchStatus, rule, systemFetchStatus, system, intl, entities, topics } = this.props;
         const { selected, selectedEntities } = this.state;
         const bulkSelectMenuItems = [{
             title: intl.formatMessage(messages.selectNone),
@@ -160,7 +160,6 @@ OverviewDetails.propTypes = {
     intl: PropTypes.any,
     selectEntity: PropTypes.func,
     fetchTopics: PropTypes.func,
-    topicsFetchStatus: PropTypes.string,
     topics: PropTypes.array
 };
 
@@ -171,7 +170,6 @@ const mapStateToProps = (state, ownProps) => ({
     systemFetchStatus: state.AdvisorStore.systemFetchStatus,
     entities: state.entities,
     topics: state.AdvisorStore.topics,
-    topicsFetchStatus: state.AdvisorStore.topicsFetchStatus,
     ...state,
     ...ownProps
 });
