@@ -33,9 +33,9 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         { title: intl.formatMessage(messages.rulesTableColumnTitleTotalrisk), transforms: [sortable] },
         { title: intl.formatMessage(messages.rulesTableColumnTitleSystems), transforms: [sortable] },
         {
-            title: <span className='ansibleCol'>
-                <AnsibeTowerIcon size='md' /> {intl.formatMessage(messages.rulesTableColumnTitleAnsible)}
-            </span>, transforms: [sortable]
+            title: <><AnsibeTowerIcon size='md' /> {intl.formatMessage(messages.rulesTableColumnTitleAnsible)}</>,
+            transforms: [sortable],
+            dataLabel: intl.formatMessage(messages.rulesTableColumnTitleAnsible)
         }
     ]);
     const [rows, setRows] = useState([]);
