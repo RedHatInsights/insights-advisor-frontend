@@ -2,7 +2,7 @@
 import React from 'react';
 import { Battery, Reboot, Shield } from '@redhat-cloud-services/frontend-components';
 import PropTypes from 'prop-types';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Grid, GridItem, Card, CardBody } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import ReactMarkdown from 'react-markdown/with-html';
 import { injectIntl } from 'react-intl';
@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import * as AppConstants from '../../AppConstants';
 import './_RuleDetails.scss';
 import messages from '../../Messages';
+import barDividedList from '../../Utilities/BarDividedList';
 
 const RuleDetails = ({ children, className, rule, intl, topics }) => {
     const ruleResolutionRisk = (rule) => {
@@ -23,16 +24,14 @@ const RuleDetails = ({ children, className, rule, intl, topics }) => {
 
     const resolutionRisk = ruleResolutionRisk(rule);
 
-    const topicLinks = () => topics && topics.map(topic =>
-        intersection(topic.tags.split(' '), rule.tags.split(' ')).length ?
+    const topicLinks = () => topics && compact(topics.map((topic) =>
+        intersection(topic.tags.split(' '), rule.tags.split(' ')).length &&
             <React.Fragment key={topic.slug}>
                 <Link to={`/topics/${topic.slug}`}>
                     {`${topic.name} (${topic.impacted_systems_count})`}
                 </Link>
-                &nbsp;
             </React.Fragment>
-            : null
-    );
+    ));
 
     return <Grid gutter='md' className={className}>
         <GridItem md={8} sm={12}>
@@ -51,11 +50,15 @@ const RuleDetails = ({ children, className, rule, intl, topics }) => {
                         </a>
                     </GridItem>
                 )}
-                {topics && rule.tags && compact(topicLinks()).length > 0 &&
+                {topics && rule.tags && topicLinks().length > 0 &&
                     <GridItem>
-                        {intl.formatMessage(messages.topicRelatedToRule)}
-                        <br />
-                        {topicLinks()}
+                        <Card className="topicsCard" isCompact>
+                            <CardBody>
+                                <strong>{intl.formatMessage(messages.topicRelatedToRule)}</strong>
+                                <br />
+                                {barDividedList(topicLinks())}
+                            </CardBody>
+                        </Card>
                     </GridItem>
                 }
             </Grid>
