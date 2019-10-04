@@ -49,7 +49,7 @@
   "overview.deploy.title": "Deploy Insights at scale",
   "overview.deploy.body": "Get more out of Insights with more systems.\n        Quickly connect systems with <linkansible> Ansible </linkansible>\n        or <linkpuppet> Puppet </linkpuppet>",
   "overview.deploy.action": "Download Ansible Playbook",
-  "overview.actioncallnosystems.body": "With predictive analytics, avoid problems and unplanned <break></break>\n        downtime in your Red Hat environment. Red Hat Insights is <break></break>\n        included with your Red Hat Enterprise Linux subscription",
+  "overview.actioncallnosystems.body": "With predictive analytics, avoid problems and unplanned <break> </break>\n        downtime in your Red Hat environment. Red Hat Insights is <break> </break>\n        included with your Red Hat Enterprise Linux subscription",
   "overview.actioncallnosystems.action": "Get started",
   "rulesdetails.publishdate": "Publish Date: {date}",
   "affectedSystems": "Affected systems",
