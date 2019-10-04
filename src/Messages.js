@@ -260,8 +260,8 @@ export default defineMessages({
     overviewActionCallNoSystemsBody: {
         id: 'overview.actioncallnosystems.body',
         description: 'Overview, action call body when there are no systems',
-        defaultMessage: `With predictive analytics, avoid problems and unplanned <break></break>
-        downtime in your Red Hat environment. Red Hat Insights is <break></break>
+        defaultMessage: `With predictive analytics, avoid problems and unplanned <break> </break>
+        downtime in your Red Hat environment. Red Hat Insights is <break> </break>
         included with your Red Hat Enterprise Linux subscription`
     },
     overviewActionCallNoSystemsAction: {
