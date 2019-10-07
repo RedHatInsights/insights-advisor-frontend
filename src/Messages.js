@@ -337,6 +337,6 @@ export default defineMessages({
     topicRelatedToRule: {
         id: 'topicRelatedToRule',
         description: 'Identifying the list of topics that include this rule',
-        defaultMessage: 'Topics related to this rule:'
+        defaultMessage: 'Topics related to this rule'
     }
 });
