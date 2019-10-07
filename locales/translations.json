@@ -35,7 +35,7 @@
   "topiccard.learnmorelink": "Learn more",
   "recommended": "Recommended",
   "featured": "Featured",
-  "topiccard.systemsaffected": "{systems} {systems, plural, one {system} other {systems}} affected",
+  "topiccard.systemsaffected": "{systems, plural, one {# system} other {# systems}} affected",
   "overview": "Overview",
   "overview.categorychart.title": "Rule hits by category",
   "overview.severitychart.title": "Rule hits by severity",

@@ -27,7 +27,6 @@ const SummaryChartItem = ({ numIssues, name, riskName, affectedSystems, setFilte
             </SplitItem>
             <SplitItem className='pf-u-text-align-right pf-u-pl-sm'>
                 {returnLink(intl.formatMessage(messages.summaryChartItem, { numIssues, name, affectedSystems }))}
-
             </SplitItem>
         </Split>
     </StackItem>;
