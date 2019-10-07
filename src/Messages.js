@@ -185,7 +185,7 @@ export default defineMessages({
     topicCardSystemsaffected: {
         id: 'topiccard.systemsaffected',
         description: 'Topic card, systems affected text',
-        defaultMessage: '{systems} {systems, plural, one {system} other {systems}} affected'
+        defaultMessage: '{systems, plural, one {# system} other {# systems}} affected'
     },
     overview: {
         id: 'overview',
