@@ -98,7 +98,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 ...filters,
                 offset: 0,
                 limit,
-                impacting
+                impacting,
+                sort
             });
         } catch (error) {
             addNotification({
