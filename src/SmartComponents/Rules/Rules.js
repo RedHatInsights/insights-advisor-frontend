@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import asyncComponent from '../../Utilities/asyncComponent';
 
 const ListRules = asyncComponent(() => import(/* webpackChunkName: "ListRules" */ './ListRules'));
@@ -16,6 +16,7 @@ const Rules = () => {
                 <Route exact path='/rules/:id' component={ Details }/>
                 <Route path='/rules/by_id/:id/:inventoryId/' component={ InventoryDetails }/>
                 <Route path='/rules/:id/:inventoryId/' component={ InventoryDetails }/>
+                <Redirect path='*' to='/rules'  push/>
             </Switch>
         </React.Fragment>
     );
