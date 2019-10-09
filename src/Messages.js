@@ -21,9 +21,9 @@ export default defineMessages({
         description: 'Rulestable column title, total risk',
         defaultMessage: 'Total Risk'
     },
-    rulesTableColumnTitleSystems: {
-        id: 'rulestable.columntitle.systems',
-        description: 'Rulestable column title, systems',
+    systems: {
+        id: 'systems',
+        description: 'Systems title used in rule table column and systems tab header',
         defaultMessage: 'Systems'
     },
     rulesTableColumnTitleAnsible: {
@@ -338,5 +338,40 @@ export default defineMessages({
         id: 'topicRelatedToRule',
         description: 'Identifying the list of topics that include this rule',
         defaultMessage: 'Topics related to this rule'
+    },
+    name: {
+        id: 'name',
+        description: 'Used in the system table title column, identifying display name of a system',
+        defaultMessage: 'Name'
+    },
+    numberRuleHits: {
+        id: 'numberRuleHits',
+        description: 'Used in the system table title column, number of rule hits per system',
+        defaultMessage: 'Number of rule hits'
+    },
+    lastSeen: {
+        id: 'lastSeen',
+        description: 'Used in the system table title column, the last time a system has checked in',
+        defaultMessage: 'Last seen'
+    },
+    systemTableNoHitsTitle: {
+        id: 'systemtable.nohits.title',
+        description: 'System table, no hits message, title',
+        defaultMessage: 'No matching systems found'
+    },
+    systemTableNoHitsEnabledRulesBody: {
+        id: 'systemtable.nohits.enabledrulesbody',
+        description: 'System table, no  hits messags, body',
+        defaultMessage: 'The filter criteria matches no systems. Try changing your filter settings.'
+    },
+    search: {
+        id: 'search',
+        description: 'Commonly used in text input search fields ',
+        defaultMessage: 'Search'
+    },
+    systemTableFetchError: {
+        id: 'systemtable.fetch.error',
+        description: 'System table, fetch , error message',
+        defaultMessage: 'There was an error fetching systems.'
     }
 });

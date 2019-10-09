@@ -37,7 +37,8 @@ const Breadcrumbs = ({ breadcrumbs, current, fetchRule, match, ruleFetchStatus, 
     }, [breadcrumbs, match.params.id, match.params.inventoryId, match.url, rule.description]);
 
     useEffect(() => {
-        if (match.params.inventoryId !== undefined) {
+        const title = match.url.split('/')[1];
+        if (match.params.inventoryId !== undefined && title !== 'systems') {
             fetchRule({ rule_id: match.params.id }); // eslint-disable-line camelcase
         } else {
             buildBreadcrumbs();

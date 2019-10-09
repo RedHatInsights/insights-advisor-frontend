@@ -31,7 +31,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         { title: intl.formatMessage(messages.rulesTableColumnTitleRule), transforms: [sortable] },
         { title: intl.formatMessage(messages.rulesTableColumnTitleAdded), transforms: [sortable, cellWidth(15)] },
         { title: intl.formatMessage(messages.rulesTableColumnTitleTotalrisk), transforms: [sortable] },
-        { title: intl.formatMessage(messages.rulesTableColumnTitleSystems), transforms: [sortable] },
+        { title: intl.formatMessage(messages.systems), transforms: [sortable] },
         {
             title: <><AnsibeTowerIcon size='md' /> {intl.formatMessage(messages.rulesTableColumnTitleAnsible)}</>,
             transforms: [sortable],

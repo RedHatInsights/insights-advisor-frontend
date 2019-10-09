@@ -20,11 +20,12 @@ import asyncComponent from './Utilities/asyncComponent';
 const Overview = asyncComponent(() => import(/* webpackChunkName: "Overview" */ './SmartComponents/Overview/Overview'));
 const Rules = asyncComponent(() => import(/* webpackChunkName: "Rules" */ './SmartComponents/Rules/Rules'));
 const Topics = asyncComponent(() => import(/* webpackChunkName: "Topics" */ './SmartComponents/Topics/Topics'));
-const paths = {
-    overview: '/overview',
-    rules: '/rules',
-    topics: '/topics'
-};
+const paths = [
+    { title: 'Overview', to: '/overview', rootClass: 'Insights', component: Overview },
+    { title: 'Rules', to: '/rules', rootClass: 'Insights', component: Rules },
+    { title: 'Topics', to: '/topics', rootClass: 'Insights', component: Topics },
+    { title: 'Systems', to: '/systems', rootClass: 'Insights', component: Rules }
+];
 
 const InsightsRoute = ({ component: Component, rootClass, ...rest }) => {
     const root = document.getElementById('root');
@@ -32,7 +33,7 @@ const InsightsRoute = ({ component: Component, rootClass, ...rest }) => {
     root.classList.add(`page__${rootClass}`, 'pf-c-page__main');
     root.setAttribute('role', 'main');
 
-    return (<Route { ...rest } component={ Component } />);
+    return (<Route {...rest} component={Component} />);
 };
 
 InsightsRoute.propTypes = {
@@ -50,10 +51,7 @@ InsightsRoute.propTypes = {
  */
 export const Routes = () =>
     <Switch>
-        <InsightsRoute path={ paths.overview } component={ Overview } rootClass='overview/'/>
-        <InsightsRoute path={ paths.rules } component={ Rules } rootClass='rules'/>
-        <InsightsRoute path={ paths.topics } component={ Topics } rootClass='topics'/>
-
-        { /* Finally, catch all unmatched routes */ }
-        <Redirect path='*' to={ `${paths.overview}` } push/>
-    </Switch> ;
+        {paths.map((path) => <InsightsRoute key={path.title} path={path.to} component={path.component} rootClass={path.rootClass} />)}
+        { /* Finally, catch all unmatched routes */}
+        <Redirect path='*' to={`${paths.overview}`} push />
+    </Switch>;

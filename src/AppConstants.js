@@ -9,12 +9,14 @@ export const BREADCRUMBS_SET = 'BREADCRUMBS_SET';
 export const FILTERS_SET = 'FILTERS_SET';
 export const TOPIC_FETCH = 'TOPIC_FETCH';
 export const TOPICS_FETCH = 'TOPICS_FETCH';
+export const SYSTEMS_FETCH = 'SYSTEMS_FETCH';
 
 export const BASE_URL = '/api/insights/v1';
 export const RULES_FETCH_URL = `${BASE_URL}/rule/`;
 export const STATS_RULES_FETCH_URL = `${BASE_URL}/stats/rules/`;
 export const STATS_SYSTEMS_FETCH_URL = `${BASE_URL}/stats/systems/`;
 export const TOPICS_FETCH_URL = `${BASE_URL}/topic/`;
+export const SYSTEMS_FETCH_URL = `${BASE_URL}/system/`;
 
 export const SYSTEM_TYPES = { rhel: 105, ocp: 325 };
 export const RULE_CATEGORIES = {

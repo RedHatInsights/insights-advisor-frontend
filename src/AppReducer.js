@@ -23,7 +23,9 @@ const initialState = Immutable({
     topic: {},
     topicFetchStatus: '',
     topics: [],
-    topicsFetchStatus: ''
+    topicsFetchStatus: '',
+    systems: {},
+    systemsFetchStatus: ''
 });
 
 export const AdvisorStore = (state = initialState, action) => {
@@ -117,6 +119,16 @@ export const AdvisorStore = (state = initialState, action) => {
             });
         case `${ActionTypes.TOPICS_FETCH}_REJECTED`:
             return state.set('topicsFetchStatus', 'rejected');
+
+        case `${ActionTypes.SYSTEMS_FETCH}_PENDING`:
+            return state.set('systemsFetchStatus', 'pending');
+        case `${ActionTypes.SYSTEMS_FETCH}_FULFILLED`:
+            return Immutable.merge(state, {
+                systems: action.payload,
+                systemsFetchStatus: 'fulfilled'
+            });
+        case `${ActionTypes.SYSTEMS_FETCH}_REJECTED`:
+            return state.set('systemsFetchStatus', 'rejected');
 
         default:
             return state;

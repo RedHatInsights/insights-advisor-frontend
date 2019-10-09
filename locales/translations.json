@@ -3,7 +3,7 @@
   "rulestable.columntitle.added": "Added",
   "rulestable.columntitle.rule": "Rule",
   "rulestable.columntitle.totalrisk": "Total Risk",
-  "rulestable.columntitle.systems": "Systems",
+  "systems": "Systems",
   "rulestable.columntitle.ansible": "Ansible",
   "rulestable.hidereports.errordisabling": "Disabling reports failed",
   "rulestable.hidereports.errorenabling": "Enabling reports failed",
@@ -64,5 +64,12 @@
   "selectAll": "Select all ({items} items)",
   "selectPage": "Select page ({items} items)",
   "selectNone": "Select none (0 items)",
-  "topicRelatedToRule": "Topics related to this rule"
+  "topicRelatedToRule": "Topics related to this rule",
+  "name": "Name",
+  "numberRuleHits": "Number of rule hits",
+  "lastSeen": "Last seen",
+  "systemtable.nohits.title": "No matching systems found",
+  "systemtable.nohits.enabledrulesbody": "The filter criteria matches no systems. Try changing your filter settings.",
+  "search": "Search",
+  "systemtable.fetch.error": "There was an error fetching systems."
 }
