@@ -43,3 +43,7 @@ export const fetchTopic = (options) => ({
     type: ActionTypes.TOPIC_FETCH,
     payload: fetchData(`${ActionTypes.TOPICS_FETCH_URL}${options.topic_id}/`)
 });
+export const fetchSystems = (options) => ({
+    type: ActionTypes.SYSTEMS_FETCH,
+    payload: fetchData(ActionTypes.SYSTEMS_FETCH_URL, {}, options)
+});
