@@ -19,7 +19,7 @@
     "@redhat-cloud-services/frontend-components-inventory-insights": "0.1.14",
     "@redhat-cloud-services/frontend-components-notifications": "0.0.7",
     "@redhat-cloud-services/frontend-components-remediations": "0.0.3",
-    "@redhat-cloud-services/frontend-components-translations": "0.0.4",
+    "@redhat-cloud-services/frontend-components-translations": "0.0.6",
     "@redhat-cloud-services/frontend-components-utilities": "0.0.9",
     "babel-plugin-react-intl": "4.1.20",
     "classnames": "2.2.6",

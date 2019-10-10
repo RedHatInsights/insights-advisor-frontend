@@ -1,4 +1,15 @@
-/* eslint max-len: 0 */
+import { createIntl, createIntlCache } from 'react-intl';
+import  { intlHelper }  from '@redhat-cloud-services/frontend-components-translations';
+import messages from './Messages';
+const cache = createIntlCache();
+const locale = navigator.language;
+const intl = createIntl({
+    // eslint-disable-next-line no-console
+    onError: console.log,
+    locale
+}, cache);
+const intlSettings = { locale };
+
 export const RULE_FETCH = 'RULE_FETCH';
 export const RULES_FETCH = 'RULES_FETCH';
 export const SYSTEM_FETCH = 'SYSTEM_FETCH';
@@ -33,59 +44,79 @@ export const SEVERITY_MAP = {
 };
 export const FILTER_CATEGORIES = [
     {
-        type: 'checkbox', title: 'Total Risk', urlParam: 'total_risk', values: [
-            { label: 'Critical', value: '4' },
-            { label: 'Important', value: '3' },
-            { label: 'Moderate', value: '2' },
-            { label: 'Low', value: '1' }
+        type: 'checkbox', title: intlHelper(intl.formatMessage(messages.totalRisk), intlSettings), urlParam: 'total_risk', values: [
+            { label: intlHelper(intl.formatMessage(messages.critical), intlSettings), value: '4' },
+            { label: intlHelper(intl.formatMessage(messages.important), intlSettings), value: '3' },
+            { label: intlHelper(intl.formatMessage(messages.moderate), intlSettings), value: '2' },
+            { label: intlHelper(intl.formatMessage(messages.low), intlSettings), value: '1' }
         ]
     }, {
-        type: 'checkbox', title: 'Risk of Change', urlParam: 'res_risk', values: [
-            { label: 'High', value: '4' },
-            { label: 'Moderate', value: '3' },
-            { label: 'Low', value: '2' },
-            { label: 'Very Low', value: '1' }
+        type: 'checkbox', title: intlHelper(intl.formatMessage(messages.riskofchange), intlSettings), urlParam: 'res_risk', values: [
+            { label: intlHelper(intl.formatMessage(messages.high), intlSettings), value: '4' },
+            { label: intlHelper(intl.formatMessage(messages.moderate), intlSettings), value: '3' },
+            { label: intlHelper(intl.formatMessage(messages.low), intlSettings), value: '2' },
+            { label: intlHelper(intl.formatMessage(messages.veryLow), intlSettings), value: '1' }
         ]
     },
     {
-        type: 'checkbox', title: 'Impact', urlParam: 'impact', values: [
-            { label: 'Critical', value: '4' },
-            { label: 'Important', value: '3' },
-            { label: 'Moderate', value: '2' },
-            { label: 'Low', value: '1' }
+        type: 'checkbox', title: intlHelper(intl.formatMessage(messages.impact), intlSettings), urlParam: 'impact', values: [
+            { label: intlHelper(intl.formatMessage(messages.critical), intlSettings), value: '4' },
+            { label: intlHelper(intl.formatMessage(messages.important), intlSettings), value: '3' },
+            { label: intlHelper(intl.formatMessage(messages.moderate), intlSettings), value: '2' },
+            { label: intlHelper(intl.formatMessage(messages.low), intlSettings), value: '1' }
         ]
     },
     {
-        type: 'checkbox', title: 'Likelihood', urlParam: 'likelihood', values: [
-            { label: 'Critical', value: '4' },
-            { label: 'Important', value: '3' },
-            { label: 'Moderate', value: '2' },
-            { label: 'Low', value: '1' }
+        type: 'checkbox', title: intlHelper(intl.formatMessage(messages.likelihood), intlSettings), urlParam: 'likelihood', values: [
+            { label: intlHelper(intl.formatMessage(messages.critical), intlSettings), value: '4' },
+            { label: intlHelper(intl.formatMessage(messages.important), intlSettings), value: '3' },
+            { label: intlHelper(intl.formatMessage(messages.moderate), intlSettings), value: '2' },
+            { label: intlHelper(intl.formatMessage(messages.low), intlSettings), value: '1' }
         ]
     },
     {
-        type: 'checkbox', title: 'Category', urlParam: 'category', values: [
-            { label: 'Availability', value: `${RULE_CATEGORIES.availability}` },
-            { label: 'Performance', value: `${RULE_CATEGORIES.performance}` },
-            { label: 'Stability', value: `${RULE_CATEGORIES.stability}` },
-            { label: 'Security', value: `${RULE_CATEGORIES.security}` }
+        type: 'checkbox', title: intlHelper(intl.formatMessage(messages.category), intlSettings), urlParam: 'category', values: [
+            { label: intlHelper(intl.formatMessage(messages.availability), intlSettings), value: `${RULE_CATEGORIES.availability}` },
+            { label: intlHelper(intl.formatMessage(messages.performance), intlSettings), value: `${RULE_CATEGORIES.performance}` },
+            { label: intlHelper(intl.formatMessage(messages.stability), intlSettings), value: `${RULE_CATEGORIES.stability}` },
+            { label: intlHelper(intl.formatMessage(messages.security), intlSettings), value: `${RULE_CATEGORIES.security}` }
         ]
     },
     {
-        type: 'radio', title: 'Rule Status', urlParam: 'reports_shown', values: [
-            { label: 'All', value: undefined },
-            { label: 'Enabled', value: true },
-            { label: 'Disabled', value: false }
+        type: 'radio', title: intlHelper(intl.formatMessage(messages.ruleStatus), intlSettings), urlParam: 'reports_shown', values: [
+            { label: intlHelper(intl.formatMessage(messages.all), intlSettings), value: undefined },
+            { label: intlHelper(intl.formatMessage(messages.enabled), intlSettings), value: true },
+            { label: intlHelper(intl.formatMessage(messages.disabled), intlSettings), value: false }
         ]
     }
 ];
 export const RISK_OF_CHANGE_DESC = {
-    1: 'The change takes very little time to implement and there is minimal impact to system operations.',
-    2: 'Typically, these changes do not require that a system be taken offline.',
-    3: 'These will likely require an outage window.',
-    4: 'The change takes a significant amount of time and planning to execute, and will impact the system and business operations of the host due to downtime.'
+    1: intlHelper(intl.formatMessage(messages.riskOfChangeTextOne), intlSettings),
+    2: intlHelper(intl.formatMessage(messages.riskOfChangeTextTwo), intlSettings),
+    3: intlHelper(intl.formatMessage(messages.riskOfChangeTextThree), intlSettings),
+    4: intlHelper(intl.formatMessage(messages.riskOfChangeTextFour), intlSettings)
 };
-export const IMPACT_LABEL = { 1: 'Low', 2: 'Moderate', 3: 'Important', 4: 'Critical' };
-export const LIKELIHOOD_LABEL = { 1: 'Low', 2: 'Moderate', 3: 'Important', 4: 'Critical' };
-export const RISK_OF_CHANGE_LABEL = { 1: 'Very Low', 2: 'Low', 3: 'Moderate', 4: 'High' };
-export const TOTAL_RISK_LABEL = { 1: 'Low', 2: 'Moderate', 3: 'Important', 4: 'Critical' };
+export const IMPACT_LABEL = {
+    1: intlHelper(intl.formatMessage(messages.low), intlSettings),
+    2: intlHelper(intl.formatMessage(messages.moderate), intlSettings),
+    3: intlHelper(intl.formatMessage(messages.important), intlSettings),
+    4: intlHelper(intl.formatMessage(messages.critical), intlSettings)
+};
+export const LIKELIHOOD_LABEL = {
+    1: intlHelper(intl.formatMessage(messages.low), intlSettings),
+    2: intlHelper(intl.formatMessage(messages.moderate), intlSettings),
+    3: intlHelper(intl.formatMessage(messages.important), intlSettings),
+    4: intlHelper(intl.formatMessage(messages.critical), intlSettings)
+};
+export const RISK_OF_CHANGE_LABEL = {
+    1: intlHelper(intl.formatMessage(messages.veryLow), intlSettings),
+    2: intlHelper(intl.formatMessage(messages.low), intlSettings),
+    3: intlHelper(intl.formatMessage(messages.moderate), intlSettings),
+    4: intlHelper(intl.formatMessage(messages.high), intlSettings)
+};
+export const TOTAL_RISK_LABEL = {
+    1: intlHelper(intl.formatMessage(messages.low), intlSettings),
+    2: intlHelper(intl.formatMessage(messages.moderate), intlSettings),
+    3: intlHelper(intl.formatMessage(messages.important), intlSettings),
+    4: intlHelper(intl.formatMessage(messages.critical), intlSettings)
+};

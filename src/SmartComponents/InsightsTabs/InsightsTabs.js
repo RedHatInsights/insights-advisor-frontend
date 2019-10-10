@@ -20,7 +20,7 @@ class InsightsTabs extends Component {
     state = {
         activeTab: {},
         tabs: {
-            rules: { title: this.props.intl.formatMessage(messages.rulesTitle), to: '/rules', component: <RulesTable /> },
+            rules: { title: this.props.intl.formatMessage(messages.rules), to: '/rules', component: <RulesTable /> },
             systems: { title: this.props.intl.formatMessage(messages.systems), to: '/systems', component: <SystemsTable /> }
         }
     };
@@ -42,7 +42,7 @@ class InsightsTabs extends Component {
         const { tabs, activeTab } = this.state;
         return <>
             <PageHeader>
-                <PageHeaderTitle title={this.props.intl.formatMessage(messages.rulesTitle)} />
+                <PageHeaderTitle title={this.props.intl.formatMessage(messages.rules)} />
             </PageHeader>
             {activeTab.title && <Tabs mountOnEnter unmountOnExit
                 className='insights-tabs'

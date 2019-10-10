@@ -41,7 +41,7 @@ const TopicCard = ({ topic, history, intl }) => {
                                 <Button variant="link" onClick={() => {
                                     history.push(`/topics/${topic.slug}/`);
                                 }}>
-                                    {intl.formatMessage(messages.topicCardLearnMoreLink)}
+                                    {intl.formatMessage(messages.learnMore)}
                                 </Button>
                             </LevelItem>
                             {topic.featured && <LevelItem>

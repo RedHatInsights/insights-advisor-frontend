@@ -17,7 +17,7 @@ import messages from '../../Messages';
 
 const List = ({ topics, topicsFetchStatus, fetchTopics, setBreadcrumbs, intl }) => {
     useEffect(() => {
-        setBreadcrumbs([{ title: intl.formatMessage(messages.topicsTitle), navigate: '/topics' }]);
+        setBreadcrumbs([{ title: intl.formatMessage(messages.topics), navigate: '/topics' }]);
         fetchTopics();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchTopics, setBreadcrumbs]);
@@ -47,7 +47,7 @@ const List = ({ topics, topicsFetchStatus, fetchTopics, setBreadcrumbs, intl }) 
 
     return <>
         <PageHeader>
-            <PageHeaderTitle title={intl.formatMessage(messages.topicsTitle)} />
+            <PageHeaderTitle title={intl.formatMessage(messages.topics)} />
         </PageHeader>
         <Main>
             {renderTopics()}

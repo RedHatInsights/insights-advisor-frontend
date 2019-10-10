@@ -29,7 +29,7 @@ const FilterChips = ({ filters, removeFilter, removeAllFilters, intl }) => {
             })}
         </ChipGroup>
         <Button variant="link" onClick={() => removeAllFilters()}>
-            {intl.formatMessage(messages.filterChipsClearAll)}
+            {intl.formatMessage(messages.clearFilters)}
         </Button>
     </>;
 };

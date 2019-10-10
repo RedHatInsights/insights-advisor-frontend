@@ -1,74 +1,75 @@
+/* eslint-disable max-len */
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
-    rulesTitle: {
-        id: 'title.rules',
-        description: 'Rules Title',
+    rules: {
+        id: 'rules',
+        description: 'Used as a title',
         defaultMessage: 'Rules'
     },
-    rulesTableColumnTitleAdded: {
-        id: 'rulestable.columntitle.added',
-        description: 'Rulestable column title, added',
+    added: {
+        id: 'added',
+        description: 'Rule table column title',
         defaultMessage: 'Added'
     },
-    rulesTableColumnTitleRule: {
-        id: 'rulestable.columntitle.rule',
-        description: 'Rulestable column title, rule',
+    rule: {
+        id: 'rule',
+        description: 'Rule table column title',
         defaultMessage: 'Rule'
     },
-    rulesTableColumnTitleTotalrisk: {
-        id: 'rulestable.columntitle.totalrisk',
-        description: 'Rulestable column title, total risk',
-        defaultMessage: 'Total Risk'
+    totalRisk: {
+        id: 'totalRisk',
+        description: 'Rule table column title, Rule details label',
+        defaultMessage: 'Total risk'
     },
     systems: {
         id: 'systems',
         description: 'Systems title used in rule table column and systems tab header',
         defaultMessage: 'Systems'
     },
-    rulesTableColumnTitleAnsible: {
-        id: 'rulestable.columntitle.ansible',
-        description: 'Rulestable column title, ansible',
+    ansible: {
+        id: 'ansible',
+        description: 'Rule tablecolumn title',
         defaultMessage: 'Ansible'
     },
     rulesTableHideReportsErrorDisabled: {
         id: 'rulestable.hidereports.errordisabling',
-        description: 'Rulestable, hide reports action, error for disabling reporting on a rule',
+        description: 'Rule table, hide reports action, error for disabling reporting on a rule',
         defaultMessage: 'Disabling reports failed'
     },
     rulesTableHideReportsErrorEnabled: {
         id: 'rulestable.hidereports.errorenabling',
-        description: 'Rulestable, hide reports action, error for enabling reporting on a rule',
+        description: 'Rule table, hide reports action, error for enabling reporting on a rule',
         defaultMessage: 'Enabling reports failed'
     },
-    rulesTableActionDisableRule: {
-        id: 'rulestable.action.disablerule',
-        description: 'Rulestable, action text for disabling reporting of a rule',
-        defaultMessage: 'Disable Rule'
+    disableRule: {
+        id: 'disableRule',
+        description: 'Rule table, action text for disabling reporting of a rule',
+        defaultMessage: 'Disable rule'
     },
-    rulesTableActionEnableRule: {
-        id: 'rulestable.action.enablerule',
-        description: 'Rulestable, action text for enabling reporting of a rule',
-        defaultMessage: 'Enable Rule'
+    enableRule: {
+        id: 'enableRule',
+        description: 'Rule table, action text for enabling reporting of a rule',
+        defaultMessage: 'Enable rule'
     },
     rulesTableNoRuleHitsTitle: {
         id: 'rulestable.norulehits.title',
-        description: 'Rulestable, no rule hits message, title',
+        description: 'Rule table, no rule hits message, title',
         defaultMessage: 'No rule hits'
     },
     rulesTableNoRuleHitsEnabledRulesBody: {
         id: 'rulestable.norulehits.enabledrulesbody',
-        description: 'Rulestable, no rule hits message for enabled rules, body',
+        description: 'Rule table, no rule hits message for enabled rules, body',
         defaultMessage: 'None of your connected systems are affected by enabled rules.'
     },
     rulesTableNoRuleHitsAnyRulesBody: {
         id: 'rulestable.norulehits.anyrulesbody',
-        description: 'Rulestable, no rule hits message for any known rules, body',
+        description: 'Rule table, no rule hits message for any known rules, body',
         defaultMessage: 'None of your connected systems are affected by any known rules.'
     },
     rulesTableNoRuleHitsAddDisabledButton: {
         id: 'rulestable.norulehits.adddisabledbutton',
-        description: 'Rulestable, no rule hits message for any enabled rules, include disabled rules button',
+        description: 'Rule table, no rule hits message for any enabled rules, include disabled rules button',
         defaultMessage: 'Include disabled rules'
     },
     disabled: {
@@ -76,8 +77,8 @@ export default defineMessages({
         description: 'Disabled',
         defaultMessage: 'Disabled'
     },
-    notapplicable: {
-        id: 'notapplicable',
+    nA: {
+        id: 'nA',
         description: 'Abreviated as N/A, text equivelent, not applicable',
         defaultMessage: 'N/A'
     },
@@ -103,7 +104,7 @@ export default defineMessages({
     },
     rulesTableFetchRulesError: {
         id: 'rulestable.fetchrules.error',
-        description: 'Rulestable, fetch rules, error message',
+        description: 'Rule table, fetch rules, error message',
         defaultMessage: 'There was an error fetching rules list.'
     },
     loading: {
@@ -131,14 +132,14 @@ export default defineMessages({
         description: 'The no hits text for the overview chart',
         defaultMessage: 'Your connected systems have no categorized rule hits.'
     },
-    overviewChartTotalHits: {
-        id: 'overviewchart.totalhits',
-        description: 'The total hits text for the overview chart',
-        defaultMessage: 'Total Hits'
+    totalHits: {
+        id: 'total hits',
+        description: 'The total hits label for the overview donut chart',
+        defaultMessage: 'Total hits'
     },
-    filterChipsClearAll: {
-        id: 'filter.chips.clearall',
-        description: 'Clear all filter chips text',
+    clearFilters: {
+        id: 'clearFilters',
+        description: 'Filter action, clear all filter chips',
         defaultMessage: 'Clear filters'
     },
     knowledgebaseArticle: {
@@ -149,26 +150,22 @@ export default defineMessages({
     riskofchange: {
         id: 'riskofchange',
         description: 'Risk of Change',
-        defaultMessage: 'Risk of Change'
+        defaultMessage: 'Risk of change'
     },
     rulesDetailsTotalriskBody: {
         id: 'rulesdetails.totalriskbody',
         description: 'Text explaining the total risk value of this rule',
         defaultMessage: `The <strong>likelihood</strong> that this will be a problem is
         {likelihood}. The <strong>impact</strong> of the problem would be
-        {impact} if it occurred.` },
-    rulesDetailsRiskofchangeBody: {
-        id: 'rulesdetails.riskofchangebody',
-        description: 'Text explaining the risk of change value of this rule',
-        defaultMessage: 'Clear filters'
+        {impact} if it occurred.`
     },
     undefined: {
         id: 'undefined',
         description: 'Undefined',
         defaultMessage: 'Undefined'
     },
-    topicCardLearnMoreLink: {
-        id: 'topiccard.learnmorelink',
+    learnMore: {
+        id: 'learnMore',
         description: 'Topic card, link to topic details page',
         defaultMessage: 'Learn more'
     },
@@ -272,7 +269,7 @@ export default defineMessages({
     rulesDetailsPubishdate: {
         id: 'rulesdetails.publishdate',
         description: 'Rules details, publish date',
-        defaultMessage: 'Publish Date: {date}'
+        defaultMessage: 'Publish date: {date}'
     },
     affectedSystems: {
         id: 'affectedSystems',
@@ -299,8 +296,8 @@ export default defineMessages({
         description: 'Topic details, body when none are present or exist',
         defaultMessage: 'There exist no further details for this topic.'
     },
-    topicsTitle: {
-        id: 'title.topics',
+    topics: {
+        id: 'topics',
         description: 'Topics Title',
         defaultMessage: 'Topics'
     },
@@ -321,17 +318,17 @@ export default defineMessages({
     },
     selectAll: {
         id: 'selectAll',
-        description: 'Bulk select all items in a table with number',
+        description: 'Action, Bulk select all items in a table with number',
         defaultMessage: 'Select all ({items} items)'
     },
     selectPage: {
         id: 'selectPage',
-        description: 'Bulk select all visible items in table, with number',
+        description: 'Action, Bulk select all visible items in table, with number',
         defaultMessage: 'Select page ({items} items)'
     },
     selectNone: {
         id: 'selectNone',
-        description: 'Bulk deselect all',
+        description: 'Action, Bulk deselect all',
         defaultMessage: 'Select none (0 items)'
     },
     topicRelatedToRule: {
@@ -373,5 +370,105 @@ export default defineMessages({
         id: 'systemtable.fetch.error',
         description: 'System table, fetch , error message',
         defaultMessage: 'There was an error fetching systems.'
+    },
+    low: {
+        id: 'low',
+        description: 'Filter value',
+        defaultMessage: 'Low'
+    },
+    moderate: {
+        id: 'moderate',
+        description: 'Filter value',
+        defaultMessage: 'Moderate'
+    },
+    important: {
+        id: 'important',
+        description: 'Filter value',
+        defaultMessage: 'Important'
+    },
+    critical: {
+        id: 'critical',
+        description: 'Filter value',
+        defaultMessage: 'Critical'
+    },
+    veryLow: {
+        id: 'veryLow',
+        description: 'Filter value',
+        defaultMessage: 'Very Low'
+    },
+    high: {
+        id: 'high',
+        description: 'Filter value',
+        defaultMessage: 'High'
+    },
+    availability: {
+        id: 'availability',
+        description: 'Filter value',
+        defaultMessage: 'Availability'
+    },
+    performance: {
+        id: 'performance',
+        description: 'Filter value',
+        defaultMessage: 'Performance'
+    },
+    stability: {
+        id: 'stability',
+        description: 'Filter value',
+        defaultMessage: 'Stability'
+    },
+    security: {
+        id: 'security',
+        description: 'Filter value',
+        defaultMessage: 'Security'
+    },
+    all: {
+        id: 'all',
+        description: 'Filter value',
+        defaultMessage: 'All'
+    },
+    enabled: {
+        id: 'enabled',
+        description: 'Filter value',
+        defaultMessage: 'Enabled'
+    },
+    impact: {
+        id: 'impact',
+        description: 'Filter title',
+        defaultMessage: 'Impact'
+    },
+    category: {
+        id: 'category',
+        description: 'Filter title',
+        defaultMessage: 'Category'
+    },
+    ruleStatus: {
+        id: 'ruleStatus',
+        description: 'Filter title',
+        defaultMessage: 'Rule Status'
+    },
+    likelihood: {
+        id: 'likelihood',
+        description: 'Filter title',
+        defaultMessage: 'Likelihood'
+    },
+    riskOfChangeTextOne: {
+        id: 'riskOfChangeTextOne',
+        description: 'Risk of change text explaining a value one',
+        defaultMessage: 'The change takes very little time to implement and there is minimal impact to system operations.'
+    },
+    riskOfChangeTextTwo: {
+        id: 'riskOfChangeTextTwo',
+        description: 'Risk of change text explaining a value two',
+        defaultMessage: 'Typically, these changes do not require that a system be taken offline.'
+    },
+    riskOfChangeTextThree: {
+        id: 'riskOfChangeTextThree',
+        description: 'Risk of change text explaining a value three',
+        defaultMessage: 'These will likely require an outage window.'
+    },
+    riskOfChangeTextFour: {
+        id: 'riskOfChangeTextFour',
+        description: 'Risk of change text explaining a value four',
+        defaultMessage: `The change takes a significant amount of time and planning to execute, and will impact the system and business operations of the host due to downtime.`
     }
 });
