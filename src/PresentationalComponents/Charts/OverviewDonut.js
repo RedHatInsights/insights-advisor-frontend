@@ -55,7 +55,7 @@ const OverviewDonut = ({ className, category, setFilters, history, intl }) => {
                         }
                     }] }
                     title={ `${totalHits}` }
-                    subTitle={intl.formatMessage(messages.overviewChartTotalHits)}
+                    subTitle={intl.formatMessage(messages.totalHits)}
                     themeColor={ ChartThemeColor.multiOrdered }
                     themeVariant={ ChartThemeVariant.light }
                 />

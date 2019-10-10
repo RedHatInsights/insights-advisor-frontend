@@ -71,7 +71,7 @@ const RuleDetails = ({ children, className, rule, intl, topics }) => {
                     </GridItem>
                 )}
                 <GridItem className='pf-u-pb-md' sm={8} md={12}>
-                    <div>{intl.formatMessage(messages.rulesTableColumnTitleTotalrisk)}</div>
+                    <div>{intl.formatMessage(messages.totalRisk)}</div>
                     <div className='pf-u-display-inline-flex pf-m-align-center pf-u-pb-sm pf-u-pt-sm'>
                         <div className='pf-u-display-inline-flex'>
                             <Battery

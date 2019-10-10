@@ -28,14 +28,14 @@ import messages from '../../Messages';
 
 const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, history, intl }) => {
     const [cols] = useState([
-        { title: intl.formatMessage(messages.rulesTableColumnTitleRule), transforms: [sortable] },
-        { title: intl.formatMessage(messages.rulesTableColumnTitleAdded), transforms: [sortable, cellWidth(15)] },
-        { title: intl.formatMessage(messages.rulesTableColumnTitleTotalrisk), transforms: [sortable] },
+        { title: intl.formatMessage(messages.rule), transforms: [sortable] },
+        { title: intl.formatMessage(messages.added), transforms: [sortable, cellWidth(15)] },
+        { title: intl.formatMessage(messages.totalRisk), transforms: [sortable] },
         { title: intl.formatMessage(messages.systems), transforms: [sortable] },
         {
-            title: <><AnsibeTowerIcon size='md' /> {intl.formatMessage(messages.rulesTableColumnTitleAnsible)}</>,
+            title: <><AnsibeTowerIcon size='md' /> {intl.formatMessage(messages.ansible)}</>,
             transforms: [sortable],
-            dataLabel: intl.formatMessage(messages.rulesTableColumnTitleAnsible)
+            dataLabel: intl.formatMessage(messages.ansible)
         }
     ]);
     const [rows, setRows] = useState([]);
@@ -120,11 +120,11 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
         return rule && rule.reports_shown ?
             [{
-                title: intl.formatMessage(messages.rulesTableActionDisableRule),
+                title: intl.formatMessage(messages.disableRule),
                 onClick: (event, rowId) => hideReports(rowId)
             }]
             : [{
-                title: intl.formatMessage(messages.rulesTableActionEnableRule),
+                title: intl.formatMessage(messages.enableRule),
                 onClick: (event, rowId) => hideReports(rowId)
             }];
     };
@@ -221,7 +221,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                                 {
                                     title: <div className="pf-m-center" key={key} style={{ verticalAlign: 'top' }}>
                                         <Battery
-                                            label={intl.formatMessage(messages.rulesTableColumnTitleTotalrisk)}
+                                            label={intl.formatMessage(messages.totalRisk)}
                                             labelHidden
                                             severity={value.total_risk}
                                         />
@@ -230,7 +230,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                                 {
                                     title: <div key={key}> {value.reports_shown ?
                                         `${value.impacted_systems_count.toLocaleString()}`
-                                        : intl.formatMessage(messages.notapplicable)}</div>
+                                        : intl.formatMessage(messages.nA)}</div>
                                 },
                                 {
                                     title: <div className="pf-m-center " key={key}>
