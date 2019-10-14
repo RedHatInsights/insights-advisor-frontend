@@ -43,7 +43,7 @@ const Breadcrumbs = ({ breadcrumbs, current, fetchRule, match, ruleFetchStatus, 
         } else {
             buildBreadcrumbs();
         }
-    }, [buildBreadcrumbs, fetchRule, match.params.id, match.params.inventoryId]);
+    }, [buildBreadcrumbs, fetchRule, match.params.id, match.params.inventoryId, match.url]);
 
     useEffect(() => {
         if (ruleFetchStatus === 'fulfilled' && !ruleDescriptionLoaded) {
