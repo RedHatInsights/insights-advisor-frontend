@@ -28,7 +28,7 @@ const RuleDetails = ({ children, className, rule, intl, topics }) => {
         intersection(topic.tags.split(' '), rule.tags.split(' ')).length &&
             <React.Fragment key={topic.slug}>
                 <Link to={`/topics/${topic.slug}`}>
-                    {`${topic.name} (${topic.impacted_systems_count})`}
+                    {`${topic.name}`}
                 </Link>
             </React.Fragment>
     ));

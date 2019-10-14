@@ -53,5 +53,5 @@ export const Routes = () =>
     <Switch>
         {paths.map((path) => <InsightsRoute key={path.title} path={path.to} component={path.component} rootClass={path.rootClass} />)}
         { /* Finally, catch all unmatched routes */}
-        <Redirect path='*' to={`${paths.overview}`} push />
+        <Redirect path='*' to={`${paths[0].to}`} push />
     </Switch>;
