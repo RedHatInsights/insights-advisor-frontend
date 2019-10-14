@@ -115,8 +115,8 @@ export const RISK_OF_CHANGE_LABEL = {
     4: intlHelper(intl.formatMessage(messages.high), intlSettings)
 };
 export const TOTAL_RISK_LABEL = {
-    1: intlHelper(intl.formatMessage(messages.low), intlSettings),
-    2: intlHelper(intl.formatMessage(messages.moderate), intlSettings),
-    3: intlHelper(intl.formatMessage(messages.important), intlSettings),
-    4: intlHelper(intl.formatMessage(messages.critical), intlSettings)
+    1: 'Low',
+    2: 'Moderate',
+    3: 'Important',
+    4: 'Critical'
 };
