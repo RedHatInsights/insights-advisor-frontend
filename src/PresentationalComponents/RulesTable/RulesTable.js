@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Battery, Main, TableToolbar } from '@redhat-cloud-services/frontend-components';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import PropTypes from 'prop-types';
-import { AnsibeTowerIcon, CheckIcon, ExportIcon } from '@patternfly/react-icons';
+import { AnsibeTowerIcon, CheckCircleIcon, CheckIcon, ExportIcon } from '@patternfly/react-icons';
 import { flatten } from 'lodash';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
@@ -183,8 +183,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 setRows([{
                     cells: [{
                         title: (
-                            <MessageState icon={CheckIcon} title={intl.formatMessage(messages.rulesTableNoRuleHitsTitle)}
-                                text={filters.reports_shown ?
+                            <MessageState icon={CheckIcon} iconClass='ansibleCheck' size='sm'
+                                title={intl.formatMessage(messages.rulesTableNoRuleHitsTitle)} text={filters.reports_shown ?
                                     intl.formatMessage(messages.rulesTableNoRuleHitsEnabledRulesBody) :
                                     intl.formatMessage(messages.rulesTableNoRuleHitsAnyRulesBody)}>
                                 {filters.reports_shown && <Button variant="link" style={{ paddingTop: 24 }} onClick={() => {
@@ -234,7 +234,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                                 },
                                 {
                                     title: <div className="pf-m-center " key={key}>
-                                        {value.playbook_count ? <CheckIcon className='ansibleCheck' /> : null}
+                                        {value.playbook_count ? <CheckCircleIcon className='ansibleCheck' /> : null}
                                     </div>
                                 }
                             ]
