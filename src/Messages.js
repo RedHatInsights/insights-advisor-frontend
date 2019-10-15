@@ -144,8 +144,8 @@ export default defineMessages({
     },
     knowledgebaseArticle: {
         id: 'knowledgebasearticle',
-        description: 'Knowledgebase Article',
-        defaultMessage: 'Knowledgebase Article'
+        description: 'Knowledgebase article',
+        defaultMessage: 'Knowledgebase article'
     },
     riskofchange: {
         id: 'riskofchange',

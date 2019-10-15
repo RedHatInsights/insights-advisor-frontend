@@ -27,7 +27,7 @@
   "overviewchart.nohits": "Your connected systems have no categorized rule hits.",
   "total hits": "Total hits",
   "clearFilters": "Clear filters",
-  "knowledgebasearticle": "Knowledgebase Article",
+  "knowledgebasearticle": "Knowledgebase article",
   "riskofchange": "Risk of change",
   "rulesdetails.totalriskbody": "The <strong>likelihood</strong> that this will be a problem is\n        {likelihood}. The <strong>impact</strong> of the problem would be\n        {impact} if it occurred.",
   "undefined": "Undefined",
