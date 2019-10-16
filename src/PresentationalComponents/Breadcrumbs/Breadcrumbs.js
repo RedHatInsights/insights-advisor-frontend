@@ -15,12 +15,20 @@ const Breadcrumbs = ({ breadcrumbs, current, fetchRule, match, ruleFetchStatus, 
     const [ruleDescriptionLoaded, setRuleDescription] = useState(false);
     const buildBreadcrumbs = useCallback(() => {
         let crumbs = [];
+        const addTabedCrumb = (param) => {
+            const rootTitle = param.toLowerCase();
+            if (rootTitle === 'rules' || rootTitle === 'systems') {
+                crumbs.push({ title: 'Rules', navigate: '/rules' });
+            }
+        };
 
         // add rules base breadcrumb
         if (breadcrumbs[0] !== undefined) {
+            addTabedCrumb(breadcrumbs[0].title);
             crumbs.push(breadcrumbs[0]);
         } else {
             const title = match.url.split('/')[1];
+            addTabedCrumb(title);
             crumbs.push({ title, navigate: `/${title}` });
         }
 
@@ -54,17 +62,17 @@ const Breadcrumbs = ({ breadcrumbs, current, fetchRule, match, ruleFetchStatus, 
 
     return (
         <React.Fragment>
-            { (ruleFetchStatus === 'fulfilled' || items.length > 0) && (
+            {(ruleFetchStatus === 'fulfilled' || items.length > 0) && (
                 <Breadcrumb>
-                    { items.map((oneLink, key) => (
-                        <BreadcrumbItem key={ key }>
-                            <Link to={ oneLink.navigate }>{ oneLink.title }</Link>
+                    {items.map((oneLink, key) => (
+                        <BreadcrumbItem key={key}>
+                            <Link to={oneLink.navigate}>{oneLink.title}</Link>
                         </BreadcrumbItem>
-                    )) }
-                    <BreadcrumbItem isActive>{ current }</BreadcrumbItem>
+                    ))}
+                    <BreadcrumbItem isActive>{current}</BreadcrumbItem>
                 </Breadcrumb>
-            ) }
-            { ruleFetchStatus === 'pending' && intl.formatMessage(messages.loading)}
+            )}
+            {ruleFetchStatus === 'pending' && intl.formatMessage(messages.loading)}
         </React.Fragment>
     );
 };
