@@ -2,6 +2,7 @@ import React from 'react';
 import * as reactRouterDom from 'react-router-dom';
 import * as reactCore from '@patternfly/react-core';
 import * as reactIcons from '@patternfly/react-icons';
+import * as pfReactTable from '@patternfly/react-table';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
@@ -25,7 +26,8 @@ class InventoryDetails extends React.Component {
             react: React,
             reactRouterDom,
             reactCore,
-            reactIcons
+            reactIcons,
+            pfReactTable
         });
         const { InventoryDetailHead, AppInfo } = inventoryConnector();
 
