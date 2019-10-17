@@ -49,7 +49,7 @@ class OverviewDetails extends Component {
 
         return this.state.selectedEntities === system.host_ids.length ?
             system.host_ids
-            : entities.rows.filter(entity => entity.selected).map(entity => entity.id);
+            : entities.rows.filter(entity => entity.selected === true).map(entity => entity.id);
     };
 
     remediationDataProvider = () => {
