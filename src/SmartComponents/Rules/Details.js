@@ -47,8 +47,7 @@ class OverviewDetails extends Component {
             return [];
         }
 
-        return this.state.selectedEntities === system.host_ids.length ?
-            system.host_ids
+        return (this.state.selectedEntities === system.host_ids.length) && this.state.selectedEntities > 1 ? system.host_ids
             : entities.rows.filter(entity => entity.selected === true).map(entity => entity.id);
     };
 
