@@ -18,14 +18,14 @@ const SummaryChartItem = ({ numIssues, name, riskName, affectedSystems, setFilte
         history.push(`/rules`);
     };
 
-    const returnLink = (children) => <Button variant="link" onClick={setChartFilters}>{children}</Button>;
+    const returnLink = (children) => <Button className='paddingLeftLabelOverride' variant="link" onClick={setChartFilters}>{children}</Button>;
 
     return <StackItem widget-type='InsightsSummaryChartItem' widget-id={name}>
-        <Split style={{ alignItems: 'flex-end' }}>
-            <SplitItem className='pf-u-pr-md'>
+        <Split className='flexAlignOverride'>
+            <SplitItem>
                 {returnLink(<Battery label={riskName} severity={riskName} labelHidden={true} />)}
             </SplitItem>
-            <SplitItem className='pf-u-text-align-right pf-u-pl-sm'>
+            <SplitItem>
                 {returnLink(intl.formatMessage(messages.summaryChartItem, { numIssues, name, affectedSystems }))}
             </SplitItem>
         </Split>

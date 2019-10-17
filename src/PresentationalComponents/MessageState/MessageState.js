@@ -3,8 +3,8 @@ import { EmptyState, EmptyStateBody, EmptyStateIcon, EmptyStateVariant, Title } 
 import PropTypes from 'prop-types';
 import { CubesIcon } from '@patternfly/react-icons';
 
-const MessageState = ({ children, icon, iconClass, iconStyle, size, text, title, variant }) => (
-    <EmptyState variant={variant}>
+const MessageState = ({ className, children, icon, iconClass, iconStyle, size, text, title, variant }) => (
+    <EmptyState className={className} variant={variant}>
         {icon !== 'none' && <EmptyStateIcon className={iconClass} style={iconStyle} icon={icon} size={size} />}
         <Title headingLevel="h5" size='lg'>
             {title}
@@ -24,7 +24,8 @@ MessageState.propTypes = {
     size: PropTypes.string,
     text: PropTypes.any,
     title: PropTypes.string,
-    variant: PropTypes.any
+    variant: PropTypes.any,
+    className: PropTypes.string
 };
 
 MessageState.defaultProps = {

@@ -219,7 +219,7 @@ export default defineMessages({
     overviewConnectsystemsAction: {
         id: 'overview.connectsystems.action',
         description: 'Overview, action link for connecting first systems',
-        defaultMessage: `Learn how to connect a system to insights`
+        defaultMessage: `Learn how to connect a system to Insights`
     },
     overviewRemediateTitle: {
         id: 'overview.remediate.title',
