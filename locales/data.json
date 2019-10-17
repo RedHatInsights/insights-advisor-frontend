@@ -42,7 +42,7 @@
     "overview.actioncall.title": "Get started with Red Hat Insights",
     "overview.connectsystems.title": "Connect your first systems",
     "overview.connectsystems.body": "Connect at least 10 systems to get a better\n        awareness of issues and optimizations\n        identified across your infastructure",
-    "overview.connectsystems.action": "Learn how to connect a system to insights",
+    "overview.connectsystems.action": "Learn how to connect a system to Insights",
     "overview.remediate.title": "Remediate Insights findings with Ansible",
     "overview.remediate.body": "Easily generate an Ansible playbook to \n        quickly and effectively remediate Insights findings",
     "overview.remediate.action": "Get started with Insights and Ansible Playbooks",

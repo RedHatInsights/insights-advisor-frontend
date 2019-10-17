@@ -1,6 +1,3 @@
-@import '~@redhat-cloud-services/frontend-components-utilities/files/Utilities/_variables';
-@import '~@redhat-cloud-services/frontend-components-utilities/files/Utilities/_mixins';
-
 .disabled {
   color: var(--pf-global--disabled-color--100);
 }
@@ -10,4 +7,12 @@
   padding-top: var(--pf-global--spacer--md);
   border-top: 1px solid var(--pf-global--BorderColor--light-200);
   font-size: var(--pf-global--FontSize--sm);
+}
+
+.paddingLeftLabelOverride {
+  padding-left: 0px;
+}
+
+.flexAlignOverride {
+  align-items: center;
 }

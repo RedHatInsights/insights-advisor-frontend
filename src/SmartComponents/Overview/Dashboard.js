@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import asyncComponent from '../../Utilities/asyncComponent';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Button, Level, LevelItem, Title } from '@patternfly/react-core';
+import { Button, Flex, FlexItem, Level, LevelItem, Title } from '@patternfly/react-core';
 import { Main, PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { global_Color_100, global_primary_color_100 } from '@patternfly/react-tokens';
@@ -79,56 +79,69 @@ class OverviewDashboard extends Component {
                         <Main className='pf-m-light'>
                             <Title size='2xl' headingLevel='h1'>{intl.formatMessage(messages.overviewActioncallTitle)}</Title>
                             <Level>
-                                <LevelItem style={{ maxWidth: '400px' }}>
-                                    <MessageState
-                                        iconStyle={{ color: global_Color_100.value }}
-                                        icon={() => SERVER_STACK_ICON}
-                                        title={intl.formatMessage(messages.overviewConnectsystemsTitle)}
-                                        text={<span key='1'>
-                                            {intl.formatMessage(messages.overviewConnectsystemsBody)}
-                                        </span>}>
-                                        <Button component="a" href="https://access.redhat.com/products/red-hat-insights#getstarted"
-                                            target="_blank" variant="link">
-                                            {intl.formatMessage(messages.overviewConnectsystemsAction)}
-                                        </Button>
-                                    </MessageState>
+                                <LevelItem className='maxWidthOverride'>
+                                    <Flex breakpointMods={[{ modifier: 'column' }]}>
+                                        <FlexItem>
+                                            <MessageState
+                                                iconStyle={{ color: global_Color_100.value }}
+                                                icon={() => SERVER_STACK_ICON}
+                                                title={intl.formatMessage(messages.overviewConnectsystemsTitle)}
+                                                text={<span key='1'>
+                                                    {intl.formatMessage(messages.overviewConnectsystemsBody)}
+                                                </span>}>
+                                                <Button component="a" href="https://access.redhat.com/products/red-hat-insights#getstarted"
+                                                    target="_blank" variant="link">
+                                                    {intl.formatMessage(messages.overviewConnectsystemsAction)}
+                                                </Button>
+                                            </MessageState>
+                                        </FlexItem>
+                                    </Flex>
                                 </LevelItem>
-                                <LevelItem style={{ maxWidth: '400px' }}>
-                                    <MessageState
-                                        iconStyle={{ color: global_Color_100.value }}
-                                        icon={() => ANSIBLE_MARK_ICON}
-                                        title={intl.formatMessage(messages.overviewRemediateTitle)}
-                                        text={<span key='1'>
-                                            {intl.formatMessage(messages.overviewRemediateBody)}
-                                        </span>}>
-                                        <Button component="a" href="https://cloud.redhat.com/insights/remediations"
-                                            target="_blank" variant="link">
-                                            {intl.formatMessage(messages.overviewRemediateAction)}
-                                        </Button>
-                                    </MessageState>
+                                <LevelItem className='maxWidthOverride'>
+                                    <Flex breakpointMods={[{ modifier: 'column' }]}>
+                                        <FlexItem>
+                                            <MessageState
+                                                className='svgAlignmentOverride'
+                                                iconStyle={{ color: global_Color_100.value }}
+                                                icon={() => ANSIBLE_MARK_ICON}
+                                                title={intl.formatMessage(messages.overviewRemediateTitle)}
+                                                text={<span key='1'>
+                                                    {intl.formatMessage(messages.overviewRemediateBody)}
+                                                </span>}>
+                                                <Button component="a" href="https://cloud.redhat.com/insights/remediations"
+                                                    target="_blank" variant="link">
+                                                    {intl.formatMessage(messages.overviewRemediateAction)}
+                                                </Button>
+                                            </MessageState>
+                                        </FlexItem>
+                                    </Flex>
                                 </LevelItem>
-                                <LevelItem style={{ maxWidth: '400px' }}>
-                                    <MessageState
-                                        iconStyle={{ color: global_Color_100.value }}
-                                        icon={() => GLOBAL_ECONSYSTEM_ICON}
-                                        title={intl.formatMessage(messages.overviewDeployTitle)}
-                                        text={<span key='1'>
-                                            {intl.formatMessage(messages.overviewDeployBody, {
-                                                linkansible(link) {
-                                                    return <a rel="noopener noreferrer" target="_blank"
-                                                        href="https://galaxy.ansible.com/redhatinsights/insights-client">{link}</a>;
-                                                },
-                                                linkpuppet(link) {
-                                                    return <a rel="noopener noreferrer" target="_blank"
-                                                        href="https://forge.puppetlabs.com/lphiri/access_insights_client">{link}</a>;
-                                                }
-                                            })}
-                                        </span>}>
-                                        <Button component="a" href="https://galaxy.ansible.com/redhatinsights/insights-client"
-                                            target="_blank" variant="secondary">
-                                            {intl.formatMessage(messages.overviewDeployAction)}
-                                        </Button>
-                                    </MessageState>
+                                <LevelItem className='maxWidthOverride'>
+                                    <Flex breakpointMods={[{ modifier: 'column' }]}>
+                                        <FlexItem>
+                                            <MessageState
+                                                iconStyle={{ color: global_Color_100.value }}
+                                                icon={() => GLOBAL_ECONSYSTEM_ICON}
+                                                title={intl.formatMessage(messages.overviewDeployTitle)}
+                                                text={<span key='1'>
+                                                    {intl.formatMessage(messages.overviewDeployBody, {
+                                                        linkansible(link) {
+                                                            return <a rel="noopener noreferrer" target="_blank"
+                                                                href="https://galaxy.ansible.com/redhatinsights/insights-client">{link}</a>;
+                                                        },
+                                                        linkpuppet(link) {
+                                                            return <a rel="noopener noreferrer" target="_blank"
+                                                                href="https://forge.puppetlabs.com/lphiri/access_insights_client">{link}</a>;
+                                                        }
+                                                    })}
+                                                </span>}>
+                                                <Button component="a" href="https://galaxy.ansible.com/redhatinsights/insights-client"
+                                                    target="_blank" variant="secondary">
+                                                    {intl.formatMessage(messages.overviewDeployAction)}
+                                                </Button>
+                                            </MessageState>
+                                        </FlexItem>
+                                    </Flex>
                                 </LevelItem>
                             </Level>
                         </Main>
