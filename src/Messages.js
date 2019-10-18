@@ -470,5 +470,10 @@ export default defineMessages({
         id: 'riskOfChangeTextFour',
         description: 'Risk of change text explaining a value four',
         defaultMessage: `The change takes a significant amount of time and planning to execute, and will impact the system and business operations of the host due to downtime.`
+    },
+    no: {
+        id: 'no',
+        description: 'Used to signal no ansible playbook',
+        defaultMessage: `No`
     }
 });
