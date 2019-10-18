@@ -234,7 +234,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                                 },
                                 {
                                     title: <div className="pf-m-center " key={key}>
-                                        {value.playbook_count ? <CheckCircleIcon className='ansibleCheck' /> : null}
+                                        {value.playbook_count ? <CheckCircleIcon className='ansibleCheck' /> : intl.formatMessage(messages.no)}
                                     </div>
                                 }
                             ]
