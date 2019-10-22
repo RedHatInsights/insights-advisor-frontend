@@ -46,6 +46,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const [offset, setOffset] = useState(0);
     const [isKebabOpen, setIsKebabOpen] = useState(false);
     const [filterBuilding, setFilterBuilding] = useState(true);
+    const [queryString, setQueryString] = useState('');
 
     const results = rules.meta ? rules.meta.count : 0;
 
@@ -154,6 +155,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     useEffect(() => {
         const queryString = Object.keys(filters).map(key => key + '=' + filters[key]).join('&');
+        setQueryString(`?${queryString}`);
         history.replace({
             search: `?${queryString}`
         });
@@ -276,11 +278,11 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                     isOpen={isKebabOpen}
                     isPlain
                     dropdownItems={[
-                        <DropdownItem value='json' href={`${BASE_URL}/export/hits.json/`} key="export json"
+                        <DropdownItem value='json' href={`${BASE_URL}/export/hits.json/${queryString}`} key="export json"
                             aria-label='export data json'>
                             <ExportIcon /> {intl.formatMessage(messages.rulesTableActionExportJson)}
                         </DropdownItem>,
-                        <DropdownItem value='csv' href={`${BASE_URL}/export/hits.csv/`} key="export csv"
+                        <DropdownItem value='csv' href={`${BASE_URL}/export/hits.csv/${queryString}`} key="export csv"
                             aria-label='export data csv'>
                             <ExportIcon /> {intl.formatMessage(messages.rulesTableActionExportCsv)}
                         </DropdownItem>
