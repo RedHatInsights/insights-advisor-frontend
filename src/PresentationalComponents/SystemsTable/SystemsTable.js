@@ -1,13 +1,13 @@
 /* eslint camelcase: 0 */
 import React, { useCallback, useEffect, useState } from 'react';
-import { TableToolbar, SimpleTableFilter } from '@redhat-cloud-services/frontend-components';
+import { TableToolbar, PrimaryToolbar } from '@redhat-cloud-services/frontend-components';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import PropTypes from 'prop-types';
 import { flatten } from 'lodash';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Pagination, PaginationVariant, Level, LevelItem, InputGroup } from '@patternfly/react-core';
+import { Pagination, PaginationVariant } from '@patternfly/react-core';
 import { cellWidth, sortable, Table, TableBody, TableHeader } from '@patternfly/react-table';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { injectIntl } from 'react-intl';
@@ -46,13 +46,9 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
         setOffset(0);
     }, [setSort, setSortBy, setOffset]);
 
-    const onSetPage = (_event, pageNumber) => {
+    const onSetPage = (pageNumber) => {
         const newOffset = pageNumber * limit - limit;
         setOffset(newOffset);
-    };
-
-    const onPerPageSelect = (_event, limit) => {
-        setLimit(limit);
     };
 
     const fetchAction = useCallback(() => {
@@ -60,9 +56,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
     }, []);
 
     useEffect(() => {
-        if (searchText !== null) {
-            fetchSystems(searchText.length && { display_name: searchText, sort });
-        }
+        searchText !== null && fetchSystems(searchText.length && { display_name: searchText, sort });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearchText]);
 
@@ -75,9 +69,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
     }, [fetchSystems, limit, offset, sort]);
 
     useEffect(() => {
-        if (!rows.length) {
-            onSort(null, 2, 'desc');
-        }
+        !rows.length && onSort(null, 2, 'desc');
     }, [onSort, rows.length]);
 
     useEffect(() => {
@@ -121,28 +113,26 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
         }
     }, [fetchAction, intl, systems]);
 
-    const renderPagination = (location) => <Pagination
-        itemCount={results}
-        perPage={limit}
-        page={(offset / limit + 1)}
-        onSetPage={onSetPage}
-        onPerPageSelect={onPerPageSelect}
-        widgetId={`pagination-options-menu-${location === 'bottom' ? 'bottom' : 'top'}`}
-        variant={location === 'bottom' && PaginationVariant.bottom}
-    />;
+    const filterConfigItems = [{
+        label: intl.formatMessage(messages.name),
+        filterValues: {
+            onChange: (event, value) => setSearchText(value),
+            value: searchText
+        }
+    }];
 
-    return <>
-        <TableToolbar style={{ justifyContent: 'space-between' }}>
-            <Level gutter='md'>
-                <LevelItem>
-                    <InputGroup>
-                        <SimpleTableFilter buttonTitle={null}
-                            onFilterChange={setSearchText}
-                            placeholder={intl.formatMessage(messages.search)} />
-                    </InputGroup>
-                </LevelItem>
-            </Level>
-        </TableToolbar>
+    return <React.Fragment>
+        <PrimaryToolbar
+            pagination={{
+                itemCount: results,
+                page: offset / limit + 1,
+                perPage: limit,
+                onSetPage(event, page) { onSetPage(page); },
+                onPerPageSelect(event, perPage) { setLimit(perPage); },
+                isCompact: false
+            }}
+            filterConfig={{ items: filterConfigItems }}
+        />
         {systemsFetchStatus === 'fulfilled' &&
             <Table aria-label={'rule-table'} sortBy={sortBy} onSort={onSort} cells={cols} rows={rows}>
                 <TableHeader />
@@ -152,9 +142,16 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
         {systemsFetchStatus === 'pending' && (<Loading />)}
         {systemsFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.systemTableFetchError)} />)}
         <TableToolbar>
-            {renderPagination('bottom')}
+            <Pagination
+                itemCount={results}
+                perPage={limit}
+                page={(offset / limit + 1)}
+                onSetPage={(event, page) => { onSetPage(page); }}
+                widgetId={`pagination-options-menu-bottom`}
+                variant={PaginationVariant.bottom}
+            />
         </TableToolbar>
-    </>;
+    </React.Fragment>;
 };
 
 SystemsTable.propTypes = {
