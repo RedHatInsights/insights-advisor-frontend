@@ -118,7 +118,11 @@ class OverviewDetails extends Component {
                                                 <ToolbarItem className='pf-u-mr-sm'>
                                                     <BulkSelect count={selectedEntities}
                                                         items={bulkSelectMenuItems}
-                                                        checked={selected} />
+                                                        checked={selected}
+                                                        onChange={() => {
+                                                            this.bulkOnClick(!selected, !selected ?
+                                                                system && system.host_ids && system.host_ids.length : 0);
+                                                        }} />
                                                 </ToolbarItem>
                                                 <ToolbarItem>
                                                     <RemediationButton
