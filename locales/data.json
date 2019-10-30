@@ -19,7 +19,10 @@
     "rulestable.filter.inputtext": "Find a rule...",
     "rulestable.action.exportjson": "Export as JSON",
     "rulestable.action.exportcsv": "Export as CSV",
-    "rulestable.action.showrulehits": "Show rules with hits",
+    "rulestable.action.show": "Show passed rules",
+    "rulestable.action.hide": "Hide passed rules",
+    "rulestable.action.showDisabled": "Show disabled rules",
+    "rulestable.action.hideDisabled": "Hide disabled rules",
     "rulestable.fetchrules.error": "There was an error fetching rules list.",
     "loading": "Loading...",
     "summarychart.nohits": "Your connected systems have no rule hits.",
@@ -82,16 +85,15 @@
     "performance": "Performance",
     "stability": "Stability",
     "security": "Security",
-    "all": "All",
     "enabled": "Enabled",
     "impact": "Impact",
     "category": "Category",
-    "ruleStatus": "Rule Status",
     "likelihood": "Likelihood",
     "riskOfChangeTextOne": "The change takes very little time to implement and there is minimal impact to system operations.",
     "riskOfChangeTextTwo": "Typically, these changes do not require that a system be taken offline.",
     "riskOfChangeTextThree": "These will likely require an outage window.",
     "riskOfChangeTextFour": "The change takes a significant amount of time and planning to execute, and will impact the system and business operations of the host due to downtime.",
-    "no": "No"
+    "no": "No",
+    "description": "Description"
   }
 }
