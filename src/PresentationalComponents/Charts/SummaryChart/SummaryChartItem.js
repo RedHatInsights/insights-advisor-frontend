@@ -14,7 +14,7 @@ import messages from '../../../Messages';
 const SummaryChartItem = ({ numIssues, name, riskName, affectedSystems, setFilters, history, intl }) => {
     const setChartFilters = () => {
         const totalRisk = `${SEVERITY_MAP[`${riskName}-risk`]}`;
-        setFilters({ total_risk: totalRisk, reports_shown: true, impacting: true });
+        setFilters({ total_risk: totalRisk, reports_shown: 'true', impacting: true });
         history.push(`/rules`);
     };
 

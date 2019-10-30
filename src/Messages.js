@@ -97,10 +97,25 @@ export default defineMessages({
         description: 'Button text to export/download rules table data as csv',
         defaultMessage: 'Export as CSV'
     },
-    rulesTableActionShowrulehits: {
-        id: 'rulestable.action.showrulehits',
-        description: 'Checkbox label for action show only rules that affect systems',
-        defaultMessage: 'Show rules with hits'
+    rulesTableActionShow: {
+        id: 'rulestable.action.show',
+        description: 'Label for action show all rules including those that affect systems',
+        defaultMessage: 'Show passed rules'
+    },
+    rulesTableActionHide: {
+        id: 'rulestable.action.hide',
+        description: 'Label for action show only rules that affect systems',
+        defaultMessage: 'Hide passed rules'
+    },
+    rulesTableActionShowDisabled: {
+        id: 'rulestable.action.showDisabled',
+        description: 'Label for action show all rules including those that are disabled',
+        defaultMessage: 'Show disabled rules'
+    },
+    rulesTableActionHideDisabled: {
+        id: 'rulestable.action.hideDisabled',
+        description: 'Label for action show only rules that are enabled',
+        defaultMessage: 'Hide disabled rules'
     },
     rulesTableFetchRulesError: {
         id: 'rulestable.fetchrules.error',
@@ -421,11 +436,6 @@ export default defineMessages({
         description: 'Filter value',
         defaultMessage: 'Security'
     },
-    all: {
-        id: 'all',
-        description: 'Filter value',
-        defaultMessage: 'All'
-    },
     enabled: {
         id: 'enabled',
         description: 'Filter value',
@@ -440,11 +450,6 @@ export default defineMessages({
         id: 'category',
         description: 'Filter title',
         defaultMessage: 'Category'
-    },
-    ruleStatus: {
-        id: 'ruleStatus',
-        description: 'Filter title',
-        defaultMessage: 'Rule Status'
     },
     likelihood: {
         id: 'likelihood',
@@ -475,5 +480,10 @@ export default defineMessages({
         id: 'no',
         description: 'Used to signal no ansible playbook',
         defaultMessage: `No`
+    },
+    description: {
+        id: 'description',
+        description: 'Description',
+        defaultMessage: `Description`
     }
 });

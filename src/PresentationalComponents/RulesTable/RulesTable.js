@@ -1,17 +1,14 @@
 /* eslint camelcase: 0 */
 import React, { useCallback, useEffect, useState } from 'react';
-import { Battery, Main, TableToolbar } from '@redhat-cloud-services/frontend-components';
+import { Battery, Main, TableToolbar, PrimaryToolbar } from '@redhat-cloud-services/frontend-components';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import PropTypes from 'prop-types';
-import { AnsibeTowerIcon, CheckCircleIcon, CheckIcon, ExportIcon } from '@patternfly/react-icons';
+import { AnsibeTowerIcon, CheckCircleIcon, CheckIcon } from '@patternfly/react-icons';
 import { flatten } from 'lodash';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import {
-    Badge, Button, Checkbox, Dropdown, DropdownItem, DropdownPosition, KebabToggle,
-    Pagination, PaginationVariant
-} from '@patternfly/react-core';
+import { Badge, Button, Pagination, PaginationVariant } from '@patternfly/react-core';
 import { cellWidth, sortable, Table, TableBody, TableHeader } from '@patternfly/react-table';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { injectIntl } from 'react-intl';
@@ -19,16 +16,17 @@ import { injectIntl } from 'react-intl';
 import * as AppActions from '../../AppActions';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import Failed from '../../PresentationalComponents/Loading/Failed';
-import Filters from '../../PresentationalComponents/Filters/Filters';
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
 import MessageState from '../MessageState/MessageState';
 import RuleDetails from '../RuleDetails/RuleDetails';
 import messages from '../../Messages';
+import { FILTER_CATEGORIES as FC } from '../../AppConstants';
+import debounce from '../../Utilities/Debounce';
 
 const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, history, intl }) => {
     const [cols] = useState([
-        { title: intl.formatMessage(messages.rule), transforms: [sortable] },
+        { title: intl.formatMessage(messages.description), transforms: [sortable] },
         { title: intl.formatMessage(messages.added), transforms: [sortable, cellWidth(15)] },
         { title: intl.formatMessage(messages.totalRisk), transforms: [sortable] },
         { title: intl.formatMessage(messages.systems), transforms: [sortable] },
@@ -44,11 +42,17 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const [impacting, setImpacting] = useState(filters.impacting);
     const [limit, setLimit] = useState(10);
     const [offset, setOffset] = useState(0);
-    const [isKebabOpen, setIsKebabOpen] = useState(false);
     const [filterBuilding, setFilterBuilding] = useState(true);
     const [queryString, setQueryString] = useState('');
-
+    const [searchText, setSearchText] = useState('');
+    const debouncedSearchText = debounce(searchText, 800);
     const results = rules.meta ? rules.meta.count : 0;
+
+    // transforms array of strings -> comma seperated strings, required by advisor api
+    const filterFetchBuilder = (filters) => (Object.assign({},
+        ...Object.entries(filters).map((filter) => (Array.isArray(filter[1]) ? { [filter[0]]: filter[1].join() }
+            : { [filter[0]]: filter[1] })))
+    );
 
     const onSort = useCallback((_event, index, direction) => {
         const attrIndex = {
@@ -64,18 +68,20 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         setOffset(0);
     }, [setSort, setSortBy, setOffset]);
 
-    const onSetPage = (_event, pageNumber) => {
+    const onSetPage = (pageNumber) => {
         const newOffset = pageNumber * limit - limit;
         setOffset(newOffset);
-    };
-
-    const onPerPageSelect = (_event, limit) => {
-        setLimit(limit);
     };
 
     const toggleRulesWithHits = (impacting) => {
         setFilters({ ...filters, impacting });
         setImpacting(impacting);
+        setOffset(0);
+    };
+
+    const toggleRulesDisabled = (param) => {
+        let reports_shown = param === 'undefined' ? undefined : param;
+        setFilters({ ...filters, reports_shown });
         setOffset(0);
     };
 
@@ -96,7 +102,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             }
 
             fetchRules({
-                ...filters,
+                ...filterFetchBuilder(filters),
                 offset: 0,
                 limit,
                 impacting,
@@ -134,27 +140,44 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         setOffset(0);
     }, []);
 
+    const buildFilterChips = () => {
+        const localFilters = { ...filters };
+        delete localFilters.text;
+        delete localFilters.impacting;
+        delete localFilters.reports_shown;
+        delete localFilters.topic;
+        const prunedFilters = Object.entries(localFilters);
+
+        return prunedFilters.length > 0 ? prunedFilters.map(item => {
+            const category = FC[item[0]];
+            const chips = Array.isArray(item[1]) ? item[1].map(value =>
+                ({ name: category.values.find(values => values.value === String(value)).label, value }))
+                : [{ name: category.values.find(values => values.value === String(item[1])).label, value: item[1] }];
+            return { category: category.title, chips, urlParam: category.urlParam };
+        })
+            : [];
+    };
+
+    // Builds table filters from url params
     useEffect(() => {
         if (history.location.search) {
             const searchParams = new URLSearchParams(history.location.search);
             const paramsObject = Array.from(searchParams).reduce((acc, [key, value]) => ({
-                ...acc, [key]: (value === 'true' || value === 'false') ? JSON.parse(value) : value
+                ...acc, [key]: (value === 'true' || value === 'false') ? JSON.parse(value) : value.split(',')
             }), {});
-            let showAllRules = {};
-            if (paramsObject.reports_shown === 'undefined') {
-                showAllRules = { reports_shown: undefined };
-            }
-
+            paramsObject.reports_shown = paramsObject.reports_shown === undefined || paramsObject.reports_shown[0] === 'undefined' ? undefined
+                : paramsObject.reports_shown;
             setImpacting(paramsObject.impacting);
-            setFilters({ ...paramsObject, ...showAllRules });
+            setFilters({ ...paramsObject });
         }
 
         setFilterBuilding(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // Builds and pushes url params from table filters
     useEffect(() => {
-        const queryString = Object.keys(filters).map(key => key + '=' + filters[key]).join('&');
+        const queryString = Object.keys(filters).map(key => `${key}=${Array.isArray(filters[key]) ? filters[key].join() : filters[key]}`).join('&');
         setQueryString(`?${queryString}`);
         history.replace({
             search: `?${queryString}`
@@ -164,13 +187,12 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     useEffect(() => {
         if (!filterBuilding) {
             fetchRules({
-                ...filters,
+                ...filterFetchBuilder(filters),
                 offset,
                 limit,
                 sort
             });
         }
-
     }, [fetchRules, filterBuilding, filters, limit, offset, sort]);
 
     useEffect(() => {
@@ -254,50 +276,140 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchAction, filters, rules, setFilters]);
 
-    const renderPagination = (location) => <Pagination
-        itemCount={results}
-        perPage={limit}
-        page={(offset / limit + 1)}
-        onSetPage={onSetPage}
-        onPerPageSelect={onPerPageSelect}
-        widgetId={`pagination-options-menu-${location === 'bottom' ? 'bottom' : 'top'}`}
-        variant={location === 'bottom' ? PaginationVariant.bottom : null}
-    />;
+    useEffect(() => {
+        filters.text === undefined ? setSearchText('') : setSearchText(filters.text);
+    }, [filters.text]);
 
-    return <>
-        <TableToolbar style={{ justifyContent: 'space-between' }}>
-            <Filters
-                fetchAction={fetchAction}
-                searchPlaceholder={intl.formatMessage(messages.rulesTableFilterInputText)}
-                results={results}
-            >
-                <Dropdown
-                    position={DropdownPosition.left}
-                    toggle={<KebabToggle onToggle={isOpen => { setIsKebabOpen(isOpen); }} />}
-                    onSelect={() => { setIsKebabOpen(false); }}
-                    isOpen={isKebabOpen}
-                    isPlain
-                    dropdownItems={[
-                        <DropdownItem value='json' href={`${BASE_URL}/export/hits.json/${queryString}`} key="export json"
-                            aria-label='export data json'>
-                            <ExportIcon /> {intl.formatMessage(messages.rulesTableActionExportJson)}
-                        </DropdownItem>,
-                        <DropdownItem value='csv' href={`${BASE_URL}/export/hits.csv/${queryString}`} key="export csv"
-                            aria-label='export data csv'>
-                            <ExportIcon /> {intl.formatMessage(messages.rulesTableActionExportCsv)}
-                        </DropdownItem>
-                    ]}
-                />
-                <Checkbox
-                    label={intl.formatMessage(messages.rulesTableActionShowrulehits)}
-                    isChecked={impacting}
-                    onChange={toggleRulesWithHits}
-                    aria-label="InsightsRulesHideHits"
-                    id="InsightsRulesHideHits"
-                />
-                {renderPagination()}
-            </Filters>
-        </TableToolbar>
+    // Debounced function, sets text filter after specified time (800ms)
+    useEffect(() => {
+        if (!filterBuilding) {
+            const filter = { ...filters };
+            const text = searchText.length ? { text: searchText } : {};
+            delete filter.text;
+            setFilters({ ...filter, ...text });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [debouncedSearchText]);
+
+    const removeFilterParam = (param) => {
+        const filter = { ...filters };
+        delete filter[param];
+        setFilters(filter);
+    };
+
+    const addFilterParam = (param, values) => {
+        values.length > 0 ? setFilters({ ...filters, ...{ [param]: values } }) : removeFilterParam(param);
+    };
+
+    const actions = [
+        '', {
+            label: intl.formatMessage(impacting ? messages.rulesTableActionShow : messages.rulesTableActionHide),
+            onClick: () => toggleRulesWithHits(!impacting)
+        }
+    ];
+
+    const filterConfigItems = [{
+        label: intl.formatMessage(messages.description),
+        filterValues: {
+            onChange: (event, value) => setSearchText(value),
+            value: searchText
+        }
+    }, {
+        label: FC.total_risk.title,
+        type: FC.total_risk.type,
+        id: FC.total_risk.urlParam,
+        value: `checkbox-${FC.total_risk.urlParam}`,
+        filterValues: {
+            onChange: (event, values) => addFilterParam(FC.total_risk.urlParam, values),
+            value: filters.total_risk,
+            items: FC.total_risk.values
+        }
+    }, {
+        label: FC.res_risk.title,
+        type: FC.res_risk.type,
+        id: FC.res_risk.urlParam,
+        value: `checkbox-${FC.res_risk.urlParam}`,
+        filterValues: {
+            onChange: (event, values) => addFilterParam(FC.res_risk.urlParam, values),
+            value: filters.res_risk,
+            items: FC.res_risk.values
+        }
+    }, {
+        label: FC.impact.title,
+        type: FC.impact.type,
+        id: FC.impact.urlParam,
+        value: `checkbox-${FC.impact.urlParam}`,
+        filterValues: {
+            onChange: (event, values) => addFilterParam(FC.impact.urlParam, values),
+            value: filters.impact,
+            items: FC.impact.values
+        }
+    }, {
+        label: FC.likelihood.title,
+        type: FC.likelihood.type,
+        id: FC.likelihood.urlParam,
+        value: `checkbox-${FC.likelihood.urlParam}`,
+        filterValues: {
+            onChange: (event, values) => addFilterParam(FC.likelihood.urlParam, values),
+            value: filters.likelihood,
+            items: FC.likelihood.values
+        }
+    }, {
+        label: FC.category.title,
+        type: FC.category.type,
+        id: FC.category.urlParam,
+        value: `checkbox-${FC.category.urlParam}`,
+        filterValues: {
+            onChange: (event, values) => addFilterParam(FC.category.urlParam, values),
+            value: filters.category,
+            items: FC.category.values
+        }
+    }, {
+        label: FC.reports_shown.title,
+        type: FC.reports_shown.type,
+        id: FC.reports_shown.urlParam,
+        value: `radio-${FC.reports_shown.urlParam}`,
+        filterValues: {
+            onChange: (event, value) => toggleRulesDisabled(value),
+            value: filters.reports_shown === undefined ? 'undefined' : `${filters.reports_shown}`,
+            items: FC.reports_shown.values
+        }
+    }];
+
+    const activeFiltersConfig = {
+        filters: buildFilterChips(),
+        onDelete: (event, itemsToRemove, isAll) => {
+            if (isAll) {
+                setFilters({ impacting: true, reports_shown: 'true' });
+            } else {
+                itemsToRemove.map(item => {
+                    const newFilter = {
+                        [item.urlParam]:
+                            filters[item.urlParam].filter(value => Number(value) !== Number(item.chips[0].value))
+                    };
+                    newFilter[item.urlParam].length > 0 ? setFilters({ ...filters, ...newFilter }) : removeFilterParam(item.urlParam);
+                });
+            }
+        }
+    };
+
+    return <React.Fragment>
+        <PrimaryToolbar
+            pagination={{
+                itemCount: results,
+                page: offset / limit + 1,
+                perPage: limit,
+                onSetPage(event, page) { onSetPage(page); },
+                onPerPageSelect(event, perPage) { setLimit(perPage); },
+                isCompact: false
+            }}
+            exportConfig={{
+                onSelect: (event, exportType) => window.location = `${BASE_URL}/export/hits.${exportType === 'json' ? 'json' : 'csv'}/${queryString}`
+            }}
+            actionsConfig={{ actions }}
+            filterConfig={{ items: filterConfigItems }}
+            activeFiltersConfig={activeFiltersConfig}
+        />
         {rulesFetchStatus === 'fulfilled' &&
             <Table aria-label={'rule-table'}
                 actionResolver={actionResolver} onCollapse={handleOnCollapse} sortBy={sortBy}
@@ -308,9 +420,16 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         {rulesFetchStatus === 'pending' && (<Loading />)}
         {rulesFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.rulesTableFetchRulesError)} />)}
         <TableToolbar>
-            {renderPagination('bottom')}
+            <Pagination
+                itemCount={results}
+                perPage={limit}
+                page={(offset / limit + 1)}
+                onSetPage={(event, page) => { onSetPage(page); }}
+                widgetId={`pagination-options-menu-bottom`}
+                variant={PaginationVariant.bottom}
+            />
         </TableToolbar>
-    </>;
+    </React.Fragment>;
 };
 
 RulesTable.propTypes = {

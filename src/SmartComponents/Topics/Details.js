@@ -26,14 +26,14 @@ import './_Details.scss';
 const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl, filters }) => {
     useEffect(() => {
         if (typeof filters.topic === 'undefined') {
-            setFilters({ impacting: true, reports_shown: true, topic: match.params.id });
+            setFilters({ impacting: true, reports_shown: 'true', topic: match.params.id });
         }
     });
 
     useEffect(() => {
         fetchTopic({ topic_id: match.params.id });
         return () => {
-            setFilters({ impacting: true, reports_shown: true });
+            setFilters({ impacting: true, reports_shown: 'true' });
         };
     }, [fetchTopic, match.params.id, setFilters]);
 
