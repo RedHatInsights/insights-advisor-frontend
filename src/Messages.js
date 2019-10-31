@@ -100,12 +100,12 @@ export default defineMessages({
     rulesTableActionShow: {
         id: 'rulestable.action.show',
         description: 'Label for action show all rules including those that affect systems',
-        defaultMessage: 'Show passed rules'
+        defaultMessage: 'Show rules with no impacted systems'
     },
     rulesTableActionHide: {
         id: 'rulestable.action.hide',
         description: 'Label for action show only rules that affect systems',
-        defaultMessage: 'Hide passed rules'
+        defaultMessage: 'Hide rules with no impacted systems'
     },
     rulesTableActionShowDisabled: {
         id: 'rulestable.action.showDisabled',
