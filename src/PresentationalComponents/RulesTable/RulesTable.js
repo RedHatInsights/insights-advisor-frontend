@@ -311,7 +311,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const filterConfigItems = [{
         label: intl.formatMessage(messages.description),
         filterValues: {
-            key: 'text',
+            key: 'text-filter',
             onChange: (event, value) => setSearchText(value),
             value: searchText
         }
