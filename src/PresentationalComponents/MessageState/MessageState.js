@@ -32,7 +32,7 @@ MessageState.defaultProps = {
     icon: CubesIcon,
     title: '',
     variant: EmptyStateVariant.full,
-    size: ''
+    size: 'md'
 };
 
 export default MessageState;
