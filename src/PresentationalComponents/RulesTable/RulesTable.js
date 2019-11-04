@@ -4,7 +4,6 @@ import { Battery, Main, TableToolbar, PrimaryToolbar } from '@redhat-cloud-servi
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import PropTypes from 'prop-types';
 import { AnsibeTowerIcon, CheckCircleIcon, CheckIcon } from '@patternfly/react-icons';
-import { flatten } from 'lodash';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -223,54 +222,43 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 }]
                 );
             } else {
-                let rows = rules.data.map((value, key) => {
-                    return [
-                        {
-                            isOpen: false,
-                            rule: value,
-                            cells: [
-                                {
-                                    title: value.reports_shown ?
-                                        <Link key={key} to={`/rules/${value.rule_id}`}>
-                                            {value.description}
-                                        </Link>
-                                        : <span key={key}> <Badge isRead>{intl.formatMessage(messages.disabled)}</Badge> {value.description}</span>
-
-                                },
-                                {
-                                    title: <div key={key}>
-                                        {moment(value.publish_date).fromNow()}
-                                    </div>
-                                },
-                                {
-                                    title: <div className="pf-m-center" key={key} style={{ verticalAlign: 'top' }}>
-                                        <Battery
-                                            label={intl.formatMessage(messages.totalRisk)}
-                                            labelHidden
-                                            severity={value.total_risk}
-                                        />
-                                    </div>
-                                },
-                                {
-                                    title: <div key={key}> {value.reports_shown ?
-                                        `${value.impacted_systems_count.toLocaleString()}`
-                                        : intl.formatMessage(messages.nA)}</div>
-                                },
-                                {
-                                    title: <div className="pf-m-center " key={key}>
-                                        {value.playbook_count ? <CheckCircleIcon className='ansibleCheck' /> : intl.formatMessage(messages.no)}
-                                    </div>
-                                }
-                            ]
-                        },
-                        {
-                            parent: key * 2,
-                            fullWidth: true,
-                            cells: [{ title: <Main className='pf-m-light'> <RuleDetails rule={value} /></Main> }]
-                        }
-                    ];
-                });
-                setRows(flatten(rows));
+                const rows = rules.data.flatMap((value, key) => ([{
+                    isOpen: false,
+                    rule: value,
+                    cells: [{
+                        title: value.reports_shown ?
+                            <Link key={key} to={`/rules/${value.rule_id}`}>
+                                {value.description}
+                            </Link>
+                            : <span key={key}> <Badge isRead>{intl.formatMessage(messages.disabled)}</Badge> {value.description}</span>
+                    }, {
+                        title: <div key={key}>
+                            {moment(value.publish_date).fromNow()}
+                        </div>
+                    }, {
+                        title: <div className="pf-m-center" key={key} style={{ verticalAlign: 'top' }}>
+                            <Battery
+                                label={intl.formatMessage(messages.totalRisk)}
+                                labelHidden
+                                severity={value.total_risk}
+                            />
+                        </div>
+                    }, {
+                        title: <div key={key}> {value.reports_shown ?
+                            `${value.impacted_systems_count.toLocaleString()}`
+                            : intl.formatMessage(messages.nA)}</div>
+                    }, {
+                        title: <div className="pf-m-center " key={key}>
+                            {value.playbook_count ? <CheckCircleIcon className='ansibleCheck' /> : intl.formatMessage(messages.no)}
+                        </div>
+                    }]
+                }, {
+                    parent: key * 2,
+                    fullWidth: true,
+                    cells: [{ title: <Main className='pf-m-light'> <RuleDetails rule={value} /></Main> }]
+                }
+                ]));
+                setRows(rows.asMutable());
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { TableToolbar, PrimaryToolbar } from '@redhat-cloud-services/frontend-components';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import PropTypes from 'prop-types';
-import { flatten } from 'lodash';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -85,30 +84,25 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
                     }]
                 }]);
             } else {
-                let rows = systems.data.map((value, key) => {
-                    return [
+                const rows = systems.data.flatMap((value, key) => ([{
+                    isOpen: false,
+                    system: value,
+                    cells: [
                         {
-                            isOpen: false,
-                            system: value,
-                            cells: [
-                                {
-                                    title: <Link key={key} to={`/systems/${value.system_uuid}`}>
-                                        {value.display_name}
-                                    </Link>
-                                },
-                                {
-                                    title: <div key={key}> {value.hits}</div>
-                                },
-                                {
-                                    title: <div key={key}>
-                                        {moment(value.last_seen).fromNow()}
-                                    </div>
-                                }
-                            ]
+                            title: <Link key={key} to={`/systems/${value.system_uuid}`}>
+                                {value.display_name}
+                            </Link>
+                        }, {
+                            title: <div key={key}> {value.hits}</div>
+                        }, {
+                            title: <div key={key}>
+                                {moment(value.last_seen).fromNow()}
+                            </div>
                         }
-                    ];
-                });
-                setRows(flatten(rows));
+                    ]
+                }
+                ]));
+                setRows(rows.asMutable());
             }
         }
     }, [fetchAction, intl, systems]);
