@@ -14,7 +14,7 @@ import messages from '../../Messages';
 const OverviewDonut = ({ className, category, setFilters, history, intl }) => {
     const setDonutFilters = category => {
         const categoryNum = `${RULE_CATEGORIES[category]}`;
-        setFilters({ category: categoryNum, reports_shown: 'true', impacting: true });
+        setFilters({ category: [categoryNum], reports_shown: 'true', impacting: true });
     };
 
     const legendClick = () => {
