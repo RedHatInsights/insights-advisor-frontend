@@ -311,6 +311,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const filterConfigItems = [{
         label: intl.formatMessage(messages.description),
         filterValues: {
+            key: 'text',
             onChange: (event, value) => setSearchText(value),
             value: searchText
         }
@@ -320,6 +321,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         id: FC.total_risk.urlParam,
         value: `checkbox-${FC.total_risk.urlParam}`,
         filterValues: {
+            key: `${FC.total_risk.urlParam}-filter`,
             onChange: (event, values) => addFilterParam(FC.total_risk.urlParam, values),
             value: filters.total_risk,
             items: FC.total_risk.values
@@ -330,6 +332,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         id: FC.res_risk.urlParam,
         value: `checkbox-${FC.res_risk.urlParam}`,
         filterValues: {
+            key: `${FC.res_risk.urlParam}-filter`,
             onChange: (event, values) => addFilterParam(FC.res_risk.urlParam, values),
             value: filters.res_risk,
             items: FC.res_risk.values
@@ -340,6 +343,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         id: FC.impact.urlParam,
         value: `checkbox-${FC.impact.urlParam}`,
         filterValues: {
+            key: `${FC.impact.urlParam}-filter`,
             onChange: (event, values) => addFilterParam(FC.impact.urlParam, values),
             value: filters.impact,
             items: FC.impact.values
@@ -350,6 +354,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         id: FC.likelihood.urlParam,
         value: `checkbox-${FC.likelihood.urlParam}`,
         filterValues: {
+            key: `${FC.likelihood.urlParam}-filter`,
             onChange: (event, values) => addFilterParam(FC.likelihood.urlParam, values),
             value: filters.likelihood,
             items: FC.likelihood.values
@@ -360,6 +365,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         id: FC.category.urlParam,
         value: `checkbox-${FC.category.urlParam}`,
         filterValues: {
+            key: `${FC.category.urlParam}-filter`,
             onChange: (event, values) => addFilterParam(FC.category.urlParam, values),
             value: filters.category,
             items: FC.category.values
@@ -370,6 +376,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         id: FC.reports_shown.urlParam,
         value: `radio-${FC.reports_shown.urlParam}`,
         filterValues: {
+            key: `${FC.reports_shown.urlParam}-filter`,
             onChange: (event, value) => toggleRulesDisabled(value),
             value: filters.reports_shown === undefined ? 'undefined' : `${filters.reports_shown}`,
             items: FC.reports_shown.values
