@@ -116,6 +116,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
     const filterConfigItems = [{
         label: intl.formatMessage(messages.name),
         filterValues: {
+            key: 'text-filter',
             onChange: (event, value) => setSearchText(value),
             value: searchText
         }
