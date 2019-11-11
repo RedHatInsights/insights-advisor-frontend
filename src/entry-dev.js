@@ -9,7 +9,7 @@ import logger from 'redux-logger';
 import getBaseName from './Utilities/getBaseName';
 import { NotificationsPortal } from '@redhat-cloud-services/frontend-components-notifications';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations';
-import messages from '../locales/data';
+import messages from '../locales/data.json';
 
 ReactDOM.render(
     <IntlProvider locale={navigator.language} messages={messages} onError={console.log}>
