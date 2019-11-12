@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
@@ -10,47 +11,38 @@ import * as AppActions from '../../AppActions';
 import './_breadcrumbs.scss';
 import messages from '../../Messages';
 
-const Breadcrumbs = ({ breadcrumbs, current, fetchRule, match, ruleFetchStatus, rule, intl }) => {
+const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl }) => {
     const [items, setItems] = useState([]);
     const [ruleDescriptionLoaded, setRuleDescription] = useState(false);
     const buildBreadcrumbs = useCallback(() => {
-        let crumbs = [];
-        const addTabedCrumb = (param) => {
-            const rootTitle = param.toLowerCase();
-            if (rootTitle === 'rules' || rootTitle === 'systems') {
-                crumbs.push({ title: 'Rules', navigate: '/rules' });
-            }
-        };
+        const crumbs = [];
+        const splitUrl = match.url.split('/');
 
-        // add rules base breadcrumb
-        if (breadcrumbs[0] !== undefined) {
-            addTabedCrumb(breadcrumbs[0].title);
-            crumbs.push(breadcrumbs[0]);
-        } else {
-            const title = match.url.split('/')[1];
-            addTabedCrumb(title);
-            crumbs.push({ title, navigate: `/${title}` });
+        // add rules base
+        crumbs.push({ title: splitUrl[1], navigate: `/${splitUrl[1]}` });
+        // if applicable, add tab
+        if (splitUrl[1] === 'rules') {
+            splitUrl[1] + splitUrl[2] !== 'rulessystems' ?
+                crumbs.push({ title: intl.formatMessage(messages.rules), navigate: '/rules' })
+                : crumbs.push({ title: intl.formatMessage(messages.systems), navigate: '/rules/systems' });
         }
 
-        // add :id breadcrumb
+        // if applicable, add :id breadcrumb
         if (match.params.id !== undefined && match.params.inventoryId !== undefined) {
-            const title = rule.description;
             crumbs.push({
-                title,
+                title: rule.description,
                 navigate: `/${match.url.split('/')[1]}/${match.params.id}`
             });
         }
 
         setItems(crumbs);
-    }, [breadcrumbs, match.params.id, match.params.inventoryId, match.url, rule.description]);
+    }, [intl, match.params.id, match.params.inventoryId, match.url, rule.description]);
 
     useEffect(() => {
-        const title = match.url.split('/')[1];
-        if (match.params.inventoryId !== undefined && title !== 'systems') {
-            fetchRule({ rule_id: match.params.id }); // eslint-disable-line camelcase
-        } else {
-            buildBreadcrumbs();
-        }
+        const splitUrl = match.url.split('/');
+        match.params.inventoryId !== undefined && splitUrl[2] !== 'systems' ?
+            fetchRule({ rule_id: match.params.id }) // eslint-disable-line camelcase
+            : buildBreadcrumbs();
     }, [buildBreadcrumbs, fetchRule, match.params.id, match.params.inventoryId, match.url]);
 
     useEffect(() => {
@@ -78,7 +70,6 @@ const Breadcrumbs = ({ breadcrumbs, current, fetchRule, match, ruleFetchStatus, 
 };
 
 Breadcrumbs.propTypes = {
-    breadcrumbs: PropTypes.arrayOf(Object),
     current: PropTypes.string,
     fetchRule: PropTypes.func,
     match: PropTypes.object,
@@ -88,10 +79,8 @@ Breadcrumbs.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-    breadcrumbs: state.AdvisorStore.breadcrumbs,
     rule: state.AdvisorStore.rule,
     ruleFetchStatus: state.AdvisorStore.ruleFetchStatus,
-    ...state,
     ...ownProps
 });
 

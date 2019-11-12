@@ -27,10 +27,6 @@ export const fetchSystem = (options) => ({
     type: ActionTypes.SYSTEM_FETCH,
     payload: fetchData(`${ActionTypes.RULES_FETCH_URL}${options.rule_id}/systems/`)
 });
-export const setBreadcrumbs = (breadcrumbObj) => ({
-    type: ActionTypes.BREADCRUMBS_SET,
-    payload: breadcrumbObj
-});
 export const setFilters = (filters) => ({
     type: ActionTypes.FILTERS_SET,
     payload: filters

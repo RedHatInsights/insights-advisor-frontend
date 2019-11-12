@@ -31,7 +31,6 @@ class OverviewDashboard extends Component {
     async componentDidMount() {
         this.props.fetchStatsRules();
         this.props.fetchStatsSystems();
-        this.props.setBreadcrumbs([{ title: 'Overview', navigate: '/overview' }]);
     }
 
     componentDidUpdate(prevProps) {
@@ -167,8 +166,6 @@ class OverviewDashboard extends Component {
 
 OverviewDashboard.propTypes = {
     match: PropTypes.object,
-    breadcrumbs: PropTypes.array,
-    setBreadcrumbs: PropTypes.func,
     statsRulesFetchStatus: PropTypes.string,
     statsRules: PropTypes.object,
     fetchStatsRules: PropTypes.func,
@@ -179,7 +176,6 @@ OverviewDashboard.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-    breadcrumbs: state.AdvisorStore.breadcrumbs,
     statsRules: state.AdvisorStore.statsRules,
     statsRulesFetchStatus: state.AdvisorStore.statsRulesFetchStatus,
     statsSystems: state.AdvisorStore.statsSystems,
@@ -189,8 +185,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = dispatch => ({
     fetchStatsRules: (url) => dispatch(AppActions.fetchStatsRules(url)),
-    fetchStatsSystems: (url) => dispatch(AppActions.fetchStatsSystems(url)),
-    setBreadcrumbs: (obj) => dispatch(AppActions.setBreadcrumbs(obj))
+    fetchStatsSystems: (url) => dispatch(AppActions.fetchStatsSystems(url))
 });
 
 export default injectIntl(routerParams(connect(

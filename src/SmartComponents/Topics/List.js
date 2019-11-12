@@ -15,12 +15,8 @@ import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import messages from '../../Messages';
 
-const List = ({ topics, topicsFetchStatus, fetchTopics, setBreadcrumbs, intl }) => {
-    useEffect(() => {
-        setBreadcrumbs([{ title: intl.formatMessage(messages.topics), navigate: '/topics' }]);
-        fetchTopics();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fetchTopics, setBreadcrumbs]);
+const List = ({ topics, topicsFetchStatus, fetchTopics, intl }) => {
+    useEffect(() => { fetchTopics(); }, [fetchTopics]);
 
     const buildTopicList = () => {
         const groupedTopics = groupBy(topics, 'featured');
@@ -31,7 +27,7 @@ const List = ({ topics, topicsFetchStatus, fetchTopics, setBreadcrumbs, intl }) 
         return combinedTopics.map(topic => <TopicCard key={topic.name} topic={topic} />);
     };
 
-    const renderTopics = () => <>
+    const renderTopics = () => <React.Fragment>
         {topicsFetchStatus === '' || topicsFetchStatus === 'pending' && <Loading />}
         {topicsFetchStatus === 'fulfilled' && topics.length > 0 &&
             <Gallery gutter="lg">
@@ -43,21 +39,20 @@ const List = ({ topics, topicsFetchStatus, fetchTopics, setBreadcrumbs, intl }) 
                 title={intl.formatMessage(messages.topicsListNotopicsTitle)}
                 text={intl.formatMessage(messages.topicsListNotopicsBody)} />
         }
-    </>;
+    </React.Fragment>;
 
-    return <>
+    return <React.Fragment>
         <PageHeader>
             <PageHeaderTitle title={intl.formatMessage(messages.topics)} />
         </PageHeader>
         <Main>
             {renderTopics()}
         </Main>
-    </>;
+    </React.Fragment>;
 };
 
 List.displayName = 'list-topics';
 List.propTypes = {
-    setBreadcrumbs: PropTypes.func,
     fetchTopics: PropTypes.func,
     topicsFetchStatus: PropTypes.string,
     topics: PropTypes.array,
@@ -71,7 +66,6 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    setBreadcrumbs: (obj) => dispatch(AppActions.setBreadcrumbs(obj)),
     fetchTopics: () => dispatch(AppActions.fetchTopics())
 });
 
