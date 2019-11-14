@@ -22,6 +22,7 @@ import RuleDetails from '../RuleDetails/RuleDetails';
 import messages from '../../Messages';
 import { FILTER_CATEGORIES as FC } from '../../AppConstants';
 import debounce from '../../Utilities/Debounce';
+import DisableRule from '../Modals/DisableRule';
 
 const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, history, intl }) => {
     const [cols] = useState([
@@ -44,6 +45,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const [filterBuilding, setFilterBuilding] = useState(true);
     const [queryString, setQueryString] = useState('');
     const [searchText, setSearchText] = useState('');
+    const [disableRuleOpen, setDisableRuleOpen] = useState(false);
+    const [selectedRule, setSelectedRule] = useState({});
     const debouncedSearchText = debounce(searchText, 800);
     const results = rules.meta ? rules.meta.count : 0;
 
@@ -52,6 +55,16 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         ...Object.entries(filters).map((filter) => (Array.isArray(filter[1]) ? { [filter[0]]: filter[1].join() }
             : { [filter[0]]: filter[1] })))
     );
+
+    const fetchRulesFn = () => {
+        fetchRules({
+            ...filterFetchBuilder(filters),
+            offset: 0,
+            limit,
+            impacting,
+            sort
+        });
+    };
 
     const onSort = useCallback((_event, index, direction) => {
         const attrIndex = {
@@ -92,28 +105,22 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     const hideReports = async (rowId) => {
         const rule = rows[rowId].rule;
+
         try {
             if (rule.reports_shown) {
-                await API.post(`${BASE_URL}/ack/`, { rule_id: rule.rule_id });
-
+                setSelectedRule(rule);
+                setDisableRuleOpen(true);
             } else {
                 await API.delete(`${BASE_URL}/ack/${rule.rule_id}/`);
+                fetchRulesFn();
             }
-
-            fetchRules({
-                ...filterFetchBuilder(filters),
-                offset: 0,
-                limit,
-                impacting,
-                sort
-            });
         } catch (error) {
             addNotification({
                 variant: 'danger',
                 dismissable: true,
                 title: rule.reports_shown ? intl.formatMessage(messages.rulesTableHideReportsErrorDisabled)
                     : intl.formatMessage(messages.rulesTableHideReportsErrorEnabled),
-                description: intl.formatMessage(messages.rulesTableHideReportsErrorBody, { ruleName: rule.description })
+                description: `${error}`
             });
         }
     };
@@ -389,6 +396,12 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     };
 
     return <React.Fragment>
+        <DisableRule
+            handleModalToggle={setDisableRuleOpen}
+            isModalOpen={disableRuleOpen}
+            rule={selectedRule}
+            afterDisableFn={fetchRulesFn}
+        />
         <PrimaryToolbar
             pagination={{
                 itemCount: results,

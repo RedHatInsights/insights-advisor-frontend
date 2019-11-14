@@ -47,6 +47,21 @@ export default defineMessages({
         description: 'Rule table, action text for disabling reporting of a rule',
         defaultMessage: 'Disable rule'
     },
+    disableRuleBody: {
+        id: 'disableRuleBody',
+        description: 'Explaining the action of disabling a rule',
+        defaultMessage: `Disabling a rule means that hits for this rule across all systems will not be shown in reports and dashboards.`
+    },
+    disableRuleSingleSystem: {
+        id: 'disableRuleSingleSystem',
+        description: 'Explaining the action of disabling a rule for a single system',
+        defaultMessage: 'Disable only for this system'
+    },
+    justificatonNote: {
+        id: 'justificatonNote',
+        description: 'Justification note',
+        defaultMessage: 'Justification note'
+    },
     enableRule: {
         id: 'enableRule',
         description: 'Rule table, action text for enabling reporting of a rule',
@@ -485,5 +500,15 @@ export default defineMessages({
         id: 'description',
         description: 'Description',
         defaultMessage: `Description`
+    },
+    save: {
+        id: 'save',
+        description: 'Save',
+        defaultMessage: `Save`
+    },
+    cancel: {
+        id: 'cancel',
+        description: 'Cancel',
+        defaultMessage: `Cancel`
     }
 });
