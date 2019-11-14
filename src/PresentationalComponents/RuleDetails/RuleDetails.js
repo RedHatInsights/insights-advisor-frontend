@@ -14,7 +14,7 @@ import './_RuleDetails.scss';
 import messages from '../../Messages';
 import barDividedList from '../../Utilities/BarDividedList';
 
-const RuleDetails = ({ children, className, rule, intl, topics }) => {
+const RuleDetails = ({ children, className, rule, intl, topics, header }) => {
     const ruleResolutionRisk = (rule) => {
         const resolution = rule.resolution_set.find(resolution => resolution.system_type ===
             AppConstants.SYSTEM_TYPES.rhel ||
@@ -36,6 +36,9 @@ const RuleDetails = ({ children, className, rule, intl, topics }) => {
     return <Grid gutter='md' className={className}>
         <GridItem md={8} sm={12}>
             <Grid>
+                {header && <GridItem className='pf-u-pb-md'>
+                    {header}
+                </GridItem>}
                 <GridItem className='pf-u-pb-md'>
                     {
                         typeof rule.summary === 'string' &&
@@ -127,7 +130,8 @@ RuleDetails.propTypes = {
     className: PropTypes.string,
     rule: PropTypes.object,
     intl: PropTypes.any,
-    topics: PropTypes.array
+    topics: PropTypes.array,
+    header: PropTypes.any
 };
 
 export default injectIntl(RuleDetails);

@@ -8,6 +8,9 @@
   "rulestable.hidereports.errordisabling": "Disabling reports failed",
   "rulestable.hidereports.errorenabling": "Enabling reports failed",
   "disableRule": "Disable rule",
+  "disableRuleBody": "Disabling a rule means that hits for this rule across all systems will not be shown in reports and dashboards.",
+  "disableRuleSingleSystem": "Disable only for this system",
+  "justificatonNote": "Justification note",
   "enableRule": "Enable rule",
   "rulestable.norulehits.title": "No rule hits",
   "rulestable.norulehits.enabledrulesbody": "None of your connected systems are affected by enabled rules.",
@@ -93,5 +96,7 @@
   "riskOfChangeTextThree": "These will likely require an outage window.",
   "riskOfChangeTextFour": "The change takes a significant amount of time and planning to execute, and will impact the system and business operations of the host due to downtime.",
   "no": "No",
-  "description": "Description"
+  "description": "Description",
+  "save": "Save",
+  "cancel": "Cancel"
 }

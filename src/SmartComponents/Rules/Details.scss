@@ -1,5 +1,7 @@
-@import '~@redhat-cloud-services/frontend-components-utilities/files/Utilities/_variables';
-
 .titlePaddingOverride{
   padding-bottom: var(--pf-global--spacer--sm);
+}
+
+.pageHeaderOverride{
+  padding-bottom: 0px;
 }

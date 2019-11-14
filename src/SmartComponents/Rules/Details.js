@@ -5,11 +5,11 @@ import RemediationButton from '@redhat-cloud-services/frontend-components-remedi
 import { Main, PageHeader, PageHeaderTitle, BulkSelect } from '@redhat-cloud-services/frontend-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Title, ToolbarItem, ToolbarGroup } from '@patternfly/react-core';
+import { Title, ToolbarItem, ToolbarGroup, Dropdown, DropdownToggle, DropdownItem, Flex, FlexItem } from '@patternfly/react-core';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { injectIntl } from 'react-intl';
-import { AnsibeTowerIcon } from '@patternfly/react-icons';
+import { AnsibeTowerIcon, CaretDownIcon } from '@patternfly/react-icons';
 import { global_BackgroundColor_100 } from '@patternfly/react-tokens';
 
 import * as AppActions from '../../AppActions';
@@ -18,6 +18,9 @@ import Failed from '../../PresentationalComponents/Loading/Failed';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import RuleDetails from '../../PresentationalComponents/RuleDetails/RuleDetails';
 import messages from '../../Messages';
+import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
+import API from '../../Utilities/Api';
+import { BASE_URL } from '../../AppConstants';
 
 import './Details.scss';
 
@@ -26,7 +29,9 @@ class OverviewDetails extends Component {
         kbaDetails: {},
         kbaDetailsLoading: false,
         selected: false,
-        selectedEntities: 0
+        selectedEntities: 0,
+        actionsDropdownOpen: false,
+        disableRuleModalOpen: false
     };
 
     async componentDidMount() {
@@ -70,9 +75,28 @@ class OverviewDetails extends Component {
         this.props.selectEntity({ selected });
     }
 
+    handleModalToggle = (disableRuleModalOpen) => {
+        this.setState({ disableRuleModalOpen });
+    }
+
+    enableRule = async (rule) => {
+        try {
+            await API.delete(`${BASE_URL}/ack/${rule.rule_id}/`);
+            this.props.fetchRule({ rule_id: this.props.match.params.id });
+        } catch (error) {
+            this.handleModalToggle(false);
+            addNotification({
+                variant: 'danger',
+                dismissable: true,
+                title: this.props.intl.formatMessage(messages.rulesTableHideReportsErrorDisabled),
+                description: `${error}`
+            });
+        }
+    }
+
     render() {
         const { match, ruleFetchStatus, rule, systemFetchStatus, system, intl, entities, topics } = this.props;
-        const { selected, selectedEntities } = this.state;
+        const { selected, selectedEntities, disableRuleModalOpen, actionsDropdownOpen } = this.state;
         const bulkSelectMenuItems = [{
             title: intl.formatMessage(messages.selectNone),
             onClick: () => this.bulkOnClick(false, 0)
@@ -88,18 +112,50 @@ class OverviewDetails extends Component {
 
         return (
             <React.Fragment>
+                <DisableRule
+                    handleModalToggle={this.handleModalToggle}
+                    isModalOpen={disableRuleModalOpen}
+                    rule={rule}
+                    afterDisableFn={() => this.props.fetchRule({ rule_id: this.props.match.params.id })}
+                />
                 {ruleFetchStatus === 'fulfilled' && (
                     <React.Fragment>
-                        <PageHeader>
+                        <PageHeader className='pageHeaderOverride'>
                             <Breadcrumbs
                                 current={rule.description || ''}
                                 match={match}
                             />
-                            <PageHeaderTitle title={rule.description || ''} />
-                            <p>{intl.formatMessage(messages.rulesDetailsPubishdate, { date: (new Date(rule.publish_date)).toLocaleDateString() })}</p>
                         </PageHeader>
                         <Main className='pf-m-light pf-u-pt-sm'>
-                            <RuleDetails rule={rule} topics={topics} />
+                            <RuleDetails rule={rule} topics={topics} header={
+                                <React.Fragment>
+                                    <PageHeaderTitle title={rule.description || ''} />
+                                    <p>{intl.formatMessage(
+                                        messages.rulesDetailsPubishdate, { date: (new Date(rule.publish_date)).toLocaleDateString() }
+                                    )}</p>
+                                </React.Fragment>
+                            }>
+                                <Flex>
+                                    <FlexItem breakpointMods={[{ modifier: 'align-right' }]}>
+                                        <Dropdown
+                                            onSelect={() => { this.setState({ actionsDropdownOpen: !actionsDropdownOpen }); }}
+                                            toggle={<DropdownToggle
+                                                onToggle={(actionsDropdownOpen) => { this.setState({ actionsDropdownOpen }); }}
+                                                iconComponent={CaretDownIcon}>Actions
+                                            </DropdownToggle>}
+                                            isOpen={actionsDropdownOpen}
+                                            dropdownItems={rule && rule.reports_shown ?
+                                                [<DropdownItem key="link"
+                                                    onClick={() => { this.handleModalToggle(true); }}>
+                                                    {intl.formatMessage(messages.disableRule)}</DropdownItem>]
+                                                : [<DropdownItem key="link"
+                                                    onClick={() => { this.enableRule(rule); }}>
+                                                    {intl.formatMessage(messages.enableRule)}</DropdownItem>]
+                                            }
+                                        />
+                                    </FlexItem>
+                                </Flex>
+                            </RuleDetails>
                         </Main>
                     </React.Fragment>
                 )}
