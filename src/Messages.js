@@ -57,6 +57,21 @@ export default defineMessages({
         description: 'Explaining the action of disabling a rule for a single system',
         defaultMessage: 'Disable only for this system'
     },
+    ruleIsDisabled: {
+        id: 'ruleIsDisabled',
+        description: 'Exclaiming that the rule is disabled',
+        defaultMessage: 'Rule is disabled'
+    },
+    ruleIsDisabledBody: {
+        id: 'ruleIsDisabledBody',
+        description: 'Explaining that the rule is disabled',
+        defaultMessage: 'This rule has been disabled and has no results.'
+    },
+    ruleIsDisabledJustification: {
+        id: 'ruleIsDisabledJustification',
+        description: 'Explaining that the rule is disabled with following justification',
+        defaultMessage: 'This rule has been disabled for all systems for the following reason: '
+    },
     justificatonNote: {
         id: 'justificatonNote',
         description: 'Justification note',
@@ -510,5 +525,10 @@ export default defineMessages({
         id: 'cancel',
         description: 'Cancel',
         defaultMessage: `Cancel`
+    },
+    none: {
+        id: 'none',
+        description: 'None',
+        defaultMessage: `None`
     }
 });

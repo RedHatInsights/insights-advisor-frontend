@@ -1,8 +1,9 @@
+import * as ActionTypes from './AppConstants';
+
+import Advisor from '@redhat-cloud-services/frontend-components-inventory-insights';
 /* eslint camelcase: 0 */
 import Immutable from 'seamless-immutable';
-import * as ActionTypes from './AppConstants';
 import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
-import Advisor from '@redhat-cloud-services/frontend-components-inventory-insights';
 
 // eslint-disable-next-line new-cap
 const initialState = Immutable({
@@ -24,7 +25,9 @@ const initialState = Immutable({
     topics: [],
     topicsFetchStatus: '',
     systems: {},
-    systemsFetchStatus: ''
+    systemsFetchStatus: '',
+    ruleAck: {},
+    ruleAckFetchStatus: ''
 });
 
 export const AdvisorStore = (state = initialState, action) => {
@@ -123,6 +126,21 @@ export const AdvisorStore = (state = initialState, action) => {
             });
         case `${ActionTypes.SYSTEMS_FETCH}_REJECTED`:
             return state.set('systemsFetchStatus', 'rejected');
+
+        case `${ActionTypes.RULE_ACK_FETCH}_PENDING`:
+            return state.set('ruleAckFetchStatus', 'pending');
+        case `${ActionTypes.RULE_ACK_FETCH}_FULFILLED`:
+            return Immutable.merge(state, {
+                ruleAck: action.payload,
+                ruleAckFetchStatus: 'fulfilled'
+            });
+        case `${ActionTypes.RULE_ACK_FETCH}_REJECTED`:
+            return state.set('ruleAckFetchStatus', 'rejected');
+
+        case ActionTypes.RULE_ACK_SET:
+            return Immutable.merge(state, {
+                ruleAck: action.payload
+            });
 
         default:
             return state;

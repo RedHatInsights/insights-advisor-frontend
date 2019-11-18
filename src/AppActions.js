@@ -1,9 +1,16 @@
 import * as ActionTypes from './AppConstants';
+
 import API from './Utilities/Api';
 
 const fetchData = async (url, headers, options) => {
     await insights.chrome.auth.getUser();
     const response = await API.get(url, headers, options);
+    return response.data;
+};
+
+const setData = async (url, headers, options) => {
+    await insights.chrome.auth.getUser();
+    const response = await API.post(url, headers, options);
     return response.data;
 };
 
@@ -43,3 +50,12 @@ export const fetchSystems = (options) => ({
     type: ActionTypes.SYSTEMS_FETCH,
     payload: fetchData(ActionTypes.SYSTEMS_FETCH_URL, {}, options)
 });
+export const fetchRuleAck = (options) => ({
+    type: ActionTypes.RULE_ACK_FETCH,
+    payload: fetchData(`${ActionTypes.RULE_ACK_FETCH_URL}${options.rule_id}/`)
+});
+export const setRuleAck = (options) => ({
+    type: ActionTypes.RULE_ACK_FETCH,
+    payload: setData(ActionTypes.RULE_ACK_FETCH_URL, {}, options)
+});
+

@@ -1,28 +1,44 @@
 /* eslint camelcase: 0 */
-import React, { Component } from 'react';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
-import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
-import { Main, PageHeader, PageHeaderTitle, BulkSelect } from '@redhat-cloud-services/frontend-components';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { Title, ToolbarItem, ToolbarGroup, Dropdown, DropdownToggle, DropdownItem, Flex, FlexItem } from '@patternfly/react-core';
-import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
-import { injectIntl } from 'react-intl';
-import { AnsibeTowerIcon, CaretDownIcon } from '@patternfly/react-icons';
-import { global_BackgroundColor_100 } from '@patternfly/react-tokens';
+import './Details.scss';
 
 import * as AppActions from '../../AppActions';
-import Loading from '../../PresentationalComponents/Loading/Loading';
-import Failed from '../../PresentationalComponents/Loading/Failed';
-import Inventory from '../../PresentationalComponents/Inventory/Inventory';
-import RuleDetails from '../../PresentationalComponents/RuleDetails/RuleDetails';
-import messages from '../../Messages';
-import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
+
+import { AnsibeTowerIcon, BellSlashIcon, CaretDownIcon } from '@patternfly/react-icons';
+import {
+    Badge,
+    Button,
+    Card,
+    CardBody,
+    CardHead,
+    Dropdown,
+    DropdownItem,
+    DropdownToggle,
+    Flex,
+    FlexItem,
+    Title,
+    ToolbarGroup,
+    ToolbarItem
+} from '@patternfly/react-core';
+import { BulkSelect, Main, PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
+import React, { Component } from 'react';
+
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
-
-import './Details.scss';
+import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
+import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
+import Failed from '../../PresentationalComponents/Loading/Failed';
+import Inventory from '../../PresentationalComponents/Inventory/Inventory';
+import Loading from '../../PresentationalComponents/Loading/Loading';
+import MessageState from '../../PresentationalComponents/MessageState/MessageState';
+import PropTypes from 'prop-types';
+import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
+import RuleDetails from '../../PresentationalComponents/RuleDetails/RuleDetails';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
+import { connect } from 'react-redux';
+import { global_BackgroundColor_100 } from '@patternfly/react-tokens';
+import { injectIntl } from 'react-intl';
+import messages from '../../Messages';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 class OverviewDetails extends Component {
     state = {
@@ -35,10 +51,14 @@ class OverviewDetails extends Component {
     };
 
     async componentDidMount() {
-        this.props.fetchRule({ rule_id: this.props.match.params.id });
-        this.props.fetchSystem({ rule_id: this.props.match.params.id });
-        this.props.fetchTopics();
+        const { fetchRule, fetchRuleAck, fetchSystem, fetchTopics, match } = this.props;
+        await fetchRule({ rule_id: match.params.id });
+        fetchSystem({ rule_id: match.params.id });
+        fetchTopics();
         this.setState({ selectedEntities: this.getSelectedItems().length });
+        if (!this.props.rule.reports_shown && this.props.rule.rule_id) {
+            fetchRuleAck({ rule_id: this.props.rule.rule_id });
+        }
     }
     componentDidUpdate(prevProps) {
         if (this.props !== prevProps) {
@@ -95,7 +115,7 @@ class OverviewDetails extends Component {
     }
 
     render() {
-        const { match, ruleFetchStatus, rule, systemFetchStatus, system, intl, entities, topics } = this.props;
+        const { match, ruleFetchStatus, rule, systemFetchStatus, system, intl, entities, topics, ruleAck } = this.props;
         const { selected, selectedEntities, disableRuleModalOpen, actionsDropdownOpen } = this.state;
         const bulkSelectMenuItems = [{
             title: intl.formatMessage(messages.selectNone),
@@ -129,7 +149,13 @@ class OverviewDetails extends Component {
                         <Main className='pf-m-light pf-u-pt-sm'>
                             <RuleDetails rule={rule} topics={topics} header={
                                 <React.Fragment>
-                                    <PageHeaderTitle title={rule.description || ''} />
+                                    <PageHeaderTitle title={<span>
+                                        {!rule.reports_shown && <Badge isRead>
+                                            <BellSlashIcon size='md' />&nbsp;
+                                            {intl.formatMessage(messages.disabled)}
+                                        </Badge>}
+                                        {rule.description}
+                                    </span>} />
                                     <p>{intl.formatMessage(
                                         messages.rulesDetailsPubishdate, { date: (new Date(rule.publish_date)).toLocaleDateString() }
                                     )}</p>
@@ -162,7 +188,7 @@ class OverviewDetails extends Component {
                 {ruleFetchStatus === 'pending' && (<Loading />)}
                 <Main>
                     <React.Fragment>
-                        {ruleFetchStatus === 'fulfilled' && (
+                        {ruleFetchStatus === 'fulfilled' && rule.reports_shown ?
                             <React.Fragment>
                                 <Title headingLevel="h3" size="2xl" className='titlePaddingOverride'>
                                     {intl.formatMessage(messages.affectedSystems)}
@@ -196,7 +222,27 @@ class OverviewDetails extends Component {
                                 )}
                                 {systemFetchStatus === 'pending' && (<Loading />)}
                             </React.Fragment>
-                        )}
+                            : <React.Fragment>
+                                <Card className='cardBorderOverride'>
+                                    <CardHead>
+                                        <BellSlashIcon size='sm' />&nbsp;{intl.formatMessage(messages.ruleIsDisabled)}</CardHead>
+                                    <CardBody>
+                                        <p>
+                                            {intl.formatMessage(messages.ruleIsDisabledJustification)}
+                                            <i>{ruleAck.justification || intl.formatMessage(messages.none)}</i>
+                                            {ruleAck.updated_at && <span>&nbsp;({new Date(ruleAck.updated_at).toLocaleDateString()})</span>}
+                                        </p>
+                                        <Button isInline variant='link'
+                                            onClick={() => { this.enableRule(rule); }}>
+                                            {intl.formatMessage(messages.enableRule)}
+                                        </Button>
+                                    </CardBody>
+                                </Card>
+                                <MessageState icon={BellSlashIcon} size='sm'
+                                    title={intl.formatMessage(messages.ruleIsDisabled)}
+                                    text={intl.formatMessage(messages.ruleIsDisabledBody)} />
+                            </React.Fragment>
+                        }
                         {ruleFetchStatus === 'pending' && (<Loading />)}
                         {ruleFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.rulesTableFetchRulesError)} />)}
                     </React.Fragment>
@@ -219,7 +265,9 @@ OverviewDetails.propTypes = {
     intl: PropTypes.any,
     selectEntity: PropTypes.func,
     fetchTopics: PropTypes.func,
-    topics: PropTypes.array
+    topics: PropTypes.array,
+    ruleAck: PropTypes.object,
+    fetchRuleAck: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -229,7 +277,7 @@ const mapStateToProps = (state, ownProps) => ({
     systemFetchStatus: state.AdvisorStore.systemFetchStatus,
     entities: state.entities,
     topics: state.AdvisorStore.topics,
-    ...state,
+    ruleAck: state.AdvisorStore.ruleAck,
     ...ownProps
 });
 
@@ -238,7 +286,8 @@ const mapDispatchToProps = dispatch => ({
     fetchSystem: (url) => dispatch(AppActions.fetchSystem(url)),
     addNotification: data => dispatch(addNotification(data)),
     selectEntity: (payload) => dispatch({ type: 'SELECT_ENTITY', payload }),
-    fetchTopics: () => dispatch(AppActions.fetchTopics())
+    fetchTopics: () => dispatch(AppActions.fetchTopics()),
+    fetchRuleAck: data => dispatch(AppActions.fetchRuleAck(data))
 });
 
 export default injectIntl(routerParams(connect(
