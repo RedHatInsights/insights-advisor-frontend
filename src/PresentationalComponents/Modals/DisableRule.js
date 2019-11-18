@@ -1,44 +1,31 @@
+import { Button, Checkbox, Form, FormGroup, Modal, TextInput } from '@patternfly/react-core';
 import React, { useState } from 'react';
+
 import PropTypes from 'prop-types';
-import { Modal, Button, Form, FormGroup, TextInput, Checkbox } from '@patternfly/react-core';
-import { injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
-
-import API from '../../Utilities/Api';
-import { BASE_URL } from '../../AppConstants';
+import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
+import { setRuleAck } from '../../AppActions';
 
-const DisableRule = ({ handleModalToggle, intl, isModalOpen, displaySingleSystemCheckbox, rule, afterDisableFn, addNotification }) => {
+const DisableRule = ({ handleModalToggle, intl, isModalOpen, displaySingleSystemCheckbox, rule, afterDisableFn, setRuleAck }) => {
     const [justification, setJustificaton] = useState('');
     const [singleSystem, setSingleSystem] = useState(false);
 
-    const disableRule = async () => {
-        try {
-            if (rule.reports_shown) {
-                // eslint-disable-next-line camelcase
-                await API.post(`${BASE_URL}/ack/`, { rule_id: rule.rule_id, justification });
-                afterDisableFn();
-                handleModalToggle(false);
-            }
-        } catch (error) {
+    const disableRule = () => {
+        if (rule.reports_shown) {
+            // eslint-disable-next-line camelcase
+            setRuleAck({ rule_id: rule.rule_id, justification });
+            afterDisableFn();
+            setJustificaton('');
             handleModalToggle(false);
-            addNotification({
-                variant: 'danger',
-                dismissable: true,
-                title: intl.formatMessage(messages.rulesTableHideReportsErrorDisabled),
-                description: `${error}`
-            });
         }
-
-        setJustificaton('');
     };
 
     return <Modal
         isSmall
         title={intl.formatMessage(messages.disableRule)}
         isOpen={isModalOpen}
-        onClose={() => { handleModalToggle(false); setJustificaton('');  }}
+        onClose={() => { handleModalToggle(false); setJustificaton(''); }}
         actions={[
             <Button key="confirm" variant="primary" onClick={disableRule}>
                 {intl.formatMessage(messages.save)}
@@ -51,8 +38,8 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, displaySingleSystem
     >
         {intl.formatMessage(messages.disableRuleBody)}
         <Form>
-            <FormGroup />
-            {displaySingleSystemCheckbox && <FormGroup>
+            <FormGroup fieldId='blank-form' />
+            {displaySingleSystemCheckbox && <FormGroup fieldId='disable-rule-one-system'>
                 <Checkbox
                     isChecked={singleSystem}
                     onChange={() => { setSingleSystem(!singleSystem); }}
@@ -83,8 +70,7 @@ DisableRule.propTypes = {
     intl: PropTypes.any,
     rule: PropTypes.object,
     afterDisableFn: PropTypes.func,
-    addNotification: PropTypes.func
-
+    setRuleAck: PropTypes.func
 };
 
 DisableRule.defaultProps = {
@@ -96,7 +82,7 @@ DisableRule.defaultProps = {
 };
 
 const mapDispatchToProps = dispatch => ({
-    addNotification: data => dispatch(addNotification(data))
+    setRuleAck: data => dispatch(setRuleAck(data))
 });
 
 export default injectIntl(connect(

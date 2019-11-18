@@ -10,6 +10,9 @@
   "disableRule": "Disable rule",
   "disableRuleBody": "Disabling a rule means that hits for this rule across all systems will not be shown in reports and dashboards.",
   "disableRuleSingleSystem": "Disable only for this system",
+  "ruleIsDisabled": "Rule is disabled",
+  "ruleIsDisabledBody": "This rule has been disabled and has no results.",
+  "ruleIsDisabledJustification": "This rule has been disabled for all systems for the following reason: ",
   "justificatonNote": "Justification note",
   "enableRule": "Enable rule",
   "rulestable.norulehits.title": "No rule hits",
@@ -98,5 +101,6 @@
   "no": "No",
   "description": "Description",
   "save": "Save",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "none": "None"
 }

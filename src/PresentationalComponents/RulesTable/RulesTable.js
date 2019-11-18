@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Battery, Main, TableToolbar, PrimaryToolbar } from '@redhat-cloud-services/frontend-components';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import PropTypes from 'prop-types';
-import { AnsibeTowerIcon, CheckCircleIcon, CheckIcon } from '@patternfly/react-icons';
+import { AnsibeTowerIcon, BellSlashIcon, CheckCircleIcon, CheckIcon } from '@patternfly/react-icons';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -233,11 +233,13 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                     isOpen: false,
                     rule: value,
                     cells: [{
-                        title: value.reports_shown ?
-                            <Link key={key} to={`/rules/${value.rule_id}`}>
-                                {value.description}
-                            </Link>
-                            : <span key={key}> <Badge isRead>{intl.formatMessage(messages.disabled)}</Badge> {value.description}</span>
+                        title:
+                            <span key={key}>
+                                {!value.reports_shown && <Badge isRead>
+                                    <BellSlashIcon size='md' />&nbsp;
+                                    {intl.formatMessage(messages.disabled)}</Badge>}
+                                <Link key={key} to={`/rules/${value.rule_id}`}> {value.description} </Link>
+                            </span>
                     }, {
                         title: <div key={key}>
                             {moment(value.publish_date).fromNow()}

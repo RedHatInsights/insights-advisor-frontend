@@ -5,3 +5,11 @@
 .pageHeaderOverride{
   padding-bottom: 0px;
 }
+
+.cardBorderOverride{
+  border-left: var(--pf-global--BorderWidth--lg) solid var(--pf-global--info-color--200);
+  
+  .pf-c-card__head {
+    color: var(--pf-global--info-color--200);
+  }
+}
