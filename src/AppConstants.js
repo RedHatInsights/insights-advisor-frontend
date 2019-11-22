@@ -25,6 +25,8 @@ export const TOPICS_FETCH = 'TOPICS_FETCH';
 export const SYSTEMS_FETCH = 'SYSTEMS_FETCH';
 export const RULE_ACK_FETCH = 'RULE_ACK_FETCH';
 export const RULE_ACK_SET = 'RULE_ACK_SET';
+export const HOST_ACK_FETCH = 'HOST_ACK_FETCH';
+export const HOST_ACK_SET = 'HOST_ACK_SET';
 
 export const BASE_URL = '/api/insights/v1';
 export const RULES_FETCH_URL = `${BASE_URL}/rule/`;
@@ -32,7 +34,8 @@ export const STATS_RULES_FETCH_URL = `${BASE_URL}/stats/rules/`;
 export const STATS_SYSTEMS_FETCH_URL = `${BASE_URL}/stats/systems/`;
 export const TOPICS_FETCH_URL = `${BASE_URL}/topic/`;
 export const SYSTEMS_FETCH_URL = `${BASE_URL}/system/`;
-export const RULE_ACK_FETCH_URL = `${BASE_URL}/ack/`;
+export const RULE_ACK_URL = `${BASE_URL}/ack/`;
+export const HOST_ACK_URL = `${BASE_URL}/hostack/`;
 
 export const SYSTEM_TYPES = { rhel: 105, ocp: 325 };
 export const RULE_CATEGORIES = {

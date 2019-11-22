@@ -27,7 +27,9 @@ const initialState = Immutable({
     systems: {},
     systemsFetchStatus: '',
     ruleAck: {},
-    ruleAckFetchStatus: ''
+    ruleAckFetchStatus: '',
+    hostAcks: {},
+    hostAcksFetchStatus: ''
 });
 
 export const AdvisorStore = (state = initialState, action) => {
@@ -141,6 +143,16 @@ export const AdvisorStore = (state = initialState, action) => {
             return Immutable.merge(state, {
                 ruleAck: action.payload
             });
+
+        case `${ActionTypes.HOST_ACK_FETCH}_PENDING`:
+            return state.set('hostAcksFetchStatus', 'pending');
+        case `${ActionTypes.HOST_ACK_FETCH}_FULFILLED`:
+            return Immutable.merge(state, {
+                hostAcks: action.payload,
+                hostAcksFetchStatus: 'fulfilled'
+            });
+        case `${ActionTypes.HOST_ACK_FETCH}_REJECTED`:
+            return state.set('hostAcksFetchStatus', 'rejected');
 
         default:
             return state;

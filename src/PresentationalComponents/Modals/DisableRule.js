@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { Button, Checkbox, Form, FormGroup, Modal, TextInput } from '@patternfly/react-core';
 import React, { useState } from 'react';
 
@@ -5,18 +6,21 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
-import { setRuleAck } from '../../AppActions';
+import { setAck } from '../../AppActions';
 
-const DisableRule = ({ handleModalToggle, intl, isModalOpen, displaySingleSystemCheckbox, rule, afterDisableFn, setRuleAck }) => {
+const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, rule, afterFn, setAck }) => {
     const [justification, setJustificaton] = useState('');
     const [singleSystem, setSingleSystem] = useState(false);
 
     const disableRule = () => {
         if (rule.reports_shown) {
-            // eslint-disable-next-line camelcase
-            setRuleAck({ rule_id: rule.rule_id, justification });
-            afterDisableFn();
+            const options = singleSystem
+                ? { type: 'HOST', options: { rule_id: rule.rule_id, system_uuid: host.id, ...(justification && { justification }) } }
+                : { type: 'RULE', options: { rule_id: rule.rule_id, ...(justification && { justification }) } };
+            setAck(options);
+            afterFn();
             setJustificaton('');
+            setSingleSystem(false);
             handleModalToggle(false);
         }
     };
@@ -39,7 +43,7 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, displaySingleSystem
         {intl.formatMessage(messages.disableRuleBody)}
         <Form>
             <FormGroup fieldId='blank-form' />
-            {displaySingleSystemCheckbox && <FormGroup fieldId='disable-rule-one-system'>
+            {host !== undefined && <FormGroup fieldId='disable-rule-one-system'>
                 <Checkbox
                     isChecked={singleSystem}
                     onChange={() => { setSingleSystem(!singleSystem); }}
@@ -48,7 +52,7 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, displaySingleSystem
                     name="disable-rule-one-system" />
             </FormGroup>}
             <FormGroup
-                label={intl.formatMessage(messages.justificatonNote)}
+                label={intl.formatMessage(messages.justificationNote)}
                 fieldId="disable-rule-justification">
                 <TextInput
                     type="text"
@@ -65,27 +69,24 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, displaySingleSystem
 
 DisableRule.propTypes = {
     isModalOpen: PropTypes.bool,
-    displaySingleSystemCheckbox: PropTypes.bool,
+    host: PropTypes.object,
     handleModalToggle: PropTypes.func,
     intl: PropTypes.any,
     rule: PropTypes.object,
-    afterDisableFn: PropTypes.func,
-    setRuleAck: PropTypes.func
+    afterFn: PropTypes.func,
+    setAck: PropTypes.func
 };
 
 DisableRule.defaultProps = {
     isModalOpen: false,
     handleModalToggle: () => undefined,
-    displaySingleSystemCheckbox: false,
+    system: undefined,
     rule: {},
-    afterDisableFn: () => undefined
+    afterFn: () => undefined
 };
 
 const mapDispatchToProps = dispatch => ({
-    setRuleAck: data => dispatch(setRuleAck(data))
+    setAck: data => dispatch(setAck(data))
 });
 
-export default injectIntl(connect(
-    null,
-    mapDispatchToProps
-)(DisableRule));
+export default injectIntl(connect(null, mapDispatchToProps)(DisableRule));
