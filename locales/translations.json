@@ -13,7 +13,11 @@
   "ruleIsDisabled": "Rule is disabled",
   "ruleIsDisabledBody": "This rule has been disabled and has no results.",
   "ruleIsDisabledJustification": "This rule has been disabled for all systems for the following reason: ",
-  "justificatonNote": "Justification note",
+  "ruleIsDisabledForSystems": "Rule is disabled for some systems",
+  "ruleIsDisabledForSystemsBody": "Rule is disabled for {systems, plural, one {# system.} other {# systems.}}",
+  "enableRuleForSystems": "Enable this rule for all systems",
+  "viewSystems": "View Systems",
+  "justificationNote": "Justification note",
   "enableRule": "Enable rule",
   "rulestable.norulehits.title": "No rule hits",
   "rulestable.norulehits.enabledrulesbody": "None of your connected systems are affected by enabled rules.",
@@ -102,5 +106,10 @@
   "description": "Description",
   "save": "Save",
   "cancel": "Cancel",
-  "none": "None"
+  "none": "None",
+  "dateDisabled": "Date Disabled",
+  "hostAckModalTitle": "Rule has been disabled for:",
+  "systemName": "System name",
+  "enable": "Enable",
+  "error": "Error"
 }

@@ -72,8 +72,28 @@ export default defineMessages({
         description: 'Explaining that the rule is disabled with following justification',
         defaultMessage: 'This rule has been disabled for all systems for the following reason: '
     },
-    justificatonNote: {
-        id: 'justificatonNote',
+    ruleIsDisabledForSystems: {
+        id: 'ruleIsDisabledForSystems',
+        description: 'Exclaiming that the rule is disabled for systems',
+        defaultMessage: 'Rule is disabled for some systems'
+    },
+    ruleIsDisabledForSystemsBody: {
+        id: 'ruleIsDisabledForSystemsBody',
+        description: 'Exclaiming that the rule is disabled for systems (system count)',
+        defaultMessage: 'Rule is disabled for {systems, plural, one {# system.} other {# systems.}}'
+    },
+    enableRuleForSystems: {
+        id: 'enableRuleForSystems',
+        description: 'Enable this rule for all systems',
+        defaultMessage: 'Enable this rule for all systems'
+    },
+    viewSystems: {
+        id: 'viewSystems',
+        description: 'View systems',
+        defaultMessage: 'View Systems'
+    },
+    justificationNote: {
+        id: 'justificationNote',
         description: 'Justification note',
         defaultMessage: 'Justification note'
     },
@@ -530,5 +550,30 @@ export default defineMessages({
         id: 'none',
         description: 'None',
         defaultMessage: `None`
+    },
+    dateDisabled: {
+        id: 'dateDisabled',
+        description: 'Date disabled',
+        defaultMessage: 'Date Disabled'
+    },
+    hostAckModalTitle: {
+        id: 'hostAckModalTitle',
+        description: 'Title for host ack table modal',
+        defaultMessage: 'Rule has been disabled for:'
+    },
+    systemName: {
+        id: 'systemName',
+        description: 'System name',
+        defaultMessage: 'System name'
+    },
+    enable: {
+        id: 'enable',
+        description: 'Enable',
+        defaultMessage: 'Enable'
+    },
+    error: {
+        id: 'error',
+        description: 'Error',
+        defaultMessage: 'Error'
     }
 });

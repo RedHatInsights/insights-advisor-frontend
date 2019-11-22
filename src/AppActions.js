@@ -52,10 +52,13 @@ export const fetchSystems = (options) => ({
 });
 export const fetchRuleAck = (options) => ({
     type: ActionTypes.RULE_ACK_FETCH,
-    payload: fetchData(`${ActionTypes.RULE_ACK_FETCH_URL}${options.rule_id}/`)
+    payload: fetchData(`${ActionTypes.RULE_ACK_URL}${options.rule_id}/`)
 });
-export const setRuleAck = (options) => ({
-    type: ActionTypes.RULE_ACK_FETCH,
-    payload: setData(ActionTypes.RULE_ACK_FETCH_URL, {}, options)
+export const setAck = (options) => ({
+    type: ActionTypes[`${options.type}_ACK_SET`],
+    payload: setData(ActionTypes[`${options.type}_ACK_URL`], {}, options.options)
 });
-
+export const fetchHostAcks = (options) => ({
+    type: ActionTypes.HOST_ACK_FETCH,
+    payload: fetchData(`${ActionTypes.HOST_ACK_URL}`, {}, options)
+});
