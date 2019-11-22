@@ -1,28 +1,29 @@
+import * as AppActions from '../../AppActions';
+
+import { AnsibeTowerIcon, BellSlashIcon, CheckCircleIcon, CheckIcon } from '@patternfly/react-icons';
+import { Badge, Button, Pagination, PaginationVariant } from '@patternfly/react-core';
+import { Battery, Main, PrimaryToolbar, TableToolbar } from '@redhat-cloud-services/frontend-components';
 /* eslint camelcase: 0 */
 import React, { useCallback, useEffect, useState } from 'react';
-import { Battery, Main, TableToolbar, PrimaryToolbar } from '@redhat-cloud-services/frontend-components';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
-import PropTypes from 'prop-types';
-import { AnsibeTowerIcon, BellSlashIcon, CheckCircleIcon, CheckIcon } from '@patternfly/react-icons';
-import moment from 'moment';
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { Badge, Button, Pagination, PaginationVariant } from '@patternfly/react-core';
-import { cellWidth, sortable, Table, TableBody, TableHeader } from '@patternfly/react-table';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
-import { injectIntl } from 'react-intl';
+import { Table, TableBody, TableHeader, cellWidth, sortable } from '@patternfly/react-table';
 
-import * as AppActions from '../../AppActions';
-import Loading from '../../PresentationalComponents/Loading/Loading';
-import Failed from '../../PresentationalComponents/Loading/Failed';
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
-import MessageState from '../MessageState/MessageState';
-import RuleDetails from '../RuleDetails/RuleDetails';
-import messages from '../../Messages';
-import { FILTER_CATEGORIES as FC } from '../../AppConstants';
-import debounce from '../../Utilities/Debounce';
 import DisableRule from '../Modals/DisableRule';
+import { FILTER_CATEGORIES as FC } from '../../AppConstants';
+import Failed from '../../PresentationalComponents/Loading/Failed';
+import { Link } from 'react-router-dom';
+import Loading from '../../PresentationalComponents/Loading/Loading';
+import MessageState from '../MessageState/MessageState';
+import PropTypes from 'prop-types';
+import RuleDetails from '../RuleDetails/RuleDetails';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
+import { connect } from 'react-redux';
+import debounce from '../../Utilities/Debounce';
+import { injectIntl } from 'react-intl';
+import messages from '../../Messages';
+import moment from 'moment';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, history, intl }) => {
     const [cols] = useState([
@@ -398,12 +399,12 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     };
 
     return <React.Fragment>
-        <DisableRule
+        {disableRuleOpen && <DisableRule
             handleModalToggle={setDisableRuleOpen}
             isModalOpen={disableRuleOpen}
             rule={selectedRule}
-            afterDisableFn={fetchRulesFn}
-        />
+            afterFn={fetchRulesFn}
+        />}
         <PrimaryToolbar
             pagination={{
                 itemCount: results,
