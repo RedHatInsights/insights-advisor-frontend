@@ -20,7 +20,7 @@ import {
     ToolbarGroup,
     ToolbarItem
 } from '@patternfly/react-core';
-import { BulkSelect, Main, PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
+import { BulkSelect, DateFormat, Main, PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import API from '../../Utilities/Api';
@@ -186,7 +186,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                                 {rule.description}
                             </span>} />
                             <p>{intl.formatMessage(
-                                messages.rulesDetailsPubishdate, { date: (new Date(rule.publish_date)).toLocaleDateString() }
+                                messages.rulesDetailsPubishdate, { date: <DateFormat date={new Date(rule.publish_date)} type="onlyDate" /> }
                             )}</p>
                         </React.Fragment>}>
                         <Flex>
@@ -232,7 +232,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                                     : <React.Fragment>
                                         {intl.formatMessage(messages.ruleIsDisabledJustification)}
                                         <i>{ruleAck.justification || intl.formatMessage(messages.none)}</i>
-                                        {ruleAck.updated_at && <span>&nbsp;({new Date(ruleAck.updated_at).toLocaleDateString()})</span>}
+                                        {ruleAck.updated_at && <span>&nbsp;<DateFormat date={new Date(ruleAck.updated_at)} type="onlyDate" /></span>}
                                     </React.Fragment>}
                             </CardBody>
                             <CardFooter>

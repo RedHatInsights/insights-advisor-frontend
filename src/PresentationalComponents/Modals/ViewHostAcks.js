@@ -6,6 +6,7 @@ import { fetchHostAcks, setAck } from '../../AppActions';
 
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
+import { DateFormat } from '@redhat-cloud-services/frontend-components';
 import { OutlinedBellIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
@@ -43,7 +44,7 @@ const ViewHostAcks = ({ fetchHostAcks, handleModalToggle, intl, isModalOpen, hos
                 cells: [
                     item.system_uuid,
                     item.justification || intl.formatMessage(messages.none),
-                    (new Date(item.updated_at)).toLocaleDateString(),
+                    { title: <DateFormat date={new Date(item.updated_at)} type="onlyDate" /> },
                     {
                         title: <Button key={item.system_uuid} isInline variant='link' onClick={() => deleteAck(item)}>
                             <OutlinedBellIcon size='sm' /> &nbsp; {intl.formatMessage(messages.enable)}
