@@ -554,7 +554,7 @@ export default defineMessages({
     dateDisabled: {
         id: 'dateDisabled',
         description: 'Date disabled',
-        defaultMessage: 'Date Disabled'
+        defaultMessage: 'Date disabled'
     },
     hostAckModalTitle: {
         id: 'hostAckModalTitle',
