@@ -10,7 +10,7 @@ import { setAck } from '../../AppActions';
 
 const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, rule, afterFn, setAck }) => {
     const [justification, setJustificaton] = useState('');
-    const [singleSystem, setSingleSystem] = useState(true);
+    const [singleSystem, setSingleSystem] = useState(host !== undefined);
 
     const disableRule = () => {
         if (rule.reports_shown) {
