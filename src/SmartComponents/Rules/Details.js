@@ -9,6 +9,7 @@ import {
     Button,
     Card,
     CardBody,
+    CardFooter,
     CardHead,
     Dropdown,
     DropdownItem,
@@ -214,26 +215,27 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
             <React.Fragment>
                 {ruleFetchStatus === 'fulfilled' &&
                     <React.Fragment>
-                        {(ruleHostAcks.length > 0 || !rule.reports_shown) && <Card className='cardBorderOverride'>
-                            <CardHead>
+                        {(ruleHostAcks.length > 0 || !rule.reports_shown) && <Card className='cardOverride'>
+                            <CardHead><Title headingLevel="h4" size="xl">
                                 <BellSlashIcon size='sm' />&nbsp;{intl.formatMessage(ruleHostAcks.length > 0 && rule.reports_shown ?
-                                    messages.ruleIsDisabledForSystems : messages.ruleIsDisabled)}</CardHead>
+                                    messages.ruleIsDisabledForSystems : messages.ruleIsDisabled)}
+                            </Title></CardHead>
                             <CardBody>
-                                <p>
-                                    {ruleHostAcks.length > 0 && rule.reports_shown ?
-                                        <React.Fragment>
-                                            {intl.formatMessage(messages.ruleIsDisabledForSystemsBody, { systems: ruleHostAcks.length })}
-                                            &nbsp;
-                                            <Button isInline variant='link' onClick={() => setviewSystemsModalOpen(true)}>
-                                                {intl.formatMessage(messages.viewSystems)}
-                                            </Button>
-                                        </React.Fragment>
-                                        : <React.Fragment>
-                                            {intl.formatMessage(messages.ruleIsDisabledJustification)}
-                                            <i>{ruleAck.justification || intl.formatMessage(messages.none)}</i>
-                                            {ruleAck.updated_at && <span>&nbsp;({new Date(ruleAck.updated_at).toLocaleDateString()})</span>}
-                                        </React.Fragment>}
-                                </p>
+                                {ruleHostAcks.length > 0 && rule.reports_shown ?
+                                    <React.Fragment>
+                                        {intl.formatMessage(messages.ruleIsDisabledForSystemsBody, { systems: ruleHostAcks.length })}
+                                        &nbsp;
+                                        <Button isInline variant='link' onClick={() => setviewSystemsModalOpen(true)}>
+                                            {intl.formatMessage(messages.viewSystems)}
+                                        </Button>
+                                    </React.Fragment>
+                                    : <React.Fragment>
+                                        {intl.formatMessage(messages.ruleIsDisabledJustification)}
+                                        <i>{ruleAck.justification || intl.formatMessage(messages.none)}</i>
+                                        {ruleAck.updated_at && <span>&nbsp;({new Date(ruleAck.updated_at).toLocaleDateString()})</span>}
+                                    </React.Fragment>}
+                            </CardBody>
+                            <CardFooter>
                                 {ruleHostAcks.length > 0 && rule.reports_shown ?
                                     // to be enabled with bulk actions
                                     // <Button isInline variant='link' onClick={() => enableRuleForSystems()}>
@@ -243,7 +245,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                                     : <Button isInline variant='link' onClick={() => enableRule(rule)}>
                                         {intl.formatMessage(messages.enableRule)}
                                     </Button>}
-                            </CardBody>
+                            </CardFooter>
                         </Card>}
                         {rule.reports_shown && <React.Fragment>
                             <Title headingLevel='h3' size='2xl'>
