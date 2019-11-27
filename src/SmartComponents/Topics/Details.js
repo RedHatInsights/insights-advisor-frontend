@@ -1,50 +1,45 @@
 /* eslint-disable camelcase */
-import React, { useEffect } from 'react';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
-import { Main, PageHeader, Truncate } from '@redhat-cloud-services/frontend-components';
-import {
-    TextContent,
-    Text,
-    TextVariants,
-    Label,
-    Title
-} from '@patternfly/react-core';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { StarIcon, TimesCircleIcon } from '@patternfly/react-icons';
-import { injectIntl } from 'react-intl';
+import './_Details.scss';
 
 import * as AppActions from '../../AppActions';
+
+import { Label, Text, TextContent, TextVariants, Title } from '@patternfly/react-core';
+import { Main, PageHeader, Truncate } from '@redhat-cloud-services/frontend-components';
+import React, { useEffect } from 'react';
+import { StarIcon, TimesCircleIcon } from '@patternfly/react-icons';
+
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
-import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
+import PropTypes from 'prop-types';
+import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
+import { connect } from 'react-redux';
+import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
-
-import './_Details.scss';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl, filters }) => {
     useEffect(() => {
         if (typeof filters.topic === 'undefined') {
-            setFilters({ impacting: true, reports_shown: 'true', topic: match.params.id });
+            setFilters({ impacting: true, reports_shown: 'true', topic: match.params.id, sort: `-publish_date` });
         }
     });
 
     useEffect(() => {
         fetchTopic({ topic_id: match.params.id });
         return () => {
-            setFilters({ impacting: true, reports_shown: 'true' });
+            setFilters({ impacting: true, reports_shown: 'true', sort: '-publish_date' });
         };
     }, [fetchTopic, match.params.id, setFilters]);
 
-    return <>
+    return <React.Fragment>
         <PageHeader>
             <Breadcrumbs
                 current={topic.name}
                 match={match}
             />
             {topicFetchStatus === 'fulfilled' &&
-                <>
+                <React.Fragment>
                     <Title size="2xl" className='titleOverride'>
                         {topic.name}{topic.featured && <Label className='labelOverride'><StarIcon />
                             {intl.formatMessage(messages.featured)}
@@ -61,22 +56,22 @@ const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl,
                             />
                         </Text>
                     </TextContent>
-                </>
+                </React.Fragment>
             }
             {topicFetchStatus === '' || topicFetchStatus === 'pending' && <Loading />}
         </PageHeader>
         <Main>
-            <>
-                {topicFetchStatus === '' || topicFetchStatus === 'pending' || topicFetchStatus === 'fulfilled' && <>
+            <React.Fragment>
+                {topicFetchStatus === '' || topicFetchStatus === 'pending' || topicFetchStatus === 'fulfilled' && <React.Fragment>
                     <Title headingLevel="h3" size="2xl" className='titlePaddingOverride'> Rules</Title>
                     {filters.topic && <RulesTable />}
-                </>}
+                </React.Fragment>}
                 {topicFetchStatus === 'failed' || topicFetchStatus === 'rejected' &&
                     <MessageState icon={TimesCircleIcon} title={intl.formatMessage(messages.topicDetailslNodetailsTitle)}
                         text={intl.formatMessage(messages.topicDetailslNodetailsBody)} />}
-            </>
+            </React.Fragment>
         </Main>
-    </>;
+    </React.Fragment>;
 };
 
 Details.propTypes = {

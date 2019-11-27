@@ -39,7 +39,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     ]);
     const [rows, setRows] = useState([]);
     const [sortBy, setSortBy] = useState({});
-    const [sort, setSort] = useState('-publish_date');
     const [impacting, setImpacting] = useState(filters.impacting);
     const [limit, setLimit] = useState(10);
     const [offset, setOffset] = useState(0);
@@ -50,6 +49,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const [selectedRule, setSelectedRule] = useState({});
     const debouncedSearchText = debounce(searchText, 800);
     const results = rules.meta ? rules.meta.count : 0;
+    const sortIndices = { 1: 'description', 2: 'publish_date', 3: 'total_risk', 4: 'impacted_count', 5: 'playbook_count' };
 
     // transforms array of strings -> comma seperated strings, required by advisor api
     const filterFetchBuilder = (filters) => (Object.assign({},
@@ -62,24 +62,16 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             ...filterFetchBuilder(filters),
             offset: 0,
             limit,
-            impacting,
-            sort
+            impacting
         });
     };
 
-    const onSort = useCallback((_event, index, direction) => {
-        const attrIndex = {
-            1: 'description',
-            2: 'publish_date',
-            3: 'total_risk',
-            4: 'impacted_count',
-            5: 'playbook_count'
-        };
-        const orderParam = `${direction === 'asc' ? '' : '-'}${attrIndex[index]}`;
+    const onSort = (_event, index, direction) => {
+        const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
         setSortBy({ index, direction });
-        setSort(orderParam);
+        setFilters({ ...filters, sort: orderParam });
         setOffset(0);
-    }, [setSort, setSortBy, setOffset]);
+    };
 
     const onSetPage = (pageNumber) => {
         const newOffset = pageNumber * limit - limit;
@@ -153,6 +145,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         delete localFilters.impacting;
         delete localFilters.reports_shown;
         delete localFilters.topic;
+        delete localFilters.sort;
         const prunedFilters = Object.entries(localFilters);
 
         return prunedFilters.length > 0 ? prunedFilters.map(item => {
@@ -174,6 +167,9 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             }), {});
             paramsObject.reports_shown = paramsObject.reports_shown === undefined || paramsObject.reports_shown[0] === 'undefined' ? undefined
                 : paramsObject.reports_shown;
+            paramsObject.sort = paramsObject.sort === undefined ? '-publish_date'
+                : paramsObject.sort[0];
+
             setImpacting(paramsObject.impacting);
             setFilters({ ...paramsObject });
         }
@@ -196,17 +192,20 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             fetchRules({
                 ...filterFetchBuilder(filters),
                 offset,
-                limit,
-                sort
+                limit
             });
         }
-    }, [fetchRules, filterBuilding, filters, limit, offset, sort]);
+    }, [fetchRules, filterBuilding, filters, limit, offset]);
 
     useEffect(() => {
-        if (!rows.length) {
-            onSort(null, 2, 'desc');
+        if (filters.sort !== undefined) {
+            const sortIndex = Number(Object.entries(sortIndices).find(item => item[1] === filters.sort || `-${item[1]}` === filters.sort)[0]);
+            const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
+            setSortBy({ index: sortIndex, direction: sortDirection });
         }
-    }, [onSort, rows.length]);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filters, filters.sort]);
 
     useEffect(() => {
         if (rules.data) {
