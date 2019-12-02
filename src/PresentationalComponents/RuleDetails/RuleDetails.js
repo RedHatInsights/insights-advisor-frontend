@@ -25,7 +25,7 @@ const RuleDetails = ({ children, className, rule, intl, topics, header }) => {
     const resolutionRisk = ruleResolutionRisk(rule);
 
     const topicLinks = () => topics && compact(topics.map((topic) =>
-        intersection(topic.tags.split(' '), rule.tags.split(' ')).length &&
+        intersection(topic.tag.split(' '), rule.tags.split(' ')).length &&
         <React.Fragment key={topic.slug}>
             <Link to={`/topics/${topic.slug}`}>
                 {`${topic.name}`}
