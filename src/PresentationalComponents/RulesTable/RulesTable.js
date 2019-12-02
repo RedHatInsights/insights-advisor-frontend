@@ -1,7 +1,7 @@
 import * as AppActions from '../../AppActions';
 
 import { AnsibeTowerIcon, BellSlashIcon, CheckCircleIcon, CheckIcon } from '@patternfly/react-icons';
-import { Badge, Button, Pagination, PaginationVariant } from '@patternfly/react-core';
+import { Badge, Button, Pagination, PaginationVariant, Stack, StackItem } from '@patternfly/react-core';
 import { Battery, Main, PrimaryToolbar, TableToolbar } from '@redhat-cloud-services/frontend-components';
 /* eslint camelcase: 0 */
 import React, { useCallback, useEffect, useState } from 'react';
@@ -17,6 +17,7 @@ import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../MessageState/MessageState';
 import PropTypes from 'prop-types';
 import RuleDetails from '../RuleDetails/RuleDetails';
+import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
 import debounce from '../../Utilities/Debounce';
@@ -47,6 +48,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const [searchText, setSearchText] = useState('');
     const [disableRuleOpen, setDisableRuleOpen] = useState(false);
     const [selectedRule, setSelectedRule] = useState({});
+    const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
+    const [viewSystemsModalRule, setViewSystemsModalRule] = useState({});
     const debouncedSearchText = debounce(searchText, 800);
     const results = rules.meta ? rules.meta.count : 0;
     const sortIndices = { 1: 'description', 2: 'publish_date', 3: 'total_risk', 4: 'impacted_count', 5: 'playbook_count' };
@@ -264,7 +267,22 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 }, {
                     parent: key * 2,
                     fullWidth: true,
-                    cells: [{ title: <Main className='pf-m-light'> <RuleDetails rule={value} /></Main> }]
+                    cells: [{
+                        title: <Main className='pf-m-light'>
+                            <Stack gutter="md">
+                                {value.hosts_acked_count ? <StackItem>
+                                    <BellSlashIcon size='sm' />
+                                    &nbsp;{intl.formatMessage(messages.ruleIsDisabledForSystemsBody, { systems: value.hosts_acked_count })}
+                                    &nbsp; <Button isInline variant='link'
+                                        onClick={() => { setViewSystemsModalRule(value); setViewSystemsModalOpen(true); }}>
+                                        {intl.formatMessage(messages.viewSystems)}
+                                    </Button>
+                                </StackItem>
+                                    : <React.Fragment></React.Fragment>}
+                                <RuleDetails rule={value} />
+                            </Stack>
+                        </Main>
+                    }]
                 }
                 ]));
                 setRows(rows.asMutable());
@@ -397,7 +415,17 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         }
     };
 
+    const afterViewSystemsFn = () => {
+        fetchRulesFn();
+    };
+
     return <React.Fragment>
+        {viewSystemsModalOpen && <ViewHostAcks
+            handleModalToggle={(toggleModal) => setViewSystemsModalOpen(toggleModal)}
+            isModalOpen={viewSystemsModalOpen}
+            afterFn={afterViewSystemsFn}
+            rule={viewSystemsModalRule}
+        />}
         {disableRuleOpen && <DisableRule
             handleModalToggle={setDisableRuleOpen}
             isModalOpen={disableRuleOpen}

@@ -15,7 +15,7 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, rule, afterFn
     const disableRule = () => {
         if (rule.reports_shown) {
             const options = singleSystem
-                ? { type: 'HOST', options: { rule: rule.rule_id, system_uuid: host.id, ...(justification && { justification }) } }
+                ? { type: 'HOST', options: { rule: rule.rule_id, system_uuid: host.id, justification } }
                 : { type: 'RULE', options: { rule_id: rule.rule_id, ...(justification && { justification }) } };
             setAck(options);
             afterFn();

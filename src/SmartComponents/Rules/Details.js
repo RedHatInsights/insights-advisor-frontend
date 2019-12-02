@@ -43,14 +43,20 @@ import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchRule, ruleFetchStatus, rule, systemFetchStatus, system, intl, entities,
-    topics, ruleAck, hostAcks, fetchHostAcks, selectEntity }) => {
+    topics, ruleAck, fetchHostAcks, selectEntity }) => {
     const [selected, setSelected] = useState(false);
     const [selectedEntities, setSelectedEntities] = useState(0);
     const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [host, setHost] = useState(undefined);
-    const [ruleHostAcks, setRuleHostAcks] = useState([]);
-    const [viewSystemsModalOpen, setviewSystemsModalOpen] = useState(false);
+    const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
+
+    const fetchRulefn = () => {
+        fetchTopics();
+        fetchSystem({ rule_id: match.params.id });
+        fetchRule({ rule_id: match.params.id });
+        fetchHostAcks({ rule_id: rule.rule_id });
+    };
 
     const getSelectedItems = useCallback(() => {
         return entities && entities.loaded ?
@@ -115,7 +121,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
 
     const afterDisableFn = () => {
         setHost(undefined);
-        fetchRule({ rule_id: match.params.id });
+        fetchRulefn();
     };
 
     const actionResolver = () => ([{
@@ -126,15 +132,12 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     useEffect(() => {
         if (host === undefined) {
             fetchSystem({ rule_id: match.params.id });
-            fetchHostAcks({ limit: 100000 });
+            fetchHostAcks({ rule_id: rule.rule_id });
         }
-    }, [fetchHostAcks, fetchSystem, host, match.params.id]);
+    }, [fetchHostAcks, fetchSystem, host, match.params.id, rule.rule_id]);
 
     useEffect(() => {
-        fetchRule({ rule_id: match.params.id });
-        fetchHostAcks({ limit: 100000 });
-        fetchSystem({ rule_id: match.params.id });
-        fetchTopics();
+        fetchRulefn();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -148,15 +151,9 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         setSelectedEntities(getSelectedItems().length);
     }, [getSelectedItems]);
 
-    useEffect(() => {
-        if (hostAcks && hostAcks.data) {
-            setRuleHostAcks(hostAcks.data.filter(item => item.rule === rule.rule_id));
-        }
-    }, [hostAcks, rule.rule_id]);
-
     return <React.Fragment>
         {viewSystemsModalOpen && <ViewHostAcks
-            handleModalToggle={(toggleModal) => setviewSystemsModalOpen(toggleModal)}
+            handleModalToggle={(toggleModal) => setViewSystemsModalOpen(toggleModal)}
             isModalOpen={viewSystemsModalOpen}
             afterFn={afterViewSystemsFn}
             rule={rule}
@@ -176,7 +173,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                         match={match} />
                 </PageHeader>
                 <Main className='pf-m-light pf-u-pt-sm'>
-                    <RuleDetails rule={rule} topics={topics} header={
+                    <RuleDetails isDetailsPage rule={rule} topics={topics} header={
                         <React.Fragment>
                             <PageHeaderTitle title={<span>
                                 {!rule.reports_shown && <Badge isRead>
@@ -215,17 +212,17 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
             <React.Fragment>
                 {ruleFetchStatus === 'fulfilled' &&
                     <React.Fragment>
-                        {(ruleHostAcks.length > 0 || !rule.reports_shown) && <Card className='cardOverride'>
+                        {(rule.hosts_acked_count > 0 || !rule.reports_shown) && <Card className='cardOverride'>
                             <CardHead><Title headingLevel="h4" size="xl">
-                                <BellSlashIcon size='sm' />&nbsp;{intl.formatMessage(ruleHostAcks.length > 0 && rule.reports_shown ?
+                                <BellSlashIcon size='sm' />&nbsp;{intl.formatMessage(rule.hosts_acked_count > 0 && rule.reports_shown ?
                                     messages.ruleIsDisabledForSystems : messages.ruleIsDisabled)}
                             </Title></CardHead>
                             <CardBody>
-                                {ruleHostAcks.length > 0 && rule.reports_shown ?
+                                {rule.hosts_acked_count > 0 && rule.reports_shown ?
                                     <React.Fragment>
-                                        {intl.formatMessage(messages.ruleIsDisabledForSystemsBody, { systems: ruleHostAcks.length })}
+                                        {intl.formatMessage(messages.ruleIsDisabledForSystemsBody, { systems: rule.hosts_acked_count })}
                                         &nbsp;
-                                        <Button isInline variant='link' onClick={() => setviewSystemsModalOpen(true)}>
+                                        <Button isInline variant='link' onClick={() => setViewSystemsModalOpen(true)}>
                                             {intl.formatMessage(messages.viewSystems)}
                                         </Button>
                                     </React.Fragment>
@@ -236,7 +233,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                                     </React.Fragment>}
                             </CardBody>
                             <CardFooter>
-                                {ruleHostAcks.length > 0 && rule.reports_shown ?
+                                {rule.hosts_acked_count > 0 && rule.reports_shown ?
                                     // to be enabled with bulk actions
                                     // <Button isInline variant='link' onClick={() => enableRuleForSystems()}>
                                     //     {intl.formatMessage(messages.enableRuleForSystems)}
@@ -302,9 +299,7 @@ OverviewDetails.propTypes = {
     topics: PropTypes.array,
     ruleAck: PropTypes.object,
     fetchRuleAck: PropTypes.func,
-    fetchHostAcks: PropTypes.func,
-    hostAcks: PropTypes.object
-
+    fetchHostAcks: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => ({
