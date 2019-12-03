@@ -43,7 +43,7 @@ import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchRule, ruleFetchStatus, rule, systemFetchStatus, system, intl, entities,
-    topics, ruleAck, fetchHostAcks, selectEntity }) => {
+    topics, ruleAck, selectEntity }) => {
     const [selected, setSelected] = useState(false);
     const [selectedEntities, setSelectedEntities] = useState(0);
     const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
@@ -55,7 +55,6 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         fetchTopics();
         fetchSystem({ rule_id: match.params.id });
         fetchRule({ rule_id: match.params.id });
-        fetchHostAcks({ rule_id: rule.rule_id });
     };
 
     const getSelectedItems = useCallback(() => {
@@ -128,13 +127,6 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         title: 'Disable rule for system',
         onClick: (event, rowIndex, item) => (handleModalToggle(true, item))
     }]);
-
-    useEffect(() => {
-        if (host === undefined) {
-            fetchSystem({ rule_id: match.params.id });
-            fetchHostAcks({ rule_id: rule.rule_id });
-        }
-    }, [fetchHostAcks, fetchSystem, host, match.params.id, rule.rule_id]);
 
     useEffect(() => {
         fetchRulefn();
@@ -298,8 +290,7 @@ OverviewDetails.propTypes = {
     fetchTopics: PropTypes.func,
     topics: PropTypes.array,
     ruleAck: PropTypes.object,
-    fetchRuleAck: PropTypes.func,
-    fetchHostAcks: PropTypes.func
+    fetchRuleAck: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -320,9 +311,7 @@ const mapDispatchToProps = dispatch => ({
     addNotification: data => dispatch(addNotification(data)),
     selectEntity: (payload) => dispatch({ type: 'SELECT_ENTITY', payload }),
     fetchTopics: () => dispatch(AppActions.fetchTopics()),
-    fetchRuleAck: data => dispatch(AppActions.fetchRuleAck(data)),
-    fetchHostAcks: data => dispatch(AppActions.fetchHostAcks(data))
-
+    fetchRuleAck: data => dispatch(AppActions.fetchRuleAck(data))
 });
 
 export default injectIntl(routerParams(connect(
