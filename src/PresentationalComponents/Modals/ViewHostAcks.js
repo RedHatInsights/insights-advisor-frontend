@@ -7,6 +7,7 @@ import { fetchHostAcks, setAck } from '../../AppActions';
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
 import { DateFormat } from '@redhat-cloud-services/frontend-components';
+import { List } from 'react-content-loader';
 import { OutlinedBellIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
@@ -14,7 +15,7 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 
-const ViewHostAcks = ({ fetchHostAcks, handleModalToggle, intl, isModalOpen, hostAcks, rule, afterFn }) => {
+const ViewHostAcks = ({ fetchHostAcks, hostAcksFetchStatus, handleModalToggle, intl, isModalOpen, hostAcks, rule, afterFn }) => {
     const columns = [
         intl.formatMessage(messages.systemName),
         intl.formatMessage(messages.justificationNote),
@@ -71,10 +72,16 @@ const ViewHostAcks = ({ fetchHostAcks, handleModalToggle, intl, isModalOpen, hos
         onClose={() => { afterFn(); handleModalToggle(false); }}
         isFooterLeftAligned
     >
-        <Table aria-label="host-ack-table" rows={rows} cells={columns}>
+        {hostAcksFetchStatus === 'fulfilled' && <Table aria-label="host-ack-table" rows={rows} cells={columns}>
             <TableHeader />
             <TableBody />
-        </Table>
+        </Table>}
+        {hostAcksFetchStatus !== 'fulfilled' && <Table aria-label="host-ack-table" rows={[{
+            cells: [{ props: { colSpan: 3 }, title: (<List />) }]
+        }]} cells={columns}>
+            <TableHeader />
+            <TableBody />
+        </Table>}
     </Modal>;
 };
 
@@ -85,6 +92,7 @@ ViewHostAcks.propTypes = {
     rule: PropTypes.object,
     fetchHostAcks: PropTypes.func,
     hostAcks: PropTypes.object,
+    hostAcksFetchStatus: PropTypes.string,
     addNotification: PropTypes.func,
     afterFn: PropTypes.func
 
@@ -97,8 +105,9 @@ ViewHostAcks.defaultProps = {
     afterFn: () => undefined
 };
 
-const mapStateToProps = (state, ownProps) => ({
-    hostAcks: state.AdvisorStore.hostAcks,
+const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
+    hostAcks: AdvisorStore.hostAcks,
+    hostAcksFetchStatus: AdvisorStore.hostAcksFetchStatus,
     ...ownProps
 });
 
