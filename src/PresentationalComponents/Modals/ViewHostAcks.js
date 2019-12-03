@@ -26,7 +26,7 @@ const ViewHostAcks = ({ fetchHostAcks, handleModalToggle, intl, isModalOpen, hos
     const deleteAck = async (host) => {
         try {
             await API.delete(`${BASE_URL}/hostack/${host.id}/`);
-            fetchHostAcks({ limit: 100000 });
+            fetchHostAcks({ rule_id: rule.rule_id });
         } catch (error) {
             handleModalToggle(false);
             addNotification({
@@ -40,7 +40,7 @@ const ViewHostAcks = ({ fetchHostAcks, handleModalToggle, intl, isModalOpen, hos
 
     useEffect(() => {
         if (hostAcks.data) {
-            const rows = hostAcks.data.filter(item => item.rule === rule.rule_id).map(item => ({
+            const rows = hostAcks.data.map(item => ({
                 cells: [
                     item.system_uuid,
                     item.justification || intl.formatMessage(messages.none),
@@ -59,6 +59,10 @@ const ViewHostAcks = ({ fetchHostAcks, handleModalToggle, intl, isModalOpen, hos
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hostAcks]);
+
+    useEffect(() => {
+        fetchHostAcks({ rule_id: rule.rule_id });
+    }, [fetchHostAcks, rule.rule_id]);
 
     return <Modal
         width={'50%'}

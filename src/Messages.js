@@ -90,7 +90,7 @@ export default defineMessages({
     viewSystems: {
         id: 'viewSystems',
         description: 'View systems',
-        defaultMessage: 'View Systems'
+        defaultMessage: 'View systems'
     },
     justificationNote: {
         id: 'justificationNote',
@@ -575,5 +575,10 @@ export default defineMessages({
         id: 'error',
         description: 'Error',
         defaultMessage: 'Error'
+    },
+    viewAffectedSystems: {
+        id: 'viewAffectedSystems',
+        description: 'Link text to view all hosts that are affected by a rule',
+        defaultMessage: 'View {systems, plural, one {the affected system.} other {# affected systems.}}'
     }
 });

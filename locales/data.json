@@ -17,7 +17,7 @@
     "ruleIsDisabledForSystems": "Rule is disabled for some systems",
     "ruleIsDisabledForSystemsBody": "Rule is disabled for {systems, plural, one {# system.} other {# systems.}}",
     "enableRuleForSystems": "Enable this rule for all systems",
-    "viewSystems": "View Systems",
+    "viewSystems": "View systems",
     "justificationNote": "Justification note",
     "enableRule": "Enable rule",
     "rulestable.norulehits.title": "No rule hits",
@@ -112,6 +112,7 @@
     "hostAckModalTitle": "Rule has been disabled for:",
     "systemName": "System name",
     "enable": "Enable",
-    "error": "Error"
+    "error": "Error",
+    "viewAffectedSystems": "View {systems, plural, one {the affected system.} other {# affected systems.}}"
   }
 }
