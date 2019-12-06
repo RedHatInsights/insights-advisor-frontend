@@ -580,5 +580,15 @@ export default defineMessages({
         id: 'viewAffectedSystems',
         description: 'Link text to view all hosts that are affected by a rule',
         defaultMessage: 'View {systems, plural, one {the affected system.} other {# affected systems.}}'
+    },
+    ruleHelpful: {
+        id: 'ruleHelpful',
+        description: 'Asking the user if they find a rule helpful',
+        defaultMessage: 'Is this rule helpful?'
+    },
+    feedbackThankyou: {
+        id: 'feedbackThankyou',
+        description: 'Thanking user for feedback',
+        defaultMessage: 'Thank you for your feedback!'
     }
 });

@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactMarkdown from 'react-markdown/with-html';
+import RuleRating from '../RuleRating//RuleRating';
 import barDividedList from '../../Utilities/BarDividedList';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
@@ -66,6 +67,7 @@ const RuleDetails = ({ children, className, rule, intl, topics, header, isDetail
                         </Card>
                     </GridItem>
                 }
+                {isDetailsPage && <RuleRating rule={rule}/>}
                 {!isDetailsPage && rule.impacted_systems_count > 0 &&
                     <GridItem className='pf-u-pb-md'>
                         <Link key={`${rule.rule_id}-link`} to={`/rules/${rule.rule_id}`}>
