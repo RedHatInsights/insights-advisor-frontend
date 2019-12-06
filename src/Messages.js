@@ -47,6 +47,11 @@ export default defineMessages({
         description: 'Rule table, action text for disabling reporting of a rule',
         defaultMessage: 'Disable rule'
     },
+    disableRuleForSystems: {
+        id: 'disableRuleForSystems',
+        description: 'Rule detail system table, action text for disabling reporting of a rule for a system',
+        defaultMessage: 'Disable rule for selected systems'
+    },
     disableRuleBody: {
         id: 'disableRuleBody',
         description: 'Explaining the action of disabling a rule',
@@ -76,6 +81,11 @@ export default defineMessages({
         id: 'ruleIsDisabledForSystems',
         description: 'Exclaiming that the rule is disabled for systems',
         defaultMessage: 'Rule is disabled for some systems'
+    },
+    ruleIsDisabledForAllSystems: {
+        id: 'ruleIsDisabledForAllSystems',
+        description: 'Exclaiming that the rule is disabled for all systems',
+        defaultMessage: 'Rule is disabled for all systems'
     },
     ruleIsDisabledForSystemsBody: {
         id: 'ruleIsDisabledForSystemsBody',
