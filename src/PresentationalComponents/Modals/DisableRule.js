@@ -2,27 +2,42 @@
 import { Button, Checkbox, Form, FormGroup, Modal, TextInput } from '@patternfly/react-core';
 import React, { useState } from 'react';
 
+import API from '../../Utilities/Api';
+import { BASE_URL } from '../../AppConstants';
 import PropTypes from 'prop-types';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import { setAck } from '../../AppActions';
 
-const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, rule, afterFn, setAck }) => {
+const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, hosts, rule, afterFn, setAck, addNotification }) => {
     const [justification, setJustificaton] = useState('');
-    const [singleSystem, setSingleSystem] = useState(host !== undefined);
+    const [singleSystem, setSingleSystem] = useState(host !== undefined || hosts.length > 0);
+
+    const bulkHostActions = async () => {
+        const data = { systems: hosts, justification };
+        try {
+            await API.post(`${BASE_URL}/rule/${rule.rule_id}/ack_hosts/`, {}, data);
+            afterFn && afterFn();
+        } catch (error) {
+            addNotification({ variant: 'danger', dismissable: true, title: intl.formatMessage(messages.error), description: `${error}` });
+        }
+    };
 
     const disableRule = () => {
-        if (rule.reports_shown) {
+        if (rule.reports_shown && !hosts.length) {
             const options = singleSystem
                 ? { type: 'HOST', options: { rule: rule.rule_id, system_uuid: host.id, justification } }
                 : { type: 'RULE', options: { rule_id: rule.rule_id, ...(justification && { justification }) } };
             setAck(options);
-            afterFn();
             setJustificaton('');
-            setSingleSystem(false);
-            handleModalToggle(false);
+            afterFn && afterFn();
+        } else {
+            bulkHostActions();
         }
+
+        handleModalToggle(false);
     };
 
     return <Modal
@@ -31,7 +46,7 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, rule, afterFn
         isOpen={isModalOpen}
         onClose={() => { handleModalToggle(false); setJustificaton(''); }}
         actions={[
-            <Button key="confirm" variant="primary" onClick={disableRule}>
+            <Button key="confirm" variant="primary" onClick={() => disableRule()}>
                 {intl.formatMessage(messages.save)}
             </Button>,
             <Button key="cancel" variant="link" onClick={() => { handleModalToggle(false); setJustificaton(''); }}>
@@ -43,11 +58,11 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, rule, afterFn
         {intl.formatMessage(messages.disableRuleBody)}
         <Form>
             <FormGroup fieldId='blank-form' />
-            {host !== undefined && <FormGroup fieldId='disable-rule-one-system'>
+            {(host !== undefined || hosts.length > 0) && <FormGroup fieldId='disable-rule-one-system'>
                 <Checkbox
                     isChecked={singleSystem}
                     onChange={() => { setSingleSystem(!singleSystem); }}
-                    label={intl.formatMessage(messages.disableRuleSingleSystem)}
+                    label={hosts.length ? intl.formatMessage(messages.disableRuleForSystems) : intl.formatMessage(messages.disableRuleSingleSystem)}
                     id="disable-rule-one-system"
                     name="disable-rule-one-system" />
             </FormGroup>}
@@ -74,7 +89,9 @@ DisableRule.propTypes = {
     intl: PropTypes.any,
     rule: PropTypes.object,
     afterFn: PropTypes.func,
-    setAck: PropTypes.func
+    setAck: PropTypes.func,
+    hosts: PropTypes.array,
+    addNotification: PropTypes.func
 };
 
 DisableRule.defaultProps = {
@@ -82,10 +99,13 @@ DisableRule.defaultProps = {
     handleModalToggle: () => undefined,
     system: undefined,
     rule: {},
-    afterFn: () => undefined
+    afterFn: () => undefined,
+    host: undefined,
+    hosts: []
 };
 
 const mapDispatchToProps = dispatch => ({
+    addNotification: data => dispatch(addNotification(data)),
     setAck: data => dispatch(setAck(data))
 });
 

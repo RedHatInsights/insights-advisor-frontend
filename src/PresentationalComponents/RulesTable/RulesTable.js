@@ -272,7 +272,9 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                             <Stack gutter="md">
                                 {value.hosts_acked_count ? <StackItem>
                                     <BellSlashIcon size='sm' />
-                                    &nbsp;{intl.formatMessage(messages.ruleIsDisabledForSystemsBody, { systems: value.hosts_acked_count })}
+                                    &nbsp;{value.hosts_acked_count && !value.impacted_systems_count ?
+                                        intl.formatMessage(messages.ruleIsDisabledForAllSystems) :
+                                        intl.formatMessage(messages.ruleIsDisabledForSystemsBody, { systems: value.hosts_acked_count })}
                                     &nbsp; <Button isInline variant='link'
                                         onClick={() => { setViewSystemsModalRule(value); setViewSystemsModalOpen(true); }}>
                                         {intl.formatMessage(messages.viewSystems)}
