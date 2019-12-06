@@ -1,0 +1,14 @@
+.like {
+  color: #3f9c35;
+}
+
+.dislike {
+  color: var(--pf-global--danger-color--200);
+}
+
+.ratingSpanOverride{
+    font-size: var(--pf-global--FontSize--sm) !important;
+    button {
+        padding: 8px;
+    }
+}
