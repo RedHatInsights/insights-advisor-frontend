@@ -27,7 +27,7 @@ const ViewHostAcks = ({ fetchHostAcks, hostAcksFetchStatus, handleModalToggle, i
     const deleteAck = async (host) => {
         try {
             await API.delete(`${BASE_URL}/hostack/${host.id}/`);
-            fetchHostAcks({ rule_id: rule.rule_id });
+            fetchHostAcks({ rule_id: rule.rule_id, limit: rule.hosts_acked_count });
         } catch (error) {
             handleModalToggle(false);
             addNotification({
@@ -62,8 +62,8 @@ const ViewHostAcks = ({ fetchHostAcks, hostAcksFetchStatus, handleModalToggle, i
     }, [hostAcks]);
 
     useEffect(() => {
-        fetchHostAcks({ rule_id: rule.rule_id });
-    }, [fetchHostAcks, rule.rule_id]);
+        fetchHostAcks({ rule_id: rule.rule_id, limit: rule.hosts_acked_count });
+    }, [fetchHostAcks, rule.hosts_acked_count, rule.rule_id]);
 
     return <Modal
         width={'50%'}

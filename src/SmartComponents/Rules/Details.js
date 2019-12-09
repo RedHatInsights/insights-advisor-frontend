@@ -49,7 +49,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         fetchTopics();
         fetchSystem({ rule_id: match.params.id });
         fetchRule({ rule_id: match.params.id });
-        fetchHostAcks({ rule_id: match.params.id });
+        fetchHostAcks({ rule_id: match.params.id, limit: rule.hosts_acked_count });
     };
 
     const handleModalToggle = (disableRuleModalOpen, host = undefined) => {
