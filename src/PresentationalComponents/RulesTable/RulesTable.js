@@ -1,7 +1,8 @@
 import * as AppActions from '../../AppActions';
+import * as AppConstants from '../../AppConstants';
 
 import { AnsibeTowerIcon, BellSlashIcon, CheckCircleIcon, CheckIcon } from '@patternfly/react-icons';
-import { Badge, Button, Pagination, PaginationVariant, Stack, StackItem } from '@patternfly/react-core';
+import { Badge, Button, Pagination, PaginationVariant, Stack, StackItem, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Battery, Main, PrimaryToolbar, TableToolbar } from '@redhat-cloud-services/frontend-components';
 /* eslint camelcase: 0 */
 import React, { useCallback, useEffect, useState } from 'react';
@@ -30,7 +31,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const [cols] = useState([
         { title: intl.formatMessage(messages.description), transforms: [sortable] },
         { title: intl.formatMessage(messages.added), transforms: [sortable, cellWidth(15)] },
-        { title: intl.formatMessage(messages.totalRisk), transforms: [sortable] },
+        { title: intl.formatMessage(messages.totalRisk), transforms: [sortable, cellWidth(15)] },
         { title: intl.formatMessage(messages.systems), transforms: [sortable] },
         {
             title: <><AnsibeTowerIcon size='md' /> {intl.formatMessage(messages.ansible)}</>,
@@ -248,12 +249,18 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                             {moment(value.publish_date).fromNow()}
                         </div>
                     }, {
-                        title: <div className="pf-m-center" key={key} style={{ verticalAlign: 'top' }}>
-                            <Battery
-                                label={intl.formatMessage(messages.totalRisk)}
-                                labelHidden
-                                severity={value.total_risk}
-                            />
+                        title: <div className="pf-m-center" key={key}>
+                            <Tooltip position={TooltipPosition.bottom} content={intl.formatMessage(messages.rulesDetailsTotalriskBody, {
+                                likelihood: AppConstants.LIKELIHOOD_LABEL[value.likelihood] || intl.formatMessage(messages.undefined),
+                                impact: AppConstants.IMPACT_LABEL[value.impact.impact] || intl.formatMessage(messages.undefined),
+                                strong(str) { return <strong>{str}</strong>; }
+                            })}>
+                                <Battery
+                                    label={AppConstants.TOTAL_RISK_LABEL[value.total_risk] || intl.formatMessage(messages.undefined)}
+                                    RHCLOUD-2752
+                                    severity={value.total_risk}
+                                />
+                            </Tooltip>
                         </div>
                     }, {
                         title: <div key={key}> {value.reports_shown ?
