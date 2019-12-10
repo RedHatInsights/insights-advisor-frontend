@@ -4,7 +4,7 @@ import './_RuleDetails.scss';
 import * as AppConstants from '../../AppConstants';
 
 import { Battery, Reboot, Shield } from '@redhat-cloud-services/frontend-components';
-import { Card, CardBody, Grid, GridItem, Stack, StackItem, Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { Card, CardBody, Split, SplitItem, Stack, StackItem, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { compact, intersection } from 'lodash';
 
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
@@ -17,7 +17,7 @@ import barDividedList from '../../Utilities/BarDividedList';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 
-const RuleDetails = ({ children, className, rule, intl, topics, header, isDetailsPage }) => {
+const RuleDetails = ({ children, rule, intl, topics, header, isDetailsPage }) => {
     const ruleResolutionRisk = (rule) => {
         const resolution = rule.resolution_set.find(resolution => resolution.system_type ===
             AppConstants.SYSTEM_TYPES.rhel ||
@@ -36,28 +36,28 @@ const RuleDetails = ({ children, className, rule, intl, topics, header, isDetail
         </React.Fragment>
     ));
 
-    return <Grid gutter='md' className={className}>
-        <GridItem md={8} sm={12}>
-            <Grid>
-                {header && <GridItem className='pf-u-pb-md'>
+    return <Split gutter='sm'>
+        <SplitItem>
+            <Stack>
+                {header && <StackItem>
                     {header}
-                </GridItem>}
-                <GridItem className='pf-u-pb-md'>
+                </StackItem>}
+                <StackItem>
                     {
                         typeof rule.summary === 'string' &&
                         Boolean(rule.summary) &&
                         <ReactMarkdown source={rule.summary} escapeHtml={false} />
                     }
-                </GridItem>
+                </StackItem>
                 {rule.node_id && (
-                    <GridItem className='pf-u-pb-md'>
+                    <StackItem>
                         <a rel="noopener noreferrer" target="_blank" href={`https://access.redhat.com/node/${rule.node_id}`}>
                             {intl.formatMessage(messages.knowledgebaseArticle)}&nbsp;<ExternalLinkAltIcon size='sm' />
                         </a>
-                    </GridItem>
+                    </StackItem>
                 )}
                 {topics && rule.tags && topicLinks().length > 0 &&
-                    <GridItem>
+                    <StackItem>
                         <Card className="topicsCard" isCompact>
                             <CardBody>
                                 <strong>{intl.formatMessage(messages.topicRelatedToRule)}</strong>
@@ -65,26 +65,26 @@ const RuleDetails = ({ children, className, rule, intl, topics, header, isDetail
                                 {barDividedList(topicLinks())}
                             </CardBody>
                         </Card>
-                    </GridItem>
+                    </StackItem>
                 }
-                {isDetailsPage && <RuleRating rule={rule}/>}
+                {isDetailsPage && <RuleRating rule={rule} />}
                 {!isDetailsPage && rule.impacted_systems_count > 0 &&
-                    <GridItem className='pf-u-pb-md'>
+                    <StackItem>
                         <Link key={`${rule.rule_id}-link`} to={`/rules/${rule.rule_id}`}>
                             {intl.formatMessage(messages.viewAffectedSystems, { systems: rule.impacted_systems_count })}
                         </Link>
-                    </GridItem>
+                    </StackItem>
                 }
-            </Grid>
-        </GridItem>
-        <GridItem md={4} sm={12}>
-            <Grid gutter='sm'>
+            </Stack>
+        </SplitItem>
+        <SplitItem>
+            <Stack gutter='sm'>
                 {children && (
-                    <GridItem>
+                    <StackItem>
                         {children}
-                    </GridItem>
+                    </StackItem>
                 )}
-                <GridItem className='pf-u-pb-md' sm={8} md={12}>
+                <StackItem>
                     <Stack>
                         <StackItem>{intl.formatMessage(messages.totalRisk)}</StackItem>
                         <StackItem className='pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm'>
@@ -129,15 +129,14 @@ const RuleDetails = ({ children, className, rule, intl, topics, header, isDetail
                         </StackItem>
                     </Stack>
                     {rule.reboot_required && <Reboot red />}
-                </GridItem>
-            </Grid>
-        </GridItem>
-    </Grid>;
+                </StackItem>
+            </Stack>
+        </SplitItem>
+    </Split>;
 };
 
 RuleDetails.propTypes = {
     children: PropTypes.any,
-    className: PropTypes.string,
     rule: PropTypes.object,
     intl: PropTypes.any,
     topics: PropTypes.array,
