@@ -73,10 +73,6 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         }
     };
 
-    const afterViewSystemsFn = () => {
-        fetchSystem({ rule_id: match.params.id });
-    };
-
     const afterDisableFn = () => {
         setHost(undefined);
         fetchRulefn();
@@ -112,7 +108,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         {viewSystemsModalOpen && <ViewHostAcks
             handleModalToggle={(toggleModal) => setViewSystemsModalOpen(toggleModal)}
             isModalOpen={viewSystemsModalOpen}
-            afterFn={afterViewSystemsFn}
+            afterFn={fetchRulefn}
             rule={rule}
         />}
         {disableRuleModalOpen && <DisableRule
