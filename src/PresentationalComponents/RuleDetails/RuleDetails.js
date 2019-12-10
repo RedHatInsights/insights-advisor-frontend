@@ -38,7 +38,7 @@ const RuleDetails = ({ children, rule, intl, topics, header, isDetailsPage }) =>
 
     return <Split gutter='sm'>
         <SplitItem>
-            <Stack>
+            <Stack gutter='sm'>
                 {header && <StackItem>
                     {header}
                 </StackItem>}
@@ -128,8 +128,8 @@ const RuleDetails = ({ children, rule, intl, topics, header, isDetailsPage }) =>
                             </TextContent>
                         </StackItem>
                     </Stack>
-                    {rule.reboot_required && <Reboot red />}
                 </StackItem>
+                {rule.reboot_required && <StackItem><Reboot red /> </StackItem>}
             </Stack>
         </SplitItem>
     </Split>;
