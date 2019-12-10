@@ -444,7 +444,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 isCompact: false
             }}
             exportConfig={{
-                onSelect: (event, exportType) => window.location = `${BASE_URL}/export/hits.${exportType === 'json' ? 'json' : 'csv'}/${queryString}`
+                onSelect: (event, exportType) => window.location = `${BASE_URL}/export/hits.${exportType === 'json' ? 'json' : 'csv'}/${queryString}`,
+                isDisabled: !impacting
             }}
             actionsConfig={{ actions }}
             filterConfig={{ items: filterConfigItems }}
