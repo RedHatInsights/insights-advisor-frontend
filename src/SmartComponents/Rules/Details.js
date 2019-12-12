@@ -229,7 +229,7 @@ OverviewDetails.propTypes = {
     fetchTopics: PropTypes.func,
     topics: PropTypes.array,
     ruleAck: PropTypes.object,
-    hostAcks: PropTypes.array,
+    hostAcks: PropTypes.object,
     fetchRuleAck: PropTypes.func,
     fetchHostAcks: PropTypes.func
 };
