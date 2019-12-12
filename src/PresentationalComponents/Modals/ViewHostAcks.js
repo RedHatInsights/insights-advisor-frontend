@@ -43,7 +43,7 @@ const ViewHostAcks = ({ fetchHostAcks, hostAcksFetchStatus, handleModalToggle, i
         if (hostAcks.data) {
             const rows = hostAcks.data.map(item => ({
                 cells: [
-                    item.system_uuid,
+                    item.display_name || item.system_uuid,
                     item.justification || intl.formatMessage(messages.none),
                     { title: <DateFormat date={new Date(item.updated_at)} type="onlyDate" /> },
                     {
