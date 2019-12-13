@@ -23,7 +23,7 @@ const RuleRating = ({ intl, rule }) => {
             setSubmitted(true);
             setTimeout(() => setThankYou(''), 3000);
         } catch (error) {
-            console.error(error);
+            console.error(error); // eslint-disable-line no-console
         }
     };
 
