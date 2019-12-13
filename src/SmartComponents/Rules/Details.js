@@ -46,10 +46,8 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
 
     const fetchRulefn = () => {
-        fetchTopics();
         fetchSystem({ rule_id: match.params.id });
         fetchRule({ rule_id: match.params.id });
-        fetchHostAcks({ rule_id: match.params.id, limit: rule.hosts_acked_count });
     };
 
     const handleModalToggle = (disableRuleModalOpen, host = undefined) => {
@@ -94,6 +92,12 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     };
 
     useEffect(() => {
+        fetchHostAcks({ rule_id: rule.rule_id, limit: rule.hosts_acked_count });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [fetchHostAcks, rule.hosts_acked_count]);
+
+    useEffect(() => {
+        fetchTopics();
         fetchRulefn();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
