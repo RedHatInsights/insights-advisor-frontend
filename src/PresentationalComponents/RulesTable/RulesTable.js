@@ -145,7 +145,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     const buildFilterChips = () => {
         const localFilters = { ...filters };
-        delete localFilters.text;
         delete localFilters.impacting;
         delete localFilters.reports_shown;
         delete localFilters.topic;
@@ -153,11 +152,15 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         const prunedFilters = Object.entries(localFilters);
 
         return prunedFilters.length > 0 ? prunedFilters.map(item => {
-            const category = FC[item[0]];
-            const chips = Array.isArray(item[1]) ? item[1].map(value =>
-                ({ name: category.values.find(values => values.value === String(value)).label, value }))
-                : [{ name: category.values.find(values => values.value === String(item[1])).label, value: item[1] }];
-            return { category: category.title, chips, urlParam: category.urlParam };
+            if (FC[item[0]]) {
+                const category = FC[item[0]];
+                const chips = Array.isArray(item[1]) ? item[1].map(value =>
+                    ({ name: category.values.find(values => values.value === String(value)).label, value }))
+                    : [{ name: category.values.find(values => values.value === String(item[1])).label, value: item[1] }];
+                return { category: category.title, chips, urlParam: category.urlParam };
+            } else {
+                return { category: 'Description', chips: [{ name: item[1], value: item[1] }], urlParam: item[0] };
+            }
         })
             : [];
     };
@@ -411,12 +414,13 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         filters: buildFilterChips(),
         onDelete: (event, itemsToRemove, isAll) => {
             if (isAll) {
-                setFilters({ impacting: true, reports_shown: 'true' });
+                setFilters({ ...(filters.topic && { topic: filters.topic }), impacting: true, reports_shown: 'true' });
             } else {
                 itemsToRemove.map(item => {
                     const newFilter = {
-                        [item.urlParam]:
-                            filters[item.urlParam].filter(value => Number(value) !== Number(item.chips[0].value))
+                        [item.urlParam]: Array.isArray(filters[item.urlParam]) ?
+                            filters[item.urlParam].filter(value => String(value) !== String(item.chips[0].value))
+                            : ''
                     };
                     newFilter[item.urlParam].length > 0 ? setFilters({ ...filters, ...newFilter }) : removeFilterParam(item.urlParam);
                 });
