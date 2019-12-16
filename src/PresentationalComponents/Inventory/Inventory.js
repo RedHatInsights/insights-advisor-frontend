@@ -17,14 +17,16 @@ import { global_BackgroundColor_100 } from '@patternfly/react-tokens';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import { useStore } from 'react-redux'
 
-const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification, items, afterDisableFn }) => {
+const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification, items, afterDisableFn, advisorStore }) => {
     const [InventoryTable, setInventoryTable] = useState();
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(50);
     const [selected, setSelected] = useState([]);
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [bulkSelect, setBulkSelect] = useState();
+    const store = useStore(advisorStore);
 
     const loadInventory = async () => {
         const {
@@ -42,7 +44,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
             ...mergeWithEntities()
         });
 
-        const { InventoryTable } = inventoryConnector();
+        const { InventoryTable } = inventoryConnector(store);
         setInventoryTable(() => InventoryTable);
     };
 
@@ -166,5 +168,6 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default injectIntl(routerParams(connect(({ entities, props }) => ({
     rows: entities && entities.rows,
+    advisorStore: entities,
     ...props
 }), mapDispatchToProps)(Inventory)));
