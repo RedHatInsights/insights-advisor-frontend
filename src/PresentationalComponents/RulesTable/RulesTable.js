@@ -1,3 +1,5 @@
+import './_RulesTable.scss';
+
 import * as AppActions from '../../AppActions';
 import * as AppConstants from '../../AppConstants';
 
@@ -154,8 +156,10 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         return prunedFilters.length > 0 ? prunedFilters.map(item => {
             if (FC[item[0]]) {
                 const category = FC[item[0]];
-                const chips = Array.isArray(item[1]) ? item[1].map(value =>
-                    ({ name: category.values.find(values => values.value === String(value)).label, value }))
+                const chips = Array.isArray(item[1]) ? item[1].map(value => {
+                    const selectedCategoryValue = category.values.find(values => values.value === String(value));
+                    return { name: selectedCategoryValue.text || selectedCategoryValue.label, value };
+                })
                     : [{ name: category.values.find(values => values.value === String(item[1])).label, value: item[1] }];
                 return { category: category.title, chips, urlParam: category.urlParam };
             } else {
@@ -253,14 +257,13 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                         </div>
                     }, {
                         title: <div className="pf-m-center" key={key}>
-                            <Tooltip position={TooltipPosition.bottom} content={intl.formatMessage(messages.rulesDetailsTotalriskBody, {
+                            <Tooltip key={key} position={TooltipPosition.bottom} content={intl.formatMessage(messages.rulesDetailsTotalriskBody, {
                                 likelihood: AppConstants.LIKELIHOOD_LABEL[value.likelihood] || intl.formatMessage(messages.undefined),
                                 impact: AppConstants.IMPACT_LABEL[value.impact.impact] || intl.formatMessage(messages.undefined),
                                 strong(str) { return <strong>{str}</strong>; }
                             })}>
                                 <Battery
                                     label={AppConstants.TOTAL_RISK_LABEL[value.total_risk] || intl.formatMessage(messages.undefined)}
-                                    RHCLOUD-2752
                                     severity={value.total_risk}
                                 />
                             </Tooltip>

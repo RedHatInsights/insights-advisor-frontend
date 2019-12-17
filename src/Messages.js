@@ -600,5 +600,10 @@ export default defineMessages({
         id: 'feedbackThankyou',
         description: 'Thanking user for feedback',
         defaultMessage: 'Thank you for your feedback!'
+    },
+    all: {
+        id: 'all',
+        description: 'All',
+        defaultMessage: 'All'
     }
 });

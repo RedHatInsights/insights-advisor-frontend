@@ -1,6 +1,9 @@
+/* eslint-disable max-len */
 /* eslint-disable camelcase */
+import { Battery, Shield } from '@redhat-cloud-services/frontend-components';
 import { createIntl, createIntlCache } from 'react-intl';
 
+import React from 'react';
 import { intlHelper } from '@redhat-cloud-services/frontend-components-translations';
 import messages from './Messages';
 
@@ -50,55 +53,6 @@ export const SEVERITY_MAP = {
     'medium-risk': 2,
     'low-risk': 1
 };
-export const FILTER_CATEGORIES = {
-    total_risk: {
-        type: 'checkbox', title: 'Total risk', urlParam: 'total_risk', values: [
-            { label: 'Critical', value: '4' },
-            { label: 'Important', value: '3' },
-            { label: 'Moderate', value: '2' },
-            { label: 'Low', value: '1' }
-        ]
-    },
-    res_risk: {
-        type: 'checkbox', title: 'Risk of change', urlParam: 'res_risk', values: [
-            { label: intlHelper(intl.formatMessage(messages.high), intlSettings), value: '4' },
-            { label: 'Moderate', value: '3' },
-            { label: 'Low', value: '2' },
-            { label: 'Very low', value: '1' }
-        ]
-    },
-    impact: {
-        type: 'checkbox', title: 'Impact', urlParam: 'impact', values: [
-            { label: 'Critical', value: '4' },
-            { label: 'Important', value: '3' },
-            { label: 'Moderate', value: '2' },
-            { label: 'Low', value: '1' }
-        ]
-    },
-    likelihood: {
-        type: 'checkbox', title: 'Likelihood', urlParam: 'likelihood', values: [
-            { label: 'Critical', value: '4' },
-            { label: 'Important', value: '3' },
-            { label: 'Moderate', value: '2' },
-            { label: 'Low', value: '1' }
-        ]
-    },
-    category: {
-        type: 'checkbox', title: 'Category', urlParam: 'category', values: [
-            { label: 'Availability', value: `${RULE_CATEGORIES.availability}` },
-            { label: 'Performance', value: `${RULE_CATEGORIES.performance}` },
-            { label: 'Stability', value: `${RULE_CATEGORIES.stability}` },
-            { label: 'Security', value: `${RULE_CATEGORIES.security}` }
-        ]
-    },
-    reports_shown: {
-        type: 'radio', title: 'Rule status', urlParam: 'reports_shown', values: [
-            { label: 'All', value: 'undefined' },
-            { label: 'Enabled', value: 'true' },
-            { label: 'Disabled', value: 'false' }
-        ]
-    }
-};
 export const RISK_OF_CHANGE_DESC = {
     1: intlHelper(intl.formatMessage(messages.riskOfChangeTextOne), intlSettings),
     2: intlHelper(intl.formatMessage(messages.riskOfChangeTextTwo), intlSettings),
@@ -124,8 +78,57 @@ export const RISK_OF_CHANGE_LABEL = {
     4: intlHelper(intl.formatMessage(messages.high), intlSettings)
 };
 export const TOTAL_RISK_LABEL = {
-    1: 'Low',
-    2: 'Moderate',
-    3: 'Important',
-    4: 'Critical'
+    1: intlHelper(intl.formatMessage(messages.low), intlSettings),
+    2: intlHelper(intl.formatMessage(messages.moderate), intlSettings),
+    3: intlHelper(intl.formatMessage(messages.important), intlSettings),
+    4: intlHelper(intl.formatMessage(messages.critical), intlSettings)
+};
+export const FILTER_CATEGORIES = {
+    total_risk: {
+        type: 'checkbox', title: 'Total risk', urlParam: 'total_risk', values: [
+            { label: <Battery label={TOTAL_RISK_LABEL[4]} severity={4} />, text: TOTAL_RISK_LABEL[4], value: '4' },
+            { label: <Battery label={TOTAL_RISK_LABEL[3]} severity={3} />, text: TOTAL_RISK_LABEL[3], value: '3' },
+            { label: <Battery label={TOTAL_RISK_LABEL[2]} severity={2} />, text: TOTAL_RISK_LABEL[2], value: '2' },
+            { label: <Battery label={TOTAL_RISK_LABEL[1]} severity={1} />, text: TOTAL_RISK_LABEL[1], value: '1' }
+        ]
+    },
+    res_risk: {
+        type: 'checkbox', title: 'Risk of change', urlParam: 'res_risk', values: [
+            { label: <React.Fragment><Shield hasTooltip={false} impact={4} size={'sm'} title={RISK_OF_CHANGE_LABEL[4]} />{RISK_OF_CHANGE_LABEL[4]}</React.Fragment>, text: RISK_OF_CHANGE_LABEL[4], value: '4' },
+            { label: <React.Fragment><Shield hasTooltip={false} impact={3} size={'sm'} title={RISK_OF_CHANGE_LABEL[3]} />{RISK_OF_CHANGE_LABEL[3]}</React.Fragment>, text: RISK_OF_CHANGE_LABEL[3], value: '3' },
+            { label: <React.Fragment><Shield hasTooltip={false} impact={2} size={'sm'} title={RISK_OF_CHANGE_LABEL[2]} />{RISK_OF_CHANGE_LABEL[2]}</React.Fragment>, text: RISK_OF_CHANGE_LABEL[2], value: '2' },
+            { label: <React.Fragment><Shield hasTooltip={false} impact={1} size={'sm'} title={RISK_OF_CHANGE_LABEL[1]} />{RISK_OF_CHANGE_LABEL[1]}</React.Fragment>, text: RISK_OF_CHANGE_LABEL[1], value: '1' }
+        ]
+    },
+    impact: {
+        type: 'checkbox', title: 'Impact', urlParam: 'impact', values: [
+            { label: IMPACT_LABEL[4], value: '4' },
+            { label: IMPACT_LABEL[3], value: '3' },
+            { label: IMPACT_LABEL[2], value: '2' },
+            { label: IMPACT_LABEL[1], value: '1' }
+        ]
+    },
+    likelihood: {
+        type: 'checkbox', title: 'Likelihood', urlParam: 'likelihood', values: [
+            { label: LIKELIHOOD_LABEL[4], value: '4' },
+            { label: LIKELIHOOD_LABEL[3], value: '3' },
+            { label: LIKELIHOOD_LABEL[2], value: '2' },
+            { label: LIKELIHOOD_LABEL[1], value: '1' }
+        ]
+    },
+    category: {
+        type: 'checkbox', title: 'Category', urlParam: 'category', values: [
+            { label: intlHelper(intl.formatMessage(messages.availability), intlSettings), value: `${RULE_CATEGORIES.availability}` },
+            { label: intlHelper(intl.formatMessage(messages.performance), intlSettings), value: `${RULE_CATEGORIES.performance}` },
+            { label: intlHelper(intl.formatMessage(messages.stability), intlSettings), value: `${RULE_CATEGORIES.stability}` },
+            { label: intlHelper(intl.formatMessage(messages.security), intlSettings), value: `${RULE_CATEGORIES.security}` }
+        ]
+    },
+    reports_shown: {
+        type: 'radio', title: 'Rule status', urlParam: 'reports_shown', values: [
+            { label: intlHelper(intl.formatMessage(messages.all), intlSettings), value: 'undefined' },
+            { label: intlHelper(intl.formatMessage(messages.enabled), intlSettings), value: 'true' },
+            { label: intlHelper(intl.formatMessage(messages.disabled), intlSettings), value: 'false' }
+        ]
+    }
 };
