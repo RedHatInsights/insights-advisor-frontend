@@ -116,5 +116,6 @@
   "error": "Error",
   "viewAffectedSystems": "View {systems, plural, one {the affected system.} other {# affected systems.}}",
   "ruleHelpful": "Is this rule helpful?",
-  "feedbackThankyou": "Thank you for your feedback!"
+  "feedbackThankyou": "Thank you for your feedback!",
+  "all": "All"
 }
