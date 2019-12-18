@@ -1,22 +1,23 @@
+import * as AppActions from '../../AppActions';
+
+import { Pagination, PaginationVariant } from '@patternfly/react-core';
+import { PrimaryToolbar, TableToolbar } from '@redhat-cloud-services/frontend-components';
 /* eslint camelcase: 0 */
 import React, { useCallback, useEffect, useState } from 'react';
-import { TableToolbar, PrimaryToolbar } from '@redhat-cloud-services/frontend-components';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
-import PropTypes from 'prop-types';
-import moment from 'moment';
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { Pagination, PaginationVariant } from '@patternfly/react-core';
-import { cellWidth, sortable, Table, TableBody, TableHeader } from '@patternfly/react-table';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
-import { injectIntl } from 'react-intl';
+import { Table, TableBody, TableHeader, cellWidth, sortable } from '@patternfly/react-table';
 
-import * as AppActions from '../../AppActions';
-import Loading from '../Loading/Loading';
 import Failed from '../Loading/Failed';
+import { Link } from 'react-router-dom';
+import Loading from '../Loading/Loading';
 import MessageState from '../MessageState/MessageState';
+import PropTypes from 'prop-types';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
+import { connect } from 'react-redux';
 import debounce from '../../Utilities/Debounce';
+import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
+import moment from 'moment';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
     const [cols] = useState([
@@ -30,7 +31,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
     const [limit, setLimit] = useState(10);
     const [offset, setOffset] = useState(0);
     const results = systems.meta ? systems.meta.count : 0;
-    const [searchText, setSearchText] = useState(null);
+    const [searchText, setSearchText] = useState('');
     const debouncedSearchText = debounce(searchText, 800);
 
     const onSort = useCallback((_event, index, direction) => {
@@ -55,7 +56,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
     }, []);
 
     useEffect(() => {
-        searchText !== null && fetchSystems(searchText.length && { display_name: searchText, sort });
+        fetchSystems(searchText.length && { display_name: searchText, sort });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearchText]);
 
@@ -116,6 +117,11 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
         }
     }];
 
+    const activeFiltersConfig = {
+        filters: searchText.length > 0 && [({ category: 'Description', chips: [{ name: searchText }] })] || [],
+        onDelete: () => setSearchText('')
+    };
+
     return <React.Fragment>
         <PrimaryToolbar
             pagination={{
@@ -127,6 +133,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
                 isCompact: false
             }}
             filterConfig={{ items: filterConfigItems }}
+            activeFiltersConfig={activeFiltersConfig}
         />
         {systemsFetchStatus === 'fulfilled' &&
             <Table aria-label={'rule-table'} sortBy={sortBy} onSort={onSort} cells={cols} rows={rows}>
