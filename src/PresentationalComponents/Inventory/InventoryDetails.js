@@ -1,27 +1,25 @@
-import React from 'react';
-import * as reactRouterDom from 'react-router-dom';
-import * as reactCore from '@patternfly/react-core';
-import * as reactIcons from '@patternfly/react-icons';
-import * as pfReactTable from '@patternfly/react-table';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
-import registryDecorator from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
-import { Main, PageHeader } from '@redhat-cloud-services/frontend-components';
-import { entitiesDetailsReducer } from '../../AppReducer';
-import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
-import Loading from '../../PresentationalComponents/Loading/Loading';
 import '@redhat-cloud-services/frontend-components-inventory-insights/index.css';
 
-@registryDecorator()
-class InventoryDetails extends React.Component {
-    state = { InventoryDetails: () => <Loading/> };
+import * as pfReactTable from '@patternfly/react-table';
+import * as reactCore from '@patternfly/react-core';
+import * as reactIcons from '@patternfly/react-icons';
+import * as reactRouterDom from 'react-router-dom';
 
-    componentDidMount () {
-        this.fetchInventoryDetails();
-    }
+import { Main, PageHeader } from '@redhat-cloud-services/frontend-components';
+import React, { useEffect, useState } from 'react';
 
-    async fetchInventoryDetails () {
+import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { entitiesDetailsReducer } from '../../AppReducer';
+import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+
+const InventoryDetails = ({ entity, match }) => {
+    const [InventoryDetail, setInventoryDetail] = useState();
+    const [AppInfo, setAppInfo] = useState();
+
+    const fetchInventoryDetails = async () => {
         const { inventoryConnector, mergeWithDetail, INVENTORY_ACTION_TYPES } = await insights.loadInventory({
             react: React,
             reactRouterDom,
@@ -31,42 +29,32 @@ class InventoryDetails extends React.Component {
         });
         const { InventoryDetailHead, AppInfo } = inventoryConnector();
 
-        this.getRegistry().register({
+        getRegistry().register({
             ...mergeWithDetail(entitiesDetailsReducer(INVENTORY_ACTION_TYPES))
         });
-        this.setState({
-            InventoryDetail: InventoryDetailHead, AppInfo
-        });
-    }
+        setInventoryDetail(() => InventoryDetailHead);
+        setAppInfo(() => AppInfo);
+    };
 
-    onNavigate (navigateTo) {
-        const { history } = this.props;
-        history.push(`/${navigateTo}`);
-    }
+    useEffect(() => { fetchInventoryDetails(); }, []);
 
-    render () {
-        const { InventoryDetail, AppInfo } = this.state;
-        const { entity } = this.props;
-        return (
-            <>
-                <PageHeader className="pf-m-light ins-inventory-detail">
-                    { entity && <Breadcrumbs
-                        current={ entity.display_name || entity.id }
-                        match={ this.props.match }
-                    /> }
-                    { InventoryDetail && <InventoryDetail hideBack/> }
-                </PageHeader>
-                <Main>
-                    <reactCore.Grid gutter="md">
-                        <reactCore.GridItem span={ 12 }>
-                            { AppInfo && <AppInfo/> }
-                        </reactCore.GridItem>
-                    </reactCore.Grid>
-                </Main>
-            </>
-        );
-    }
-}
+    return <React.Fragment>
+        <PageHeader className="pf-m-light ins-inventory-detail">
+            {entity && <Breadcrumbs
+                current={entity.display_name || entity.id}
+                match={match}
+            />}
+            {InventoryDetail && <InventoryDetail hideBack />}
+        </PageHeader>
+        <Main>
+            <reactCore.Grid gutter="md">
+                <reactCore.GridItem span={12}>
+                    {AppInfo && <AppInfo />}
+                </reactCore.GridItem>
+            </reactCore.Grid>
+        </Main>
+    </React.Fragment>;
+};
 
 InventoryDetails.contextTypes = {
     store: PropTypes.object
@@ -79,10 +67,9 @@ InventoryDetails.propTypes = {
     match: PropTypes.any
 };
 
-function mapStateToProps (store) {
-    return {
-        entity: store.entityDetails && store.entityDetails.entity
-    };
-}
+const mapStateToProps = ({ entityDetails, props }) => ({
+    entity: entityDetails && entityDetails.entity,
+    ...props
+});
 
 export default routerParams(connect(mapStateToProps, null)(InventoryDetails));
