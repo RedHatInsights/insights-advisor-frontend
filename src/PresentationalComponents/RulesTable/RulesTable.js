@@ -229,7 +229,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                                     intl.formatMessage(messages.rulesTableNoRuleHitsEnabledRulesBody) :
                                     intl.formatMessage(messages.rulesTableNoRuleHitsAnyRulesBody)}>
                                 {filters.reports_shown && <Button variant="link" style={{ paddingTop: 24 }} onClick={() => {
-                                    setFilters({ ...filters, reports_shown: undefined });
+                                    toggleRulesDisabled('undefined');
                                     fetchAction();
                                 }}>
                                     {intl.formatMessage(messages.rulesTableNoRuleHitsAddDisabledButton)}
