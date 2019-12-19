@@ -23,11 +23,13 @@ const ViewHostAcks = ({ fetchHostAcks, hostAcksFetchStatus, handleModalToggle, i
         ''
     ];
     const [rows, setRows] = useState([]);
+    const [unclean, setUnclean] = useState(false);
 
     const deleteAck = async (host) => {
         try {
             await API.delete(`${BASE_URL}/hostack/${host.id}/`);
             fetchHostAcks({ rule_id: rule.rule_id, limit: rule.hosts_acked_count });
+            setUnclean(true);
         } catch (error) {
             handleModalToggle(false);
             addNotification({
@@ -69,7 +71,7 @@ const ViewHostAcks = ({ fetchHostAcks, hostAcksFetchStatus, handleModalToggle, i
         width={'50%'}
         title={intl.formatMessage(messages.hostAckModalTitle)}
         isOpen={isModalOpen}
-        onClose={() => { afterFn(); handleModalToggle(false); }}
+        onClose={() => { unclean && afterFn(); handleModalToggle(false); }}
         isFooterLeftAligned
     >
         {hostAcksFetchStatus === 'fulfilled' && <Table aria-label="host-ack-table" rows={rows} cells={columns}>
