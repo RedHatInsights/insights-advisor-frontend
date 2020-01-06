@@ -16,7 +16,7 @@ const RuleRating = ({ intl, rule }) => {
     const [submitted, setSubmitted] = useState(false);
     const [thankYou, setThankYou] = useState(intl.formatMessage(messages.feedbackThankyou));
     const updateRuleRating = async (newRating) => {
-        const calculatedRating = rating === 0 ? newRating : 0;
+        const calculatedRating = rating === newRating  ? 0 : newRating;
         try {
             await API.post(`${AppConstants.BASE_URL}/rating/`, {}, { rule: rule.rule_id, rating: calculatedRating });
             setRating(calculatedRating);
