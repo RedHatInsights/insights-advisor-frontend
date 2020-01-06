@@ -29,10 +29,10 @@ const RuleRating = ({ intl, rule }) => {
 
     return <span className='ratingSpanOverride'>
         {intl.formatMessage(messages.ruleHelpful)}
-        <Button variant="plain" aria-label="Action" onClick={() => updateRuleRating(1)}>
+        <Button variant="plain" aria-label="thumbs-up" onClick={() => updateRuleRating(1)}>
             <OutlinedThumbsUpIcon className={rating === 1 && 'like' || ''} size='sm' />
         </Button>
-        <Button variant="plain" aria-label="Action" onClick={() => updateRuleRating(-1)}>
+        <Button variant="plain" aria-label="thumbs-down" onClick={() => updateRuleRating(-1)}>
             <OutlinedThumbsDownIcon className={rating === -1 && 'dislike' || ''} size='sm' />
         </Button>
         {submitted && thankYou}
