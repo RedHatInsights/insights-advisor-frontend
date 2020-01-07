@@ -4,7 +4,7 @@ import * as reactCore from '@patternfly/react-core';
 import * as reactIcons from '@patternfly/react-icons';
 import * as reactRouterDom from 'react-router-dom';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { AnsibeTowerIcon } from '@patternfly/react-icons';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
@@ -19,6 +19,7 @@ import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification, items, afterDisableFn }) => {
+    const inventory = useRef(null);
     const [InventoryTable, setInventoryTable] = useState();
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(50);
@@ -46,9 +47,12 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
         setInventoryTable(() => InventoryTable);
     };
 
-    const onRefresh = ({ page, per_page: perPage }) => {
-        setPage(page);
-        setPageSize(perPage);
+    const onRefresh = (options) => {
+        setPage(options.page);
+        setPageSize(options.per_page);
+        if (inventory && inventory.current) {
+            inventory.current.onRefreshData(options);
+        }
     };
 
     const remediationDataProvider = () => ({
@@ -94,6 +98,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
             hosts={selected} />
         }
         {InventoryTable && <InventoryTable
+            ref={inventory}
             items={items}
             onRefresh={onRefresh}
             page={page}
