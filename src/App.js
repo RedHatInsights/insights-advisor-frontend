@@ -32,7 +32,7 @@ const App = (props) => {
 
     useEffect(() => {
         const baseComponentUrl = props.location.pathname.split('/')[1];
-        baseComponentUrl && appNavClick[baseComponentUrl](false);
+        insights && insights.chrome && baseComponentUrl && appNavClick[baseComponentUrl](false);
     }, [appNavClick, props.location]);
 
     return (auth && <Routes childProps={props} />);
