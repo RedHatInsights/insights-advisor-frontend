@@ -92,8 +92,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     const toggleRulesDisabled = (param) => {
         const reports_shown = param === 'undefined' ? undefined : param;
-        setFilters({ ...filters, reports_shown, ...(reports_shown === 'false' && { impacting: false }) });
-        reports_shown === 'false' && setImpacting(false);
+        setFilters({ ...filters, reports_shown, ...(reports_shown !== 'true' && { impacting: false }) });
+        reports_shown !== 'true' && setImpacting(false);
         setOffset(0);
     };
 
