@@ -27,7 +27,9 @@ const SummaryChart = ({ reportsTotalRisk, rulesTotalRisk, intl }) => {
                 numIssues={value}
                 affectedSystems={totalIssues[key]} />;
         } else {
-            noHits.push(intl.formatMessage(messages.summaryChartItemNoHits, { severity: translatedTotalRisk }) + ' ');
+            noHits.push(<span id={`${translatedTotalRisk}`}>
+                {intl.formatMessage(messages.summaryChartItemNoHits, { severity: translatedTotalRisk }) + ' '}
+            </span>);
         }
     });
     const rulesWithHits = hitsBuilder(rulesTotalRisk, reportsTotalRisk).reverse();

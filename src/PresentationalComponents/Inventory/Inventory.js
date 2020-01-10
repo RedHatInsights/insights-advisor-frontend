@@ -19,11 +19,11 @@ import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 let page = 1;
+let pageSize = 50;
 let rule_id = '';
 const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification, items, afterDisableFn }) => {
     const inventory = useRef(null);
     const [InventoryTable, setInventoryTable] = useState();
-    const [pageSize, setPageSize] = useState(50);
     const [selected, setSelected] = useState([]);
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [bulkSelect, setBulkSelect] = useState();
@@ -49,11 +49,14 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
     };
 
     const onRefresh = (options) => {
-        setPageSize(options.per_page);
-        rule_id !== rule.rule_id && (page = 1);
+        if (rule_id !== rule.rule_id) {
+            page = 1;
+            pageSize = 50;
+        }
 
         if (inventory && inventory.current) {
             page = options.page;
+            pageSize = options.per_page;
             rule_id = rule.rule_id;
             inventory.current.onRefreshData(options);
         }
