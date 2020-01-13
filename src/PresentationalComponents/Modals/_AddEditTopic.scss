@@ -1,0 +1,26 @@
+.text-area-override {
+    max-width: 30em;
+    min-height: 8em;
+    max-height: 12em;
+}
+
+.text-input-override {
+    width: 22em;
+    display: inline;
+}
+
+.radio-override {
+    padding-left: 5px;
+}
+
+.checkbox-override {
+    padding-left: 5px;
+}
+
+.split-override {
+    width: 100%;
+}
+
+.modal-width-override {
+    width: 60%;
+}
