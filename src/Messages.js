@@ -254,6 +254,16 @@ export default defineMessages({
         description: 'Featured',
         defaultMessage: 'Featured'
     },
+    status: {
+        id: 'status',
+        description: 'Status',
+        defaultMessage: 'Status'
+    },
+    label: {
+        id: 'label',
+        description: 'Label',
+        defaultMessage: 'Label'
+    },
     topicCardSystemsaffected: {
         id: 'topiccard.systemsaffected',
         description: 'Topic card, systems affected text',
@@ -361,6 +371,11 @@ export default defineMessages({
         description: 'Read less',
         defaultMessage: 'Read less'
     },
+    deleteTopic: {
+        id: 'deleteTopic',
+        description: 'Used for Button in Edit Topic Modal',
+        defaultMessage: 'Delete topic'
+    },
     topicDetailslNodetailsTitle: {
         id: 'topicdetails.nodetails.title',
         description: 'Topic details, title when none are present or exist',
@@ -371,10 +386,70 @@ export default defineMessages({
         description: 'Topic details, body when none are present or exist',
         defaultMessage: 'There exist no further details for this topic.'
     },
+    title: {
+        id: 'title',
+        description: 'Used in the topics admin table title column, identifying display title of a topic',
+        defaultMessage: 'Title'
+    },
+    tag: {
+        id: 'tag',
+        description: 'Used in the topics admin table tag column, identifying display tag for a topic',
+        defaultMessage: 'Tag'
+    },
+    topicAddEditDescription: {
+        id: 'topicAddEditDescription',
+        description: 'description header for TopicAddEdit Modal',
+        defaultMessage: 'Description'
+    },
+    topicAddEditDescriptionHelperText: {
+        id: 'topicAddEditDescriptionHelperText',
+        description: 'helper text for description text area on TopicAddEdit Modal',
+        defaultMessage: 'Shown to users to describe the topic'
+    },
+    topicAddEditDisabled: {
+        id: 'topicAddEditDisabled',
+        description: 'Disabled label in TopicAddEdit radio buttons',
+        defaultMessage: 'Disabled (not visible)'
+    },
+    topicAddEditEnabled: {
+        id: 'topicAddEditEnabled',
+        description: 'Enabled label in TopicAddEdit radio buttons',
+        defaultMessage: 'Enabled (visible)'
+    },
+    topicAddEditFeatureBox: {
+        id: 'topicAddEditFeatureBox',
+        description: 'label for feature checkbox in TopicAddEdit Modal',
+        defaultMessage: 'Feature this topic'
+    },
+    topicAddEditTagHelperText: {
+        id: 'topicAddEditLabelHelperText',
+        description: 'helper text for tag text input in TopicAddEdit Modal',
+        defaultMessage: 'Rules tagged with this tag will be added to the topic'
+    },
+    topicAdminCreate: {
+        id: 'topicAdminCreate',
+        description: 'Create Label',
+        defaultMessage: 'Create new topic'
+    },
+    topicAdminEdit: {
+        id: 'topicAdminEdit',
+        description: 'Edit Label',
+        defaultMessage: 'Edit topic'
+    },
+    topicAdminTitle: {
+        id: 'topicAdminTitle',
+        description: 'The title for the Topic Admin page',
+        defaultMessage: 'Topic - administration'
+    },
     topics: {
         id: 'topics',
         description: 'Topics Title',
         defaultMessage: 'Topics'
+    },
+    topicSlug: {
+        id: 'topicslug',
+        description: 'Used in the topics admin table slug column, identifying display slug for a topic',
+        defaultMessage: 'Slug'
     },
     topicsListNotopicsTitle: {
         id: 'topicslist.notopics.title',

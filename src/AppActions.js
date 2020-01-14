@@ -42,6 +42,10 @@ export const fetchTopics = () => ({
     type: ActionTypes.TOPICS_FETCH,
     payload: fetchData(ActionTypes.TOPICS_FETCH_URL)
 });
+export const fetchTopicsAdmin = () => ({
+    type: ActionTypes.TOPICS_FETCH,
+    payload: fetchData(`${ActionTypes.TOPICS_FETCH_URL}?show_disabled=true`)
+});
 export const fetchTopic = (options) => ({
     type: ActionTypes.TOPIC_FETCH,
     payload: fetchData(`${ActionTypes.TOPICS_FETCH_URL}${options.topic_id}/`)
