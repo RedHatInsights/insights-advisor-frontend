@@ -454,7 +454,7 @@ export default defineMessages({
     topicsListNotopicsTitle: {
         id: 'topicslist.notopics.title',
         description: 'Topics list, no topics title',
-        defaultMessage: 'There was an issue fetching topics'
+        defaultMessage: 'No topics'
     },
     topicsListNotopicsBody: {
         id: 'topicslist.notopics.body',
@@ -501,15 +501,15 @@ export default defineMessages({
         description: 'Used in the system table title column, the last time a system has checked in',
         defaultMessage: 'Last seen'
     },
-    systemTableNoHitsTitle: {
-        id: 'systemtable.nohits.title',
-        description: 'System table, no hits message, title',
-        defaultMessage: 'No matching systems found'
+    noHitsTitle: {
+        id: 'nohits.title',
+        description: 'No hits message, title',
+        defaultMessage: 'No matching {item} found'
     },
-    systemTableNoHitsEnabledRulesBody: {
-        id: 'systemtable.nohits.enabledrulesbody',
-        description: 'System table, no  hits messags, body',
-        defaultMessage: 'The filter criteria matches no systems. Try changing your filter settings.'
+    noHitsBody: {
+        id: 'nohits.body',
+        description: 'No hits messags, body',
+        defaultMessage: 'The filter criteria matches no {item}. Try changing your filter settings.'
     },
     search: {
         id: 'search',

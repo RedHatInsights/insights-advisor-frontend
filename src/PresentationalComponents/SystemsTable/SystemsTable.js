@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import Loading from '../Loading/Loading';
 import MessageState from '../MessageState/MessageState';
 import PropTypes from 'prop-types';
+import { SearchIcon } from '@patternfly/react-icons';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
 import debounce from '../../Utilities/Debounce';
@@ -77,10 +78,9 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
             if (!systems.meta.count) {
                 setRows([{
                     cells: [{
-                        title: (
-                            <MessageState icon='none' title={intl.formatMessage(messages.systemTableNoHitsTitle)}
-                                text={intl.formatMessage(messages.systemTableNoHitsEnabledRulesBody)}>
-                            </MessageState>),
+                        title: (<MessageState icon={SearchIcon}
+                            title={intl.formatMessage(messages.noHitsTitle, { item: intl.formatMessage(messages.systems).toLowerCase() })}
+                            text={intl.formatMessage(messages.noHitsBody, { item: intl.formatMessage(messages.systems).toLowerCase() })} />),
                         props: { colSpan: 5 }
                     }]
                 }]);
