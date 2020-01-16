@@ -88,7 +88,7 @@ const TopicsTable = ({ topics, topicsFetchStatus, intl }) => {
                                 <MessageState icon={SearchIcon}
                                     title={intl.formatMessage(messages.noHitsTitle, { item: intl.formatMessage(messages.topics).toLowerCase() })}
                                     text={intl.formatMessage(messages.noHitsBody, { item: intl.formatMessage(messages.topics).toLowerCase() })} />),
-                            props: { colSpan: 3 }
+                            props: { colSpan: 4 }
                         }]
                     }])
                     }
