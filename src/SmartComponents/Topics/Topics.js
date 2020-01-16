@@ -8,8 +8,8 @@ const Details = asyncComponent(() => import(/* webpackChunkName: "TopicDetails" 
 const Admin = asyncComponent(() => import(/* webpackChunkName: "TopicAdmin" */ '../../PresentationalComponents/TopicsAdminTable/TopicsAdminTable'));
 
 const Topics = () => {
-    const [isInternal, setIsInternal] = useState({});
-    useEffect(() => { insights.chrome.auth.getUser().then((data) => setIsInternal(data.identity.internal)); }, []);
+    const [isInternal, setIsInternal] = useState(false);
+    useEffect(() => { insights.chrome.auth.getUser().then((data) => setIsInternal(data.identity.user.is_internal)); }, []);
 
     return <React.Fragment>
         <Switch>
