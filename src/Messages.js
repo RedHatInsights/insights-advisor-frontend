@@ -349,7 +349,17 @@ export default defineMessages({
     overviewActionCallNoSystemsAction: {
         id: 'overview.actioncallnosystems.action',
         description: 'Overview, action call link for when there are no systems',
-        defaultMessage: 'Get started'
+        defaultMessage: 'Getting started documentation'
+    },
+    installClient: {
+        id: 'installClient',
+        description: 'Install the client on the RHEL system',
+        defaultMessage: 'Install the client on the RHEL system.'
+    },
+    registerSystem: {
+        id: 'registerSystem',
+        description: 'Register the system to Red Hat Insights',
+        defaultMessage: 'Register the system to Red Hat Insights.'
     },
     rulesDetailsPubishdate: {
         id: 'rulesdetails.publishdate',

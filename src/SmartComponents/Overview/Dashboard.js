@@ -1,23 +1,24 @@
 /* eslint camelcase: 0 */
-import React, { Component } from 'react';
-import asyncComponent from '../../Utilities/asyncComponent';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Button, Flex, FlexItem, Level, LevelItem, Title } from '@patternfly/react-core';
-import { Main, PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
-import { global_Color_100, global_primary_color_100 } from '@patternfly/react-tokens';
-import { ChartSpikeIcon } from '@patternfly/react-icons';
-import { injectIntl } from 'react-intl';
-
-import * as AppActions from '../../AppActions';
-import Loading from '../../PresentationalComponents/Loading/Loading';
-import MessageState from '../../PresentationalComponents/MessageState/MessageState';
-import { ANSIBLE_MARK_ICON, GLOBAL_ECONSYSTEM_ICON, SERVER_STACK_ICON } from '../../AppSvgs';
-import messages from '../../Messages';
-
 import '../../App.scss';
 import './Dashboard.scss';
+
+import * as AppActions from '../../AppActions';
+
+import { ANSIBLE_MARK_ICON, GLOBAL_ECONSYSTEM_ICON, SERVER_STACK_ICON } from '../../AppSvgs';
+import { Bullseye, Button, ClipboardCopy, Flex, FlexItem, Level, LevelItem, Stack, StackItem, Title } from '@patternfly/react-core';
+import { Main, PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
+import React, { Component } from 'react';
+import { global_Color_100, global_primary_color_100 } from '@patternfly/react-tokens';
+
+import { ChartSpikeIcon } from '@patternfly/react-icons';
+import Loading from '../../PresentationalComponents/Loading/Loading';
+import MessageState from '../../PresentationalComponents/MessageState/MessageState';
+import PropTypes from 'prop-types';
+import asyncComponent from '../../Utilities/asyncComponent';
+import { connect } from 'react-redux';
+import { injectIntl } from 'react-intl';
+import messages from '../../Messages';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/Charts/SummaryChart/SummaryChart'));
 const OverviewDonut = asyncComponent(() => import('../../PresentationalComponents/Charts/OverviewDonut'));
@@ -154,6 +155,18 @@ class OverviewDashboard extends Component {
                         text={<span key='1'>
                             {intl.formatMessage(messages.overviewActionCallNoSystemsBody, { break() { return <br />; } })}
                         </span>}>
+                        <Bullseye>
+                            <Stack gutter="md">
+                                <StackItem>
+                                    1. {intl.formatMessage(messages.installClient)}
+                                    <ClipboardCopy>yum install insights-client</ClipboardCopy>
+                                </StackItem>
+                                <StackItem>
+                                    2. {intl.formatMessage(messages.registerSystem)}
+                                    <ClipboardCopy>insights-client --register</ClipboardCopy>
+                                </StackItem>
+                            </Stack>
+                        </Bullseye>
                         <Button component="a" href="https://access.redhat.com/products/red-hat-insights#getstarted"
                             target="_blank" variant="primary">
                             {intl.formatMessage(messages.overviewActionCallNoSystemsAction)}
