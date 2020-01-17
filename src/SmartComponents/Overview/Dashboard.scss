@@ -18,3 +18,11 @@
 .maxWidthOverride {
   max-width: 400px;
 }
+
+.pf-c-clipboard-copy__group-copy {
+  background-color: var(--pf-global--BackgroundColor--100);
+}
+
+.pf-l-stack {
+  color: var(--pf-c-empty-state__body--Color);
+}
