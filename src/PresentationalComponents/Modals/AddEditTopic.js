@@ -38,7 +38,7 @@ const AddEditTopic = ({ handleModalToggle, intl, isModalOpen, topic, addNotifica
             if (type === 'DELETE') {
                 await API.delete(`${BASE_URL}/topic/${slug}`);
             } else if (topic.slug) {
-                await API.put(`${BASE_URL}/topic/${slug}`, data, {});
+                await API.put(`${BASE_URL}/topic/${slug}/`, data);
             } else {
                 await API.post(`${BASE_URL}/topic/`, {}, data);
             }
