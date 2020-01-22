@@ -1,15 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { injectIntl } from 'react-intl';
+import './_breadcrumbs.scss';
 
 import * as AppActions from '../../AppActions';
-import './_breadcrumbs.scss';
+
+import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
+import React, { useCallback, useEffect, useState } from 'react';
+
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl }) => {
     const [items, setItems] = useState([]);
@@ -21,11 +23,8 @@ const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl })
         // add rules base
         crumbs.push({ title: splitUrl[1], navigate: `/${splitUrl[1]}` });
         // if applicable, add tab
-        if (splitUrl[1] === 'rules') {
-            splitUrl[1] + splitUrl[2] !== 'rulessystems' ?
-                crumbs.push({ title: intl.formatMessage(messages.rules), navigate: '/rules' })
-                : crumbs.push({ title: intl.formatMessage(messages.systems), navigate: '/rules/systems' });
-        }
+        splitUrl[1] === 'rules' && splitUrl[1] + splitUrl[2] === 'rulessystems' &&
+            crumbs.push({ title: intl.formatMessage(messages.systems), navigate: '/rules/systems' });
 
         // if applicable, add :id breadcrumb
         if (match.params.id !== undefined && match.params.inventoryId !== undefined) {
