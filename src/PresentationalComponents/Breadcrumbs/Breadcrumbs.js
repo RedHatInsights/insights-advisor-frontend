@@ -1,15 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { injectIntl } from 'react-intl';
-
 import * as AppActions from '../../AppActions';
-import './_breadcrumbs.scss';
+
+import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
+import React, { useCallback, useEffect, useState } from 'react';
+
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+
+const titleCase = str => str.charAt(0).toUpperCase() + str.toLowerCase().substr(1);
 
 const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl }) => {
     const [items, setItems] = useState([]);
@@ -19,7 +21,7 @@ const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl })
         const splitUrl = match.url.split('/');
 
         // add rules base
-        crumbs.push({ title: splitUrl[1], navigate: `/${splitUrl[1]}` });
+        crumbs.push({ title: titleCase(splitUrl[1]), navigate: `/${splitUrl[1]}` });
         // if applicable, add tab
         if (splitUrl[1] === 'rules') {
             splitUrl[1] + splitUrl[2] !== 'rulessystems' ?
@@ -30,7 +32,7 @@ const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl })
         // if applicable, add :id breadcrumb
         if (match.params.id !== undefined && match.params.inventoryId !== undefined) {
             crumbs.push({
-                title: rule.description,
+                title: titleCase(rule.description),
                 navigate: `/${match.url.split('/')[1]}/${match.params.id}`
             });
         }
@@ -58,10 +60,10 @@ const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl })
                 <Breadcrumb>
                     {items.map((oneLink, key) => (
                         <BreadcrumbItem key={key}>
-                            <Link to={oneLink.navigate}>{oneLink.title}</Link>
+                            <Link to={oneLink.navigate}>{titleCase(oneLink.title)}</Link>
                         </BreadcrumbItem>
                     ))}
-                    <BreadcrumbItem isActive>{current}</BreadcrumbItem>
+                    <BreadcrumbItem isActive>{titleCase(current)}</BreadcrumbItem>
                 </Breadcrumb>
             )}
             {ruleFetchStatus === 'pending' && intl.formatMessage(messages.loading)}
