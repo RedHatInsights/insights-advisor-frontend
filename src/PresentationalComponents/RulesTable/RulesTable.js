@@ -149,7 +149,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const buildFilterChips = () => {
         const localFilters = { ...filters };
         delete localFilters.impacting;
-        delete localFilters.reports_shown;
         delete localFilters.topic;
         delete localFilters.sort;
         const prunedFilters = Object.entries(localFilters);
