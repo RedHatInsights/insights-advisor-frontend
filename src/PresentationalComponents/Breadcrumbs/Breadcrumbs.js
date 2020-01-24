@@ -11,7 +11,7 @@ import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
-const titleCase = str => str.charAt(0).toUpperCase() + str.toLowerCase().substr(1);
+const titleCase = (str = '') => str.charAt(0).toUpperCase() + str.toLowerCase().substr(1);
 
 const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl }) => {
     const [items, setItems] = useState([]);
