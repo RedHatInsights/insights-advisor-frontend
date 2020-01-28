@@ -93,7 +93,6 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
     }, [rows]);
 
     useEffect(() => {
-        rule_id = '';
         loadInventory();
     }, []);
 
