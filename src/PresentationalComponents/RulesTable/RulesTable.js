@@ -187,8 +187,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 : paramsObject.reports_shown;
             paramsObject.sort = paramsObject.sort === undefined ? '-publish_date'
                 : paramsObject.sort[0];
-            paramsObject.incident === undefined && (paramsObject.incident = true);
-            !Array.isArray(paramsObject.incident) && (paramsObject.incident = [`${paramsObject.incident}`]);
+            paramsObject.incident !== undefined && !Array.isArray(paramsObject.incident) && (paramsObject.incident = [`${paramsObject.incident}`]);
 
             setImpacting(paramsObject.impacting);
             setFilters({ ...paramsObject });
@@ -435,7 +434,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         filters: buildFilterChips(),
         onDelete: (event, itemsToRemove, isAll) => {
             if (isAll) {
-                setFilters({ ...(filters.topic && { topic: filters.topic }), impacting: true, reports_shown: 'true', incident: ['true'] });
+                setFilters({ ...(filters.topic && { topic: filters.topic }), impacting: true, reports_shown: 'true' });
             } else {
                 itemsToRemove.map(item => {
                     const newFilter = {
