@@ -3,8 +3,8 @@ import './Details.scss';
 
 import * as AppActions from '../../AppActions';
 
+import { BellSlashIcon, CaretDownIcon } from '@patternfly/react-icons';
 import {
-    Badge,
     Button,
     Card,
     CardBody,
@@ -17,7 +17,6 @@ import {
     FlexItem,
     Title
 } from '@patternfly/react-core';
-import { BellSlashIcon, CaretDownIcon } from '@patternfly/react-icons';
 import { DateFormat, Main, PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
 import React, { useEffect, useState } from 'react';
 
@@ -31,6 +30,7 @@ import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import PropTypes from 'prop-types';
 import RuleDetails from '../../PresentationalComponents/RuleDetails/RuleDetails';
+import RuleLabels from '../../PresentationalComponents/RuleLabels/RuleLabels';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
@@ -132,13 +132,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                 <Main className='pf-m-light pf-u-pt-sm'>
                     <RuleDetails isDetailsPage rule={rule} topics={topics} header={
                         <React.Fragment>
-                            <PageHeaderTitle title={<span>
-                                {!rule.reports_shown && <Badge isRead>
-                                    <BellSlashIcon size='md' />&nbsp;
-                                    {intl.formatMessage(messages.disabled)}
-                                </Badge>}
-                                {rule.description}
-                            </span>} />
+                            <PageHeaderTitle title={<React.Fragment><RuleLabels rule={rule} />{rule.description}</React.Fragment>} />
                             <p>{intl.formatMessage(
                                 messages.rulesDetailsPubishdate, { date: <DateFormat date={new Date(rule.publish_date)} type="onlyDate" /> }
                             )}</p>

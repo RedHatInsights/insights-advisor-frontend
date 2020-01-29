@@ -67,6 +67,11 @@ export default defineMessages({
         description: 'Exclaiming that the rule is disabled',
         defaultMessage: 'Rule is disabled'
     },
+    ruleIsDisabledTooltip: {
+        id: 'ruleIsDisabledTooltip',
+        description: 'Disabled badge tooltip explaining the meaning of a disabled rule',
+        defaultMessage: 'Indicates hits for this rule across all systems will not be shown in reports and dashboards.'
+    },
     ruleIsDisabledBody: {
         id: 'ruleIsDisabledBody',
         description: 'Explaining that the rule is disabled',
@@ -690,5 +695,25 @@ export default defineMessages({
         id: 'all',
         description: 'All',
         defaultMessage: 'All'
+    },
+    incidentRules: {
+        id: 'incidentRules',
+        description: 'Rules with incidents',
+        defaultMessage: 'Incident rules'
+    },
+    nonIncidentRules: {
+        id: 'nonIncidentRules',
+        description: 'Rules with no incidents',
+        defaultMessage: 'Non-incident rules'
+    },
+    incident: {
+        id: 'incident',
+        description: 'Incident',
+        defaultMessage: 'Incident'
+    },
+    incidentTooltip: {
+        id: 'incidentTooltip',
+        description: 'Incident badge tooltip text',
+        defaultMessage: 'Indicates configurations that are currently affecting your systems.'
     }
 });

@@ -1,12 +1,12 @@
+/* eslint camelcase: 0 */
 import './_RulesTable.scss';
 
 import * as AppActions from '../../AppActions';
 import * as AppConstants from '../../AppConstants';
 
 import { AnsibeTowerIcon, BellSlashIcon, CheckCircleIcon, CheckIcon } from '@patternfly/react-icons';
-import { Badge, Button, Pagination, PaginationVariant, Stack, StackItem, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Battery, Main, PrimaryToolbar, TableToolbar } from '@redhat-cloud-services/frontend-components';
-/* eslint camelcase: 0 */
+import { Button, Pagination, PaginationVariant, Stack, StackItem, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Table, TableBody, TableHeader, cellWidth, sortable } from '@patternfly/react-table';
 
@@ -20,6 +20,7 @@ import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../MessageState/MessageState';
 import PropTypes from 'prop-types';
 import RuleDetails from '../RuleDetails/RuleDetails';
+import RuleLabels from '../RuleLabels/RuleLabels';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
@@ -59,8 +60,14 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     // transforms array of strings -> comma seperated strings, required by advisor api
     const filterFetchBuilder = (filters) => (Object.assign({},
-        ...Object.entries(filters).map((filter) => (Array.isArray(filter[1]) ? { [filter[0]]: filter[1].join() }
-            : { [filter[0]]: filter[1] })))
+        ...Object.entries(filters).map((filter) => {
+            const filterName = filter[0];
+            const filterValue = filter[1];
+
+            return (Array.isArray(filterValue) ?
+                (filterValue[0] === 'true' || 'false') && filterValue.length > 1 ? null : { [filterName]: filterValue.join() }
+                : { [filterName]: filterValue });
+        }))
     );
 
     const fetchRulesFn = () => {
@@ -180,6 +187,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 : paramsObject.reports_shown;
             paramsObject.sort = paramsObject.sort === undefined ? '-publish_date'
                 : paramsObject.sort[0];
+            paramsObject.incident === undefined && (paramsObject.incident = true);
+            !Array.isArray(paramsObject.incident) && (paramsObject.incident = [`${paramsObject.incident}`]);
 
             setImpacting(paramsObject.impacting);
             setFilters({ ...paramsObject });
@@ -246,9 +255,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                     cells: [{
                         title:
                             <span key={key}>
-                                {!value.reports_shown && <Badge isRead>
-                                    <BellSlashIcon size='md' />&nbsp;
-                                    {intl.formatMessage(messages.disabled)}</Badge>}
+                                <RuleLabels rule={value} />
                                 <Link key={key} to={`/rules/${value.rule_id}`}> {value.description} </Link>
                             </span>
                     }, {
@@ -401,6 +408,17 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             items: FC.category.values
         }
     }, {
+        label: FC.incident.title,
+        type: FC.incident.type,
+        id: FC.incident.urlParam,
+        value: `checkbox-${FC.incident.urlParam}`,
+        filterValues: {
+            key: `${FC.incident.urlParam}-filter`,
+            onChange: (event, values) => addFilterParam(FC.incident.urlParam, values),
+            value: filters.incident,
+            items: FC.incident.values
+        }
+    }, {
         label: FC.reports_shown.title,
         type: FC.reports_shown.type,
         id: FC.reports_shown.urlParam,
@@ -417,7 +435,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         filters: buildFilterChips(),
         onDelete: (event, itemsToRemove, isAll) => {
             if (isAll) {
-                setFilters({ ...(filters.topic && { topic: filters.topic }), impacting: true, reports_shown: 'true' });
+                setFilters({ ...(filters.topic && { topic: filters.topic }), impacting: true, reports_shown: 'true', incident: ['true'] });
             } else {
                 itemsToRemove.map(item => {
                     const newFilter = {

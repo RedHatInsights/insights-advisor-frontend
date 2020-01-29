@@ -124,6 +124,12 @@ export const FILTER_CATEGORIES = {
             { label: intlHelper(intl.formatMessage(messages.security), intlSettings), value: `${RULE_CATEGORIES.security}` }
         ]
     },
+    incident: {
+        type: 'checkbox', title: 'Incident rules', urlParam: 'incident', values: [
+            { label: intlHelper(intl.formatMessage(messages.incidentRules), intlSettings), value: 'true' },
+            { label: intlHelper(intl.formatMessage(messages.nonIncidentRules), intlSettings), value: 'false' }
+        ]
+    },
     reports_shown: {
         type: 'radio', title: 'Rule status', urlParam: 'reports_shown', values: [
             { label: intlHelper(intl.formatMessage(messages.all), intlSettings), value: 'undefined' },
