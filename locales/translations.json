@@ -12,6 +12,7 @@
   "disableRuleBody": "Disabling a rule means that hits for this rule across all systems will not be shown in reports and dashboards.",
   "disableRuleSingleSystem": "Disable only for this system",
   "ruleIsDisabled": "Rule is disabled",
+  "ruleIsDisabledTooltip": "Indicates hits for this rule across all systems will not be shown in reports and dashboards.",
   "ruleIsDisabledBody": "This rule has been disabled and has no results.",
   "ruleIsDisabledJustification": "This rule has been disabled for all systems for the following reason: ",
   "ruleIsDisabledForSystems": "Rule is disabled for some systems",
@@ -134,5 +135,9 @@
   "viewAffectedSystems": "View {systems, plural, one {the affected system.} other {# affected systems.}}",
   "ruleHelpful": "Is this rule helpful?",
   "feedbackThankyou": "Thank you for your feedback!",
-  "all": "All"
+  "all": "All",
+  "incidentRules": "Incident rules",
+  "nonIncidentRules": "Non-incident rules",
+  "incident": "Incident",
+  "incidentTooltip": "Indicates configurations that are currently affecting your systems."
 }

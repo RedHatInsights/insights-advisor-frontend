@@ -19,7 +19,7 @@ const initialState = Immutable({
     systemFetchStatus: '',
     systemtype: {},
     systemtypeFetchStatus: '',
-    filters: { impacting: true, reports_shown: 'true', sort: '-publish_date' },
+    filters: { impacting: true, reports_shown: 'true', sort: '-publish_date', incident: ['true'] },
     topic: {},
     topicFetchStatus: '',
     topics: [],
