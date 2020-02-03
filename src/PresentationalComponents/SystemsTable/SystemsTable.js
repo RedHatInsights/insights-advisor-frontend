@@ -1,10 +1,11 @@
+/* eslint camelcase: 0 */
 import * as AppActions from '../../AppActions';
 
 import { Pagination, PaginationVariant } from '@patternfly/react-core';
 import { PrimaryToolbar, TableToolbar } from '@redhat-cloud-services/frontend-components';
-/* eslint camelcase: 0 */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableHeader, cellWidth, sortable } from '@patternfly/react-table';
+import { paramParser, urlBuilder } from '../Common/Tables';
 
 import Failed from '../Loading/Failed';
 import { Link } from 'react-router-dom';
@@ -20,7 +21,7 @@ import messages from '../../Messages';
 import moment from 'moment';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
-const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
+const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters, setFilters, history }) => {
     const [cols] = useState([
         { title: intl.formatMessage(messages.name), transforms: [sortable] },
         { title: intl.formatMessage(messages.numberRuleHits), transforms: [sortable, cellWidth(15)] },
@@ -28,50 +29,76 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
     ]);
     const [rows, setRows] = useState([]);
     const [sortBy, setSortBy] = useState({});
-    const [sort, setSort] = useState('-last_seen');
     const [limit, setLimit] = useState(10);
     const [offset, setOffset] = useState(0);
     const results = systems.meta ? systems.meta.count : 0;
-    const [searchText, setSearchText] = useState('');
+    const [searchText, setSearchText] = useState(filters.display_name || '');
     const debouncedSearchText = debounce(searchText, 800);
+    const [filterBuilding, setFilterBuilding] = useState(true);
 
-    const onSort = useCallback((_event, index, direction) => {
-        const attrIndex = {
-            0: 'display_name',
-            1: 'hits',
-            2: 'last_seen'
-        };
-        const orderParam = `${direction === 'asc' ? '' : '-'}${attrIndex[index]}`;
+    const sortIndices = {
+        0: 'display_name',
+        1: 'hits',
+        2: 'last_seen'
+    };
+
+    const onSort = (_event, index, direction) => {
+        const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
         setSortBy({ index, direction });
-        setSort(orderParam);
+        setFilters({ ...filters, sort: orderParam });
         setOffset(0);
-    }, [setSort, setSortBy, setOffset]);
+    };
 
     const onSetPage = (pageNumber) => {
         const newOffset = pageNumber * limit - limit;
         setOffset(newOffset);
     };
 
-    const fetchAction = useCallback(() => {
-        setOffset(0);
-    }, []);
+    useEffect(() => {
+        filters.display_name === undefined ? setSearchText('') : setSearchText(filters.display_name);
+    }, [filters.display_name]);
 
     useEffect(() => {
-        fetchSystems(searchText.length && { display_name: searchText, sort });
+        const filter = { ...filters };
+        const text = searchText.length ? { display_name: searchText } : {};
+        delete filter.display_name;
+        setFilters({ ...filter, ...text });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearchText]);
 
     useEffect(() => {
-        fetchSystems({
-            offset,
-            limit,
-            sort
-        });
-    }, [fetchSystems, limit, offset, sort]);
+        if (history.location.search) {
+            const paramsObject = paramParser(history);
+            paramsObject.sort !== undefined && (paramsObject.sort = paramsObject.sort[0]);
+            paramsObject.display_name !== undefined && (paramsObject.display_name = paramsObject.display_name[0]);
+            setFilters({ ...paramsObject });
+            setFilterBuilding(false);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
-        !rows.length && onSort(null, 2, 'desc');
-    }, [onSort, rows.length]);
+        urlBuilder(filters, history);
+    }, [filters, history]);
+
+    useEffect(() => {
+        if (filters.sort !== undefined) {
+            const sortIndex = Number(Object.entries(sortIndices).find(item => item[1] === filters.sort || `-${item[1]}` === filters.sort)[0]);
+            const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
+            setSortBy({ index: sortIndex, direction: sortDirection });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filters.sort]);
+
+    useEffect(() => {
+        if (!filterBuilding) {
+            fetchSystems({
+                offset,
+                limit,
+                ...filters
+            });
+        }
+    }, [fetchSystems, limit, offset, filters, filterBuilding]);
 
     useEffect(() => {
         if (systems.data) {
@@ -106,7 +133,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl }) => {
                 setRows(rows.asMutable());
             }
         }
-    }, [fetchAction, intl, systems]);
+    }, [intl, systems]);
 
     const filterConfigItems = [{
         label: intl.formatMessage(messages.name),
@@ -162,18 +189,22 @@ SystemsTable.propTypes = {
     systems: PropTypes.object,
     addNotification: PropTypes.func,
     history: PropTypes.object,
-    intl: PropTypes.any
+    intl: PropTypes.any,
+    filters: PropTypes.object,
+    setFilters: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => ({
     systems: state.AdvisorStore.systems,
     systemsFetchStatus: state.AdvisorStore.systemsFetchStatus,
+    filters: state.AdvisorStore.filtersSystems,
     ...ownProps
 });
 
 const mapDispatchToProps = dispatch => ({
     fetchSystems: (url) => dispatch(AppActions.fetchSystems(url)),
-    addNotification: data => dispatch(addNotification(data))
+    addNotification: data => dispatch(addNotification(data)),
+    setFilters: (filters) => dispatch(AppActions.setFiltersSystems(filters))
 });
 
 export default injectIntl(routerParams(connect(

@@ -9,6 +9,7 @@ import { Battery, Main, PrimaryToolbar, TableToolbar } from '@redhat-cloud-servi
 import { Button, Pagination, PaginationVariant, Stack, StackItem, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Table, TableBody, TableHeader, cellWidth, sortable } from '@patternfly/react-table';
+import { filterFetchBuilder, paramParser, urlBuilder } from '../Common/Tables';
 
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
@@ -57,18 +58,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const debouncedSearchText = debounce(searchText, 800);
     const results = rules.meta ? rules.meta.count : 0;
     const sortIndices = { 1: 'description', 2: 'publish_date', 3: 'total_risk', 4: 'impacted_count', 5: 'playbook_count' };
-
-    // transforms array of strings -> comma seperated strings, required by advisor api
-    const filterFetchBuilder = (filters) => (Object.assign({},
-        ...Object.entries(filters).map((filter) => {
-            const filterName = filter[0];
-            const filterValue = filter[1];
-
-            return (Array.isArray(filterValue) ?
-                (filterValue[0] === 'true' || 'false') && filterValue.length > 1 ? null : { [filterName]: filterValue.join() }
-                : { [filterName]: filterValue });
-        }))
-    );
 
     const fetchRulesFn = () => {
         fetchRules({
@@ -179,10 +168,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     // Builds table filters from url params
     useEffect(() => {
         if (history.location.search) {
-            const searchParams = new URLSearchParams(history.location.search);
-            const paramsObject = Array.from(searchParams).reduce((acc, [key, value]) => ({
-                ...acc, [key]: (value === 'true' || value === 'false') ? JSON.parse(value) : value.split(',')
-            }), {});
+            const paramsObject = paramParser(history);
+
             paramsObject.reports_shown = paramsObject.reports_shown === undefined || paramsObject.reports_shown[0] === 'undefined' ? undefined
                 : paramsObject.reports_shown;
             paramsObject.sort = paramsObject.sort === undefined ? '-publish_date'
@@ -199,10 +186,10 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     // Builds and pushes url params from table filters
     useEffect(() => {
-        const queryString = Object.keys(filters).map(key => `${key}=${Array.isArray(filters[key]) ? filters[key].join() : filters[key]}`).join('&');
-        setQueryString(`?${queryString}`);
+        const queryString = urlBuilder(filters);
+        setQueryString(queryString);
         history.replace({
-            search: `?${queryString}`
+            search: queryString
         });
     }, [filters, history]);
 

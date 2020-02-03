@@ -66,3 +66,7 @@ export const fetchHostAcks = (options) => ({
     type: ActionTypes.HOST_ACK_FETCH,
     payload: fetchData(`${ActionTypes.HOST_ACK_URL}`, {}, options)
 });
+export const setFiltersSystems = (filters) => ({
+    type: ActionTypes.FILTERS_SYSTEMS_SET,
+    payload: filters
+});

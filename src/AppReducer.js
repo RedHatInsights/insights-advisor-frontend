@@ -20,6 +20,7 @@ const initialState = Immutable({
     systemtype: {},
     systemtypeFetchStatus: '',
     filters: { impacting: true, reports_shown: 'true', sort: '-publish_date' },
+    filtersSystems: { sort: '-last_seen' },
     topic: {},
     topicFetchStatus: '',
     topics: [],
@@ -153,6 +154,11 @@ export const AdvisorStore = (state = initialState, action) => {
             });
         case `${ActionTypes.HOST_ACK_FETCH}_REJECTED`:
             return state.set('hostAcksFetchStatus', 'rejected');
+
+        case ActionTypes.FILTERS_SYSTEMS_SET:
+            return Immutable.merge(state, {
+                filtersSystems: action.payload
+            });
 
         default:
             return state;
