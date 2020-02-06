@@ -1,17 +1,19 @@
-import React, { Component } from 'react';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
-import PropTypes from 'prop-types';
-import { PageHeader, PageHeaderTitle, Main } from '@redhat-cloud-services/frontend-components';
-import { Tabs, Tab, TabsVariant } from '@patternfly/react-core';
-import { injectIntl } from 'react-intl';
+import './InsightsTabs.scss';
 
+import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
+import React, { Component } from 'react';
+import { Tab, TabsVariant } from '@patternfly/react-core/dist/js/components/Tabs/index';
+
+import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
+import PropTypes from 'prop-types';
+import { Tabs } from '@patternfly/react-core/dist/js/components/Tabs/Tabs';
 import asyncComponent from '../../Utilities/asyncComponent';
+import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const RulesTable = asyncComponent(() => import(/* webpackChunkName: "RulesTAble" */ '../../PresentationalComponents/RulesTable/RulesTable'));
 const SystemsTable = asyncComponent(() => import(/* webpackChunkName: "SystemsTable" */ '../../PresentationalComponents/SystemsTable/SystemsTable'));
-
-import './InsightsTabs.scss';
 
 class InsightsTabs extends Component {
     state = {

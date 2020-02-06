@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as AppActions from '../../AppActions';
 
-import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { Breadcrumb } from '@patternfly/react-core/dist/js/components/Breadcrumb/Breadcrumb';
+import { BreadcrumbItem } from '@patternfly/react-core/dist/js/components/Breadcrumb/BreadcrumbItem';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';

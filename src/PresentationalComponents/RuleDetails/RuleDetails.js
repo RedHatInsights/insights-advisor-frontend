@@ -3,16 +3,23 @@ import './_RuleDetails.scss';
 
 import * as AppConstants from '../../AppConstants';
 
-import { Battery, Reboot, Shield } from '@redhat-cloud-services/frontend-components';
-import { Card, CardBody, Split, SplitItem, Stack, StackItem, Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { Split, SplitItem } from '@patternfly/react-core/dist/js/layouts/Split/index';
+import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/index';
+import { Text, TextVariants } from '@patternfly/react-core/dist/js/components/Text/Text';
 import { compact, intersection } from 'lodash';
 
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { Battery } from '@redhat-cloud-services/frontend-components/components/Battery';
+import { Card } from '@patternfly/react-core/dist/js/components/Card/Card';
+import { CardBody } from '@patternfly/react-core/dist/js/components/Card/CardBody';
+import ExternalLinkAltIcon  from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactMarkdown from 'react-markdown/with-html';
+import { Reboot } from '@redhat-cloud-services/frontend-components/components/Reboot';
 import RuleRating from '../RuleRating/RuleRating';
+import { Shield } from '@redhat-cloud-services/frontend-components/components/Shield';
+import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
 import barDividedList from '../../Utilities/BarDividedList';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';

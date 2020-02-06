@@ -1,6 +1,8 @@
+import { Card } from '@patternfly/react-core/dist/js/components/Card/Card';
+import { CardBody } from '@patternfly/react-core/dist/js/components/Card/CardBody';
+import { CardHeader } from '@patternfly/react-core/dist/js/components/Card/CardHeader';
+import  FrownOpenIcon  from '@patternfly/react-icons/dist/js/icons/frown-open-icon';
 import React from 'react';
-import { Card, CardBody, CardHeader } from '@patternfly/react-core';
-import { FrownOpenIcon } from '@patternfly/react-icons';
 import propTypes from 'prop-types';
 
 const Failed = ({ message }) => <>

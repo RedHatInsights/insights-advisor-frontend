@@ -2,18 +2,25 @@ import './_TopicsAdminTable.scss';
 
 import * as AppActions from '../../AppActions';
 
-import { BanIcon, CheckCircleIcon, EditAltIcon, StarIcon } from '@patternfly/react-icons';
-import { Button, Title } from '@patternfly/react-core';
-import { Main, PageHeader, PrimaryToolbar, TableToolbar } from '@redhat-cloud-services/frontend-components';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Table, TableBody, TableHeader, sortable } from '@patternfly/react-table';
 
 import AddEditTopic from '../Modals/AddEditTopic';
+import BanIcon from '@patternfly/react-icons/dist/js/icons/ban-icon';
+import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
+import EditAltIcon from '@patternfly/react-icons/dist/js/icons/edit-alt-icon';
 import Failed from '../Loading/Failed';
 import Immutable from 'seamless-immutable';
 import Loading from '../Loading/Loading';
+import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
 import MessageState from '../MessageState/MessageState';
+import { PageHeader } from '@redhat-cloud-services/frontend-components/components/PageHeader';
+import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/components/PrimaryToolbar';
 import PropTypes from 'prop-types';
+import StarIcon  from '@patternfly/react-icons/dist/js/icons/star-icon';
+import { TableToolbar } from '@redhat-cloud-services/frontend-components/components/TableToolbar';
+import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';

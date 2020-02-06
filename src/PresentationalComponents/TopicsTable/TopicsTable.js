@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { SearchIcon, StarIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { SortByDirection, Table, TableBody, TableHeader, sortable } from '@patternfly/react-table';
 
-import { Label } from '@patternfly/react-core';
+import { Label } from '@patternfly/react-core/dist/js/components/Label/Label';
 import { Link } from 'react-router-dom';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
-import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components';
+import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/components/PrimaryToolbar';
 import PropTypes from 'prop-types';
+import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
+import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
+import TimesCircleIcon from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';

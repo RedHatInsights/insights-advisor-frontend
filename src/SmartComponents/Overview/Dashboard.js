@@ -5,15 +5,23 @@ import './Dashboard.scss';
 import * as AppActions from '../../AppActions';
 
 import { ANSIBLE_MARK_ICON, GLOBAL_ECONSYSTEM_ICON, SERVER_STACK_ICON } from '../../AppSvgs';
-import { Bullseye, Button, ClipboardCopy, Flex, FlexItem, Level, LevelItem, Stack, StackItem, Title } from '@patternfly/react-core';
-import { Main, PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
+import { Level, LevelItem } from '@patternfly/react-core/dist/js/layouts/Level/index';
+import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
 import React, { Component } from 'react';
+import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/index';
 import { global_Color_100, global_primary_color_100 } from '@patternfly/react-tokens';
 
-import { ChartSpikeIcon } from '@patternfly/react-icons';
+import { Bullseye } from '@patternfly/react-core/dist/js/layouts/Bullseye/Bullseye';
+import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+import ChartSpikeIcon from '@patternfly/react-icons/dist/js/icons/chartSpike-icon';
+import { ClipboardCopy } from '@patternfly/react-core/dist/js/components/ClipboardCopy/ClipboardCopy';
+import { Flex } from '@patternfly/react-core/dist/js/layouts/Flex/Flex';
+import { FlexItem } from '@patternfly/react-core/dist/js/layouts/Flex/FlexItem';
 import Loading from '../../PresentationalComponents/Loading/Loading';
+import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import PropTypes from 'prop-types';
+import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import asyncComponent from '../../Utilities/asyncComponent';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';

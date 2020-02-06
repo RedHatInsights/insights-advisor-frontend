@@ -1,10 +1,16 @@
 /* eslint-disable camelcase */
-import { Button, Checkbox, Form, FormGroup, Modal, TextInput } from '@patternfly/react-core';
+
 import React, { useState } from 'react';
 
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
+import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+import { Checkbox } from '@patternfly/react-core/dist/js/components/Checkbox/Checkbox';
+import { Form } from '@patternfly/react-core/dist/js/components/Form/Form';
+import { FormGroup } from '@patternfly/react-core/dist/js/components/Form/FormGroup';
+import { Modal } from '@patternfly/react-core/dist/js/components/Modal/Modal';
 import PropTypes from 'prop-types';
+import { TextInput } from '@patternfly/react-core/dist/js/components/TextInput/TextInput';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';

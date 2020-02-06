@@ -1,7 +1,7 @@
+/* eslint camelcase: 0 */
 import * as ActionTypes from './AppConstants';
 
 import Advisor from '@redhat-cloud-services/frontend-components-inventory-insights';
-/* eslint camelcase: 0 */
 import Immutable from 'seamless-immutable';
 import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
 
