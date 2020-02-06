@@ -12,7 +12,7 @@ import Loading from '../Loading/Loading';
 import MessageState from '../MessageState/MessageState';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/components/PrimaryToolbar';
 import PropTypes from 'prop-types';
-import SearchIcon  from '@patternfly/react-icons/dist/js/icons/search-icon';
+import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { TableToolbar } from '@redhat-cloud-services/frontend-components/components/TableToolbar';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
@@ -73,8 +73,9 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
             paramsObject.sort !== undefined && (paramsObject.sort = paramsObject.sort[0]);
             paramsObject.display_name !== undefined && (paramsObject.display_name = paramsObject.display_name[0]);
             setFilters({ ...paramsObject });
-            setFilterBuilding(false);
         }
+
+        setFilterBuilding(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
