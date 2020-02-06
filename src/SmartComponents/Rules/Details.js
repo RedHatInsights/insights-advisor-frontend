@@ -3,34 +3,32 @@ import './Details.scss';
 
 import * as AppActions from '../../AppActions';
 
-import { BellSlashIcon, CaretDownIcon } from '@patternfly/react-icons';
-import {
-    Button,
-    Card,
-    CardBody,
-    CardFooter,
-    CardHead,
-    Dropdown,
-    DropdownItem,
-    DropdownToggle,
-    Flex,
-    FlexItem,
-    Title
-} from '@patternfly/react-core';
-import { DateFormat, Main, PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
+import { Card, CardBody, CardFooter, CardHead } from '@patternfly/react-core/dist/js/components/Card/index';
+import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
 import React, { useEffect, useState } from 'react';
 
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
+import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
+import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+import CaretDownIcon  from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
+import { DateFormat } from '@redhat-cloud-services/frontend-components/components/DateFormat';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
+import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
+import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
+import { DropdownToggle } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownToggle';
 import Failed from '../../PresentationalComponents/Loading/Failed';
+import { Flex } from '@patternfly/react-core/dist/js/layouts/Flex/Flex';
+import { FlexItem } from '@patternfly/react-core/dist/js/layouts/Flex/FlexItem';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import Loading from '../../PresentationalComponents/Loading/Loading';
+import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import PropTypes from 'prop-types';
 import RuleDetails from '../../PresentationalComponents/RuleDetails/RuleDetails';
 import RuleLabels from '../../PresentationalComponents/RuleLabels/RuleLabels';
+import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';

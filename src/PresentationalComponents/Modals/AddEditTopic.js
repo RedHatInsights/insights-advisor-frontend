@@ -1,22 +1,19 @@
 import './_AddEditTopic.scss';
 
-import {
-    Button,
-    Checkbox,
-    Form,
-    FormGroup,
-    Modal,
-    Radio,
-    Split,
-    SplitItem,
-    TextArea,
-    TextInput
-} from '@patternfly/react-core';
 import React, { useState } from 'react';
+import { Split, SplitItem } from '@patternfly/react-core/dist/js/layouts/Split/index';
 
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
+import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+import { Checkbox } from '@patternfly/react-core/dist/js/components/Checkbox/Checkbox';
+import { Form } from '@patternfly/react-core/dist/js/components/Form/Form';
+import { FormGroup } from '@patternfly/react-core/dist/js/components/Form/FormGroup';
+import { Modal } from '@patternfly/react-core/dist/js/components/Modal/Modal';
 import PropTypes from 'prop-types';
+import { Radio } from '@patternfly/react-core/dist/js/components/Radio/Radio';
+import { TextArea } from '@patternfly/react-core/dist/js/components/TextArea/TextArea';
+import { TextInput } from '@patternfly/react-core/dist/js/components/TextInput/TextInput';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
 import { fetchTopicsAdmin } from '../../AppActions';

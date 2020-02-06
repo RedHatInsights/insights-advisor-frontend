@@ -5,10 +5,11 @@ import * as reactCore from '@patternfly/react-core';
 import * as reactIcons from '@patternfly/react-icons';
 import * as reactRouterDom from 'react-router-dom';
 
-import { Main, PageHeader } from '@redhat-cloud-services/frontend-components';
 import React, { useEffect, useState } from 'react';
 
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
+import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
+import { PageHeader } from '@redhat-cloud-services/frontend-components/components/PageHeader';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { entitiesDetailsReducer } from '../../AppReducer';

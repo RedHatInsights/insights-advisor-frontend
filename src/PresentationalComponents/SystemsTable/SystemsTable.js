@@ -1,8 +1,7 @@
 /* eslint camelcase: 0 */
 import * as AppActions from '../../AppActions';
 
-import { Pagination, PaginationVariant } from '@patternfly/react-core';
-import { PrimaryToolbar, TableToolbar } from '@redhat-cloud-services/frontend-components';
+import { Pagination, PaginationVariant } from '@patternfly/react-core/dist/js/components/Pagination/Pagination';
 import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableHeader, cellWidth, sortable } from '@patternfly/react-table';
 import { paramParser, urlBuilder } from '../Common/Tables';
@@ -11,8 +10,10 @@ import Failed from '../Loading/Failed';
 import { Link } from 'react-router-dom';
 import Loading from '../Loading/Loading';
 import MessageState from '../MessageState/MessageState';
+import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/components/PrimaryToolbar';
 import PropTypes from 'prop-types';
-import { SearchIcon } from '@patternfly/react-icons';
+import SearchIcon  from '@patternfly/react-icons/dist/js/icons/search-icon';
+import { TableToolbar } from '@redhat-cloud-services/frontend-components/components/TableToolbar';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
 import debounce from '../../Utilities/Debounce';

@@ -1,14 +1,15 @@
 /* eslint-disable camelcase */
-import { Button, Modal } from '@patternfly/react-core';
 import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableHeader } from '@patternfly/react-table';
 import { fetchHostAcks, setAck } from '../../AppActions';
 
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
-import { DateFormat } from '@redhat-cloud-services/frontend-components';
+import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+import { DateFormat } from '@redhat-cloud-services/frontend-components/components/DateFormat';
 import { List } from 'react-content-loader';
-import { OutlinedBellIcon } from '@patternfly/react-icons';
+import { Modal } from '@patternfly/react-core/dist/js/components/Modal/Modal';
+import OutlinedBellIcon  from '@patternfly/react-icons/dist/js/icons/outlined-bell-icon';
 import PropTypes from 'prop-types';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';

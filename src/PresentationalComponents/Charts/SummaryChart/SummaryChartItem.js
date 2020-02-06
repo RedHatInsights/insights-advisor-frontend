@@ -1,15 +1,18 @@
 /* eslint camelcase: 0 */
-import React from 'react';
+import * as AppActions from '../../../AppActions';
+
+import { Split, SplitItem } from '@patternfly/react-core/dist/js/layouts/Split/index';
+
+import { Battery } from '@redhat-cloud-services/frontend-components/components/Battery';
+import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import PropTypes from 'prop-types';
-import { Battery } from '@redhat-cloud-services/frontend-components';
-import { Button, Split, SplitItem, StackItem } from '@patternfly/react-core';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import React from 'react';
+import { SEVERITY_MAP } from '../../../AppConstants';
+import { StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/StackItem';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-
-import * as AppActions from '../../../AppActions';
-import { SEVERITY_MAP } from '../../../AppConstants';
 import messages from '../../../Messages';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const SummaryChartItem = ({ numIssues, name, riskName, affectedSystems, setFilters, history, intl }) => {
     const setChartFilters = () => {

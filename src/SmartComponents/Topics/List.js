@@ -1,9 +1,9 @@
 import * as AppActions from '../../AppActions';
 
-import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
+import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
 import React, { useEffect } from 'react';
 
-import { Main } from '@redhat-cloud-services/frontend-components';
+import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
 import PropTypes from 'prop-types';
 import TopicsTable from '../../PresentationalComponents/TopicsTable/TopicsTable';
 import { connect } from 'react-redux';

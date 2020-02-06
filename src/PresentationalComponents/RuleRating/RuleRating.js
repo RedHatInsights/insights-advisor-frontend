@@ -2,11 +2,12 @@ import './_RuleRating.scss';
 
 import * as AppConstants from '../../AppConstants';
 
-import { OutlinedThumbsDownIcon, OutlinedThumbsUpIcon } from '@patternfly/react-icons';
 import React, { useState } from 'react';
 
 import API from '../../Utilities/Api';
-import { Button } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+import OutlinedThumbsDownIcon from '@patternfly/react-icons/dist/js/icons/outlined-thumbs-down-icon';
+import OutlinedThumbsUpIcon  from '@patternfly/react-icons/dist/js/icons/outlined-thumbs-up-icon';
 import PropTypes from 'prop-types';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';

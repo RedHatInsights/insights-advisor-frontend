@@ -1,9 +1,10 @@
 /* eslint-disable max-len */
 /* eslint-disable camelcase */
-import { Battery, Shield } from '@redhat-cloud-services/frontend-components';
 import { createIntl, createIntlCache } from 'react-intl';
 
+import { Battery } from '@redhat-cloud-services/frontend-components/components/Battery';
 import React from 'react';
+import { Shield } from '@redhat-cloud-services/frontend-components/components/Shield';
 import { intlHelper } from '@redhat-cloud-services/frontend-components-translations';
 import messages from './Messages';
 

@@ -1,8 +1,9 @@
 import './_RuleLabels.scss';
 
-import { Label, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { Tooltip, TooltipPosition } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
 
-import { BellSlashIcon } from '@patternfly/react-icons';
+import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
+import { Label } from '@patternfly/react-core/dist/js/components/Label/Label';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { injectIntl } from 'react-intl';

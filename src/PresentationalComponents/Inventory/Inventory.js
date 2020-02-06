@@ -6,7 +6,7 @@ import * as reactRouterDom from 'react-router-dom';
 
 import React, { useEffect, useRef, useState } from 'react';
 
-import { AnsibeTowerIcon } from '@patternfly/react-icons';
+import  AnsibeTowerIcon  from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
