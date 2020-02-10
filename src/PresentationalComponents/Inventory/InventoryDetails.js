@@ -1,10 +1,9 @@
 import '@redhat-cloud-services/frontend-components-inventory-insights/index.css';
 
 import * as pfReactTable from '@patternfly/react-table';
-import * as reactCore from '@patternfly/react-core';
-import * as reactIcons from '@patternfly/react-icons';
 import * as reactRouterDom from 'react-router-dom';
 
+import { Grid, GridItem } from '@patternfly/react-core/dist/js/layouts/Grid/index';
 import React, { useEffect, useState } from 'react';
 
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
@@ -24,8 +23,6 @@ const InventoryDetails = ({ entity, match }) => {
         const { inventoryConnector, mergeWithDetail, INVENTORY_ACTION_TYPES } = await insights.loadInventory({
             react: React,
             reactRouterDom,
-            reactCore,
-            reactIcons,
             pfReactTable
         });
         const { InventoryDetailHead, AppInfo } = inventoryConnector();
@@ -48,11 +45,11 @@ const InventoryDetails = ({ entity, match }) => {
             {InventoryDetail && <InventoryDetail hideBack />}
         </PageHeader>
         <Main>
-            <reactCore.Grid gutter="md">
-                <reactCore.GridItem span={12}>
+            <Grid gutter="md">
+                <GridItem span={12}>
                     {AppInfo && <AppInfo />}
-                </reactCore.GridItem>
-            </reactCore.Grid>
+                </GridItem>
+            </Grid>
         </Main>
     </React.Fragment>;
 };

@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableHeader, cellWidth, sortable } from '@patternfly/react-table';
 import { paramParser, urlBuilder } from '../Common/Tables';
 
+import { DateFormat } from '@redhat-cloud-services/frontend-components/components/DateFormat';
 import Failed from '../Loading/Failed';
 import { Link } from 'react-router-dom';
 import Loading from '../Loading/Loading';
@@ -19,7 +20,6 @@ import { connect } from 'react-redux';
 import debounce from '../../Utilities/Debounce';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
-import moment from 'moment';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters, setFilters, history }) => {
@@ -125,9 +125,8 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
                         }, {
                             title: <div key={key}> {value.hits}</div>
                         }, {
-                            title: <div key={key}>
-                                {moment(value.last_seen).fromNow()}
-                            </div>
+
+                            title: <DateFormat key={key} date={value.last_seen} variant='relative' />
                         }
                     ]
                 }

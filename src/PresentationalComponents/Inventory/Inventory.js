@@ -1,7 +1,5 @@
 /* eslint-disable camelcase */
 import * as pfReactTable from '@patternfly/react-table';
-import * as reactCore from '@patternfly/react-core';
-import * as reactIcons from '@patternfly/react-icons';
 import * as reactRouterDom from 'react-router-dom';
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -35,8 +33,6 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
         } = await insights.loadInventory({
             react: React,
             reactRouterDom,
-            reactCore,
-            reactIcons,
             pfReactTable
         });
 
