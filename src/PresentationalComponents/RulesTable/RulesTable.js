@@ -15,10 +15,11 @@ import API from '../../Utilities/Api';
 import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
 import { BASE_URL } from '../../AppConstants';
 import { Battery } from '@redhat-cloud-services/frontend-components/components/Battery';
-import  BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
+import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
-import CheckIcon  from '@patternfly/react-icons/dist/js/icons/check-icon';
+import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
+import { DateFormat } from '@redhat-cloud-services/frontend-components/components/DateFormat';
 import DisableRule from '../Modals/DisableRule';
 import { FILTER_CATEGORIES as FC } from '../../AppConstants';
 import Failed from '../../PresentationalComponents/Loading/Failed';
@@ -37,7 +38,6 @@ import { connect } from 'react-redux';
 import debounce from '../../Utilities/Debounce';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
-import moment from 'moment';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, history, intl }) => {
@@ -254,9 +254,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                                 <Link key={key} to={`/rules/${value.rule_id}`}> {value.description} </Link>
                             </span>
                     }, {
-                        title: <div key={key}>
-                            {moment(value.publish_date).fromNow()}
-                        </div>
+                        title: <DateFormat key={key} date={value.publish_date} variant='relative' />
                     }, {
                         title: <div className="pf-m-center" key={key}>
                             <Tooltip key={key} position={TooltipPosition.bottom} content={intl.formatMessage(messages.rulesDetailsTotalriskBody, {
