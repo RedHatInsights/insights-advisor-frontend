@@ -30,8 +30,6 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     ]);
     const [rows, setRows] = useState([]);
     const [sortBy, setSortBy] = useState({});
-    const [limit, setLimit] = useState(10);
-    const [offset, setOffset] = useState(0);
     const results = systems.meta ? systems.meta.count : 0;
     const [searchText, setSearchText] = useState(filters.display_name || '');
     const debouncedSearchText = debounce(searchText, 800);
@@ -46,13 +44,12 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     const onSort = (_event, index, direction) => {
         const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
         setSortBy({ index, direction });
-        setFilters({ ...filters, sort: orderParam });
-        setOffset(0);
+        setFilters({ ...filters, sort: orderParam, offset: 0 });
     };
 
     const onSetPage = (pageNumber) => {
-        const newOffset = pageNumber * limit - limit;
-        setOffset(newOffset);
+        const newOffset = pageNumber * filters.limit - filters.limit;
+        setFilters({ ...filters, offset: newOffset });
     };
 
     useEffect(() => {
@@ -72,6 +69,9 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
             const paramsObject = paramParser(history);
             paramsObject.sort !== undefined && (paramsObject.sort = paramsObject.sort[0]);
             paramsObject.display_name !== undefined && (paramsObject.display_name = paramsObject.display_name[0]);
+            paramsObject.offset === undefined && (paramsObject.offset = 0);
+            paramsObject.limit === undefined && (paramsObject.limit = 10);
+
             setFilters({ ...paramsObject });
         }
 
@@ -94,13 +94,15 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
 
     useEffect(() => {
         if (!filterBuilding) {
+            filters.limit || filters.offest === undefined && setFilters({ ...filters, offset: 0, limit: 10 });
+
             fetchSystems({
-                offset,
-                limit,
+                offset: filters.offset,
+                limit: filters.limit,
                 ...filters
             });
         }
-    }, [fetchSystems, limit, offset, filters, filterBuilding]);
+    }, [fetchSystems, filters, filterBuilding, setFilters]);
 
     useEffect(() => {
         if (systems.data) {
@@ -154,10 +156,10 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
         <PrimaryToolbar
             pagination={{
                 itemCount: results,
-                page: offset / limit + 1,
-                perPage: limit,
+                page: filters.offset / filters.limit + 1,
+                perPage: Number(filters.limit),
                 onSetPage(event, page) { onSetPage(page); },
-                onPerPageSelect(event, perPage) { setLimit(perPage); },
+                onPerPageSelect(event, perPage) { setFilters({ ...filters, limit: perPage, offset: 0 }); },
                 isCompact: false
             }}
             filterConfig={{ items: filterConfigItems }}
@@ -174,8 +176,8 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
         <TableToolbar>
             <Pagination
                 itemCount={results}
-                perPage={limit}
-                page={(offset / limit + 1)}
+                perPage={Number(filters.limit)}
+                page={(filters.offset / filters.limit + 1)}
                 onSetPage={(event, page) => { onSetPage(page); }}
                 widgetId={`pagination-options-menu-bottom`}
                 variant={PaginationVariant.bottom}

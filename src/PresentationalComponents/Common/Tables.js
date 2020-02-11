@@ -10,8 +10,10 @@ export const urlBuilder = (filters, history) => {
 // transforms array of strings -> comma seperated strings, required by advisor api
 export const filterFetchBuilder = (filters) => Object.assign({},
     ...Object.entries(filters).map(([filterName, filterValue]) => Array.isArray(filterValue) ?
-        (filterValue[0] === 'true' || 'false') && filterValue.length > 1 ? null : { [filterName]: filterValue.join() }
-        : { [filterName]: filterValue }));
+        ((filterValue[0] === 'true') || (filterValue[0] === 'false')) && filterValue.length > 1 ? null
+            : { [filterName]: filterValue.join() }
+        : { [filterName]: filterValue })
+);
 
 // parses url params for use in table/filter chips
 export const paramParser = (history) => {
