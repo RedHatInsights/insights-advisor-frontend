@@ -55,8 +55,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const [rows, setRows] = useState([]);
     const [sortBy, setSortBy] = useState({});
     const [impacting, setImpacting] = useState(filters.impacting);
-    const [limit, setLimit] = useState(10);
-    const [offset, setOffset] = useState(0);
     const [filterBuilding, setFilterBuilding] = useState(true);
     const [queryString, setQueryString] = useState('');
     const [searchText, setSearchText] = useState('');
@@ -71,8 +69,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const fetchRulesFn = () => {
         fetchRules({
             ...filterFetchBuilder(filters),
-            offset: 0,
-            limit,
+            offset: filters.offset,
+            limit: filters.limit,
             impacting
         });
     };
@@ -80,26 +78,23 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const onSort = (_event, index, direction) => {
         const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
         setSortBy({ index, direction });
-        setFilters({ ...filters, sort: orderParam });
-        setOffset(0);
+        setFilters({ ...filters, sort: orderParam, offset: 0 });
     };
 
     const onSetPage = (pageNumber) => {
-        const newOffset = pageNumber * limit - limit;
-        setOffset(newOffset);
+        const newOffset = pageNumber * filters.limit - filters.limit;
+        setFilters({ ...filters, offset: newOffset });
     };
 
     const toggleRulesWithHits = (impacting) => {
-        setFilters({ ...filters, impacting });
+        setFilters({ ...filters, impacting, offset: 0 });
         setImpacting(impacting);
-        setOffset(0);
     };
 
     const toggleRulesDisabled = (param) => {
         const reports_shown = param === 'undefined' ? undefined : param;
-        setFilters({ ...filters, reports_shown, ...(reports_shown !== 'true' && { impacting: false }) });
+        setFilters({ ...filters, reports_shown, offset: 0, ...(reports_shown !== 'true' && { impacting: false }) });
         reports_shown !== 'true' && setImpacting(false);
-        setOffset(0);
     };
 
     const handleOnCollapse = (event, rowId, isOpen) => {
@@ -148,14 +143,17 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     };
 
     const fetchAction = useCallback(() => {
-        setOffset(0);
-    }, []);
+        setFilters({ ...filters, offset: 0, limit: 10 });
+    }, [filters, setFilters]);
 
     const buildFilterChips = () => {
         const localFilters = { ...filters };
         delete localFilters.impacting;
         delete localFilters.topic;
         delete localFilters.sort;
+        delete localFilters.offset;
+        delete localFilters.limit;
+
         const prunedFilters = Object.entries(localFilters);
 
         return prunedFilters.length > 0 ? prunedFilters.map(item => {
@@ -181,9 +179,10 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
             paramsObject.reports_shown = paramsObject.reports_shown === undefined || paramsObject.reports_shown[0] === 'undefined' ? undefined
                 : paramsObject.reports_shown;
-            paramsObject.sort = paramsObject.sort === undefined ? '-publish_date'
-                : paramsObject.sort[0];
+            paramsObject.sort = paramsObject.sort === undefined ? '-publish_date' : paramsObject.sort[0];
             paramsObject.incident !== undefined && !Array.isArray(paramsObject.incident) && (paramsObject.incident = [`${paramsObject.incident}`]);
+            paramsObject.offset === undefined && (paramsObject.offset = 0);
+            paramsObject.limit === undefined && (paramsObject.limit = 10);
 
             setImpacting(paramsObject.impacting);
             setFilters({ ...paramsObject });
@@ -204,13 +203,14 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     useEffect(() => {
         if (!filterBuilding) {
+            filters.limit || filters.offest === undefined && setFilters({ ...filters, offset: 0, limit: 10 });
             fetchRules({
                 ...filterFetchBuilder(filters),
-                offset,
-                limit
+                offset: filters.offset || 0,
+                limit: filters.limit || 10
             });
         }
-    }, [fetchRules, filterBuilding, filters, limit, offset]);
+    }, [fetchRules, filterBuilding, filters, setFilters]);
 
     useEffect(() => {
         if (filters.sort !== undefined) {
@@ -218,7 +218,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
             setSortBy({ index: sortIndex, direction: sortDirection });
         }
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filters, filters.sort]);
 
@@ -462,10 +461,10 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         <PrimaryToolbar
             pagination={{
                 itemCount: results,
-                page: offset / limit + 1,
-                perPage: limit,
+                page: filters.offset / filters.limit + 1,
+                perPage: Number(filters.limit),
                 onSetPage(event, page) { onSetPage(page); },
-                onPerPageSelect(event, perPage) { setLimit(perPage); },
+                onPerPageSelect(event, perPage) { setFilters({ ...filters, limit: perPage, offset: 0 }); },
                 isCompact: false
             }}
             exportConfig={{
@@ -488,8 +487,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         <TableToolbar>
             <Pagination
                 itemCount={results}
-                perPage={limit}
-                page={(offset / limit + 1)}
+                perPage={Number(filters.limit)}
+                page={(filters.offset / filters.limit + 1)}
                 onSetPage={(event, page) => { onSetPage(page); }}
                 widgetId={`pagination-options-menu-bottom`}
                 variant={PaginationVariant.bottom}
