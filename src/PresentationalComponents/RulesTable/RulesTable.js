@@ -180,6 +180,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             paramsObject.reports_shown = paramsObject.reports_shown === undefined || paramsObject.reports_shown[0] === 'undefined' ? undefined
                 : paramsObject.reports_shown;
             paramsObject.sort = paramsObject.sort === undefined ? '-publish_date' : paramsObject.sort[0];
+            !Array.isArray(paramsObject.has_playbook) && (paramsObject.has_playbook = [`${paramsObject.has_playbook}`]);
             paramsObject.incident !== undefined && !Array.isArray(paramsObject.incident) && (paramsObject.incident = [`${paramsObject.incident}`]);
             paramsObject.offset === undefined && (paramsObject.offset = 0);
             paramsObject.limit === undefined && (paramsObject.limit = 10);
@@ -409,6 +410,17 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             onChange: (event, values) => addFilterParam(FC.incident.urlParam, values),
             value: filters.incident,
             items: FC.incident.values
+        }
+    }, {
+        label: FC.has_playbook.title,
+        type: FC.has_playbook.type,
+        id: FC.has_playbook.urlParam,
+        value: `checkbox-${FC.has_playbook.urlParam}`,
+        filterValues: {
+            key: `${FC.has_playbook.urlParam}-filter`,
+            onChange: (event, values) => addFilterParam(FC.has_playbook.urlParam, values),
+            value: filters.has_playbook,
+            items: FC.has_playbook.values
         }
     }, {
         label: FC.reports_shown.title,

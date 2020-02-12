@@ -132,6 +132,12 @@ export const FILTER_CATEGORIES = {
             { label: intlHelper(intl.formatMessage(messages.nonIncidentRules), intlSettings), value: 'false' }
         ]
     },
+    has_playbook: {
+        type: 'checkbox', title: 'Ansible support', urlParam: 'has_playbook', values: [
+            { label: 'Ansible remediation support', text: 'Ansible remediation support', value: 'true' },
+            { label: 'No Ansible remediation support', text: 'No Ansible remediation support', value: 'false' }
+        ]
+    },
     reports_shown: {
         type: 'radio', title: 'Rule status', urlParam: 'reports_shown', values: [
             { label: intlHelper(intl.formatMessage(messages.all), intlSettings), value: 'undefined' },
