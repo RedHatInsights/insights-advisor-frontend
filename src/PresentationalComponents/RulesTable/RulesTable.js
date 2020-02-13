@@ -500,9 +500,10 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         <TableToolbar>
             <Pagination
                 itemCount={results}
-                perPage={Number(filters.limit)}
                 page={(filters.offset / filters.limit + 1)}
+                perPage={Number(filters.limit)}
                 onSetPage={(event, page) => { onSetPage(page); }}
+                onPerPageSelect={(event, perPage) => { setFilters({ ...filters, limit: perPage, offset: 0 }); }}
                 widgetId={`pagination-options-menu-bottom`}
                 variant={PaginationVariant.bottom}
             />
