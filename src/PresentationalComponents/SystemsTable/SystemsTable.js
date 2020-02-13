@@ -179,6 +179,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
                 perPage={Number(filters.limit)}
                 page={(filters.offset / filters.limit + 1)}
                 onSetPage={(event, page) => { onSetPage(page); }}
+                onPerPageSelect={(event, perPage) => { setFilters({ ...filters, limit: perPage, offset: 0 }); }}
                 widgetId={`pagination-options-menu-bottom`}
                 variant={PaginationVariant.bottom}
             />
