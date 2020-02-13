@@ -180,7 +180,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             paramsObject.reports_shown = paramsObject.reports_shown === undefined || paramsObject.reports_shown[0] === 'undefined' ? undefined
                 : paramsObject.reports_shown;
             paramsObject.sort = paramsObject.sort === undefined ? '-publish_date' : paramsObject.sort[0];
-            !Array.isArray(paramsObject.has_playbook) && (paramsObject.has_playbook = [`${paramsObject.has_playbook}`]);
+            paramsObject.has_playbook !== undefined && !Array.isArray(paramsObject.has_playbook) &&
+                (paramsObject.has_playbook = [`${paramsObject.has_playbook}`]);
             paramsObject.incident !== undefined && !Array.isArray(paramsObject.incident) && (paramsObject.incident = [`${paramsObject.incident}`]);
             paramsObject.offset === undefined && (paramsObject.offset = 0);
             paramsObject.limit === undefined && (paramsObject.limit = 10);
