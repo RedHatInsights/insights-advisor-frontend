@@ -183,8 +183,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             paramsObject.has_playbook !== undefined && !Array.isArray(paramsObject.has_playbook) &&
                 (paramsObject.has_playbook = [`${paramsObject.has_playbook}`]);
             paramsObject.incident !== undefined && !Array.isArray(paramsObject.incident) && (paramsObject.incident = [`${paramsObject.incident}`]);
-            paramsObject.offset === undefined && (paramsObject.offset = 0);
-            paramsObject.limit === undefined && (paramsObject.limit = 10);
+            paramsObject.offset === undefined ? paramsObject.offset = 0 : paramsObject.offset = Number(paramsObject.offset[0]);
+            paramsObject.limit === undefined ? paramsObject.limit = 10 : paramsObject.limit = Number(paramsObject.limit[0]);
 
             setImpacting(paramsObject.impacting);
             setFilters({ ...paramsObject });
