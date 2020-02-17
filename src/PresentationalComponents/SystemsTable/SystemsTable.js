@@ -69,8 +69,8 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
             const paramsObject = paramParser(history);
             paramsObject.sort !== undefined && (paramsObject.sort = paramsObject.sort[0]);
             paramsObject.display_name !== undefined && (paramsObject.display_name = paramsObject.display_name[0]);
-            paramsObject.offset === undefined && (paramsObject.offset = 0);
-            paramsObject.limit === undefined && (paramsObject.limit = 10);
+            paramsObject.offset === undefined ? paramsObject.offset = 0 : paramsObject.offset = Number(paramsObject.offset[0]);
+            paramsObject.limit === undefined ? paramsObject.limit = 10 : paramsObject.limit = Number(paramsObject.limit[0]);
 
             setFilters({ ...paramsObject });
         }
