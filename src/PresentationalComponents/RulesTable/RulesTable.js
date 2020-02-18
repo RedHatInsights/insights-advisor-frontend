@@ -5,7 +5,7 @@ import * as AppActions from '../../AppActions';
 import * as AppConstants from '../../AppConstants';
 
 import { Pagination, PaginationVariant } from '@patternfly/react-core/dist/js/components/Pagination/Pagination';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/index';
 import { Table, TableBody, TableHeader, cellWidth, sortable } from '@patternfly/react-table';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
@@ -142,10 +142,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             }];
     };
 
-    const fetchAction = useCallback(() => {
-        setFilters({ ...filters, offset: 0, limit: 10 });
-    }, [filters, setFilters]);
-
     const buildFilterChips = () => {
         const localFilters = { ...filters };
         delete localFilters.impacting;
@@ -235,7 +231,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                                     intl.formatMessage(messages.rulesTableNoRuleHitsAnyRulesBody)}>
                                 {filters.reports_shown && <Button variant="link" style={{ paddingTop: 24 }} onClick={() => {
                                     toggleRulesDisabled('undefined');
-                                    fetchAction();
                                 }}>
                                     {intl.formatMessage(messages.rulesTableNoRuleHitsAddDisabledButton)}
                                 </Button>}
@@ -305,7 +300,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fetchAction, filters, rules, setFilters]);
+    }, [filters, rules, setFilters]);
 
     useEffect(() => {
         filters.text === undefined ? setSearchText('') : setSearchText(filters.text);
