@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
+import App from './App';
+import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations';
+import { NotificationsPortal } from '@redhat-cloud-services/frontend-components-notifications';
+import { Provider } from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { Provider } from 'react-redux';
+import { getBaseName } from '@redhat-cloud-services/frontend-components-utilities/files/helpers';
 import { init } from './Store';
-import App from './App';
-import getBaseName from './Utilities/getBaseName';
-import { NotificationsPortal } from '@redhat-cloud-services/frontend-components-notifications';
-import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations';
 import messages from '../locales/data.json';
 
 ReactDOM.render(
