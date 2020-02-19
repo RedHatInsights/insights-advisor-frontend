@@ -14,7 +14,7 @@ import messages from '../locales/data.json';
 ReactDOM.render(
     <IntlProvider locale={navigator.language} messages={messages} onError={console.log}>
         <Provider store={init(logger).getStore()}>
-            <Router basename={getBaseName(window.location.pathname)}>
+            <Router basename={getBaseName(window.location.pathname).split('/')[1]}>
                 <React.Fragment>
                     <NotificationsPortal />
                     <App />
