@@ -229,9 +229,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                                 title={intl.formatMessage(messages.rulesTableNoRuleHitsTitle)} text={filters.reports_shown ?
                                     intl.formatMessage(messages.rulesTableNoRuleHitsEnabledRulesBody) :
                                     intl.formatMessage(messages.rulesTableNoRuleHitsAnyRulesBody)}>
-                                {filters.reports_shown && <Button variant="link" style={{ paddingTop: 24 }} onClick={() => {
-                                    toggleRulesDisabled('undefined');
-                                }}>
+                                {filters.reports_shown && <Button variant="link" style={{ paddingTop: 24 }}
+                                    onClick={() => toggleRulesDisabled('undefined')}>
                                     {intl.formatMessage(messages.rulesTableNoRuleHitsAddDisabledButton)}
                                 </Button>}
                             </MessageState>),
