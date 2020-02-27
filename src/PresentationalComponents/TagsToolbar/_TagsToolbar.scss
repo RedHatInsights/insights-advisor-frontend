@@ -1,0 +1,35 @@
+.tagsToolbarContainer {
+  background-color: var(--pf-global--BackgroundColor--100);
+  border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--light-100);
+
+  .dropDownOverride {
+    button {
+      &::before {
+        border: none !important;
+      }
+    }
+
+    padding-left: var(--pf-global--spacer--md);
+  }
+}
+
+.tagsListContainer {
+  .pf-c-data-list {
+    border: none;
+  }
+
+  .pf-c-data-list__item {
+    border: none;
+
+    .pf-c-data-list__item-control {
+      padding: 16px 0 16px !important;
+    }
+
+    .pf-c-data-list__item-content {
+      padding-bottom: 16px !important;
+      .pf-c-data-list__cell {
+        padding-top: 16px !important;
+      }
+    }
+  }
+}

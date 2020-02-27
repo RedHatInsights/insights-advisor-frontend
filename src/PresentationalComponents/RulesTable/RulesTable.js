@@ -40,7 +40,7 @@ import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
-const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, history, intl }) => {
+const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, history, intl, selectedTags }) => {
     const [cols] = useState([
         { title: intl.formatMessage(messages.description), transforms: [sortable] },
         { title: intl.formatMessage(messages.added), transforms: [sortable, cellWidth(15)] },
@@ -67,11 +67,14 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const sortIndices = { 1: 'description', 2: 'publish_date', 3: 'total_risk', 4: 'impacted_count', 5: 'playbook_count' };
 
     const fetchRulesFn = () => {
+        const options = selectedTags.length && ({ tags: selectedTags.join() });
+
         fetchRules({
             ...filterFetchBuilder(filters),
             offset: filters.offset,
             limit: filters.limit,
-            impacting
+            impacting,
+            ...options
         });
     };
 
@@ -201,14 +204,17 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     useEffect(() => {
         if (!filterBuilding) {
+            const options = selectedTags.length && ({ tags: selectedTags.join() });
+
             filters.limit || filters.offest === undefined && setFilters({ ...filters, offset: 0, limit: 10 });
             fetchRules({
                 ...filterFetchBuilder(filters),
                 offset: filters.offset || 0,
-                limit: filters.limit || 10
+                limit: filters.limit || 10,
+                ...options
             });
         }
-    }, [fetchRules, filterBuilding, filters, setFilters]);
+    }, [fetchRules, filterBuilding, filters, setFilters, selectedTags]);
 
     useEffect(() => {
         if (filters.sort !== undefined) {
@@ -513,13 +519,15 @@ RulesTable.propTypes = {
     addNotification: PropTypes.func,
     setFilters: PropTypes.func,
     history: PropTypes.object,
-    intl: PropTypes.any
+    intl: PropTypes.any,
+    selectedTags: PropTypes.array
 };
 
 const mapStateToProps = (state, ownProps) => ({
     rules: state.AdvisorStore.rules,
     rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
     filters: state.AdvisorStore.filters,
+    selectedTags: state.AdvisorStore.selectedTags,
     ...ownProps
 });
 

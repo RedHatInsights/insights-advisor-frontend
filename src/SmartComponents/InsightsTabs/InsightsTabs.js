@@ -12,8 +12,9 @@ import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
-const RulesTable = asyncComponent(() => import(/* webpackChunkName: "RulesTAble" */ '../../PresentationalComponents/RulesTable/RulesTable'));
+const RulesTable = asyncComponent(() => import(/* webpackChunkName: "RulesTable" */ '../../PresentationalComponents/RulesTable/RulesTable'));
 const SystemsTable = asyncComponent(() => import(/* webpackChunkName: "SystemsTable" */ '../../PresentationalComponents/SystemsTable/SystemsTable'));
+const TagsToolbar = asyncComponent(() => import(/* webpackChunkName: "TagsToolbar" */ '../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 
 class InsightsTabs extends Component {
     state = {
@@ -38,7 +39,8 @@ class InsightsTabs extends Component {
 
     render = () => {
         const { tabs, activeTab } = this.state;
-        return <>
+        return <React.Fragment>
+            <TagsToolbar />
             <PageHeader>
                 <PageHeaderTitle title={this.props.intl.formatMessage(messages.rules)} />
             </PageHeader>
@@ -58,7 +60,7 @@ class InsightsTabs extends Component {
                 }
             </Tabs>
             }
-        </>;
+        </React.Fragment>;
     }
 }
 

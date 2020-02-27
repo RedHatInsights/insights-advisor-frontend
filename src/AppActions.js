@@ -14,13 +14,13 @@ const setData = async (url, headers, options) => {
     return response.data;
 };
 
-export const fetchStatsRules = () => ({
+export const fetchStatsRules = (options) => ({
     type: ActionTypes.STATS_RULES_FETCH,
-    payload: fetchData(ActionTypes.STATS_RULES_FETCH_URL)
+    payload: fetchData(ActionTypes.STATS_RULES_FETCH_URL, {}, options)
 });
-export const fetchStatsSystems = () => ({
+export const fetchStatsSystems = (options) => ({
     type: ActionTypes.STATS_SYSTEMS_FETCH,
-    payload: fetchData(ActionTypes.STATS_SYSTEMS_FETCH_URL)
+    payload: fetchData(ActionTypes.STATS_SYSTEMS_FETCH_URL, {}, options)
 });
 export const fetchRules = (options) => ({
     type: ActionTypes.RULES_FETCH,
@@ -38,9 +38,9 @@ export const setFilters = (filters) => ({
     type: ActionTypes.FILTERS_SET,
     payload: filters
 });
-export const fetchTopics = () => ({
+export const fetchTopics = (options) => ({
     type: ActionTypes.TOPICS_FETCH,
-    payload: fetchData(ActionTypes.TOPICS_FETCH_URL)
+    payload: fetchData(ActionTypes.TOPICS_FETCH_URL, {}, options)
 });
 export const fetchTopicsAdmin = () => ({
     type: ActionTypes.TOPICS_FETCH,
@@ -69,4 +69,8 @@ export const fetchHostAcks = (options) => ({
 export const setFiltersSystems = (filters) => ({
     type: ActionTypes.FILTERS_SYSTEMS_SET,
     payload: filters
+});
+export const setSelectedTags = (tags) => ({
+    type: ActionTypes.SELECTED_TAGS_SET,
+    payload: tags
 });

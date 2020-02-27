@@ -1,5 +1,4 @@
 /* eslint camelcase: 0 */
-import '../../App.scss';
 import './Dashboard.scss';
 
 import * as AppActions from '../../AppActions';
@@ -7,9 +6,8 @@ import * as AppActions from '../../AppActions';
 import { ANSIBLE_MARK_ICON, GLOBAL_ECONSYSTEM_ICON, SERVER_STACK_ICON } from '../../AppSvgs';
 import { Level, LevelItem } from '@patternfly/react-core/dist/js/layouts/Level/index';
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
-import React, { Component } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/index';
-import { global_Color_100, global_primary_color_100 } from '@patternfly/react-tokens';
 
 import { Bullseye } from '@patternfly/react-core/dist/js/layouts/Bullseye/Bullseye';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
@@ -22,168 +20,167 @@ import { Main } from '@redhat-cloud-services/frontend-components/components/Main
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import PropTypes from 'prop-types';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
-import asyncComponent from '../../Utilities/asyncComponent';
 import { connect } from 'react-redux';
+import  global_Color_100  from '@patternfly/react-tokens/dist/js/global_Color_100';
+import global_primary_color_100  from '@patternfly/react-tokens/dist/js/global_primary_color_100';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
-const SummaryChart = asyncComponent(() => import('../../PresentationalComponents/Charts/SummaryChart/SummaryChart'));
-const OverviewDonut = asyncComponent(() => import('../../PresentationalComponents/Charts/OverviewDonut'));
+const SummaryChart = lazy(() => import('../../PresentationalComponents/Charts/SummaryChart/SummaryChart'));
+const OverviewDonut = lazy(() => import('../../PresentationalComponents/Charts/OverviewDonut'));
+const TagsToolbar = lazy(() => import('../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 
-class OverviewDashboard extends Component {
-    state = {
-        total: -1,
-        category: []
-    };
+const OverviewDashboard = ({ statsRulesFetchStatus, statsSystemsFetchStatus, statsRules, statsSystems, intl,
+    fetchStatsRules, fetchStatsSystems, selectedTags }) => {
+    const [total, setTotal] = useState(-1);
+    const [category, setCategory] = useState([]);
 
-    async componentDidMount() {
-        this.props.fetchStatsRules();
-        this.props.fetchStatsSystems();
-    }
+    useEffect(() => {
+        const options = selectedTags.length && ({ tags: selectedTags.join() });
+        fetchStatsRules(options);
+        fetchStatsSystems(options);
+    }, [fetchStatsRules, fetchStatsSystems, selectedTags]);
 
-    componentDidUpdate(prevProps) {
-        if (this.props.statsRules !== prevProps.statsRules) {
-            const rules = this.props.statsRules;
-            this.setState({
-                category: [rules.category.Availability, rules.category.Stability, rules.category.Performance, rules.category.Security]
-            });
-            this.setState({ total: rules.total });
+    useEffect(() => {
+        if (statsRules !== undefined && statsRules.category !== undefined) {
+            const category = statsRules.category;
+            setCategory([category.Availability, category.Stability, category.Performance, category.Security]);
+            setTotal({ total: statsRules.total });
         }
-    }
+    }, [statsRules]);
 
-    render() {
-        const {
-            statsRulesFetchStatus, statsSystemsFetchStatus, statsRules, statsSystems, intl
-        } = this.props;
-        const { category, total } = this.state;
-        return <>
-            <PageHeader>
-                <PageHeaderTitle title={intl.formatMessage(messages.overview)} />
-            </PageHeader>
-            {total !== 0 ?
-                <>
-                    <Main className='pf-m-light mainPaddingOverride'>
-                        <Level className='levelAlignOverride'>
-                            <LevelItem className='levelItemPaddingOverride'>
-                                <Title size='lg' headingLevel='h3'>{intl.formatMessage(messages.overviewSeverityChartTitle)}</Title>
-                                {statsRulesFetchStatus === 'fulfilled' && statsSystemsFetchStatus === 'fulfilled' ? (
+    return <React.Fragment>
+        <Suspense fallback={<Loading />}>
+            <TagsToolbar />
+        </Suspense>
+        <PageHeader>
+            <PageHeaderTitle title={intl.formatMessage(messages.overview)} />
+        </PageHeader>
+        {total !== 0 ?
+            <React.Fragment>
+                <Main className='pf-m-light mainPaddingOverride'>
+                    <Level className='levelAlignOverride'>
+                        <LevelItem className='levelItemPaddingOverride'>
+                            <Title size='lg' headingLevel='h3'>{intl.formatMessage(messages.overviewSeverityChartTitle)}</Title>
+                            {statsRulesFetchStatus === 'fulfilled' && statsSystemsFetchStatus === 'fulfilled' ? (
+                                <Suspense fallback={<Loading />}>
                                     <SummaryChart rulesTotalRisk={statsRules.total_risk} reportsTotalRisk={statsSystems.total_risk} />
-                                )
-                                    : (<Loading />)
-                                }
-                            </LevelItem>
-                            <LevelItem>
-                                <Title size='lg' headingLevel='h3'>{intl.formatMessage(messages.overviewCategoryChartTitle)}</Title>
-                                {statsRulesFetchStatus === 'fulfilled' ? (
+                                </Suspense>)
+                                : (<Loading />)
+                            }
+                        </LevelItem>
+                        <LevelItem>
+                            <Title size='lg' headingLevel='h3'>{intl.formatMessage(messages.overviewCategoryChartTitle)}</Title>
+                            {statsRulesFetchStatus === 'fulfilled' && category.length ? (
+                                <Suspense fallback={<Loading />}>
                                     <OverviewDonut category={category} className='pf-u-mt-md' />
-                                )
-                                    : (<Loading />)}
+                                </Suspense>
+                            )
+                                : (<Loading />)}
+                        </LevelItem>
+                    </Level>
+                </Main>
+                <Main>
+                    <Main className='pf-m-light'>
+                        <Title size='2xl' headingLevel='h1'>{intl.formatMessage(messages.overviewActioncallTitle)}</Title>
+                        <Level>
+                            <LevelItem className='maxWidthOverride'>
+                                <Flex breakpointMods={[{ modifier: 'column' }]}>
+                                    <FlexItem>
+                                        <MessageState
+                                            iconStyle={{ color: global_Color_100.value }}
+                                            icon={() => SERVER_STACK_ICON}
+                                            title={intl.formatMessage(messages.overviewConnectsystemsTitle)}
+                                            text={<span>
+                                                {intl.formatMessage(messages.overviewConnectsystemsBody)}
+                                            </span>}>
+                                            <Button component="a" href="https://access.redhat.com/products/red-hat-insights#getstarted"
+                                                target="_blank" variant="link">
+                                                {intl.formatMessage(messages.overviewConnectsystemsAction)}
+                                            </Button>
+                                        </MessageState>
+                                    </FlexItem>
+                                </Flex>
                             </LevelItem>
-                            <LevelItem>&nbsp;</LevelItem>
+                            <LevelItem className='maxWidthOverride'>
+                                <Flex breakpointMods={[{ modifier: 'column' }]}>
+                                    <FlexItem>
+                                        <MessageState
+                                            className='svgAlignmentOverride'
+                                            iconStyle={{ color: global_Color_100.value }}
+                                            icon={() => ANSIBLE_MARK_ICON}
+                                            title={intl.formatMessage(messages.overviewRemediateTitle)}
+                                            text={<span>
+                                                {intl.formatMessage(messages.overviewRemediateBody)}
+                                            </span>}>
+                                            <Button component="a" href="https://cloud.redhat.com/insights/remediations"
+                                                target="_blank" variant="link">
+                                                {intl.formatMessage(messages.overviewRemediateAction)}
+                                            </Button>
+                                        </MessageState>
+                                    </FlexItem>
+                                </Flex>
+                            </LevelItem>
+                            <LevelItem className='maxWidthOverride'>
+                                <Flex breakpointMods={[{ modifier: 'column' }]}>
+                                    <FlexItem>
+                                        <MessageState
+                                            iconStyle={{ color: global_Color_100.value }}
+                                            icon={() => GLOBAL_ECONSYSTEM_ICON}
+                                            title={intl.formatMessage(messages.overviewDeployTitle)}
+                                            text={<span>
+                                                {intl.formatMessage(messages.overviewDeployBody, {
+                                                    linkansible(link) {
+                                                        return <a rel="noopener noreferrer" target="_blank"
+                                                            href="https://galaxy.ansible.com/redhatinsights/insights-client">{link}</a>;
+                                                    },
+                                                    linkpuppet(link) {
+                                                        return <a rel="noopener noreferrer" target="_blank"
+                                                            href="https://forge.puppetlabs.com/lphiri/access_insights_client">{link}</a>;
+                                                    }
+                                                })}
+                                            </span>}>
+                                            <Button component="a" href="https://galaxy.ansible.com/redhatinsights/insights-client"
+                                                target="_blank" variant="secondary">
+                                                {intl.formatMessage(messages.overviewDeployAction)}
+                                            </Button>
+                                        </MessageState>
+                                    </FlexItem>
+                                </Flex>
+                            </LevelItem>
                         </Level>
                     </Main>
-                    <Main>
-                        <Main className='pf-m-light'>
-                            <Title size='2xl' headingLevel='h1'>{intl.formatMessage(messages.overviewActioncallTitle)}</Title>
-                            <Level>
-                                <LevelItem className='maxWidthOverride'>
-                                    <Flex breakpointMods={[{ modifier: 'column' }]}>
-                                        <FlexItem>
-                                            <MessageState
-                                                iconStyle={{ color: global_Color_100.value }}
-                                                icon={() => SERVER_STACK_ICON}
-                                                title={intl.formatMessage(messages.overviewConnectsystemsTitle)}
-                                                text={<span key='1'>
-                                                    {intl.formatMessage(messages.overviewConnectsystemsBody)}
-                                                </span>}>
-                                                <Button component="a" href="https://access.redhat.com/products/red-hat-insights#getstarted"
-                                                    target="_blank" variant="link">
-                                                    {intl.formatMessage(messages.overviewConnectsystemsAction)}
-                                                </Button>
-                                            </MessageState>
-                                        </FlexItem>
-                                    </Flex>
-                                </LevelItem>
-                                <LevelItem className='maxWidthOverride'>
-                                    <Flex breakpointMods={[{ modifier: 'column' }]}>
-                                        <FlexItem>
-                                            <MessageState
-                                                className='svgAlignmentOverride'
-                                                iconStyle={{ color: global_Color_100.value }}
-                                                icon={() => ANSIBLE_MARK_ICON}
-                                                title={intl.formatMessage(messages.overviewRemediateTitle)}
-                                                text={<span key='1'>
-                                                    {intl.formatMessage(messages.overviewRemediateBody)}
-                                                </span>}>
-                                                <Button component="a" href="https://cloud.redhat.com/insights/remediations"
-                                                    target="_blank" variant="link">
-                                                    {intl.formatMessage(messages.overviewRemediateAction)}
-                                                </Button>
-                                            </MessageState>
-                                        </FlexItem>
-                                    </Flex>
-                                </LevelItem>
-                                <LevelItem className='maxWidthOverride'>
-                                    <Flex breakpointMods={[{ modifier: 'column' }]}>
-                                        <FlexItem>
-                                            <MessageState
-                                                iconStyle={{ color: global_Color_100.value }}
-                                                icon={() => GLOBAL_ECONSYSTEM_ICON}
-                                                title={intl.formatMessage(messages.overviewDeployTitle)}
-                                                text={<span key='1'>
-                                                    {intl.formatMessage(messages.overviewDeployBody, {
-                                                        linkansible(link) {
-                                                            return <a rel="noopener noreferrer" target="_blank"
-                                                                href="https://galaxy.ansible.com/redhatinsights/insights-client">{link}</a>;
-                                                        },
-                                                        linkpuppet(link) {
-                                                            return <a rel="noopener noreferrer" target="_blank"
-                                                                href="https://forge.puppetlabs.com/lphiri/access_insights_client">{link}</a>;
-                                                        }
-                                                    })}
-                                                </span>}>
-                                                <Button component="a" href="https://galaxy.ansible.com/redhatinsights/insights-client"
-                                                    target="_blank" variant="secondary">
-                                                    {intl.formatMessage(messages.overviewDeployAction)}
-                                                </Button>
-                                            </MessageState>
-                                        </FlexItem>
-                                    </Flex>
-                                </LevelItem>
-                            </Level>
-                        </Main>
-                    </Main>
-                </>
-                : <Main>
-                    <MessageState
-                        iconStyle={{ color: global_primary_color_100.value }}
-                        icon={ChartSpikeIcon}
-                        title={intl.formatMessage(messages.overviewActioncallTitle)}
-                        text={<span key='1'>
-                            {intl.formatMessage(messages.overviewActionCallNoSystemsBody, { break() { return <br />; } })}
-                        </span>}>
-                        <Bullseye>
-                            <Stack gutter="md">
-                                <StackItem>
-                                    1. {intl.formatMessage(messages.installClient)}
-                                    <ClipboardCopy>yum install insights-client</ClipboardCopy>
-                                </StackItem>
-                                <StackItem>
-                                    2. {intl.formatMessage(messages.registerSystem)}
-                                    <ClipboardCopy>insights-client --register</ClipboardCopy>
-                                </StackItem>
-                            </Stack>
-                        </Bullseye>
-                        <Button component="a" href="https://access.redhat.com/products/red-hat-insights#getstarted"
-                            target="_blank" variant="primary">
-                            {intl.formatMessage(messages.overviewActionCallNoSystemsAction)}
-                        </Button>
-                    </MessageState>
-                </Main>}
-        </>;
-    }
-}
+                </Main>
+            </React.Fragment>
+            : <Main>
+                <MessageState
+                    iconStyle={{ color: global_primary_color_100.value }}
+                    icon={ChartSpikeIcon}
+                    title={intl.formatMessage(messages.overviewActioncallTitle)}
+                    text={<span>
+                        {intl.formatMessage(messages.overviewActionCallNoSystemsBody, { break() { return <br />; } })}
+                    </span>}>
+                    <Bullseye>
+                        <Stack gutter="md">
+                            <StackItem>
+                                1. {intl.formatMessage(messages.installClient)}
+                                <ClipboardCopy>yum install insights-client</ClipboardCopy>
+                            </StackItem>
+                            <StackItem>
+                                2. {intl.formatMessage(messages.registerSystem)}
+                                <ClipboardCopy>insights-client --register</ClipboardCopy>
+                            </StackItem>
+                        </Stack>
+                    </Bullseye>
+                    <Button component="a" href="https://access.redhat.com/products/red-hat-insights#getstarted"
+                        target="_blank" variant="primary">
+                        {intl.formatMessage(messages.overviewActionCallNoSystemsAction)}
+                    </Button>
+                </MessageState>
+            </Main>}
+    </React.Fragment>;
+};
 
 OverviewDashboard.propTypes = {
     match: PropTypes.object,
@@ -193,6 +190,7 @@ OverviewDashboard.propTypes = {
     statsSystemsFetchStatus: PropTypes.string,
     statsSystems: PropTypes.object,
     fetchStatsSystems: PropTypes.func,
+    selectedTags: PropTypes.array,
     intl: PropTypes.any
 };
 
@@ -201,6 +199,7 @@ const mapStateToProps = (state, ownProps) => ({
     statsRulesFetchStatus: state.AdvisorStore.statsRulesFetchStatus,
     statsSystems: state.AdvisorStore.statsSystems,
     statsSystemsFetchStatus: state.AdvisorStore.statsSystemsFetchStatus,
+    selectedTags: state.AdvisorStore.selectedTags,
     ...ownProps
 });
 
@@ -209,7 +208,4 @@ const mapDispatchToProps = dispatch => ({
     fetchStatsSystems: (url) => dispatch(AppActions.fetchStatsSystems(url))
 });
 
-export default injectIntl(routerParams(connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(OverviewDashboard)));
+export default injectIntl(routerParams(connect(mapStateToProps, mapDispatchToProps)(OverviewDashboard)));
