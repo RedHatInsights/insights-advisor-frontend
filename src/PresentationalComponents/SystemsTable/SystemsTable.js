@@ -22,7 +22,7 @@ import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
-const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters, setFilters, history }) => {
+const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters, setFilters, history, selectedTags }) => {
     const [cols] = useState([
         { title: intl.formatMessage(messages.name), transforms: [sortable] },
         { title: intl.formatMessage(messages.numberRuleHits), transforms: [sortable, cellWidth(15)] },
@@ -94,15 +94,18 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
 
     useEffect(() => {
         if (!filterBuilding) {
+            const options = selectedTags.length && ({ tags: selectedTags.join() });
+
             filters.limit || filters.offest === undefined && setFilters({ ...filters, offset: 0, limit: 10 });
 
             fetchSystems({
                 offset: filters.offset,
                 limit: filters.limit,
-                ...filters
+                ...filters,
+                ...options
             });
         }
-    }, [fetchSystems, filters, filterBuilding, setFilters]);
+    }, [fetchSystems, filters, filterBuilding, setFilters, selectedTags]);
 
     useEffect(() => {
         if (systems.data) {
@@ -195,13 +198,15 @@ SystemsTable.propTypes = {
     history: PropTypes.object,
     intl: PropTypes.any,
     filters: PropTypes.object,
-    setFilters: PropTypes.func
+    setFilters: PropTypes.func,
+    selectedTags: PropTypes.array
 };
 
 const mapStateToProps = (state, ownProps) => ({
     systems: state.AdvisorStore.systems,
     systemsFetchStatus: state.AdvisorStore.systemsFetchStatus,
     filters: state.AdvisorStore.filtersSystems,
+    selectedTags: state.AdvisorStore.selectedTags,
     ...ownProps
 });
 
