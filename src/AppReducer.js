@@ -30,7 +30,8 @@ const initialState = Immutable({
     ruleAck: {},
     ruleAckFetchStatus: '',
     hostAcks: {},
-    hostAcksFetchStatus: ''
+    hostAcksFetchStatus: '',
+    selectedTags: []
 });
 
 export const AdvisorStore = (state = initialState, action) => {
@@ -158,6 +159,11 @@ export const AdvisorStore = (state = initialState, action) => {
         case ActionTypes.FILTERS_SYSTEMS_SET:
             return Immutable.merge(state, {
                 filtersSystems: action.payload
+            });
+
+        case ActionTypes.SELECTED_TAGS_SET:
+            return Immutable.merge(state, {
+                selectedTags: action.payload
             });
 
         default:

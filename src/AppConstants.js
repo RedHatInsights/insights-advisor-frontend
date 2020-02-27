@@ -32,6 +32,7 @@ export const RULE_ACK_SET = 'RULE_ACK_SET';
 export const HOST_ACK_FETCH = 'HOST_ACK_FETCH';
 export const HOST_ACK_SET = 'HOST_ACK_SET';
 export const FILTERS_SYSTEMS_SET = 'FILTERS_SYSTEMS_SET';
+export const SELECTED_TAGS_SET = 'SELECTED_TAGS_SET';
 
 export const BASE_URL = '/api/insights/v1';
 export const RULES_FETCH_URL = `${BASE_URL}/rule/`;
