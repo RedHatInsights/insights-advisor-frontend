@@ -252,7 +252,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                         title:
                             <span key={key}>
                                 <RuleLabels rule={value} />
-                                <Link key={key} to={`/rules/${value.rule_id}`}> {value.description} </Link>
+                                <Link key={key} to={`/recommendations/${value.rule_id}`}> {value.description} </Link>
                             </span>
                     }, {
                         title: <DateFormat key={key} date={value.publish_date} variant='relative' />

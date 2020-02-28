@@ -7,100 +7,105 @@ export default defineMessages({
         description: 'Used as a title',
         defaultMessage: 'Rules'
     },
+    recommendations: {
+        id: 'recommendations',
+        description: 'Used as a title',
+        defaultMessage: 'Recommendations'
+    },
     added: {
         id: 'added',
-        description: 'Rule table column title',
+        description: 'Recommendation table column title',
         defaultMessage: 'Added'
     },
     rule: {
         id: 'rule',
-        description: 'Rule table column title',
+        description: 'Recommendation table column title',
         defaultMessage: 'Rule'
     },
     totalRisk: {
         id: 'totalRisk',
-        description: 'Rule table column title, Rule details label',
+        description: 'Recommendation table column title, recommendationdetails label',
         defaultMessage: 'Total risk'
     },
     systems: {
         id: 'systems',
-        description: 'Systems title used in rule table column and systems tab header',
+        description: 'Systems title used in recommendation table column and systems tab header',
         defaultMessage: 'Systems'
     },
     ansible: {
         id: 'ansible',
-        description: 'Rule tablecolumn title',
+        description: 'Recommendation table column title',
         defaultMessage: 'Ansible'
     },
     rulesTableHideReportsErrorDisabled: {
         id: 'rulestable.hidereports.errordisabling',
-        description: 'Rule table, hide reports action, error for disabling reporting on a rule',
+        description: 'Recommendation table, hide reports action, error for disabling reporting on a rule',
         defaultMessage: 'Disabling reports failed'
     },
     rulesTableHideReportsErrorEnabled: {
         id: 'rulestable.hidereports.errorenabling',
-        description: 'Rule table, hide reports action, error for enabling reporting on a rule',
+        description: 'Recommendation table, hide reports action, error for enabling reporting on a rule',
         defaultMessage: 'Enabling reports failed'
     },
     disableRule: {
         id: 'disableRule',
-        description: 'Rule table, action text for disabling reporting of a rule',
+        description: 'Recommendation table, action text for disabling reporting of a rule',
         defaultMessage: 'Disable rule'
     },
     disableRuleForSystems: {
         id: 'disableRuleForSystems',
-        description: 'Rule detail system table, action text for disabling reporting of a rule for a system',
-        defaultMessage: 'Disable rule for selected systems'
+        description: 'Recommendationdetail system table, action text for disabling reporting of a recommendationfor a system',
+        defaultMessage: 'Disable recommendation for selected systems'
     },
     disableRuleBody: {
         id: 'disableRuleBody',
         description: 'Explaining the action of disabling a rule',
-        defaultMessage: `Disabling a rule means that hits for this rule across all systems will not be shown in reports and dashboards.`
+        defaultMessage: `Disabling a recommendation means that this recommendation across all systems will not be shown in reports and dashboards.`
     },
     disableRuleSingleSystem: {
         id: 'disableRuleSingleSystem',
-        description: 'Explaining the action of disabling a rule for a single system',
+        description: 'Explaining the action of disabling a recommendationfor a single system',
         defaultMessage: 'Disable only for this system'
     },
     ruleIsDisabled: {
         id: 'ruleIsDisabled',
-        description: 'Exclaiming that the rule is disabled',
-        defaultMessage: 'Rule is disabled'
+        description: 'Exclaiming that the recommendationis disabled',
+        defaultMessage: 'Recommendation is disabled'
     },
     ruleIsDisabledTooltip: {
         id: 'ruleIsDisabledTooltip',
         description: 'Disabled badge tooltip explaining the meaning of a disabled rule',
-        defaultMessage: 'Indicates hits for this rule across all systems will not be shown in reports and dashboards.'
+        defaultMessage: 'Indicates this recommendation across all systems will not be shown in reports and dashboards.'
     },
     ruleIsDisabledBody: {
         id: 'ruleIsDisabledBody',
-        description: 'Explaining that the rule is disabled',
-        defaultMessage: 'This rule has been disabled and has no results.'
+        description: 'Explaining that the recommendationis disabled',
+        defaultMessage: 'This recommendation has been disabled and has no results.'
     },
     ruleIsDisabledJustification: {
         id: 'ruleIsDisabledJustification',
-        description: 'Explaining that the rule is disabled with following justification',
-        defaultMessage: 'This rule has been disabled for all systems for the following reason: '
+        description: 'Explaining that the recommendationis disabled with following justification',
+        defaultMessage: 'This recommendation has been disabled for all systems for the following reason: '
     },
     ruleIsDisabledForSystems: {
         id: 'ruleIsDisabledForSystems',
-        description: 'Exclaiming that the rule is disabled for systems',
-        defaultMessage: 'Rule is disabled for some systems'
+        description: 'Exclaiming that the recommendationis disabled for systems',
+        defaultMessage: 'Recommendation is disabled for some systems'
     },
     ruleIsDisabledForAllSystems: {
         id: 'ruleIsDisabledForAllSystems',
-        description: 'Exclaiming that the rule is disabled for all systems',
-        defaultMessage: 'Rule is disabled for all systems'
+        description: 'Exclaiming that the recommendationis disabled for all systems',
+        defaultMessage: 'Recommendation is disabled for all systems'
     },
     ruleIsDisabledForSystemsBody: {
         id: 'ruleIsDisabledForSystemsBody',
-        description: 'Exclaiming that the rule is disabled for systems (system count)',
-        defaultMessage: 'Rule is disabled for {systems, plural, one {# system.} other {# systems.}}'
+        description: 'Exclaiming that the recommendationis disabled for systems (system count)',
+        defaultMessage: 'Recommendation is disabled for {systems, plural, one {# system.} other {# systems.}}'
     },
     enableRuleForSystems: {
         id: 'enableRuleForSystems',
-        description: 'Enable this rule for all systems',
-        defaultMessage: 'Enable this rule for all systems'
+        description: 'Enable this recommendationfor all systems',
+        defaultMessage: 'Enable this recommendation for all systems'
     },
     viewSystems: {
         id: 'viewSystems',
@@ -114,28 +119,28 @@ export default defineMessages({
     },
     enableRule: {
         id: 'enableRule',
-        description: 'Rule table, action text for enabling reporting of a rule',
+        description: 'Recommendation table, action text for enabling reporting of a rule',
         defaultMessage: 'Enable rule'
     },
     rulesTableNoRuleHitsTitle: {
         id: 'rulestable.norulehits.title',
-        description: 'Rule table, no rule hits message, title',
-        defaultMessage: 'No rule hits'
+        description: 'Recommendation table, no recommendations message, title',
+        defaultMessage: 'No recommendations'
     },
     rulesTableNoRuleHitsEnabledRulesBody: {
         id: 'rulestable.norulehits.enabledrulesbody',
-        description: 'Rule table, no rule hits message for enabled rules, body',
+        description: 'Recommendation table, no recommendations message for enabled rules, body',
         defaultMessage: 'None of your connected systems are affected by enabled rules.'
     },
     rulesTableNoRuleHitsAnyRulesBody: {
         id: 'rulestable.norulehits.anyrulesbody',
-        description: 'Rule table, no rule hits message for any known rules, body',
+        description: 'Recommendation table, no recommendations message for any known rules, body',
         defaultMessage: 'None of your connected systems are affected by any known rules.'
     },
     rulesTableNoRuleHitsAddDisabledButton: {
         id: 'rulestable.norulehits.adddisabledbutton',
-        description: 'Rule table, no rule hits message for any enabled rules, include disabled rules button',
-        defaultMessage: 'Include disabled rules'
+        description: 'Recommendation table, no recommendations message for any enabled rules, include disabled recommendations button',
+        defaultMessage: 'Include disabled recommendations'
     },
     disabled: {
         id: 'disabled',
@@ -149,43 +154,43 @@ export default defineMessages({
     },
     rulesTableFilterInputText: {
         id: 'rulestable.filter.inputtext',
-        description: 'Search text placeholder for rules table',
+        description: 'Search text placeholder for recommendation table',
         defaultMessage: 'Find a rule...'
     },
     rulesTableActionExportJson: {
         id: 'rulestable.action.exportjson',
-        description: 'Button text to export/download rules table data as json',
+        description: 'Button text to export/download recommendation table data as json',
         defaultMessage: 'Export as JSON'
     },
     rulesTableActionExportCsv: {
         id: 'rulestable.action.exportcsv',
-        description: 'Button text to export/download rules table data as csv',
+        description: 'Button text to export/download recommendation table data as csv',
         defaultMessage: 'Export as CSV'
     },
     rulesTableActionShow: {
         id: 'rulestable.action.show',
-        description: 'Label for action show all rules including those that affect systems',
-        defaultMessage: 'Show rules with no impacted systems'
+        description: 'Label for action show all recommendationsincluding those that affect systems',
+        defaultMessage: 'Show recommendations with no impacted systems'
     },
     rulesTableActionHide: {
         id: 'rulestable.action.hide',
-        description: 'Label for action show only rules that affect systems',
-        defaultMessage: 'Hide rules with no impacted systems'
+        description: 'Label for action show only recommendationsthat affect systems',
+        defaultMessage: 'Hide recommendations with no impacted systems'
     },
     rulesTableActionShowDisabled: {
         id: 'rulestable.action.showDisabled',
-        description: 'Label for action show all rules including those that are disabled',
-        defaultMessage: 'Show disabled rules'
+        description: 'Label for action show all recommendationsincluding those that are disabled',
+        defaultMessage: 'Show disabled recommendations'
     },
     rulesTableActionHideDisabled: {
         id: 'rulestable.action.hideDisabled',
-        description: 'Label for action show only rules that are enabled',
-        defaultMessage: 'Hide disabled rules'
+        description: 'Label for action show only recommendationsthat are enabled',
+        defaultMessage: 'Hide disabled recommendations'
     },
     rulesTableFetchRulesError: {
         id: 'rulestable.fetchrules.error',
-        description: 'Rule table, fetch rules, error message',
-        defaultMessage: 'There was an error fetching rules list.'
+        description: 'Recommendation table, fetch rules, error message',
+        defaultMessage: 'There was an error fetching recommendations list.'
     },
     loading: {
         id: 'loading',
@@ -195,7 +200,7 @@ export default defineMessages({
     summaryChartNoHits: {
         id: 'summarychart.nohits',
         description: 'The no hits text for the summary chart',
-        defaultMessage: 'Your connected systems have no rule hits.'
+        defaultMessage: 'Your connected systems have no recommendations.'
     },
     summaryChartItem: {
         id: 'summarychart.item',
@@ -210,7 +215,7 @@ export default defineMessages({
     overviewChartNoHits: {
         id: 'overviewchart.nohits',
         description: 'The no hits text for the overview chart',
-        defaultMessage: 'Your connected systems have no categorized rule hits.'
+        defaultMessage: 'Your connected systems have no categorized recommendations.'
     },
     totalHits: {
         id: 'total hits',
@@ -297,12 +302,12 @@ export default defineMessages({
     overviewCategoryChartTitle: {
         id: 'overview.categorychart.title',
         description: 'Overview Category donut chart title',
-        defaultMessage: 'Rule hits by category'
+        defaultMessage: 'Recommendations by category'
     },
     overviewSeverityChartTitle: {
         id: 'overview.severitychart.title',
         description: 'Overview severity chart title',
-        defaultMessage: 'Rule hits by severity'
+        defaultMessage: 'Recommendations by severity'
     },
     overviewActioncallTitle: {
         id: 'overview.actioncall.title',
@@ -383,7 +388,7 @@ export default defineMessages({
     },
     rulesDetailsPubishdate: {
         id: 'rulesdetails.publishdate',
-        description: 'Rules details, publish date',
+        description: 'Recommendationsdetails, publish date',
         defaultMessage: 'Publish date: {date}'
     },
     affectedSystems: {
@@ -459,7 +464,7 @@ export default defineMessages({
     topicAddEditTagHelperText: {
         id: 'topicAddEditLabelHelperText',
         description: 'helper text for tag text input in TopicAddEdit Modal',
-        defaultMessage: 'Rules tagged with this tag will be added to the topic'
+        defaultMessage: 'Recommendationstagged with this tag will be added to the topic'
     },
     topicAdminCreate: {
         id: 'topicAdminCreate',
@@ -528,8 +533,8 @@ export default defineMessages({
     },
     numberRuleHits: {
         id: 'numberRuleHits',
-        description: 'Used in the system table title column, number of rule hits per system',
-        defaultMessage: 'Number of rule hits'
+        description: 'Used in the system table title column, number of recommendations per system',
+        defaultMessage: 'Number of recommendations'
     },
     lastSeen: {
         id: 'lastSeen',
@@ -679,7 +684,7 @@ export default defineMessages({
     hostAckModalTitle: {
         id: 'hostAckModalTitle',
         description: 'Title for host ack table modal',
-        defaultMessage: 'Rule has been disabled for:'
+        defaultMessage: 'Recommendation has been disabled for:'
     },
     systemName: {
         id: 'systemName',
@@ -703,8 +708,8 @@ export default defineMessages({
     },
     ruleHelpful: {
         id: 'ruleHelpful',
-        description: 'Asking the user if they find a rule helpful',
-        defaultMessage: 'Is this rule helpful?'
+        description: 'Asking the user if they find a recommendation helpful',
+        defaultMessage: 'Is this recommendation helpful?'
     },
     feedbackThankyou: {
         id: 'feedbackThankyou',
@@ -718,13 +723,13 @@ export default defineMessages({
     },
     incidentRules: {
         id: 'incidentRules',
-        description: 'Rules with incidents',
-        defaultMessage: 'Incident rules'
+        description: 'Recommendationswith incidents',
+        defaultMessage: 'Incident recommendations'
     },
     nonIncidentRules: {
         id: 'nonIncidentRules',
-        description: 'Rules with no incidents',
-        defaultMessage: 'Non-incident rules'
+        description: 'Recommendationswith no incidents',
+        defaultMessage: 'Non-incident recommendations'
     },
     incident: {
         id: 'incident',

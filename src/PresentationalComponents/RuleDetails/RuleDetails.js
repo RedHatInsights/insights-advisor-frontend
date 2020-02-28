@@ -77,7 +77,7 @@ const RuleDetails = ({ children, rule, intl, topics, header, isDetailsPage }) =>
                 {isDetailsPage && <RuleRating rule={rule} />}
                 {!isDetailsPage && rule.impacted_systems_count > 0 &&
                     <StackItem>
-                        <Link key={`${rule.rule_id}-link`} to={`/rules/${rule.rule_id}`}>
+                        <Link key={`${rule.rule_id}-link`} to={`/recommendations/${rule.rule_id}`}>
                             {intl.formatMessage(messages.viewAffectedSystems, { systems: rule.impacted_systems_count })}
                         </Link>
                     </StackItem>

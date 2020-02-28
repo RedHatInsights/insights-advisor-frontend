@@ -10,7 +10,7 @@ const App = (props) => {
     const [auth, setAuth] = useState(false);
     const appNavClick = {
         overview(redirect) { insights.chrome.appNavClick({ id: 'overview', redirect  }); },
-        rules(redirect) { insights.chrome.appNavClick({ id: 'rules', redirect  }); },
+        recommendations(redirect) { insights.chrome.appNavClick({ id: 'recommendations', redirect  }); },
         topics(redirect) { insights.chrome.appNavClick({ id: 'topics', redirect }); }
     };
 
