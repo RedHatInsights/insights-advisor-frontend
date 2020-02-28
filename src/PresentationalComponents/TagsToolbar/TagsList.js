@@ -42,6 +42,14 @@ const TagsList = ({ setSelectedTags, selectedTags, showMoreCount, intl, tags, ha
                             </DataListCell>]} />
                     </DataListItemRow>
                 </DataListItem>)}
+                {tags.length === 0 && <DataListItem aria-labelledby="tag-list-item-no-tags" key='no-tags'>
+                    <DataListItemRow>
+                        <DataListItemCells dataListCells={[
+                            <DataListCell key="primary content">
+                                {intl.formatMessage(messages.noTags)}
+                            </DataListCell>]} />
+                    </DataListItemRow>
+                </DataListItem>}
                 {showMoreCount > 0 && tags.length > showMoreCount && <DataListItem aria-labelledby="tag-list-item-show-more">
                     <DataListItemRow>
                         <DataListItemCells dataListCells={[
