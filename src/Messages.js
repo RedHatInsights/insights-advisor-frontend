@@ -39,18 +39,18 @@ export default defineMessages({
     },
     rulesTableHideReportsErrorDisabled: {
         id: 'rulestable.hidereports.errordisabling',
-        description: 'Recommendation table, hide reports action, error for disabling reporting on a reccomendation',
+        description: 'Recommendation table, hide reports action, error for disabling reporting on a recommendation',
         defaultMessage: 'Disabling reports failed'
     },
     rulesTableHideReportsErrorEnabled: {
         id: 'rulestable.hidereports.errorenabling',
-        description: 'Recommendation table, hide reports action, error for enabling reporting on a reccomendation',
+        description: 'Recommendation table, hide reports action, error for enabling reporting on a recommendation',
         defaultMessage: 'Enabling reports failed'
     },
     disableRule: {
         id: 'disableRule',
-        description: 'Recommendation table, action text for disabling reporting of a reccomendation',
-        defaultMessage: 'Disable reccomendation'
+        description: 'Recommendation table, action text for disabling reporting of a recommendation',
+        defaultMessage: 'Disable recommendation'
     },
     disableRuleForSystems: {
         id: 'disableRuleForSystems',
@@ -59,7 +59,7 @@ export default defineMessages({
     },
     disableRuleBody: {
         id: 'disableRuleBody',
-        description: 'Explaining the action of disabling a reccomendation',
+        description: 'Explaining the action of disabling a recommendation',
         defaultMessage: `Disabling a recommendation means that this recommendation across all systems will not be shown in reports and dashboards.`
     },
     disableRuleSingleSystem: {
@@ -74,7 +74,7 @@ export default defineMessages({
     },
     ruleIsDisabledTooltip: {
         id: 'ruleIsDisabledTooltip',
-        description: 'Disabled badge tooltip explaining the meaning of a disabled reccomendation',
+        description: 'Disabled badge tooltip explaining the meaning of a disabled recommendation',
         defaultMessage: 'Indicates this recommendation across all systems will not be shown in reports and dashboards.'
     },
     ruleIsDisabledBody: {
@@ -119,8 +119,8 @@ export default defineMessages({
     },
     enableRule: {
         id: 'enableRule',
-        description: 'Recommendation table, action text for enabling reporting of a reccomendation',
-        defaultMessage: 'Enable reccomendation'
+        description: 'Recommendation table, action text for enabling reporting of a recommendation',
+        defaultMessage: 'Enable recommendation'
     },
     rulesTableNoRuleHitsTitle: {
         id: 'rulestable.norulehits.title',
@@ -249,7 +249,7 @@ export default defineMessages({
     },
     rulesDetailsTotalriskBody: {
         id: 'rulesdetails.totalriskbody',
-        description: 'Text explaining the total risk value of this reccomendation',
+        description: 'Text explaining the total risk value of this recommendation',
         defaultMessage: `The <strong>likelihood</strong> that this will be a problem is
         {likelihood}. The <strong>impact</strong> of the problem would be
         {impact} if it occurred.`
@@ -528,8 +528,8 @@ export default defineMessages({
     },
     topicRelatedToRule: {
         id: 'topicRelatedToRule',
-        description: 'Identifying the list of topics that include this reccomendation',
-        defaultMessage: 'Topics related to this reccomendation'
+        description: 'Identifying the list of topics that include this recommendation',
+        defaultMessage: 'Topics related to this recommendation'
     },
     name: {
         id: 'name',
@@ -708,7 +708,7 @@ export default defineMessages({
     },
     viewAffectedSystems: {
         id: 'viewAffectedSystems',
-        description: 'Link text to view all hosts that are affected by a reccomendation',
+        description: 'Link text to view all hosts that are affected by a recommendation',
         defaultMessage: 'View {systems, plural, one {the affected system.} other {# affected systems.}}'
     },
     ruleHelpful: {
