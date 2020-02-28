@@ -39,18 +39,18 @@ export default defineMessages({
     },
     rulesTableHideReportsErrorDisabled: {
         id: 'rulestable.hidereports.errordisabling',
-        description: 'Recommendation table, hide reports action, error for disabling reporting on a rule',
+        description: 'Recommendation table, hide reports action, error for disabling reporting on a reccomendation',
         defaultMessage: 'Disabling reports failed'
     },
     rulesTableHideReportsErrorEnabled: {
         id: 'rulestable.hidereports.errorenabling',
-        description: 'Recommendation table, hide reports action, error for enabling reporting on a rule',
+        description: 'Recommendation table, hide reports action, error for enabling reporting on a reccomendation',
         defaultMessage: 'Enabling reports failed'
     },
     disableRule: {
         id: 'disableRule',
-        description: 'Recommendation table, action text for disabling reporting of a rule',
-        defaultMessage: 'Disable rule'
+        description: 'Recommendation table, action text for disabling reporting of a reccomendation',
+        defaultMessage: 'Disable reccomendation'
     },
     disableRuleForSystems: {
         id: 'disableRuleForSystems',
@@ -59,7 +59,7 @@ export default defineMessages({
     },
     disableRuleBody: {
         id: 'disableRuleBody',
-        description: 'Explaining the action of disabling a rule',
+        description: 'Explaining the action of disabling a reccomendation',
         defaultMessage: `Disabling a recommendation means that this recommendation across all systems will not be shown in reports and dashboards.`
     },
     disableRuleSingleSystem: {
@@ -74,7 +74,7 @@ export default defineMessages({
     },
     ruleIsDisabledTooltip: {
         id: 'ruleIsDisabledTooltip',
-        description: 'Disabled badge tooltip explaining the meaning of a disabled rule',
+        description: 'Disabled badge tooltip explaining the meaning of a disabled reccomendation',
         defaultMessage: 'Indicates this recommendation across all systems will not be shown in reports and dashboards.'
     },
     ruleIsDisabledBody: {
@@ -119,8 +119,8 @@ export default defineMessages({
     },
     enableRule: {
         id: 'enableRule',
-        description: 'Recommendation table, action text for enabling reporting of a rule',
-        defaultMessage: 'Enable rule'
+        description: 'Recommendation table, action text for enabling reporting of a reccomendation',
+        defaultMessage: 'Enable reccomendation'
     },
     rulesTableNoRuleHitsTitle: {
         id: 'rulestable.norulehits.title',
@@ -249,7 +249,7 @@ export default defineMessages({
     },
     rulesDetailsTotalriskBody: {
         id: 'rulesdetails.totalriskbody',
-        description: 'Text explaining the total risk value of this rule',
+        description: 'Text explaining the total risk value of this reccomendation',
         defaultMessage: `The <strong>likelihood</strong> that this will be a problem is
         {likelihood}. The <strong>impact</strong> of the problem would be
         {impact} if it occurred.`
@@ -528,8 +528,8 @@ export default defineMessages({
     },
     topicRelatedToRule: {
         id: 'topicRelatedToRule',
-        description: 'Identifying the list of topics that include this rule',
-        defaultMessage: 'Topics related to this rule'
+        description: 'Identifying the list of topics that include this reccomendation',
+        defaultMessage: 'Topics related to this reccomendation'
     },
     name: {
         id: 'name',
@@ -708,7 +708,7 @@ export default defineMessages({
     },
     viewAffectedSystems: {
         id: 'viewAffectedSystems',
-        description: 'Link text to view all hosts that are affected by a rule',
+        description: 'Link text to view all hosts that are affected by a reccomendation',
         defaultMessage: 'View {systems, plural, one {the affected system.} other {# affected systems.}}'
     },
     ruleHelpful: {
