@@ -431,6 +431,11 @@ export default defineMessages({
         description: 'Tags followed by a count (of selected tags)',
         defaultMessage: 'Tags ({count})'
     },
+    noTags: {
+        id: 'noTags',
+        description: 'When there exist no tags for an account',
+        defaultMessage: 'No tags available'
+    },
     topicAddEditDescription: {
         id: 'topicAddEditDescription',
         description: 'description header for TopicAddEdit Modal',

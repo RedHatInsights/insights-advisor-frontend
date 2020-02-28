@@ -84,6 +84,7 @@
     "title": "Title",
     "tag": "Tag",
     "tagsCount": "Tags ({count})",
+    "noTags": "No tags available",
     "topicAddEditDescription": "Description",
     "topicAddEditDescriptionHelperText": "Shown to users to describe the topic",
     "topicAddEditDisabled": "Disabled (not visible)",

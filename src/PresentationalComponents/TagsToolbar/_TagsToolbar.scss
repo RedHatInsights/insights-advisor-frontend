@@ -2,6 +2,10 @@
   background-color: var(--pf-global--BackgroundColor--100);
   border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--light-100);
 
+  .pf-c-dropdown__menu {
+    top: 36px !important;
+  }
+
   .dropDownOverride {
     button {
       &::before {
