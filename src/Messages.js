@@ -469,7 +469,7 @@ export default defineMessages({
     topicAddEditTagHelperText: {
         id: 'topicAddEditLabelHelperText',
         description: 'helper text for tag text input in TopicAddEdit Modal',
-        defaultMessage: 'Recommendationstagged with this tag will be added to the topic'
+        defaultMessage: 'Recommendations tagged with this tag will be added to the topic'
     },
     topicAdminCreate: {
         id: 'topicAdminCreate',

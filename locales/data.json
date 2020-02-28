@@ -91,7 +91,7 @@
     "topicAddEditDisabled": "Disabled (not visible)",
     "topicAddEditEnabled": "Enabled (visible)",
     "topicAddEditFeatureBox": "Feature this topic",
-    "topicAddEditLabelHelperText": "Recommendationstagged with this tag will be added to the topic",
+    "topicAddEditLabelHelperText": "Recommendations tagged with this tag will be added to the topic",
     "topicAdminCreate": "Create new topic",
     "topicAdminEdit": "Edit topic",
     "topicAdminTitle": "Topic - administration",
