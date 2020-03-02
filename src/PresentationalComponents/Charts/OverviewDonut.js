@@ -23,7 +23,7 @@ const OverviewDonut = ({ className, category, setFilters, history, intl }) => {
             mutation: (data) => {
                 const category = data.datum.name.split(' ')[0].toLowerCase();
                 setDonutFilters(category);
-                history.push(`/rules`);
+                history.push(`/recommendations`);
             }
         }];
     };
@@ -47,7 +47,7 @@ const OverviewDonut = ({ className, category, setFilters, history, intl }) => {
                                         mutation: data => {
                                             const category = data.datum.xName.toLowerCase();
                                             setDonutFilters(category);
-                                            history.push(`/rules`);
+                                            history.push(`/recommendations`);
                                         }
                                     }
                                 ];

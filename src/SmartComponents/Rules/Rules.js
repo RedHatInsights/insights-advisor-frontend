@@ -1,5 +1,6 @@
-import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
+
+import React from 'react';
 import asyncComponent from '../../Utilities/asyncComponent';
 
 const InsightsTabs = asyncComponent(() => import(/* webpackChunkName: "InsightsTabs" */ '../InsightsTabs/InsightsTabs'));
@@ -9,14 +10,14 @@ const InventoryDetails = asyncComponent(() =>
 
 const Rules = () => <React.Fragment>
     <Switch>
-        <Route exact path='/rules' component={InsightsTabs} />
-        <Route exact path='/rules/systems' component={InsightsTabs} />
-        <Route exact path='/rules/systems/:inventoryId/' component={InventoryDetails} />
-        <Route exact path='/rules/by_id/:id' component={Details} />
-        <Route exact path='/rules/:id' component={Details} />
-        <Route path='/rules/by_id/:id/:inventoryId/' component={InventoryDetails} />
-        <Route path='/rules/:id/:inventoryId/' component={InventoryDetails} />
-        <Redirect path='*' to='/rules' push />
+        <Route exact path='/recommendations' component={InsightsTabs} />
+        <Route exact path='/recommendations/systems' component={InsightsTabs} />
+        <Route exact path='/recommendations/systems/:inventoryId/' component={InventoryDetails} />
+        <Route exact path='/recommendations/by_id/:id' component={Details} />
+        <Route exact path='/recommendations/:id' component={Details} />
+        <Route path='/recommendations/by_id/:id/:inventoryId/' component={InventoryDetails} />
+        <Route path='/recommendations/:id/:inventoryId/' component={InventoryDetails} />
+        <Redirect path='*' to='/recommendations' push />
     </Switch>
 </React.Fragment>;
 

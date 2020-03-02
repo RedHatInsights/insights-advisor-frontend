@@ -26,8 +26,8 @@ const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl })
         // if applicable, add tab
         if (splitUrl[1] === 'rules') {
             splitUrl[1] + splitUrl[2] !== 'rulessystems' ?
-                crumbs.push({ title: intl.formatMessage(messages.rules), navigate: '/rules' })
-                : crumbs.push({ title: intl.formatMessage(messages.systems), navigate: '/rules/systems' });
+                crumbs.push({ title: intl.formatMessage(messages.recommendations), navigate: '/recommendations' })
+                : crumbs.push({ title: intl.formatMessage(messages.systems), navigate: '/recommendations/systems' });
         }
 
         // if applicable, add :id breadcrumb

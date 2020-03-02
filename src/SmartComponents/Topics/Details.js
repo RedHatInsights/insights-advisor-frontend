@@ -69,7 +69,9 @@ const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl,
         <Main>
             <React.Fragment>
                 {topicFetchStatus === '' || topicFetchStatus === 'pending' || topicFetchStatus === 'fulfilled' && <React.Fragment>
-                    <Title headingLevel="h3" size="2xl" className='titlePaddingOverride'> Rules</Title>
+                    <Title headingLevel="h3" size="2xl" className='titlePaddingOverride'>
+                        {intl.formatMessage(messages.recommendations)}
+                    </Title>
                     {filters.topic && <RulesTable />}
                 </React.Fragment>}
                 {topicFetchStatus === 'failed' || topicFetchStatus === 'rejected' &&

@@ -124,7 +124,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
                     system: value,
                     cells: [
                         {
-                            title: <Link key={key} to={`/rules/systems/${value.system_uuid}`}>
+                            title: <Link key={key} to={`/recommendations/systems/${value.system_uuid}`}>
                                 {value.display_name}
                             </Link>
                         }, {

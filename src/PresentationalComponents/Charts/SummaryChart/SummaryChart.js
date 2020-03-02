@@ -36,7 +36,7 @@ const SummaryChart = ({ reportsTotalRisk, rulesTotalRisk, intl }) => {
 
     return <Stack
         style={{ marginTop: 18 }}
-        aria-label='Rule hits by severity' widget-type='InsightsSummaryChart'>
+        aria-label='Recommendations by severity' widget-type='InsightsSummaryChart'>
         {rulesWithHits.filter(Boolean).length > 0 ?
             <React.Fragment>
                 {rulesWithHits}

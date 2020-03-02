@@ -20,13 +20,13 @@ class InsightsTabs extends Component {
     state = {
         activeTab: {},
         tabs: {
-            rules: { title: this.props.intl.formatMessage(messages.rules), to: '/rules', component: <RulesTable /> },
-            systems: { title: this.props.intl.formatMessage(messages.systems), to: '/rules/systems', component: <SystemsTable /> }
+            recommendations: { title: this.props.intl.formatMessage(messages.recommendations), to: '/recommendations', component: <RulesTable /> },
+            systems: { title: this.props.intl.formatMessage(messages.systems), to: '/recommendations/systems', component: <SystemsTable /> }
         }
     };
 
     async componentDidMount() {
-        const tabType = location.pathname.slice(location.pathname.indexOf('insights/')).split('/')[2] === 'systems' ? 'systems' : 'rules';
+        const tabType = location.pathname.slice(location.pathname.indexOf('insights/')).split('/')[2] === 'systems' ? 'systems' : 'recommendations';
         const activeTab = this.state.tabs[tabType];
         this.setState({ activeTab });
     }
@@ -42,7 +42,7 @@ class InsightsTabs extends Component {
         return <React.Fragment>
             <TagsToolbar />
             <PageHeader>
-                <PageHeaderTitle title={this.props.intl.formatMessage(messages.rules)} />
+                <PageHeaderTitle title={this.props.intl.formatMessage(messages.recommendations)} />
             </PageHeader>
             {activeTab.title && <Tabs mountOnEnter unmountOnExit
                 className='insights-tabs'

@@ -1,4 +1,5 @@
 import { Redirect, Route, Switch } from 'react-router-dom';
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import asyncComponent from './Utilities/asyncComponent';
@@ -22,7 +23,7 @@ const Rules = asyncComponent(() => import(/* webpackChunkName: "Rules" */ './Sma
 const Topics = asyncComponent(() => import(/* webpackChunkName: "Topics" */ './SmartComponents/Topics/Topics'));
 const paths = [
     { title: 'Overview', to: '/overview', rootClass: 'Insights', component: Overview },
-    { title: 'Rules', to: '/rules', rootClass: 'Insights', component: Rules },
+    { title: 'Rules', to: '/recommendations', rootClass: 'Insights', component: Rules },
     { title: 'Topics', to: '/topics', rootClass: 'Insights', component: Topics },
     { title: 'Systems', to: '/systems', rootClass: 'Insights', component: Rules }
 ];

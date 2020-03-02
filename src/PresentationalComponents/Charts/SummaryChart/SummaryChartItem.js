@@ -18,7 +18,7 @@ const SummaryChartItem = ({ numIssues, name, riskName, affectedSystems, setFilte
     const setChartFilters = () => {
         const totalRisk = `${SEVERITY_MAP[`${riskName}-risk`]}`;
         setFilters({ total_risk: [totalRisk], reports_shown: 'true', impacting: true });
-        history.push(`/rules`);
+        history.push(`/recommendations`);
     };
 
     const returnLink = (children) => <Button className='paddingLeftLabelOverride' variant="link" onClick={setChartFilters}>{children}</Button>;

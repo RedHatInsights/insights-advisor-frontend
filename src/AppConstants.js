@@ -128,7 +128,7 @@ export const FILTER_CATEGORIES = {
         ]
     },
     incident: {
-        type: 'checkbox', title: 'Incident rules', urlParam: 'incident', values: [
+        type: 'checkbox', title: 'Incidents', urlParam: 'incident', values: [
             { label: intlHelper(intl.formatMessage(messages.incidentRules), intlSettings), value: 'true' },
             { label: intlHelper(intl.formatMessage(messages.nonIncidentRules), intlSettings), value: 'false' }
         ]
@@ -140,7 +140,7 @@ export const FILTER_CATEGORIES = {
         ]
     },
     reports_shown: {
-        type: 'radio', title: 'Rule status', urlParam: 'reports_shown', values: [
+        type: 'radio', title: 'Status', urlParam: 'reports_shown', values: [
             { label: intlHelper(intl.formatMessage(messages.all), intlSettings), value: 'undefined' },
             { label: intlHelper(intl.formatMessage(messages.enabled), intlSettings), value: 'true' },
             { label: intlHelper(intl.formatMessage(messages.disabled), intlSettings), value: 'false' }
