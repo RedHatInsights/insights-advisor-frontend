@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableHeader, cellWidth, sortable } from '@patternfly/react-table';
 import { paramParser, urlBuilder } from '../Common/Tables';
 
+import { CullingInformation } from '@redhat-cloud-services/frontend-components/components/CullingInfo';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/components/DateFormat';
 import Failed from '../Loading/Failed';
 import { Link } from 'react-router-dom';
@@ -131,7 +132,11 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
                             title: <div key={key}> {value.hits}</div>
                         }, {
 
-                            title: <DateFormat key={key} date={value.last_seen} variant='relative' />
+                            title:
+                                value.stale_at ? <CullingInformation stale={value.stale_at}>
+                                    <DateFormat key={key} date={value.last_seen} variant='relative' />
+                                </CullingInformation>
+                                    : <DateFormat key={key} date={value.last_seen} variant='relative' />
                         }
                     ]
                 }

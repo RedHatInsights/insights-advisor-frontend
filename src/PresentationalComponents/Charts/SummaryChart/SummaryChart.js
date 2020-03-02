@@ -1,4 +1,4 @@
-import './SummaryChart.scss';
+import './_SummaryChart.scss';
 
 import { SEVERITY_MAP, TOTAL_RISK_LABEL } from '../../../AppConstants';
 import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/index';

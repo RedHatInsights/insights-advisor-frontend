@@ -1,15 +1,17 @@
 /* eslint camelcase: 0 */
-import React from 'react';
-import PropTypes from 'prop-types';
+import './OverviewDonut.scss';
+
+import * as AppActions from '../../AppActions';
+
 import { ChartDonut, ChartLegend, ChartThemeColor, ChartThemeVariant } from '@patternfly/react-charts';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+
+import PropTypes from 'prop-types';
+import { RULE_CATEGORIES } from '../../AppConstants';
+import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-
-import './OverviewDonut.scss';
-import * as AppActions from '../../AppActions';
-import { RULE_CATEGORIES } from '../../AppConstants';
 import messages from '../../Messages';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const OverviewDonut = ({ className, category, setFilters, history, intl }) => {
     const setDonutFilters = category => {
@@ -31,13 +33,13 @@ const OverviewDonut = ({ className, category, setFilters, history, intl }) => {
     const totalHits = category.length ? category.reduce((sum, curr) => sum + curr) : 0;
     const typeNames = ['Availability', 'Stability', 'Performance', 'Security'];
 
-    return <>{ totalHits ?
-        <div className={ `donut-chart-inline ${className}` }>
+    return <>{totalHits ?
+        <div className={`donut-chart-inline ${className}`}>
             <div className="donut-chart-container">
                 <ChartDonut
-                    data={ category.map((value, key) => ({ x: typeNames[key], y: value, label: `${typeNames[key]}: ${value}` })) }
-                    labels={ ({ datum }) => `${datum.x}: ${datum.y}` }
-                    events={ [{
+                    data={category.map((value, key) => ({ x: typeNames[key], y: value, label: `${typeNames[key]}: ${value}` }))}
+                    labels={({ datum }) => `${datum.x}: ${datum.y}`}
+                    events={[{
                         target: 'data',
                         eventHandlers: {
                             onClick: () => {
@@ -53,16 +55,16 @@ const OverviewDonut = ({ className, category, setFilters, history, intl }) => {
                                 ];
                             }
                         }
-                    }] }
-                    title={ `${totalHits}` }
+                    }]}
+                    title={`${totalHits}`}
                     subTitle={intl.formatMessage(messages.totalHits)}
-                    themeColor={ ChartThemeColor.multiOrdered }
-                    themeVariant={ ChartThemeVariant.light }
+                    themeColor={ChartThemeColor.multiOrdered}
+                    themeVariant={ChartThemeVariant.light}
                 />
             </div>
             <ChartLegend
-                data={ category.map((value, key) => ({ name: `${typeNames[key]} (${value})` })) }
-                events={ [
+                data={category.map((value, key) => ({ name: `${typeNames[key]} (${value})` }))}
+                events={[
                     {
                         target: 'labels', eventHandlers: {
                             onClick: legendClick,
@@ -76,16 +78,17 @@ const OverviewDonut = ({ className, category, setFilters, history, intl }) => {
                                 }];
                             }
                         }
-                    }] }
+                    }]}
                 orientation="vertical"
-                height={ 200 }
-                y={ 40 }
-                responsive={ false }
-                themeColor={ ChartThemeColor.multiOrdered }
-                themeVariant={ ChartThemeVariant.light }
+                height={200}
+                width={150}
+                y={40}
+                responsive={false}
+                themeColor={ChartThemeColor.multiOrdered}
+                themeVariant={ChartThemeVariant.light}
             />
         </div>
-        : <p style={ { marginTop: 18 } }>{ intl.formatMessage(messages.overviewChartNoHits) }</p>
+        : <p style={{ marginTop: 18 }}>{intl.formatMessage(messages.overviewChartNoHits)}</p>
     }</>;
 };
 
@@ -95,18 +98,10 @@ OverviewDonut.propTypes = {
     history: PropTypes.object,
     setFilters: PropTypes.func,
     intl: PropTypes.any
-
 };
 
-OverviewDonut.defaultProps = {
-    category: []
-};
+OverviewDonut.defaultProps = { category: [] };
 
-const mapDispatchToProps = dispatch => ({
-    setFilters: (filters) => dispatch(AppActions.setFilters(filters))
-});
+const mapDispatchToProps = dispatch => ({ setFilters: (filters) => dispatch(AppActions.setFilters(filters)) });
 
-export default injectIntl(routerParams(connect(
-    null,
-    mapDispatchToProps
-)(OverviewDonut)));
+export default injectIntl(routerParams(connect(null, mapDispatchToProps)(OverviewDonut)));

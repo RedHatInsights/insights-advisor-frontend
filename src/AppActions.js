@@ -22,6 +22,10 @@ export const fetchStatsSystems = (options) => ({
     type: ActionTypes.STATS_SYSTEMS_FETCH,
     payload: fetchData(ActionTypes.STATS_SYSTEMS_FETCH_URL, {}, options)
 });
+export const fetchStatsStaleHosts = (options) => ({
+    type: ActionTypes.STATS_STALEHOSTS_FETCH,
+    payload: fetchData(ActionTypes.STATS_STALEHOSTS_FETCH_URL, {}, options)
+});
 export const fetchRules = (options) => ({
     type: ActionTypes.RULES_FETCH,
     payload: fetchData(ActionTypes.RULES_FETCH_URL, {}, options)

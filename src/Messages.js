@@ -309,6 +309,26 @@ export default defineMessages({
         description: 'Overview severity chart title',
         defaultMessage: 'Recommendations by severity'
     },
+    overviewSystemInventory: {
+        id: 'overview.systemInventory.title',
+        description: 'Overview system inventory chart title',
+        defaultMessage: 'System inventory'
+    },
+    overviewSystemInventoryStale: {
+        id: 'overview.systemInventory.stale',
+        description: 'Overview system inventory chart stale systems',
+        defaultMessage: '{systems, plural, one {# stale system} other {# stale systems}}'
+    },
+    overviewSystemInventoryRemoved: {
+        id: 'overview.systemInventory.Removed',
+        description: 'Overview system inventory chart systems to be removed',
+        defaultMessage: '{systems, plural, one {# system} other {# systems}} to be removed'
+    },
+    overviewSystemInventoryOK: {
+        id: 'overview.systemInventory.OK',
+        description: 'Overview system inventory chart systems OK',
+        defaultMessage: 'All systes are up to date'
+    },
     overviewActioncallTitle: {
         id: 'overview.actioncall.title',
         description: 'Overview, call to action title',
