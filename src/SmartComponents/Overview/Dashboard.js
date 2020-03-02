@@ -21,18 +21,19 @@ import MessageState from '../../PresentationalComponents/MessageState/MessageSta
 import PropTypes from 'prop-types';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import { connect } from 'react-redux';
-import  global_Color_100  from '@patternfly/react-tokens/dist/js/global_Color_100';
-import global_primary_color_100  from '@patternfly/react-tokens/dist/js/global_primary_color_100';
+import global_Color_100 from '@patternfly/react-tokens/dist/js/global_Color_100';
+import global_primary_color_100 from '@patternfly/react-tokens/dist/js/global_primary_color_100';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const SummaryChart = lazy(() => import('../../PresentationalComponents/Charts/SummaryChart/SummaryChart'));
 const OverviewDonut = lazy(() => import('../../PresentationalComponents/Charts/OverviewDonut'));
+const SystemInventory = lazy(() => import('../../PresentationalComponents/Charts/SystemInventory'));
 const TagsToolbar = lazy(() => import('../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 
 const OverviewDashboard = ({ statsRulesFetchStatus, statsSystemsFetchStatus, statsRules, statsSystems, intl,
-    fetchStatsRules, fetchStatsSystems, selectedTags }) => {
+    fetchStatsRules, fetchStatsSystems, selectedTags, statsStaleHosts, statsStaleHostsFetchStatus, fetchStatsStaleHosts }) => {
     const [total, setTotal] = useState(-1);
     const [category, setCategory] = useState([]);
 
@@ -40,7 +41,8 @@ const OverviewDashboard = ({ statsRulesFetchStatus, statsSystemsFetchStatus, sta
         const options = selectedTags.length && ({ tags: selectedTags.join() });
         fetchStatsRules(options);
         fetchStatsSystems(options);
-    }, [fetchStatsRules, fetchStatsSystems, selectedTags]);
+        fetchStatsStaleHosts(options);
+    }, [fetchStatsStaleHosts, fetchStatsRules, fetchStatsSystems, selectedTags]);
 
     useEffect(() => {
         if (statsRules !== undefined && statsRules.category !== undefined) {
@@ -77,6 +79,14 @@ const OverviewDashboard = ({ statsRulesFetchStatus, statsSystemsFetchStatus, sta
                                     <OverviewDonut category={category} className='pf-u-mt-md' />
                                 </Suspense>
                             )
+                                : (<Loading />)}
+                        </LevelItem>
+                        <LevelItem>
+                            <Title size='lg' headingLevel='h3'>{intl.formatMessage(messages.overviewSystemInventory)}</Title>
+                            {statsStaleHostsFetchStatus === 'fulfilled' ? (
+                                <Suspense fallback={<Loading />}>
+                                    <SystemInventory staleHosts={statsStaleHosts} className='pf-u-mt-md' />
+                                </Suspense>)
                                 : (<Loading />)}
                         </LevelItem>
                     </Level>
@@ -191,6 +201,9 @@ OverviewDashboard.propTypes = {
     statsSystems: PropTypes.object,
     fetchStatsSystems: PropTypes.func,
     selectedTags: PropTypes.array,
+    statsStaleHostsFetchStatus: PropTypes.string,
+    statsStaleHosts: PropTypes.object,
+    fetchStatsStaleHosts: PropTypes.func,
     intl: PropTypes.any
 };
 
@@ -200,12 +213,16 @@ const mapStateToProps = (state, ownProps) => ({
     statsSystems: state.AdvisorStore.statsSystems,
     statsSystemsFetchStatus: state.AdvisorStore.statsSystemsFetchStatus,
     selectedTags: state.AdvisorStore.selectedTags,
+    statsStaleHosts: state.AdvisorStore.statsStaleHosts,
+    statsStaleHostsFetchStatus: state.AdvisorStore.statsStaleHostsFetchStatus,
     ...ownProps
 });
 
 const mapDispatchToProps = dispatch => ({
     fetchStatsRules: (url) => dispatch(AppActions.fetchStatsRules(url)),
-    fetchStatsSystems: (url) => dispatch(AppActions.fetchStatsSystems(url))
+    fetchStatsSystems: (url) => dispatch(AppActions.fetchStatsSystems(url)),
+    fetchStatsStaleHosts: (url) => dispatch(AppActions.fetchStatsStaleHosts(url))
+
 });
 
 export default injectIntl(routerParams(connect(mapStateToProps, mapDispatchToProps)(OverviewDashboard)));
