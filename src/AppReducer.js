@@ -178,6 +178,16 @@ export const AdvisorStore = (state = initialState, action) => {
                 selectedTags: action.payload
             });
 
+        case ActionTypes.RULE_SET:
+            return Immutable.merge(state, {
+                rule: action.payload
+            });
+
+        case ActionTypes.SYSTEM_SET:
+            return Immutable.merge(state, {
+                system: action.payload
+            });
+
         default:
             return state;
     }

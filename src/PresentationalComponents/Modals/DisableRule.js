@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 
 import React, { useState } from 'react';
+import { setAck, setRule, setSystem } from '../../AppActions';
 
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
@@ -15,23 +16,23 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
-import { setAck } from '../../AppActions';
 
-const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, hosts, rule, afterFn, setAck, addNotification }) => {
+const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, hosts, rule, afterFn, setAck, addNotification, setSystem, setRule }) => {
     const [justification, setJustificaton] = useState('');
     const [singleSystem, setSingleSystem] = useState(host !== undefined || hosts.length > 0);
 
     const bulkHostActions = async () => {
         const data = { systems: hosts, justification };
         try {
-            await API.post(`${BASE_URL}/rule/${rule.rule_id}/ack_hosts/`, {}, data);
-            afterFn && afterFn();
+            const response = await API.post(`${BASE_URL}/rule/${rule.rule_id}/ack_hosts/`, {}, data);
+            setSystem({ host_ids: response.data.host_ids });
+            setRule({ ...rule, hosts_acked_count: response.data.count });
         } catch (error) {
             addNotification({ variant: 'danger', dismissable: true, title: intl.formatMessage(messages.error), description: `${error}` });
         }
     };
 
-    const disableRule = async() => {
+    const disableRule = async () => {
         if (rule.reports_shown && !hosts.length) {
             const options = singleSystem
                 ? { type: 'HOST', options: { rule: rule.rule_id, system_uuid: host.id, justification } }
@@ -97,7 +98,10 @@ DisableRule.propTypes = {
     afterFn: PropTypes.func,
     setAck: PropTypes.func,
     hosts: PropTypes.array,
-    addNotification: PropTypes.func
+    addNotification: PropTypes.func,
+    setRule: PropTypes.func,
+    setSystem: PropTypes.func
+
 };
 
 DisableRule.defaultProps = {
@@ -112,7 +116,9 @@ DisableRule.defaultProps = {
 
 const mapDispatchToProps = dispatch => ({
     addNotification: data => dispatch(addNotification(data)),
-    setAck: data => dispatch(setAck(data))
+    setAck: data => dispatch(setAck(data)),
+    setRule: data => dispatch(setRule(data)),
+    setSystem: data => dispatch(setSystem(data))
 });
 
 export default injectIntl(connect(null, mapDispatchToProps)(DisableRule));
