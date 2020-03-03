@@ -25,6 +25,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
     const [selected, setSelected] = useState([]);
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [bulkSelect, setBulkSelect] = useState();
+    const [internalTableProps, setInternalTableProps] = useState();
 
     const loadInventory = async () => {
         const {
@@ -83,10 +84,22 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
 
     useEffect(() => {
         const calculateSelectedItems = (rows) => bulkSelect ?
-            setBulkSelect(false) : setSelected(rows.filter(entity => entity.selected === true).map(entity => entity.id));;
+            setBulkSelect(false) : rule.playbook_count > 0 ?
+                setSelected(rows.filter(entity => entity.selected === true).map(entity => entity.id)) : null ;;
         rows && calculateSelectedItems(rows);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [rows]);
+
+    useEffect(() => {
+        const updateTableProps = (rule) => rule.playbook_count > 0 ?
+            setInternalTableProps(tableProps) :
+            setInternalTableProps({
+                ...tableProps,
+                onSelect: null
+            });
+        rule && updateTableProps(rule);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [rule]);
 
     useEffect(() => {
         loadInventory();
@@ -107,7 +120,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
             page={page}
             total={items.length}
             perPage={pageSize}
-            tableProps={tableProps}
+            tableProps={internalTableProps}
             actionsConfig={{
                 actions: [<RemediationButton
                     key='remediation-button'
@@ -122,7 +135,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
                     onClick: () => handleModalToggle(true)
                 }]
             }}
-            bulkSelect={{
+            bulkSelect={ rule.playbook_count > 0 ? {
                 count: selected.length,
                 items: [{
                     title: intl.formatMessage(messages.selectNone),
@@ -148,7 +161,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
                 }],
                 checked: selected.length === items.length ? 1 : selected.length === pageSize ? null : 0,
                 onSelect: () => { selected.length > 0 ? onSelectRows(-1, false) : bulkSelectfn(); }
-            }}
+            } : null }
         />}
     </React.Fragment>;
 };
