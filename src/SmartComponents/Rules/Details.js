@@ -12,7 +12,7 @@ import { BASE_URL } from '../../AppConstants';
 import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
-import CaretDownIcon  from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
+import CaretDownIcon from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/components/DateFormat';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
@@ -37,7 +37,7 @@ import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchRule, ruleFetchStatus, rule, systemFetchStatus, system, intl,
-    topics, ruleAck, hostAcks, fetchHostAcks }) => {
+    topics, ruleAck, hostAcks, fetchHostAcks, setSystem, setRule }) => {
     const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [host, setHost] = useState(undefined);
@@ -82,8 +82,9 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     const bulkHostActions = async () => {
         const data = { systems: hostAcks.data.map(item => item.system_uuid) };
         try {
-            await API.post(`${BASE_URL}/rule/${rule.rule_id}/unack_hosts/`, {}, data);
-            fetchRulefn();
+            const response = await API.post(`${BASE_URL}/rule/${rule.rule_id}/unack_hosts/`, {}, data);
+            setSystem({ host_ids: response.data.host_ids });
+            setRule({ ...rule, hosts_acked_count: 0 });
         } catch (error) {
             addNotification({ variant: 'danger', dismissable: true, title: intl.formatMessage(messages.error), description: `${error}` });
         }
@@ -227,7 +228,9 @@ OverviewDetails.propTypes = {
     ruleAck: PropTypes.object,
     hostAcks: PropTypes.object,
     fetchRuleAck: PropTypes.func,
-    fetchHostAcks: PropTypes.func
+    fetchHostAcks: PropTypes.func,
+    setRule: PropTypes.func,
+    setSystem: PropTypes.func
 };
 
 const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
@@ -247,7 +250,9 @@ const mapDispatchToProps = dispatch => ({
     addNotification: data => dispatch(addNotification(data)),
     fetchTopics: () => dispatch(AppActions.fetchTopics()),
     fetchRuleAck: data => dispatch(AppActions.fetchRuleAck(data)),
-    fetchHostAcks: data => dispatch(AppActions.fetchHostAcks(data))
+    fetchHostAcks: data => dispatch(AppActions.fetchHostAcks(data)),
+    setRule: data => dispatch(AppActions.setRule(data)),
+    setSystem: data => dispatch(AppActions.setSystem(data))
 });
 
 export default injectIntl(routerParams(connect(

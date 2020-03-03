@@ -78,3 +78,11 @@ export const setSelectedTags = (tags) => ({
     type: ActionTypes.SELECTED_TAGS_SET,
     payload: tags
 });
+export const setRule = (rule) => ({
+    type: ActionTypes.RULE_SET,
+    payload: rule
+});
+export const setSystem = (system) => ({
+    type: ActionTypes.SYSTEM_SET,
+    payload: system
+});
