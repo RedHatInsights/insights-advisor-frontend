@@ -17,7 +17,7 @@ const App = (props) => {
     useEffect(() => {
         insights.chrome.init();
         insights.chrome.auth.getUser().then(() => setAuth(true));
-        insights.chrome.identifyApp('insights');
+        insights.chrome.identifyApp('advisor');
         const baseComponentUrl = props.location.pathname.split('/')[1];
         const unregister = insights.chrome.on('APP_NAVIGATION', event => {
             if (event.domEvent) {
