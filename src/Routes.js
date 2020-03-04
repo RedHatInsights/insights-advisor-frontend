@@ -18,11 +18,9 @@ import asyncComponent from './Utilities/asyncComponent';
  *         see the difference with DashboardMap and InventoryDeployments.
  *
  */
-const Overview = asyncComponent(() => import(/* webpackChunkName: "Overview" */ './SmartComponents/Overview/Overview'));
 const Rules = asyncComponent(() => import(/* webpackChunkName: "Rules" */ './SmartComponents/Rules/Rules'));
 const Topics = asyncComponent(() => import(/* webpackChunkName: "Topics" */ './SmartComponents/Topics/Topics'));
 const paths = [
-    { title: 'Overview', to: '/overview', rootClass: 'Insights', component: Overview },
     { title: 'Rules', to: '/recommendations', rootClass: 'Insights', component: Rules },
     { title: 'Topics', to: '/topics', rootClass: 'Insights', component: Topics },
     { title: 'Systems', to: '/systems', rootClass: 'Insights', component: Rules }
