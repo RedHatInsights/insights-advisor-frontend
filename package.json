@@ -105,6 +105,6 @@
     "nightly": "npm run travis:verify"
   },
   "insights": {
-    "appname": "insights"
+    "appname": "advisor"
   }
 }
