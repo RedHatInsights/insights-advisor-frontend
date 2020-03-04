@@ -26,7 +26,7 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, hosts, rule, 
         try {
             const response = await API.post(`${BASE_URL}/rule/${rule.rule_id}/ack_hosts/`, {}, data);
             setSystem({ host_ids: response.data.host_ids });
-            setRule({ ...rule, hosts_acked_count: response.data.count });
+            setRule({ ...rule, hosts_acked_count: response.data.count + rule.hosts_acked_count });
         } catch (error) {
             addNotification({ variant: 'danger', dismissable: true, title: intl.formatMessage(messages.error), description: `${error}` });
         }
