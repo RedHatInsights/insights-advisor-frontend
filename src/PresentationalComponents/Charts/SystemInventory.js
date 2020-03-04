@@ -11,7 +11,6 @@ import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 
 const SystemInventory = ({ staleHosts, intl }) => {
-    console.error(staleHosts);
     const iconMessage = (icon, message, link) => <Split className='flexAlignOverride' gutter='sm'>
         <SplitItem> {icon} </SplitItem>
         <SplitItem> {link ? <Link className='pf-c-button pf-m-link' to={link}>{message}</Link> : message} </SplitItem>
