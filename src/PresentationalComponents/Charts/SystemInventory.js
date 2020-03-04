@@ -17,7 +17,7 @@ const SystemInventory = ({ staleHosts, intl }) => {
     </Split>;
 
     return <Stack className='stackOverride' aria-label='System inventory' widget-type='InsightsSystemInventoryChart'>
-        {staleHosts &&  staleHosts.warn_count > 0  || staleHosts.hide_count > 0 ? <React.Fragment>
+        {staleHosts &&  staleHosts.warn_count > 0  || staleHosts.stale_count > 0 ? <React.Fragment>
             <StackItem >
                 {iconMessage(<ExclamationTriangleIcon color='var(--pf-global--warning-color--100)' />,
                     intl.formatMessage(messages.overviewSystemInventoryStale, { systems: staleHosts.warn_count }),
@@ -25,7 +25,7 @@ const SystemInventory = ({ staleHosts, intl }) => {
             </StackItem>
             <StackItem>
                 {iconMessage(<ExclamationCircleIcon color='var(--pf-global--danger-color--100)' />,
-                    intl.formatMessage(messages.overviewSystemInventoryRemoved, { systems: staleHosts.hide_count }),
+                    intl.formatMessage(messages.overviewSystemInventoryRemoved, { systems: staleHosts.stale_count }),
                     '/inventory?staleness=stale')}
             </StackItem>
         </React.Fragment>
