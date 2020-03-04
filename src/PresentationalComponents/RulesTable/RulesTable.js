@@ -309,6 +309,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     useEffect(() => {
         filters.text === undefined ? setSearchText('') : setSearchText(filters.text);
+        setFilters({ ...filters, offset: 0 });
     }, [filters.text]);
 
     // Debounced function, sets text filter after specified time (800ms)
@@ -323,13 +324,13 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     }, [debouncedSearchText]);
 
     const removeFilterParam = (param) => {
-        const filter = { ...filters };
+        const filter = { ...filters, offset: 0 };
         delete filter[param];
         setFilters(filter);
     };
 
     const addFilterParam = (param, values) => {
-        values.length > 0 ? setFilters({ ...filters, ...{ [param]: values } }) : removeFilterParam(param);
+        values.length > 0 ? setFilters({ ...filters, offset: 0, ...{ [param]: values } }) : removeFilterParam(param);
     };
 
     const actions = [
