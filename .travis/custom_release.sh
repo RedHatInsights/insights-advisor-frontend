@@ -2,23 +2,29 @@
 set -e
 set -x
 
-if [ "${TRAVIS_BRANCH}" = "master-beta" ]; then
-    for env in ci qa; do
-        echo
+if [ "${TRAVIS_BRANCH}" = "master" ]
+then
+    for env in ci qa
+    do
         echo "PUSHING ${env}-beta"
         rm -rf ./dist/.git
         .travis/release.sh "${env}-beta"
     done
-elif [ "${TRAVIS_BRANCH}" = "master" ]; then
-    echo
-    echo "PUSHING prod-beta"
-    rm -rf ./dist/.git
-    .travis/release.sh "prod-beta"
-elif [ "${TRAVIS_BRANCH}" = "master-stable" ]; then
-    for env in ci qa prod; do
-        echo
+fi
+
+
+if [ "${TRAVIS_BRANCH}" = "master-stable" ]
+then
+    for env in ci qa
+    do
         echo "PUSHING ${env}-stable"
         rm -rf ./dist/.git
         .travis/release.sh "${env}-stable"
     done
+fi
+
+if [[ "${TRAVIS_BRANCH}" = "prod-beta" || "${TRAVIS_BRANCH}" = "prod-stable" ]]; then
+    echo "PUSHING ${TRAVIS_BRANCH}"
+    rm -rf ./build/.git
+    .travis/release.sh "${TRAVIS_BRANCH}"
 fi
