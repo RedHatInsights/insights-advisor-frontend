@@ -21,11 +21,11 @@ const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl })
         const crumbs = [];
         const splitUrl = match.url.split('/');
 
-        // add rules base
+        // add recommendations base
         crumbs.push({ title: titleCase(splitUrl[1]), navigate: `/${splitUrl[1]}` });
         // if applicable, add tab
-        if (splitUrl[1] === 'rules') {
-            splitUrl[1] + splitUrl[2] !== 'rulessystems' ?
+        if (splitUrl[1] === 'recommendations') {
+            splitUrl[1] + splitUrl[2] !== 'recommendationssystems' ?
                 crumbs.push({ title: intl.formatMessage(messages.recommendations), navigate: '/recommendations' })
                 : crumbs.push({ title: intl.formatMessage(messages.systems), navigate: '/recommendations/systems' });
         }
