@@ -26,7 +26,7 @@ class InsightsTabs extends Component {
     };
 
     async componentDidMount() {
-        const tabType = location.pathname.slice(location.pathname.indexOf('insights/')).split('/')[2] === 'systems' ? 'systems' : 'recommendations';
+        const tabType = location.pathname.slice(location.pathname.indexOf('advisor/')).split('/')[2] === 'systems' ? 'systems' : 'recommendations';
         const activeTab = this.state.tabs[tabType];
         this.setState({ activeTab });
     }

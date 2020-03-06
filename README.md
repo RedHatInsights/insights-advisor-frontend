@@ -13,7 +13,7 @@ Note: You will need to set up the Insights environment if you want to develop wi
 2. Have [insights-proxy](https://github.com/RedHatInsights/insights-proxy) installed under PROXY_PATH and run the following command:
 
 ```shell
-SPANDX_CONFIG="./config/spandx.config.js" bash $PROXY_PATH/scripts/run.sh
+SPANDX_CONFIG="./profiles/local-frontend.js" bash $PROXY_PATH/scripts/run.sh
 ```
 3. `npm start`
 4. Checkout https://ci.foo.redhat.com:1337/insights/actions or https://prod.foo.redhat.com:1337/insights/actions depending on which api env your testing against
@@ -64,4 +64,4 @@ If you are running linux and have docker installed, you can skip the installatio
  docker run -v $PWD/config:/config --rm --net='host' -p1337:1337 -e PLATFORM=linux -ti docker.io/redhatinsights/insights-proxy
 ```
 #### Running against a local API
-Set `apiHost` in the spandx.config.js to http://127.0.0.1:8000
+Set `apiHost` in the ./profiles/local-frontend.js to http://127.0.0.1:8000
