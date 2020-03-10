@@ -15,6 +15,20 @@
 
     padding-left: var(--pf-global--spacer--md);
   }
+  .pf-c-select__toggle {
+    width: 220px;
+    font-size: small;
+  }
+  .pf-c-select {
+    max-width: 400px !important;
+  }
+
+  .pf-c-check__label {
+    max-width: 350px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .tagsListContainer {
@@ -26,13 +40,13 @@
     border: none;
 
     .pf-c-data-list__item-control {
-      padding: 16px 0 16px !important;
+      padding: 8px 0 8px !important;
     }
 
     .pf-c-data-list__item-content {
-      padding-bottom: 16px !important;
+      padding-bottom: 8px !important;
       .pf-c-data-list__cell {
-        padding-top: 16px !important;
+        padding-top: 8px !important;
       }
     }
   }
