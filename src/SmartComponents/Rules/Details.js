@@ -77,7 +77,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     };
 
     const actionResolver = () => ([{
-        title: 'Disable rule for system',
+        title: 'Disable recommendation for system',
         onClick: (event, rowIndex, item) => (handleModalToggle(true, item))
     }]);
 
