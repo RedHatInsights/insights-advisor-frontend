@@ -5,7 +5,7 @@ import * as AppActions from '../../AppActions';
 
 import { Card, CardBody, CardFooter, CardHead } from '@patternfly/react-core/dist/js/components/Card/index';
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
 
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
@@ -36,16 +36,19 @@ import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
+const TagsToolbar = lazy(() => import('../../PresentationalComponents/TagsToolbar/TagsToolbar'));
+
 const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchRule, ruleFetchStatus, rule, systemFetchStatus, system, intl,
-    topics, ruleAck, hostAcks, fetchHostAcks, setSystem, setRule }) => {
+    topics, ruleAck, hostAcks, fetchHostAcks, setSystem, setRule, selectedTags }) => {
     const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [host, setHost] = useState(undefined);
     const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
 
     const fetchRulefn = () => {
-        fetchSystem({ rule_id: match.params.id });
-        fetchRule({ rule_id: match.params.id });
+        const options = selectedTags.length && ({ tags: selectedTags.join() });
+        fetchSystem({ rule_id: match.params.id, ...options });
+        fetchRule({ rule_id: match.params.id, ...options });
     };
 
     const handleModalToggle = (disableRuleModalOpen, host = undefined) => {
@@ -56,8 +59,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     const enableRule = async (rule) => {
         try {
             await API.delete(`${BASE_URL}/ack/${rule.rule_id}/`);
-            fetchSystem({ rule_id: match.params.id });
-            fetchRule({ rule_id: match.params.id });
+            fetchRulefn();
         } catch (error) {
             handleModalToggle(false);
             addNotification({
@@ -83,8 +85,12 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         const data = { systems: hostAcks.data.map(item => item.system_uuid) };
         try {
             const response = await API.post(`${BASE_URL}/rule/${rule.rule_id}/unack_hosts/`, {}, data);
-            setSystem({ host_ids: response.data.host_ids });
-            setRule({ ...rule, hosts_acked_count: 0 });
+            if (selectedTags.length > 0) {
+                fetchRulefn();
+            } else {
+                setSystem({ host_ids: response.data.host_ids });
+                setRule({ ...rule, hosts_acked_count: 0 });
+            }
         } catch (error) {
             addNotification({ variant: 'danger', dismissable: true, title: intl.formatMessage(messages.error), description: `${error}` });
         }
@@ -101,6 +107,12 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const ref = useRef();
+    useEffect(() => {
+        JSON.stringify(ref.current) !== JSON.stringify(selectedTags) && fetchRulefn();
+        ref.current = selectedTags;
+    }, [fetchRulefn, selectedTags]);
+
     useEffect(() => {
         if (!rule.reports_shown && rule.rule_id) {
             fetchRuleAck({ rule_id: rule.rule_id });
@@ -108,6 +120,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     }, [fetchRuleAck, rule.reports_shown, rule.rule_id]);
 
     return <React.Fragment>
+        <Suspense fallback={<Loading />}> <TagsToolbar /> </Suspense>
         {viewSystemsModalOpen && <ViewHostAcks
             handleModalToggle={(toggleModal) => setViewSystemsModalOpen(toggleModal)}
             isModalOpen={viewSystemsModalOpen}
@@ -230,7 +243,8 @@ OverviewDetails.propTypes = {
     fetchRuleAck: PropTypes.func,
     fetchHostAcks: PropTypes.func,
     setRule: PropTypes.func,
-    setSystem: PropTypes.func
+    setSystem: PropTypes.func,
+    selectedTags: PropTypes.array
 };
 
 const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
@@ -241,6 +255,7 @@ const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
     topics: AdvisorStore.topics,
     ruleAck: AdvisorStore.ruleAck,
     hostAcks: AdvisorStore.hostAcks,
+    selectedTags: AdvisorStore.selectedTags,
     ...ownProps
 });
 
