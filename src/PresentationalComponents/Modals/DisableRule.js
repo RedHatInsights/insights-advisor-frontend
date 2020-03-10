@@ -17,16 +17,23 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 
-const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, hosts, rule, afterFn, setAck, addNotification, setSystem, setRule }) => {
+const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, hosts, rule, afterFn, setAck, addNotification, setSystem, setRule,
+    selectedTags }) => {
     const [justification, setJustificaton] = useState('');
     const [singleSystem, setSingleSystem] = useState(host !== undefined || hosts.length > 0);
 
     const bulkHostActions = async () => {
         const data = { systems: hosts, justification };
         try {
-            const response = await API.post(`${BASE_URL}/rule/${rule.rule_id}/ack_hosts/`, {}, data);
-            setSystem({ host_ids: response.data.host_ids });
-            setRule({ ...rule, hosts_acked_count: response.data.count + rule.hosts_acked_count });
+            const response = await API.post(`${BASE_URL}/rule/${rule.rule_id}/ack_hosts/`,
+                {}, data);
+            if (selectedTags.length > 0) {
+                afterFn && afterFn();
+            } else {
+                setSystem({ host_ids: response.data.host_ids });
+                setRule({ ...rule, hosts_acked_count: response.data.count + rule.hosts_acked_count });
+            }
+
         } catch (error) {
             addNotification({ variant: 'danger', dismissable: true, title: intl.formatMessage(messages.error), description: `${error}` });
         }
@@ -100,8 +107,8 @@ DisableRule.propTypes = {
     hosts: PropTypes.array,
     addNotification: PropTypes.func,
     setRule: PropTypes.func,
-    setSystem: PropTypes.func
-
+    setSystem: PropTypes.func,
+    selectedTags: PropTypes.array
 };
 
 DisableRule.defaultProps = {
@@ -121,4 +128,6 @@ const mapDispatchToProps = dispatch => ({
     setSystem: data => dispatch(setSystem(data))
 });
 
-export default injectIntl(connect(null, mapDispatchToProps)(DisableRule));
+export default injectIntl(connect(({ AdvisorStore }) => ({
+    selectedTags: AdvisorStore.selectedTags
+}), mapDispatchToProps)(DisableRule));
