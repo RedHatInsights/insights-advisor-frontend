@@ -1,7 +1,5 @@
 import './_TagsToolbar.scss';
 
-import * as AppActions from '../../AppActions';
-
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import { Chip } from '@patternfly/react-core/dist/js/components/ChipGroup/Chip';
 import { ChipGroup } from '@patternfly/react-core/dist/js/components/ChipGroup/ChipGroup';
@@ -16,6 +14,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
+import { setSelectedTags } from '../../AppActions';
 
 const TagsList = ({ setSelectedTags, selectedTags, showMoreCount, intl, tags, handleModalToggle }) => {
     const updateSelectedTags = (value, e) => selectedTags.indexOf(e.target.name) > -1 ?
@@ -84,7 +83,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    setSelectedTags: (tags) => dispatch(AppActions.setSelectedTags(tags))
+    setSelectedTags: (tags) => dispatch(setSelectedTags(tags))
 });
 
 export default injectIntl(connect(

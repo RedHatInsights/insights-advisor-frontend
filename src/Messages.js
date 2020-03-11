@@ -230,7 +230,7 @@ export default defineMessages({
     filterResults: {
         id: 'filterResults',
         description: 'Filter action, for tagstoolbar, ',
-        defaultMessage: 'Filter results by tag:'
+        defaultMessage: 'Filter by tags:'
     },
     allSystems: {
         id: 'allSystems',

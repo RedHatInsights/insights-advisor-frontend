@@ -1,25 +1,25 @@
 import './_TagsToolbar.scss';
 
 import React, { useEffect, useState } from 'react';
+import { Select, SelectOption, SelectVariant } from '@patternfly/react-core/dist/js/components/Select/index';
 
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
-import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
-import { DropdownToggle } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownToggle';
+import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import ManageTags from './ManageTags';
 import PropTypes from 'prop-types';
 import { TagIcon } from '@patternfly/react-icons';
-import TagsList from './TagsList';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
+import { setSelectedTags } from '../../AppActions';
 
-const TagsToolbar = ({ selectedTags, intl }) => {
+const TagsToolbar = ({ selectedTags, intl, setSelectedTags }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [tags, setTags] = useState([]);
     const [manageTagsModalOpen, setManageTagsModalOpen] = useState(false);
-    const showMoreCount = 10;
+    const showMoreCount = 20;
     const onToggle = isOpen => setIsOpen(isOpen);
 
     useEffect(() => {
@@ -35,31 +35,46 @@ const TagsToolbar = ({ selectedTags, intl }) => {
         fetchTags();
     }, [intl]);
 
+    const titleFn = () => <React.Fragment>
+        <TagIcon />&nbsp;{intl.formatMessage(messages.filterResults)} {selectedTags.length === 0 && intl.formatMessage(messages.allSystems)}
+    </React.Fragment>;
+
+    const onSelect = (e, selection) => selectedTags.includes(selection) ? setSelectedTags(selectedTags.filter(item => item !== selection))
+        : setSelectedTags([...selectedTags, selection]);
+
     return <div className='tagsToolbarContainer'>
         {<ManageTags
             handleModalToggle={(toggleModal) => setManageTagsModalOpen(toggleModal)}
             isModalOpen={manageTagsModalOpen}
             tags={tags}
         />}
-        <Dropdown
+        <Select
             className='dropDownOverride'
-            toggle={<DropdownToggle onToggle={onToggle}>
-                <TagIcon /> {intl.formatMessage(messages.filterResults)} {selectedTags.length ?
-                    <span>
-                        {selectedTags.slice(0, 3).map((item, count) => `${item} ${count !== selectedTags.length - 1 ? ',' : ''} `)}
-                        {selectedTags.length > 3 && intl.formatMessage(messages.countMore, { count: selectedTags.length - 3 })}
-                    </span>
-                    : intl.formatMessage(messages.allSystems)}
-            </DropdownToggle>}
-            isOpen={isOpen}>
-            <TagsList tags={tags} showMoreCount={showMoreCount} handleModalToggle={(toggleModal) => setManageTagsModalOpen(toggleModal)} />
-        </Dropdown>
-    </div>;
+            variant={SelectVariant.checkbox}
+            aria-label='Select Group Input'
+            onToggle={onToggle}
+            onSelect={onSelect}
+            selections={selectedTags}
+            isExpanded={isOpen}
+            placeholderText={titleFn()}
+            ariaLabelledBy='select-group-input'
+        >
+            {tags.slice(0, showMoreCount || tags.length).map(item => <SelectOption key={item} value={item} />)}
+            {showMoreCount > 0 && tags.length > showMoreCount && <Button key='view all tags'
+                variant='link' onClick={(toggleModal) => setManageTagsModalOpen(toggleModal)}>
+                {intl.formatMessage(messages.countMore, { count: tags.length - showMoreCount })}
+            </Button>
+            }
+        </Select>
+    </div >;
 };
 
-TagsToolbar.propTypes = { selectedTags: PropTypes.array, addNotification: PropTypes.func, intl: PropTypes.any };
+TagsToolbar.propTypes = { selectedTags: PropTypes.array, addNotification: PropTypes.func, intl: PropTypes.any, setSelectedTags: PropTypes.func };
 
 export default injectIntl(connect(
     state => ({ selectedTags: state.AdvisorStore.selectedTags }),
-    dispatch => ({ addNotification: data => dispatch(addNotification(data)) }))
+    dispatch => ({
+        addNotification: data => dispatch(addNotification(data)),
+        setSelectedTags: (tags) => dispatch(setSelectedTags(tags))
+    }))
 (TagsToolbar));
