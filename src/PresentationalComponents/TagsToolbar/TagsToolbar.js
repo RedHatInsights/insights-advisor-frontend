@@ -36,7 +36,12 @@ const TagsToolbar = ({ selectedTags, intl, setSelectedTags }) => {
     }, [intl]);
 
     const titleFn = () => <React.Fragment>
-        <TagIcon />&nbsp;{intl.formatMessage(messages.filterResults)} {selectedTags.length === 0 && intl.formatMessage(messages.allSystems)}
+        <TagIcon />&nbsp;
+        {tags.length > 0 ?
+            <React.Fragment>
+                {intl.formatMessage(messages.filterResults)} {selectedTags.length === 0 && intl.formatMessage(messages.allSystems)}
+            </React.Fragment>
+            : intl.formatMessage(messages.noTags) }
     </React.Fragment>;
 
     const onSelect = (e, selection) => selectedTags.includes(selection) ? setSelectedTags(selectedTags.filter(item => item !== selection))
@@ -58,6 +63,7 @@ const TagsToolbar = ({ selectedTags, intl, setSelectedTags }) => {
             isExpanded={isOpen}
             placeholderText={titleFn()}
             ariaLabelledBy='select-group-input'
+            isDisabled={tags.length === 0}
         >
             {tags.slice(0, showMoreCount || tags.length).map(item => <SelectOption key={item} value={item} />)}
             {showMoreCount > 0 && tags.length > showMoreCount && <Button key='view all tags'
