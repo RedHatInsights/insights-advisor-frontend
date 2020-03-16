@@ -33,7 +33,7 @@ const TopicsTable = ({ topics, topicsFetchStatus, intl }) => {
         return isValidSearchText ? [{
             topic: value,
             cells: [{
-                title: <span key={key}><Link key={key} to={`/topics/${value.slug}/`}> {value.name} </Link></span>,
+                title: <span key={key}><Link key={key} to={`/topics/${value.slug}`}> {value.name} </Link></span>,
                 props: { colSpan: 2 }
             }, {
                 title: <span key={key}> {value.featured && <Label> <StarIcon />&nbsp;{intl.formatMessage(messages.featured)}</Label>} </span>
