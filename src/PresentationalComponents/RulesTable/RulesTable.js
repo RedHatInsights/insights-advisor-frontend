@@ -5,7 +5,7 @@ import * as AppActions from '../../AppActions';
 import * as AppConstants from '../../AppConstants';
 
 import { Pagination, PaginationVariant } from '@patternfly/react-core/dist/js/components/Pagination/Pagination';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/index';
 import { Table, TableBody, TableHeader, cellWidth, sortable } from '@patternfly/react-table';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
@@ -66,17 +66,19 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const results = rules.meta ? rules.meta.count : 0;
     const sortIndices = { 1: 'description', 2: 'publish_date', 3: 'total_risk', 4: 'impacted_count', 5: 'playbook_count' };
 
-    const fetchRulesFn = () => {
+    const fetchRulesFn = useCallback(() => {
         const options = selectedTags.length && ({ tags: selectedTags.join() });
+
+        filters.limit === undefined || filters.offset === undefined && setFilters({ ...filters, offset: 0, limit: 10 });
 
         fetchRules({
             ...filterFetchBuilder(filters),
-            offset: filters.offset,
-            limit: filters.limit,
+            offset: filters.offset || 0,
+            limit: filters.limit || 10,
             impacting,
             ...options
         });
-    };
+    }, [fetchRules, filters, impacting, selectedTags, setFilters]);
 
     const onSort = (_event, index, direction) => {
         const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
@@ -96,8 +98,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     const toggleRulesDisabled = (param) => {
         const reports_shown = param === 'undefined' ? undefined : param;
-        setFilters({ ...filters, reports_shown, offset: 0, ...(reports_shown !== 'true' && { impacting: false }) });
         reports_shown !== 'true' && setImpacting(false);
+        setFilters({ ...filters, reports_shown, offset: 0, ...(reports_shown !== 'true' && { impacting: false }) });
     };
 
     const handleOnCollapse = (event, rowId, isOpen) => {
@@ -171,11 +173,13 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             : [];
     };
 
+    useEffect(() => {!filterBuilding && fetchRulesFn();}, [fetchRulesFn, filterBuilding, filters, selectedTags]);
+
     // Builds table filters from url params
     useEffect(() => {
-        if (history.location.search) {
+        if (history.location.search && filterBuilding) {
             const paramsObject = paramParser(history);
-
+            paramsObject.text === undefined ? setSearchText('') : setSearchText(paramsObject.text);
             paramsObject.reports_shown = paramsObject.reports_shown === undefined || paramsObject.reports_shown[0] === 'undefined' ? undefined
                 : paramsObject.reports_shown;
             paramsObject.sort = paramsObject.sort === undefined ? '-publish_date' : paramsObject.sort[0];
@@ -187,9 +191,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
             setImpacting(paramsObject.impacting);
             setFilters({ ...paramsObject });
+            setFilterBuilding(false);
         }
-
-        setFilterBuilding(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -201,20 +204,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             search: queryString
         });
     }, [filters, history]);
-
-    useEffect(() => {
-        if (!filterBuilding) {
-            const options = selectedTags.length && ({ tags: selectedTags.join() });
-
-            filters.limit || filters.offest === undefined && setFilters({ ...filters, offset: 0, limit: 10 });
-            fetchRules({
-                ...filterFetchBuilder(filters),
-                offset: filters.offset || 0,
-                limit: filters.limit || 10,
-                ...options
-            });
-        }
-    }, [fetchRules, filterBuilding, filters, setFilters, selectedTags]);
 
     useEffect(() => {
         if (filters.sort !== undefined) {
@@ -305,20 +294,15 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filters, rules, setFilters]);
-
-    useEffect(() => {
-        filters.text === undefined ? setSearchText('') : setSearchText(filters.text);
-        setFilters({ ...filters, offset: 0 });
-    }, [filters.text]);
+    }, [rules]);
 
     // Debounced function, sets text filter after specified time (800ms)
     useEffect(() => {
-        if (!filterBuilding) {
+        if (!filterBuilding && rulesFetchStatus !== 'pending') {
             const filter = { ...filters };
             const text = searchText.length ? { text: searchText } : {};
             delete filter.text;
-            setFilters({ ...filter, ...text });
+            setFilters({ ...filter, ...text, offset: 0 });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearchText]);
