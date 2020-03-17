@@ -62,7 +62,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const [selectedRule, setSelectedRule] = useState({});
     const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
     const [viewSystemsModalRule, setViewSystemsModalRule] = useState({});
-    const debouncedSearchText = debounce(searchText, 800);
+    const debouncedSearchText = debounce(searchText, 600);
     const results = rules.meta ? rules.meta.count : 0;
     const sortIndices = { 1: 'description', 2: 'publish_date', 3: 'total_risk', 4: 'impacted_count', 5: 'playbook_count' };
 
