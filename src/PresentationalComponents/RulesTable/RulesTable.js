@@ -67,11 +67,15 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const sortIndices = { 1: 'description', 2: 'publish_date', 3: 'total_risk', 4: 'impacted_count', 5: 'playbook_count' };
 
     const fetchRulesFn = useCallback(() => {
-        filters.limit === undefined || filters.offset === undefined && setFilters({ ...filters, offset: 0, limit: 10 });
+        const undefinedLimitOffset = filters.limit === undefined || filters.offset === undefined;
+        const limit = undefinedLimitOffset ? 10 : filters.limit;
+        const offset = undefinedLimitOffset ? 0 : filters.offset;
+        undefinedLimitOffset && setFilters({ ...filters, offset: 0, limit: 10 });
+
         fetchRules({
             ...filterFetchBuilder(filters),
-            offset: filters.offset || 0,
-            limit: filters.limit || 10,
+            offset,
+            limit,
             impacting
         });
     }, [fetchRules, filters, impacting, setFilters]);
@@ -169,7 +173,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             : [];
     };
 
-    useEffect(() => {!filterBuilding && fetchRulesFn();}, [fetchRulesFn, filterBuilding, filters]);
+    useEffect(() => { !filterBuilding && fetchRulesFn(); }, [fetchRulesFn, filterBuilding, filters]);
 
     // Builds table filters from url params
     useEffect(() => {
@@ -187,8 +191,10 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
             setImpacting(paramsObject.impacting);
             setFilters({ ...paramsObject });
-            setFilterBuilding(false);
         }
+
+        setFilterBuilding(false);
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
