@@ -1,68 +1,84 @@
 import './InsightsTabs.scss';
 
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
-import React, { Component } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { Tab, TabsVariant } from '@patternfly/react-core/dist/js/components/Tabs/index';
 
+import { Alert } from '@patternfly/react-core/dist/js/components/Alert/Alert';
+import { AlertActionCloseButton } from '@patternfly/react-core/dist/js/components/Alert/AlertActionCloseButton';
+import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
 import PropTypes from 'prop-types';
 import { Tabs } from '@patternfly/react-core/dist/js/components/Tabs/Tabs';
-import asyncComponent from '../../Utilities/asyncComponent';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
-const RulesTable = asyncComponent(() => import(/* webpackChunkName: "RulesTable" */ '../../PresentationalComponents/RulesTable/RulesTable'));
-const SystemsTable = asyncComponent(() => import(/* webpackChunkName: "SystemsTable" */ '../../PresentationalComponents/SystemsTable/SystemsTable'));
-const TagsToolbar = asyncComponent(() => import(/* webpackChunkName: "TagsToolbar" */ '../../PresentationalComponents/TagsToolbar/TagsToolbar'));
+const RulesTable = lazy(() => import(/* webpackChunkName: "RulesTable" */ '../../PresentationalComponents/RulesTable/RulesTable'));
+const SystemsTable = lazy(() => import(/* webpackChunkName: "SystemsTable" */ '../../PresentationalComponents/SystemsTable/SystemsTable'));
+const TagsToolbar = lazy(() => import(/* webpackChunkName: "TagsToolbar" */ '../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 
-class InsightsTabs extends Component {
-    state = {
-        activeTab: {},
-        tabs: {
-            recommendations: { title: this.props.intl.formatMessage(messages.recommendations), to: '/recommendations', component: <RulesTable /> },
-            systems: { title: this.props.intl.formatMessage(messages.systems), to: '/recommendations/systems', component: <SystemsTable /> }
+let cveAlertShown = true;
+const InsightsTabs = ({ intl, history }) => {
+    const [activeTab, setActiveTab] = useState({});
+    const [cveAlert, setCveAlert] = useState(cveAlertShown);
+    const tabs = {
+        recommendations: {
+            title: intl.formatMessage(messages.recommendations), to: '/recommendations',
+            component: <Suspense fallback={<Loading />}><RulesTable /></Suspense>
+        },
+        systems: {
+            title: intl.formatMessage(messages.systems), to: '/recommendations/systems',
+            component: <Suspense fallback={<Loading />}><SystemsTable /></Suspense>
         }
     };
 
-    async componentDidMount() {
+    useEffect(() => {
         const tabType = location.pathname.slice(location.pathname.indexOf('advisor/')).split('/')[2] === 'systems' ? 'systems' : 'recommendations';
-        const activeTab = this.state.tabs[tabType];
-        this.setState({ activeTab });
-    }
+        const activeTab = tabs[tabType];
+        setActiveTab(activeTab);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    handleTabClick = (event, tabKey) => {
-        const activeTab = this.state.tabs[tabKey];
-        this.setState({ activeTab });
-        this.props.history.push(activeTab.to);
-    }
+    const handleTabClick = (event, tabKey) => {
+        const activeTab = tabs[tabKey];
+        setActiveTab(activeTab);
+        history.push(activeTab.to);
+    };
 
-    render = () => {
-        const { tabs, activeTab } = this.state;
-        return <React.Fragment>
-            <TagsToolbar />
-            <PageHeader>
-                <PageHeaderTitle title={this.props.intl.formatMessage(messages.recommendations)} />
-            </PageHeader>
-            {activeTab.title && <Tabs mountOnEnter unmountOnExit
-                className='insights-tabs'
-                activeKey={activeTab.title.toLowerCase()}
-                onSelect={this.handleTabClick}
-                aria-label="Insights Tabs"
-                variant={TabsVariant.nav}
+    return <React.Fragment>
+        <Suspense fallback={<Loading />}> <TagsToolbar /> </Suspense>
+        <PageHeader>
+            <PageHeaderTitle title={intl.formatMessage(messages.recommendations)} />
+            {cveAlert && <Alert
+                className='alertOverride'
+                variant="warning"
+                isInline
+                title={intl.formatMessage(messages.cveAlertTitle)}
+                action={<AlertActionCloseButton onClose={() => {cveAlertShown = false; setCveAlert(false);}} />}
             >
-                {Object.entries(tabs).map((item) =>
-                    <Tab key={item[0]} eventKey={item[0]} title={item[1].title}>
-                        <Main>
-                            {activeTab.title === item[1].title && item[1].component}
-                        </Main>
-                    </Tab>)
-                }
-            </Tabs>
+                {intl.formatMessage(messages.cveAlert)}&nbsp; <a href="/insights/vulnerability/cves?page=1&sort=-public_date">View CVEs</a>
+            </Alert>}
+        </PageHeader>
+        {activeTab.title && <Tabs mountOnEnter unmountOnExit
+            className='insights-tabs'
+            activeKey={activeTab.title.toLowerCase()}
+            onSelect={handleTabClick}
+            aria-label="Insights Tabs"
+            variant={TabsVariant.nav}
+        >
+            {Object.entries(tabs).map((item) =>
+                <Tab key={item[0]} eventKey={item[0]} title={item[1].title}>
+                    <Main>
+                        {activeTab.title === item[1].title && item[1].component}
+                    </Main>
+                </Tab>)
             }
-        </React.Fragment>;
-    }
-}
+        </Tabs>
+        }
+    </React.Fragment>;
+
+};
 
 InsightsTabs.displayName = 'insights-tabs';
 InsightsTabs.propTypes = {

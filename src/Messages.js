@@ -100,7 +100,7 @@ export default defineMessages({
     ruleIsDisabledForSystemsBody: {
         id: 'ruleIsDisabledForSystemsBody',
         description: 'Exclaiming that the recommendationis disabled for systems (system count)',
-        defaultMessage: 'Recommendation is disabled for {systems, plural, one {# system.} other {# systems.}}'
+        defaultMessage: 'Recommendation is disabled for {systems, plural, one {# system} other {# systems}}'
     },
     enableRuleForSystems: {
         id: 'enableRuleForSystems',
@@ -584,7 +584,7 @@ export default defineMessages({
     systemTableFetchError: {
         id: 'systemtable.fetch.error',
         description: 'System table, fetch , error message',
-        defaultMessage: 'There was an error fetching systems.'
+        defaultMessage: 'There was an error fetching systems'
     },
     low: {
         id: 'low',
@@ -729,7 +729,7 @@ export default defineMessages({
     viewAffectedSystems: {
         id: 'viewAffectedSystems',
         description: 'Link text to view all hosts that are affected by a recommendation',
-        defaultMessage: 'View {systems, plural, one {the affected system.} other {# affected systems.}}'
+        defaultMessage: 'View {systems, plural, one {the affected system} other {# affected systems}}'
     },
     ruleHelpful: {
         id: 'ruleHelpful',
@@ -764,6 +764,16 @@ export default defineMessages({
     incidentTooltip: {
         id: 'incidentTooltip',
         description: 'Incident badge tooltip text',
-        defaultMessage: 'Indicates configurations that are currently affecting your systems.'
+        defaultMessage: 'Indicates configurations that are currently affecting your systems'
+    },
+    cveAlert: {
+        id: 'cveAlert',
+        description: 'Cve alert body',
+        defaultMessage: 'As of April 28th, 2020, all CVE recommendations previously shown in recommendations have moved over to the Vulnerability section of Red Hat Insights which provides additional capabilities for enhanced CVE identification and remediation.'
+    },
+    cveAlertTitle: {
+        id: 'cveAlertTitle',
+        description: 'Cve alert title',
+        defaultMessage: 'CVE recommendations relocated'
     }
 });
