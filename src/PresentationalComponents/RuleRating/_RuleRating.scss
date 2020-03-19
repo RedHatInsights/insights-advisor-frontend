@@ -1,9 +1,9 @@
 .like {
-  color: #3f9c35;
+  color: var(--pf-global--success-color--200);
 }
 
 .dislike {
-  color: var(--pf-global--danger-color--200);
+  color: var(--pf-global--primary-color--100);
 }
 
 .ratingSpanOverride{
