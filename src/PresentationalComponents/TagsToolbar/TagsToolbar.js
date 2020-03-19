@@ -66,11 +66,11 @@ const TagsToolbar = ({ selectedTags, intl, setSelectedTags }) => {
             isDisabled={tags.length === 0}
         >
             {tags.slice(0, showMoreCount || tags.length).map(item => <SelectOption key={item} value={item} />)}
-            {showMoreCount > 0 && tags.length > showMoreCount && <Button key='view all tags'
+            {(showMoreCount > 0 && tags.length > showMoreCount) ? <Button key='view all tags'
                 variant='link' onClick={(toggleModal) => setManageTagsModalOpen(toggleModal)}>
                 {intl.formatMessage(messages.countMore, { count: tags.length - showMoreCount })}
             </Button>
-            }
+                : <React.Fragment />}
         </Select>
     </div >;
 };
