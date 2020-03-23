@@ -25,7 +25,7 @@ const TagsList = ({ setSelectedTags, selectedTags, showMoreCount, intl, tags, ha
         {!showMoreCount && <ChipGroup>
             {selectedTags.map(currentChip => (
                 <Chip key={currentChip} onClick={() => updateSelectedTags(null, { target: { name: currentChip } })}>
-                    {currentChip}
+                    {decodeURIComponent(currentChip)}
                 </Chip>
             ))}
         </ChipGroup>}
@@ -37,7 +37,7 @@ const TagsList = ({ setSelectedTags, selectedTags, showMoreCount, intl, tags, ha
                             isChecked={selectedTags.indexOf(item) > -1} />
                         <DataListItemCells dataListCells={[
                             <DataListCell key="primary content">
-                                {`${item}`}
+                                {`${decodeURIComponent(item)}`}
                             </DataListCell>]} />
                     </DataListItemRow>
                 </DataListItem>)}
