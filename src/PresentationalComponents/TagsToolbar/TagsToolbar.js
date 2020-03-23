@@ -8,7 +8,7 @@ import { BASE_URL } from '../../AppConstants';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import ManageTags from './ManageTags';
 import PropTypes from 'prop-types';
-import { TagIcon } from '@patternfly/react-icons';
+import TagIcon from '@patternfly/react-icons/dist/js/icons/tag-icon';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
