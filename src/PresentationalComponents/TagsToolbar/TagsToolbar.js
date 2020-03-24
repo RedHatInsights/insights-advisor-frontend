@@ -2,6 +2,7 @@ import './_TagsToolbar.scss';
 
 import React, { useEffect, useState } from 'react';
 import { Select, SelectOption, SelectVariant } from '@patternfly/react-core/dist/js/components/Select/index';
+import { Tooltip, TooltipPosition } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
 
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
@@ -41,7 +42,7 @@ const TagsToolbar = ({ selectedTags, intl, setSelectedTags }) => {
             <React.Fragment>
                 {intl.formatMessage(messages.filterResults)} {selectedTags.length === 0 && intl.formatMessage(messages.allSystems)}
             </React.Fragment>
-            : intl.formatMessage(messages.noTags) }
+            : intl.formatMessage(messages.noTags)}
     </React.Fragment>;
 
     const onSelect = (e, selection) => selectedTags.includes(selection) ? setSelectedTags(selectedTags.filter(item => item !== selection))
@@ -65,7 +66,10 @@ const TagsToolbar = ({ selectedTags, intl, setSelectedTags }) => {
             ariaLabelledBy='select-group-input'
             isDisabled={tags.length === 0}
         >
-            {tags.slice(0, showMoreCount || tags.length).map(item => <SelectOption key={item} value={`${decodeURIComponent(item)}`} />)}
+            {tags.slice(0, showMoreCount || tags.length).map(item =>
+                <Tooltip key={item} content={`${decodeURIComponent(item)}`} position={TooltipPosition.right}>
+                    <SelectOption value={`${decodeURIComponent(item)}`} />
+                </Tooltip>)}
             {(showMoreCount > 0 && tags.length > showMoreCount) ? <Button key='view all tags'
                 variant='link' onClick={(toggleModal) => setManageTagsModalOpen(toggleModal)}>
                 {intl.formatMessage(messages.countMore, { count: tags.length - showMoreCount })}
