@@ -67,9 +67,12 @@ const TagsToolbar = ({ selectedTags, intl, setSelectedTags }) => {
             isDisabled={tags.length === 0}
         >
             {tags.slice(0, showMoreCount || tags.length).map(item =>
-                <Tooltip key={item} content={`${decodeURIComponent(item)}`} position={TooltipPosition.right}>
-                    <SelectOption value={`${decodeURIComponent(item)}`} />
-                </Tooltip>)}
+                <SelectOption key={item} value={`${decodeURIComponent(item)}`}>
+                    <Tooltip content={`${decodeURIComponent(item)}`} position={TooltipPosition.right}>
+                        <span>{`${decodeURIComponent(item)}`}</span>
+                    </Tooltip>
+                </SelectOption>
+            )}
             {(showMoreCount > 0 && tags.length > showMoreCount) ? <Button key='view all tags'
                 variant='link' onClick={(toggleModal) => setManageTagsModalOpen(toggleModal)}>
                 {intl.formatMessage(messages.countMore, { count: tags.length - showMoreCount })}
