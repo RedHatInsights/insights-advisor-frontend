@@ -206,7 +206,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                             </CardFooter>
                         </Card>}
                         {rule.reports_shown && <React.Fragment>
-                            <Title headingLevel='h3' size='2xl'>
+                            <Title className='titleOverride' headingLevel='h3' size='2xl'>
                                 {intl.formatMessage(messages.affectedSystems)}
                             </Title>
                             {systemFetchStatus === 'fulfilled' &&
