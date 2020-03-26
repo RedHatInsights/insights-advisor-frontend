@@ -15,8 +15,6 @@ const App = (props) => {
     };
 
     useEffect(() => {
-        // eslint-disable-next-line no-console
-        console.error('app.js', window.location);
         insights.chrome.init();
         insights.chrome.auth.getUser().then(() => setAuth(true));
         insights.chrome.identifyApp('advisor');
