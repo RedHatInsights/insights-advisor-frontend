@@ -1,4 +1,4 @@
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -52,6 +52,7 @@ InsightsRoute.propTypes = {
  */
 export const Routes = () =>{
 
+    // eslint-disable-next-line no-console
     console.error(location.search);
     return <Switch>
         {paths.map((path) => <InsightsRoute key={path.title} path={path.path} component={path.component} rootClass={path.rootClass} />)}
