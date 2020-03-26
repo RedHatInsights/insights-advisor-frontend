@@ -21,11 +21,11 @@ import asyncComponent from './Utilities/asyncComponent';
 const Rules = asyncComponent(() => import(/* webpackChunkName: "Rules" */ './SmartComponents/Rules/Rules'));
 const Topics = asyncComponent(() => import(/* webpackChunkName: "Topics" */ './SmartComponents/Topics/Topics'));
 const paths = [
-    { title: 'Rules', to: '/recommendations:?', rootClass: 'Insights', component: Rules },
-    { title: 'Rules', to: '/recommendations', rootClass: 'Insights', component: Rules },
-    { title: 'Systems', to: '/systems:?', rootClass: 'Insights', component: Rules },
-    { title: 'Systems', to: '/systems', rootClass: 'Insights', component: Rules },
-    { title: 'Topics', to: '/topics', rootClass: 'Insights', component: Topics }
+    { title: 'Rules', path: '/recommendations:?', rootClass: 'Insights', component: Rules },
+    { title: 'Rules', path: '/recommendations', rootClass: 'Insights', component: Rules },
+    { title: 'Systems', path: '/systems:?', rootClass: 'Insights', component: Rules },
+    { title: 'Systems', path: '/systems', rootClass: 'Insights', component: Rules },
+    { title: 'Topics', path: '/topics', rootClass: 'Insights', component: Topics }
 ];
 
 const InsightsRoute = ({ component: Component, rootClass, ...rest }) => {
@@ -50,9 +50,11 @@ InsightsRoute.propTypes = {
  *      path - https://prod.foo.redhat.com:1337/insights/advisor/rules
  *      component - component to be rendered when a route has been chosen.
  */
-export const Routes = () =>
-    <Switch>
-        {paths.map((path) => <InsightsRoute key={path.title} path={path.to} component={path.component} rootClass={path.rootClass} />)}
+export const Routes = () =>{
+
+    console.error(location.search);
+    return <Switch>
+        {paths.map((path) => <InsightsRoute key={path.title} path={path.path} component={path.component} rootClass={path.rootClass} />)}
         { /* Finally, catch all unmatched routes */}
-        <Redirect path='*' to={paths[1].to} push />
-    </Switch>;
+        {/* <Redirect path='*' to={`${paths[0].path}`} push /> */}
+    </Switch>;};
