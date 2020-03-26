@@ -1,4 +1,4 @@
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useLocation } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -53,7 +53,7 @@ InsightsRoute.propTypes = {
 export const Routes = () =>{
 
     // eslint-disable-next-line no-console
-    console.error(location.search);
+    console.error(location, useLocation());
     return <Switch>
         {paths.map((path) => <InsightsRoute key={path.title} path={path.path} component={path.component} rootClass={path.rootClass} />)}
         { /* Finally, catch all unmatched routes */}
