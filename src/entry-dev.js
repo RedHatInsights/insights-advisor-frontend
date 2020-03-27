@@ -11,9 +11,6 @@ import { init } from './Store';
 import logger from 'redux-logger';
 import messages from '../locales/data.json';
 
-// eslint-disable-next-line no-console
-console.error('entry-dev.js', window.location);
-
 ReactDOM.render(
     <IntlProvider locale={navigator.language} messages={messages} onError={console.log}>
         <Provider store={init(logger).getStore()}>
