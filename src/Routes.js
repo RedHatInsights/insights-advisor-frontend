@@ -1,4 +1,4 @@
-import { Route, Switch, useLocation } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -50,12 +50,8 @@ InsightsRoute.propTypes = {
  *      path - https://prod.foo.redhat.com:1337/insights/advisor/rules
  *      component - component to be rendered when a route has been chosen.
  */
-export const Routes = () =>{
-
-    // eslint-disable-next-line no-console
-    console.error(location, useLocation());
-    return <Switch>
-        {paths.map((path) => <InsightsRoute key={path.title} path={path.path} component={path.component} rootClass={path.rootClass} />)}
-        { /* Finally, catch all unmatched routes */}
-        {/* <Redirect path='*' to={`${paths[0].path}`} push /> */}
-    </Switch>;};
+export const Routes = () => <Switch>
+    {paths.map((path) => <InsightsRoute key={path.title} path={path.path} component={path.component} rootClass={path.rootClass} />)}
+    { /* Finally, catch all unmatched routes */}
+    <Redirect path='*' to={`${paths[1].path}`} push />
+</Switch>;
