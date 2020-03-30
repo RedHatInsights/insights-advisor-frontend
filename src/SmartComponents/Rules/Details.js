@@ -2,13 +2,14 @@
 import './Details.scss';
 
 import * as AppActions from '../../AppActions';
+import * as cveToRuleid from '../../cveToRuleid.json';
 
+import { BASE_URL, UI_BASE } from '../../AppConstants';
 import { Card, CardBody, CardFooter, CardHead } from '@patternfly/react-core/dist/js/components/Card/index';
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
 
 import API from '../../Utilities/Api';
-import { BASE_URL } from '../../AppConstants';
 import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
@@ -37,7 +38,6 @@ import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const TagsToolbar = lazy(() => import('../../PresentationalComponents/TagsToolbar/TagsToolbar'));
-
 const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchRule, ruleFetchStatus, rule, systemFetchStatus, system, intl,
     topics, ruleAck, hostAcks, fetchHostAcks, setSystem, setRule, selectedTags }) => {
     const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
@@ -45,6 +45,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     const [host, setHost] = useState(undefined);
     const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchRulefn = () => {
         const options = selectedTags.length && ({ tags: selectedTags.join() });
         fetchSystem({ rule_id: match.params.id, ...options });
@@ -102,8 +103,14 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     }, [fetchHostAcks, rule.hosts_acked_count]);
 
     useEffect(() => {
-        fetchTopics();
-        fetchRulefn();
+        const isCVE = cveToRuleid.find(mapping => mapping.rule_id === match.params.id);
+
+        if (isCVE) {
+            window.location.href = `${UI_BASE}/vulnerability/cves/${isCVE.cves[0].includes('CVE-') ? isCVE.cves[0] : ''}`;
+        } else {
+            fetchTopics();
+            fetchRulefn();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
