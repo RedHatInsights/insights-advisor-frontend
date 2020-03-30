@@ -2,7 +2,6 @@
 import './Details.scss';
 
 import * as AppActions from '../../AppActions';
-import * as cveToRuleid from '../../cveToRuleid.json';
 
 import { BASE_URL, UI_BASE } from '../../AppConstants';
 import { Card, CardBody, CardFooter, CardHead } from '@patternfly/react-core/dist/js/components/Card/index';
@@ -33,6 +32,7 @@ import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
+import { cveToRuleid } from '../../cveToRuleid.js';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
@@ -103,7 +103,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     }, [fetchHostAcks, rule.hosts_acked_count]);
 
     useEffect(() => {
-        const isCVE = cveToRuleid.find(mapping => mapping.rule_id === match.params.id);
+        const isCVE = cveToRuleid && cveToRuleid.find(mapping => mapping.rule_id === match.params.id);
 
         if (isCVE) {
             window.location.href = `${UI_BASE}/vulnerability/cves/${isCVE.cves[0].includes('CVE-') ? isCVE.cves[0] : ''}`;
