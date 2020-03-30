@@ -21,8 +21,8 @@ import asyncComponent from './Utilities/asyncComponent';
 const Rules = asyncComponent(() => import(/* webpackChunkName: "Rules" */ './SmartComponents/Rules/Rules'));
 const Topics = asyncComponent(() => import(/* webpackChunkName: "Topics" */ './SmartComponents/Topics/Topics'));
 const paths = [
-    { title: 'Rules', path: '/recommendations:?', rootClass: 'Insights', component: Rules },
-    { title: 'Rules', path: '/recommendations', rootClass: 'Insights', component: Rules },
+    { title: 'Recommendations', path: '/recommendations:?', rootClass: 'Insights', component: Rules },
+    { title: 'Recommendations', path: '/recommendations', rootClass: 'Insights', component: Rules },
     { title: 'Systems', path: '/systems:?', rootClass: 'Insights', component: Rules },
     { title: 'Systems', path: '/systems', rootClass: 'Insights', component: Rules },
     { title: 'Topics', path: '/topics', rootClass: 'Insights', component: Topics }
@@ -52,6 +52,7 @@ InsightsRoute.propTypes = {
  */
 export const Routes = () => <Switch>
     {paths.map((path) => <InsightsRoute key={path.title} path={path.path} component={path.component} rootClass={path.rootClass} />)}
+    <Redirect path='/rules' to={`${paths[1].path}`} push />
     { /* Finally, catch all unmatched routes */}
     <Redirect path='*' to={`${paths[1].path}`} push />
 </Switch>;
