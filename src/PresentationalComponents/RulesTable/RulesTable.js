@@ -18,7 +18,6 @@ import { Battery } from '@redhat-cloud-services/frontend-components/components/B
 import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
-import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/components/DateFormat';
 import DisableRule from '../Modals/DisableRule';
 import { FILTER_CATEGORIES as FC } from '../../AppConstants';
@@ -223,7 +222,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 setRows([{
                     cells: [{
                         title: (
-                            <MessageState icon={CheckIcon} iconClass='ansibleCheck' size='sm'
+                            <MessageState icon={CheckCircleIcon} iconClass='ansibleCheck' size='md'
                                 title={intl.formatMessage(messages.rulesTableNoRuleHitsTitle)} text={filters.reports_shown ?
                                     intl.formatMessage(messages.rulesTableNoRuleHitsEnabledRulesBody) :
                                     intl.formatMessage(messages.rulesTableNoRuleHitsAnyRulesBody)}>
