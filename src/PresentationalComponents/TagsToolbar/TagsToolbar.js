@@ -26,7 +26,7 @@ const TagsToolbar = ({ selectedTags, intl, setSelectedTags }) => {
     useEffect(() => {
         const fetchTags = async () => {
             try {
-                const response = await API.get(`${BASE_URL}/tag`);
+                const response = await API.get(`${BASE_URL}/tag/`);
                 setTags(response.data.tags);
             } catch (error) {
                 addNotification({ variant: 'danger', dismissable: true, title: intl.formatMessage(messages.error), description: `${error}` });

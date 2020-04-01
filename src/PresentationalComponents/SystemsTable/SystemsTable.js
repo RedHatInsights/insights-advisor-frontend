@@ -85,7 +85,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     }, [filters, history]);
 
     useEffect(() => {
-        if (filters.sort !== undefined) {
+        if (!filterBuilding && filters.sort !== undefined) {
             const sortIndex = Number(Object.entries(sortIndices).find(item => item[1] === filters.sort || `-${item[1]}` === filters.sort)[0]);
             const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
             setSortBy({ index: sortIndex, direction: sortDirection });
