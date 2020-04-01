@@ -72,8 +72,9 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
             paramsObject.display_name !== undefined && (paramsObject.display_name = paramsObject.display_name[0]);
             paramsObject.offset === undefined ? paramsObject.offset = 0 : paramsObject.offset = Number(paramsObject.offset[0]);
             paramsObject.limit === undefined ? paramsObject.limit = 10 : paramsObject.limit = Number(paramsObject.limit[0]);
-
             setFilters({ ...paramsObject });
+        } else if (filters.limit === undefined || filters.offest === undefined) {
+            setFilters({ ...filters, offset: 0, limit: 10 });
         }
 
         setFilterBuilding(false);
@@ -96,9 +97,6 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     useEffect(() => {
         if (!filterBuilding) {
             const options = selectedTags.length && ({ tags: selectedTags.join() });
-
-            filters.limit || filters.offest === undefined && setFilters({ ...filters, offset: 0, limit: 10 });
-
             fetchSystems({
                 offset: filters.offset,
                 limit: filters.limit,
