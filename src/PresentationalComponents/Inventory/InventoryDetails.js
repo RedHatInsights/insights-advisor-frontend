@@ -5,7 +5,7 @@ import * as reactRouterDom from 'react-router-dom';
 
 import { Grid, GridItem } from '@patternfly/react-core/dist/js/layouts/Grid/index';
 import React, { useEffect, useState } from 'react';
-
+import { useStore } from 'react-redux';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/components/PageHeader';
@@ -18,6 +18,7 @@ import routerParams from '@redhat-cloud-services/frontend-components-utilities/f
 const InventoryDetails = ({ entity, match }) => {
     const [InventoryDetail, setInventoryDetail] = useState();
     const [AppInfo, setAppInfo] = useState();
+    const store = useStore();
 
     const fetchInventoryDetails = async () => {
         const { inventoryConnector, mergeWithDetail, INVENTORY_ACTION_TYPES } = await insights.loadInventory({
@@ -25,7 +26,7 @@ const InventoryDetails = ({ entity, match }) => {
             reactRouterDom,
             pfReactTable
         });
-        const { InventoryDetailHead, AppInfo } = inventoryConnector();
+        const { InventoryDetailHead, AppInfo } = inventoryConnector(store);
 
         getRegistry().register({
             ...mergeWithDetail(entitiesDetailsReducer(INVENTORY_ACTION_TYPES))

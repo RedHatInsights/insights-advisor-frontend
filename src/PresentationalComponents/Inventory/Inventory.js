@@ -3,7 +3,7 @@ import * as pfReactTable from '@patternfly/react-table';
 import * as reactRouterDom from 'react-router-dom';
 
 import React, { useEffect, useRef, useState } from 'react';
-
+import { useStore } from 'react-redux';
 import  AnsibeTowerIcon  from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import PropTypes from 'prop-types';
@@ -25,6 +25,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
     const [selected, setSelected] = useState([]);
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [bulkSelect, setBulkSelect] = useState();
+    const store = useStore();
 
     const loadInventory = async () => {
         const {
@@ -40,7 +41,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
             ...mergeWithEntities()
         });
 
-        const { InventoryTable } = inventoryConnector();
+        const { InventoryTable } = inventoryConnector(store);
         setInventoryTable(() => InventoryTable);
     };
 
