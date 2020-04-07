@@ -32,6 +32,11 @@ export default defineMessages({
         description: 'Systems title used in recommendation table column and systems tab header',
         defaultMessage: 'Systems'
     },
+    systemsExposed: {
+        id: 'systemsExposed',
+        description: 'Systems title used in exec report',
+        defaultMessage: 'Systems exposed'
+    },
     ansible: {
         id: 'ansible',
         description: 'Recommendation table column title',
@@ -769,11 +774,61 @@ export default defineMessages({
     cveAlert: {
         id: 'cveAlert',
         description: 'Cve alert body',
-        defaultMessage: 'As of April 28th, 2020, all CVE recommendations previously shown in recommendations have moved over to the Vulnerability section of Red Hat Insights which provides additional capabilities for enhanced CVE identification and remediation.'
+        defaultMessage: 'As of April 20th, 2020, all CVE recommendations previously shown in recommendations have moved over to the Vulnerability section of Red Hat Insights which provides additional capabilities for enhanced CVE identification and remediation.'
     },
     cveAlertTitle: {
         id: 'cveAlertTitle',
         description: 'Cve alert title',
         defaultMessage: 'CVE recommendations relocated'
+    },
+    downloadExecutiveLabel: {
+        id: 'downloadExecutiveLabel',
+        description: 'Label given to link for downloading exec report',
+        defaultMessage: 'Download executive report'
+    },
+    insightsHeader: {
+        id: 'insightsHeader',
+        description: 'Type value for Executive Reports Download Button',
+        defaultMessage: 'Insights'
+    },
+    execReportHeader: {
+        id: 'execReportHeader',
+        description: 'Header in the Executive Report describing the number of systems and risk analyzed',
+        defaultMessage: `This report is an executive summary of rules that may impact your Red Hat Enterprise Linux servers. Red Hat Insights service is analyzing {systems} and has identified {risks} that impact 1 or more of these systems.`
+    },
+    execReportHeaderSystems: {
+        id: 'execReportHeaderSystems',
+        description: 'System part of the exec report header',
+        defaultMessage: '{systems, plural, one {# RHEL system} other {# RHEL systems}}'
+    },
+    execReportHeaderRisks: {
+        id: 'execReportHeaderRisks',
+        description: 'Risk part of the exec report header',
+        defaultMessage: '{risks, plural, one {# Risk} other {# Risks}}'
+    },
+    recNumAndPercentage: {
+        id: 'recNumAndPercentage',
+        description: 'Given number and total displays percentage',
+        defaultMessage: '{count} ({total}% of total)'
+    },
+    severity: {
+        id: 'severity',
+        description: 'Severity',
+        defaultMessage: 'Severity'
+    },
+    severityHeader: {
+        id: 'severityHeader',
+        description: 'Header for Severity Section of Exec Report',
+        defaultMessage: 'Identified rules by severity'
+    },
+    categoryHeader: {
+        id: 'categoryHeader',
+        description: 'Header for Category Section of Exec Report',
+        defaultMessage: 'Recently identified rules by category'
+    },
+    top3RulesHeader: {
+        id: 'topThreeRulesHeader',
+        description: 'Header for Top 3 section of Exec Report',
+        defaultMessage: 'Top 3 rules in your infrastructure'
     }
 });
