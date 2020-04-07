@@ -1,7 +1,7 @@
 /*global module*/
-const apiHost = `https://qa.cloud.redhat.com`;
+const apiHost = `https://cloud.redhat.com`;
 const frontendHost = (process.env.PLATFORM === 'linux') ? 'localhost' : 'host.docker.internal';
-const chromeHost = 'https://qa.cloud.redhat.com';
+const chromeHost = 'https://cloud.redhat.com';
 const SECTION = 'insights';
 const APP_ID = 'advisor';
 const routes = {};
