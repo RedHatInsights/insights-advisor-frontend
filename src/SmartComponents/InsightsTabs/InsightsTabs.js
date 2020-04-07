@@ -10,6 +10,7 @@ import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
 import PropTypes from 'prop-types';
 import { Tabs } from '@patternfly/react-core/dist/js/components/Tabs/Tabs';
+import { UI_BASE } from '../../AppConstants';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
@@ -57,7 +58,7 @@ const InsightsTabs = ({ intl, history }) => {
                 title={intl.formatMessage(messages.cveAlertTitle)}
                 action={<AlertActionCloseButton onClose={() => {cveAlertShown = false; setCveAlert(false);}} />}
             >
-                {intl.formatMessage(messages.cveAlert)}&nbsp; <a href="/insights/vulnerability/cves?page=1&sort=-public_date">View CVEs</a>
+                {intl.formatMessage(messages.cveAlert)}&nbsp; <a href={`${UI_BASE}/vulnerability/cves?page=1&sort=-public_date`}>View CVEs</a>
             </Alert>}
         </PageHeader>
         {activeTab.title && <Tabs mountOnEnter unmountOnExit
