@@ -25,9 +25,8 @@ const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl })
         crumbs.push({ title: titleCase(splitUrl[1]), navigate: `/${splitUrl[1]}` });
         // if applicable, add tab
         if (splitUrl[1] === 'recommendations') {
-            splitUrl[1] + splitUrl[2] !== 'recommendationssystems' ?
-                crumbs.push({ title: intl.formatMessage(messages.recommendations), navigate: '/recommendations' })
-                : crumbs.push({ title: intl.formatMessage(messages.systems), navigate: '/recommendations/systems' });
+            splitUrl[1] + splitUrl[2] === 'recommendationssystems' &&
+                crumbs.push({ title: intl.formatMessage(messages.systems), navigate: '/recommendations/systems' });
         }
 
         // if applicable, add :id breadcrumb
