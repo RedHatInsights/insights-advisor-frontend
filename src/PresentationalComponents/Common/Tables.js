@@ -22,3 +22,6 @@ export const paramParser = (history) => {
         ...acc, [key]: (value === 'true' || value === 'false') ? JSON.parse(value) : value.split(',')
     }), {});
 };
+
+// capitalizes text string
+export const capitalize = (string) => string[0].toUpperCase() + string.substring(1);
