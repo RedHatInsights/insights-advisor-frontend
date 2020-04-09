@@ -160,6 +160,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                             <FlexItem breakpointMods={[{ modifier: 'align-right' }]}>
                                 <Dropdown
                                     onSelect={() => setActionsDropdownOpen(!actionsDropdownOpen)}
+                                    position='right'
                                     toggle={<DropdownToggle
                                         onToggle={(actionsDropdownOpen) => setActionsDropdownOpen(actionsDropdownOpen)}
                                         iconComponent={CaretDownIcon}>Actions
