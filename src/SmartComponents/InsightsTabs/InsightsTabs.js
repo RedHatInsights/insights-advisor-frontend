@@ -6,6 +6,7 @@ import { Tab, TabsVariant } from '@patternfly/react-core/dist/js/components/Tabs
 
 import { Alert } from '@patternfly/react-core/dist/js/components/Alert/Alert';
 import { AlertActionCloseButton } from '@patternfly/react-core/dist/js/components/Alert/AlertActionCloseButton';
+import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
 import PropTypes from 'prop-types';
@@ -51,6 +52,7 @@ const InsightsTabs = ({ intl, history }) => {
         <Suspense fallback={<Loading />}> <TagsToolbar /> </Suspense>
         <PageHeader>
             <PageHeaderTitle title={intl.formatMessage(messages.recommendations)} />
+            <DownloadExecReport/>
             {cveAlert && <Alert
                 className='alertOverride'
                 variant="warning"
