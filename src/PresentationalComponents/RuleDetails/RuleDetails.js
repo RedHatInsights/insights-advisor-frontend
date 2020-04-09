@@ -11,7 +11,7 @@ import { compact, intersection } from 'lodash';
 import { Battery } from '@redhat-cloud-services/frontend-components/components/Battery';
 import { Card } from '@patternfly/react-core/dist/js/components/Card/Card';
 import { CardBody } from '@patternfly/react-core/dist/js/components/Card/CardBody';
-import ExternalLinkAltIcon  from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -43,19 +43,15 @@ const RuleDetails = ({ children, rule, intl, topics, header, isDetailsPage }) =>
         </React.Fragment>
     ));
 
+    const ruleDescription = (data) => typeof data === 'string' && Boolean(data) && <ReactMarkdown source={data} escapeHtml={false} />;
+
     return <Split gutter='sm'>
         <SplitItem>
             <Stack gutter='sm'>
                 {header && <StackItem>
                     {header}
                 </StackItem>}
-                <StackItem>
-                    {
-                        typeof rule.summary === 'string' &&
-                        Boolean(rule.summary) &&
-                        <ReactMarkdown source={rule.summary} escapeHtml={false} />
-                    }
-                </StackItem>
+                <StackItem>{isDetailsPage ? ruleDescription(rule.generic) : ruleDescription(rule.summary)}</StackItem>
                 {rule.node_id && (
                     <StackItem>
                         <a rel="noopener noreferrer" target="_blank" href={`https://access.redhat.com/node/${rule.node_id}`}>
