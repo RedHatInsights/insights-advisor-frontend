@@ -34,7 +34,7 @@ const TagsList = ({ setSelectedTags, selectedTags, showMoreCount, intl, tags, ha
                 {tags.slice(0, showMoreCount || tags.length).map(item => <DataListItem aria-labelledby="tag-list-item" key={item}>
                     <DataListItemRow>
                         <DataListCheck aria-labelledby={`${item}-check`} name={item} onChange={updateSelectedTags}
-                            isChecked={selectedTags.indexOf(item) > -1} />
+                            checked={selectedTags.indexOf(item) > -1} />
                         <DataListItemCells dataListCells={[
                             <DataListCell key="primary content">
                                 {`${decodeURIComponent(item)}`}
