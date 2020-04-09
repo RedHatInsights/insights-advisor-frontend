@@ -93,7 +93,7 @@ export const TOTAL_RISK_LABEL = {
 };
 export const FILTER_CATEGORIES = {
     total_risk: {
-        type: 'checkbox', title: 'Total risk', urlParam: 'total_risk', values: [
+        type: 'checkbox', title: 'total risk', urlParam: 'total_risk', values: [
             { label: <Battery label={TOTAL_RISK_LABEL[4]} severity={4} />, text: TOTAL_RISK_LABEL[4], value: '4' },
             { label: <Battery label={TOTAL_RISK_LABEL[3]} severity={3} />, text: TOTAL_RISK_LABEL[3], value: '3' },
             { label: <Battery label={TOTAL_RISK_LABEL[2]} severity={2} />, text: TOTAL_RISK_LABEL[2], value: '2' },
@@ -101,7 +101,7 @@ export const FILTER_CATEGORIES = {
         ]
     },
     res_risk: {
-        type: 'checkbox', title: 'Risk of change', urlParam: 'res_risk', values: [
+        type: 'checkbox', title: 'risk of change', urlParam: 'res_risk', values: [
             { label: <React.Fragment><Shield hasTooltip={false} impact={4} size={'sm'} title={RISK_OF_CHANGE_LABEL[4]} />{RISK_OF_CHANGE_LABEL[4]}</React.Fragment>, text: RISK_OF_CHANGE_LABEL[4], value: '4' },
             { label: <React.Fragment><Shield hasTooltip={false} impact={3} size={'sm'} title={RISK_OF_CHANGE_LABEL[3]} />{RISK_OF_CHANGE_LABEL[3]}</React.Fragment>, text: RISK_OF_CHANGE_LABEL[3], value: '3' },
             { label: <React.Fragment><Shield hasTooltip={false} impact={2} size={'sm'} title={RISK_OF_CHANGE_LABEL[2]} />{RISK_OF_CHANGE_LABEL[2]}</React.Fragment>, text: RISK_OF_CHANGE_LABEL[2], value: '2' },
@@ -109,7 +109,7 @@ export const FILTER_CATEGORIES = {
         ]
     },
     impact: {
-        type: 'checkbox', title: 'Impact', urlParam: 'impact', values: [
+        type: 'checkbox', title: 'impact', urlParam: 'impact', values: [
             { label: IMPACT_LABEL[4], value: '4' },
             { label: IMPACT_LABEL[3], value: '3' },
             { label: IMPACT_LABEL[2], value: '2' },
@@ -117,7 +117,7 @@ export const FILTER_CATEGORIES = {
         ]
     },
     likelihood: {
-        type: 'checkbox', title: 'Likelihood', urlParam: 'likelihood', values: [
+        type: 'checkbox', title: 'likelihood', urlParam: 'likelihood', values: [
             { label: LIKELIHOOD_LABEL[4], value: '4' },
             { label: LIKELIHOOD_LABEL[3], value: '3' },
             { label: LIKELIHOOD_LABEL[2], value: '2' },
@@ -125,7 +125,7 @@ export const FILTER_CATEGORIES = {
         ]
     },
     category: {
-        type: 'checkbox', title: 'Category', urlParam: 'category', values: [
+        type: 'checkbox', title: 'category', urlParam: 'category', values: [
             { label: intlHelper(intl.formatMessage(messages.availability), intlSettings), value: `${RULE_CATEGORIES.availability}` },
             { label: intlHelper(intl.formatMessage(messages.performance), intlSettings), value: `${RULE_CATEGORIES.performance}` },
             { label: intlHelper(intl.formatMessage(messages.stability), intlSettings), value: `${RULE_CATEGORIES.stability}` },
@@ -133,7 +133,7 @@ export const FILTER_CATEGORIES = {
         ]
     },
     incident: {
-        type: 'checkbox', title: 'Incidents', urlParam: 'incident', values: [
+        type: 'checkbox', title: 'incidents', urlParam: 'incident', values: [
             { label: intlHelper(intl.formatMessage(messages.incidentRules), intlSettings), value: 'true' },
             { label: intlHelper(intl.formatMessage(messages.nonIncidentRules), intlSettings), value: 'false' }
         ]
@@ -145,7 +145,7 @@ export const FILTER_CATEGORIES = {
         ]
     },
     reports_shown: {
-        type: 'radio', title: 'Status', urlParam: 'reports_shown', values: [
+        type: 'radio', title: 'status', urlParam: 'reports_shown', values: [
             { label: intlHelper(intl.formatMessage(messages.all), intlSettings), value: 'undefined' },
             { label: intlHelper(intl.formatMessage(messages.enabled), intlSettings), value: 'true' },
             { label: intlHelper(intl.formatMessage(messages.disabled), intlSettings), value: 'false' }

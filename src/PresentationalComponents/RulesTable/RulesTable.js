@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/index';
 import { Table, TableBody, TableHeader, cellWidth, sortable } from '@patternfly/react-table';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
-import { filterFetchBuilder, paramParser, urlBuilder } from '../Common/Tables';
+import { capitalize, filterFetchBuilder, paramParser, urlBuilder } from '../Common/Tables';
 
 import API from '../../Utilities/Api';
 import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
@@ -166,7 +166,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                     return { name: selectedCategoryValue.text || selectedCategoryValue.label, value };
                 })
                     : [{ name: category.values.find(values => values.value === String(item[1])).label, value: item[1] }];
-                return { category: category.title, chips, urlParam: category.urlParam };
+                return { category: capitalize(category.title), chips, urlParam: category.urlParam };
             } else {
                 return { category: 'Description', chips: [{ name: item[1], value: item[1] }], urlParam: item[0] };
             }
@@ -327,7 +327,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     ];
 
     const filterConfigItems = [{
-        label: intl.formatMessage(messages.description),
+        label: intl.formatMessage(messages.description).toLowerCase(),
         filterValues: {
             key: 'text-filter',
             onChange: (event, value) => setSearchText(value),
