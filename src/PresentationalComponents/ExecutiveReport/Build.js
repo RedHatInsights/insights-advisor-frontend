@@ -61,7 +61,7 @@ const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => 
                     subTitle={intl.formatMessage(messages.severityHeader)}
                     title='100'
                     data={severityPie}
-                    colorSchema={'orange'}
+                    colorSchema={'multi'}
                 />
             </Column>
         </Section>
