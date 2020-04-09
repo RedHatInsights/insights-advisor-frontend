@@ -6,6 +6,7 @@ import React from 'react';
 import { TOTAL_RISK_LABEL } from '../../AppConstants';
 import { Text } from '@react-pdf/renderer';
 import messages from '../../Messages';
+import { truncate } from 'lodash';
 
 const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => {
     const batteryMap = {
@@ -39,7 +40,9 @@ const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => 
                 total: Math.round(Number(value / statsReports.total * 100))
             })])];
 
-    const rulesDesc = (rule) => <Text><Text style={{ fontWeight: 700 }}> {rule.description}</Text> &nbsp;{rule.summary}</Text>;
+    const rulesDesc = (rule) => <Text>
+        <Text style={{ fontWeight: 700 }}> {rule.description}</Text>&nbsp;{truncate(rule.summary, { length: 300 })}
+    </Text>;
 
     return <React.Fragment key={intl.formatMessage(messages.insightsHeader)}>
         <Paragraph>
