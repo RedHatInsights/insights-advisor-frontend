@@ -66,20 +66,14 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const sortIndices = { 1: 'description', 2: 'publish_date', 3: 'total_risk', 4: 'impacted_count', 5: 'playbook_count' };
 
     const fetchRulesFn = useCallback(() => {
-        const undefinedLimitOffset = filters.limit === undefined || filters.offset === undefined;
         const options = selectedTags.length && ({ tags: selectedTags.join() });
-        const limit = undefinedLimitOffset ? 10 : filters.limit;
-        const offset = undefinedLimitOffset ? 0 : filters.offset;
-        undefinedLimitOffset && setFilters({ ...filters, offset: 0, limit: 10 });
 
         fetchRules({
             ...filterFetchBuilder(filters),
-            offset,
-            limit,
             impacting,
             ...options
         });
-    }, [fetchRules, filters, impacting, selectedTags, setFilters]);
+    }, [fetchRules, filters, impacting, selectedTags]);
 
     const onSort = (_event, index, direction) => {
         const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
@@ -174,7 +168,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             : [];
     };
 
-    useEffect(() => {!filterBuilding && fetchRulesFn();}, [fetchRulesFn, filterBuilding, filters, selectedTags]);
+    useEffect(() => { !filterBuilding && fetchRulesFn(); }, [fetchRulesFn, filterBuilding, filters, selectedTags]);
 
     // Builds table filters from url params
     useEffect(() => {
@@ -214,7 +208,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             setSortBy({ index: sortIndex, direction: sortDirection });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filters, filters.sort]);
+    }, [filters.sort]);
 
     useEffect(() => {
         if (rules.data) {
@@ -427,7 +421,10 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         filters: buildFilterChips(),
         onDelete: (event, itemsToRemove, isAll) => {
             if (isAll) {
-                setFilters({ ...(filters.topic && { topic: filters.topic }), impacting: true, reports_shown: 'true' });
+                setFilters({
+                    ...(filters.topic && { topic: filters.topic }),
+                    impacting: true, reports_shown: 'true', limit: filters.limit, offset: filters.offset
+                });
             } else {
                 itemsToRemove.map(item => {
                     const newFilter = {
