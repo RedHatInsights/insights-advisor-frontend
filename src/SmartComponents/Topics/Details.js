@@ -34,7 +34,7 @@ const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl,
     useEffect(() => {
         fetchTopic({ topic_id: match.params.id });
         return () => {
-            setFilters({ impacting: true, reports_shown: 'true', sort: '-publish_date' });
+            setFilters({ impacting: true, reports_shown: 'true', sort: '-publish_date', limit: 10, offset: 0 });
         };
     }, [fetchTopic, match.params.id, setFilters]);
 
