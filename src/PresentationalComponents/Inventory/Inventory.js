@@ -3,7 +3,7 @@ import * as pfReactTable from '@patternfly/react-table';
 import * as reactRouterDom from 'react-router-dom';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useStore } from 'react-redux';
+
 import  AnsibeTowerIcon  from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import PropTypes from 'prop-types';
@@ -15,6 +15,7 @@ import global_BackgroundColor_100 from '@patternfly/react-tokens/dist/js/global_
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import { useStore } from 'react-redux';
 
 let page = 1;
 let pageSize = 50;
@@ -120,6 +121,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
                 </RemediationButton>,
                 {
                     label: intl.formatMessage(messages.disableRuleForSystems),
+                    props: { isDisabled: selected.length === 0 },
                     onClick: () => handleModalToggle(true)
                 }]
             }}
