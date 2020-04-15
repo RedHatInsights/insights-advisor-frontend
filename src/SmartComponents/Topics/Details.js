@@ -27,7 +27,7 @@ import routerParams from '@redhat-cloud-services/frontend-components-utilities/f
 const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl, filters }) => {
     useEffect(() => {
         if (typeof filters.topic === 'undefined') {
-            setFilters({ impacting: true, reports_shown: 'true', topic: match.params.id, sort: `-publish_date` });
+            setFilters({ impacting: true, reports_shown: 'true', topic: match.params.id, sort: `-publish_date`, limit: 10, offset: 0  });
         }
     });
 
