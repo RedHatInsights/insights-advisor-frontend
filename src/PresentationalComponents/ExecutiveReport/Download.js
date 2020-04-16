@@ -1,11 +1,11 @@
 import './_Download.scss';
 
 import { RULES_FETCH_URL, STATS_REPORTS_FETCH_URL, STATS_SYSTEMS_FETCH_URL } from '../../AppConstants';
+import React, { useMemo, useState } from 'react';
 
 import API from '../../Utilities/Api';
 import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-generator';
 import ExportIcon from '@patternfly/react-icons/dist/js/icons/export-icon';
-import React, { useState, useMemo } from 'react';
 import buildExecReport from './Build';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
@@ -31,10 +31,13 @@ const DownloadExecReport = () => {
         return <DownloadButton
             label={loading ? intl.formatMessage(messages.loading) : intl.formatMessage(messages.downloadExecutiveLabel)}
             asyncFunction={dataFetch}
-            buttonProps={{ variant: 'link', icon: <ExportIcon className='iconOverride' />, component: 'a', className: 'downloadButtonOverride' }}
+            buttonProps={{
+                variant: 'link', icon: <ExportIcon className='iconOverride' />, component: 'a', className: 'downloadButtonOverride',
+                ...(loading ? { isDisabled: true } : null)
+            }}
             type={intl.formatMessage(messages.insightsHeader)}
             fileName={`Insights-Executive-Report--${(new Date()).toUTCString().replace(/ /g, '-')}.pdf`} />;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loading]);
 };
 
