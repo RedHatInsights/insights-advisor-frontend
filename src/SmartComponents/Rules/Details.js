@@ -106,7 +106,9 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         const isCVE = cveToRuleid && cveToRuleid.find(mapping => mapping.rule_id === match.params.id);
 
         if (isCVE) {
-            window.location.href = `${UI_BASE}/vulnerability/cves/${isCVE.cves[0].includes('CVE-') ? isCVE.cves[0] : ''}`;
+            window.location.href = `${UI_BASE}/vulnerability/cves/${isCVE.cves[0].includes('CVE-') ?
+                `${isCVE.cves[0]}?security_rule=${match.params.id}`
+                : ''}`;
         } else {
             fetchTopics();
             fetchRulefn();
