@@ -25,14 +25,15 @@ const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => 
             [TOTAL_RISK_LABEL[key].props.children, intl.formatMessage(messages.recNumAndPercentage, {
                 count: value,
                 total: Math.round(Number(value / statsReports.total * 100))
-            })])
+            })]).reverse()
     ];
 
     const categoryPie = [
-        { x: intl.formatMessage(messages.performance), y: statsReports.category.Performance },
         { x: intl.formatMessage(messages.availability), y: statsReports.category.Availability },
-        { x: intl.formatMessage(messages.stability), y: statsReports.category.Stability },
-        { x: intl.formatMessage(messages.security), y: statsReports.category.Security }];
+        { x: intl.formatMessage(messages.performance), y: statsReports.category.Performance },
+        { x: intl.formatMessage(messages.security), y: statsReports.category.Security },
+        { x: intl.formatMessage(messages.stability), y: statsReports.category.Stability }
+    ];
     const categoryRows = [[intl.formatMessage(messages.category), intl.formatMessage(messages.numberRuleHits)],
         ...Object.entries(statsReports.category).map(([key, value]) =>
             [key, intl.formatMessage(messages.recNumAndPercentage, {
