@@ -36,7 +36,7 @@ const DownloadExecReport = () => {
                 ...(loading ? { isDisabled: true } : null)
             }}
             type={intl.formatMessage(messages.insightsHeader)}
-            fileName={`Insights-Executive-Report--${(new Date()).toUTCString().replace(/ /g, '-')}.pdf`} />;
+            fileName={`Advisor-Executive-Report--${(new Date()).toUTCString().replace(/ /g, '-')}.pdf`} />;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loading]);
 };

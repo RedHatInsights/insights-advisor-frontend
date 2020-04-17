@@ -20,7 +20,7 @@ const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => 
         { x: intl.formatMessage(messages.important), y: statsReports.total_risk[3] },
         { x: intl.formatMessage(messages.moderate), y: statsReports.total_risk[2] },
         { x: intl.formatMessage(messages.low), y: statsReports.total_risk[1] }];
-    const severityRows = [[intl.formatMessage(messages.severity), intl.formatMessage(messages.numberRuleHits)],
+    const severityRows = [[intl.formatMessage(messages.severity), intl.formatMessage(messages.poundOfRecs)],
         ...Object.entries(statsReports.total_risk).map(([key, value]) =>
             [TOTAL_RISK_LABEL[key].props.children, intl.formatMessage(messages.recNumAndPercentage, {
                 count: value,
@@ -34,7 +34,7 @@ const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => 
         { x: intl.formatMessage(messages.security), y: statsReports.category.Security },
         { x: intl.formatMessage(messages.stability), y: statsReports.category.Stability }
     ];
-    const categoryRows = [[intl.formatMessage(messages.category), intl.formatMessage(messages.numberRuleHits)],
+    const categoryRows = [[intl.formatMessage(messages.category), intl.formatMessage(messages.poundOfRecs)],
         ...Object.entries(statsReports.category).map(([key, value]) =>
             [key, intl.formatMessage(messages.recNumAndPercentage, {
                 count: value,

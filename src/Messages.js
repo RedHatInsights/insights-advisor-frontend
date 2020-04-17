@@ -789,12 +789,12 @@ export default defineMessages({
     insightsHeader: {
         id: 'insightsHeader',
         description: 'Type value for Executive Reports Download Button',
-        defaultMessage: 'Insights'
+        defaultMessage: 'Advisor'
     },
     execReportHeader: {
         id: 'execReportHeader',
         description: 'Header in the Executive Report describing the number of systems and risk analyzed',
-        defaultMessage: `This report is an executive summary of rules that may impact your Red Hat Enterprise Linux servers. Red Hat Insights service is analyzing {systems} and has identified {risks} that impact 1 or more of these systems.`
+        defaultMessage: `This report is an executive summary of recommendations that may impact your Red Hat Enterprise Linux servers. Red Hat Advisor service is analyzing {systems} and has identified {risks} that impact 1 or more of these systems.`
     },
     execReportHeaderSystems: {
         id: 'execReportHeaderSystems',
@@ -819,16 +819,21 @@ export default defineMessages({
     severityHeader: {
         id: 'severityHeader',
         description: 'Header for Severity Section of Exec Report',
-        defaultMessage: 'Identified rules by severity'
+        defaultMessage: 'Identified recommendations by severity'
     },
     categoryHeader: {
         id: 'categoryHeader',
         description: 'Header for Category Section of Exec Report',
-        defaultMessage: 'Recently identified rules by category'
+        defaultMessage: 'Recently identified recommendations by category'
     },
     top3RulesHeader: {
         id: 'topThreeRulesHeader',
         description: 'Header for Top 3 section of Exec Report',
-        defaultMessage: 'Top 3 rules in your infrastructure'
+        defaultMessage: 'Top 3 recommendations in your infrastructure'
+    },
+    poundOfRecs: {
+        id: 'poundOfRecs',
+        description: '# of recommendations',
+        defaultMessage: '# of recommendations'
     }
 });
