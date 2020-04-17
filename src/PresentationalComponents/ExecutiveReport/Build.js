@@ -42,7 +42,7 @@ const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => 
             })])];
 
     const rulesDesc = (rule) => <Text>
-        <Text style={{ fontWeight: 700 }}> {rule.description}</Text>&nbsp;{truncate(rule.summary, { length: 300 })}
+        <Text style={{ fontWeight: 700 }}> {rule.description}</Text>&nbsp;{truncate(rule.summary, { length: 280 })}
     </Text>;
 
     return <React.Fragment key={intl.formatMessage(messages.insightsHeader)}>
