@@ -155,15 +155,16 @@
     "cveAlert": "As of April 20th, 2020, all CVE recommendations previously shown in recommendations have moved over to the Vulnerability section of Red Hat Insights which provides additional capabilities for enhanced CVE identification and remediation.",
     "cveAlertTitle": "CVE recommendations relocated",
     "downloadExecutiveLabel": "Download executive report",
-    "insightsHeader": "Insights",
-    "execReportHeader": "This report is an executive summary of rules that may impact your Red Hat Enterprise Linux servers. Red Hat Insights service is analyzing {systems} and has identified {risks} that impact 1 or more of these systems.",
+    "insightsHeader": "Advisor",
+    "execReportHeader": "This report is an executive summary of recommendations that may impact your Red Hat Enterprise Linux servers. Red Hat Advisor service is analyzing {systems} and has identified {risks} that impact 1 or more of these systems.",
     "execReportHeaderSystems": "{systems, plural, one {# RHEL system} other {# RHEL systems}}",
     "execReportHeaderRisks": "{risks, plural, one {# Risk} other {# Risks}}",
     "recNumAndPercentage": "{count} ({total}% of total)",
     "severity": "Severity",
-    "severityHeader": "Identified rules by severity",
-    "categoryHeader": "Recently identified rules by category",
-    "topThreeRulesHeader": "Top 3 rules in your infrastructure",
+    "severityHeader": "Identified recommendations by severity",
+    "categoryHeader": "Recently identified recommendations by category",
+    "topThreeRulesHeader": "Top 3 recommendations in your infrastructure",
+    "poundOfRecs": "# of recommendations",
     "app.greeting": "Hello, {name}!"
   }
 }
