@@ -177,7 +177,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             paramsObject.text === undefined ? setSearchText('') : setSearchText(paramsObject.text);
             paramsObject.reports_shown = paramsObject.reports_shown === undefined || paramsObject.reports_shown[0] === 'undefined' ? undefined
                 : paramsObject.reports_shown;
-            paramsObject.sort = paramsObject.sort === undefined ? '-publish_date' : paramsObject.sort[0];
+            paramsObject.sort = paramsObject.sort === undefined ? '-total_risk' : paramsObject.sort[0];
             paramsObject.has_playbook !== undefined && !Array.isArray(paramsObject.has_playbook) &&
                 (paramsObject.has_playbook = [`${paramsObject.has_playbook}`]);
             paramsObject.incident !== undefined && !Array.isArray(paramsObject.incident) && (paramsObject.incident = [`${paramsObject.incident}`]);
