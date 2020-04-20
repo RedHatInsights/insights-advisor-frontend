@@ -19,7 +19,7 @@ const DownloadExecReport = () => {
         const [statsSystems, statsReports, topActiveRec] = await Promise.all([
             (await API.get(STATS_SYSTEMS_FETCH_URL)).data,
             (await API.get(STATS_REPORTS_FETCH_URL)).data,
-            (await API.get(RULES_FETCH_URL, {}, { limit: 3, sort: '-impacted_count' })).data
+            (await API.get(RULES_FETCH_URL, {}, { limit: 3, sort: '-total_risk,-impacted_count', impacting: true })).data
         ]);
         const report = buildExecReport({ statsReports, statsSystems, topActiveRec, intl });
         setLoading(false);
