@@ -98,7 +98,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     };
 
     useEffect(() => {
-        fetchHostAcks({ rule_id: rule.rule_id, limit: rule.hosts_acked_count });
+        rule.rule_id && fetchHostAcks({ rule_id: rule.rule_id, limit: rule.hosts_acked_count });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchHostAcks, rule.hosts_acked_count]);
 
