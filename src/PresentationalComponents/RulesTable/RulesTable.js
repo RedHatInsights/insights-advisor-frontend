@@ -305,6 +305,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     const removeFilterParam = (param) => {
         const filter = { ...filters, offset: 0 };
+        param === 'text' && setSearchText('');
         delete filter[param];
         setFilters(filter);
     };
@@ -421,6 +422,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         filters: buildFilterChips(),
         onDelete: (event, itemsToRemove, isAll) => {
             if (isAll) {
+                setSearchText('');
                 setFilters({
                     ...(filters.topic && { topic: filters.topic }),
                     impacting: true, reports_shown: 'true', limit: filters.limit, offset: filters.offset
