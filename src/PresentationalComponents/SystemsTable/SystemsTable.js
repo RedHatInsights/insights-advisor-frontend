@@ -162,7 +162,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
                 perPage: Number(filters.limit),
                 onSetPage(event, page) { onSetPage(page); },
                 onPerPageSelect(event, perPage) { setFilters({ ...filters, limit: perPage, offset: 0 }); },
-                isCompact: false
+                isCompact: true
             }}
             filterConfig={{ items: filterConfigItems }}
             activeFiltersConfig={activeFiltersConfig}
