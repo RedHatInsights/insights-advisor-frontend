@@ -54,11 +54,16 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, hosts, rule, 
         handleModalToggle(false);
     };
 
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') { disableRule(); }
+    };
+
     return <Modal
         isSmall
         title={intl.formatMessage(messages.disableRule)}
         isOpen={isModalOpen}
         onClose={() => { handleModalToggle(false); setJustificaton(''); }}
+        onKeyPress={handleKeyPress}
         actions={[
             <Button key="confirm" variant="primary" onClick={() => disableRule()}>
                 {intl.formatMessage(messages.save)}
