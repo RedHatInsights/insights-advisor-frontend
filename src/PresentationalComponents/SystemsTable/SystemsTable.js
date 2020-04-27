@@ -1,66 +1,128 @@
 /* eslint camelcase: 0 */
 import * as AppActions from '../../AppActions';
+import * as pfReactTable from '@patternfly/react-table';
+import * as reactRouterDom from 'react-router-dom';
 
-import { Pagination, PaginationVariant } from '@patternfly/react-core/dist/js/components/Pagination/Pagination';
-import React, { useEffect, useState } from 'react';
-import { Table, TableBody, TableHeader, cellWidth, sortable } from '@patternfly/react-table';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { connect, useStore } from 'react-redux';
 import { paramParser, urlBuilder } from '../Common/Tables';
 
-import { DateFormat } from '@redhat-cloud-services/frontend-components/components/DateFormat';
 import Failed from '../Loading/Failed';
-import { Link } from 'react-router-dom';
 import Loading from '../Loading/Loading';
-import MessageState from '../MessageState/MessageState';
-import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/components/PrimaryToolbar';
 import PropTypes from 'prop-types';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
-import { TableToolbar } from '@redhat-cloud-services/frontend-components/components/TableToolbar';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
-import { connect } from 'react-redux';
 import debounce from '../../Utilities/Debounce';
+import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import { systemReducer } from '../../AppReducer';
 
 const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters, setFilters, history, selectedTags }) => {
-    const [cols] = useState([
-        { title: intl.formatMessage(messages.name), transforms: [sortable] },
-        { title: intl.formatMessage(messages.numberRuleHits), transforms: [sortable, cellWidth(15)] },
-        { title: intl.formatMessage(messages.lastSeen), transforms: [sortable] }
-    ]);
-    const [rows, setRows] = useState([]);
-    const [sortBy, setSortBy] = useState({});
+    const inventory = useRef(null);
+    const [InventoryTable, setInventory] = useState();
+    const store = useStore();
     const results = systems.meta ? systems.meta.count : 0;
     const [searchText, setSearchText] = useState(filters.display_name || '');
     const debouncedSearchText = debounce(searchText, 800);
     const [filterBuilding, setFilterBuilding] = useState(true);
-
     const sortIndices = {
         0: 'display_name',
         1: 'hits',
         2: 'last_seen'
     };
 
-    const onSort = (_event, index, direction) => {
+    const onSort = ({ index, direction }) => {
         const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
-        setSortBy({ index, direction });
         setFilters({ ...filters, sort: orderParam, offset: 0 });
     };
 
-    const onSetPage = (pageNumber) => {
-        const newOffset = pageNumber * filters.limit - filters.limit;
-        setFilters({ ...filters, offset: newOffset });
+    const fetchSystemsFn = useCallback(() => {
+        const options = selectedTags.length && ({ tags: selectedTags.join() });
+        fetchSystems({ ...filters, ...options });
+
+    }, [fetchSystems, filters, selectedTags]);
+
+    const filterConfigItems = [{
+        label: intl.formatMessage(messages.name),
+        filterValues: {
+            key: 'text-filter',
+            onChange: (event, value) => setSearchText(value),
+            value: searchText
+        }
+    }];
+
+    const activeFiltersConfig = {
+        filters: searchText.length > 0 && [({ category: 'Description', chips: [{ name: searchText }] })] || [],
+        onDelete: () => setSearchText('')
     };
+
+    const handleRefresh = (options) => {
+        if (systemsFetchStatus === 'fulfilled') {
+            const { offset, limit } = filters;
+            const newOffset = (options.page * options.per_page) - options.per_page;
+            if (newOffset !== offset || limit !== options.per_page) {
+                setFilters({
+                    ...filters,
+                    limit: options.per_page,
+                    offset: (options.page * options.per_page) - options.per_page
+                });
+            }
+        }
+    };
+
+    const calculateSort = () => {
+        const sortIndex = Number(Object.entries(sortIndices).find(item => item[1] === filters.sort || `-${item[1]}` === filters.sort)[0]);
+        const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
+        return {
+            index: sortIndex,
+            key: sortIndex !== 2 ? sortIndices[sortIndex] : 'updated',
+            direction: sortDirection
+        };
+    };
+
+    useEffect(() => {
+        (async () => {
+            const { inventoryConnector, mergeWithEntities, INVENTORY_ACTION_TYPES
+            } = await insights.loadInventory({
+                react: React,
+                reactRouterDom,
+                pfReactTable
+            });
+            getRegistry().register({
+                ...mergeWithEntities(
+                    systemReducer(
+                        [
+                            { title: intl.formatMessage(messages.name), transforms: [pfReactTable.sortable], key: 'display_name' },
+                            {
+                                title: intl.formatMessage(messages.numberRuleHits), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(15)],
+                                key: 'hits'
+                            },
+                            { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable], key: 'updated' }
+                        ],
+                        INVENTORY_ACTION_TYPES
+                    )
+                )
+            });
+
+            const { InventoryTable } = inventoryConnector(store);
+            setInventory(() => InventoryTable);
+        })();
+    }, [intl, store]);
 
     useEffect(() => {
         filters.display_name === undefined ? setSearchText('') : setSearchText(filters.display_name);
     }, [filters.display_name]);
 
     useEffect(() => {
-        const filter = { ...filters };
-        const text = searchText.length ? { display_name: searchText } : {};
-        delete filter.display_name;
-        setFilters({ ...filter, ...text });
+        const copyFilters = { ...filters };
+        delete copyFilters.display_name;
+        setFilters({
+            ...copyFilters,
+            ...(searchText.length ? { display_name: searchText } : {}),
+            offset: 0
+        });
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearchText]);
 
@@ -85,108 +147,31 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     }, [filters, history]);
 
     useEffect(() => {
-        if (!filterBuilding && filters.sort !== undefined) {
-            const sortIndex = Number(Object.entries(sortIndices).find(item => item[1] === filters.sort || `-${item[1]}` === filters.sort)[0]);
-            const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
-            setSortBy({ index: sortIndex, direction: sortDirection });
-        }
+        !filterBuilding && systemsFetchStatus !== 'pending' && fetchSystemsFn();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filters.sort]);
+    }, [fetchSystemsFn, filterBuilding, filters, selectedTags]);
 
-    useEffect(() => {
-        if (!filterBuilding) {
-            const options = selectedTags.length && ({ tags: selectedTags.join() });
-            fetchSystems({
-                offset: filters.offset,
-                limit: filters.limit,
-                ...filters,
-                ...options
-            });
-        }
-    }, [fetchSystems, filters, filterBuilding, setFilters, selectedTags]);
-
-    useEffect(() => {
-        if (systems.data) {
-            if (!systems.meta.count) {
-                setRows([{
-                    cells: [{
-                        title: (<MessageState icon={SearchIcon}
-                            title={intl.formatMessage(messages.noHitsTitle, { item: intl.formatMessage(messages.systems).toLowerCase() })}
-                            text={intl.formatMessage(messages.noHitsBody, { item: intl.formatMessage(messages.systems).toLowerCase() })} />),
-                        props: { colSpan: 5 }
-                    }]
-                }]);
-            } else {
-                const rows = systems.data.flatMap((value, key) => ([{
-                    isOpen: false,
-                    system: value,
-                    cells: [
-                        {
-                            title: <Link key={key} to={`/recommendations/systems/${value.system_uuid}`}>
-                                {value.display_name}
-                            </Link>
-                        }, {
-                            title: <div key={key}> {value.hits}</div>
-                        }, {
-
-                            title:
-                                <DateFormat key={key} date={value.last_seen} variant='relative' />
-                        }
-                    ]
-                }
-                ]));
-                setRows(rows.asMutable());
-            }
-        }
-    }, [intl, systems]);
-
-    const filterConfigItems = [{
-        label: intl.formatMessage(messages.name),
-        filterValues: {
-            key: 'text-filter',
-            onChange: (event, value) => setSearchText(value),
-            value: searchText
-        }
-    }];
-
-    const activeFiltersConfig = {
-        filters: searchText.length > 0 && [({ category: 'Description', chips: [{ name: searchText }] })] || [],
-        onDelete: () => setSearchText('')
-    };
-
-    return <React.Fragment>
-        <PrimaryToolbar
-            pagination={{
-                itemCount: results,
-                page: filters.offset / filters.limit + 1,
-                perPage: Number(filters.limit),
-                onSetPage(event, page) { onSetPage(page); },
-                onPerPageSelect(event, perPage) { setFilters({ ...filters, limit: perPage, offset: 0 }); },
-                isCompact: true
-            }}
-            filterConfig={{ items: filterConfigItems }}
-            activeFiltersConfig={activeFiltersConfig}
-        />
-        {systemsFetchStatus === 'fulfilled' &&
-            <Table aria-label={'rule-table'} sortBy={sortBy} onSort={onSort} cells={cols} rows={rows}>
-                <TableHeader />
-                <TableBody />
-            </Table>
-        }
-        {systemsFetchStatus === 'pending' && (<Loading />)}
-        {systemsFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.systemTableFetchError)} />)}
-        <TableToolbar>
-            <Pagination
-                itemCount={results}
+    return InventoryTable ?
+        systemsFetchStatus !== 'failed' ?
+            <InventoryTable
+                ref={inventory}
+                items={((systemsFetchStatus !== 'pending' && systems && systems.data) || []).map((system) => ({
+                    ...system,
+                    id: system.system_uuid
+                }))}
+                sortBy={calculateSort()}
+                onSort={onSort}
+                hasCheckbox={false}
+                page={filters.offset / filters.limit + 1}
+                total={results}
+                isLoaded={systemsFetchStatus !== 'pending'}
                 perPage={Number(filters.limit)}
-                page={(filters.offset / filters.limit + 1)}
-                onSetPage={(event, page) => { onSetPage(page); }}
-                onPerPageSelect={(event, perPage) => { setFilters({ ...filters, limit: perPage, offset: 0 }); }}
-                widgetId={`pagination-options-menu-bottom`}
-                variant={PaginationVariant.bottom}
+                onRefresh={handleRefresh}
+                filterConfig={{ items: filterConfigItems }}
+                activeFiltersConfig={activeFiltersConfig}
             />
-        </TableToolbar>
-    </React.Fragment>;
+            : systemsFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.systemTableFetchError)} />)
+        : <Loading />;
 };
 
 SystemsTable.propTypes = {
@@ -201,12 +186,11 @@ SystemsTable.propTypes = {
     selectedTags: PropTypes.array
 };
 
-const mapStateToProps = (state, ownProps) => ({
-    systems: state.AdvisorStore.systems,
-    systemsFetchStatus: state.AdvisorStore.systemsFetchStatus,
-    filters: state.AdvisorStore.filtersSystems,
-    selectedTags: state.AdvisorStore.selectedTags,
-    ...ownProps
+const mapStateToProps = ({ AdvisorStore }) => ({
+    systems: AdvisorStore.systems,
+    systemsFetchStatus: AdvisorStore.systemsFetchStatus,
+    filters: AdvisorStore.filtersSystems,
+    selectedTags: AdvisorStore.selectedTags
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -215,7 +199,4 @@ const mapDispatchToProps = dispatch => ({
     setFilters: (filters) => dispatch(AppActions.setFiltersSystems(filters))
 });
 
-export default injectIntl(routerParams(connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(SystemsTable)));
+export default injectIntl(routerParams(connect(mapStateToProps, mapDispatchToProps)(SystemsTable)));
