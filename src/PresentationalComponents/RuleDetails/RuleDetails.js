@@ -43,7 +43,9 @@ const RuleDetails = ({ children, rule, intl, topics, header, isDetailsPage }) =>
         </React.Fragment>
     ));
 
-    const ruleDescription = (data) => typeof data === 'string' && Boolean(data) && <ReactMarkdown source={data} escapeHtml={false} />;
+    const ruleDescription = (data, isGeneric) => typeof data === 'string' && Boolean(data) && <span className={isGeneric && 'genericOverride'}>
+        <ReactMarkdown source={data} escapeHtml={false} />
+    </span>;
 
     return <Split gutter='sm'>
         <SplitItem>
@@ -51,7 +53,7 @@ const RuleDetails = ({ children, rule, intl, topics, header, isDetailsPage }) =>
                 {header && <StackItem>
                     {header}
                 </StackItem>}
-                <StackItem>{isDetailsPage ? ruleDescription(rule.generic) : ruleDescription(rule.summary)}</StackItem>
+                <StackItem>{isDetailsPage ? ruleDescription(rule.generic, true) : ruleDescription(rule.summary)}</StackItem>
                 {rule.node_id && (
                     <StackItem>
                         <a rel="noopener noreferrer" target="_blank" href={`https://access.redhat.com/node/${rule.node_id}`}>
