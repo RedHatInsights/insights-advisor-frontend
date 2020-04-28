@@ -42,3 +42,10 @@ hr {
 .batteryTextMarginOverride {
   padding-top: 3px;
 }
+
+.genericOverride {
+  p {
+    margin-top: 0;
+    margin-bottom: var(--pf-global--spacer--md);
+  }
+}
