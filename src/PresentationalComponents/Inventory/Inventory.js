@@ -70,7 +70,13 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
 
     const onRemediationCreated = result => {
         onSelectRows(-1, false);
-        addNotification(result.getNotification());
+        try {
+            result.remediation && addNotification(result.getNotification());
+        } catch (error) {
+            addNotification(
+                { variant: 'danger', dismissable: true, title: intl.formatMessage(messages.error), description: `${error}` }
+            );
+        }
     };
 
     const handleModalToggle = (disableRuleModalOpen) => {
