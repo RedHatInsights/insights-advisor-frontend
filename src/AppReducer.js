@@ -33,7 +33,7 @@ const initialState = Immutable({
     ruleAckFetchStatus: '',
     hostAcks: {},
     hostAcksFetchStatus: '',
-    selectedTags: []
+    selectedTags: null
 });
 
 export const AdvisorStore = (state = initialState, action) => {

@@ -34,6 +34,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
             try {
                 const response = await API.get(`${BASE_URL}/tag/`);
                 setTags(response.data.tags);
+                params === null && selectedTags === null && setSelectedTags([]);
                 if (params.length) {
                     const tagsToSet = intersection(params.split(','), response.data.tags);
                     tagUrlBuilder(tagsToSet);
@@ -69,7 +70,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
         tagUrlBuilder(tagsToSet);
     };
 
-    return <div className='tagsToolbarContainer'>
+    return selectedTags !== null && <div className='tagsToolbarContainer'>
         {<ManageTags
             handleModalToggle={(toggleModal) => setManageTagsModalOpen(toggleModal)}
             isModalOpen={manageTagsModalOpen}

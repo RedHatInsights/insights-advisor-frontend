@@ -169,7 +169,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             : [];
     };
 
-    useEffect(() => { !filterBuilding && fetchRulesFn(); }, [fetchRulesFn, filterBuilding, filters, selectedTags]);
+    useEffect(() => { !filterBuilding && selectedTags !== null && fetchRulesFn(); }, [fetchRulesFn, filterBuilding, filters, selectedTags]);
 
     // Builds table filters from url params
     useEffect(() => {
@@ -186,8 +186,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             paramsObject.offset === undefined ? paramsObject.offset = 0 : paramsObject.offset = Number(paramsObject.offset[0]);
             paramsObject.limit === undefined ? paramsObject.limit = 10 : paramsObject.limit = Number(paramsObject.limit[0]);
 
-            setImpacting(paramsObject.impacting);
-            setFilters({ ...paramsObject });
+            setImpacting(filters.impacting || paramsObject.impacting);
+            setFilters({ ...filters, ...paramsObject });
         }
 
         setFilterBuilding(false);

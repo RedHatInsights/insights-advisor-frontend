@@ -134,7 +134,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
             paramsObject.display_name !== undefined && (paramsObject.display_name = paramsObject.display_name[0]);
             paramsObject.offset === undefined ? paramsObject.offset = 0 : paramsObject.offset = Number(paramsObject.offset[0]);
             paramsObject.limit === undefined ? paramsObject.limit = 10 : paramsObject.limit = Number(paramsObject.limit[0]);
-            setFilters({ ...paramsObject });
+            setFilters({ ...filters, ...paramsObject });
         } else if (filters.limit === undefined || filters.offest === undefined) {
             setFilters({ ...filters, offset: 0, limit: 10 });
         }
@@ -148,7 +148,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     }, [filters, selectedTags]);
 
     useEffect(() => {
-        !filterBuilding && systemsFetchStatus !== 'pending' && fetchSystemsFn();
+        !filterBuilding && systemsFetchStatus !== 'pending' && selectedTags !== null && fetchSystemsFn();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchSystemsFn, filterBuilding, filters, selectedTags]);
 
