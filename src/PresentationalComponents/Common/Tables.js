@@ -1,10 +1,11 @@
 // Builds returns url params from table filters, pushes to url if history object is passed
-export const urlBuilder = (filters, history) => {
+export const urlBuilder = (filters, selectedTags) => {
+    const url = new URL(window.location);
     const queryString = `?${Object.keys(filters).map(key => `${key}=${Array.isArray(filters[key]) ? filters[key].join() : filters[key]}`).join('&')}`;
-    history && history.replace({
-        search: queryString
-    });
-    return queryString;
+    const params = new URLSearchParams(queryString);
+    selectedTags.length ? params.set('tags', selectedTags.join()) : params.delete('tags');
+    window.history.replaceState(null, null, `${url.origin}${url.pathname}?${params.toString()}`);
+    return `?${queryString}`;
 };
 
 // transforms array of strings -> comma seperated strings, required by advisor api
@@ -16,8 +17,8 @@ export const filterFetchBuilder = (filters) => Object.assign({},
 );
 
 // parses url params for use in table/filter chips
-export const paramParser = (history) => {
-    const searchParams = new URLSearchParams(history.location.search);
+export const paramParser = () => {
+    const searchParams = new URLSearchParams(window.location.search);
     return Array.from(searchParams).reduce((acc, [key, value]) => ({
         ...acc, [key]: (value === 'true' || value === 'false') ? JSON.parse(value) : value.split(',')
     }), {});

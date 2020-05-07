@@ -39,7 +39,7 @@ import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
-const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, history, intl, selectedTags }) => {
+const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, intl, selectedTags }) => {
     const [cols] = useState([
         { title: intl.formatMessage(messages.description), transforms: [sortable] },
         { title: intl.formatMessage(messages.added), transforms: [sortable, cellWidth(15)] },
@@ -66,8 +66,9 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const sortIndices = { 1: 'description', 2: 'publish_date', 3: 'total_risk', 4: 'impacted_count', 5: 'playbook_count' };
 
     const fetchRulesFn = useCallback(() => {
+        const queryString = urlBuilder(filters, selectedTags);
+        setQueryString(queryString);
         const options = selectedTags.length && ({ tags: selectedTags.join() });
-
         fetchRules({
             ...filterFetchBuilder(filters),
             impacting,
@@ -172,8 +173,9 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     // Builds table filters from url params
     useEffect(() => {
-        if (history.location.search && filterBuilding) {
-            const paramsObject = paramParser(history);
+        if (window.location.search && filterBuilding) {
+            const paramsObject = paramParser();
+            delete paramsObject.tags;
             paramsObject.text === undefined ? setSearchText('') : setSearchText(paramsObject.text);
             paramsObject.reports_shown = paramsObject.reports_shown === undefined || paramsObject.reports_shown[0] === 'undefined' ? undefined
                 : paramsObject.reports_shown;
@@ -191,15 +193,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         setFilterBuilding(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    // Builds and pushes url params from table filters
-    useEffect(() => {
-        const queryString = urlBuilder(filters);
-        setQueryString(queryString);
-        history.replace({
-            search: queryString
-        });
-    }, [filters, history]);
 
     useEffect(() => {
         if (filters.sort !== undefined) {
@@ -504,7 +497,6 @@ RulesTable.propTypes = {
     filters: PropTypes.object,
     addNotification: PropTypes.func,
     setFilters: PropTypes.func,
-    history: PropTypes.object,
     intl: PropTypes.any,
     selectedTags: PropTypes.array
 };
