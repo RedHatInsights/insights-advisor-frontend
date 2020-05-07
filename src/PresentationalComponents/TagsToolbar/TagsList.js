@@ -15,11 +15,15 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import { setSelectedTags } from '../../AppActions';
+import { tagUrlBuilder } from './Common';
 
 const TagsList = ({ setSelectedTags, selectedTags, showMoreCount, intl, tags, handleModalToggle }) => {
-    const updateSelectedTags = (value, e) => selectedTags.indexOf(e.target.name) > -1 ?
-        setSelectedTags(selectedTags.filter(item => item !== e.target.name))
-        : setSelectedTags([...selectedTags, e.target.name]);
+    const updateSelectedTags = (value, e) => {
+        const tagsToSet = selectedTags.indexOf(e.target.name) > -1 ?
+            selectedTags.filter(item => item !== e.target.name) : [...selectedTags, e.target.name];
+        setSelectedTags(tagsToSet);
+        tagUrlBuilder(tagsToSet);
+    };
 
     return <React.Fragment>
         {!showMoreCount && <ChipGroup>
@@ -70,7 +74,8 @@ TagsList.propTypes = {
     tags: PropTypes.object.isRequired,
     showMoreCount: PropTypes.number,
     handleModalToggle: PropTypes.func.isRequired,
-    intl: PropTypes.any
+    intl: PropTypes.any,
+    history: PropTypes.object
 };
 
 TagsList.defaultProps = {
