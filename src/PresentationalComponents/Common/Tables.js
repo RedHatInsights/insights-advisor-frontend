@@ -3,7 +3,7 @@ export const urlBuilder = (filters, selectedTags) => {
     const url = new URL(window.location);
     const queryString = `?${Object.keys(filters).map(key => `${key}=${Array.isArray(filters[key]) ? filters[key].join() : filters[key]}`).join('&')}`;
     const params = new URLSearchParams(queryString);
-    selectedTags.length ? params.set('tags', selectedTags.join()) : params.delete('tags');
+    selectedTags !== null && selectedTags.length ? params.set('tags', selectedTags.join()) : params.delete('tags');
     window.history.replaceState(null, null, `${url.origin}${url.pathname}?${params.toString()}`);
     return `?${queryString}`;
 };
