@@ -47,7 +47,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchRulefn = () => {
-        const options = selectedTags.length && ({ tags: selectedTags.join() });
+        const options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags.join() });
         fetchSystem({ rule_id: match.params.id, ...options });
         fetchRule({ rule_id: match.params.id, ...options });
     };
@@ -118,7 +118,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
 
     const ref = useRef();
     useEffect(() => {
-        JSON.stringify(ref.current) !== JSON.stringify(selectedTags) && fetchRulefn();
+        selectedTags !== null && JSON.stringify(ref.current) !== JSON.stringify(selectedTags) && fetchRulefn();
         ref.current = selectedTags;
     }, [fetchRulefn, selectedTags]);
 

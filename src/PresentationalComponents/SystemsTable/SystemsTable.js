@@ -18,7 +18,7 @@ import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { systemReducer } from '../../AppReducer';
 
-const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters, setFilters, history, selectedTags }) => {
+const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters, setFilters, selectedTags }) => {
     const inventory = useRef(null);
     const [InventoryTable, setInventory] = useState();
     const store = useStore();
@@ -127,13 +127,14 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     }, [debouncedSearchText]);
 
     useEffect(() => {
-        if (history.location.search) {
-            const paramsObject = paramParser(history);
+        if (window.location.search) {
+            const paramsObject = paramParser();
+            delete paramsObject.tags;
             paramsObject.sort !== undefined && (paramsObject.sort = paramsObject.sort[0]);
             paramsObject.display_name !== undefined && (paramsObject.display_name = paramsObject.display_name[0]);
             paramsObject.offset === undefined ? paramsObject.offset = 0 : paramsObject.offset = Number(paramsObject.offset[0]);
             paramsObject.limit === undefined ? paramsObject.limit = 10 : paramsObject.limit = Number(paramsObject.limit[0]);
-            setFilters({ ...paramsObject });
+            setFilters({ ...filters, ...paramsObject });
         } else if (filters.limit === undefined || filters.offest === undefined) {
             setFilters({ ...filters, offset: 0, limit: 10 });
         }
@@ -143,11 +144,11 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     }, []);
 
     useEffect(() => {
-        urlBuilder(filters, history);
-    }, [filters, history]);
+        urlBuilder(filters, selectedTags);
+    }, [filters, selectedTags]);
 
     useEffect(() => {
-        !filterBuilding && systemsFetchStatus !== 'pending' && fetchSystemsFn();
+        !filterBuilding && systemsFetchStatus !== 'pending' && selectedTags !== null && fetchSystemsFn();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchSystemsFn, filterBuilding, filters, selectedTags]);
 
@@ -179,7 +180,6 @@ SystemsTable.propTypes = {
     systemsFetchStatus: PropTypes.string,
     systems: PropTypes.object,
     addNotification: PropTypes.func,
-    history: PropTypes.object,
     intl: PropTypes.any,
     filters: PropTypes.object,
     setFilters: PropTypes.func,
