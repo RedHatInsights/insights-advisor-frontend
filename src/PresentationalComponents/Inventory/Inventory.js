@@ -21,7 +21,7 @@ import { useStore } from 'react-redux';
 let page = 1;
 let pageSize = 50;
 let rule_id = '';
-const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification, items, afterDisableFn }) => {
+const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification, items, afterDisableFn, onSortFn }) => {
     const inventory = useRef(null);
     const [InventoryTable, setInventoryTable] = useState();
     const [selected, setSelected] = useState([]);
@@ -37,8 +37,11 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
     };
 
     const onSort = ({ index, direction }) => {
-        const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
-        setFilters({ ...filters, sort: orderParam });
+        console.error(index, direction);
+        const sort = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
+        console.error(sort);
+        setFilters({ ...filters, sort });
+        onSortFn(sort);
     };
 
     const calculateSort = () => {
@@ -46,7 +49,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
         const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
         return {
             index: sortIndex,
-            key: sortIndex !== 2 ? sortIndices[sortIndex] : 'updated',
+            key: sortIndex !== 2 ? sortIndices[sortIndex] : 'last_seen',
             direction: sortDirection
         };
     };
@@ -199,7 +202,8 @@ Inventory.propTypes = {
     intl: PropTypes.any,
     rule: PropTypes.object,
     addNotification: PropTypes.func,
-    afterDisableFn: PropTypes.func
+    afterDisableFn: PropTypes.func,
+    onSortFn: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => ({
