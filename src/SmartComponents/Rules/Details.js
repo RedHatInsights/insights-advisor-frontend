@@ -99,9 +99,8 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     };
 
     const onSortFn = (sort) => {
-        console.error(sort);
         setFilters({ ...filters, sort });
-        // fetchRulefn(false);
+        fetchRulefn(false);
     };
 
     useEffect(() => {

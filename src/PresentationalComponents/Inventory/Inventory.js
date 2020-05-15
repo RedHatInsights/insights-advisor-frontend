@@ -37,20 +37,17 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
     };
 
     const onSort = ({ index, direction }) => {
-        console.error(index, direction);
         const sort = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
-        console.error(sort);
         setFilters({ ...filters, sort });
         onSortFn(sort);
     };
 
     const calculateSort = () => {
         const sortIndex = Number(Object.entries(sortIndices).find(item => item[1] === filters.sort || `-${item[1]}` === filters.sort)[0]);
-        const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
         return {
             index: sortIndex,
-            key: sortIndex !== 2 ? sortIndices[sortIndex] : 'last_seen',
-            direction: sortDirection
+            key: sortIndex !== 2 ? sortIndices[sortIndex] : 'updated',
+            direction: filters.sort[0] === '-' ? 'desc' : 'asc'
         };
     };
 
