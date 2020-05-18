@@ -8,9 +8,9 @@ import promiseMiddleware from 'redux-promise-middleware';
 let registry;
 
 const localStorage = store => next => action => {
+    next(action);
     const activeStore = store.getState().AdvisorStore;
     sessionStorage.setItem('AdvisorStore', JSON.stringify(activeStore));
-    next(action);
 };
 
 export function init(...middleware) {
