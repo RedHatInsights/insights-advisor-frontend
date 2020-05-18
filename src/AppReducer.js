@@ -36,7 +36,8 @@ const initialState = Immutable({
     selectedTags: null
 });
 
-export const AdvisorStore = (state = initialState, action) => {
+// eslint-disable-next-line new-cap
+export const getAdvisorStore = (previousState) => (state =  Immutable(previousState) || initialState, action) => {
     switch (action.type) {
         case `${ActionTypes.RULE_FETCH}_PENDING`:
             return state.set('ruleFetchStatus', 'pending');
