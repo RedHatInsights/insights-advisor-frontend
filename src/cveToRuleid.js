@@ -423,22 +423,6 @@ export const cveToRuleid = [
         ]
     },
     {
-        rule_id: 'CVE_2017_smbloris_samba|SAMBA_CVE_2017_SMBLORIS_2',
-        name: '"SMBLoris" Samba denial of service',
-        description: '"SMBLoris" Samba denial of service',
-        cves: [
-            '"SMBLoris" Samba denial of service'
-        ]
-    },
-    {
-        rule_id: 'CVE_2017_smbloris_samba|SAMBA_CVE_2017_SMBLORIS_EXTERNAL_2',
-        name: '"SMBLoris" Samba denial of service',
-        description: '"SMBLoris" Samba denial of service with externally listening process',
-        cves: [
-            '"SMBLoris" Samba denial of service with externally listening process'
-        ]
-    },
-    {
         rule_id: 'CVE_2018_1000115_memcached|CVE_2018_1000115',
         name: 'CVE-2018-1000115: memcached spoofed traffic amplification',
         description: 'CVE-2018-1000115: memcached spoofed traffic amplification',
