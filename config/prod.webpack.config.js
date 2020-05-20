@@ -10,11 +10,7 @@ module.exports = () => {
         patterns: [
             { from: path.resolve(__dirname, '../static/images'), to: 'images' },
             { from: path.resolve(__dirname, '../static/drf-yasg'), to: 'drf-yasg' },
-            { from: path.resolve(__dirname, '../static/rest_framework'), to: 'rest_framework' }],
-
-        options: {
-            concurrency: 100
-        }
+            { from: path.resolve(__dirname, '../static/rest_framework'), to: 'rest_framework' }]
     });
     plugins.push(CopyFilesWebpackPlugin);
 
