@@ -6,10 +6,16 @@ const path = require('path');
 const { config: webpackConfig, plugins } = config({ rootFolder: resolve(__dirname, '../'), debug: true });
 
 module.exports = () => {
-    const CopyFilesWebpackPlugin = new(require('copy-webpack-plugin'))([
-        { from: path.resolve(__dirname, '../static/images'), to: 'images' },
-        { from: path.resolve(__dirname, '../static/drf-yasg'), to: 'drf-yasg' },
-        { from: path.resolve(__dirname, '../static/rest_framework'), to: 'rest_framework' }]);
+    const CopyFilesWebpackPlugin = new(require('copy-webpack-plugin'))({
+        patterns: [
+            { from: path.resolve(__dirname, '../static/images'), to: 'images' },
+            { from: path.resolve(__dirname, '../static/drf-yasg'), to: 'drf-yasg' },
+            { from: path.resolve(__dirname, '../static/rest_framework'), to: 'rest_framework' }],
+
+        options: {
+            concurrency: 100
+        }
+    });
     plugins.push(CopyFilesWebpackPlugin);
 
     return { ...webpackConfig, plugins };
