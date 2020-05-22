@@ -71,14 +71,14 @@ export const RISK_OF_CHANGE_DESC = {
 };
 export const IMPACT_LABEL = {
     1: intlHelper(intl.formatMessage(messages.low), intlSettings),
-    2: intlHelper(intl.formatMessage(messages.moderate), intlSettings),
-    3: intlHelper(intl.formatMessage(messages.important), intlSettings),
+    2: intlHelper(intl.formatMessage(messages.medium), intlSettings),
+    3: intlHelper(intl.formatMessage(messages.high), intlSettings),
     4: intlHelper(intl.formatMessage(messages.critical), intlSettings)
 };
 export const LIKELIHOOD_LABEL = {
     1: intlHelper(intl.formatMessage(messages.low), intlSettings),
-    2: intlHelper(intl.formatMessage(messages.moderate), intlSettings),
-    3: intlHelper(intl.formatMessage(messages.important), intlSettings),
+    2: intlHelper(intl.formatMessage(messages.medium), intlSettings),
+    3: intlHelper(intl.formatMessage(messages.high), intlSettings),
     4: intlHelper(intl.formatMessage(messages.critical), intlSettings)
 };
 export const RISK_OF_CHANGE_LABEL = {

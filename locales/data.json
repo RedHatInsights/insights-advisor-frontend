@@ -121,6 +121,7 @@
     "important": "Important",
     "critical": "Critical",
     "veryLow": "Very Low",
+    "medium": "Medium",
     "high": "High",
     "availability": "Availability",
     "performance": "Performance",
