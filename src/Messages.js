@@ -616,6 +616,11 @@ export default defineMessages({
         description: 'Filter value',
         defaultMessage: 'Very Low'
     },
+    medium: {
+        id: 'medium',
+        description: 'Filter value',
+        defaultMessage: 'Medium'
+    },
     high: {
         id: 'high',
         description: 'Filter value',
