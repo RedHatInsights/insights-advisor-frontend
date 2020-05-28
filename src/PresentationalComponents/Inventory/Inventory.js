@@ -21,26 +21,21 @@ import { useStore } from 'react-redux';
 let page = 1;
 let pageSize = 50;
 let rule_id = '';
-const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification, items, afterDisableFn, onSortFn }) => {
+const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification, items, afterDisableFn, onSortFn, filters }) => {
     const inventory = useRef(null);
     const [InventoryTable, setInventoryTable] = useState();
     const [selected, setSelected] = useState([]);
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [bulkSelect, setBulkSelect] = useState();
-    const [filters, setFilters] = useState({ sort: '-display_name' });
 
     const store = useStore();
 
     const sortIndices = {
         1: 'display_name',
-        2: 'last_seen'
+        2: 'updated'
     };
 
-    const onSort = ({ index, direction }) => {
-        const sort = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
-        setFilters({ ...filters, sort });
-        onSortFn(sort);
-    };
+    const onSort = ({ index, direction }) => onSortFn(`${direction === 'asc' ? '' : '-'}${sortIndices[index]}`);
 
     const calculateSort = () => {
         const sortIndex = Number(Object.entries(sortIndices).find(item => item[1] === filters.sort || `-${item[1]}` === filters.sort)[0]);
@@ -200,7 +195,8 @@ Inventory.propTypes = {
     rule: PropTypes.object,
     addNotification: PropTypes.func,
     afterDisableFn: PropTypes.func,
-    onSortFn: PropTypes.func
+    onSortFn: PropTypes.func,
+    filters: PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => ({
