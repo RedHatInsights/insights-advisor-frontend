@@ -117,7 +117,6 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                 : ''}`;
         } else {
             fetchTopics();
-            fetchRulefn();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
