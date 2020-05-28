@@ -34,9 +34,9 @@ export const fetchRule = (options) => ({
     type: ActionTypes.RULE_FETCH,
     payload: fetchData(`${ActionTypes.RULES_FETCH_URL}${options.rule_id}/`, {}, options.tags && { tags: options.tags })
 });
-export const fetchSystem = (options) => ({
+export const fetchSystem = (ruleId, options) => ({
     type: ActionTypes.SYSTEM_FETCH,
-    payload: fetchData(`${ActionTypes.RULES_FETCH_URL}${options.rule_id}/systems/`, {}, options.tags && { tags: options.tags })
+    payload: fetchData(`${ActionTypes.RULES_FETCH_URL}${encodeURI(ruleId)}/systems`, {}, options)
 });
 export const setFilters = (filters) => ({
     type: ActionTypes.FILTERS_SET,

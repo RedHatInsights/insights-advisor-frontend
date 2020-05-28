@@ -44,12 +44,13 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [host, setHost] = useState(undefined);
     const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
+    const [filters, setFilters] = useState({ sort: 'display_name' });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const fetchRulefn = () => {
+    const fetchRulefn = (newSort, rule = true, system = true) => {
         const options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags.join() });
-        fetchSystem({ rule_id: match.params.id, ...options });
-        fetchRule({ rule_id: match.params.id, ...options });
+        system && fetchSystem(match.params.id, { ...options, ...filters, ...newSort });
+        rule && fetchRule({ rule_id: match.params.id, ...options });
     };
 
     const handleModalToggle = (disableRuleModalOpen, host = undefined) => {
@@ -95,6 +96,11 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         } catch (error) {
             addNotification({ variant: 'danger', dismissable: true, title: intl.formatMessage(messages.error), description: `${error}` });
         }
+    };
+
+    const onSortFn = (sort) => {
+        setFilters({ sort });
+        fetchRulefn({ sort }, false);
     };
 
     useEffect(() => {
@@ -222,7 +228,8 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                             {systemFetchStatus === 'fulfilled' &&
                                 <Inventory
                                     tableProps={{ canSelectAll: false, actionResolver }}
-                                    items={system.host_ids} rule={rule} afterDisableFn={afterDisableFn} />}
+                                    items={system.host_ids} rule={rule} afterDisableFn={afterDisableFn} filters={filters}
+                                    onSortFn={onSortFn} />}
                             {systemFetchStatus === 'pending' && (<Loading />)}
                         </React.Fragment>}
                         {systemFetchStatus === 'fulfilled' && !rule.reports_shown && <MessageState icon={BellSlashIcon} size='sm'
@@ -271,7 +278,7 @@ const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
 
 const mapDispatchToProps = dispatch => ({
     fetchRule: (url) => dispatch(AppActions.fetchRule(url)),
-    fetchSystem: (url) => dispatch(AppActions.fetchSystem(url)),
+    fetchSystem: (rule_id, options) => dispatch(AppActions.fetchSystem(rule_id, options)),
     addNotification: data => dispatch(addNotification(data)),
     fetchTopics: () => dispatch(AppActions.fetchTopics()),
     fetchRuleAck: data => dispatch(AppActions.fetchRuleAck(data)),

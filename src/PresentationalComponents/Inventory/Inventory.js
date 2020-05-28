@@ -4,7 +4,7 @@ import * as reactRouterDom from 'react-router-dom';
 
 import React, { useEffect, useRef, useState } from 'react';
 
-import  AnsibeTowerIcon  from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
+import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
@@ -15,35 +15,35 @@ import global_BackgroundColor_100 from '@patternfly/react-tokens/dist/js/global_
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import { systemReducer } from '../../AppReducer';
 import { useStore } from 'react-redux';
 
 let page = 1;
 let pageSize = 50;
 let rule_id = '';
-const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification, items, afterDisableFn }) => {
+const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification, items, afterDisableFn, onSortFn, filters }) => {
     const inventory = useRef(null);
     const [InventoryTable, setInventoryTable] = useState();
     const [selected, setSelected] = useState([]);
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [bulkSelect, setBulkSelect] = useState();
+
     const store = useStore();
 
-    const loadInventory = async () => {
-        const {
-            inventoryConnector,
-            mergeWithEntities
-        } = await insights.loadInventory({
-            react: React,
-            reactRouterDom,
-            pfReactTable
-        });
+    const sortIndices = {
+        1: 'display_name',
+        2: 'updated'
+    };
 
-        getRegistry().register({
-            ...mergeWithEntities()
-        });
+    const onSort = ({ index, direction }) => onSortFn(`${direction === 'asc' ? '' : '-'}${sortIndices[index]}`);
 
-        const { InventoryTable } = inventoryConnector(store);
-        setInventoryTable(() => InventoryTable);
+    const calculateSort = () => {
+        const sortIndex = Number(Object.entries(sortIndices).find(item => item[1] === filters.sort || `-${item[1]}` === filters.sort)[0]);
+        return {
+            index: sortIndex,
+            key: sortIndex !== 2 ? sortIndices[sortIndex] : 'updated',
+            direction: filters.sort[0] === '-' ? 'desc' : 'asc'
+        };
     };
 
     const onRefresh = (options) => {
@@ -97,8 +97,27 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
     }, [rows]);
 
     useEffect(() => {
-        loadInventory();
-    }, []);
+        (async () => {
+            const { inventoryConnector, mergeWithEntities, INVENTORY_ACTION_TYPES } = await insights.loadInventory({
+                react: React, reactRouterDom, pfReactTable
+            });
+
+            getRegistry().register({
+                ...mergeWithEntities(
+                    systemReducer(
+                        [
+                            { title: intl.formatMessage(messages.name), transforms: [pfReactTable.sortable], key: 'display_name' },
+                            { title: intl.formatMessage(messages.lastSeen), transforms: [], key: 'updated' }
+                        ],
+                        INVENTORY_ACTION_TYPES
+                    )
+                )
+            });
+
+            const { InventoryTable } = inventoryConnector(store);
+            setInventoryTable(() => InventoryTable);
+        })();
+    }, [intl, store]);
 
     return <React.Fragment>
         {disableRuleModalOpen && <DisableRule
@@ -111,6 +130,8 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
         {InventoryTable && <InventoryTable
             ref={inventory}
             items={items}
+            sortBy={calculateSort()}
+            onSort={onSort}
             onRefresh={onRefresh}
             page={page}
             total={items.length}
@@ -173,7 +194,9 @@ Inventory.propTypes = {
     intl: PropTypes.any,
     rule: PropTypes.object,
     addNotification: PropTypes.func,
-    afterDisableFn: PropTypes.func
+    afterDisableFn: PropTypes.func,
+    onSortFn: PropTypes.func,
+    filters: PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => ({
