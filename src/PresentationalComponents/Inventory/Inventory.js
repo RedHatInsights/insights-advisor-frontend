@@ -107,7 +107,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
                     systemReducer(
                         [
                             { title: intl.formatMessage(messages.name), transforms: [pfReactTable.sortable], key: 'display_name' },
-                            { title: intl.formatMessage(messages.lastSeen), transforms: [], key: 'updated' }
+                            { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable], key: 'updated' }
                         ],
                         INVENTORY_ACTION_TYPES
                     )
