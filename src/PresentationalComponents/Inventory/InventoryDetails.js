@@ -5,7 +5,7 @@ import * as reactRouterDom from 'react-router-dom';
 
 import { Grid, GridItem } from '@patternfly/react-core/dist/js/layouts/Grid/index';
 import React, { useEffect, useState } from 'react';
-import { useStore } from 'react-redux';
+
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/components/PageHeader';
@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import { entitiesDetailsReducer } from '../../AppReducer';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import { useStore } from 'react-redux';
 
 const InventoryDetails = ({ entity, match }) => {
     const [InventoryDetail, setInventoryDetail] = useState();
@@ -35,6 +36,7 @@ const InventoryDetails = ({ entity, match }) => {
         setAppInfo(() => AppInfo);
     };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { fetchInventoryDetails(); }, []);
 
     return <React.Fragment>
