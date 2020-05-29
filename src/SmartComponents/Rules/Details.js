@@ -100,6 +100,8 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
 
     const onSortFn = (sort) => {
         setFilters({ sort });
+        sort === 'updated' && (sort = 'last_seen');
+        sort === '-updated' && (sort = '-last_seen');
         fetchRulefn({ sort }, false);
     };
 
