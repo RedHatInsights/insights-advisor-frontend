@@ -100,6 +100,8 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
 
     const onSortFn = (sort) => {
         setFilters({ sort });
+        sort === 'updated' && (sort = 'last_seen');
+        sort === '-updated' && (sort = '-last_seen');
         fetchRulefn({ sort }, false);
     };
 
@@ -117,7 +119,6 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                 : ''}`;
         } else {
             fetchTopics();
-            fetchRulefn();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
