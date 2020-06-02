@@ -46,14 +46,13 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         { title: intl.formatMessage(messages.totalRisk), transforms: [sortable, cellWidth(15)] },
         { title: intl.formatMessage(messages.systems), transforms: [sortable] },
         {
-            title: <><AnsibeTowerIcon size='md' /> {intl.formatMessage(messages.ansible)}</>,
+            title: <React.Fragment><AnsibeTowerIcon size='md' /> {intl.formatMessage(messages.ansible)}</React.Fragment>,
             transforms: [sortable],
             dataLabel: intl.formatMessage(messages.ansible)
         }
     ]);
     const [rows, setRows] = useState([]);
     const [sortBy, setSortBy] = useState({});
-    const [impacting, setImpacting] = useState(filters.impacting);
     const [filterBuilding, setFilterBuilding] = useState(true);
     const [queryString, setQueryString] = useState('');
     const [searchText, setSearchText] = useState('');
@@ -71,10 +70,9 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         const options = selectedTags.length && ({ tags: selectedTags.join() });
         fetchRules({
             ...filterFetchBuilder(filters),
-            impacting,
             ...options
         });
-    }, [fetchRules, filters, impacting, selectedTags]);
+    }, [fetchRules, filters, selectedTags]);
 
     const onSort = (_event, index, direction) => {
         const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
@@ -89,12 +87,10 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     const toggleRulesWithHits = (impacting) => {
         setFilters({ ...filters, impacting, offset: 0 });
-        setImpacting(impacting);
     };
 
     const toggleRulesDisabled = (param) => {
         const reports_shown = param === 'undefined' ? undefined : param;
-        reports_shown !== 'true' && setImpacting(false);
         setFilters({ ...filters, reports_shown, offset: 0, ...(reports_shown !== 'true' && { impacting: false }) });
     };
 
@@ -186,7 +182,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             paramsObject.offset === undefined ? paramsObject.offset = 0 : paramsObject.offset = Number(paramsObject.offset[0]);
             paramsObject.limit === undefined ? paramsObject.limit = 10 : paramsObject.limit = Number(paramsObject.limit[0]);
 
-            setImpacting(filters.impacting || paramsObject.impacting);
             setFilters({ ...filters, ...paramsObject });
         }
 
@@ -309,8 +304,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     const actions = [
         '', {
-            label: intl.formatMessage(impacting ? messages.rulesTableActionShow : messages.rulesTableActionHide),
-            onClick: () => toggleRulesWithHits(!impacting)
+            label: intl.formatMessage(filters.impacting ? messages.rulesTableActionShow : messages.rulesTableActionHide),
+            onClick: () => toggleRulesWithHits(!filters.impacting)
         }
     ];
 
@@ -461,7 +456,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             }}
             exportConfig={{
                 onSelect: (event, exportType) => window.location = `${BASE_URL}/export/hits.${exportType === 'json' ? 'json' : 'csv'}/${queryString}`,
-                isDisabled: !impacting
+                isDisabled: !filters.impacting
             }}
             actionsConfig={{ actions }}
             filterConfig={{ items: filterConfigItems }}
