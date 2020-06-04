@@ -29,7 +29,11 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     const sortIndices = {
         0: 'display_name',
         1: 'hits',
-        2: 'last_seen'
+        2: 'critical_hits',
+        3: 'important_hits',
+        4: 'moderate_hits',
+        5: 'low_hits',
+        6: 'last_seen'
     };
 
     const onSort = ({ index, direction }) => {
@@ -98,6 +102,10 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
                                 title: intl.formatMessage(messages.numberRuleHits), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(15)],
                                 key: 'hits'
                             },
+                            { title: intl.formatMessage(messages.critical), key: 'critical_hits' },
+                            { title: intl.formatMessage(messages.important), key: 'important_hits' },
+                            { title: intl.formatMessage(messages.moderate), key: 'moderate_hits' },
+                            { title: intl.formatMessage(messages.low), key: 'low_hits' },
                             { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable], key: 'updated' }
                         ],
                         INVENTORY_ACTION_TYPES
