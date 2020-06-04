@@ -102,10 +102,10 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
                                 title: intl.formatMessage(messages.numberRuleHits), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(15)],
                                 key: 'hits'
                             },
-                            { title: intl.formatMessage(messages.critical), transforms: [pfReactTable.sortable], key: 'critical_hits' },
-                            { title: intl.formatMessage(messages.important), transforms: [pfReactTable.sortable], key: 'important_hits' },
-                            { title: intl.formatMessage(messages.moderate), transforms: [pfReactTable.sortable], key: 'moderate_hits' },
-                            { title: intl.formatMessage(messages.low), transforms: [pfReactTable.sortable], key: 'low_hits' },
+                            { title: intl.formatMessage(messages.critical), key: 'critical_hits' },
+                            { title: intl.formatMessage(messages.important), key: 'important_hits' },
+                            { title: intl.formatMessage(messages.moderate), key: 'moderate_hits' },
+                            { title: intl.formatMessage(messages.low), key: 'low_hits' },
                             { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable], key: 'updated' }
                         ],
                         INVENTORY_ACTION_TYPES
