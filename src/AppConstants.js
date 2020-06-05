@@ -146,6 +146,12 @@ export const FILTER_CATEGORIES = {
             { label: 'No Ansible remediation support', text: 'No Ansible remediation support', value: 'false' }
         ]
     },
+    reboot: {
+        type: 'checkbox', title: 'Reboot required', urlParam: 'reboot', values: [
+            { label: 'Yes', text: 'Yes', value: 'true' },
+            { label: 'No', text: 'No', value: 'false' }
+        ]
+    },
     reports_shown: {
         type: 'radio', title: 'status', urlParam: 'reports_shown', values: [
             { label: intlHelper(intl.formatMessage(messages.all), intlSettings), value: 'undefined' },

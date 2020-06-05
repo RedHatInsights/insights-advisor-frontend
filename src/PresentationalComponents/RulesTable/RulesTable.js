@@ -181,6 +181,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             paramsObject.incident !== undefined && !Array.isArray(paramsObject.incident) && (paramsObject.incident = [`${paramsObject.incident}`]);
             paramsObject.offset === undefined ? paramsObject.offset = 0 : paramsObject.offset = Number(paramsObject.offset[0]);
             paramsObject.limit === undefined ? paramsObject.limit = 10 : paramsObject.limit = Number(paramsObject.limit[0]);
+            paramsObject.reboot !== undefined && !Array.isArray(paramsObject.reboot) && (paramsObject.reboot = [`${paramsObject.reboot}`]);
 
             setFilters({ ...filters, ...paramsObject });
         }
@@ -392,6 +393,17 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             onChange: (event, values) => addFilterParam(FC.has_playbook.urlParam, values),
             value: filters.has_playbook,
             items: FC.has_playbook.values
+        }
+    },  {
+        label: FC.reboot.title,
+        type: FC.reboot.type,
+        id: FC.reboot.urlParam,
+        value: `checkbox-${FC.reboot.urlParam}`,
+        filterValues: {
+            key: `${FC.reboot.urlParam}-filter`,
+            onChange: (event, values) => addFilterParam(FC.reboot.urlParam, values),
+            value: filters.reboot,
+            items: FC.reboot.values
         }
     }, {
         label: FC.reports_shown.title,
