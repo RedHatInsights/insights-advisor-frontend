@@ -135,19 +135,19 @@ export const FILTER_CATEGORIES = {
         ]
     },
     incident: {
-        type: 'checkbox', title: 'incidents', urlParam: 'incident', values: [
+        type: 'radio', title: 'incidents', urlParam: 'incident', values: [
             { label: intlHelper(intl.formatMessage(messages.incidentRules), intlSettings), value: 'true' },
             { label: intlHelper(intl.formatMessage(messages.nonIncidentRules), intlSettings), value: 'false' }
         ]
     },
     has_playbook: {
-        type: 'checkbox', title: 'Ansible support', urlParam: 'has_playbook', values: [
+        type: 'radio', title: 'Ansible support', urlParam: 'has_playbook', values: [
             { label: 'Ansible remediation support', text: 'Ansible remediation support', value: 'true' },
             { label: 'No Ansible remediation support', text: 'No Ansible remediation support', value: 'false' }
         ]
     },
     reboot: {
-        type: 'checkbox', title: 'Reboot required', urlParam: 'reboot', values: [
+        type: 'radio', title: 'Reboot required', urlParam: 'reboot', values: [
             { label: 'Yes', text: 'Yes', value: 'true' },
             { label: 'No', text: 'No', value: 'false' }
         ]
