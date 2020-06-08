@@ -12,7 +12,6 @@
     "analyze": "NODE_ENV=production webpack --config config/dev.webpack.config.js --env.prod=true --env.analyze=true --mode production",
     "build": "webpack --config config/prod.webpack.config.js",
     "lint": "npm-run-all lint:*",
-    "lint-fix": "eslint config src --fix",
     "lint:js": "eslint config src",
     "lint:js:fix": "eslint config src --fix",
     "lint:sass": "stylelint 'src/**/*.scss' --config .stylelintrc.json",

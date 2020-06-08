@@ -22,11 +22,6 @@ const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl })
 
         // add recommendations base
         crumbs.push({ title: capitalize(splitUrl[1]), navigate: `/${splitUrl[1]}` });
-        // if applicable, add tab
-        if (splitUrl[1] === 'recommendations') {
-            splitUrl[1] + splitUrl[2] === 'recommendationssystems' &&
-                crumbs.push({ title: intl.formatMessage(messages.systems), navigate: '/recommendations/systems' });
-        }
 
         // if applicable, add :id breadcrumb
         if (match.params.id !== undefined && match.params.inventoryId !== undefined) {
@@ -41,7 +36,7 @@ const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl })
 
     useEffect(() => {
         const splitUrl = match.url.split('/');
-        match.params.inventoryId !== undefined && splitUrl[2] !== 'systems' ?
+        match.params.inventoryId !== undefined && splitUrl[1] !== 'systems' ?
             fetchRule({ rule_id: match.params.id }) // eslint-disable-line camelcase
             : buildBreadcrumbs();
     }, [buildBreadcrumbs, fetchRule, match.params.id, match.params.inventoryId, match.url]);

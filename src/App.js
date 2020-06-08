@@ -9,8 +9,8 @@ import routerParams from '@redhat-cloud-services/frontend-components-utilities/f
 const App = (props) => {
     const [auth, setAuth] = useState(false);
     const appNavClick = {
-        systems(redirect) { insights.chrome.appNavClick({ id: 'recommendations', redirect }); },
         recommendations(redirect) { insights.chrome.appNavClick({ id: 'recommendations', redirect }); },
+        systems(redirect) { insights.chrome.appNavClick({ id: 'systems', redirect }); },
         topics(redirect) { insights.chrome.appNavClick({ id: 'topics', redirect }); }
     };
 
