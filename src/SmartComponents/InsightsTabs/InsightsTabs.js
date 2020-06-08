@@ -20,10 +20,11 @@ const RulesTable = lazy(() => import(/* webpackChunkName: "RulesTable" */ '../..
 const SystemsTable = lazy(() => import(/* webpackChunkName: "SystemsTable" */ '../../PresentationalComponents/SystemsTable/SystemsTable'));
 const TagsToolbar = lazy(() => import(/* webpackChunkName: "TagsToolbar" */ '../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 
-let cveAlertShown = true;
+let AdvisorCveAlert = sessionStorage.getItem('AdvisorCveAlert') || false;
+
 const InsightsTabs = ({ intl, history }) => {
     const [activeTab, setActiveTab] = useState({});
-    const [cveAlert, setCveAlert] = useState(cveAlertShown);
+    const [cveAlert, setCveAlert] = useState(AdvisorCveAlert);
     const tabs = {
         recommendations: {
             title: intl.formatMessage(messages.recommendations), to: '/recommendations',
@@ -52,13 +53,16 @@ const InsightsTabs = ({ intl, history }) => {
         <Suspense fallback={<Loading />}> <TagsToolbar /> </Suspense>
         <PageHeader>
             <PageHeaderTitle title={intl.formatMessage(messages.recommendations)} />
-            <DownloadExecReport/>
-            {cveAlert && <Alert
+            <DownloadExecReport />
+            {!cveAlert && <Alert
                 className='alertOverride'
                 variant="warning"
                 isInline
                 title={intl.formatMessage(messages.cveAlertTitle)}
-                action={<AlertActionCloseButton onClose={() => {cveAlertShown = false; setCveAlert(false);}} />}
+                action={<AlertActionCloseButton onClose={() => {
+                    setCveAlert(true);
+                    sessionStorage.setItem('AdvisorCveAlert', 'true');
+                }} />}
             >
                 {intl.formatMessage(messages.cveAlert)}&nbsp; <a href={`${UI_BASE}/vulnerability/cves?page=1&sort=-public_date`}>View CVEs</a>
             </Alert>}
