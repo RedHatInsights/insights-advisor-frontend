@@ -160,3 +160,12 @@ export const FILTER_CATEGORIES = {
         ]
     }
 };
+
+export const SYSTEM_FILTER_CATEGORIES = {
+    hits: {
+        type: 'checkbox', title: 'Total Risk', urlParam: 'hits', values: [
+            { label: 'All systems', text: 'All systems', value: 'all' },
+            ...FILTER_CATEGORIES.total_risk.values
+        ]
+    }
+};

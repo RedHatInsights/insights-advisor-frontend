@@ -5,7 +5,7 @@ import * as reactRouterDom from 'react-router-dom';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { connect, useStore } from 'react-redux';
-import { paramParser, urlBuilder } from '../Common/Tables';
+import { paramParser, urlBuilder, filterFetchBuilder, pruneFilters } from '../Common/Tables';
 
 import Failed from '../Loading/Failed';
 import Loading from '../Loading/Loading';
@@ -18,6 +18,7 @@ import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { systemReducer } from '../../AppReducer';
+import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 
 const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters, setFilters, selectedTags }) => {
     const inventory = useRef(null);
@@ -44,9 +45,23 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
 
     const fetchSystemsFn = useCallback(() => {
         const options = selectedTags.length && ({ tags: selectedTags.join() });
-        fetchSystems({ ...filters, ...options });
+        fetchSystems({ ...filterFetchBuilder(filters), ...options });
 
     }, [fetchSystems, filters, selectedTags]);
+
+    const removeFilterParam = (param) => {
+        const filter = { ...filters, offset: 0 };
+        param === 'text' && setSearchText('');
+        delete filter[param];
+        param === 'hits' && filter.hits === undefined && (filter.hits = ['yes']);
+        setFilters(filter);
+    };
+
+    const addFilterParam = (param, values) => {
+        // remove 'yes' from the hits filter if the user chooses any other filters (its always the first item)
+        param === 'hits' && values.length > 1 && values.includes('yes') && values.shift();
+        values.length > 0 ? setFilters({ ...filters, offset: 0, ...{ [param]: values } }) : removeFilterParam(param);
+    };
 
     const filterConfigItems = [{
         label: intl.formatMessage(messages.name),
@@ -55,11 +70,46 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
             onChange: (event, value) => setSearchText(value),
             value: searchText
         }
+    }, {
+        label: SFC.hits.title,
+        type: SFC.hits.type,
+        id: SFC.hits.urlParam,
+        value: `checkbox-${SFC.hits.urlParam}`,
+        filterValues: {
+            key: `${SFC.hits.urlParam}-filter`,
+            onChange: (event, values) => addFilterParam(SFC.hits.urlParam, values),
+            value: filters.hits,
+            items: SFC.hits.values
+        }
     }];
 
+    const buildFilterChips = () => {
+        const localFilters = { ...filters };
+        localFilters.hits && localFilters.hits.includes('yes') && delete localFilters.hits;
+        delete localFilters.sort;
+        delete localFilters.offset;
+        delete localFilters.limit;
+
+        return pruneFilters(localFilters, SFC);
+    };
+
     const activeFiltersConfig = {
-        filters: searchText.length > 0 && [({ category: 'Description', chips: [{ name: searchText }] })] || [],
-        onDelete: () => setSearchText('')
+        filters: buildFilterChips(),
+        onDelete: (event, itemsToRemove, isAll) => {
+            if (isAll) {
+                setSearchText('');
+                setFilters({ sort: filters.sort, limit: filters.limit, offset: filters.offset, hits: ['yes'] });
+            } else {
+                itemsToRemove.map(item => {
+                    const newFilter = {
+                        [item.urlParam]: Array.isArray(filters[item.urlParam]) ?
+                            filters[item.urlParam].filter(value => String(value) !== String(item.chips[0].value))
+                            : ''
+                    };
+                    newFilter[item.urlParam].length > 0 ? setFilters({ ...filters, ...newFilter }) : removeFilterParam(item.urlParam);
+                });
+            }
+        }
     };
 
     const handleRefresh = (options) => {
@@ -141,11 +191,12 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
             delete paramsObject.tags;
             paramsObject.sort !== undefined && (paramsObject.sort = paramsObject.sort[0]);
             paramsObject.display_name !== undefined && (paramsObject.display_name = paramsObject.display_name[0]);
+            paramsObject.hits === undefined && (paramsObject.hits = ['yes']);
             paramsObject.offset === undefined ? paramsObject.offset = 0 : paramsObject.offset = Number(paramsObject.offset[0]);
             paramsObject.limit === undefined ? paramsObject.limit = 10 : paramsObject.limit = Number(paramsObject.limit[0]);
             setFilters({ ...filters, ...paramsObject });
-        } else if (filters.limit === undefined || filters.offest === undefined) {
-            setFilters({ ...filters, offset: 0, limit: 10 });
+        } else if (filters.limit === undefined || filters.offset === undefined || filters.hits === undefined) {
+            setFilters({ ...filters, offset: 0, limit: 10, hits: ['yes'] });
         }
 
         setFilterBuilding(false);
