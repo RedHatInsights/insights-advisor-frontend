@@ -162,15 +162,15 @@ export default defineMessages({
         description: 'Search text placeholder for recommendation table',
         defaultMessage: 'Find a rule...'
     },
-    rulesTableActionExportJson: {
-        id: 'rulestable.action.exportjson',
+    exportJson: {
+        id: 'exportJson',
         description: 'Button text to export/download recommendation table data as json',
-        defaultMessage: 'Export as JSON'
+        defaultMessage: 'Export to JSON'
     },
-    rulesTableActionExportCsv: {
-        id: 'rulestable.action.exportcsv',
+    exportCsv: {
+        id: 'exportCsv',
         description: 'Button text to export/download recommendation table data as csv',
-        defaultMessage: 'Export as CSV'
+        defaultMessage: 'Export to CSV'
     },
     rulesTableActionShow: {
         id: 'rulestable.action.show',
