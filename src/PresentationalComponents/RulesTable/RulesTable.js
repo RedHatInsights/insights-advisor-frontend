@@ -35,6 +35,7 @@ import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
 import debounce from '../../Utilities/Debounce';
+import downloadReport from '../Common/DownloadHelper';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
@@ -54,7 +55,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const [rows, setRows] = useState([]);
     const [sortBy, setSortBy] = useState({});
     const [filterBuilding, setFilterBuilding] = useState(true);
-    const [queryString, setQueryString] = useState('');
     const [searchText, setSearchText] = useState('');
     const [disableRuleOpen, setDisableRuleOpen] = useState(false);
     const [selectedRule, setSelectedRule] = useState({});
@@ -65,8 +65,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const sortIndices = { 1: 'description', 2: 'publish_date', 3: 'total_risk', 4: 'impacted_count', 5: 'playbook_count' };
 
     const fetchRulesFn = useCallback(() => {
-        const queryString = urlBuilder(filters, selectedTags);
-        setQueryString(queryString);
+        urlBuilder(filters, selectedTags);
         const options = selectedTags.length && ({ tags: selectedTags.join() });
         fetchRules({
             ...filterFetchBuilder(filters),
@@ -467,7 +466,10 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 isCompact: false
             }}
             exportConfig={{
-                onSelect: (event, exportType) => window.location = `${BASE_URL}/export/hits.${exportType === 'json' ? 'json' : 'csv'}/${queryString}`,
+                label: intl.formatMessage(messages.exportCsv),
+                // eslint-disable-next-line no-dupe-keys
+                label: intl.formatMessage(messages.exportJson),
+                onSelect: (_e, fileType) => downloadReport('hits', fileType, urlBuilder(filters, selectedTags)),
                 isDisabled: !filters.impacting
             }}
             actionsConfig={{ actions }}
