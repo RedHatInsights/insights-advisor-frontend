@@ -12,6 +12,7 @@ import Loading from '../Loading/Loading';
 import PropTypes from 'prop-types';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import debounce from '../../Utilities/Debounce';
+import downloadReport from '../Common/DownloadHelper';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
@@ -178,6 +179,12 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
                 onRefresh={handleRefresh}
                 filterConfig={{ items: filterConfigItems }}
                 activeFiltersConfig={activeFiltersConfig}
+                exportConfig={{
+                    label: intl.formatMessage(messages.exportCsv),
+                    // eslint-disable-next-line no-dupe-keys
+                    label: intl.formatMessage(messages.exportJson),
+                    onSelect: (_e, fileType) => downloadReport('systems', fileType, urlBuilder(filters, selectedTags))
+                }}
             />
             : systemsFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.systemTableFetchError)} />)
         : <Loading />;

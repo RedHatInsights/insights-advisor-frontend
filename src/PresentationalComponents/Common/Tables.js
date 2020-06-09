@@ -1,7 +1,7 @@
 // Builds returns url params from table filters, pushes to url if history object is passed
 export const urlBuilder = (filters, selectedTags) => {
     const url = new URL(window.location);
-    const queryString = `?${Object.keys(filters).map(key => `${key}=${Array.isArray(filters[key]) ? filters[key].join() : filters[key]}`).join('&')}`;
+    const queryString = `${Object.keys(filters).map(key => `${key}=${Array.isArray(filters[key]) ? filters[key].join() : filters[key]}`).join('&')}`;
     const params = new URLSearchParams(queryString);
     selectedTags !== null && selectedTags.length ? params.set('tags', selectedTags.join()) : params.delete('tags');
     window.history.replaceState(null, null, `${url.origin}${url.pathname}?${params.toString()}`);
