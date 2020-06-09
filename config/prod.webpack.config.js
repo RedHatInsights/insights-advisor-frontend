@@ -8,7 +8,6 @@ const { config: webpackConfig, plugins } = config({ rootFolder: resolve(__dirnam
 module.exports = () => {
     const CopyFilesWebpackPlugin = new(require('copy-webpack-plugin'))({
         patterns: [
-            { from: path.resolve(__dirname, '../static/images'), to: 'images' },
             { from: path.resolve(__dirname, '../static/drf-yasg'), to: 'drf-yasg' },
             { from: path.resolve(__dirname, '../static/rest_framework'), to: 'rest_framework' }]
     });
