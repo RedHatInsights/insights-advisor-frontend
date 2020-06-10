@@ -81,7 +81,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
         const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
         return {
             index: sortIndex,
-            key: sortIndex !== 2 ? sortIndices[sortIndex] : 'updated',
+            key: sortIndex !== 6 ? sortIndices[sortIndex] : 'updated',
             direction: sortDirection
         };
     };
