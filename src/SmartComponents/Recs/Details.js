@@ -4,7 +4,7 @@ import './Details.scss';
 import * as AppActions from '../../AppActions';
 
 import { BASE_URL, UI_BASE } from '../../AppConstants';
-import { Card, CardBody, CardFooter, CardHead } from '@patternfly/react-core/dist/js/components/Card/index';
+import { Card, CardBody, CardFooter, CardHead } from '@patternfly/react-core/dist/js/components/Card';
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
 

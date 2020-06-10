@@ -18,13 +18,15 @@ import asyncComponent from './Utilities/asyncComponent';
  *         see the difference with DashboardMap and InventoryDeployments.
  *
  */
-const Rules = asyncComponent(() => import(/* webpackChunkName: "Rules" */ './SmartComponents/Rules/Rules'));
+const Recs = asyncComponent(() => import(/* webpackChunkName: "Recs" */ './SmartComponents/Recs/Recs'));
+const Systems = asyncComponent(() => import(/* webpackChunkName: "Systems" */ './SmartComponents/Systems/Systems'));
 const Topics = asyncComponent(() => import(/* webpackChunkName: "Topics" */ './SmartComponents/Topics/Topics'));
+
 const paths = [
-    { title: 'Recommendations', path: '/recommendations:?', rootClass: 'Insights', component: Rules },
-    { title: 'Recommendations', path: '/recommendations', rootClass: 'Insights', component: Rules },
-    { title: 'Systems', path: '/systems:?', rootClass: 'Insights', component: Rules },
-    { title: 'Systems', path: '/systems', rootClass: 'Insights', component: Rules },
+    { title: 'Recommendations', path: '/recommendations:?', rootClass: 'Insights', component: Recs },
+    { title: 'Recommendations', path: '/recommendations', rootClass: 'Insights', component: Recs },
+    { title: 'Systems', path: '/systems:?', rootClass: 'Insights', component: Systems },
+    { title: 'Systems', path: '/systems', rootClass: 'Insights', component: Systems },
     { title: 'Topics', path: '/topics', rootClass: 'Insights', component: Topics }
 ];
 
@@ -42,17 +44,9 @@ InsightsRoute.propTypes = {
     rootClass: PropTypes.string
 };
 
-/**
- * the Switch component changes routes depending on the path.
- *
- * Route properties:
- *      exact - path must match exactly,
- *      path - https://prod.foo.redhat.com:1337/insights/advisor/rules
- *      component - component to be rendered when a route has been chosen.
- */
 export const Routes = () => <Switch>
     {paths.map((path) => <InsightsRoute key={path.title} path={path.path} component={path.component} rootClass={path.rootClass} />)}
-    <Redirect path='/rules' to={`${paths[1].path}`} push />
+    <Redirect path='/recommendations' to={`${paths[1].path}`} push />
     { /* Finally, catch all unmatched routes */}
     <Redirect path='*' to={`${paths[1].path}`} push />
 </Switch>;
