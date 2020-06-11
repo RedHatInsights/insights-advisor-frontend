@@ -95,11 +95,12 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
                     </Tooltip>
                 </SelectOption>
             )}
-            {(showMoreCount > 0 && tags.length > showMoreCount) ? <Button key='view all tags'
+            <Button key='manage all tags'
                 variant='link' onClick={(toggleModal) => setManageTagsModalOpen(toggleModal)}>
-                {intl.formatMessage(messages.countMore, { count: tags.length - showMoreCount })}
+                {(showMoreCount > 0 && tags.length > showMoreCount) ?
+                    intl.formatMessage(messages.countMoreTags, { count: tags.length - showMoreCount }) : intl.formatMessage(messages.manageTags)
+                }
             </Button>
-                : <React.Fragment />}
         </Select>
     </div >;
 };
