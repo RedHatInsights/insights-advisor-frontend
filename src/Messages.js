@@ -274,6 +274,11 @@ export default defineMessages({
         description: 'Accepts a count of items, appends the text more',
         defaultMessage: '{count} more'
     },
+    countMoreTags: {
+        id: 'countMoreTags',
+        description: 'Accepts a count of additional taks available',
+        defaultMessage: '{count} more tags available'
+    },
     recommended: {
         id: 'recommended',
         description: 'Recommended',
@@ -465,6 +470,11 @@ export default defineMessages({
         id: 'noTags',
         description: 'When there exist no tags for an account',
         defaultMessage: 'No tags available'
+    },
+    manageTags: {
+        id: 'manageTags',
+        description: 'Manage tags',
+        defaultMessage: 'Manage tags'
     },
     topicAddEditDescription: {
         id: 'topicAddEditDescription',
