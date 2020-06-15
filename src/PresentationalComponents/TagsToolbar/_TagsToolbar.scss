@@ -1,3 +1,5 @@
+@import '~@redhat-cloud-services/frontend-components-utilities/files/Utilities/_all.scss';
+
 .tagsToolbarContainer {
   background-color: var(--pf-global--BackgroundColor--100);
   border-bottom: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--light-100);
@@ -15,6 +17,18 @@
 
     padding-left: var(--pf-global--spacer--md);
   }
+
+  .tags-filter-group {
+    display: flex;
+    padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--md) var(--pf-global--spacer--md) var(--pf-global--spacer--md);
+
+    .tags-filter-search-icon {
+      position: relative;
+      @include rem('left', -30px);
+      @include rem('top', 10px);
+    }
+  }
+
   .pf-c-select__toggle {
     width: 220px;
     font-size: small;
