@@ -574,7 +574,7 @@ export default defineMessages({
     numberRuleHits: {
         id: 'numberRuleHits',
         description: 'Used in the system table title column, number of recommendations per system',
-        defaultMessage: 'Number of recommendations'
+        defaultMessage: 'Recommendations'
     },
     lastSeen: {
         id: 'lastSeen',
