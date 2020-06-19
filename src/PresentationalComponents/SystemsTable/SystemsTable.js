@@ -3,6 +3,7 @@ import * as AppActions from '../../AppActions';
 import * as pfReactTable from '@patternfly/react-table';
 import * as reactRouterDom from 'react-router-dom';
 
+import { DEBOUNCE_DELAY, SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { connect, useStore } from 'react-redux';
 import { filterFetchBuilder, paramParser, pruneFilters, urlBuilder } from '../Common/Tables';
@@ -10,7 +11,6 @@ import { filterFetchBuilder, paramParser, pruneFilters, urlBuilder } from '../Co
 import Failed from '../Loading/Failed';
 import Loading from '../Loading/Loading';
 import PropTypes from 'prop-types';
-import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import debounce from '../../Utilities/Debounce';
 import downloadReport from '../Common/DownloadHelper';
@@ -26,7 +26,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     const store = useStore();
     const results = systems.meta ? systems.meta.count : 0;
     const [searchText, setSearchText] = useState(filters.display_name || '');
-    const debouncedSearchText = debounce(searchText, 800);
+    const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
     const [filterBuilding, setFilterBuilding] = useState(true);
     const sortIndices = {
         0: 'display_name',

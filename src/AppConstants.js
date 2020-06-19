@@ -51,6 +51,7 @@ export const HOST_ACK_URL = `${BASE_URL}/hostack/`;
 
 export const UI_BASE = './insights';
 export const SYSTEM_TYPES = { rhel: 105, ocp: 325 };
+export const DEBOUNCE_DELAY = 600;
 export const RULE_CATEGORIES = {
     availability: 1,
     security: 2,

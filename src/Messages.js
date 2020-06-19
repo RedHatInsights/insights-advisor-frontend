@@ -237,6 +237,11 @@ export default defineMessages({
         description: 'Filter action, for tagstoolbar, ',
         defaultMessage: 'Filter by tags:'
     },
+    filterTagsInToolbar: {
+        id: 'filterTagsInToolbar',
+        description: 'Filter text input, for tagstoolbar',
+        defaultMessage: 'Filter by tags'
+    },
     allSystems: {
         id: 'allSystems',
         description: 'All systems',

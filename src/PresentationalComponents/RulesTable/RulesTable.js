@@ -4,6 +4,7 @@ import './_RulesTable.scss';
 import * as AppActions from '../../AppActions';
 import * as AppConstants from '../../AppConstants';
 
+import { DEBOUNCE_DELAY, FILTER_CATEGORIES as FC } from '../../AppConstants';
 import { Pagination, PaginationVariant } from '@patternfly/react-core/dist/js/components/Pagination/Pagination';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/index';
@@ -20,7 +21,6 @@ import { Button } from '@patternfly/react-core/dist/js/components/Button/Button'
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/components/DateFormat';
 import DisableRule from '../Modals/DisableRule';
-import { FILTER_CATEGORIES as FC } from '../../AppConstants';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import { Link } from 'react-router-dom';
 import Loading from '../../PresentationalComponents/Loading/Loading';
@@ -60,7 +60,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const [selectedRule, setSelectedRule] = useState({});
     const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
     const [viewSystemsModalRule, setViewSystemsModalRule] = useState({});
-    const debouncedSearchText = debounce(searchText, 600);
+    const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
     const results = rules.meta ? rules.meta.count : 0;
     const sortIndices = { 1: 'description', 2: 'publish_date', 3: 'total_risk', 4: 'impacted_count', 5: 'playbook_count' };
 
