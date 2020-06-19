@@ -25,6 +25,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
     const [manageTagsModalOpen, setManageTagsModalOpen] = useState(false);
     const showMoreCount = 20;
     const onToggle = isOpen => setIsOpen(isOpen);
+    let tagCounter = 0;
 
     useEffect(() => {
         const url = new URL(window.location);
@@ -88,12 +89,17 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
             ariaLabelledBy='select-group-input'
             isDisabled={tags.length === 0}
         >
-            {tags.slice(0, showMoreCount || tags.length).map(item =>
-                <SelectOption key={item} value={`${item}`}>
-                    <Tooltip content={`${decodeURIComponent(item)}`} position={TooltipPosition.right}>
-                        <span>{`${decodeURIComponent(item)}`}</span>
-                    </Tooltip>
-                </SelectOption>
+            {[...new Set(tags.map(item => item.split('/')[0]))].map(namespace =>
+                <React.Fragment key={namespace}>
+                    {tagCounter < Math.min(showMoreCount, tags.length) && <p>{namespace}</p>}
+                    {tags.slice(0, showMoreCount || tags.length).map(item => item.startsWith(namespace + '/') &&
+                        <SelectOption key={tagCounter++} value={`${item}`}>
+                            <Tooltip content={`${decodeURIComponent(item)}`} position={TooltipPosition.right}>
+                                <span>{`${decodeURIComponent(item.split('/')[1])}`}</span>
+                            </Tooltip>
+                        </SelectOption>
+                    )}
+                </React.Fragment>
             )}
             <Button key='manage all tags'
                 variant='link' onClick={(toggleModal) => setManageTagsModalOpen(toggleModal)}>
