@@ -5,11 +5,12 @@ import * as reactRouterDom from 'react-router-dom';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { connect, useStore } from 'react-redux';
-import { paramParser, urlBuilder, filterFetchBuilder, pruneFilters } from '../Common/Tables';
+import { filterFetchBuilder, paramParser, pruneFilters, urlBuilder } from '../Common/Tables';
 
 import Failed from '../Loading/Failed';
 import Loading from '../Loading/Loading';
 import PropTypes from 'prop-types';
+import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import debounce from '../../Utilities/Debounce';
 import downloadReport from '../Common/DownloadHelper';
@@ -18,7 +19,6 @@ import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { systemReducer } from '../../AppReducer';
-import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 
 const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters, setFilters, selectedTags }) => {
     const inventory = useRef(null);
@@ -138,6 +138,15 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
 
     useEffect(() => {
         (async () => {
+            const rows = [{
+                title: intl.formatMessage(messages.name), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(90)], key: 'display_name'
+            },
+            { title: intl.formatMessage(messages.numberRuleHits), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(1)], key: 'hits' },
+            { title: intl.formatMessage(messages.critical), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(1)], key: 'critical_hits' },
+            { title: intl.formatMessage(messages.important), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(1)], key: 'important_hits' },
+            { title: intl.formatMessage(messages.moderate), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(1)], key: 'moderate_hits' },
+            { title: intl.formatMessage(messages.low), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(1)], key: 'low_hits' },
+            { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(1)], key: 'updated' }];
             const { inventoryConnector, mergeWithEntities, INVENTORY_ACTION_TYPES
             } = await insights.loadInventory({
                 react: React,
@@ -147,18 +156,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
             getRegistry().register({
                 ...mergeWithEntities(
                     systemReducer(
-                        [
-                            { title: intl.formatMessage(messages.name), transforms: [pfReactTable.sortable], key: 'display_name' },
-                            {
-                                title: intl.formatMessage(messages.numberRuleHits), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(15)],
-                                key: 'hits'
-                            },
-                            { title: intl.formatMessage(messages.critical), transforms: [pfReactTable.sortable], key: 'critical_hits' },
-                            { title: intl.formatMessage(messages.important), transforms: [pfReactTable.sortable], key: 'important_hits' },
-                            { title: intl.formatMessage(messages.moderate), transforms: [pfReactTable.sortable], key: 'moderate_hits' },
-                            { title: intl.formatMessage(messages.low), transforms: [pfReactTable.sortable], key: 'low_hits' },
-                            { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable], key: 'updated' }
-                        ],
+                        [...rows],
                         INVENTORY_ACTION_TYPES
                     )
                 )
