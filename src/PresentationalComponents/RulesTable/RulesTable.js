@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/index';
 import { Table, TableBody, TableHeader, cellWidth, sortable } from '@patternfly/react-table';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
-import { capitalize, filterFetchBuilder, paramParser, urlBuilder } from '../Common/Tables';
+import { filterFetchBuilder, paramParser, pruneFilters, urlBuilder } from '../Common/Tables';
 
 import API from '../../Utilities/Api';
 import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
@@ -146,22 +146,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         delete localFilters.offset;
         delete localFilters.limit;
 
-        const prunedFilters = Object.entries(localFilters);
-
-        return prunedFilters.length > 0 ? prunedFilters.map(item => {
-            if (FC[item[0]]) {
-                const category = FC[item[0]];
-                const chips = Array.isArray(item[1]) ? item[1].map(value => {
-                    const selectedCategoryValue = category.values.find(values => values.value === String(value));
-                    return { name: selectedCategoryValue.text || selectedCategoryValue.label, value };
-                })
-                    : [{ name: category.values.find(values => values.value === String(item[1])).label, value: item[1] }];
-                return { category: capitalize(category.title), chips, urlParam: category.urlParam };
-            } else {
-                return { category: 'Description', chips: [{ name: item[1], value: item[1] }], urlParam: item[0] };
-            }
-        })
-            : [];
+        return pruneFilters(localFilters, FC);
     };
 
     useEffect(() => { !filterBuilding && selectedTags !== null && fetchRulesFn(); }, [fetchRulesFn, filterBuilding, filters, selectedTags]);

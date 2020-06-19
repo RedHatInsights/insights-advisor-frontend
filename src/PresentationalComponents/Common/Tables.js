@@ -26,3 +26,21 @@ export const paramParser = () => {
 
 // capitalizes text string
 export const capitalize = (string) => string[0].toUpperCase() + string.substring(1);
+
+export const pruneFilters = (localFilters, filterCategories) => {
+    const prunedFilters = Object.entries(localFilters);
+    return prunedFilters.length > 0 ? prunedFilters.map(item => {
+        if (filterCategories[item[0]]) {
+            const category = filterCategories[item[0]];
+            const chips = Array.isArray(item[1]) ? item[1].map(value => {
+                const selectedCategoryValue = category.values.find(values => values.value === String(value));
+                return { name: selectedCategoryValue.text || selectedCategoryValue.label, value };
+            })
+                : [{ name: category.values.find(values => values.value === String(item[1])).label, value: item[1] }];
+            return { category: capitalize(category.title), chips, urlParam: category.urlParam };
+        } else {
+            return { category: 'Description', chips: [{ name: item[1], value: item[1] }], urlParam: item[0] };
+        }
+    })
+        : [];
+};
