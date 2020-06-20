@@ -34,7 +34,7 @@ export const pruneFilters = (localFilters, filterCategories) => {
             const category = filterCategories[item[0]];
             const chips = Array.isArray(item[1]) ? item[1].map(value => {
                 const selectedCategoryValue = category.values.find(values => values.value === String(value));
-                return { name: selectedCategoryValue.text || selectedCategoryValue.label, value };
+                return selectedCategoryValue ? { name: selectedCategoryValue.text || selectedCategoryValue.label, value } : { name: value, value };
             })
                 : [{ name: category.values.find(values => values.value === String(item[1])).label, value: item[1] }];
             return { category: capitalize(category.title), chips, urlParam: category.urlParam };
