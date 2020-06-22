@@ -73,7 +73,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
     </React.Fragment>;
 
     const onToggle = isOpen => {
-        setSearchText();
+        setSearchText('');
         setIsOpen(isOpen);
     };
 
