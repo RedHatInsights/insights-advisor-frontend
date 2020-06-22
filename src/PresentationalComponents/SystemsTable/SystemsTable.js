@@ -139,14 +139,14 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     useEffect(() => {
         (async () => {
             const rows = [{
-                title: intl.formatMessage(messages.name), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(90)], key: 'display_name'
+                title: intl.formatMessage(messages.name), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(80)], key: 'display_name'
             },
             { title: intl.formatMessage(messages.numberRuleHits), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(1)], key: 'hits' },
             { title: intl.formatMessage(messages.critical), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(1)], key: 'critical_hits' },
             { title: intl.formatMessage(messages.important), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(1)], key: 'important_hits' },
             { title: intl.formatMessage(messages.moderate), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(1)], key: 'moderate_hits' },
             { title: intl.formatMessage(messages.low), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(1)], key: 'low_hits' },
-            { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(1)], key: 'updated' }];
+            { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(10)], key: 'updated' }];
             const { inventoryConnector, mergeWithEntities, INVENTORY_ACTION_TYPES
             } = await insights.loadInventory({
                 react: React,
