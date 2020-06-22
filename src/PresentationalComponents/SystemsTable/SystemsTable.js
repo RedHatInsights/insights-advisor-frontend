@@ -172,14 +172,13 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     }, [filters.display_name]);
 
     useEffect(() => {
-        const copyFilters = { ...filters };
-        delete copyFilters.display_name;
-        setFilters({
-            ...copyFilters,
-            ...(searchText.length ? { display_name: searchText } : {}),
-            offset: 0
-        });
-
+        if (!filterBuilding && systemsFetchStatus !== 'pending') {
+            const copyFilters = { ...filters };
+            delete copyFilters.display_name;
+            setFilters({
+                ...copyFilters, ...(searchText.length ? { display_name: searchText } : {}), offset: 0
+            });
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearchText]);
 
