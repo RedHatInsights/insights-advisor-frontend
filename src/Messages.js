@@ -172,6 +172,11 @@ export default defineMessages({
         description: 'Button text to export/download recommendation table data as csv',
         defaultMessage: 'Export to CSV'
     },
+    exportPdf: {
+        id: 'exportPdf',
+        description: 'Button text to export/download data as pdf',
+        defaultMessage: 'Export to PDF'
+    },
     rulesTableActionShow: {
         id: 'rulestable.action.show',
         description: 'Label for action show all recommendationsincluding those that affect systems',

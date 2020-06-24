@@ -11,6 +11,7 @@ import { filterFetchBuilder, paramParser, pruneFilters, urlBuilder } from '../Co
 import Failed from '../Loading/Failed';
 import Loading from '../Loading/Loading';
 import PropTypes from 'prop-types';
+import SystemsPdf from '../Export/SystemsPdf';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import debounce from '../../Utilities/Debounce';
 import downloadReport from '../Common/DownloadHelper';
@@ -228,10 +229,11 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
                 filterConfig={{ items: filterConfigItems }}
                 activeFiltersConfig={activeFiltersConfig}
                 exportConfig={{
-                    label: intl.formatMessage(messages.exportCsv),
-                    // eslint-disable-next-line no-dupe-keys
-                    label: intl.formatMessage(messages.exportJson),
-                    onSelect: (_e, fileType) => downloadReport('systems', fileType, urlBuilder(filters, selectedTags))
+                    onSelect: (_e, fileType) => downloadReport('systems', fileType, urlBuilder(filters, selectedTags)),
+                    extraItems: [<li key='download-pd' role="menuitem">
+                        <SystemsPdf filters={{ ...filterFetchBuilder(filters) }} selectedTags={selectedTags.join()}
+                            systemsCount={systems && systems.meta.count} />
+                    </li>]
                 }}
             />
             : systemsFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.systemTableFetchError)} />)
