@@ -232,7 +232,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
                     onSelect: (_e, fileType) => downloadReport('systems', fileType, urlBuilder(filters, selectedTags)),
                     extraItems: [<li key='download-pd' role="menuitem">
                         <SystemsPdf filters={{ ...filterFetchBuilder(filters) }} selectedTags={selectedTags.join()}
-                            systemsCount={systems && systems.meta.count} />
+                            systemsCount={systems && systems.meta && systems.meta.count} />
                     </li>]
                 }}
             />

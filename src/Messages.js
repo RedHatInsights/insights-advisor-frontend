@@ -27,6 +27,11 @@ export default defineMessages({
         description: 'Recommendation table column title, recommendationdetails label',
         defaultMessage: 'Total risk'
     },
+    totalRecs: {
+        id: 'totalRecs',
+        description: 'Systable column header',
+        defaultMessage: 'Total recommendations'
+    },
     systems: {
         id: 'systems',
         description: 'Systems title used in recommendation table column and systems tab header',
@@ -830,6 +835,21 @@ export default defineMessages({
         id: 'execReportHeaderRisks',
         description: 'Risk part of the exec report header',
         defaultMessage: '{risks, plural, one {# Risk} other {# Risks}}'
+    },
+    sysTableCount: {
+        id: 'sysTableCount',
+        description: 'Systable pdf report',
+        defaultMessage: 'This report identified {systems}.'
+    },
+    filtersApplied: {
+        id: 'filtersApplied',
+        description: 'Systable pdf report',
+        defaultMessage: 'Filters applied:'
+    },
+    tagsApplied: {
+        id: 'tagsApplied',
+        description: 'Systable pdf report',
+        defaultMessage: 'Tags applied:'
     },
     recNumAndPercentage: {
         id: 'recNumAndPercentage',

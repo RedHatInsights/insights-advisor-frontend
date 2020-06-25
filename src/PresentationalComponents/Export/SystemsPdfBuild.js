@@ -1,42 +1,59 @@
 /* eslint-disable camelcase */
-// import { Battery, Chart, Column, Panel, PanelItem, Paragraph, Section, Table } from '@redhat-cloud-services/frontend-components-pdf-generator';
+import { Column, Paragraph, Section, Table } from '@redhat-cloud-services/frontend-components-pdf-generator';
 
 import PropTypes from 'prop-types';
 import React from 'react';
-// import { Text } from '@react-pdf/renderer';
+import { Text } from '@react-pdf/renderer';
 import messages from '../../Messages';
 
-const BuildReport = ({ systems, filters, intl }) => {
-    console.error(systems, filters);
-    // const severityRows = [[intl.formatMessage(messages.severity), intl.formatMessage(messages.poundOfRecs)],
-    // ...Object.entries(statsReports.total_risk).map(([key, value]) =>
-    //     [TOTAL_RISK_LABEL[key].props.children, intl.formatMessage(messages.recNumAndPercentage, {
-    //         count: value,
-    //         total: Math.round(Number(value / statsReports.total * 100))
-    //     })]).reverse()
-    // ];
+export const tablePage = ({ systems, intl }) => {
+    const rowHeaders = [intl.formatMessage(messages.name), intl.formatMessage(messages.totalRecs), intl.formatMessage(messages.critical),
+        intl.formatMessage(messages.important), intl.formatMessage(messages.moderate), intl.formatMessage(messages.low),
+        intl.formatMessage(messages.lastSeen)];
+    const rows = [
+        ...systems.data.map(system => [system.display_name, `${system.hits}`, `${system.critical_hits}`, `${system.important_hits}`,
+            `${system.moderate_hits}`, `${system.low_hits}`, new Date(system.last_seen).toUTCString()
+        ])];
 
-    // const categoryRows = [[intl.formatMessage(messages.category), intl.formatMessage(messages.poundOfRecs)],
-    // ...Object.entries(statsReports.category).map(([key, value]) =>
-    //     [key, intl.formatMessage(messages.recNumAndPercentage, {
-    //         count: value,
-    //         total: Math.round(Number(value / statsReports.total * 100))
-    //     })])];
-
-    // const rulesDesc = (rule) => <Text>
-    //     <Text style={{ fontWeight: 700 }}> {rule.description}</Text>&nbsp;{truncate(rule.summary, { length: 280 })}
-    // </Text>;
-
-    return <React.Fragment key={`${intl.formatMessage(messages.insightsHeader)}: ${intl.formatMessage(messages.systems)}`}>
-
-    </React.Fragment>;
+    return <React.Fragment key='test'>
+        <Column>
+            <Table withHeader rows={[rowHeaders, ...rows]} />
+        </Column>
+    </React.Fragment >;
 };
 
-BuildReport.propTypes = {
+tablePage.propTypes = {
+    systems: PropTypes.object,
+    intl: PropTypes.any
+};
+
+export const leadPage = ({ systems, filters, tags, intl }) => {
+
+    return <React.Fragment key={`${intl.formatMessage(messages.insightsHeader)}: ${intl.formatMessage(messages.systems)}`}>
+        <Paragraph key='sys-count'>
+            {intl.formatMessage(messages.sysTableCount, {
+                systems: <Text style={{ fontWeight: 700 }}>
+                    {intl.formatMessage(messages.execReportHeaderSystems, { systems: systems.meta.count })}
+                </Text>
+            })}
+        </Paragraph>
+        <Paragraph key='filters-applied'>
+            {intl.formatMessage(messages.filtersApplied)}
+            {/* <Text>{filters}</Text> */}
+        </Paragraph>
+        <Paragraph key='tags-applied'>
+            {intl.formatMessage(messages.tagsApplied)}
+            <Text>{decodeURIComponent(tags)}</Text>
+        </Paragraph>
+        <Section title='Systems'>
+            {tablePage({ systems, intl })}
+        </Section>
+    </React.Fragment >;
+};
+
+leadPage.propTypes = {
     systems: PropTypes.object,
     filters: PropTypes.object,
     tags: PropTypes.array,
     intl: PropTypes.any
 };
-
-export default BuildReport;
