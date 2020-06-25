@@ -803,5 +803,15 @@ export const cveToRuleid = [
         cves: [
             'CVE-2014-3566'
         ]
+    },
+    {
+        rule_id: 'CVE_2020_14298_docker|CVE_2020_14298_DOCKER',
+        name: 'CVE-2016-8867, CVE-2020-14298, CVE-2020-14300: docker privilege escalation',
+        description: 'CVE-2016-8867, CVE-2020-14298, CVE-2020-14300: docker privilege escalation',
+        cves: [
+            'CVE-2016-8867',
+            'CVE-2020-14298',
+            'CVE-2020-14300'
+        ]
     }
 ];
