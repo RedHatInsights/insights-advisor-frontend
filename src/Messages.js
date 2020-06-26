@@ -27,11 +27,6 @@ export default defineMessages({
         description: 'Recommendation table column title, recommendationdetails label',
         defaultMessage: 'Total risk'
     },
-    totalRecs: {
-        id: 'totalRecs',
-        description: 'Systable column header',
-        defaultMessage: 'Total recommendations'
-    },
     systems: {
         id: 'systems',
         description: 'Systems title used in recommendation table column and systems tab header',

@@ -7,7 +7,7 @@ import { Text } from '@react-pdf/renderer';
 import messages from '../../Messages';
 
 export const tablePage = ({ page, systems, intl }) => {
-    const rowHeaders = [intl.formatMessage(messages.name), intl.formatMessage(messages.totalRecs), intl.formatMessage(messages.critical),
+    const rowHeaders = [intl.formatMessage(messages.name), intl.formatMessage(messages.recommendations), intl.formatMessage(messages.critical),
         intl.formatMessage(messages.important), intl.formatMessage(messages.moderate), intl.formatMessage(messages.low),
         intl.formatMessage(messages.lastSeen)];
     const rows = [
