@@ -18,10 +18,10 @@ const SystemsPdf = ({ filters, selectedTags, systemsCount }) => {
         setLoading(true);
         const options = selectedTags.length && ({ tags: selectedTags });
         const [systems] = await Promise.all([(await API.get(SYSTEMS_FETCH_URL, {}, { ...filters, ...options, limit: systemsCount })).data]);
-        const firstPage = leadPage({ systemsTotal: systems.meta.count, systems: systems.data.slice(0, 14), filters, tags: selectedTags, intl });
+        const firstPage = leadPage({ systemsTotal: systems.meta.count, systems: systems.data.slice(0, 10), filters, tags: selectedTags, intl });
 
-        const otherPages = systems.data.slice(14, systems.data.length).reduce((resultArray, item, index) => {
-            const chunkIndex = Math.floor(index / 16);
+        const otherPages = systems.data.slice(10, systems.data.length).reduce((resultArray, item, index) => {
+            const chunkIndex = Math.floor(index / 14);
             !resultArray[chunkIndex] && (resultArray[chunkIndex] = []);
             resultArray[chunkIndex].push(item);
 
@@ -43,6 +43,7 @@ const SystemsPdf = ({ filters, selectedTags, systemsCount }) => {
             reportName={`${intl.formatMessage(messages.insightsHeader)}:`}
             type={intl.formatMessage(messages.systems)}
             fileName={`Advisor_systems--${(new Date()).toUTCString().replace(/ /g, '-')}.pdf`}
+            size={[841.89, 595.28]}
         />;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [loading]);
