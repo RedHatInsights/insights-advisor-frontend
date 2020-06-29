@@ -12,24 +12,38 @@ import messages from '../../Messages';
 const styles = StyleSheet.create({
     bold: { fontWeight: global_FontWeight_bold.value },
     link: { color: global_link_Color.value },
-    text: { marginTop: global_spacer_md.value  }
+    text: { marginTop: global_spacer_md.value },
+    endColumn: { width: '100px' },
+    hitColumn: { width: '4px' }
 });
 
 export const tablePage = ({ page, systems, intl }) => {
-    const rowHeaders = [intl.formatMessage(messages.name), intl.formatMessage(messages.recommendations), intl.formatMessage(messages.critical),
-        intl.formatMessage(messages.important), intl.formatMessage(messages.moderate), intl.formatMessage(messages.low),
-        intl.formatMessage(messages.lastSeen)];
+    const header = [{ value: intl.formatMessage(messages.name), style: styles.endColumn },
+        { value: intl.formatMessage(messages.recommendations), style: styles.hitColumn },
+        { value: intl.formatMessage(messages.critical), style: styles.hitColumn },
+        { value: intl.formatMessage(messages.important), style: styles.hitColumn },
+        { value: intl.formatMessage(messages.moderate), style: styles.hitColumn },
+        { value: intl.formatMessage(messages.low), style: styles.hitColumn },
+        { value: intl.formatMessage(messages.lastSeen), style: styles.endColumn }];
+    const hitColumns = ['hits', 'critical_hits', 'important_hits', 'moderate_hits', 'low_hits'];
+
+    // eslint-disable-next-line react/prop-types
+    const rowBuilder = ({ value, style }) => <Text style={style}>{value}</Text>;
     const rows = [
-        ...systems.map(system => [
-            <Link key={system.system_uuid} style={styles.link}
-                src={`https://cloud.redhat.com/insights/advisor/systems/${system.system_uuid}/`}>system.display_name</Link>,
-            `${system.hits}`, `${system.critical_hits}`, `${system.important_hits}`, `${system.moderate_hits}`, `${system.low_hits}`,
-            new Date(system.last_seen).toUTCString()
-        ])];
+        ...systems.map(system => {
+            const [, date, month, year, time] = new Date(system.last_seen).toUTCString().split(' ');
+            const sysDate = `${date} ${month} ${year}, ${time.split(':').slice(0, 2).join(':')} UTC`;
+            return [
+                <Text key={system.system_uuid} style={styles.endColumn}><Link style={styles.link}
+                    src={`https://cloud.redhat.com/insights/advisor/systems/${system.system_uuid}/`}>{system.display_name}</Link></Text>,
+                ...hitColumns.map(item => rowBuilder({ style: styles.hitColumn, value: system[item] })),
+                <Text key={system.last_seen} style={styles.endColumn}>{`${sysDate}`}</Text>
+            ];
+        })];
 
     return <React.Fragment key={page}>
         <Column>
-            <Table withHeader rows={[rowHeaders, ...rows]} />
+            <Table withHeader rows={[header.map(item => rowBuilder(item)), ...rows]} />
         </Column>
     </React.Fragment >;
 };

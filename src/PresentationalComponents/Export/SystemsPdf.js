@@ -21,7 +21,7 @@ const SystemsPdf = ({ filters, selectedTags, systemsCount }) => {
         const firstPage = leadPage({ systemsTotal: systems.meta.count, systems: systems.data.slice(0, 10), filters, tags: selectedTags, intl });
 
         const otherPages = systems.data.slice(10, systems.data.length).reduce((resultArray, item, index) => {
-            const chunkIndex = Math.floor(index / 14);
+            const chunkIndex = Math.floor(index / 16);
             !resultArray[chunkIndex] && (resultArray[chunkIndex] = []);
             resultArray[chunkIndex].push(item);
 
