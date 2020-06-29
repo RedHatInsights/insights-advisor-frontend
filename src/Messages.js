@@ -172,6 +172,11 @@ export default defineMessages({
         description: 'Button text to export/download recommendation table data as csv',
         defaultMessage: 'Export to CSV'
     },
+    exportPdf: {
+        id: 'exportPdf',
+        description: 'Button text to export/download data as pdf',
+        defaultMessage: 'Export to PDF'
+    },
     rulesTableActionShow: {
         id: 'rulestable.action.show',
         description: 'Label for action show all recommendationsincluding those that affect systems',
@@ -825,6 +830,21 @@ export default defineMessages({
         id: 'execReportHeaderRisks',
         description: 'Risk part of the exec report header',
         defaultMessage: '{risks, plural, one {# Risk} other {# Risks}}'
+    },
+    sysTableCount: {
+        id: 'sysTableCount',
+        description: 'Systable pdf report',
+        defaultMessage: 'This report identified {systems}.'
+    },
+    filtersApplied: {
+        id: 'filtersApplied',
+        description: 'Systable pdf report',
+        defaultMessage: 'Filters applied:'
+    },
+    tagsApplied: {
+        id: 'tagsApplied',
+        description: 'Systable pdf report',
+        defaultMessage: 'Tags applied:'
     },
     recNumAndPercentage: {
         id: 'recNumAndPercentage',
