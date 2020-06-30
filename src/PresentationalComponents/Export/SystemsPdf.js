@@ -18,10 +18,10 @@ const SystemsPdf = ({ filters, selectedTags, systemsCount }) => {
         setLoading(true);
         const options = selectedTags.length && ({ tags: selectedTags });
         const [systems] = await Promise.all([(await API.get(SYSTEMS_FETCH_URL, {}, { ...filters, ...options, limit: systemsCount })).data]);
-        const firstPage = leadPage({ systemsTotal: systems.meta.count, systems: systems.data.slice(0, 10), filters, tags: selectedTags, intl });
+        const firstPage = leadPage({ systemsTotal: systems.meta.count, systems: systems.data.slice(0, 18), filters, tags: selectedTags, intl });
 
-        const otherPages = systems.data.slice(10, systems.data.length).reduce((resultArray, item, index) => {
-            const chunkIndex = Math.floor(index / 16);
+        const otherPages = systems.data.slice(18, systems.data.length).reduce((resultArray, item, index) => {
+            const chunkIndex = Math.floor(index / 26);
             !resultArray[chunkIndex] && (resultArray[chunkIndex] = []);
             resultArray[chunkIndex].push(item);
 
