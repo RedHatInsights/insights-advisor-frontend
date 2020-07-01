@@ -295,11 +295,12 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     ];
 
     const filterConfigItems = [{
-        label: intl.formatMessage(messages.description).toLowerCase(),
+        label: intl.formatMessage(messages.recommendation).toLowerCase(),
         filterValues: {
             key: 'text-filter',
             onChange: (event, value) => setSearchText(value),
-            value: searchText
+            value: searchText,
+            placeholder: intl.formatMessage(messages.search)
         }
     }, {
         label: FC.total_risk.title,

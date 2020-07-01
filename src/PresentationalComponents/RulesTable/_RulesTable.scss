@@ -1,5 +1,11 @@
 .pf-c-check__label {
     #battery_svg {
-        height: 1.25rem; 
+        height: 1.25rem;
+    }
+}
+
+.ins-c-conditional-filter .ins-c-conditional-filter__group .pf-c-dropdown__toggle-text {
+    @media screen and (min-width: 884px) {
+        min-width: 150px !important;
     }
 }
