@@ -39,7 +39,7 @@ export const pruneFilters = (localFilters, filterCategories) => {
                 : [{ name: category.values.find(values => values.value === String(item[1])).label, value: item[1] }];
             return { category: capitalize(category.title), chips, urlParam: category.urlParam };
         } else {
-            return { category: 'Description', chips: [{ name: item[1], value: item[1] }], urlParam: item[0] };
+            return { category: 'Name', chips: [{ name: item[1], value: item[1] }], urlParam: item[0] };
         }
     })
         : [];

@@ -37,6 +37,11 @@ export default defineMessages({
         description: 'Systems title used in recommendation table column and systems tab header',
         defaultMessage: 'Systems'
     },
+    system: {
+        id: 'system',
+        description: 'System',
+        defaultMessage: 'System'
+    },
     systemsExposed: {
         id: 'systemsExposed',
         description: 'Systems title used in exec report',

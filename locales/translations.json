@@ -6,6 +6,7 @@
   "rule": "Rule",
   "totalRisk": "Total risk",
   "systems": "Systems",
+  "system": "System",
   "systemsExposed": "Systems exposed",
   "ansible": "Ansible",
   "rulestable.hidereports.errordisabling": "Disabling reports failed",

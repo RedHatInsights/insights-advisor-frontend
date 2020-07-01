@@ -42,7 +42,7 @@ import routerParams from '@redhat-cloud-services/frontend-components-utilities/f
 
 const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, intl, selectedTags }) => {
     const [cols] = useState([
-        { title: intl.formatMessage(messages.description), transforms: [sortable] },
+        { title: intl.formatMessage(messages.name), transforms: [sortable] },
         { title: intl.formatMessage(messages.added), transforms: [sortable, cellWidth(15)] },
         { title: intl.formatMessage(messages.totalRisk), transforms: [sortable, cellWidth(15)] },
         { title: intl.formatMessage(messages.systems), transforms: [sortable] },
@@ -295,7 +295,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     ];
 
     const filterConfigItems = [{
-        label: intl.formatMessage(messages.recommendation).toLowerCase(),
+        label: intl.formatMessage(messages.name).toLowerCase(),
         filterValues: {
             key: 'text-filter',
             onChange: (event, value) => setSearchText(value),
