@@ -7,6 +7,11 @@ export default defineMessages({
         description: 'Used as a title',
         defaultMessage: 'Rules'
     },
+    recommendation: {
+        id: 'recommendation',
+        description: 'Recommendation',
+        defaultMessage: 'Recommendation'
+    },
     recommendations: {
         id: 'recommendations',
         description: 'Used as a title',
