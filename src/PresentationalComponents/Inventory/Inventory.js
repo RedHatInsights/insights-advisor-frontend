@@ -161,8 +161,8 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
                     }
                 },
                 {
-                    ...items && items.length > 0 ? {
-                        title: intl.formatMessage(messages.selectPage, { items: pageSize || 0 }),
+                    ...items && items.length > pageSize ? {
+                        title: intl.formatMessage(messages.selectPage, { items: pageSize }),
                         onClick: () => {
                             onSelectRows(0, true);
                         }
