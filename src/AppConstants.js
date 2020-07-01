@@ -39,6 +39,7 @@ export const RULE_SET = 'RULE_SET';
 export const SYSTEM_SET = 'SYSTEM_SET';
 
 export const BASE_URL = '/api/insights/v1';
+export const INV_BASE_URL = '/api/inventory/v1';
 export const RULES_FETCH_URL = `${BASE_URL}/rule/`;
 export const STATS_RULES_FETCH_URL = `${BASE_URL}/stats/rules/`;
 export const STATS_SYSTEMS_FETCH_URL = `${BASE_URL}/stats/systems/`;
