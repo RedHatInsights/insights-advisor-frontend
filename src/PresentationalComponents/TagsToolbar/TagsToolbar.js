@@ -30,7 +30,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [totalTags, setTotalTags] = useState();
     const [tags, setTags] = useState([]);
-    const [searchText, setSearchText] = useState('');
+    const [searchText, setSearchText] = useState();
     const [params, setParams] = useState();
     const [tagsCount, setTagsCount] = useState();
     const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
@@ -79,6 +79,11 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
 
         return formattedTags;
     };
+
+    // Force triggers the debounce function on mount (i.e. deleting this will break things)
+    useEffect(() => {
+        setSearchText('');
+    }, []);
 
     useEffect(() => {
         setTagsCount(tags.flatMap(source => source.data).length);
