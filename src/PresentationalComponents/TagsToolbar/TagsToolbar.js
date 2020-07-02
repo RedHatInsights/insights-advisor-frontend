@@ -1,14 +1,15 @@
 import './_TagsToolbar.scss';
 
 import React, { useEffect, useState } from 'react';
-import { Select, SelectOption, SelectVariant } from '@patternfly/react-core/dist/js/components/Select/index';
+import { Select, SelectGroup, SelectOption, SelectVariant } from '@patternfly/react-core/dist/js/components/Select/index';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
 
 import API from '../../Utilities/Api';
-import { BASE_URL } from '../../AppConstants';
+import { Badge } from '@patternfly/react-core/dist/js/components/Badge/Badge';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import { DEBOUNCE_DELAY } from '../../AppConstants';
 import { Divider } from '@patternfly/react-core/dist/js/components/Divider/Divider';
+import { INV_BASE_URL } from '../../AppConstants';
 import { InputGroup } from '@patternfly/react-core/dist/js/components/InputGroup/InputGroup';
 import ManageTags from './ManageTags';
 import PropTypes from 'prop-types';
@@ -27,34 +28,74 @@ import { useIntl } from 'react-intl';
 const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
     const intl = useIntl();
     const [isOpen, setIsOpen] = useState(false);
+    const [totalTags, setTotalTags] = useState();
     const [tags, setTags] = useState([]);
     const [searchText, setSearchText] = useState('');
+    const [params, setParams] = useState();
+    const [tagsCount, setTagsCount] = useState();
     const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
     const [manageTagsModalOpen, setManageTagsModalOpen] = useState(false);
     const showMoreCount = 20;
 
-    const fetchTags = async (params, filter) => {
+    const groupTags = (tags) => {
+        return tags.map(tag => tag.namespace).filter((value, index, self) =>
+            self.indexOf(value) === index
+        ).map(source => ({
+            source,
+            data: tags.filter(tag => tag.namespace === source)
+        }));
+    };
+
+    const formatTags = (tags) => {
+        let formattedTags = [];
+        tags.map(item => {
+            const { namespace, key, value } = item.tag;
+            formattedTags.push({
+                ...item.tag,
+                count: item.count,
+                id: `${namespace}/${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+            });
+        });
+        return formattedTags;
+    };
+
+    const fetchTags = async (perPage, page, params, filter) => {
+        let formattedTags = [];
         try {
-            const response = await API.get(`${BASE_URL}/tag/`);
-            filter !== '' ?
-                setTags(response.data.tags.filter(tag => tag.toLowerCase().includes(filter.toLowerCase()))) :
-                setTags(response.data.tags);
+            const response = (filter === '' || !filter) ?
+                await API.get(`${INV_BASE_URL}/tags?per_page=${perPage}&page=${page}`) :
+                await API.get(`${INV_BASE_URL}/tags?per_page=${perPage}&page=${page}&search=${filter.toLowerCase()}`);
+            setTotalTags(response.data.total);
+            formattedTags = formatTags(response.data.results);
             params === null && selectedTags === null && setSelectedTags([]);
             if (params.length) {
-                const tagsToSet = intersection(params.split(','), response.data.tags);
+                const tagsToSet = intersection(params.split(','), selectedTags);
                 tagUrlBuilder(tagsToSet);
                 setSelectedTags(tagsToSet);
             }
         } catch (error) {
             addNotification({ variant: 'danger', dismissable: true, title: intl.formatMessage(messages.error), description: `${error}` });
         }
+
+        return formattedTags;
     };
+
+    useEffect(() => {
+        setTagsCount(tags.flatMap(source => source.data).length);
+    }, [tags]);
 
     useEffect(() => {
         const url = new URL(window.location);
         let params = new URLSearchParams(url.search);
-        params = params.get('tags');
-        fetchTags(params, searchText);
+        setParams(params.get('tags'));
+    }, [selectedTags]);
+
+    useEffect(() => {
+        const url = new URL(window.location);
+        let urlParams = new URLSearchParams(url.search);
+        urlParams.get('tags') === params ?
+            (async () => setTags(groupTags(await fetchTags(showMoreCount, 1, null, searchText))))() :
+            (async () => setTags(groupTags(await fetchTags(showMoreCount, 1, urlParams, searchText))))();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearchText]);
 
@@ -86,9 +127,10 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
 
     return selectedTags !== null && <div className='tagsToolbarContainer'>
         {<ManageTags
-            handleModalToggle={(toggleModal) => setManageTagsModalOpen(toggleModal)}
-            isModalOpen={manageTagsModalOpen}
-            tags={tags}
+            totalTags={totalTags}
+            toggleModal={() => setManageTagsModalOpen(!manageTagsModalOpen)}
+            isOpen={manageTagsModalOpen}
+            fetchTags={fetchTags}
         />}
         <Select
             className='dropDownOverride'
@@ -104,6 +146,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
         >
             <InputGroup className='tags-filter-group'>
                 <TextInput
+                    aria-label='tags-filter-input'
                     placeholder={intl.formatMessage(messages.filterTagsInToolbar)}
                     value={searchText}
                     onChange={setSearchText}
@@ -111,17 +154,29 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
                 <SearchIcon className='tags-filter-search-icon'/>
             </InputGroup>
             <Divider key="inline-filter-divider" />
-            {tags.slice(0, showMoreCount || tags.length).map(item =>
-                <SelectOption key={item} value={`${item}`}>
-                    <Tooltip content={`${decodeURIComponent(item)}`} position={TooltipPosition.right}>
-                        <span>{`${decodeURIComponent(item)}`}</span>
-                    </Tooltip>
-                </SelectOption>
+            {tags.map((group, index) =>
+                <SelectGroup key={`group${index}`} label={group.source}>
+                    {group.data.map((tag, tagIndex) =>
+                        <span key={tagIndex} className='tags-select-group'>
+                            <SelectOption value={tag.id} isChecked={
+                                selectedTags.find(selection => selection === tag.id)
+                            }>
+                                <Tooltip content={`${tag.id}`} position={TooltipPosition.right}>
+                                    <span>{`${decodeURIComponent(tag.value)}`}</span>
+                                </Tooltip>
+                            </SelectOption>
+                            <Badge className='tags-select-badge'> {tag.count} </Badge>
+                        </span>
+                    )}
+                </SelectGroup>
             )}
             <Button key='manage all tags'
-                variant='link' onClick={(toggleModal) => setManageTagsModalOpen(toggleModal)}>
-                {(showMoreCount > 0 && tags.length > showMoreCount) ?
-                    intl.formatMessage(messages.countMoreTags, { count: tags.length - showMoreCount }) : intl.formatMessage(messages.manageTags)
+                variant='link' onClick={() => setManageTagsModalOpen(true)}>
+                {(showMoreCount > 0 && tagsCount >= showMoreCount) ?
+                    intl.formatMessage(
+                        messages.countMoreTags, {
+                            count: totalTags - tagsCount
+                        }) : intl.formatMessage(messages.manageTags)
                 }
             </Button>
         </Select>

@@ -257,6 +257,26 @@ export default defineMessages({
         description: 'Filter text input, for tagstoolbar',
         defaultMessage: 'Filter by tags'
     },
+    filterTagsInModal: {
+        id: 'filterTagsInModal',
+        description: 'Filter text input, for ManageTags Modal',
+        defaultMessage: 'Filter tags'
+    },
+    tagsModalName: {
+        id: 'tagsModalName',
+        description: 'Name column header',
+        defaultMessage: 'Name'
+    },
+    tagsModalValue: {
+        id: 'tagsModalValue',
+        description: 'Value column header',
+        defaultMessage: 'Value'
+    },
+    tagsModalSources: {
+        id: 'tagsModalSources',
+        description: 'Source column header',
+        defaultMessage: 'Tag Sources'
+    },
     allSystems: {
         id: 'allSystems',
         description: 'All systems',

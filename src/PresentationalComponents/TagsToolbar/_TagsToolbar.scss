@@ -20,12 +20,27 @@
 
   .tags-filter-group {
     display: flex;
-    padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--md) var(--pf-global--spacer--md) var(--pf-global--spacer--md);
+    padding: var(--pf-global--spacer--sm) 0 var(--pf-global--spacer--md) var(--pf-global--spacer--md);
 
     .tags-filter-search-icon {
       position: relative;
       @include rem('left', -30px);
       @include rem('top', 10px);
+    }
+  }
+
+  .tags-select-group {
+    display: flex;
+
+    &:hover {
+      background-color: var(--pf-c-select__menu-item--hover--BackgroundColor);
+    }
+
+    .tags-select-badge {
+      position: relative;
+      margin-top: var(--pf-global--spacer--md);
+      @include rem('left', -15px);
+      @include rem('bottom', 8px);
     }
   }
 
