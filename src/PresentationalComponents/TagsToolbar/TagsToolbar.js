@@ -63,8 +63,8 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
         let formattedTags = [];
         try {
             const response = (filter === '' || !filter) ?
-                await API.get(`${INV_BASE_URL}/tags?per_page=${perPage}&page=${page}`) :
-                await API.get(`${INV_BASE_URL}/tags?per_page=${perPage}&page=${page}&search=${filter.toLowerCase()}`);
+                await API.get(`${INV_BASE_URL}/tags?per_page=${perPage}&page=${page}&registered_with=insights`) :
+                await API.get(`${INV_BASE_URL}/tags?per_page=${perPage}&page=${page}&search=${filter.toLowerCase()}&registered_with=insights`);
             setTotalTags(response.data.total);
             formattedTags = formatTags(response.data.results);
             params === null && selectedTags === null && setSelectedTags([]);
