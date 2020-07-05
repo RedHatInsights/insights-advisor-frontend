@@ -2,6 +2,7 @@
 import * as AppActions from '../../AppActions';
 import * as pfReactTable from '@patternfly/react-table';
 import * as reactRouterDom from 'react-router-dom';
+import * as ReactRedux from 'react-redux';
 
 import { DEBOUNCE_DELAY, SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -150,6 +151,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
             { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(10)], key: 'updated' }];
             const { inventoryConnector, mergeWithEntities, INVENTORY_ACTION_TYPES
             } = await insights.loadInventory({
+                ReactRedux,
                 react: React,
                 reactRouterDom,
                 pfReactTable

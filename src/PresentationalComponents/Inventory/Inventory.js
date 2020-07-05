@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import * as pfReactTable from '@patternfly/react-table';
 import * as reactRouterDom from 'react-router-dom';
+import * as ReactRedux from 'react-redux';
 
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -99,7 +100,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
     useEffect(() => {
         (async () => {
             const { inventoryConnector, mergeWithEntities, INVENTORY_ACTION_TYPES } = await insights.loadInventory({
-                react: React, reactRouterDom, pfReactTable
+                ReactRedux, react: React, reactRouterDom, pfReactTable
             });
 
             getRegistry().register({
