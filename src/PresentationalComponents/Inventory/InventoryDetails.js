@@ -2,6 +2,7 @@ import '@redhat-cloud-services/frontend-components-inventory-insights/index.css'
 
 import * as pfReactTable from '@patternfly/react-table';
 import * as reactRouterDom from 'react-router-dom';
+import * as ReactRedux from 'react-redux';
 
 import { Grid, GridItem } from '@patternfly/react-core/dist/js/layouts/Grid/index';
 import React, { useEffect, useState } from 'react';
@@ -23,6 +24,7 @@ const InventoryDetails = ({ entity, match }) => {
 
     const fetchInventoryDetails = async () => {
         const { inventoryConnector, mergeWithDetail, INVENTORY_ACTION_TYPES } = await insights.loadInventory({
+            ReactRedux,
             react: React,
             reactRouterDom,
             pfReactTable
