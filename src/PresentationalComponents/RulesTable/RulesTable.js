@@ -189,7 +189,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 setRows([{
                     cells: [{
                         title: (
-                            <MessageState icon={CheckCircleIcon} iconClass='ansibleCheck' size='md'
+                            <MessageState icon={CheckCircleIcon} iconClass='ansibleCheck'
                                 title={intl.formatMessage(messages.rulesTableNoRuleHitsTitle)} text={filters.reports_shown ?
                                     intl.formatMessage(messages.rulesTableNoRuleHitsEnabledRulesBody) :
                                     intl.formatMessage(messages.rulesTableNoRuleHitsAnyRulesBody)}>
@@ -241,7 +241,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                     fullWidth: true,
                     cells: [{
                         title: <Main className='pf-m-light'>
-                            <Stack gutter="md">
+                            <Stack hasGutter>
                                 {value.hosts_acked_count ? <StackItem>
                                     <BellSlashIcon size='sm' />
                                     &nbsp;{value.hosts_acked_count && !value.impacted_systems_count ?

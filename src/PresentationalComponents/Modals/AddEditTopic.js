@@ -62,7 +62,7 @@ const AddEditTopic = ({ handleModalToggle, intl, isModalOpen, topic, addNotifica
     };
 
     const footer = (
-        <Split gutter='sm' className='split-override'>
+        <Split className='split-override' hasGutter>
             <SplitItem>
                 <Button key='confirm' variant='primary' onClick={ () => editTopic({ type: 'POST/PUT' }) }>
                     {intl.formatMessage(messages.save)}
@@ -92,7 +92,6 @@ const AddEditTopic = ({ handleModalToggle, intl, isModalOpen, topic, addNotifica
         isOpen={isModalOpen}
         onClose={ () => handleModalToggle(false) }
         footer={footer}
-        isFooterLeftAligned
         className='modal-width-override'
     >
         <Form>

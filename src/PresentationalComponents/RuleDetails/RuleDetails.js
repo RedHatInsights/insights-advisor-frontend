@@ -47,9 +47,9 @@ const RuleDetails = ({ children, rule, intl, topics, header, isDetailsPage }) =>
         <ReactMarkdown source={data} escapeHtml={false} />
     </span>;
 
-    return <Split gutter='sm'>
+    return <Split hasGutter>
         <SplitItem>
-            <Stack gutter='sm'>
+            <Stack hasGutter>
                 {header && <StackItem>
                     {header}
                 </StackItem>}

@@ -15,6 +15,7 @@ import { PageHeader } from '@redhat-cloud-services/frontend-components/component
 import PropTypes from 'prop-types';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
+import TagsToolbar from '../../PresentationalComponents/TagsToolbar/TagsToolbar';
 import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
 import TimesCircleIcon from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
@@ -23,7 +24,6 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
-import TagsToolbar from '../../PresentationalComponents/TagsToolbar/TagsToolbar';
 
 const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl, filters }) => {
     useEffect(() => {
@@ -48,7 +48,7 @@ const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl,
             />
             {topicFetchStatus === 'fulfilled' &&
                 <React.Fragment>
-                    <Title size="2xl" className='titleOverride'>
+                    <Title headingLevel='h3' size="2xl" className='titleOverride'>
                         {topic.name}{topic.featured && <Label className='labelOverride'><StarIcon />
                             {intl.formatMessage(messages.featured)}
                         </Label>}

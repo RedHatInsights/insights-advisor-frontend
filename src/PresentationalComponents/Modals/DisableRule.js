@@ -59,7 +59,7 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, hosts, rule, 
     };
 
     return <Modal
-        isSmall
+        variant='small'
         title={intl.formatMessage(messages.disableRule)}
         isOpen={isModalOpen}
         onClose={() => { handleModalToggle(false); setJustificaton(''); }}
@@ -72,7 +72,6 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, hosts, rule, 
                 {intl.formatMessage(messages.cancel)}
             </Button>
         ]}
-        isFooterLeftAligned
     >
         {intl.formatMessage(messages.disableRuleBody)}
         <Form>
