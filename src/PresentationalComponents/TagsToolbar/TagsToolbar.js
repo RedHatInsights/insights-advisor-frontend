@@ -144,7 +144,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
             onToggle={onToggle}
             onSelect={onSelect}
             selections={selectedTags}
-            isExpanded={isOpen}
+            isOpen={isOpen}
             placeholderText={titleFn()}
             ariaLabelledBy='select-group-input'
             isDisabled={tags.length === 0}

@@ -27,10 +27,10 @@ const List = () => {
             <DownloadExecReport />
             {!cveAlert && <Alert
                 className='alertOverride'
-                variant="warning"
+                variant='warning'
                 isInline
                 title={intl.formatMessage(messages.cveAlertTitle)}
-                action={<AlertActionCloseButton onClose={() => {
+                actionClose={<AlertActionCloseButton onClose={() => {
                     setCveAlert(true);
                     sessionStorage.setItem('AdvisorCveAlert', 'true');
                 }} />}

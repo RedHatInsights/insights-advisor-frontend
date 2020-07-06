@@ -30,7 +30,6 @@ import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/compo
 import PropTypes from 'prop-types';
 import RuleDetails from '../RuleDetails/RuleDetails';
 import RuleLabels from '../RuleLabels/RuleLabels';
-import { TableToolbar } from '@redhat-cloud-services/frontend-components/components/TableToolbar';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
@@ -189,7 +188,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 setRows([{
                     cells: [{
                         title: (
-                            <MessageState icon={CheckCircleIcon} iconClass='ansibleCheck' size='md'
+                            <MessageState icon={CheckCircleIcon} iconClass='ansibleCheck'
                                 title={intl.formatMessage(messages.rulesTableNoRuleHitsTitle)} text={filters.reports_shown ?
                                     intl.formatMessage(messages.rulesTableNoRuleHitsEnabledRulesBody) :
                                     intl.formatMessage(messages.rulesTableNoRuleHitsAnyRulesBody)}>
@@ -241,7 +240,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                     fullWidth: true,
                     cells: [{
                         title: <Main className='pf-m-light'>
-                            <Stack gutter="md">
+                            <Stack hasGutter>
                                 {value.hosts_acked_count ? <StackItem>
                                     <BellSlashIcon size='sm' />
                                     &nbsp;{value.hosts_acked_count && !value.impacted_systems_count ?
@@ -379,7 +378,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             value: filters.has_playbook,
             items: FC.has_playbook.values
         }
-    },  {
+    }, {
         label: FC.reboot.title,
         type: FC.reboot.type,
         id: FC.reboot.urlParam,
@@ -471,17 +470,15 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             </Table>}
         {rulesFetchStatus === 'pending' && (<Loading />)}
         {rulesFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.rulesTableFetchRulesError)} />)}
-        <TableToolbar>
-            <Pagination
-                itemCount={results}
-                page={(filters.offset / filters.limit + 1)}
-                perPage={Number(filters.limit)}
-                onSetPage={(event, page) => { onSetPage(page); }}
-                onPerPageSelect={(event, perPage) => { setFilters({ ...filters, limit: perPage, offset: 0 }); }}
-                widgetId={`pagination-options-menu-bottom`}
-                variant={PaginationVariant.bottom}
-            />
-        </TableToolbar>
+        <Pagination
+            itemCount={results}
+            page={(filters.offset / filters.limit + 1)}
+            perPage={Number(filters.limit)}
+            onSetPage={(event, page) => { onSetPage(page); }}
+            onPerPageSelect={(event, perPage) => { setFilters({ ...filters, limit: perPage, offset: 0 }); }}
+            widgetId={`pagination-options-menu-bottom`}
+            variant={PaginationVariant.bottom}
+        />
     </React.Fragment>;
 };
 

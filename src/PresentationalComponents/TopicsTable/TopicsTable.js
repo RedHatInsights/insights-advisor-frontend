@@ -36,7 +36,9 @@ const TopicsTable = ({ topics, topicsFetchStatus, intl }) => {
                 title: <span key={key}><Link key={key} to={`/topics/${value.slug}`}> {value.name} </Link></span>,
                 props: { colSpan: 2 }
             }, {
-                title: <span key={key}> {value.featured && <Label> <StarIcon />&nbsp;{intl.formatMessage(messages.featured)}</Label>} </span>
+                title: <span key={key}> {value.featured &&
+                    <Label color="blue" icon={<StarIcon />}>{intl.formatMessage(messages.featured)}</Label>
+                } </span>
             }, {
                 title: <span className="pf-m-center" key={key}> {value.impacted_systems_count}                </span>
             }]
