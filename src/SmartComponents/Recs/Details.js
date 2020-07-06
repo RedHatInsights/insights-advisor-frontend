@@ -175,7 +175,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                                         toggleIndicator={CaretDownIcon}>Actions
                                     </DropdownToggle>}
                                     isOpen={actionsDropdownOpen}
-                                    items={rule && rule.reports_shown ?
+                                    dropdownItems={rule && rule.reports_shown ?
                                         [<DropdownItem key='link'
                                             onClick={() => { handleModalToggle(true); }}>
                                             {intl.formatMessage(messages.disableRule)}</DropdownItem>]

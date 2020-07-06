@@ -49,7 +49,7 @@ const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl,
             {topicFetchStatus === 'fulfilled' &&
                 <React.Fragment>
                     <Title headingLevel='h3' size="2xl" className='titleOverride'>
-                        {topic.name}{topic.featured && <Label className='labelOverride'><StarIcon />
+                        {topic.name}{topic.featured && <Label color='blue' className='labelOverride' icon={<StarIcon />}>
                             {intl.formatMessage(messages.featured)}
                         </Label>}
                     </Title>

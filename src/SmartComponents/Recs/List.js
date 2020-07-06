@@ -27,7 +27,7 @@ const List = () => {
             <DownloadExecReport />
             {!cveAlert && <Alert
                 className='alertOverride'
-                variant="warning"
+                variant='warning'
                 isInline
                 title={intl.formatMessage(messages.cveAlertTitle)}
                 actionClose={<AlertActionCloseButton onClose={() => {
