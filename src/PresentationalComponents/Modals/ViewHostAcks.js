@@ -73,7 +73,6 @@ const ViewHostAcks = ({ fetchHostAcks, hostAcksFetchStatus, handleModalToggle, i
         title={intl.formatMessage(messages.hostAckModalTitle)}
         isOpen={isModalOpen}
         onClose={() => { unclean && afterFn(); handleModalToggle(false); }}
-        isFooterLeftAligned
     >
         {hostAcksFetchStatus === 'fulfilled' && <Table aria-label="host-ack-table" rows={rows} cells={columns}>
             <TableHeader />

@@ -4,7 +4,7 @@ import './Details.scss';
 import * as AppActions from '../../AppActions';
 
 import { BASE_URL, UI_BASE } from '../../AppConstants';
-import { Card, CardBody, CardFooter, CardHead } from '@patternfly/react-core/dist/js/components/Card';
+import { Card, CardBody, CardFooter, CardHeader } from '@patternfly/react-core/dist/js/components/Card';
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
 
@@ -166,13 +166,13 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                             )}</p>
                         </React.Fragment>}>
                         <Flex>
-                            <FlexItem breakpointMods={[{ modifier: 'align-right' }]}>
+                            <FlexItem align={{ default: 'alignRight' }}>
                                 <Dropdown
                                     onSelect={() => setActionsDropdownOpen(!actionsDropdownOpen)}
                                     position='right'
                                     toggle={<DropdownToggle
                                         onToggle={(actionsDropdownOpen) => setActionsDropdownOpen(actionsDropdownOpen)}
-                                        iconComponent={CaretDownIcon}>Actions
+                                        toggleIndicator={CaretDownIcon}>Actions
                                     </DropdownToggle>}
                                     isOpen={actionsDropdownOpen}
                                     dropdownItems={rule && rule.reports_shown ?
@@ -193,10 +193,10 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                 {ruleFetchStatus === 'fulfilled' &&
                     <React.Fragment>
                         {(rule.hosts_acked_count > 0 || !rule.reports_shown) && <Card className='cardOverride'>
-                            <CardHead><Title headingLevel="h4" size="xl">
+                            <CardHeader><Title headingLevel="h4" size="xl">
                                 <BellSlashIcon size='sm' />&nbsp;{intl.formatMessage(rule.hosts_acked_count > 0 && rule.reports_shown ?
                                     messages.ruleIsDisabledForSystems : messages.ruleIsDisabled)}
-                            </Title></CardHead>
+                            </Title></CardHeader>
                             <CardBody>
                                 {rule.hosts_acked_count > 0 && rule.reports_shown ?
                                     <React.Fragment>
@@ -233,7 +233,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                                     onSortFn={onSortFn} />}
                             {systemFetchStatus === 'pending' && (<Loading />)}
                         </React.Fragment>}
-                        {systemFetchStatus === 'fulfilled' && !rule.reports_shown && <MessageState icon={BellSlashIcon} size='sm'
+                        {systemFetchStatus === 'fulfilled' && !rule.reports_shown && <MessageState icon={BellSlashIcon}
                             title={intl.formatMessage(messages.ruleIsDisabled)}
                             text={intl.formatMessage(messages.ruleIsDisabledBody)} />}
                     </React.Fragment>}

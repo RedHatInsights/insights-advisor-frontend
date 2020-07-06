@@ -50,7 +50,7 @@ const InventoryDetails = ({ entity, match }) => {
             {InventoryDetail && <InventoryDetail hideBack />}
         </PageHeader>
         <Main>
-            <Grid gutter="md">
+            <Grid hasGutter>
                 <GridItem span={12}>
                     {AppInfo && <AppInfo />}
                 </GridItem>
