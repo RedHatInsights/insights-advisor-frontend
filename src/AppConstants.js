@@ -2,9 +2,6 @@
 /* eslint-disable camelcase */
 import { createIntl, createIntlCache } from 'react-intl';
 
-import { Battery } from '@redhat-cloud-services/frontend-components/components/Battery';
-import React from 'react';
-import { Shield } from '@redhat-cloud-services/frontend-components/components/Shield';
 import { intlHelper } from '@redhat-cloud-services/frontend-components-translations';
 import messages from './Messages';
 
@@ -98,18 +95,18 @@ export const TOTAL_RISK_LABEL = {
 export const FILTER_CATEGORIES = {
     total_risk: {
         type: 'checkbox', title: 'total risk', urlParam: 'total_risk', values: [
-            { label: <Battery label={TOTAL_RISK_LABEL[4]} severity={4} />, text: TOTAL_RISK_LABEL[4], value: '4' },
-            { label: <Battery label={TOTAL_RISK_LABEL[3]} severity={3} />, text: TOTAL_RISK_LABEL[3], value: '3' },
-            { label: <Battery label={TOTAL_RISK_LABEL[2]} severity={2} />, text: TOTAL_RISK_LABEL[2], value: '2' },
-            { label: <Battery label={TOTAL_RISK_LABEL[1]} severity={1} />, text: TOTAL_RISK_LABEL[1], value: '1' }
+            { label: TOTAL_RISK_LABEL[4], value: '4' },
+            { label: TOTAL_RISK_LABEL[3], value: '3' },
+            { label: TOTAL_RISK_LABEL[2], value: '2' },
+            { label: TOTAL_RISK_LABEL[1], value: '1' }
         ]
     },
     res_risk: {
         type: 'checkbox', title: 'risk of change', urlParam: 'res_risk', values: [
-            { label: <React.Fragment><Shield hasTooltip={false} impact={4} size={'sm'} title={RISK_OF_CHANGE_LABEL[4]} />{RISK_OF_CHANGE_LABEL[4]}</React.Fragment>, text: RISK_OF_CHANGE_LABEL[4], value: '4' },
-            { label: <React.Fragment><Shield hasTooltip={false} impact={3} size={'sm'} title={RISK_OF_CHANGE_LABEL[3]} />{RISK_OF_CHANGE_LABEL[3]}</React.Fragment>, text: RISK_OF_CHANGE_LABEL[3], value: '3' },
-            { label: <React.Fragment><Shield hasTooltip={false} impact={2} size={'sm'} title={RISK_OF_CHANGE_LABEL[2]} />{RISK_OF_CHANGE_LABEL[2]}</React.Fragment>, text: RISK_OF_CHANGE_LABEL[2], value: '2' },
-            { label: <React.Fragment><Shield hasTooltip={false} impact={1} size={'sm'} title={RISK_OF_CHANGE_LABEL[1]} />{RISK_OF_CHANGE_LABEL[1]}</React.Fragment>, text: RISK_OF_CHANGE_LABEL[1], value: '1' }
+            { label: RISK_OF_CHANGE_LABEL[4], value: '4' },
+            { label: RISK_OF_CHANGE_LABEL[3], value: '3' },
+            { label: RISK_OF_CHANGE_LABEL[2], value: '2' },
+            { label: RISK_OF_CHANGE_LABEL[1], value: '1' }
         ]
     },
     impact: {
