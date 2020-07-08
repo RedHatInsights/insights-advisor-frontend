@@ -65,6 +65,8 @@ tablePage.propTypes = {
 };
 
 export const leadPage = ({ systemsTotal, systems, filters, tags, intl }) => {
+    delete filters.offset;
+    delete filters.limit;
     return <React.Fragment key={`${intl.formatMessage(messages.insightsHeader)}: ${intl.formatMessage(messages.systems)}`}>
         <Text key='sys-count' style={styles.text}>
             {intl.formatMessage(messages.sysTableCount, {
