@@ -1,8 +1,8 @@
 /* eslint camelcase: 0 */
 import * as AppActions from '../../AppActions';
+import * as ReactRedux from 'react-redux';
 import * as pfReactTable from '@patternfly/react-table';
 import * as reactRouterDom from 'react-router-dom';
-import * as ReactRedux from 'react-redux';
 
 import { DEBOUNCE_DELAY, SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -46,7 +46,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     };
 
     const fetchSystemsFn = useCallback(() => {
-        const options = selectedTags.length && ({ tags: selectedTags.join() });
+        const options = selectedTags.length && ({ tags: selectedTags && selectedTags.join() });
         fetchSystems({ ...filterFetchBuilder(filters), ...options });
 
     }, [fetchSystems, filters, selectedTags]);
@@ -233,7 +233,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
                 exportConfig={{
                     onSelect: (_e, fileType) => downloadReport('systems', fileType, urlBuilder(filters, selectedTags)),
                     extraItems: [<li key='download-pd' role="menuitem">
-                        <SystemsPdf filters={{ ...filterFetchBuilder(filters) }} selectedTags={selectedTags.join()}
+                        <SystemsPdf filters={{ ...filterFetchBuilder(filters) }} selectedTags={selectedTags && selectedTags.join()}
                             systemsCount={systems && systems.meta && systems.meta.count} />
                     </li>]
                 }}
