@@ -17,6 +17,7 @@ const intlSettings = { locale };
 export const RULE_FETCH = 'RULE_FETCH';
 export const RULES_FETCH = 'RULES_FETCH';
 export const SYSTEM_FETCH = 'SYSTEM_FETCH';
+export const SYSTEMS_DETAIL_FETCH = 'SYSTEMS_DETAIL_FETCH';
 export const SYSTEMTYPE_FETCH = 'SYSTEMTYPE_FETCH';
 export const STATS_RULES_FETCH = 'STATS_RULES_FETCH';
 export const STATS_SYSTEMS_FETCH = 'STATS_SYSTEMS_FETCH';
@@ -34,6 +35,7 @@ export const FILTERS_SYSTEMS_SET = 'FILTERS_SYSTEMS_SET';
 export const SELECTED_TAGS_SET = 'SELECTED_TAGS_SET';
 export const RULE_SET = 'RULE_SET';
 export const SYSTEM_SET = 'SYSTEM_SET';
+export const SYSTEMS_DETAIL_SET = 'SYSTEMS_DETAIL_SET';
 
 export const BASE_URL = '/api/insights/v1';
 export const INV_BASE_URL = '/api/inventory/v1';

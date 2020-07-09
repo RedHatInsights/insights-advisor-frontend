@@ -38,6 +38,10 @@ export const fetchSystem = (ruleId, options) => ({
     type: ActionTypes.SYSTEM_FETCH,
     payload: fetchData(`${ActionTypes.RULES_FETCH_URL}${encodeURI(ruleId)}/systems`, {}, options)
 });
+export const fetchSystemsDetail = (ruleId, options) => ({
+    type: ActionTypes.SYSTEMS_DETAIL_FETCH,
+    payload: fetchData(`${ActionTypes.RULES_FETCH_URL}${encodeURI(ruleId)}/systems_detail`, {}, options)
+});
 export const setFilters = (filters) => ({
     type: ActionTypes.FILTERS_SET,
     payload: filters
@@ -85,4 +89,8 @@ export const setRule = (rule) => ({
 export const setSystem = (system) => ({
     type: ActionTypes.SYSTEM_SET,
     payload: system
+});
+export const setSystemsDetail = (systemsDetail) => ({
+    type: ActionTypes.SYSTEMS_DETAIL_SET,
+    payload: systemsDetail
 });

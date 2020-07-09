@@ -38,8 +38,9 @@ import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
 const TagsToolbar = lazy(() => import('../../PresentationalComponents/TagsToolbar/TagsToolbar'));
-const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchRule, ruleFetchStatus, rule, systemFetchStatus, system, intl,
-    topics, ruleAck, hostAcks, fetchHostAcks, setSystem, setRule, selectedTags }) => {
+// eslint-disable-next-line max-len, no-unused-vars
+const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchRule, ruleFetchStatus, rule, intl, fetchSystemsDetail, systemsDetail, setSystemsDetail, systemsDetailFetchStatus,
+    topics, ruleAck, hostAcks, fetchHostAcks, setRule, selectedTags }) => {
     const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [host, setHost] = useState(undefined);
@@ -47,9 +48,9 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     const [filters, setFilters] = useState({ sort: 'display_name' });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const fetchRulefn = (newSort, rule = true, system = true) => {
+    const fetchRulefn = (newSort, rule = true, systemsDetail = true) => {
         const options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags.join() });
-        system && fetchSystem(match.params.id, { ...options, ...filters, ...newSort });
+        systemsDetail && fetchSystemsDetail(match.params.id, { ...options, ...filters, ...newSort });
         rule && fetchRule({ rule_id: match.params.id, ...options });
     };
 
@@ -90,7 +91,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
             if (selectedTags.length > 0) {
                 fetchRulefn();
             } else {
-                setSystem({ host_ids: response.data.host_ids });
+                setSystemsDetail({ host_ids: response.data.map(item => item.system_uuid) });
                 setRule({ ...rule, hosts_acked_count: 0 });
             }
         } catch (error) {
@@ -226,14 +227,15 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                             <Title className='titleOverride' headingLevel='h3' size='2xl'>
                                 {intl.formatMessage(messages.affectedSystems)}
                             </Title>
-                            {systemFetchStatus === 'fulfilled' &&
+                            {systemsDetailFetchStatus === 'fulfilled' &&
                                 <Inventory
                                     tableProps={{ canSelectAll: false, actionResolver }}
-                                    items={system.host_ids} rule={rule} afterDisableFn={afterDisableFn} filters={filters}
+                                    // eslint-disable-next-line max-len
+                                    items={systemsDetail.data.map(items => items.system_uuid)} rule={rule} afterDisableFn={afterDisableFn} filters={filters}
                                     onSortFn={onSortFn} />}
-                            {systemFetchStatus === 'pending' && (<Loading />)}
+                            {systemsDetailFetchStatus === 'pending' && (<Loading />)}
                         </React.Fragment>}
-                        {systemFetchStatus === 'fulfilled' && !rule.reports_shown && <MessageState icon={BellSlashIcon}
+                        {systemsDetailFetchStatus === 'fulfilled' && !rule.reports_shown && <MessageState icon={BellSlashIcon}
                             title={intl.formatMessage(messages.ruleIsDisabled)}
                             text={intl.formatMessage(messages.ruleIsDisabledBody)} />}
                     </React.Fragment>}
@@ -249,9 +251,9 @@ OverviewDetails.propTypes = {
     fetchRule: PropTypes.func,
     ruleFetchStatus: PropTypes.string,
     rule: PropTypes.object,
-    fetchSystem: PropTypes.func,
-    systemFetchStatus: PropTypes.string,
-    system: PropTypes.object,
+    fetchSystemsDetail: PropTypes.func,
+    systemsDetailFetchStatus: PropTypes.string,
+    systemsDetail: PropTypes.object,
     addNotification: PropTypes.func,
     intl: PropTypes.any,
     fetchTopics: PropTypes.func,
@@ -261,15 +263,15 @@ OverviewDetails.propTypes = {
     fetchRuleAck: PropTypes.func,
     fetchHostAcks: PropTypes.func,
     setRule: PropTypes.func,
-    setSystem: PropTypes.func,
+    setSystemsDetail: PropTypes.func,
     selectedTags: PropTypes.array
 };
 
 const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
     rule: AdvisorStore.rule,
     ruleFetchStatus: AdvisorStore.ruleFetchStatus,
-    system: AdvisorStore.system,
-    systemFetchStatus: AdvisorStore.systemFetchStatus,
+    systemsDetail: AdvisorStore.systemsDetail,
+    systemsDetailFetchStatus: AdvisorStore.systemsDetailFetchStatus,
     topics: AdvisorStore.topics,
     ruleAck: AdvisorStore.ruleAck,
     hostAcks: AdvisorStore.hostAcks,
@@ -279,13 +281,13 @@ const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
 
 const mapDispatchToProps = dispatch => ({
     fetchRule: (url) => dispatch(AppActions.fetchRule(url)),
-    fetchSystem: (rule_id, options) => dispatch(AppActions.fetchSystem(rule_id, options)),
+    fetchSystemsDetail: (rule_id, options) => dispatch(AppActions.fetchSystemsDetail(rule_id, options)),
     addNotification: data => dispatch(addNotification(data)),
     fetchTopics: () => dispatch(AppActions.fetchTopics()),
     fetchRuleAck: data => dispatch(AppActions.fetchRuleAck(data)),
     fetchHostAcks: data => dispatch(AppActions.fetchHostAcks(data)),
     setRule: data => dispatch(AppActions.setRule(data)),
-    setSystem: data => dispatch(AppActions.setSystem(data))
+    setSystemsDetail: data => dispatch(AppActions.setSystemsDetail(data))
 });
 
 export default injectIntl(routerParams(connect(
