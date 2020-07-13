@@ -45,7 +45,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     };
 
     const fetchSystemsFn = useCallback(() => {
-        const options = selectedTags.length && ({ tags: selectedTags.join() });
+        const options = selectedTags.length && ({ tags: selectedTags && selectedTags.join() });
         fetchSystems({ ...filterFetchBuilder(filters), ...options });
 
     }, [fetchSystems, filters, selectedTags]);
@@ -231,7 +231,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
                 exportConfig={{
                     onSelect: (_e, fileType) => downloadReport('systems', fileType, urlBuilder(filters, selectedTags)),
                     extraItems: [<li key='download-pd' role="menuitem">
-                        <SystemsPdf filters={{ ...filterFetchBuilder(filters) }} selectedTags={selectedTags.join()}
+                        <SystemsPdf filters={{ ...filterFetchBuilder(filters) }} selectedTags={selectedTags && selectedTags.join()}
                             systemsCount={systems && systems.meta && systems.meta.count} />
                     </li>]
                 }}
