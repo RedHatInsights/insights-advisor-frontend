@@ -167,7 +167,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
                                 selectedTags.find(selection => selection === tag.id)
                             }>
                                 <Tooltip content={`${tag.id}`} position={TooltipPosition.right}>
-                                    <span>{`${decodeURIComponent(tag.value)}`}</span>
+                                    <span>{`${decodeURIComponent(tag.key + '=' + tag.value)}`}</span>
                                 </Tooltip>
                             </SelectOption>
                             <Badge className='tags-select-badge'> {tag.count} </Badge>
