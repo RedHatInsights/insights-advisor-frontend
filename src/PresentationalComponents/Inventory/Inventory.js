@@ -1,7 +1,7 @@
+import * as ReactRedux from 'react-redux';
 /* eslint-disable camelcase */
 import * as pfReactTable from '@patternfly/react-table';
 import * as reactRouterDom from 'react-router-dom';
-import * as ReactRedux from 'react-redux';
 
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -141,7 +141,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
             actionsConfig={{
                 actions: [<RemediationButton
                     key='remediation-button'
-                    isDisabled={selected.length === 0}
+                    isDisabled={selected.length === 0 || rule.playbook_count === 0}
                     dataProvider={remediationDataProvider}
                     onRemediationCreated={(result) => onRemediationCreated(result)}>
                     <AnsibeTowerIcon size='sm' color={global_BackgroundColor_100.value} />
