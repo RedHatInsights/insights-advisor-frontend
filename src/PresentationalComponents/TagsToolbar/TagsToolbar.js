@@ -166,7 +166,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
                             <SelectOption value={tag.id} isChecked={
                                 selectedTags.find(selection => selection === tag.id)
                             }>
-                                <Tooltip content={`${tag.id}`} position={TooltipPosition.right}>
+                                <Tooltip content={`${decodeURIComponent(tag.id)}`} position={TooltipPosition.right}>
                                     <span>{`${decodeURIComponent(tag.key + '=' + tag.value)}`}</span>
                                 </Tooltip>
                             </SelectOption>
