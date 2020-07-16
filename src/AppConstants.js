@@ -4,6 +4,7 @@ import { createIntl, createIntlCache } from 'react-intl';
 
 import { intlHelper } from '@redhat-cloud-services/frontend-components-translations';
 import messages from './Messages';
+import { strong } from './Utilities/intlHelper';
 
 const cache = createIntlCache();
 const locale = navigator.language;
@@ -63,10 +64,18 @@ export const SEVERITY_MAP = {
     'low-risk': 1
 };
 export const RISK_OF_CHANGE_DESC = {
-    1: intlHelper(intl.formatMessage(messages.riskOfChangeTextOne), intlSettings),
-    2: intlHelper(intl.formatMessage(messages.riskOfChangeTextTwo), intlSettings),
-    3: intlHelper(intl.formatMessage(messages.riskOfChangeTextThree), intlSettings),
-    4: intlHelper(intl.formatMessage(messages.riskOfChangeTextFour), intlSettings)
+    1: intlHelper(intl.formatMessage(
+        messages.riskOfChangeTextOne, { strong: str => strong(str) }
+    ), intlSettings),
+    2: intlHelper(intl.formatMessage(
+        messages.riskOfChangeTextTwo, { strong: str => strong(str) }
+    ), intlSettings),
+    3: intlHelper(intl.formatMessage(
+        messages.riskOfChangeTextThree, { strong: str => strong(str) }
+    ), intlSettings),
+    4: intlHelper(intl.formatMessage(
+        messages.riskOfChangeTextFour, { strong: str => strong(str) }
+    ), intlSettings)
 };
 export const IMPACT_LABEL = {
     1: intlHelper(intl.formatMessage(messages.low), intlSettings),
@@ -74,11 +83,23 @@ export const IMPACT_LABEL = {
     3: intlHelper(intl.formatMessage(messages.high), intlSettings),
     4: intlHelper(intl.formatMessage(messages.critical), intlSettings)
 };
+export const IMPACT_LABEL_LOWER = {
+    1: intlHelper(intl.formatMessage(messages.low).toLowerCase(), intlSettings),
+    2: intlHelper(intl.formatMessage(messages.medium).toLowerCase(), intlSettings),
+    3: intlHelper(intl.formatMessage(messages.high).toLowerCase(), intlSettings),
+    4: intlHelper(intl.formatMessage(messages.critical).toLowerCase(), intlSettings)
+};
 export const LIKELIHOOD_LABEL = {
     1: intlHelper(intl.formatMessage(messages.low), intlSettings),
     2: intlHelper(intl.formatMessage(messages.medium), intlSettings),
     3: intlHelper(intl.formatMessage(messages.high), intlSettings),
     4: intlHelper(intl.formatMessage(messages.critical), intlSettings)
+};
+export const LIKELIHOOD_LABEL_LOWER = {
+    1: intlHelper(intl.formatMessage(messages.low).toLowerCase(), intlSettings),
+    2: intlHelper(intl.formatMessage(messages.medium).toLowerCase(), intlSettings),
+    3: intlHelper(intl.formatMessage(messages.high).toLowerCase(), intlSettings),
+    4: intlHelper(intl.formatMessage(messages.critical).toLowerCase(), intlSettings)
 };
 export const RISK_OF_CHANGE_LABEL = {
     1: intlHelper(intl.formatMessage(messages.veryLow), intlSettings),
@@ -91,6 +112,12 @@ export const TOTAL_RISK_LABEL = {
     2: intlHelper(intl.formatMessage(messages.moderate), intlSettings),
     3: intlHelper(intl.formatMessage(messages.important), intlSettings),
     4: intlHelper(intl.formatMessage(messages.critical), intlSettings)
+};
+export const TOTAL_RISK_LABEL_LOWER = {
+    1: intlHelper(intl.formatMessage(messages.low).toLowerCase(), intlSettings),
+    2: intlHelper(intl.formatMessage(messages.moderate).toLowerCase(), intlSettings),
+    3: intlHelper(intl.formatMessage(messages.important).toLowerCase(), intlSettings),
+    4: intlHelper(intl.formatMessage(messages.critical).toLowerCase(), intlSettings)
 };
 export const FILTER_CATEGORIES = {
     total_risk: {

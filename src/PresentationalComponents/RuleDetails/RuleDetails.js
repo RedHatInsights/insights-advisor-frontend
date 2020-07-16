@@ -8,32 +8,24 @@ import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/i
 import { Text, TextVariants } from '@patternfly/react-core/dist/js/components/Text/Text';
 import { compact, intersection } from 'lodash';
 
-import { Battery } from '@redhat-cloud-services/frontend-components/components/Battery';
 import { Card } from '@patternfly/react-core/dist/js/components/Card/Card';
 import { CardBody } from '@patternfly/react-core/dist/js/components/Card/CardBody';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
+import { InsightsLabel } from '@redhat-cloud-services/frontend-components/components/esm/InsightsLabel';
 import { Link } from 'react-router-dom';
+import PowerOffIcon from '@patternfly/react-icons/dist/js/icons/power-off-icon';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactMarkdown from 'react-markdown/with-html';
-import { Reboot } from '@redhat-cloud-services/frontend-components/components/Reboot';
 import RuleRating from '../RuleRating/RuleRating';
-import { Shield } from '@redhat-cloud-services/frontend-components/components/Shield';
+import { SeverityLine } from '@redhat-cloud-services/frontend-components-charts/dist/esm/SeverityLine';
 import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
 import barDividedList from '../../Utilities/BarDividedList';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
+import { strong } from '../../Utilities/intlHelper';
 
-const RuleDetails = ({ children, rule, intl, topics, header, isDetailsPage }) => {
-    const ruleResolutionRisk = (rule) => {
-        const resolution = rule.resolution_set.find(resolution => resolution.system_type ===
-            AppConstants.SYSTEM_TYPES.rhel ||
-            AppConstants.SYSTEM_TYPES.ocp);
-        return resolution ? resolution.resolution_risk.risk : undefined;
-    };
-
-    const resolutionRisk = ruleResolutionRisk(rule);
-
+const RuleDetails = ({ children, rule, resolutionRisk, intl, topics, header, isDetailsPage }) => {
     const topicLinks = () => topics && compact(topics.map((topic) =>
         intersection(topic.tag.split(' '), rule.tags.split(' ')).length &&
         <React.Fragment key={topic.slug}>
@@ -93,48 +85,90 @@ const RuleDetails = ({ children, rule, intl, topics, header, isDetailsPage }) =>
                     <Stack>
                         <StackItem>{intl.formatMessage(messages.totalRisk)}</StackItem>
                         <StackItem className='pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm'>
-                            <span className='pf-u-display-inline-flex'>
-                                <Battery
-                                    label=''
-                                    severity={rule.total_risk} />
-                                <span className={`batteryTextMarginOverride pf-u-pl-sm ins-sev-clr-${rule.total_risk}`}>
-                                    {AppConstants.TOTAL_RISK_LABEL[rule.total_risk] || intl.formatMessage(messages.undefined)}
-                                </span>
-                            </span>
-                        </StackItem>
-                        <StackItem>
-                            <TextContent>
-                                <Text component={TextVariants.small}>{intl.formatMessage(messages.rulesDetailsTotalriskBody, {
-                                    likelihood: AppConstants.LIKELIHOOD_LABEL[rule.likelihood] || intl.formatMessage(messages.undefined),
-                                    impact: AppConstants.IMPACT_LABEL[rule.impact.impact] || intl.formatMessage(messages.undefined),
-                                    strong(str) { return <strong>{str}</strong>; }
-                                })}</Text>
-                            </TextContent>
+                            <Split hasGutter>
+                                <SplitItem>
+                                    <InsightsLabel value={rule.total_risk}/>
+                                </SplitItem>
+                                <SplitItem isFilled/>
+                                <SplitItem>
+                                    <Stack hasGutter className='description-stack-override'>
+                                        <StackItem>
+                                            <TextContent>
+                                                <Text component={TextVariants.p}>{intl.formatMessage(messages.rulesDetailsTotalriskBody, {
+                                                    risk: AppConstants.TOTAL_RISK_LABEL_LOWER[rule.total_risk] || intl.formatMessage(messages.undefined),
+                                                    strong: str => strong(str)
+                                                })}</Text>
+                                            </TextContent>
+                                        </StackItem>
+                                        <Stack>
+                                            <StackItem>
+                                                <SeverityLine
+                                                    className='severity-line'
+                                                    title={intl.formatMessage(messages.likelihoodLevel, {
+                                                        level: AppConstants.LIKELIHOOD_LABEL[rule.likelihood]
+                                                    })}
+                                                    value={rule.likelihood}
+                                                    tooltipMessage={intl.formatMessage(messages.likelihoodDescription, {
+                                                        level: AppConstants.LIKELIHOOD_LABEL_LOWER[rule.likelihood]
+                                                    })}
+                                                />
+                                            </StackItem>
+                                            <StackItem>
+                                                <SeverityLine
+                                                    className='severity-line'
+                                                    title={intl.formatMessage(messages.impactLevel, {
+                                                        level: AppConstants.IMPACT_LABEL[rule.impact.impact]
+                                                    })}
+                                                    value={rule.impact.impact}
+                                                    tooltipMessage={intl.formatMessage(messages.impactDescription, {
+                                                        level: AppConstants.IMPACT_LABEL_LOWER[rule.impact.impact]
+                                                    })}
+                                                />
+                                            </StackItem>
+                                        </Stack>
+                                    </Stack>
+                                </SplitItem>
+                            </Split>
                         </StackItem>
                         <hr></hr>
                         <StackItem>{intl.formatMessage(messages.riskofchange)}</StackItem>
-                        <StackItem className='pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm'>
-                            <span className='pf-u-display-inline-flex'>
-                                <Shield
-                                    hasTooltip={false}
-                                    impact={resolutionRisk}
-                                    size={'md'}
-                                    title={AppConstants.RISK_OF_CHANGE_LABEL[resolutionRisk] || intl.formatMessage(messages.undefined)} />
-                                <span className={`label pf-u-pl-sm ins-sev-clr-${resolutionRisk}`}>
-                                    {AppConstants.RISK_OF_CHANGE_LABEL[resolutionRisk] || intl.formatMessage(messages.undefined)}
-                                </span>
-                            </span>
-                        </StackItem>
-                        <StackItem>
-                            <TextContent>
-                                <Text component={TextVariants.small}>
-                                    {AppConstants.RISK_OF_CHANGE_DESC[resolutionRisk]}
-                                </Text>
-                            </TextContent>
+                        <StackItem className={`pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm`}>
+                            <Split hasGutter>
+                                <SplitItem>
+                                    <InsightsLabel text={AppConstants.RISK_OF_CHANGE_LABEL[resolutionRisk]} value={resolutionRisk} hideIcon/>
+                                </SplitItem>
+                                <SplitItem isFilled/>
+                                <SplitItem>
+                                    <Stack hasGutter className='description-stack-override'>
+                                        <StackItem>
+                                            <TextContent>
+                                                <Text component={TextVariants.p}>
+                                                    {resolutionRisk ?
+                                                        AppConstants.RISK_OF_CHANGE_DESC[resolutionRisk] :
+                                                        intl.formatMessage(messages.undefined)}
+                                                </Text>
+                                            </TextContent>
+                                        </StackItem>
+                                        <StackItem>
+                                            <span className='system-reboot-message'>
+                                                <PowerOffIcon className={rule.reboot_required ? 'reboot-required-icon' : 'no-reboot-required-icon'}/>
+                                                <TextContent className='system-reboot-message__content'>
+                                                    <Text component={TextVariants.p}>
+                                                        {intl.formatMessage(messages.systemReboot, {
+                                                            strong: str => strong(str), status: rule.reboot_required ?
+                                                                intl.formatMessage(messages.is) :
+                                                                intl.formatMessage(messages.isNot)
+                                                        })}
+                                                    </Text>
+                                                </TextContent>
+                                            </span>
+                                        </StackItem>
+                                    </Stack>
+                                </SplitItem>
+                            </Split>
                         </StackItem>
                     </Stack>
                 </StackItem>
-                {rule.reboot_required && <StackItem><Reboot red /> </StackItem>}
             </Stack>
         </SplitItem>
     </Split>;
@@ -143,6 +177,7 @@ const RuleDetails = ({ children, rule, intl, topics, header, isDetailsPage }) =>
 RuleDetails.propTypes = {
     children: PropTypes.any,
     rule: PropTypes.object,
+    resolutionRisk: PropTypes.number,
     intl: PropTypes.any,
     topics: PropTypes.array,
     header: PropTypes.any,

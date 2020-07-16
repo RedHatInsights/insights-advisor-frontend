@@ -295,9 +295,8 @@ export default defineMessages({
     rulesDetailsTotalriskBody: {
         id: 'rulesdetails.totalriskbody',
         description: 'Text explaining the total risk value of this recommendation',
-        defaultMessage: `The <strong>likelihood</strong> that this will be a problem is
-        {likelihood}. The <strong>impact</strong> of the problem would be
-        {impact} if it occurred.`
+        defaultMessage: `The total risk of this remediation is <strong>{risk}</strong>,
+                        based on the combination of likelihood and impact to remediate.`
     },
     undefined: {
         id: 'undefined',
@@ -706,6 +705,16 @@ export default defineMessages({
         description: 'Filter title',
         defaultMessage: 'Impact'
     },
+    impactLevel: {
+        id: 'impactLevel',
+        description: 'Describes the impact level of a rule',
+        defaultMessage: '{level} impact'
+    },
+    impactDescription: {
+        id: 'impactDescription',
+        description: 'Used in the SeverityLine tooltip to describe the impact of a rule',
+        defaultMessage: 'The impact of the problem would be {level} if it occurred.'
+    },
     category: {
         id: 'category',
         description: 'Filter title',
@@ -716,25 +725,35 @@ export default defineMessages({
         description: 'Filter title',
         defaultMessage: 'Likelihood'
     },
+    likelihoodLevel: {
+        id: 'likelihoodLevel',
+        description: 'Describes the likelihood of a rule',
+        defaultMessage: '{level} likelihood'
+    },
+    likelihoodDescription: {
+        id: 'likelihoodDescription',
+        description: 'Used in the SeverityLine tooltip to describe the likelihood of a rule',
+        defaultMessage: 'The likelihood that this will be a problem is {level}.'
+    },
     riskOfChangeTextOne: {
         id: 'riskOfChangeTextOne',
         description: 'Risk of change text explaining a value one',
-        defaultMessage: 'The change takes very little time to implement and there is minimal impact to system operations.'
+        defaultMessage: 'The risk of change is <strong>very low</strong>, beacause the change takes very little time to implement and there is minimal impact to system operations.'
     },
     riskOfChangeTextTwo: {
         id: 'riskOfChangeTextTwo',
         description: 'Risk of change text explaining a value two',
-        defaultMessage: 'Typically, these changes do not require that a system be taken offline.'
+        defaultMessage: 'The risk of change is <strong>low</strong>, because the change does not require that a system be taken offline.'
     },
     riskOfChangeTextThree: {
         id: 'riskOfChangeTextThree',
         description: 'Risk of change text explaining a value three',
-        defaultMessage: 'These will likely require an outage window.'
+        defaultMessage: 'The risk of change is <strong>moderate</strong>, because the change will likely require an outage window.'
     },
     riskOfChangeTextFour: {
         id: 'riskOfChangeTextFour',
         description: 'Risk of change text explaining a value four',
-        defaultMessage: `The change takes a significant amount of time and planning to execute, and will impact the system and business operations of the host due to downtime.`
+        defaultMessage: `The risk of change is <strong>high</strong>, because the change takes a significant amount of time and planning to execute, and will impact the system and business operations of the host due to downtime.`
     },
     no: {
         id: 'no',
@@ -761,6 +780,16 @@ export default defineMessages({
         description: 'None',
         defaultMessage: `None`
     },
+    is: {
+        id: 'is',
+        description: 'is',
+        defaultMessage: 'is'
+    },
+    isNot: {
+        id: 'is not',
+        description: 'is not',
+        defaultMessage: 'is not'
+    },
     dateDisabled: {
         id: 'dateDisabled',
         description: 'Date disabled',
@@ -775,6 +804,11 @@ export default defineMessages({
         id: 'systemName',
         description: 'System name',
         defaultMessage: 'System name'
+    },
+    systemReboot: {
+        id: 'systemReboot',
+        description: 'Says remediation does requires system reboot',
+        defaultMessage: 'System reboot <strong>{ status }</strong> required.'
     },
     enable: {
         id: 'enable',

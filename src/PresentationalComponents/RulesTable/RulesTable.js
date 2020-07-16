@@ -8,20 +8,20 @@ import { DEBOUNCE_DELAY, FILTER_CATEGORIES as FC } from '../../AppConstants';
 import { Pagination, PaginationVariant } from '@patternfly/react-core/dist/js/components/Pagination/Pagination';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/index';
-import { Table, TableBody, TableHeader, cellWidth, sortable } from '@patternfly/react-table';
+import { Table, TableBody, TableHeader, cellWidth, fitContent, sortable } from '@patternfly/react-table';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
 import { filterFetchBuilder, paramParser, pruneFilters, urlBuilder } from '../Common/Tables';
 
 import API from '../../Utilities/Api';
 import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
 import { BASE_URL } from '../../AppConstants';
-import { Battery } from '@redhat-cloud-services/frontend-components/components/Battery';
 import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/components/DateFormat';
 import DisableRule from '../Modals/DisableRule';
 import Failed from '../../PresentationalComponents/Loading/Failed';
+import { InsightsLabel } from '@redhat-cloud-services/frontend-components/components/esm/InsightsLabel';
 import { Link } from 'react-router-dom';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
@@ -38,16 +38,18 @@ import downloadReport from '../Common/DownloadHelper';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import { strong } from '../../Utilities/intlHelper';
 
 const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, intl, selectedTags }) => {
     const [cols] = useState([
-        { title: intl.formatMessage(messages.name), transforms: [sortable] },
+        { title: intl.formatMessage(messages.name), transforms: [sortable, cellWidth(30)] },
         { title: intl.formatMessage(messages.added), transforms: [sortable, cellWidth(15)] },
         { title: intl.formatMessage(messages.totalRisk), transforms: [sortable, cellWidth(15)] },
-        { title: intl.formatMessage(messages.systems), transforms: [sortable] },
+        { title: intl.formatMessage(messages.riskofchange), transforms: [sortable, cellWidth(15)] },
+        { title: intl.formatMessage(messages.systems), transforms: [sortable, cellWidth(15)] },
         {
             title: <React.Fragment><AnsibeTowerIcon size='md' /> {intl.formatMessage(messages.ansible)}</React.Fragment>,
-            transforms: [sortable],
+            transforms: [sortable, cellWidth(15), fitContent],
             dataLabel: intl.formatMessage(messages.ansible)
         }
     ]);
@@ -62,6 +64,13 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
     const results = rules.meta ? rules.meta.count : 0;
     const sortIndices = { 1: 'description', 2: 'publish_date', 3: 'total_risk', 4: 'impacted_count', 5: 'playbook_count' };
+
+    const ruleResolutionRisk = (rule) => {
+        const resolution = rule.resolution_set.find(resolution => resolution.system_type ===
+            AppConstants.SYSTEM_TYPES.rhel ||
+            AppConstants.SYSTEM_TYPES.ocp);
+        return resolution ? resolution.resolution_risk.risk : undefined;
+    };
 
     const fetchRulesFn = useCallback(() => {
         urlBuilder(filters, selectedTags);
@@ -197,7 +206,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                                     {intl.formatMessage(messages.rulesTableNoRuleHitsAddDisabledButton)}
                                 </Button>}
                             </MessageState>),
-                        props: { colSpan: 5 }
+                        props: { colSpan: 6 }
                     }]
                 }]
                 );
@@ -216,15 +225,18 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                     }, {
                         title: <div className="pf-m-center" key={key}>
                             <Tooltip key={key} position={TooltipPosition.bottom} content={intl.formatMessage(messages.rulesDetailsTotalriskBody, {
-                                likelihood: AppConstants.LIKELIHOOD_LABEL[value.likelihood] || intl.formatMessage(messages.undefined),
-                                impact: AppConstants.IMPACT_LABEL[value.impact.impact] || intl.formatMessage(messages.undefined),
-                                strong(str) { return <strong>{str}</strong>; }
+                                risk: AppConstants.TOTAL_RISK_LABEL_LOWER[value.total_risk] || intl.formatMessage(messages.undefined),
+                                strong: str => strong(str)
                             })}>
-                                <Battery
-                                    label={AppConstants.TOTAL_RISK_LABEL[value.total_risk] || intl.formatMessage(messages.undefined)}
-                                    severity={value.total_risk}
-                                />
+                                <InsightsLabel value={value.total_risk}/>
                             </Tooltip>
+                        </div>
+                    }, {
+                        title: <div className="pf-m-center" key={key}>
+                            <InsightsLabel
+                                text={AppConstants.RISK_OF_CHANGE_LABEL[ruleResolutionRisk(value)]}
+                                value={ruleResolutionRisk(value)} hideIcon/>
+                            <div></div>
                         </div>
                     }, {
                         title: <div key={key}> {value.reports_shown ?
@@ -252,7 +264,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                                     </Button>
                                 </StackItem>
                                     : <React.Fragment></React.Fragment>}
-                                <RuleDetails rule={value} />
+                                <RuleDetails rule={value} resolutionRisk={ruleResolutionRisk(value)} />
                             </Stack>
                         </Main>
                     }]
