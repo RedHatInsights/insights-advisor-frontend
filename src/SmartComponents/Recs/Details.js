@@ -3,7 +3,7 @@ import './Details.scss';
 
 import * as AppActions from '../../AppActions';
 
-import { BASE_URL, UI_BASE } from '../../AppConstants';
+import { BASE_URL, SYSTEM_TYPES, UI_BASE } from '../../AppConstants';
 import { Card, CardBody, CardFooter, CardHeader } from '@patternfly/react-core/dist/js/components/Card';
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
@@ -51,6 +51,11 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         const options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags.join() });
         system && fetchSystem(match.params.id, { ...options, ...filters, ...newSort });
         rule && fetchRule({ rule_id: match.params.id, ...options });
+    };
+
+    const ruleResolutionRisk = (rule) => {
+        const resolution = rule.resolution_set.find(resolution => resolution.system_type === SYSTEM_TYPES.rhel || SYSTEM_TYPES.ocp);
+        return resolution ? resolution.resolution_risk.risk : undefined;
     };
 
     const handleModalToggle = (disableRuleModalOpen, host = undefined) => {
@@ -158,7 +163,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                         match={match} />
                 </PageHeader>
                 <Main className='pf-m-light pf-u-pt-sm'>
-                    <RuleDetails isDetailsPage rule={rule} topics={topics} header={
+                    <RuleDetails resolutionRisk={ruleResolutionRisk(rule)} isDetailsPage rule={rule} topics={topics} header={
                         <React.Fragment>
                             <PageHeaderTitle title={<React.Fragment><RuleLabels rule={rule} />{rule.description}</React.Fragment>} />
                             <p>{intl.formatMessage(
