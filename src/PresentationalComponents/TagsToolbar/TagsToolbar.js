@@ -149,7 +149,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
             ariaLabelledBy='select-group-input'
             isDisabled={tags.length === 0}
         >
-            <InputGroup className='tags-filter-group'>
+            <InputGroup className='tags-filter-group' value=''>
                 <TextInput
                     aria-label='tags-filter-input'
                     placeholder={intl.formatMessage(messages.filterTagsInToolbar)}
@@ -158,9 +158,9 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
                 />
                 <SearchIcon className='tags-filter-search-icon'/>
             </InputGroup>
-            <Divider key="inline-filter-divider" />
+            <Divider key="inline-filter-divider" value=''/>
             {tags.map((group, index) =>
-                <SelectGroup key={`group${index}`} label={group.source}>
+                <SelectGroup key={`group${index}`} label={group.source} value=''>
                     {group.data.map((tag, tagIndex) =>
                         <span key={tagIndex} className='tags-select-group'>
                             <SelectOption value={tag.id} isChecked={
@@ -175,7 +175,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
                     )}
                 </SelectGroup>
             )}
-            <Button key='manage all tags'
+            <Button key='manage all tags' value=''
                 variant='link' onClick={() => setManageTagsModalOpen(true)}>
                 {(showMoreCount > 0 && tagsCount >= showMoreCount) ?
                     intl.formatMessage(
