@@ -80,7 +80,9 @@ const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => 
             {topActiveRec.data.map((rule, key) =>
                 <Panel key={key} description={rulesDesc(rule)}>
                     <PanelItem title={intl.formatMessage(messages.systemsExposed)}>{`${rule.impacted_systems_count}`}</PanelItem>
-                    <PanelItem title={intl.formatMessage(messages.totalRisk)}><Battery variant={batteryMap[rule.total_risk]} /></PanelItem>
+                    <PanelItem title={intl.formatMessage(messages.totalRisk)}>
+                        <Battery variant={batteryMap[rule.total_risk]} text={TOTAL_RISK_LABEL[rule.total_risk]}/>
+                    </PanelItem>
                 </Panel>)}
         </Section>
     </React.Fragment>;
