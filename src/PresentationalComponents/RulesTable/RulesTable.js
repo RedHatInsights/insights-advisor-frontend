@@ -63,7 +63,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const [viewSystemsModalRule, setViewSystemsModalRule] = useState({});
     const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
     const results = rules.meta ? rules.meta.count : 0;
-    const sortIndices = { 1: 'description', 2: 'publish_date', 3: 'total_risk', 4: 'impacted_count', 5: 'playbook_count' };
+    const sortIndices = { 1: 'description', 2: 'publish_date', 3: 'total_risk', 4: 'resolution_risk', 5: 'impacted_count', 6: 'playbook_count' };
 
     const ruleResolutionRisk = (rule) => {
         const resolution = rule.resolution_set.find(resolution => resolution.system_type ===
