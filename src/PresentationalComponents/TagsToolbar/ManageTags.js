@@ -89,7 +89,7 @@ const ManageTags = ({ toggleModal, fetchTags, selectedTags, setSelectedTags, tot
             }))
         }}
         loaded={ loaded }
-        width='auto'
+        width='50%'
         isOpen={ isOpen }
         toggleModal={() => {
             setPerPage(10);
@@ -145,6 +145,7 @@ const ManageTags = ({ toggleModal, fetchTags, selectedTags, setSelectedTags, tot
 ManageTags.propTypes = {
     toggleModal: PropTypes.func.isRequired,
     fetchTags: PropTypes.func.isRequired,
+    totalTags: PropTypes.number.isRequired,
     isOpen: PropTypes.bool.isRequired,
     selectedTags: PropTypes.array,
     setSelectedTags: PropTypes.func
