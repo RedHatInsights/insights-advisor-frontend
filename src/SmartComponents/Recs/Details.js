@@ -22,6 +22,7 @@ import Failed from '../../PresentationalComponents/Loading/Failed';
 import { Flex } from '@patternfly/react-core/dist/js/layouts/Flex/Flex';
 import { FlexItem } from '@patternfly/react-core/dist/js/layouts/Flex/FlexItem';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
+import { Label } from '@patternfly/react-core/dist/js/components/Label/Label';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
@@ -168,7 +169,9 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                             <PageHeaderTitle title={<React.Fragment><RuleLabels rule={rule} />{rule.description}</React.Fragment>} />
                             <p>{intl.formatMessage(
                                 messages.rulesDetailsPubishdate, { date: <DateFormat date={new Date(rule.publish_date)} type="onlyDate" /> }
-                            )}</p>
+                            )}
+                            <Label className="categoryLabel" color="blue">{rule.category.name}</Label>
+                            </p>
                         </React.Fragment>}>
                         <Flex>
                             <FlexItem align={{ default: 'alignRight' }}>
