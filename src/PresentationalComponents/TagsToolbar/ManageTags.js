@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { DEBOUNCE_DELAY } from '../../AppConstants';
 import PropTypes from 'prop-types';
@@ -9,6 +9,24 @@ import messages from '../../Messages';
 import { setSelectedTags } from '../../AppActions';
 import { useIntl } from 'react-intl';
 
+const buildFilterChips = (selected) => {
+    const filters = selected.map(tag => tag.namespace).filter(
+        (value, index, self) =>
+            self.indexOf(value) === index
+    ).map(category => ({
+        category,
+        chips: selected.filter(tag =>
+            tag.namespace === category
+        ).map(tag => ({
+            name: tag.value,
+            id: tag.id,
+            value: true
+        })),
+        urlParam: 'tags'
+    }));
+    return { filters };
+};
+
 const ManageTags = ({ toggleModal, fetchTags, selectedTags, setSelectedTags, totalTags, isOpen }) => {
     const [tags, setTags] = useState();
     const [loaded, setLoaded] = useState(false);
@@ -18,6 +36,7 @@ const ManageTags = ({ toggleModal, fetchTags, selectedTags, setSelectedTags, tot
     const [searchText, setSearchText] = useState();
     const intl = useIntl();
     const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
+    const activeFiltersConfig = useMemo(() => buildFilterChips(selected), [selected]);
 
     useEffect(() => {
         (async () => {
@@ -37,11 +56,25 @@ const ManageTags = ({ toggleModal, fetchTags, selectedTags, setSelectedTags, tot
     }, [perPage, page]);
 
     useEffect(() => {
-        setSelected(selectedTags.length ? selectedTags.map(id => ({ id, selected: true })) : []);
+        setSelected(selectedTags.length ? selectedTags.map(id => ({
+            id,
+            namespace: id.split('/')[0],
+            key: decodeURIComponent(id.split('/')[1].split('=')[0]),
+            value: decodeURIComponent(id.split('/')[1].split('=')[1])
+        })) : []);
     }, [selectedTags, setSelected]);
 
+    const onDelete = (e, items, isAll) => {
+        if (isAll) {
+            setSelected([]);
+        } else {
+            const ids = items.flatMap(item => item.chips.map(chip => chip.id));
+            setSelected(selected.filter(tag => ids.filter(id => id !== tag.id).length));
+        }
+    };
+
     return <TagModal
-        systemName={intl.formatMessage(messages.insightsHeader).toLowerCase()}
+        title={intl.formatMessage(messages.tagsCount, { count: totalTags })}
         {...loaded && {
             loaded,
             pagination: {
@@ -50,13 +83,13 @@ const ManageTags = ({ toggleModal, fetchTags, selectedTags, setSelectedTags, tot
                 count: totalTags
             },
             rows: tags.map(tag => ({
-                id: tag.id,
+                ...tag,
                 selected: selected.find(selection => selection.id === tag.id),
                 cells: [tag.key, tag.value, tag.namespace, tag.count]
             }))
         }}
         loaded={ loaded }
-        width='auto'
+        width='50%'
         isOpen={ isOpen }
         toggleModal={() => {
             setPerPage(10);
@@ -89,12 +122,23 @@ const ManageTags = ({ toggleModal, fetchTags, selectedTags, setSelectedTags, tot
             { title: intl.formatMessage(messages.systems) }
         ] }
         selected={selected}
-        onSelect={(selected) => setSelected(selected.map(tag => ({ id: tag.id, selected: true })))}
+        onSelect={(selected) => setSelected(selected.map(tag => ({
+            id: tag.id,
+            namespace: tag.namespace,
+            value: tag.value,
+            selected: true
+        })))}
         onApply={() => {
             setSelectedTags(selected.map(tag => tag.id));
             setSelected([]);
         }}
         tableProps={{ canSelectAll: false }}
+        primaryToolbarProps={{
+            activeFiltersConfig: {
+                ...activeFiltersConfig,
+                onDelete
+            }
+        }}
     />;
 };
 
