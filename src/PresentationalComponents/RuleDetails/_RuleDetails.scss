@@ -3,22 +3,6 @@ hr {
   margin: var(--pf-global--spacer--md) 0 var(--pf-global--spacer--md) 0;
 }
 
-.ins-sev-clr-1 {
-  color: var(--pf-global--Color--200);
-}
-
-.ins-sev-clr-2 {
-  color: var(--pf-global--warning-color--100);
-}
-
-.ins-sev-clr-3 {
-  color: var(--ins-color--orange);
-}
-
-.ins-sev-clr-4 {
-  color: var(--pf-global--danger-color--100);
-}
-
 .description-stack-override {
   width: 452px;
   .severity-line {
@@ -51,16 +35,6 @@ hr {
   }
 }
 
-.ansibleCol {
-  svg {
-    vertical-align: text-bottom;
-  }
-}
-
-.ansibleCheck {
-  color: var(--pf-global--success-color--200);
-}
-
 .topicsCard {
   background-color: var(--pf-global--BackgroundColor--150);
   box-shadow: none;
@@ -70,10 +44,6 @@ hr {
 .alignCenterOverride {
   align-items: center;
   width: 100%;
-}
-
-.batteryTextMarginOverride {
-  padding-top: 3px;
 }
 
 .genericOverride {
