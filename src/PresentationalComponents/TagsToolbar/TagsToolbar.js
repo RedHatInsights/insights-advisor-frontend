@@ -28,35 +28,38 @@ import { useIntl } from 'react-intl';
 const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
     const intl = useIntl();
     const [isOpen, setIsOpen] = useState(false);
-    const [totalTags, setTotalTags] = useState();
-    const [tags, setTags] = useState([]);
+    const [tags, setTags] = useState({});
     const [searchText, setSearchText] = useState();
     const [params, setParams] = useState();
-    const [tagsCount, setTagsCount] = useState();
     const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
     const [manageTagsModalOpen, setManageTagsModalOpen] = useState(false);
     const showMoreCount = 20;
+    const { total, count, data } = tags;
 
     const groupTags = (tags) => {
-        return tags.map(tag => tag.namespace).filter((value, index, self) =>
-            self.indexOf(value) === index
-        ).map(source => ({
-            source,
-            data: tags.filter(tag => tag.namespace === source)
-        }));
+        return {
+            total: tags.total,
+            count: tags.count,
+            data: [...new Set(tags.data.map(tag => tag.namespace))].map(source => ({
+                source,
+                data: tags.data.filter(tag => tag.namespace === source)
+            }))
+        };
     };
 
-    const formatTags = (tags) => {
-        let formattedTags = [];
-        tags.map(item => {
-            const { namespace, key, value } = item.tag;
-            formattedTags.push({
-                ...item.tag,
-                count: item.count,
-                id: `${namespace}/${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-            });
-        });
-        return formattedTags;
+    const formatTags = (tags, total, count) => {
+        return {
+            total,
+            count,
+            data: tags.map(item => {
+                const { namespace, key, value } = item.tag;
+                return {
+                    ...item.tag,
+                    count: item.count,
+                    id: `${namespace}/${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+                };
+            })
+        };
     };
 
     const fetchTags = async (perPage, page, params, filter) => {
@@ -65,8 +68,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
             const response = (filter === '' || !filter) ?
                 await API.get(`${INV_BASE_URL}/tags?per_page=${perPage}&page=${page}&registered_with=insights`) :
                 await API.get(`${INV_BASE_URL}/tags?per_page=${perPage}&page=${page}&search=${filter.toLowerCase()}&registered_with=insights`);
-            setTotalTags(response.data.total);
-            formattedTags = formatTags(response.data.results);
+            formattedTags = formatTags(response.data.results, response.data.total, response.data.count);
             params === null && selectedTags === null && setSelectedTags([]);
             if (params.length) {
                 const tagsToSet = intersection(params.split(','), selectedTags);
@@ -84,10 +86,6 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
     useEffect(() => {
         setSearchText('');
     }, []);
-
-    useEffect(() => {
-        setTagsCount(tags.flatMap(source => source.data).length);
-    }, [tags]);
 
     useEffect(() => {
         const url = new URL(window.location);
@@ -111,7 +109,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
 
     const titleFn = () => <React.Fragment>
         <TagIcon />&nbsp;
-        {tags.length > 0 ?
+        {data && data.length > 0 ?
             <React.Fragment>
                 {intl.formatMessage(messages.filterResults)} {selectedTags.length === 0 && intl.formatMessage(messages.allSystems)}
             </React.Fragment>
@@ -132,12 +130,11 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
 
     return selectedTags !== null && <div className='tagsToolbarContainer'>
         {<ManageTags
-            totalTags={totalTags}
             toggleModal={() => setManageTagsModalOpen(!manageTagsModalOpen)}
             isOpen={manageTagsModalOpen}
             fetchTags={fetchTags}
         />}
-        <Select
+        {data && <Select
             className='dropDownOverride'
             variant={SelectVariant.checkbox}
             aria-label='Select Group Input'
@@ -147,7 +144,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
             isOpen={isOpen}
             placeholderText={titleFn()}
             ariaLabelledBy='select-group-input'
-            isDisabled={tags.length === 0}
+            isDisabled={data.length === 0}
         >
             <InputGroup className='tags-filter-group' value=''>
                 <TextInput
@@ -159,7 +156,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
                 <SearchIcon className='tags-filter-search-icon'/>
             </InputGroup>
             <Divider key="inline-filter-divider" value=''/>
-            {tags.map((group, index) =>
+            {data.map((group, index) =>
                 <SelectGroup key={`group${index}`} label={group.source} value=''>
                     {group.data.map((tag, tagIndex) =>
                         <span key={tagIndex} className='tags-select-group'>
@@ -177,14 +174,14 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
             )}
             <Button key='manage all tags' value=''
                 variant='link' onClick={() => setManageTagsModalOpen(true)}>
-                {(showMoreCount > 0 && tagsCount >= showMoreCount) ?
+                {(showMoreCount > 0 && count >= showMoreCount) ?
                     intl.formatMessage(
                         messages.countMoreTags, {
-                            count: totalTags - tagsCount
+                            count: total - count
                         }) : intl.formatMessage(messages.manageTags)
                 }
             </Button>
-        </Select>
+        </Select>}
     </div >;
 };
 
