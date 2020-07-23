@@ -27,8 +27,8 @@ const buildFilterChips = (selected) => {
     return { filters };
 };
 
-const ManageTags = ({ toggleModal, fetchTags, selectedTags, setSelectedTags, totalTags, isOpen }) => {
-    const [tags, setTags] = useState();
+const ManageTags = ({ toggleModal, fetchTags, selectedTags, setSelectedTags, isOpen }) => {
+    const [tags, setTags] = useState({});
     const [loaded, setLoaded] = useState(false);
     const [selected, setSelected] = useState([]);
     const [perPage, setPerPage] = useState(10);
@@ -37,6 +37,7 @@ const ManageTags = ({ toggleModal, fetchTags, selectedTags, setSelectedTags, tot
     const intl = useIntl();
     const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
     const activeFiltersConfig = useMemo(() => buildFilterChips(selected), [selected]);
+    const { total, data } = tags;
 
     useEffect(() => {
         (async () => {
@@ -73,79 +74,80 @@ const ManageTags = ({ toggleModal, fetchTags, selectedTags, setSelectedTags, tot
         }
     };
 
-    return <TagModal
-        title={intl.formatMessage(messages.tagsCount, { count: totalTags })}
-        {...loaded && {
-            loaded,
-            pagination: {
-                perPage,
-                page,
-                count: totalTags
-            },
-            rows: tags.map(tag => ({
-                ...tag,
-                selected: selected.find(selection => selection.id === tag.id),
-                cells: [tag.key, tag.value, tag.namespace, tag.count]
-            }))
-        }}
-        loaded={ loaded }
-        width='50%'
-        isOpen={ isOpen }
-        toggleModal={() => {
-            setPerPage(10);
-            setPage(1);
-            setSearchText();
-            setSelected([]);
-            toggleModal();
-        }}
-        filters={[
-            {
-                label: intl.formatMessage(messages.filterTagsInModal),
-                placeholder: intl.formatMessage(messages.filterTagsInModal),
-                value: 'tags-filter',
-                filterValues: {
-                    key: 'text-filter',
-                    onChange: (event, value) => setSearchText(value),
-                    value: searchText
+    return <React.Fragment>
+        {data && <TagModal
+            title={intl.formatMessage(messages.tagsCount, { count: total })}
+            {...loaded && {
+                loaded,
+                pagination: {
+                    perPage,
+                    page,
+                    count: total
+                },
+                rows: data.map(tag => ({
+                    ...tag,
+                    selected: selected.find(selection => selection.id === tag.id),
+                    cells: [tag.key, tag.value, tag.namespace, tag.count]
+                }))
+            }}
+            loaded={ loaded }
+            width='50%'
+            isOpen={ isOpen }
+            toggleModal={() => {
+                setPerPage(10);
+                setPage(1);
+                setSearchText();
+                setSelected([]);
+                toggleModal();
+            }}
+            filters={[
+                {
+                    label: intl.formatMessage(messages.filterTagsInModal),
+                    placeholder: intl.formatMessage(messages.filterTagsInModal),
+                    value: 'tags-filter',
+                    filterValues: {
+                        key: 'text-filter',
+                        onChange: (event, value) => setSearchText(value),
+                        value: searchText
+                    }
                 }
-            }
-        ]}
-        onUpdateData={(data) => {
-            setLoaded(false);
-            setPerPage(data.perPage);
-            setPage(data.page);
-        }}
-        columns={ [
-            { title: intl.formatMessage(messages.tagsModalName) },
-            { title: intl.formatMessage(messages.tagsModalValue) },
-            { title: intl.formatMessage(messages.tagsModalSources) },
-            { title: intl.formatMessage(messages.systems) }
-        ] }
-        selected={selected}
-        onSelect={(selected) => setSelected(selected.map(tag => ({
-            id: tag.id,
-            namespace: tag.namespace,
-            value: tag.value,
-            selected: true
-        })))}
-        onApply={() => {
-            setSelectedTags(selected.map(tag => tag.id));
-            setSelected([]);
-        }}
-        tableProps={{ canSelectAll: false }}
-        primaryToolbarProps={{
-            activeFiltersConfig: {
-                ...activeFiltersConfig,
-                onDelete
-            }
-        }}
-    />;
+            ]}
+            onUpdateData={(data) => {
+                setLoaded(false);
+                setPerPage(data.perPage);
+                setPage(data.page);
+            }}
+            columns={ [
+                { title: intl.formatMessage(messages.tagsModalName) },
+                { title: intl.formatMessage(messages.tagsModalValue) },
+                { title: intl.formatMessage(messages.tagsModalSources) },
+                { title: intl.formatMessage(messages.systems) }
+            ] }
+            selected={selected}
+            onSelect={(selected) => setSelected(selected.map(tag => ({
+                id: tag.id,
+                namespace: tag.namespace,
+                value: tag.value,
+                selected: true
+            })))}
+            onApply={() => {
+                setSelectedTags(selected.map(tag => tag.id));
+                setSelected([]);
+            }}
+            tableProps={{ canSelectAll: false }}
+            primaryToolbarProps={{
+                activeFiltersConfig: {
+                    ...activeFiltersConfig,
+                    onDelete
+                }
+            }}
+        />}
+    </React.Fragment>;
 };
 
 ManageTags.propTypes = {
     toggleModal: PropTypes.func.isRequired,
     fetchTags: PropTypes.func.isRequired,
-    totalTags: PropTypes.number.isRequired,
     isOpen: PropTypes.bool.isRequired,
     selectedTags: PropTypes.array,
     setSelectedTags: PropTypes.func
