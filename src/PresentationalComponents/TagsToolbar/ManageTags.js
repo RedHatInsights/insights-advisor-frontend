@@ -56,13 +56,18 @@ const ManageTags = ({ toggleModal, fetchTags, selectedTags, setSelectedTags, isO
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [perPage, page]);
 
-    useEffect(() => {
-        setSelected(selectedTags.length ? selectedTags.map(id => ({
+    const populateSelected = () => {
+        return selectedTags.length ? selectedTags.map(id => ({
             id,
             namespace: id.split('/')[0],
             key: decodeURIComponent(id.split('/')[1].split('=')[0]),
             value: decodeURIComponent(id.split('/')[1].split('=')[1])
-        })) : []);
+        })) : [];
+    };
+
+    useEffect(() => {
+        setSelected(populateSelected());
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedTags, setSelected]);
 
     const onDelete = (e, items, isAll) => {
@@ -97,7 +102,7 @@ const ManageTags = ({ toggleModal, fetchTags, selectedTags, setSelectedTags, isO
                 setPerPage(10);
                 setPage(1);
                 setSearchText();
-                setSelected([]);
+                setSelected(populateSelected());
                 toggleModal();
             }}
             filters={[
@@ -132,7 +137,6 @@ const ManageTags = ({ toggleModal, fetchTags, selectedTags, setSelectedTags, isO
             })))}
             onApply={() => {
                 setSelectedTags(selected.map(tag => tag.id));
-                setSelected([]);
             }}
             tableProps={{ canSelectAll: false }}
             primaryToolbarProps={{
