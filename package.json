@@ -50,7 +50,7 @@
     "@react-pdf/renderer": "1.6.10",
     "@redhat-cloud-services/frontend-components": "2.3.8",
     "@redhat-cloud-services/frontend-components-charts": "2.3.1",
-    "@redhat-cloud-services/frontend-components-inventory-insights": "2.5.2",
+    "@redhat-cloud-services/frontend-components-inventory-insights": "2.5.3",
     "@redhat-cloud-services/frontend-components-notifications": "2.1.2",
     "@redhat-cloud-services/frontend-components-pdf-generator": "2.2.0",
     "@redhat-cloud-services/frontend-components-remediations": "2.1.0",
