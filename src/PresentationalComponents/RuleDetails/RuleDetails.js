@@ -82,90 +82,82 @@ const RuleDetails = ({ children, rule, resolutionRisk, intl, topics, header, isD
                     </StackItem>
                 )}
                 <StackItem>
-                    <Stack>
+                    <Stack className='ins-c-rule-details__stack'>
                         <StackItem>{intl.formatMessage(messages.totalRisk)}</StackItem>
                         <StackItem className='pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm'>
-                            <Split hasGutter>
-                                <SplitItem>
-                                    <InsightsLabel value={rule.total_risk}/>
-                                </SplitItem>
-                                <SplitItem isFilled/>
-                                <SplitItem>
-                                    <Stack hasGutter className='description-stack-override'>
+                            <span className='ins-c-rule-details__stackitem'>
+                                <span><InsightsLabel value={rule.total_risk}/></span>
+                                <Stack hasGutter className='description-stack-override'>
+                                    <StackItem>
+                                        <TextContent>
+                                            <Text component={TextVariants.p}>{intl.formatMessage(messages.rulesDetailsTotalriskBody, {
+                                                risk: AppConstants.TOTAL_RISK_LABEL_LOWER[rule.total_risk] || intl.formatMessage(messages.undefined),
+                                                strong: str => strong(str)
+                                            })}</Text>
+                                        </TextContent>
+                                    </StackItem>
+                                    <Stack>
                                         <StackItem>
-                                            <TextContent>
-                                                <Text component={TextVariants.p}>{intl.formatMessage(messages.rulesDetailsTotalriskBody, {
-                                                    risk: AppConstants.TOTAL_RISK_LABEL_LOWER[rule.total_risk] || intl.formatMessage(messages.undefined),
-                                                    strong: str => strong(str)
-                                                })}</Text>
-                                            </TextContent>
+                                            <SeverityLine
+                                                className='severity-line'
+                                                title={intl.formatMessage(messages.likelihoodLevel, {
+                                                    level: AppConstants.LIKELIHOOD_LABEL[rule.likelihood]
+                                                })}
+                                                value={rule.likelihood}
+                                                tooltipMessage={intl.formatMessage(messages.likelihoodDescription, {
+                                                    level: AppConstants.LIKELIHOOD_LABEL_LOWER[rule.likelihood]
+                                                })}
+                                            />
                                         </StackItem>
-                                        <Stack>
-                                            <StackItem>
-                                                <SeverityLine
-                                                    className='severity-line'
-                                                    title={intl.formatMessage(messages.likelihoodLevel, {
-                                                        level: AppConstants.LIKELIHOOD_LABEL[rule.likelihood]
-                                                    })}
-                                                    value={rule.likelihood}
-                                                    tooltipMessage={intl.formatMessage(messages.likelihoodDescription, {
-                                                        level: AppConstants.LIKELIHOOD_LABEL_LOWER[rule.likelihood]
-                                                    })}
-                                                />
-                                            </StackItem>
-                                            <StackItem>
-                                                <SeverityLine
-                                                    className='severity-line'
-                                                    title={intl.formatMessage(messages.impactLevel, {
-                                                        level: AppConstants.IMPACT_LABEL[rule.impact.impact]
-                                                    })}
-                                                    value={rule.impact.impact}
-                                                    tooltipMessage={intl.formatMessage(messages.impactDescription, {
-                                                        level: AppConstants.IMPACT_LABEL_LOWER[rule.impact.impact]
-                                                    })}
-                                                />
-                                            </StackItem>
-                                        </Stack>
+                                        <StackItem>
+                                            <SeverityLine
+                                                className='severity-line'
+                                                title={intl.formatMessage(messages.impactLevel, {
+                                                    level: AppConstants.IMPACT_LABEL[rule.impact.impact]
+                                                })}
+                                                value={rule.impact.impact}
+                                                tooltipMessage={intl.formatMessage(messages.impactDescription, {
+                                                    level: AppConstants.IMPACT_LABEL_LOWER[rule.impact.impact]
+                                                })}
+                                            />
+                                        </StackItem>
                                     </Stack>
-                                </SplitItem>
-                            </Split>
+                                </Stack>
+                            </span>
                         </StackItem>
                         <hr></hr>
                         <StackItem>{intl.formatMessage(messages.riskofchange)}</StackItem>
                         <StackItem className={`pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm`}>
-                            <Split hasGutter>
-                                <SplitItem>
+                            <span className='ins-c-rule-details__stackitem'>
+                                <span>
                                     <InsightsLabel text={AppConstants.RISK_OF_CHANGE_LABEL[resolutionRisk]} value={resolutionRisk} hideIcon/>
-                                </SplitItem>
-                                <SplitItem isFilled/>
-                                <SplitItem>
-                                    <Stack hasGutter className='description-stack-override'>
-                                        <StackItem>
-                                            <TextContent>
+                                </span>
+                                <Stack hasGutter className='description-stack-override'>
+                                    <StackItem>
+                                        <TextContent>
+                                            <Text component={TextVariants.p}>
+                                                {resolutionRisk ?
+                                                    AppConstants.RISK_OF_CHANGE_DESC[resolutionRisk] :
+                                                    intl.formatMessage(messages.undefined)}
+                                            </Text>
+                                        </TextContent>
+                                    </StackItem>
+                                    <StackItem>
+                                        <span className='system-reboot-message'>
+                                            <PowerOffIcon className={rule.reboot_required ? 'reboot-required-icon' : 'no-reboot-required-icon'}/>
+                                            <TextContent className='system-reboot-message__content'>
                                                 <Text component={TextVariants.p}>
-                                                    {resolutionRisk ?
-                                                        AppConstants.RISK_OF_CHANGE_DESC[resolutionRisk] :
-                                                        intl.formatMessage(messages.undefined)}
+                                                    {intl.formatMessage(messages.systemReboot, {
+                                                        strong: str => strong(str), status: rule.reboot_required ?
+                                                            intl.formatMessage(messages.is) :
+                                                            intl.formatMessage(messages.isNot)
+                                                    })}
                                                 </Text>
                                             </TextContent>
-                                        </StackItem>
-                                        <StackItem>
-                                            <span className='system-reboot-message'>
-                                                <PowerOffIcon className={rule.reboot_required ? 'reboot-required-icon' : 'no-reboot-required-icon'}/>
-                                                <TextContent className='system-reboot-message__content'>
-                                                    <Text component={TextVariants.p}>
-                                                        {intl.formatMessage(messages.systemReboot, {
-                                                            strong: str => strong(str), status: rule.reboot_required ?
-                                                                intl.formatMessage(messages.is) :
-                                                                intl.formatMessage(messages.isNot)
-                                                        })}
-                                                    </Text>
-                                                </TextContent>
-                                            </span>
-                                        </StackItem>
-                                    </Stack>
-                                </SplitItem>
-                            </Split>
+                                        </span>
+                                    </StackItem>
+                                </Stack>
+                            </span>
                         </StackItem>
                     </Stack>
                 </StackItem>
