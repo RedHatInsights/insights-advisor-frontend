@@ -3,13 +3,24 @@ hr {
   margin: var(--pf-global--spacer--md) 0 var(--pf-global--spacer--md) 0;
 }
 
-.description-stack-override {
-  width: 452px;
-  .severity-line {
-    .ins-l-title {
-      width: 150px;
-      span {
-        font-size: var(--pf-global-FontSize--md);
+.ins-c-rule-details__stack {
+  width: 600px;
+
+  .ins-c-rule-details__stackitem {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    .description-stack-override {
+      width: 452px;
+
+      .severity-line {
+        .ins-l-title {
+          width: 150px;
+          span {
+            font-size: var(--pf-global-FontSize--md);
+          }
+        }
       }
     }
   }
