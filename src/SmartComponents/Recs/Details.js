@@ -34,6 +34,7 @@ import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
 import { cveToRuleid } from '../../cveToRuleid.js';
+import { encodeOptionsToURL } from '../../PresentationalComponents/Common/Tables';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
@@ -50,9 +51,16 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchRulefn = (newSort, rule = true, system = true) => {
-        const options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags.join() });
-        system && fetchSystem(match.params.id, { ...options, ...filters, ...newSort });
-        rule && fetchRule({ rule_id: match.params.id, ...options });
+        const options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)).join('&tags=') });
+        system && fetchSystem(
+            match.params.id,
+            options.tags ? {} : { ...options, ...filters, ...newSort },
+            options.tags && encodeOptionsToURL({ ...options, ...filters, ...newSort })
+        );
+        rule && fetchRule(
+            options.tags ? { rule_id: match.params.id } : { rule_id: match.params.id, ...options },
+            options.tags && encodeOptionsToURL(options)
+        );
     };
 
     const ruleResolutionRisk = (rule) => {
@@ -302,8 +310,8 @@ const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    fetchRule: (url) => dispatch(AppActions.fetchRule(url)),
-    fetchSystem: (rule_id, options) => dispatch(AppActions.fetchSystem(rule_id, options)),
+    fetchRule: (options, search) => dispatch(AppActions.fetchRule(options, search)),
+    fetchSystem: (rule_id, options, search) => dispatch(AppActions.fetchSystem(rule_id, options, search)),
     addNotification: data => dispatch(addNotification(data)),
     fetchTopics: () => dispatch(AppActions.fetchTopics()),
     fetchRuleAck: data => dispatch(AppActions.fetchRuleAck(data)),
