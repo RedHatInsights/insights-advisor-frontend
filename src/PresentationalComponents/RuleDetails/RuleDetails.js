@@ -83,7 +83,7 @@ const RuleDetails = ({ children, rule, resolutionRisk, intl, topics, header, isD
                 )}
                 <StackItem>
                     <Stack className='ins-c-rule-details__stack'>
-                        <StackItem>{intl.formatMessage(messages.totalRisk)}</StackItem>
+                        <StackItem><strong>{intl.formatMessage(messages.totalRisk)}</strong></StackItem>
                         <StackItem className='pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm'>
                             <span className='ins-c-rule-details__stackitem'>
                                 <span><InsightsLabel value={rule.total_risk}/></span>
@@ -126,7 +126,7 @@ const RuleDetails = ({ children, rule, resolutionRisk, intl, topics, header, isD
                             </span>
                         </StackItem>
                         <hr></hr>
-                        <StackItem>{intl.formatMessage(messages.riskofchange)}</StackItem>
+                        <StackItem><strong>{intl.formatMessage(messages.riskofchange)}</strong></StackItem>
                         <StackItem className={`pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm`}>
                             <span className='ins-c-rule-details__stackitem'>
                                 <span>
