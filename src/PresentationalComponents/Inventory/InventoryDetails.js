@@ -3,6 +3,7 @@ import '@redhat-cloud-services/frontend-components-inventory-insights/index.css'
 import * as pfReactTable from '@patternfly/react-table';
 import * as reactRouterDom from 'react-router-dom';
 import * as ReactRedux from 'react-redux';
+import { reactCore } from '@redhat-cloud-services/frontend-components-utilities/files/inventoryDependencies';
 
 import { Grid, GridItem } from '@patternfly/react-core/dist/js/layouts/Grid/index';
 import React, { useEffect, useState } from 'react';
@@ -20,6 +21,7 @@ import { useStore } from 'react-redux';
 const InventoryDetails = ({ entity, match }) => {
     const [InventoryDetail, setInventoryDetail] = useState();
     const [AppInfo, setAppInfo] = useState();
+    const [InvWrapper, setInvWrapper] = useState();
     const store = useStore();
 
     const fetchInventoryDetails = async () => {
@@ -27,21 +29,24 @@ const InventoryDetails = ({ entity, match }) => {
             ReactRedux,
             react: React,
             reactRouterDom,
-            pfReactTable
+            pfReactTable,
+            pfReact: reactCore
         });
-        const { InventoryDetailHead, AppInfo } = inventoryConnector(store);
+        const { InventoryDetailHead, AppInfo, DetailWrapper } = inventoryConnector(store);
 
         getRegistry().register({
             ...mergeWithDetail(entitiesDetailsReducer(INVENTORY_ACTION_TYPES))
         });
         setInventoryDetail(() => InventoryDetailHead);
         setAppInfo(() => AppInfo);
+        setInvWrapper(() => DetailWrapper);
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { fetchInventoryDetails(); }, []);
+    const Wrapper = InvWrapper || React.Fragment;
 
-    return <React.Fragment>
+    return <Wrapper>
         <PageHeader className="pf-m-light ins-inventory-detail">
             {entity && <Breadcrumbs
                 current={entity.display_name || entity.id}
@@ -56,7 +61,7 @@ const InventoryDetails = ({ entity, match }) => {
                 </GridItem>
             </Grid>
         </Main>
-    </React.Fragment>;
+    </Wrapper>;
 };
 
 InventoryDetails.contextTypes = {

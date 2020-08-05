@@ -5,6 +5,7 @@ import * as AppActions from '../../AppActions';
 import * as ReactRedux from 'react-redux';
 import * as pfReactTable from '@patternfly/react-table';
 import * as reactRouterDom from 'react-router-dom';
+import { reactCore } from '@redhat-cloud-services/frontend-components-utilities/files/inventoryDependencies';
 
 import { DEBOUNCE_DELAY, SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -156,7 +157,8 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
                 ReactRedux,
                 react: React,
                 reactRouterDom,
-                pfReactTable
+                pfReactTable,
+                pfReact: reactCore
             });
             getRegistry().register({
                 ...mergeWithEntities(
