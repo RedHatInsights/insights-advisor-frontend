@@ -5,3 +5,11 @@
 .pf-c-table th, td {
   padding-right: 0px !important;
 }
+
+.pf-c-table tr > :last-child {
+  padding-left: var(--pf-global--spacer--xs);
+}
+
+.pf-c-table .pf-c-table__sort {
+  min-width: initial;
+}
