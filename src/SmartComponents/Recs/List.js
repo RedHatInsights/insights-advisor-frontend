@@ -1,3 +1,5 @@
+import './List.scss';
+
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
 import React, { Suspense, lazy } from 'react';
 
@@ -15,7 +17,7 @@ const List = () => {
 
     return <React.Fragment>
         <Suspense fallback={<Loading />}> <TagsToolbar /> </Suspense>
-        <PageHeader>
+        <PageHeader className='ins-c-recommendations-header'>
             <PageHeaderTitle title={intl.formatMessage(messages.recommendations)} />
             <DownloadExecReport />
         </PageHeader>
