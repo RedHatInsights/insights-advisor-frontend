@@ -460,7 +460,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 perPage: Number(filters.limit),
                 onSetPage(event, page) { onSetPage(page); },
                 onPerPageSelect(event, perPage) { setFilters({ ...filters, limit: perPage, offset: 0 }); },
-                isCompact: false
+                isCompact: true
             }}
             exportConfig={{
                 label: intl.formatMessage(messages.exportCsv),
