@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SortByDirection, Table, TableBody, TableHeader, sortable } from '@patternfly/react-table';
+import { SortByDirection, Table, TableBody, TableHeader, sortable, wrappable } from '@patternfly/react-table';
 
 import { Label } from '@patternfly/react-core/dist/js/components/Label/Label';
 import { Link } from 'react-router-dom';
@@ -21,8 +21,8 @@ const TopicsTable = ({ topics, topicsFetchStatus, intl }) => {
     const [cols] = useState([
         { title: intl.formatMessage(messages.name), transforms: [sortable] },
         '',
-        { title: intl.formatMessage(messages.featured), transforms: [sortable] },
-        { title: intl.formatMessage(messages.affectedSystems), transforms: [sortable] }
+        { title: intl.formatMessage(messages.featured), transforms: [sortable, wrappable] },
+        { title: intl.formatMessage(messages.affectedSystems), transforms: [sortable, wrappable] }
     ]);
     const [rows, setRows] = useState([]);
     const [sort, setSort] = useState({ index: 2, direction: 'desc' });
