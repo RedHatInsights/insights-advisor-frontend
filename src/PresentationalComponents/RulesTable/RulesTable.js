@@ -201,7 +201,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                                 title={intl.formatMessage(messages.rulesTableNoRuleHitsTitle)} text={filters.reports_shown ?
                                     intl.formatMessage(messages.rulesTableNoRuleHitsEnabledRulesBody) :
                                     intl.formatMessage(messages.rulesTableNoRuleHitsAnyRulesBody)}>
-                                {filters.reports_shown && <Button variant="link" style={{ paddingTop: 24 }}
+                                {filters.reports_shown && <Button variant='link' style={{ paddingTop: 24 }}
                                     onClick={() => toggleRulesDisabled('undefined')}>
                                     {intl.formatMessage(messages.rulesTableNoRuleHitsAddDisabledButton)}
                                 </Button>}
@@ -223,19 +223,19 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                     }, {
                         title: <DateFormat key={key} date={value.publish_date} variant='relative' />
                     }, {
-                        title: <div className="pf-m-center" key={key}>
+                        title: <div key={key}>
                             <Tooltip key={key} position={TooltipPosition.bottom} content={intl.formatMessage(messages.rulesDetailsTotalriskBody, {
                                 risk: AppConstants.TOTAL_RISK_LABEL_LOWER[value.total_risk] || intl.formatMessage(messages.undefined),
                                 strong: str => strong(str)
                             })}>
-                                <InsightsLabel value={value.total_risk}/>
+                                <InsightsLabel value={value.total_risk} />
                             </Tooltip>
                         </div>
                     }, {
-                        title: <div className="pf-m-center" key={key}>
+                        title: <div key={key}>
                             <InsightsLabel
                                 text={AppConstants.RISK_OF_CHANGE_LABEL[ruleResolutionRisk(value)]}
-                                value={ruleResolutionRisk(value)} hideIcon/>
+                                value={ruleResolutionRisk(value)} hideIcon />
                             <div></div>
                         </div>
                     }, {
@@ -243,7 +243,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                             `${value.impacted_systems_count.toLocaleString()}`
                             : intl.formatMessage(messages.nA)}</div>
                     }, {
-                        title: <div className="pf-m-center " key={key}>
+                        title: <div className='ins-c-center-text ' key={key}>
                             {value.playbook_count ? <CheckCircleIcon className='ansibleCheck' /> : intl.formatMessage(messages.no)}
                         </div>
                     }]
