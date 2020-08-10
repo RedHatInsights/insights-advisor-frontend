@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { Battery, Chart, Column, Panel, PanelItem, Paragraph, Section, Table } from '@redhat-cloud-services/frontend-components-pdf-generator';
+import { Chart, Column, InsightsLabel, Panel, PanelItem, Paragraph, Section, Table } from '@redhat-cloud-services/frontend-components-pdf-generator';
 
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -9,12 +9,6 @@ import messages from '../../Messages';
 import { truncate } from 'lodash';
 
 const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => {
-    const batteryMap = {
-        1: 'low',
-        2: 'medium',
-        3: 'high',
-        4: 'critical'
-    };
     const severityPie = [
         { x: intl.formatMessage(messages.critical), y: statsReports.total_risk[4] },
         { x: intl.formatMessage(messages.important), y: statsReports.total_risk[3] },
@@ -81,7 +75,7 @@ const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => 
                 <Panel key={key} description={rulesDesc(rule)}>
                     <PanelItem title={intl.formatMessage(messages.systemsExposed)}>{`${rule.impacted_systems_count}`}</PanelItem>
                     <PanelItem title={intl.formatMessage(messages.totalRisk)}>
-                        <Battery variant={batteryMap[rule.total_risk]} text={TOTAL_RISK_LABEL[rule.total_risk]}/>
+                        <InsightsLabel variant={rule.total_risk}/>
                     </PanelItem>
                 </Panel>)}
         </Section>
