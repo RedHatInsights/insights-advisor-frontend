@@ -46,6 +46,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     const [host, setHost] = useState(undefined);
     const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
     const [filters, setFilters] = useState({ sort: 'display_name' });
+    const [isRuleUpdated, setIsRuleUpdated] = useState(false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchRulefn = (newSort, rule = true, system = true) => {
@@ -131,14 +132,22 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
 
     const ref = useRef();
     useEffect(() => {
-        selectedTags !== null && JSON.stringify(ref.current) !== JSON.stringify(selectedTags) && fetchRulefn();
+        if (selectedTags !== null && JSON.stringify(ref.current) !== JSON.stringify(selectedTags)) {
+            fetchRulefn();
+            setIsRuleUpdated(true);
+        }
+
         ref.current = selectedTags;
     }, [fetchRulefn, selectedTags]);
 
     useEffect(() => {
-        if (!rule.reports_shown && rule.rule_id) {
+        if (!rule.reports_shown && rule.rule_id && isRuleUpdated) {
             fetchRuleAck({ rule_id: rule.rule_id });
+        } else if (!isRuleUpdated) {
+            fetchRulefn();
+            setIsRuleUpdated(true);
         }
+        //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchRuleAck, rule.reports_shown, rule.rule_id]);
 
     return <React.Fragment>
