@@ -1,5 +1,7 @@
-import * as ReactRedux from 'react-redux';
 /* eslint-disable camelcase */
+import './_Inventory.scss';
+
+import * as ReactRedux from 'react-redux';
 import * as pfReactTable from '@patternfly/react-table';
 import * as reactRouterDom from 'react-router-dom';
 
@@ -12,7 +14,6 @@ import RemediationButton from '@redhat-cloud-services/frontend-components-remedi
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
-import global_BackgroundColor_100 from '@patternfly/react-tokens/dist/js/global_BackgroundColor_100';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import { reactCore } from '@redhat-cloud-services/frontend-components-utilities/files/inventoryDependencies';
@@ -144,7 +145,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
                 isDisabled={selected.length === 0 || rule.playbook_count === 0}
                 dataProvider={remediationDataProvider}
                 onRemediationCreated={(result) => onRemediationCreated(result)}>
-                <AnsibeTowerIcon size='sm' color={global_BackgroundColor_100.value} />
+                <AnsibeTowerIcon size='sm' className='ins-c-background__default' />
                 &nbsp;{intl.formatMessage(messages.remediate)}
             </RemediationButton>}
             actionsConfig={{
