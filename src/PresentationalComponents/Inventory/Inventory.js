@@ -2,7 +2,6 @@ import * as ReactRedux from 'react-redux';
 /* eslint-disable camelcase */
 import * as pfReactTable from '@patternfly/react-table';
 import * as reactRouterDom from 'react-router-dom';
-import { reactCore } from '@redhat-cloud-services/frontend-components-utilities/files/inventoryDependencies';
 
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -16,6 +15,7 @@ import { getRegistry } from '@redhat-cloud-services/frontend-components-utilitie
 import global_BackgroundColor_100 from '@patternfly/react-tokens/dist/js/global_BackgroundColor_100';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
+import { reactCore } from '@redhat-cloud-services/frontend-components-utilities/files/inventoryDependencies';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { systemReducer } from '../../AppReducer';
 import { useStore } from 'react-redux';
@@ -139,16 +139,16 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
             total={items.length}
             perPage={pageSize}
             tableProps={tableProps}
+            dedicatedAction={<RemediationButton
+                key='remediation-button'
+                isDisabled={selected.length === 0 || rule.playbook_count === 0}
+                dataProvider={remediationDataProvider}
+                onRemediationCreated={(result) => onRemediationCreated(result)}>
+                <AnsibeTowerIcon size='sm' color={global_BackgroundColor_100.value} />
+                &nbsp;{intl.formatMessage(messages.remediate)}
+            </RemediationButton>}
             actionsConfig={{
-                actions: [<RemediationButton
-                    key='remediation-button'
-                    isDisabled={selected.length === 0 || rule.playbook_count === 0}
-                    dataProvider={remediationDataProvider}
-                    onRemediationCreated={(result) => onRemediationCreated(result)}>
-                    <AnsibeTowerIcon size='sm' color={global_BackgroundColor_100.value} />
-                    &nbsp;{intl.formatMessage(messages.remediate)}
-                </RemediationButton>,
-                {
+                actions: ['', {
                     label: intl.formatMessage(messages.disableRuleForSystems),
                     props: { isDisabled: selected.length === 0 },
                     onClick: () => handleModalToggle(true)
