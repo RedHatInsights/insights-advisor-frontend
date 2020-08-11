@@ -39,7 +39,7 @@ const RuleDetails = ({ children, rule, resolutionRisk, intl, topics, header, isD
         <ReactMarkdown source={data} escapeHtml={false} />
     </span>;
 
-    return <Split hasGutter>
+    return <Split className='ins-c-rule-details__split' hasGutter>
         <SplitItem>
             <Stack hasGutter>
                 {header && <StackItem>

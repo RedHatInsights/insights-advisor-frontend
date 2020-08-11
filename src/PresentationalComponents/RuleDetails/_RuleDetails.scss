@@ -3,6 +3,14 @@ hr {
   margin: var(--pf-global--spacer--md) 0 var(--pf-global--spacer--md) 0;
 }
 
+.ins-c-rule-details__split {
+  display: inline-flex;
+  justify-content: space-around;
+  .pf-l-split__item {
+    position: relative;
+  }
+}
+
 .ins-c-rule-details__stack {
   width: 600px;
 
@@ -61,5 +69,17 @@ hr {
   p {
     margin-top: 0;
     margin-bottom: var(--pf-global--spacer--md);
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .ins-c-center-text {
+    text-align: left !important;
+  }
+  .ins-c-rule-details__split {
+    display: block;
+    .pf-l-split__item {
+      margin: var(--pf-global--spacer--md);
+    }
   }
 }
