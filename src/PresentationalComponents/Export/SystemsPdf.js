@@ -21,7 +21,7 @@ const SystemsPdf = ({ filters, selectedTags, systemsCount }) => {
         const firstPage = leadPage({ systemsTotal: systems.meta.count, systems: systems.data.slice(0, 18), filters, tags: selectedTags, intl });
 
         const otherPages = systems.data.slice(18, systems.data.length).reduce((resultArray, item, index) => {
-            const chunkIndex = Math.floor(index / 26);
+            const chunkIndex = Math.floor(index / 31);
             !resultArray[chunkIndex] && (resultArray[chunkIndex] = []);
             resultArray[chunkIndex].push(item);
 
@@ -35,6 +35,7 @@ const SystemsPdf = ({ filters, selectedTags, systemsCount }) => {
 
     return useMemo(() => {
         return <DownloadButton
+            allPagesHaveTitle={false}
             label={loading ? intl.formatMessage(messages.loading) : intl.formatMessage(messages.exportPdf)}
             asyncFunction={dataFetch}
             buttonProps={{
