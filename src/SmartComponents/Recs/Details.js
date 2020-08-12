@@ -185,6 +185,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                         <Flex>
                             <FlexItem align={{ default: 'alignRight' }}>
                                 <Dropdown
+                                    className='ins-c-rec-details__actions_dropdown'
                                     onSelect={() => setActionsDropdownOpen(!actionsDropdownOpen)}
                                     position='right'
                                     toggle={<DropdownToggle
