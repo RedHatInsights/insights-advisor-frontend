@@ -18,7 +18,7 @@ const List = () => {
     return <React.Fragment>
         <Suspense fallback={<Loading />}> <TagsToolbar /> </Suspense>
         <PageHeader className='ins-c-recommendations-header'>
-            <PageHeaderTitle title={intl.formatMessage(messages.recommendations)} />
+            <PageHeaderTitle title={`${intl.formatMessage(messages.insightsHeader)} ${intl.formatMessage(messages.recommendations).toLowerCase()}`} />
             <DownloadExecReport />
         </PageHeader>
         <Main><Suspense fallback={<Loading />}><RulesTable /></Suspense></Main>
