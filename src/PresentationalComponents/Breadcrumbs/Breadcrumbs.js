@@ -7,7 +7,6 @@ import { Breadcrumb } from '@patternfly/react-core/dist/js/components/Breadcrumb
 import { BreadcrumbItem } from '@patternfly/react-core/dist/js/components/Breadcrumb/BreadcrumbItem';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { capitalize } from '../Common/Tables';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
@@ -20,8 +19,8 @@ const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl })
         const crumbs = [];
         const splitUrl = match.url.split('/');
 
-        // add recommendations base
-        crumbs.push({ title: capitalize(splitUrl[1]), navigate: `/${splitUrl[1]}` });
+        // add base
+        crumbs.push({ title: `${intl.formatMessage(messages.insightsHeader)} ${splitUrl[1]}`, navigate: `/${splitUrl[1]}` });
 
         // if applicable, add :id breadcrumb
         if (match.params.id !== undefined && match.params.inventoryId !== undefined) {

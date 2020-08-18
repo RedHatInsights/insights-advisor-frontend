@@ -23,7 +23,7 @@ const List = ({ fetchTopics, intl, selectedTags }) => {
     return <React.Fragment>
         <TagsToolbar />
         <PageHeader>
-            <PageHeaderTitle title={intl.formatMessage(messages.topics)} />
+            <PageHeaderTitle title={`${intl.formatMessage(messages.insightsHeader)} ${intl.formatMessage(messages.topics).toLowerCase()}`} />
         </PageHeader>
         <Main>
             <TopicsTable />
