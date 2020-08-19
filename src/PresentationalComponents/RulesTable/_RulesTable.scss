@@ -11,3 +11,7 @@
 .ins-c-center-text{
     text-align: center;
 }
+
+.pf-c-table tr > :last-child {
+    --pf-c-table--cell--PaddingRight: 0px;
+}
