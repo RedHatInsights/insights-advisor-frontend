@@ -115,5 +115,14 @@
   },
   "insights": {
     "appname": "advisor"
+  },
+  "routes": {
+    "recommendations": "/recommendations",
+    "recommendations-detail": "/recommendations:id",
+    "recommendations-detail-system": "/recommendations:id/:id",
+    "systems": "/systems",
+    "systems-detail": "/systems:id",
+    "topics": "/topics",
+    "topics-detail": "/topics:id"
   }
 }
