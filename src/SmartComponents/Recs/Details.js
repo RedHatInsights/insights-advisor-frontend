@@ -45,7 +45,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [host, setHost] = useState(undefined);
     const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
-    const [filters, setFilters] = useState({ sort: 'display_name' });
+    const [filters, setFilters] = useState({ sort: '-updated' });
     const [isRuleUpdated, setIsRuleUpdated] = useState(false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

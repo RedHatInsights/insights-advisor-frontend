@@ -5,7 +5,6 @@ import * as AppActions from '../../AppActions';
 import * as ReactRedux from 'react-redux';
 import * as pfReactTable from '@patternfly/react-table';
 import * as reactRouterDom from 'react-router-dom';
-import { reactCore } from '@redhat-cloud-services/frontend-components-utilities/files/inventoryDependencies';
 
 import { DEBOUNCE_DELAY, SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -22,6 +21,7 @@ import downloadReport from '../Common/DownloadHelper';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
+import { reactCore } from '@redhat-cloud-services/frontend-components-utilities/files/inventoryDependencies';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { systemReducer } from '../../AppReducer';
 
