@@ -75,7 +75,7 @@ export default defineMessages({
     disableRuleBody: {
         id: 'disableRuleBody',
         description: 'Explaining the action of disabling a recommendation',
-        defaultMessage: `Disabling a recommendation means that this recommendation across all systems will not be shown in reports and dashboards.`
+        defaultMessage: `This recommendation will not be shown in reports and dashboards.`
     },
     disableRuleSingleSystem: {
         id: 'disableRuleSingleSystem',
@@ -86,6 +86,16 @@ export default defineMessages({
         id: 'ruleIsDisabled',
         description: 'Exclaiming that the recommendationis disabled',
         defaultMessage: 'Recommendation is disabled'
+    },
+    ruleSuccessfullyDisabled: {
+        id: 'ruleSuccessfullyDisabled',
+        description: 'Explaining that the rule was disabled successfully',
+        defaultMessage: 'Recommendation successfully disabled'
+    },
+    ruleSuccessfullyEnabled: {
+        id: 'ruleSuccessfullyEnabled',
+        description: 'Explaining that the rule was enabled successfully',
+        defaultMessage: 'Recommendation successfully enabled'
     },
     ruleIsDisabledTooltip: {
         id: 'ruleIsDisabledTooltip',
