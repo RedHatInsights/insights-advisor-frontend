@@ -40,7 +40,7 @@ import routerParams from '@redhat-cloud-services/frontend-components-utilities/f
 
 const TagsToolbar = lazy(() => import('../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchRule, ruleFetchStatus, rule, systemFetchStatus, system, intl,
-    topics, ruleAck, hostAcks, fetchHostAcks, setSystem, setRule, selectedTags }) => {
+    topics, ruleAck, hostAcks, fetchHostAcks, setSystem, setRule, selectedTags, addNotification }) => {
     const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [host, setHost] = useState(undefined);
@@ -68,6 +68,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     const enableRule = async (rule) => {
         try {
             await API.delete(`${BASE_URL}/ack/${rule.rule_id}/`);
+            addNotification({ variant: 'success', dismissable: true, title: intl.formatMessage(messages.ruleSuccessfullyEnabled) });
             fetchRulefn();
         } catch (error) {
             handleModalToggle(false);
@@ -94,6 +95,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         const data = { systems: hostAcks.data.map(item => item.system_uuid) };
         try {
             const response = await API.post(`${BASE_URL}/rule/${rule.rule_id}/unack_hosts/`, {}, data);
+            addNotification({ variant: 'success', dismissable: true, title: intl.formatMessage(messages.ruleSuccessfullyEnabled) });
             if (selectedTags.length > 0) {
                 fetchRulefn();
             } else {

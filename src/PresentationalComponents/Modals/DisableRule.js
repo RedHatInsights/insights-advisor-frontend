@@ -44,9 +44,14 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, hosts, rule, 
             const options = singleSystem
                 ? { type: 'HOST', options: { rule: rule.rule_id, system_uuid: host.id, justification } }
                 : { type: 'RULE', options: { rule_id: rule.rule_id, ...(justification && { justification }) } };
-            await setAck(options);
-            setJustificaton('');
-            afterFn && afterFn();
+            try {
+                await setAck(options);
+                addNotification({ variant: 'success', dismissable: true, title: intl.formatMessage(messages.ruleSuccessfullyDisabled) });
+                setJustificaton('');
+                afterFn && afterFn();
+            } catch (error) {
+                addNotification({ variant: 'danger', dismissable: true, title: intl.formatMessage(messages.error), description: `${error}` });
+            }
         } else {
             bulkHostActions();
         }
