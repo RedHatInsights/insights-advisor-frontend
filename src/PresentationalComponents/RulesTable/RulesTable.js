@@ -42,7 +42,7 @@ import { strong } from '../../Utilities/intlHelper';
 
 const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, intl, selectedTags }) => {
     const [cols] = useState([
-        { title: intl.formatMessage(messages.name), transforms: [sortable, cellWidth(30)] },
+        { title: intl.formatMessage(messages.name), transforms: [sortable, cellWidth(45)] },
         { title: intl.formatMessage(messages.added), transforms: [sortable, cellWidth(15)] },
         { title: intl.formatMessage(messages.totalRisk), transforms: [sortable, cellWidth(15)] },
         { title: intl.formatMessage(messages.riskofchange), transforms: [sortable, cellWidth(15)] },
