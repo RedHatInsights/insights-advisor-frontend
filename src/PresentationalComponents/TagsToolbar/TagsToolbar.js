@@ -29,6 +29,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
     const intl = useIntl();
     const [isOpen, setIsOpen] = useState(false);
     const [tags, setTags] = useState({});
+    const [selected, setSelected] = useState([]);
     const [searchText, setSearchText] = useState();
     const [params, setParams] = useState();
     const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
@@ -62,6 +63,16 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
         };
     };
 
+    const getSelectedTagsData = async (selectedTags) => {
+        return Promise.all(selectedTags.flatMap(async (id) => {
+            const response = await API.get(`${INV_BASE_URL}/tags?search=${id}&registered_with=insights`);
+            return response.data.results.map(obj => {
+                const { tag, count } = obj;
+                return tag && count && { ...tag, id, count };
+            });
+        }));
+    };
+
     const fetchTags = async (perPage, page, params, filter) => {
         let formattedTags = [];
         try {
@@ -91,6 +102,12 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
         const url = new URL(window.location);
         let params = new URLSearchParams(url.search);
         setParams(params.get('tags'));
+        (async() => setSelected(groupTags({
+            total: selectedTags.length,
+            count: selectedTags.length,
+            data: [].concat.apply([], await getSelectedTagsData(selectedTags))
+        }).data))();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedTags]);
 
     useEffect(() => {
@@ -156,22 +173,24 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
                 <SearchIcon className='tags-filter-search-icon'/>
             </InputGroup>
             <Divider key="inline-filter-divider"/>
-            {data.map((group, index) =>
-                <SelectGroup key={`group${index}`} label={group.source}>
-                    {group.data.map((tag, tagIndex) =>
-                        <span key={tagIndex} className='tags-select-group'>
-                            <SelectOption value={tag.id} isChecked={
-                                selectedTags.find(selection => selection === tag.id)
-                            }>
-                                <Tooltip content={`${decodeURIComponent(tag.id)}`} position={TooltipPosition.right}>
-                                    <span>{`${decodeURIComponent(tag.key + '=' + tag.value)}`}</span>
-                                </Tooltip>
-                            </SelectOption>
-                            <Badge className='tags-select-badge'> {tag.count} </Badge>
-                        </span>
-                    )}
-                </SelectGroup>
-            )}
+            {[selected, data].map((arr, key) => <React.Fragment key={key}>
+                {arr.map((group, index) =>
+                    <SelectGroup key={`group${index}`} label={group.source}>
+                        {group.data.map((tag, tagIndex) =>
+                            <span key={tagIndex} className='tags-select-group'>
+                                <SelectOption value={tag.id} isChecked={
+                                    selectedTags.find(selection => selection === tag.id)
+                                }>
+                                    <Tooltip content={`${decodeURIComponent(tag.id)}`} position={TooltipPosition.right}>
+                                        <span>{`${decodeURIComponent(tag.key + '=' + tag.value)}`}</span>
+                                    </Tooltip>
+                                </SelectOption>
+                                <Badge className='tags-select-badge'> {tag.count} </Badge>
+                            </span>
+                        )}
+                    </SelectGroup>)}
+                {key === 0 && arr.length > 0 && <Divider/>}
+            </React.Fragment>)}
             <Button key='manage all tags'
                 variant='link' onClick={() => setManageTagsModalOpen(true)}>
                 {(showMoreCount > 0 && count >= showMoreCount) ?
