@@ -46,7 +46,9 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, hosts, rule, 
                 : { type: 'RULE', options: { rule_id: rule.rule_id, ...(justification && { justification }) } };
             try {
                 await setAck(options);
-                addNotification({ variant: 'success', dismissable: true, title: intl.formatMessage(messages.ruleSuccessfullyDisabled) });
+                addNotification({
+                    variant: 'success', timeout: true, dismissable: true, title: intl.formatMessage(messages.ruleSuccessfullyDisabled)
+                });
                 setJustificaton('');
                 afterFn && afterFn();
             } catch (error) {

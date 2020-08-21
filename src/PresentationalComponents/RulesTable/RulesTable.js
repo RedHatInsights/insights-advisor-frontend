@@ -117,7 +117,9 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             } else {
                 try {
                     await API.delete(`${BASE_URL}/ack/${rule.rule_id}/`);
-                    addNotification({ variant: 'success', dismissable: true, title: intl.formatMessage(messages.ruleSuccessfullyEnabled) });
+                    addNotification({
+                        variant: 'success', timeout: true, dismissable: true, title: intl.formatMessage(messages.ruleSuccessfullyEnabled)
+                    });
                     fetchRulesFn();
                 } catch (error) {
                     addNotification({ variant: 'danger', dismissable: true, title: intl.formatMessage(messages.error), description: `${error}` });
