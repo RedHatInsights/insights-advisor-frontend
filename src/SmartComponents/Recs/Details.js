@@ -68,7 +68,9 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     const enableRule = async (rule) => {
         try {
             await API.delete(`${BASE_URL}/ack/${rule.rule_id}/`);
-            addNotification({ variant: 'success', dismissable: true, title: intl.formatMessage(messages.ruleSuccessfullyEnabled) });
+            addNotification({
+                variant: 'success', timeout: true, dismissable: true, title: intl.formatMessage(messages.ruleSuccessfullyEnabled)
+            });
             fetchRulefn();
         } catch (error) {
             handleModalToggle(false);
@@ -95,7 +97,9 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         const data = { systems: hostAcks.data.map(item => item.system_uuid) };
         try {
             const response = await API.post(`${BASE_URL}/rule/${rule.rule_id}/unack_hosts/`, {}, data);
-            addNotification({ variant: 'success', dismissable: true, title: intl.formatMessage(messages.ruleSuccessfullyEnabled) });
+            addNotification({
+                variant: 'success', timeout: true, dismissable: true, title: intl.formatMessage(messages.ruleSuccessfullyEnabled)
+            });
             if (selectedTags.length > 0) {
                 fetchRulefn();
             } else {
