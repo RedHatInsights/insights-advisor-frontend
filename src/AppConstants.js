@@ -7,7 +7,7 @@ import messages from './Messages';
 import { strong } from './Utilities/intlHelper';
 
 const cache = createIntlCache();
-const locale = navigator.language;
+const locale = navigator.language.slice(0, 2);
 const intl = createIntl({
     // eslint-disable-next-line no-console
     onError: console.log,

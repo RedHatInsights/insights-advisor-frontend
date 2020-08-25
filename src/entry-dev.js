@@ -12,7 +12,7 @@ import logger from 'redux-logger';
 import messages from '../locales/data.json';
 
 ReactDOM.render(
-    <IntlProvider locale={navigator.language} messages={messages} onError={console.log}>
+    <IntlProvider locale={navigator.language.slice(0, 2)} messages={messages} onError={console.log}>
         <Provider store={init(logger).getStore()}>
             <Router basename={getBaseName(window.location.pathname)}>
                 <React.Fragment>
