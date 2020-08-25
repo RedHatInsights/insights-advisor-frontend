@@ -55,7 +55,7 @@
     "@redhat-cloud-services/frontend-components-pdf-generator": "2.2.2",
     "@redhat-cloud-services/frontend-components-remediations": "2.1.4",
     "@redhat-cloud-services/frontend-components-translations": "2.1.0",
-    "@redhat-cloud-services/frontend-components-utilities": "2.1.4",
+    "@redhat-cloud-services/frontend-components-utilities": "2.1.5",
     "classnames": "2.2.6",
     "react": "16.13.1",
     "react-content-loader": "5.1.0",
