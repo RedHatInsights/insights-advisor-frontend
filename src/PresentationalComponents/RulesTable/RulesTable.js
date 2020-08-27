@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/index';
 import { Table, TableBody, TableHeader, cellWidth, fitContent, sortable } from '@patternfly/react-table';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
-import { filterFetchBuilder, paramParser, pruneFilters, urlBuilder } from '../Common/Tables';
+import { encodeOptionsToURL, filterFetchBuilder, paramParser, pruneFilters, urlBuilder } from '../Common/Tables';
 
 import API from '../../Utilities/Api';
 import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
@@ -74,11 +74,11 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     const fetchRulesFn = useCallback(() => {
         urlBuilder(filters, selectedTags);
-        const options = selectedTags.length && ({ tags: selectedTags.join() });
-        fetchRules({
-            ...filterFetchBuilder(filters),
-            ...options
-        });
+        const options = selectedTags.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)).join('&tags=') });
+        fetchRules(
+            options.tags ? {} : { ...filterFetchBuilder(filters), ...options },
+            options.tags && encodeOptionsToURL({ ...filterFetchBuilder(filters), ...options })
+        );
     }, [fetchRules, filters, selectedTags]);
 
     const onSort = (_event, index, direction) => {
@@ -521,7 +521,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    fetchRules: (url) => dispatch(AppActions.fetchRules(url)),
+    fetchRules: (options, search) => dispatch(AppActions.fetchRules(options, search)),
     addNotification: data => dispatch(addNotification(data)),
     setFilters: (filters) => dispatch(AppActions.setFilters(filters))
 });

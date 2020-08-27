@@ -2,9 +2,11 @@ import * as ActionTypes from './AppConstants';
 
 import API from './Utilities/Api';
 
-const fetchData = async (url, headers, options) => {
+const fetchData = async (url, headers, options, search) => {
     await insights.chrome.auth.getUser();
-    const response = await API.get(url, headers, options);
+    const response = search ?
+        await API.get(`${url}?${search}`, headers, options) :
+        await API.get(`${url}`, headers, options);
     return response.data;
 };
 
@@ -26,17 +28,17 @@ export const fetchStatsStaleHosts = (options) => ({
     type: ActionTypes.STATS_STALEHOSTS_FETCH,
     payload: fetchData(ActionTypes.STATS_STALEHOSTS_FETCH_URL, {}, options)
 });
-export const fetchRules = (options) => ({
+export const fetchRules = (options, search) => ({
     type: ActionTypes.RULES_FETCH,
-    payload: fetchData(ActionTypes.RULES_FETCH_URL, {}, options)
+    payload: fetchData(ActionTypes.RULES_FETCH_URL, {}, options, search && search)
 });
-export const fetchRule = (options) => ({
+export const fetchRule = (options, search) => ({
     type: ActionTypes.RULE_FETCH,
-    payload: fetchData(`${ActionTypes.RULES_FETCH_URL}${options.rule_id}/`, {}, options.tags && { tags: options.tags })
+    payload: fetchData(`${ActionTypes.RULES_FETCH_URL}${options.rule_id}/`, {}, options, search && search)
 });
-export const fetchSystem = (ruleId, options) => ({
+export const fetchSystem = (ruleId, options, search) => ({
     type: ActionTypes.SYSTEM_FETCH,
-    payload: fetchData(`${ActionTypes.RULES_FETCH_URL}${encodeURI(ruleId)}/systems`, {}, options)
+    payload: fetchData(`${ActionTypes.RULES_FETCH_URL}${encodeURI(ruleId)}/systems`, {}, options, search && search)
 });
 export const setFilters = (filters) => ({
     type: ActionTypes.FILTERS_SET,
