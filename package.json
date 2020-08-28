@@ -48,7 +48,7 @@
     "@patternfly/react-table": "4.16.7",
     "@patternfly/react-tokens": "4.9.6",
     "@react-pdf/renderer": "1.6.10",
-    "@redhat-cloud-services/frontend-components": "2.3.17",
+    "@redhat-cloud-services/frontend-components": "2.3.18",
     "@redhat-cloud-services/frontend-components-charts": "2.3.1",
     "@redhat-cloud-services/frontend-components-inventory-insights": "2.5.6",
     "@redhat-cloud-services/frontend-components-notifications": "2.1.2",
