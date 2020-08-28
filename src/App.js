@@ -1,6 +1,6 @@
 import './App.scss';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import PropTypes from 'prop-types';
 import { Routes } from './Routes';
@@ -8,11 +8,11 @@ import routerParams from '@redhat-cloud-services/frontend-components-utilities/f
 
 const App = (props) => {
     const [auth, setAuth] = useState(false);
-    const appNavClick = {
+    const appNavClick = useMemo(() => ({
         recommendations(redirect) { insights.chrome.appNavClick({ id: 'recommendations', redirect }); },
         systems(redirect) { insights.chrome.appNavClick({ id: 'systems', redirect }); },
         topics(redirect) { insights.chrome.appNavClick({ id: 'topics', redirect }); }
-    };
+    }), []);
 
     useEffect(() => {
         insights.chrome.init();
