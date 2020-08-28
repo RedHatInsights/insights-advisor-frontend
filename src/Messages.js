@@ -182,6 +182,11 @@ export default defineMessages({
         description: 'Search text placeholder for recommendation table',
         defaultMessage: 'Find a rule...'
     },
+    exportData: {
+        id: 'exportData',
+        description: 'Describes function of export icon',
+        defaultMessage: 'Export data'
+    },
     exportJson: {
         id: 'exportJson',
         description: 'Button text to export/download recommendation table data as json',

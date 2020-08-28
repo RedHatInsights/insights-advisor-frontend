@@ -474,7 +474,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 // eslint-disable-next-line no-dupe-keys
                 label: intl.formatMessage(messages.exportJson),
                 onSelect: (_e, fileType) => downloadReport('hits', fileType, urlBuilder(filters, selectedTags)),
-                isDisabled: !filters.impacting
+                isDisabled: !filters.impacting,
+                tooltipText: intl.formatMessage(messages.exportData)
             }}
             actionsConfig={{ actions }}
             filterConfig={{ items: filterConfigItems }}
