@@ -20,9 +20,9 @@ const App = (props) => {
         insights.chrome.init();
         insights.chrome.auth.getUser().then(() => setAuth(true));
         insights.chrome.identifyApp('advisor');
-        insights.chrome?.globalFilterScope('insights');
+        insights.chrome?.globalFilterScope?.('insights');
         insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
-            const selectedTags = insights.chrome?.mapGlobalFilter(data).filter(item => !item.includes('Workloads')) || undefined;
+            const selectedTags = insights.chrome?.mapGlobalFilter?.(data)?.filter(item => !item.includes('Workloads')) || undefined;
             dispatch(setSelectedTags(selectedTags));
         });
         const baseComponentUrl = props.location.pathname.split('/')[1];
