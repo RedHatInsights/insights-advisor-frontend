@@ -195,3 +195,7 @@ export const SYSTEM_FILTER_CATEGORIES = {
         ]
     }
 };
+
+export const isGlobalFilter = () => {
+    return insights.chrome.isBeta() || Boolean(localStorage.getItem('chrome:experimental:global-filter'));
+};

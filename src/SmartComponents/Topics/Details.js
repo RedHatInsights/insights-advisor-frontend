@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import { isGlobalFilter } from '../../AppConstants';
 
 const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl, filters }) => {
     useEffect(() => {
@@ -40,7 +41,7 @@ const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl,
     }, [fetchTopic, match.params.id, setFilters]);
 
     return <React.Fragment>
-        <TagsToolbar />
+        {!isGlobalFilter() && <TagsToolbar />}
         <PageHeader>
             <Breadcrumbs
                 current={topic.name}

@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import { isGlobalFilter } from '../../AppConstants';
 
 const TagsToolbar = asyncComponent(() => import(/* webpackChunkName: "TagsToolbar" */ '../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 
@@ -21,7 +22,7 @@ const List = ({ fetchTopics, intl, selectedTags }) => {
     }, [fetchTopics, selectedTags]);
 
     return <React.Fragment>
-        <TagsToolbar />
+        { !isGlobalFilter() && <TagsToolbar /> }
         <PageHeader>
             <PageHeaderTitle title={`${intl.formatMessage(messages.insightsHeader)} ${intl.formatMessage(messages.topics).toLowerCase()}`} />
         </PageHeader>
