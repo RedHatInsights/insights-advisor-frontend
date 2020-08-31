@@ -8,6 +8,7 @@ import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
+import { isGlobalFilter } from '../../AppConstants';
 
 const RulesTable = lazy(() => import(/* webpackChunkName: "RulesTable" */ '../../PresentationalComponents/RulesTable/RulesTable'));
 const TagsToolbar = lazy(() => import(/* webpackChunkName: "TagsToolbar" */ '../../PresentationalComponents/TagsToolbar/TagsToolbar'));
@@ -16,7 +17,7 @@ const List = () => {
     const intl = useIntl();
 
     return <React.Fragment>
-        <Suspense fallback={<Loading />}> <TagsToolbar /> </Suspense>
+        {!isGlobalFilter() && <Suspense fallback={<Loading />}> <TagsToolbar /> </Suspense>}
         <PageHeader className='ins-c-recommendations-header'>
             <PageHeaderTitle title={`${intl.formatMessage(messages.insightsHeader)} ${intl.formatMessage(messages.recommendations).toLowerCase()}`} />
             <DownloadExecReport />

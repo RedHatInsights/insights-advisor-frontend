@@ -3,7 +3,7 @@ import './Details.scss';
 
 import * as AppActions from '../../AppActions';
 
-import { BASE_URL, SYSTEM_TYPES, UI_BASE } from '../../AppConstants';
+import { BASE_URL, SYSTEM_TYPES, UI_BASE, isGlobalFilter } from '../../AppConstants';
 import { Card, CardBody, CardFooter, CardHeader } from '@patternfly/react-core/dist/js/components/Card';
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
@@ -165,7 +165,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     }, [fetchRuleAck, rule.reports_shown, rule.rule_id]);
 
     return <React.Fragment>
-        <Suspense fallback={<Loading />}> <TagsToolbar /> </Suspense>
+        {!isGlobalFilter() && <Suspense fallback={<Loading />}> <TagsToolbar /> </Suspense>}
         {viewSystemsModalOpen && <ViewHostAcks
             handleModalToggle={(toggleModal) => setViewSystemsModalOpen(toggleModal)}
             isModalOpen={viewSystemsModalOpen}
