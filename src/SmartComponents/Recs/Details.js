@@ -46,7 +46,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [host, setHost] = useState(undefined);
     const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
-    const [filters, setFilters] = useState({ sort: '-updated' });
+    const [filters, setFilters] = useState({ sort: '-last_seen', limit: 50 });
     const [isRuleUpdated, setIsRuleUpdated] = useState(false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -120,9 +120,9 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     };
 
     const onSortFn = (sort) => {
-        setFilters({ sort });
-        sort === 'updated' && (sort = 'last_seen');
-        sort === '-updated' && (sort = '-last_seen');
+        setFilters({ ...filters, sort });
+        sort === 'last_seen' && (sort = 'last_seen');
+        sort === '-last_seen' && (sort = '-last_seen');
         fetchRulefn({ sort }, false);
     };
 
@@ -261,8 +261,8 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                             {systemFetchStatus === 'fulfilled' &&
                                 <Inventory
                                     tableProps={{ canSelectAll: false, actionResolver }}
-                                    items={system.host_ids} rule={rule} afterDisableFn={afterDisableFn} filters={filters}
-                                    onSortFn={onSortFn} />}
+                                    items={system.data} rule={rule} afterDisableFn={afterDisableFn} filters={filters}
+                                    onSortFn={onSortFn} count={system.meta.count}/>}
                             {systemFetchStatus === 'pending' && (<Loading />)}
                         </React.Fragment>}
                         {systemFetchStatus === 'fulfilled' && !rule.reports_shown && <MessageState icon={BellSlashIcon}

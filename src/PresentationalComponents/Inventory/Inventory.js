@@ -24,7 +24,7 @@ import { useStore } from 'react-redux';
 let page = 1;
 let pageSize = 50;
 let rule_id = '';
-const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification, items, afterDisableFn, onSortFn, filters }) => {
+const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification, items, afterDisableFn, onSortFn, filters, count }) => {
     const inventory = useRef(null);
     const [InventoryTable, setInventoryTable] = useState();
     const [selected, setSelected] = useState([]);
@@ -35,7 +35,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
 
     const sortIndices = {
         1: 'display_name',
-        2: 'updated'
+        2: 'last_seen'
     };
 
     const onSort = ({ index, direction }) => onSortFn(`${direction === 'asc' ? '' : '-'}${sortIndices[index]}`);
@@ -44,7 +44,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
         const sortIndex = Number(Object.entries(sortIndices).find(item => item[1] === filters.sort || `-${item[1]}` === filters.sort)[0]);
         return {
             index: sortIndex,
-            key: sortIndex !== 2 ? sortIndices[sortIndex] : 'updated',
+            key: sortIndex !== 2 ? sortIndices[sortIndex] : 'last_seen',
             direction: filters.sort[0] === '-' ? 'desc' : 'asc'
         };
     };
@@ -110,7 +110,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
                     systemReducer(
                         [
                             { title: intl.formatMessage(messages.name), transforms: [pfReactTable.sortable], key: 'display_name' },
-                            { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable], key: 'updated' }
+                            { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable], key: 'last_seen' }
                         ],
                         INVENTORY_ACTION_TYPES
                     )
@@ -132,12 +132,15 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
         }
         {InventoryTable && <InventoryTable
             ref={inventory}
-            items={items}
+            items={items.map((system) => ({
+                id: system.system_uuid,
+                last_seen: system.last_seen
+            }))}
             sortBy={calculateSort()}
             onSort={onSort}
             onRefresh={onRefresh}
             page={page}
-            total={items.length}
+            total={count}
             perPage={pageSize}
             tableProps={tableProps}
             dedicatedAction={<RemediationButton
@@ -199,7 +202,8 @@ Inventory.propTypes = {
     addNotification: PropTypes.func,
     afterDisableFn: PropTypes.func,
     onSortFn: PropTypes.func,
-    filters: PropTypes.object
+    filters: PropTypes.object,
+    count: PropTypes.number
 };
 
 const mapDispatchToProps = (dispatch) => ({

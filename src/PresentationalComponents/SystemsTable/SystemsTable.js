@@ -136,7 +136,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
         const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
         return {
             index: sortIndex,
-            key: sortIndex !== 6 ? sortIndices[sortIndex] : 'updated',
+            key: sortIndex !== 6 ? sortIndices[sortIndex] : 'last_seen',
             direction: sortDirection
         };
     };
@@ -151,7 +151,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
             { title: intl.formatMessage(messages.important), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'important_hits' },
             { title: intl.formatMessage(messages.moderate), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'moderate_hits' },
             { title: intl.formatMessage(messages.low), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'low_hits' },
-            { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'updated' }];
+            { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'last_seen' }];
             const { inventoryConnector, mergeWithEntities, INVENTORY_ACTION_TYPES
             } = await insights.loadInventory({
                 ReactRedux,
