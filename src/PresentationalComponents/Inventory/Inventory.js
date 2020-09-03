@@ -9,6 +9,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
+import Loading from '../Loading/Loading';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
@@ -130,7 +131,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
             afterFn={afterDisableFn}
             hosts={selected} />
         }
-        {InventoryTable && <InventoryTable
+        {InventoryTable ? <InventoryTable
             ref={inventory}
             items={items}
             sortBy={calculateSort()}
@@ -182,7 +183,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
                 checked: selected.length === items.length ? 1 : selected.length === pageSize ? null : 0,
                 onSelect: () => { selected.length > 0 ? onSelectRows(-1, false) : bulkSelectfn(); }
             }}
-        />}
+        /> : <Loading />}
     </React.Fragment>;
 };
 
