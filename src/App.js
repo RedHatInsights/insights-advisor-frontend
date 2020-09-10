@@ -25,12 +25,7 @@ const App = (props) => {
         if (insights.chrome?.globalFilterScope) {
             insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
                 const selectedTags = insights.chrome?.mapGlobalFilter?.(data)?.filter(item => !item.includes('Workloads')) || undefined;
-                const encodedTags = selectedTags.map(tag => {
-                    const [namespace, rest] = tag.split('/');
-                    const [key, value] = rest.split('=');
-                    return `${encodeURIComponent(namespace)}/${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-                });
-                dispatch(setSelectedTags(encodedTags));
+                dispatch(setSelectedTags(selectedTags));
             });
         }
 

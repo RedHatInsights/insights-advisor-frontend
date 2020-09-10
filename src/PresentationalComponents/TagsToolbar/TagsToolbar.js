@@ -56,7 +56,7 @@ const TagsToolbar = ({ selectedTags, setSelectedTags }) => {
                 return {
                     ...item.tag,
                     count: item.count,
-                    id: `${namespace}/${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+                    id: `${namespace}/${key}=${value}`
                 };
             })
         };
