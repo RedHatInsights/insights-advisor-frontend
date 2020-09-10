@@ -1,7 +1,9 @@
 .ins-c-recommendations-header {
-    display: inline-flex;
-    flex: 1 0 auto;
-    justify-content: space-between;
+    white-space: nowrap;
+    width: auto;
+    > * {
+        display:inline-block;
+    }
     .pf-c-button {
         line-height: var(--pf-global--LineHeight--sm);
     }
