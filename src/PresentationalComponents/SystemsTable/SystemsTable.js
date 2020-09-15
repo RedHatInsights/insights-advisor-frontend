@@ -195,12 +195,12 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
             delete paramsObject.tags;
             paramsObject.sort !== undefined && (paramsObject.sort = paramsObject.sort[0]);
             paramsObject.display_name !== undefined && (paramsObject.display_name = paramsObject.display_name[0]);
-            paramsObject.hits === undefined && (paramsObject.hits = ['yes']);
+            paramsObject.hits === undefined && (paramsObject.hits = ['all']);
             paramsObject.offset === undefined ? paramsObject.offset = 0 : paramsObject.offset = Number(paramsObject.offset[0]);
             paramsObject.limit === undefined ? paramsObject.limit = 10 : paramsObject.limit = Number(paramsObject.limit[0]);
             setFilters({ ...filters, ...paramsObject });
         } else if (filters.limit === undefined || filters.offset === undefined || filters.hits === undefined) {
-            setFilters({ ...filters, offset: 0, limit: 10, hits: ['yes'] });
+            setFilters({ ...filters, offset: 0, limit: 10, hits: ['all'] });
         }
 
         setFilterBuilding(false);
