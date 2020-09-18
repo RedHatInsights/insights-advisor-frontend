@@ -155,7 +155,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     }, [fetchRulefn, selectedTags]);
 
     useEffect(() => {
-        if (!rule.reports_shown && rule.rule_id && isRuleUpdated) {
+        if (rule.reports_shown !== 'enabled' && rule.rule_id && isRuleUpdated) {
             fetchRuleAck({ rule_id: rule.rule_id });
         } else if (!isRuleUpdated) {
             fetchRulefn();
@@ -207,7 +207,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                                         toggleIndicator={CaretDownIcon}>Actions
                                     </DropdownToggle>}
                                     isOpen={actionsDropdownOpen}
-                                    dropdownItems={rule && rule.reports_shown ?
+                                    dropdownItems={rule && rule.reports_shown === 'enabled' ?
                                         [<DropdownItem key='link'
                                             onClick={() => { handleModalToggle(true); }}>
                                             {intl.formatMessage(messages.disableRule)}</DropdownItem>]
@@ -224,13 +224,13 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
             <React.Fragment>
                 {ruleFetchStatus === 'fulfilled' &&
                     <React.Fragment>
-                        {(rule.hosts_acked_count > 0 || !rule.reports_shown) && <Card className='cardOverride'>
+                        {(rule.hosts_acked_count > 0 || rule.reports_shown !== 'enabled') && <Card className='cardOverride'>
                             <CardHeader><Title headingLevel="h4" size="xl">
-                                <BellSlashIcon size='sm' />&nbsp;{intl.formatMessage(rule.hosts_acked_count > 0 && rule.reports_shown ?
+                                <BellSlashIcon size='sm' />&nbsp;{intl.formatMessage(rule.hosts_acked_count > 0 && rule.reports_shown === 'enabled' ?
                                     messages.ruleIsDisabledForSystems : messages.ruleIsDisabled)}
                             </Title></CardHeader>
                             <CardBody>
-                                {rule.hosts_acked_count > 0 && rule.reports_shown ?
+                                {rule.hosts_acked_count > 0 && rule.reports_shown === 'enabled' ?
                                     <React.Fragment>
                                         {intl.formatMessage(messages.ruleIsDisabledForSystemsBody, { systems: rule.hosts_acked_count })}
                                         &nbsp;
@@ -245,7 +245,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                                     </React.Fragment>}
                             </CardBody>
                             <CardFooter>
-                                {rule.hosts_acked_count > 0 && rule.reports_shown ?
+                                {rule.hosts_acked_count > 0 && rule.reports_shown === 'enabled' ?
                                     <Button isInline variant='link' onClick={() => bulkHostActions()}>
                                         {intl.formatMessage(messages.enableRuleForSystems)}
                                     </Button>
@@ -254,7 +254,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                                     </Button>}
                             </CardFooter>
                         </Card>}
-                        {rule.reports_shown && <React.Fragment>
+                        {rule.reports_shown === 'enabled' && <React.Fragment>
                             <Title className='titleOverride' headingLevel='h3' size='2xl'>
                                 {intl.formatMessage(messages.affectedSystems)}
                             </Title>
@@ -265,7 +265,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                                     onSortFn={onSortFn} />}
                             {systemFetchStatus === 'pending' && (<Loading />)}
                         </React.Fragment>}
-                        {systemFetchStatus === 'fulfilled' && !rule.reports_shown && <MessageState icon={BellSlashIcon}
+                        {systemFetchStatus === 'fulfilled' && rule.reports_shown !== 'enabled' && <MessageState icon={BellSlashIcon}
                             title={intl.formatMessage(messages.ruleIsDisabled)}
                             text={intl.formatMessage(messages.ruleIsDisabledBody)} />}
                     </React.Fragment>}

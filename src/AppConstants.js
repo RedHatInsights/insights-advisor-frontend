@@ -181,8 +181,9 @@ export const FILTER_CATEGORIES = {
     reports_shown: {
         type: 'radio', title: 'status', urlParam: 'reports_shown', values: [
             { label: intlHelper(intl.formatMessage(messages.all), intlSettings), value: 'undefined' },
-            { label: intlHelper(intl.formatMessage(messages.enabled), intlSettings), value: 'true' },
-            { label: intlHelper(intl.formatMessage(messages.disabled), intlSettings), value: 'false' }
+            { label: intlHelper(intl.formatMessage(messages.enabled), intlSettings), value: 'enabled' },
+            { label: intlHelper(intl.formatMessage(messages.disabled), intlSettings), value: 'disabled' },
+            { label: intlHelper(intl.formatMessage(messages.redhatDisabled), intlSettings), value: 'rhdisabled' }
         ]
     }
 };

@@ -98,7 +98,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     const toggleRulesDisabled = (param) => {
         const reports_shown = param === 'undefined' ? undefined : param;
-        setFilters({ ...filters, reports_shown, offset: 0, ...(reports_shown !== 'true' && { impacting: false }) });
+        setFilters({ ...filters, reports_shown, offset: 0, ...(reports_shown !== 'enabled' && { impacting: false }) });
     };
 
     const handleOnCollapse = (event, rowId, isOpen) => {
@@ -111,7 +111,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         const rule = rows[rowId].rule;
 
         try {
-            if (rule.reports_shown) {
+            if (rule.reports_shown === 'enabled') {
                 setSelectedRule(rule);
                 setDisableRuleOpen(true);
             } else {
@@ -129,7 +129,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             addNotification({
                 variant: 'danger',
                 dismissable: true,
-                title: rule.reports_shown ? intl.formatMessage(messages.rulesTableHideReportsErrorDisabled)
+                title: rule.reports_shown === 'enabled' ? intl.formatMessage(messages.rulesTableHideReportsErrorDisabled)
                     : intl.formatMessage(messages.rulesTableHideReportsErrorEnabled),
                 description: `${error}`
             });
@@ -142,7 +142,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             return null;
         }
 
-        return rule && rule.reports_shown ?
+        return rule && rule.reports_shown === 'enabled' ?
             [{
                 title: intl.formatMessage(messages.disableRule),
                 onClick: (event, rowId) => hideReports(rowId)
@@ -205,10 +205,10 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                     cells: [{
                         title: (
                             <MessageState icon={CheckCircleIcon} iconClass='ansibleCheck'
-                                title={intl.formatMessage(messages.rulesTableNoRuleHitsTitle)} text={filters.reports_shown ?
+                                title={intl.formatMessage(messages.rulesTableNoRuleHitsTitle)} text={filters.reports_shown === 'enabled' ?
                                     intl.formatMessage(messages.rulesTableNoRuleHitsEnabledRulesBody) :
                                     intl.formatMessage(messages.rulesTableNoRuleHitsAnyRulesBody)}>
-                                {filters.reports_shown && <Button variant='link' style={{ paddingTop: 24 }}
+                                {filters.reports_shown === 'enabled' && <Button variant='link' style={{ paddingTop: 24 }}
                                     onClick={() => toggleRulesDisabled('undefined')}>
                                     {intl.formatMessage(messages.rulesTableNoRuleHitsAddDisabledButton)}
                                 </Button>}
@@ -246,7 +246,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                             <div></div>
                         </div>
                     }, {
-                        title: <div key={key}> {value.reports_shown ?
+                        title: <div key={key}> {value.reports_shown === 'enabled' ?
                             `${value.impacted_systems_count.toLocaleString()}`
                             : intl.formatMessage(messages.nA)}</div>
                     }, {
@@ -428,7 +428,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 setSearchText('');
                 setFilters({
                     ...(filters.topic && { topic: filters.topic }),
-                    impacting: true, reports_shown: 'true', limit: filters.limit, offset: filters.offset
+                    impacting: true, reports_shown: 'enabled', limit: filters.limit, offset: filters.offset
                 });
             } else {
                 itemsToRemove.map(item => {
