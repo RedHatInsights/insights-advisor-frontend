@@ -1,4 +1,3 @@
-/* eslint camelcase: 0 */
 import './Details.scss';
 
 import * as AppActions from '../../AppActions';
@@ -41,7 +40,7 @@ import routerParams from '@redhat-cloud-services/frontend-components-utilities/f
 
 const TagsToolbar = lazy(() => import('../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchRule, ruleFetchStatus, rule, systemFetchStatus, system, intl,
-    topics, ruleAck, hostAcks, fetchHostAcks, setSystem, setRule, selectedTags, addNotification }) => {
+    topics, ruleAck, hostAcks, fetchHostAcks, setSystem, setRule, selectedTags, addNotification, workloads }) => {
     const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [host, setHost] = useState(undefined);
@@ -51,7 +50,8 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchRulefn = (newSort, rule = true, system = true) => {
-        const options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)).join('&tags=') });
+        let options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)).join('&tags=') });
+        workloads && (options = { ...options, ...workloads });
         system && fetchSystem(
             match.params.id,
             options.tags ? {} : { ...options, ...filters, ...newSort },
@@ -144,15 +144,20 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const ref = useRef();
+    const tagRef = useRef();
+    const workloadRef = useRef();
     useEffect(() => {
-        if (selectedTags !== null && JSON.stringify(ref.current) !== JSON.stringify(selectedTags)) {
-            fetchRulefn();
-            setIsRuleUpdated(true);
+        const fetchAction = () => {fetchRulefn(); setIsRuleUpdated(true);};
+
+        if (isRuleUpdated && ((selectedTags !== null && JSON.stringify(tagRef.current) !== JSON.stringify(selectedTags)) ||
+        (JSON.stringify(workloadRef.current) !== JSON.stringify(workloads)))) {
+            fetchAction();
         }
 
-        ref.current = selectedTags;
-    }, [fetchRulefn, selectedTags]);
+        workloadRef.current = workloads;
+        tagRef.current = selectedTags;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [fetchRulefn, selectedTags, workloads]);
 
     useEffect(() => {
         if (!rule.reports_shown && rule.rule_id && isRuleUpdated) {
@@ -294,7 +299,8 @@ OverviewDetails.propTypes = {
     fetchHostAcks: PropTypes.func,
     setRule: PropTypes.func,
     setSystem: PropTypes.func,
-    selectedTags: PropTypes.array
+    selectedTags: PropTypes.array,
+    workloads: PropTypes.object
 };
 
 const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
@@ -306,6 +312,7 @@ const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
     ruleAck: AdvisorStore.ruleAck,
     hostAcks: AdvisorStore.hostAcks,
     selectedTags: AdvisorStore.selectedTags,
+    workloads: AdvisorStore.workloads,
     ...ownProps
 });
 

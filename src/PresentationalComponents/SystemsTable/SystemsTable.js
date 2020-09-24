@@ -1,4 +1,3 @@
-/* eslint camelcase: 0 */
 import './SystemsTable.scss';
 
 import * as AppActions from '../../AppActions';
@@ -25,7 +24,7 @@ import { reactCore } from '@redhat-cloud-services/frontend-components-utilities/
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { systemReducer } from '../../AppReducer';
 
-const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters, setFilters, selectedTags }) => {
+const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters, setFilters, selectedTags, workloads }) => {
     const inventory = useRef(null);
     const [InventoryTable, setInventory] = useState();
     const store = useStore();
@@ -49,10 +48,10 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     };
 
     const fetchSystemsFn = useCallback(() => {
-        const options = selectedTags.length && ({ tags: selectedTags && selectedTags.join() });
+        let options = selectedTags.length && ({ tags: selectedTags && selectedTags.join() });
+        workloads && (options = { ...options, ...workloads });
         fetchSystems({ ...filterFetchBuilder(filters), ...options });
-
-    }, [fetchSystems, filters, selectedTags]);
+    }, [fetchSystems, filters, selectedTags, workloads]);
 
     const removeFilterParam = (param) => {
         const filter = { ...filters, offset: 0 };
@@ -208,8 +207,8 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
     }, []);
 
     useEffect(() => {
-        urlBuilder(filters, selectedTags);
-    }, [filters, selectedTags]);
+        urlBuilder(filters, selectedTags, workloads);
+    }, [filters, selectedTags, workloads]);
 
     useEffect(() => {
         !filterBuilding && systemsFetchStatus !== 'pending' && selectedTags !== null && fetchSystemsFn();
@@ -255,14 +254,16 @@ SystemsTable.propTypes = {
     intl: PropTypes.any,
     filters: PropTypes.object,
     setFilters: PropTypes.func,
-    selectedTags: PropTypes.array
+    selectedTags: PropTypes.array,
+    workloads: PropTypes.object
 };
 
 const mapStateToProps = ({ AdvisorStore }) => ({
     systems: AdvisorStore.systems,
     systemsFetchStatus: AdvisorStore.systemsFetchStatus,
     filters: AdvisorStore.filtersSystems,
-    selectedTags: AdvisorStore.selectedTags
+    selectedTags: AdvisorStore.selectedTags,
+    workloads: AdvisorStore.workloads
 });
 
 const mapDispatchToProps = dispatch => ({

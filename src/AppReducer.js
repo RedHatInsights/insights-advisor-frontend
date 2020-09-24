@@ -1,11 +1,10 @@
-/* eslint camelcase: 0 */
+/* eslint-disable new-cap */
 import * as ActionTypes from './AppConstants';
 
 import Advisor from '@redhat-cloud-services/frontend-components-inventory-insights';
 import Immutable from 'seamless-immutable';
 import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
 
-// eslint-disable-next-line new-cap
 const initialState = Immutable({
     rule: {},
     ruleFetchStatus: '',
@@ -33,11 +32,11 @@ const initialState = Immutable({
     ruleAckFetchStatus: '',
     hostAcks: {},
     hostAcksFetchStatus: '',
-    selectedTags: null
+    selectedTags: null,
+    workloads: {}
 });
 
-// eslint-disable-next-line new-cap
-export const getAdvisorStore = (previousState) => (state =  Immutable(previousState) || initialState, action) => {
+export const getAdvisorStore = (previousState) => (state = Immutable(previousState) || initialState, action) => {
     switch (action.type) {
         case `${ActionTypes.RULE_FETCH}_PENDING`:
             return state.set('ruleFetchStatus', 'pending');
@@ -187,6 +186,11 @@ export const getAdvisorStore = (previousState) => (state =  Immutable(previousSt
         case ActionTypes.SYSTEM_SET:
             return Immutable.merge(state, {
                 system: action.payload
+            });
+
+        case ActionTypes.WORKLOADS_SET:
+            return Immutable.merge(state, {
+                workloads: action.payload
             });
 
         default:

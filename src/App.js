@@ -1,12 +1,12 @@
 import './App.scss';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { batch, useDispatch } from 'react-redux';
+import { setSelectedTags, setWorkloads } from './AppActions';
 
 import PropTypes from 'prop-types';
 import { Routes } from './Routes';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
-import { setSelectedTags } from './AppActions';
-import { useDispatch } from 'react-redux';
 
 const App = (props) => {
     const [auth, setAuth] = useState(false);
@@ -25,7 +25,10 @@ const App = (props) => {
         if (insights.chrome?.globalFilterScope) {
             insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
                 const selectedTags = insights.chrome?.mapGlobalFilter?.(data)?.filter(item => !item.includes('Workloads')) || undefined;
-                dispatch(setSelectedTags(selectedTags));
+                batch(() => {
+                    dispatch(setWorkloads(data?.Workloads?.SAP?.isSelected && { sap_system: true }));
+                    dispatch(setSelectedTags(selectedTags));
+                });
             });
         }
 

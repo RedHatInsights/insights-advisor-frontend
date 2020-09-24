@@ -88,3 +88,7 @@ export const setSystem = (system) => ({
     type: ActionTypes.SYSTEM_SET,
     payload: system
 });
+export const setWorkloads = (data) => ({
+    type: ActionTypes.WORKLOADS_SET,
+    payload: data
+});

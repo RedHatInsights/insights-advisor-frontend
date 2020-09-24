@@ -1,5 +1,5 @@
 // Builds returns url params from table filters, pushes to url if history object is passed
-export const urlBuilder = (filters, selectedTags) => {
+export const urlBuilder = (filters, selectedTags, workloads) => {
     const url = new URL(window.location);
     const queryString = `${Object.keys(filters).map(key => `${key}=${Array.isArray(filters[key]) ? filters[key].join() : filters[key]}`).join('&')}`;
     const params = new URLSearchParams(queryString);
@@ -7,6 +7,7 @@ export const urlBuilder = (filters, selectedTags) => {
     //Removes invalid 'undefined' url param value
     params.get('reports_shown') === 'undefined' && params.delete('reports_shown');
 
+    workloads?.sap_system ? params.set('sap_system', true) : params.delete('sap_system');
     selectedTags !== null && selectedTags.length ? params.set('tags', selectedTags.join()) : params.delete('tags');
     window.history.replaceState(null, null, `${url.origin}${url.pathname}?${params.toString()}`);
     return `?${queryString}`;
