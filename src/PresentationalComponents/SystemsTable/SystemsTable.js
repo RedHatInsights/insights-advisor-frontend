@@ -224,6 +224,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
                     ...system,
                     id: system.system_uuid
                 }))}
+                isFullView
                 sortBy={calculateSort()}
                 onSort={onSort}
                 hasCheckbox={false}
