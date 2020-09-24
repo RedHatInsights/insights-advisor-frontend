@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import { Chart, Column, InsightsLabel, Panel, PanelItem, Paragraph, Section, Table } from '@redhat-cloud-services/frontend-components-pdf-generator';
 
 import PropTypes from 'prop-types';

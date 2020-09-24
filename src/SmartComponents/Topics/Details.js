@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import './_Details.scss';
 
 import * as AppActions from '../../AppActions';
@@ -22,9 +21,9 @@ import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import { Truncate } from '@redhat-cloud-services/frontend-components/components/Truncate';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
+import { isGlobalFilter } from '../../AppConstants';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
-import { isGlobalFilter } from '../../AppConstants';
 
 const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl, filters }) => {
     useEffect(() => {

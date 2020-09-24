@@ -1,4 +1,3 @@
-/* eslint camelcase: 0 */
 import './_RulesTable.scss';
 
 import * as AppActions from '../../AppActions';
@@ -40,7 +39,7 @@ import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { strong } from '../../Utilities/intlHelper';
 
-const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, intl, selectedTags }) => {
+const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, intl, selectedTags, workloads }) => {
     const [cols] = useState([
         { title: intl.formatMessage(messages.name), transforms: [sortable, cellWidth(45)] },
         { title: intl.formatMessage(messages.added), transforms: [sortable, cellWidth(15)] },
@@ -73,13 +72,14 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     };
 
     const fetchRulesFn = useCallback(() => {
-        urlBuilder(filters, selectedTags);
-        const options = selectedTags.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)).join('&tags=') });
+        urlBuilder(filters, selectedTags, workloads);
+        let options = selectedTags.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)).join('&tags=') });
+        workloads && (options = { ...options, ...workloads });
         fetchRules(
             options.tags ? {} : { ...filterFetchBuilder(filters), ...options },
             options.tags && encodeOptionsToURL({ ...filterFetchBuilder(filters), ...options })
         );
-    }, [fetchRules, filters, selectedTags]);
+    }, [fetchRules, filters, selectedTags, workloads]);
 
     const onSort = (_event, index, direction) => {
         const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
@@ -171,6 +171,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         if (window.location.search && filterBuilding) {
             const paramsObject = paramParser();
             delete paramsObject.tags;
+            delete paramsObject.sap_system;
+
             paramsObject.text === undefined ? setSearchText('') : setSearchText(paramsObject.text);
             paramsObject.reports_shown = paramsObject.reports_shown === undefined || paramsObject.reports_shown[0] === 'undefined' ? undefined
                 : paramsObject.reports_shown;
@@ -510,7 +512,8 @@ RulesTable.propTypes = {
     addNotification: PropTypes.func,
     setFilters: PropTypes.func,
     intl: PropTypes.any,
-    selectedTags: PropTypes.array
+    selectedTags: PropTypes.array,
+    workloads: PropTypes.object
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -518,6 +521,7 @@ const mapStateToProps = (state, ownProps) => ({
     rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
     filters: state.AdvisorStore.filters,
     selectedTags: state.AdvisorStore.selectedTags,
+    workloads: state.AdvisorStore.workloads,
     ...ownProps
 });
 

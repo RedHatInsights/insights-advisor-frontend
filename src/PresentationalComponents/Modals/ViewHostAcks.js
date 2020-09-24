@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableHeader } from '@patternfly/react-table';
 import { fetchHostAcks, setAck } from '../../AppActions';

@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import './_Inventory.scss';
 
 import * as ReactRedux from 'react-redux';

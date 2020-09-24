@@ -9,20 +9,21 @@ import TopicsTable from '../../PresentationalComponents/TopicsTable/TopicsTable'
 import asyncComponent from '../../Utilities/asyncComponent';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
+import { isGlobalFilter } from '../../AppConstants';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
-import { isGlobalFilter } from '../../AppConstants';
 
 const TagsToolbar = asyncComponent(() => import(/* webpackChunkName: "TagsToolbar" */ '../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 
-const List = ({ fetchTopics, intl, selectedTags }) => {
+const List = ({ fetchTopics, intl, selectedTags, workloads }) => {
     useEffect(() => {
-        const options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags.join() });
+        let options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags.join() });
+        workloads && (options = { ...options, ...workloads });
         fetchTopics(options);
-    }, [fetchTopics, selectedTags]);
+    }, [fetchTopics, selectedTags, workloads]);
 
     return <React.Fragment>
-        { !isGlobalFilter() && <TagsToolbar /> }
+        {!isGlobalFilter() && <TagsToolbar />}
         <PageHeader>
             <PageHeaderTitle title={`${intl.formatMessage(messages.insightsHeader)} ${intl.formatMessage(messages.topics).toLowerCase()}`} />
         </PageHeader>
@@ -33,9 +34,10 @@ const List = ({ fetchTopics, intl, selectedTags }) => {
 };
 
 List.displayName = 'list-topics';
-List.propTypes = { fetchTopics: PropTypes.func, intl: PropTypes.any, selectedTags: PropTypes.array };
-const mapStateToProps = (state, ownProps) => ({
-    selectedTags: state.AdvisorStore.selectedTags,
+List.propTypes = { fetchTopics: PropTypes.func, intl: PropTypes.any, selectedTags: PropTypes.array, workloads: PropTypes.object };
+const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
+    selectedTags: AdvisorStore.selectedTags,
+    workloads: AdvisorStore.workloads,
     ...ownProps
 });
 const mapDispatchToProps = dispatch => ({ fetchTopics: (options) => dispatch(AppActions.fetchTopics(options)) });

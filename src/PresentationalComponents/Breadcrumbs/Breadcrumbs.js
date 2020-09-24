@@ -36,7 +36,7 @@ const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl })
     useEffect(() => {
         const splitUrl = match.url.split('/');
         match.params.inventoryId !== undefined && splitUrl[1] !== 'systems' ?
-            fetchRule({ rule_id: match.params.id }) // eslint-disable-line camelcase
+            fetchRule({ rule_id: match.params.id })
             : buildBreadcrumbs();
     }, [buildBreadcrumbs, fetchRule, match.params.id, match.params.inventoryId, match.url]);
 

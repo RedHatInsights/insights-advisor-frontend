@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable camelcase */
+
 import { Column, Section, Table } from '@redhat-cloud-services/frontend-components-pdf-generator';
 import { Link, StyleSheet, Text } from '@react-pdf/renderer';
 
