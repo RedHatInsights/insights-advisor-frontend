@@ -172,6 +172,11 @@ export default defineMessages({
         description: 'Disabled',
         defaultMessage: 'Disabled'
     },
+    redhatDisabled: {
+        id: 'redhatDisabled',
+        description: 'Red Hat disabled',
+        defaultMessage: 'Red Hat disabled'
+    },
     nA: {
         id: 'nA',
         description: 'Abreviated as N/A, text equivelent, not applicable',
@@ -954,5 +959,15 @@ export default defineMessages({
         id: 'poundOfRecs',
         description: '# of recommendations',
         defaultMessage: '# of recommendations'
+    },
+    redhatDisabledRuleAlert: {
+        id: 'redhatDisabledRuleAlert',
+        description: 'Red Hat disabled rule alert body',
+        defaultMessage: 'We want you to focus on the more important risks to your systems.  Red Hat disabled recommendations can be found under the Status filter.'
+    },
+    redhatDisabledRuleAlertTitle: {
+        id: 'redhatDisabledRuleAlertTitle',
+        description: 'Red Hat disabled rule alert title',
+        defaultMessage: 'Red Hat has proactively disabled certain low risk recommendations'
     }
 });
