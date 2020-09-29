@@ -1,10 +1,14 @@
 .ins-c-recommendations-header {
     white-space: nowrap;
     width: auto;
-    > * {
+    .pf-c-title {
         display:inline-block;
     }
     .pf-c-button {
         line-height: var(--pf-global--LineHeight--sm);
+    }
+    .alertOverride {
+        font-size: var(--pf-global--FontSize--md);
+        margin-top: var(--pf-global--spacer--lg);
     }
 }

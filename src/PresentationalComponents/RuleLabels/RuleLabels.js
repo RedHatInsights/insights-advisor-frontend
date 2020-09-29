@@ -12,8 +12,11 @@ const RuleLabels = ({ intl, rule }) => <React.Fragment >
     {rule.tags.search('incident') !== -1 && <Tooltip content={intl.formatMessage(messages.incidentTooltip)} position={TooltipPosition.right}>
         <Label color='red' className='incidentLabel'>{intl.formatMessage(messages.incident)}</Label>
     </Tooltip>}
-    {!rule.reports_shown && <Tooltip content={intl.formatMessage(messages.ruleIsDisabledTooltip)} position={TooltipPosition.right}>
+    {rule.rule_status === 'disabled' && <Tooltip content={intl.formatMessage(messages.ruleIsDisabledTooltip)} position={TooltipPosition.right}>
         <Label color='gray'>{intl.formatMessage(messages.disabled)}</Label>
+    </Tooltip>}
+    {rule.rule_status === 'rhdisabled' && <Tooltip content={intl.formatMessage(messages.ruleIsDisabledTooltip)} position={TooltipPosition.right}>
+        <Label color='gray'>{intl.formatMessage(messages.redhatDisabled)}</Label>
     </Tooltip>}
 </React.Fragment>;
 

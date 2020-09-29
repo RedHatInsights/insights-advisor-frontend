@@ -97,8 +97,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     };
 
     const toggleRulesDisabled = (param) => {
-        const reports_shown = param === 'undefined' ? undefined : param;
-        setFilters({ ...filters, reports_shown, offset: 0, ...(reports_shown !== 'true' && { impacting: false }) });
+        const rule_status = param === 'undefined' ? undefined : param;
+        setFilters({ ...filters, rule_status, offset: 0, ...(rule_status !== 'enabled' && { impacting: false }) });
     };
 
     const handleOnCollapse = (event, rowId, isOpen) => {
@@ -111,7 +111,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         const rule = rows[rowId].rule;
 
         try {
-            if (rule.reports_shown) {
+            if (rule.rule_status === 'enabled') {
                 setSelectedRule(rule);
                 setDisableRuleOpen(true);
             } else {
@@ -129,7 +129,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             addNotification({
                 variant: 'danger',
                 dismissable: true,
-                title: rule.reports_shown ? intl.formatMessage(messages.rulesTableHideReportsErrorDisabled)
+                title: rule.rule_status === 'enabled' ? intl.formatMessage(messages.rulesTableHideReportsErrorDisabled)
                     : intl.formatMessage(messages.rulesTableHideReportsErrorEnabled),
                 description: `${error}`
             });
@@ -142,7 +142,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             return null;
         }
 
-        return rule && rule.reports_shown ?
+        return rule && rule.rule_status === 'enabled' ?
             [{
                 title: intl.formatMessage(messages.disableRule),
                 onClick: (event, rowId) => hideReports(rowId)
@@ -174,8 +174,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             delete paramsObject.sap_system;
 
             paramsObject.text === undefined ? setSearchText('') : setSearchText(paramsObject.text);
-            paramsObject.reports_shown = paramsObject.reports_shown === undefined || paramsObject.reports_shown[0] === 'undefined' ? undefined
-                : paramsObject.reports_shown;
+            paramsObject.rule_status = paramsObject.rule_status === undefined || paramsObject.rule_status[0] === 'undefined' ? undefined
+                : paramsObject.rule_status;
             paramsObject.sort = paramsObject.sort === undefined ? '-total_risk' : paramsObject.sort[0];
             paramsObject.has_playbook !== undefined && !Array.isArray(paramsObject.has_playbook) &&
                 (paramsObject.has_playbook = [`${paramsObject.has_playbook}`]);
@@ -207,10 +207,10 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                     cells: [{
                         title: (
                             <MessageState icon={CheckCircleIcon} iconClass='ansibleCheck'
-                                title={intl.formatMessage(messages.rulesTableNoRuleHitsTitle)} text={filters.reports_shown ?
+                                title={intl.formatMessage(messages.rulesTableNoRuleHitsTitle)} text={filters.rule_status === 'enabled' ?
                                     intl.formatMessage(messages.rulesTableNoRuleHitsEnabledRulesBody) :
                                     intl.formatMessage(messages.rulesTableNoRuleHitsAnyRulesBody)}>
-                                {filters.reports_shown && <Button variant='link' style={{ paddingTop: 24 }}
+                                {filters.rule_status === 'enabled' && <Button variant='link' style={{ paddingTop: 24 }}
                                     onClick={() => toggleRulesDisabled('undefined')}>
                                     {intl.formatMessage(messages.rulesTableNoRuleHitsAddDisabledButton)}
                                 </Button>}
@@ -248,7 +248,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                             <div></div>
                         </div>
                     }, {
-                        title: <div key={key}> {value.reports_shown ?
+                        title: <div key={key}> {value.rule_status === 'enabled' ?
                             `${value.impacted_systems_count.toLocaleString()}`
                             : intl.formatMessage(messages.nA)}</div>
                     }, {
@@ -411,15 +411,15 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             items: FC.reboot.values
         }
     }, {
-        label: FC.reports_shown.title,
-        type: FC.reports_shown.type,
-        id: FC.reports_shown.urlParam,
-        value: `radio-${FC.reports_shown.urlParam}`,
+        label: FC.rule_status.title,
+        type: FC.rule_status.type,
+        id: FC.rule_status.urlParam,
+        value: `radio-${FC.rule_status.urlParam}`,
         filterValues: {
-            key: `${FC.reports_shown.urlParam}-filter`,
+            key: `${FC.rule_status.urlParam}-filter`,
             onChange: (event, value) => toggleRulesDisabled(value),
-            value: filters.reports_shown === undefined ? 'undefined' : `${filters.reports_shown}`,
-            items: FC.reports_shown.values
+            value: filters.rule_status === undefined ? 'undefined' : `${filters.rule_status}`,
+            items: FC.rule_status.values
         }
     }];
 
@@ -430,7 +430,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 setSearchText('');
                 setFilters({
                     ...(filters.topic && { topic: filters.topic }),
-                    impacting: true, reports_shown: 'true', limit: filters.limit, offset: filters.offset
+                    impacting: true, rule_status: 'enabled', limit: filters.limit, offset: filters.offset
                 });
             } else {
                 itemsToRemove.map(item => {
