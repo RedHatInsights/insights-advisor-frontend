@@ -26,7 +26,7 @@ const App = (props) => {
             insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
                 const selectedTags = insights.chrome?.mapGlobalFilter?.(data)?.filter(item => !item.includes('Workloads')) || undefined;
                 batch(() => {
-                    dispatch(setWorkloads(data?.Workloads?.SAP?.isSelected && { sap_system: true }));
+                    dispatch(setWorkloads(data?.Workloads));
                     dispatch(setSelectedTags(selectedTags));
                 });
             });
