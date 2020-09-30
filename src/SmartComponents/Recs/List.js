@@ -1,7 +1,8 @@
 import './List.scss';
 
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
-import React, { Suspense, lazy, useState, useEffect } from 'react';
+import { RULES_FETCH_URL, isGlobalFilter } from '../../AppConstants';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 
 import API from '../../Utilities/Api';
 import { Alert } from '@patternfly/react-core/dist/esm/components/Alert/Alert';
@@ -11,7 +12,6 @@ import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
-import { isGlobalFilter, RULES_FETCH_URL } from '../../AppConstants';
 
 const RulesTable = lazy(() => import(/* webpackChunkName: "RulesTable" */ '../../PresentationalComponents/RulesTable/RulesTable'));
 const TagsToolbar = lazy(() => import(/* webpackChunkName: "TagsToolbar" */ '../../PresentationalComponents/TagsToolbar/TagsToolbar'));
@@ -39,7 +39,7 @@ const List = () => {
         <PageHeader className='ins-c-recommendations-header'>
             <PageHeaderTitle title={`${intl.formatMessage(messages.insightsHeader)} ${intl.formatMessage(messages.recommendations).toLowerCase()}`} />
             <DownloadExecReport />
-            {redhatDisabledRuleAlert && redHatDisabledRuleCount &&
+            {redhatDisabledRuleAlert && redHatDisabledRuleCount > 0 &&
                 <Alert
                     className='alertOverride'
                     variant="warning"
