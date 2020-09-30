@@ -12,13 +12,14 @@ import { injectIntl } from 'react-intl';
 import { isGlobalFilter } from '../../AppConstants';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
 
 const TagsToolbar = asyncComponent(() => import(/* webpackChunkName: "TagsToolbar" */ '../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 
 const List = ({ fetchTopics, intl, selectedTags, workloads }) => {
     useEffect(() => {
         let options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags.join() });
-        workloads && (options = { ...options, ...workloads });
+        workloads && (options = { ...options, ...workloadQueryBuilder(workloads)[0] });
         fetchTopics(options);
     }, [fetchTopics, selectedTags, workloads]);
 

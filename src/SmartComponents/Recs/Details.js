@@ -6,6 +6,7 @@ import { BASE_URL, SYSTEM_TYPES, UI_BASE, isGlobalFilter } from '../../AppConsta
 import { Card, CardBody, CardFooter, CardHeader } from '@patternfly/react-core/dist/js/components/Card';
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import { encodeOptionsToURL, workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
 
 import API from '../../Utilities/Api';
 import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
@@ -33,7 +34,6 @@ import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
 import { cveToRuleid } from '../../cveToRuleid.js';
-import { encodeOptionsToURL } from '../../PresentationalComponents/Common/Tables';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
@@ -51,7 +51,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchRulefn = (newSort, rule = true, system = true) => {
         let options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)).join('&tags=') });
-        workloads && (options = { ...options, ...workloads });
+        workloads && (options = { ...options, ...workloadQueryBuilder(workloads)[0] });
         system && fetchSystem(
             match.params.id,
             options.tags ? {} : { ...options, ...filters, ...newSort },

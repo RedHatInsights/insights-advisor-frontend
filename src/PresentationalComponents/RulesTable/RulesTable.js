@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/index';
 import { Table, TableBody, TableHeader, cellWidth, fitContent, sortable } from '@patternfly/react-table';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
-import { encodeOptionsToURL, filterFetchBuilder, paramParser, pruneFilters, urlBuilder } from '../Common/Tables';
+import { encodeOptionsToURL, filterFetchBuilder, paramParser, pruneFilters, urlBuilder, workloadQueryBuilder } from '../Common/Tables';
 
 import API from '../../Utilities/Api';
 import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
@@ -74,7 +74,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const fetchRulesFn = useCallback(() => {
         urlBuilder(filters, selectedTags, workloads);
         let options = selectedTags.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)).join('&tags=') });
-        workloads && (options = { ...options, ...workloads });
+        workloads && (options = { ...options, ...workloadQueryBuilder(workloads)[0] });
         fetchRules(
             options.tags ? {} : { ...filterFetchBuilder(filters), ...options },
             options.tags && encodeOptionsToURL({ ...filterFetchBuilder(filters), ...options })

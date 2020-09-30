@@ -6,8 +6,9 @@ export const urlBuilder = (filters, selectedTags, workloads) => {
 
     //Removes invalid 'undefined' url param value
     params.get('reports_shown') === 'undefined' && params.delete('reports_shown');
+    params.get('rule_status') === 'undefined' && params.delete('rule_status');
 
-    workloads?.sap_system ? params.set('sap_system', true) : params.delete('sap_system');
+    workloads?.SAP ? params.set('sap_system', true) : params.delete('sap_system');
     selectedTags !== null && selectedTags.length ? params.set('tags', selectedTags.join()) : params.delete('tags');
     window.history.replaceState(null, null, `${url.origin}${url.pathname}?${params.toString()}`);
     return `?${queryString}`;
@@ -56,3 +57,9 @@ export const pruneFilters = (localFilters, filterCategories) => {
     })
         : [];
 };
+
+const workloadsMap = { SAP: 'sap_system' };
+// builds workload query filter
+export const workloadQueryBuilder = workloads => Object.entries(workloads).map(([key, value]) =>
+    workloadsMap[key] && !!value.isSelected && { [`filter[system_profile][${workloadsMap[key]}]`]: value.isSelected }
+);

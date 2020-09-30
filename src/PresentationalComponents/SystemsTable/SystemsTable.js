@@ -8,7 +8,7 @@ import * as reactRouterDom from 'react-router-dom';
 import { DEBOUNCE_DELAY, SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { connect, useStore } from 'react-redux';
-import { filterFetchBuilder, paramParser, pruneFilters, urlBuilder } from '../Common/Tables';
+import { filterFetchBuilder, paramParser, pruneFilters, urlBuilder, workloadQueryBuilder } from '../Common/Tables';
 
 import Failed from '../Loading/Failed';
 import Loading from '../Loading/Loading';
@@ -49,7 +49,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
 
     const fetchSystemsFn = useCallback(() => {
         let options = selectedTags.length && ({ tags: selectedTags && selectedTags.join() });
-        workloads && (options = { ...options, ...workloads });
+        workloads && (options = { ...options, ...workloadQueryBuilder(workloads)[0] });
         fetchSystems({ ...filterFetchBuilder(filters), ...options });
     }, [fetchSystems, filters, selectedTags, workloads]);
 
