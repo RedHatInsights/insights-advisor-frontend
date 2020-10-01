@@ -74,7 +74,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     const fetchRulesFn = useCallback(() => {
         urlBuilder(filters, selectedTags, workloads);
         let options = selectedTags.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)).join('&tags=') });
-        workloads && (options = { ...options, ...workloadQueryBuilder(workloads)[0] });
+        workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
         fetchRules(
             options.tags ? {} : { ...filterFetchBuilder(filters), ...options },
             options.tags && encodeOptionsToURL({ ...filterFetchBuilder(filters), ...options })
