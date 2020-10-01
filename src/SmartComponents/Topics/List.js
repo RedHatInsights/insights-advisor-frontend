@@ -19,7 +19,7 @@ const TagsToolbar = asyncComponent(() => import(/* webpackChunkName: "TagsToolba
 const List = ({ fetchTopics, intl, selectedTags, workloads }) => {
     useEffect(() => {
         let options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags.join() });
-        workloads && (options = { ...options, ...workloadQueryBuilder(workloads)[0] });
+        workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
         fetchTopics(options);
     }, [fetchTopics, selectedTags, workloads]);
 

@@ -62,4 +62,4 @@ const workloadsMap = { SAP: 'sap_system' };
 // builds workload query filter
 export const workloadQueryBuilder = workloads => Object.entries(workloads).map(([key, value]) =>
     workloadsMap[key] && !!value.isSelected && { [`filter[system_profile][${workloadsMap[key]}]`]: value.isSelected }
-);
+)[0];

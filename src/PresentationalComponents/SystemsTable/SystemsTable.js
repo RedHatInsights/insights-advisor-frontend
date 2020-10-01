@@ -49,7 +49,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
 
     const fetchSystemsFn = useCallback(() => {
         let options = selectedTags.length && ({ tags: selectedTags && selectedTags.join() });
-        workloads && (options = { ...options, ...workloadQueryBuilder(workloads)[0] });
+        workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
         fetchSystems({ ...filterFetchBuilder(filters), ...options });
     }, [fetchSystems, filters, selectedTags, workloads]);
 
