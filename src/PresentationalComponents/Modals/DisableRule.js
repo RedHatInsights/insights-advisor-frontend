@@ -64,7 +64,6 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, hosts, rule, 
         title={intl.formatMessage(messages.disableRule)}
         isOpen={isModalOpen}
         onClose={() => { handleModalToggle(false); setJustificaton(''); }}
-        onKeyPress={(e) => e.key === 'Enter' && disableRule()}
         actions={[
             <Button key="confirm" variant="primary" onClick={() => disableRule()}>
                 {intl.formatMessage(messages.save)}
@@ -94,6 +93,7 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, hosts, rule, 
                     aria-describedby="disable-rule-justification"
                     value={justification}
                     onChange={(text) => setJustificaton(text)}
+                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), disableRule())}
                 />
             </FormGroup>
         </Form>
