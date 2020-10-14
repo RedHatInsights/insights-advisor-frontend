@@ -155,12 +155,22 @@ export default defineMessages({
     rulesTableNoRuleHitsEnabledRulesBody: {
         id: 'rulestable.norulehits.enabledrulesbody',
         description: 'Recommendation table, no recommendations message for enabled rules, body',
-        defaultMessage: 'None of your connected systems are affected by enabled rules.'
+        defaultMessage: 'None of your connected systems are affected by enabled recommendations.'
     },
     rulesTableNoRuleHitsAnyRulesBody: {
         id: 'rulestable.norulehits.anyrulesbody',
         description: 'Recommendation table, no recommendations message for any known rules, body',
         defaultMessage: 'None of your connected systems are affected by any known rules.'
+    },
+    rulesTableNoRuleHitsDisabledRulesBody: {
+        id: 'rulestable.norules.disabledrulesbody',
+        description: 'Recommendation table, no recommendations message for any disabled rules, body',
+        defaultMessage: 'Currently there are no disabled recommendations.'
+    },
+    rulesTableNoRuleHitsRedHatDisabledRulesBody: {
+        id: 'rulestable.norules.redhatdisabledrulesbody',
+        description: 'Recommendation table, no recommendations message for any Red Hat disabled rules, body',
+        defaultMessage: 'Currently there are no Red Hat disabled recommendations.'
     },
     rulesTableNoRuleHitsAddDisabledButton: {
         id: 'rulestable.norulehits.adddisabledbutton',

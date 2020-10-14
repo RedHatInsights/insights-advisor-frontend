@@ -164,6 +164,15 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         return pruneFilters(localFilters, FC);
     };
 
+    const noRuleHitsBodyMessage = (rule_status) => {
+        switch (rule_status) {
+            case 'enabled': return messages.rulesTableNoRuleHitsEnabledRulesBody;
+            case 'disabled': return messages.rulesTableNoRuleHitsDisabledRulesBody;
+            case 'rhdisabled': return messages.rulesTableNoRuleHitsRedHatDisabledRulesBody;
+            default: return messages.rulesTableNoRuleHitsAnyRulesBody;
+        }
+    };
+
     useEffect(() => { !filterBuilding && selectedTags !== null && fetchRulesFn(); }, [fetchRulesFn, filterBuilding, filters, selectedTags]);
 
     // Builds table filters from url params
@@ -207,9 +216,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                     cells: [{
                         title: (
                             <MessageState icon={CheckCircleIcon} iconClass='ansibleCheck'
-                                title={intl.formatMessage(messages.rulesTableNoRuleHitsTitle)} text={filters.rule_status === 'enabled' ?
-                                    intl.formatMessage(messages.rulesTableNoRuleHitsEnabledRulesBody) :
-                                    intl.formatMessage(messages.rulesTableNoRuleHitsAnyRulesBody)}>
+                                title={intl.formatMessage(messages.rulesTableNoRuleHitsTitle)}
+                                text={intl.formatMessage(noRuleHitsBodyMessage(filters.rule_status))}>
                                 {filters.rule_status === 'enabled' && <Button variant='link' style={{ paddingTop: 24 }}
                                     onClick={() => toggleRulesDisabled('undefined')}>
                                     {intl.formatMessage(messages.rulesTableNoRuleHitsAddDisabledButton)}
