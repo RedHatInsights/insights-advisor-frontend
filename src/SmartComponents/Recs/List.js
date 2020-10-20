@@ -16,10 +16,9 @@ import { useIntl } from 'react-intl';
 const RulesTable = lazy(() => import(/* webpackChunkName: "RulesTable" */ '../../PresentationalComponents/RulesTable/RulesTable'));
 const TagsToolbar = lazy(() => import(/* webpackChunkName: "TagsToolbar" */ '../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 
-let AdvisorRedHatDisabledRuleAlert = sessionStorage.getItem('AdvisorRedHatDisabledRuleAlert') || true;
-
 const List = () => {
     const intl = useIntl();
+    const AdvisorRedHatDisabledRuleAlert = JSON.parse(sessionStorage.getItem('AdvisorRedHatDisabledRuleAlert') || 'true');
     const [redhatDisabledRuleAlert, setRedHatDisabledRuleAlert] = useState(AdvisorRedHatDisabledRuleAlert);
     const [redHatDisabledRuleCount, setRedHatDisabledRuleCount] = useState(0);
 
