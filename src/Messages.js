@@ -979,5 +979,10 @@ export default defineMessages({
         id: 'redhatDisabledRuleAlertTitle',
         description: 'Red Hat disabled rule alert title',
         defaultMessage: 'Red Hat has proactively disabled certain low risk recommendations'
+    },
+    inventoryIdNotFound: {
+        id: 'inventoryIdNotFound',
+        description: 'Thrown as error when classic id does not correspond to an inventory id',
+        defaultMessage: 'No system found in inventory for the given Advisor ID'
     }
 });
