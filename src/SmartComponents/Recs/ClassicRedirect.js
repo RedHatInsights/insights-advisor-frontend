@@ -16,8 +16,9 @@ const ClassicRedirect = () => {
     const intl = useIntl();
     const dispatch = useDispatch();
     const pathname = window.location.pathname.split('/');
-    const id = pathname?.[5];
-    const classicId = pathname?.[6];
+    const starting_index = pathname.some(val => val === 'beta') ? 6 : 5;
+    const id = pathname?.[starting_index];
+    const classicId = pathname?.[starting_index + 1];
 
     useEffect(() => {
         (async () => {
