@@ -1,10 +1,15 @@
+import Qs from 'qs';
 import axios from 'axios';
 
 export default {
     get(url, headers = {}, params = {}) {
         return axios.get(url, {
             headers,
-            params
+            params,
+            paramsSerializer (params) {
+                return Qs.stringify(params, { arrayFormat: 'repeat' });
+            }
+
         });
     },
     put(url, data = {}, headers = {}) {
