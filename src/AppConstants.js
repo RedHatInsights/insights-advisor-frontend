@@ -36,6 +36,7 @@ export const SELECTED_TAGS_SET = 'SELECTED_TAGS_SET';
 export const RULE_SET = 'RULE_SET';
 export const SYSTEM_SET = 'SYSTEM_SET';
 export const WORKLOADS_SET = 'WORKLOADS_SET';
+export const SID_SET = 'SID_SET';
 
 export const BASE_URL = '/api/insights/v1';
 export const INV_BASE_URL = '/api/inventory/v1';
@@ -181,7 +182,7 @@ export const FILTER_CATEGORIES = {
     },
     rule_status: {
         type: 'radio', title: 'status', urlParam: 'rule_status', values: [
-            { label: intlHelper(intl.formatMessage(messages.all), intlSettings), value: 'undefined' },
+            { label: intlHelper(intl.formatMessage(messages.all), intlSettings), value: 'all' },
             { label: intlHelper(intl.formatMessage(messages.enabled), intlSettings), value: 'enabled' },
             { label: intlHelper(intl.formatMessage(messages.disabled), intlSettings), value: 'disabled' },
             { label: intlHelper(intl.formatMessage(messages.redhatDisabled), intlSettings), value: 'rhdisabled' }

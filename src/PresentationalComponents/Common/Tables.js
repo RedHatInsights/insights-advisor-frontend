@@ -9,7 +9,7 @@ export const urlBuilder = (filters, selectedTags, workloads) => {
     params.get('rule_status') === 'undefined' && params.delete('rule_status');
 
     workloads?.SAP ? params.set('sap_system', true) : params.delete('sap_system');
-    selectedTags !== null && selectedTags.length ? params.set('tags', selectedTags) : params.delete('tags');
+    selectedTags?.length ? params.set('tags', selectedTags) : params.delete('tags');
     window.history.replaceState(null, null, `${url.origin}${url.pathname}?${params.toString()}`);
     return `?${queryString}`;
 };

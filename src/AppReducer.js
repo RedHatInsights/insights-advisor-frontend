@@ -33,7 +33,8 @@ const initialState = Immutable({
     hostAcks: {},
     hostAcksFetchStatus: '',
     selectedTags: null,
-    workloads: {}
+    workloads: {},
+    SID: {}
 });
 
 export const getAdvisorStore = (previousState) => (state = Immutable(previousState) || initialState, action) => {
