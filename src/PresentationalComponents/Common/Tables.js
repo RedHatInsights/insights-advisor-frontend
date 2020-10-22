@@ -6,7 +6,6 @@ export const urlBuilder = (filters, selectedTags, workloads) => {
 
     //Removes invalid 'undefined' url param value
     params.get('reports_shown') === 'undefined' && params.delete('reports_shown');
-    params.get('rule_status') === 'undefined' && params.delete('rule_status');
 
     workloads?.SAP ? params.set('sap_system', true) : params.delete('sap_system');
     selectedTags?.length ? params.set('tags', selectedTags) : params.delete('tags');
