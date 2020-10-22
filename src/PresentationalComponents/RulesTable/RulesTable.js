@@ -256,9 +256,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                             <div></div>
                         </div>
                     }, {
-                        title: <div key={key}> {value.rule_status === 'enabled' ?
-                            `${value.impacted_systems_count.toLocaleString()}`
-                            : intl.formatMessage(messages.nA)}</div>
+                        title: <div key={key}>{`${value.impacted_systems_count.toLocaleString()}`}</div>
                     }, {
                         title: <div className='ins-c-center-text ' key={key}>
                             {value.playbook_count ? <CheckCircleIcon className='ansibleCheck' /> : intl.formatMessage(messages.no)}
