@@ -40,7 +40,7 @@ import routerParams from '@redhat-cloud-services/frontend-components-utilities/f
 
 const TagsToolbar = lazy(() => import('../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchRule, ruleFetchStatus, rule, systemFetchStatus, system, intl,
-    topics, ruleAck, hostAcks, fetchHostAcks, setSystem, setRule, selectedTags, addNotification, workloads }) => {
+    topics, ruleAck, hostAcks, fetchHostAcks, setSystem, setRule, selectedTags, addNotification, workloads, SID }) => {
     const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [host, setHost] = useState(undefined);
@@ -51,7 +51,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchRulefn = (newSort, rule = true, system = true) => {
         let options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)) });
-        workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
+        workloads && (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
         system && fetchSystem(
             match.params.id,
             options.tags ? {} : { ...options, ...filters, ...newSort },
@@ -157,7 +157,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         workloadRef.current = workloads;
         tagRef.current = selectedTags;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fetchRulefn, selectedTags, workloads]);
+    }, [fetchRulefn, selectedTags, workloads, SID]);
 
     useEffect(() => {
         if (rule.rule_status !== 'enabled' && rule.rule_id && isRuleUpdated) {
@@ -300,7 +300,8 @@ OverviewDetails.propTypes = {
     setRule: PropTypes.func,
     setSystem: PropTypes.func,
     selectedTags: PropTypes.array,
-    workloads: PropTypes.object
+    workloads: PropTypes.object,
+    SID: PropTypes.object
 };
 
 const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
@@ -313,6 +314,7 @@ const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
     hostAcks: AdvisorStore.hostAcks,
     selectedTags: AdvisorStore.selectedTags,
     workloads: AdvisorStore.workloads,
+    SID: AdvisorStore.SID,
     ...ownProps
 });
 
