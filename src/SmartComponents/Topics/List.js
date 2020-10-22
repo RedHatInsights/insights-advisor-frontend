@@ -16,12 +16,12 @@ import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tabl
 
 const TagsToolbar = asyncComponent(() => import(/* webpackChunkName: "TagsToolbar" */ '../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 
-const List = ({ fetchTopics, intl, selectedTags, workloads }) => {
+const List = ({ fetchTopics, intl, selectedTags, workloads, SID }) => {
     useEffect(() => {
         let options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags });
-        workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
+        workloads && (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
         fetchTopics(options);
-    }, [fetchTopics, selectedTags, workloads]);
+    }, [fetchTopics, selectedTags, workloads, SID]);
 
     return <React.Fragment>
         {!isGlobalFilter() && <TagsToolbar />}
@@ -35,10 +35,14 @@ const List = ({ fetchTopics, intl, selectedTags, workloads }) => {
 };
 
 List.displayName = 'list-topics';
-List.propTypes = { fetchTopics: PropTypes.func, intl: PropTypes.any, selectedTags: PropTypes.array, workloads: PropTypes.object };
+List.propTypes = {
+    fetchTopics: PropTypes.func, intl: PropTypes.any,
+    selectedTags: PropTypes.array, workloads: PropTypes.object, SID: PropTypes.object
+};
 const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
     selectedTags: AdvisorStore.selectedTags,
     workloads: AdvisorStore.workloads,
+    SID: AdvisorStore.SID,
     ...ownProps
 });
 const mapDispatchToProps = dispatch => ({ fetchTopics: (options) => dispatch(AppActions.fetchTopics(options)) });

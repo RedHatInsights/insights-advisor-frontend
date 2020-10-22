@@ -24,7 +24,7 @@ import { reactCore } from '@redhat-cloud-services/frontend-components-utilities/
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { systemReducer } from '../../AppReducer';
 
-const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters, setFilters, selectedTags, workloads }) => {
+const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters, setFilters, selectedTags, workloads, SID }) => {
     const inventory = useRef(null);
     const [InventoryTable, setInventory] = useState();
     const store = useStore();
@@ -49,9 +49,9 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
 
     const fetchSystemsFn = useCallback(() => {
         let options = selectedTags.length && ({ tags: selectedTags });
-        workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
+        workloads && (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
         fetchSystems({ ...filterFetchBuilder(filters), ...options });
-    }, [fetchSystems, filters, selectedTags, workloads]);
+    }, [fetchSystems, filters, selectedTags, workloads, SID]);
 
     const removeFilterParam = (param) => {
         const filter = { ...filters, offset: 0 };
@@ -255,7 +255,8 @@ SystemsTable.propTypes = {
     filters: PropTypes.object,
     setFilters: PropTypes.func,
     selectedTags: PropTypes.array,
-    workloads: PropTypes.object
+    workloads: PropTypes.object,
+    SID: PropTypes.object
 };
 
 const mapStateToProps = ({ AdvisorStore }) => ({
@@ -263,7 +264,8 @@ const mapStateToProps = ({ AdvisorStore }) => ({
     systemsFetchStatus: AdvisorStore.systemsFetchStatus,
     filters: AdvisorStore.filtersSystems,
     selectedTags: AdvisorStore.selectedTags,
-    workloads: AdvisorStore.workloads
+    workloads: AdvisorStore.workloads,
+    SID: AdvisorStore.SID
 });
 
 const mapDispatchToProps = dispatch => ({

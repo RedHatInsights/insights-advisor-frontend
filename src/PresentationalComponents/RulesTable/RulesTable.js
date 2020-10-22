@@ -39,7 +39,7 @@ import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { strong } from '../../Utilities/intlHelper';
 
-const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, intl, selectedTags, workloads }) => {
+const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, intl, selectedTags, workloads, SID }) => {
     const [cols] = useState([
         { title: intl.formatMessage(messages.name), transforms: [sortable, cellWidth(45)] },
         { title: intl.formatMessage(messages.added), transforms: [sortable, cellWidth(15)] },
@@ -73,13 +73,13 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     const fetchRulesFn = useCallback(() => {
         urlBuilder(filters, selectedTags, workloads);
-        let options = selectedTags.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)) });
-        workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
+        let options = selectedTags?.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)) });
+        workloads && (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
         fetchRules(
             options.tags ? {} : { ...filterFetchBuilder(filters), ...options },
             options.tags && encodeOptionsToURL({ ...filterFetchBuilder(filters), ...options })
         );
-    }, [fetchRules, filters, selectedTags, workloads]);
+    }, [fetchRules, filters, selectedTags, workloads, SID]);
 
     const onSort = (_event, index, direction) => {
         const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
@@ -96,8 +96,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         setFilters({ ...filters, impacting, offset: 0 });
     };
 
-    const toggleRulesDisabled = (param) => {
-        const rule_status = param === 'undefined' ? undefined : param;
+    const toggleRulesDisabled = (rule_status) => {
         setFilters({ ...filters, rule_status, offset: 0, ...(rule_status !== 'enabled' && { impacting: false }) });
     };
 
@@ -183,8 +182,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             delete paramsObject.sap_system;
 
             paramsObject.text === undefined ? setSearchText('') : setSearchText(paramsObject.text);
-            paramsObject.rule_status = paramsObject.rule_status === undefined || paramsObject.rule_status[0] === 'undefined' ? undefined
-                : paramsObject.rule_status;
             paramsObject.sort = paramsObject.sort === undefined ? '-total_risk' : paramsObject.sort[0];
             paramsObject.has_playbook !== undefined && !Array.isArray(paramsObject.has_playbook) &&
                 (paramsObject.has_playbook = [`${paramsObject.has_playbook}`]);
@@ -219,7 +216,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                                 title={intl.formatMessage(messages.rulesTableNoRuleHitsTitle)}
                                 text={intl.formatMessage(noRuleHitsBodyMessage(filters.rule_status))}>
                                 {filters.rule_status === 'enabled' && <Button variant='link' style={{ paddingTop: 24 }}
-                                    onClick={() => toggleRulesDisabled('undefined')}>
+                                    onClick={() => toggleRulesDisabled('all')}>
                                     {intl.formatMessage(messages.rulesTableNoRuleHitsAddDisabledButton)}
                                 </Button>}
                             </MessageState>),
@@ -424,7 +421,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         filterValues: {
             key: `${FC.rule_status.urlParam}-filter`,
             onChange: (event, value) => toggleRulesDisabled(value),
-            value: filters.rule_status === undefined ? 'undefined' : `${filters.rule_status}`,
+            value: `${filters.rule_status}`,
             items: FC.rule_status.values
         }
     }];
@@ -519,15 +516,17 @@ RulesTable.propTypes = {
     setFilters: PropTypes.func,
     intl: PropTypes.any,
     selectedTags: PropTypes.array,
-    workloads: PropTypes.object
+    workloads: PropTypes.object,
+    SID: PropTypes.Object
 };
 
-const mapStateToProps = (state, ownProps) => ({
-    rules: state.AdvisorStore.rules,
-    rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
-    filters: state.AdvisorStore.filters,
-    selectedTags: state.AdvisorStore.selectedTags,
-    workloads: state.AdvisorStore.workloads,
+const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
+    rules: AdvisorStore.rules,
+    rulesFetchStatus: AdvisorStore.rulesFetchStatus,
+    filters: AdvisorStore.filters,
+    selectedTags: AdvisorStore.selectedTags,
+    workloads: AdvisorStore.workloads,
+    SID: AdvisorStore.SID,
     ...ownProps
 });
 

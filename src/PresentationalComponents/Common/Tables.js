@@ -1,3 +1,5 @@
+import { generateFilter } from '@redhat-cloud-services/frontend-components-utilities/files/helpers';
+
 // Builds returns url params from table filters, pushes to url if history object is passed
 export const urlBuilder = (filters, selectedTags, workloads) => {
     const url = new URL(window.location);
@@ -6,10 +8,9 @@ export const urlBuilder = (filters, selectedTags, workloads) => {
 
     //Removes invalid 'undefined' url param value
     params.get('reports_shown') === 'undefined' && params.delete('reports_shown');
-    params.get('rule_status') === 'undefined' && params.delete('rule_status');
 
     workloads?.SAP ? params.set('sap_system', true) : params.delete('sap_system');
-    selectedTags !== null && selectedTags.length ? params.set('tags', selectedTags) : params.delete('tags');
+    selectedTags?.length ? params.set('tags', selectedTags) : params.delete('tags');
     window.history.replaceState(null, null, `${url.origin}${url.pathname}?${params.toString()}`);
     return `?${queryString}`;
 };
@@ -57,8 +58,10 @@ export const pruneFilters = (localFilters, filterCategories) => {
     }, []) : [];
 };
 
-const workloadsMap = { SAP: 'sap_system' };
 // builds workload query filter
-export const workloadQueryBuilder = workloads => Object.entries(workloads).map(([key, value]) =>
-    workloadsMap[key] && !!value.isSelected && { [`filter[system_profile][${workloadsMap[key]}]`]: value.isSelected }
-)[0];
+export const workloadQueryBuilder = (workloads, SID) => generateFilter({
+    system_profile: {
+        ...workloads?.SAP?.isSelected && { sap_system: true },
+        ...SID?.length > 0 && { sap_sids: SID }
+    }
+});
