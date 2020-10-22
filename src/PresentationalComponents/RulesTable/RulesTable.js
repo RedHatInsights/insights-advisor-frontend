@@ -96,8 +96,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         setFilters({ ...filters, impacting, offset: 0 });
     };
 
-    const toggleRulesDisabled = (param) => {
-        const rule_status = param === 'undefined' ? undefined : param;
+    const toggleRulesDisabled = (rule_status) => {
         setFilters({ ...filters, rule_status, offset: 0, ...(rule_status !== 'enabled' && { impacting: false }) });
     };
 
@@ -183,8 +182,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             delete paramsObject.sap_system;
 
             paramsObject.text === undefined ? setSearchText('') : setSearchText(paramsObject.text);
-            paramsObject.rule_status = paramsObject.rule_status === undefined || paramsObject.rule_status[0] === 'undefined' ? undefined
-                : paramsObject.rule_status;
             paramsObject.sort = paramsObject.sort === undefined ? '-total_risk' : paramsObject.sort[0];
             paramsObject.has_playbook !== undefined && !Array.isArray(paramsObject.has_playbook) &&
                 (paramsObject.has_playbook = [`${paramsObject.has_playbook}`]);
@@ -219,7 +216,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                                 title={intl.formatMessage(messages.rulesTableNoRuleHitsTitle)}
                                 text={intl.formatMessage(noRuleHitsBodyMessage(filters.rule_status))}>
                                 {filters.rule_status === 'enabled' && <Button variant='link' style={{ paddingTop: 24 }}
-                                    onClick={() => toggleRulesDisabled('undefined')}>
+                                    onClick={() => toggleRulesDisabled('all')}>
                                     {intl.formatMessage(messages.rulesTableNoRuleHitsAddDisabledButton)}
                                 </Button>}
                             </MessageState>),
@@ -426,7 +423,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         filterValues: {
             key: `${FC.rule_status.urlParam}-filter`,
             onChange: (event, value) => toggleRulesDisabled(value),
-            value: filters.rule_status === undefined ? 'undefined' : `${filters.rule_status}`,
+            value: `${filters.rule_status}`,
             items: FC.rule_status.values
         }
     }];

@@ -181,7 +181,7 @@ export const FILTER_CATEGORIES = {
     },
     rule_status: {
         type: 'radio', title: 'status', urlParam: 'rule_status', values: [
-            { label: intlHelper(intl.formatMessage(messages.all), intlSettings), value: 'undefined' },
+            { label: intlHelper(intl.formatMessage(messages.all), intlSettings), value: 'all' },
             { label: intlHelper(intl.formatMessage(messages.enabled), intlSettings), value: 'enabled' },
             { label: intlHelper(intl.formatMessage(messages.disabled), intlSettings), value: 'disabled' },
             { label: intlHelper(intl.formatMessage(messages.redhatDisabled), intlSettings), value: 'rhdisabled' }
