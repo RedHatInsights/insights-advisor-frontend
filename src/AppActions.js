@@ -92,3 +92,8 @@ export const setWorkloads = (data) => ({
     type: ActionTypes.WORKLOADS_SET,
     payload: data
 });
+
+export const setSIDs = (data) => ({
+    type: ActionTypes.SID_SET,
+    payload: data
+});

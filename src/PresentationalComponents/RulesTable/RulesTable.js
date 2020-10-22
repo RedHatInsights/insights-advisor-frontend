@@ -39,7 +39,7 @@ import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { strong } from '../../Utilities/intlHelper';
 
-const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, intl, selectedTags, workloads }) => {
+const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, intl, selectedTags, workloads, SID }) => {
     const [cols] = useState([
         { title: intl.formatMessage(messages.name), transforms: [sortable, cellWidth(45)] },
         { title: intl.formatMessage(messages.added), transforms: [sortable, cellWidth(15)] },
@@ -73,13 +73,13 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     const fetchRulesFn = useCallback(() => {
         urlBuilder(filters, selectedTags, workloads);
-        let options = selectedTags.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)) });
-        workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
+        let options = selectedTags?.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)) });
+        workloads && (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
         fetchRules(
             options.tags ? {} : { ...filterFetchBuilder(filters), ...options },
             options.tags && encodeOptionsToURL({ ...filterFetchBuilder(filters), ...options })
         );
-    }, [fetchRules, filters, selectedTags, workloads]);
+    }, [fetchRules, filters, selectedTags, workloads, SID]);
 
     const onSort = (_event, index, direction) => {
         const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
@@ -518,15 +518,17 @@ RulesTable.propTypes = {
     setFilters: PropTypes.func,
     intl: PropTypes.any,
     selectedTags: PropTypes.array,
-    workloads: PropTypes.object
+    workloads: PropTypes.object,
+    SID: PropTypes.Object
 };
 
-const mapStateToProps = (state, ownProps) => ({
-    rules: state.AdvisorStore.rules,
-    rulesFetchStatus: state.AdvisorStore.rulesFetchStatus,
-    filters: state.AdvisorStore.filters,
-    selectedTags: state.AdvisorStore.selectedTags,
-    workloads: state.AdvisorStore.workloads,
+const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
+    rules: AdvisorStore.rules,
+    rulesFetchStatus: AdvisorStore.rulesFetchStatus,
+    filters: AdvisorStore.filters,
+    selectedTags: AdvisorStore.selectedTags,
+    workloads: AdvisorStore.workloads,
+    SID: AdvisorStore.SID,
     ...ownProps
 });
 
