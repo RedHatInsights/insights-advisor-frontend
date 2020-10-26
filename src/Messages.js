@@ -277,40 +277,10 @@ export default defineMessages({
         description: 'Filter action, clear all filter chips',
         defaultMessage: 'Clear filters'
     },
-    filterResults: {
-        id: 'filterResults',
-        description: 'Filter action, for tagstoolbar, ',
-        defaultMessage: 'Filter by tags:'
-    },
-    filterTagsInToolbar: {
-        id: 'filterTagsInToolbar',
-        description: 'Filter text input, for tagstoolbar',
-        defaultMessage: 'Filter by tags'
-    },
     filterTagsInModal: {
         id: 'filterTagsInModal',
         description: 'Filter text input, for ManageTags Modal',
         defaultMessage: 'Filter tags'
-    },
-    tagsModalName: {
-        id: 'tagsModalName',
-        description: 'Name column header',
-        defaultMessage: 'Name'
-    },
-    tagsModalValue: {
-        id: 'tagsModalValue',
-        description: 'Value column header',
-        defaultMessage: 'Value'
-    },
-    tagsModalSources: {
-        id: 'tagsModalSources',
-        description: 'Source column header',
-        defaultMessage: 'Tag Sources'
-    },
-    allSystems: {
-        id: 'allSystems',
-        description: 'All systems',
-        defaultMessage: 'All systems'
     },
     knowledgebaseArticle: {
         id: 'knowledgebasearticle',
@@ -529,21 +499,6 @@ export default defineMessages({
         id: 'tag',
         description: 'Used in the topics admin table tag column, identifying display tag for a topic',
         defaultMessage: 'Tag'
-    },
-    tagsCount: {
-        id: 'tagsCount',
-        description: 'Tags followed by a count (of selected tags)',
-        defaultMessage: 'Tags ({count})'
-    },
-    noTags: {
-        id: 'noTags',
-        description: 'When there exist no tags for an account',
-        defaultMessage: 'No tags available'
-    },
-    manageTags: {
-        id: 'manageTags',
-        description: 'Manage tags',
-        defaultMessage: 'Manage tags'
     },
     topicAddEditDescription: {
         id: 'topicAddEditDescription',

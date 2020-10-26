@@ -6,15 +6,11 @@ import React, { useEffect } from 'react';
 import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
 import PropTypes from 'prop-types';
 import TopicsTable from '../../PresentationalComponents/TopicsTable/TopicsTable';
-import asyncComponent from '../../Utilities/asyncComponent';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import { isGlobalFilter } from '../../AppConstants';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
-
-const TagsToolbar = asyncComponent(() => import(/* webpackChunkName: "TagsToolbar" */ '../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 
 const List = ({ fetchTopics, intl, selectedTags, workloads, SID }) => {
     useEffect(() => {
@@ -24,7 +20,6 @@ const List = ({ fetchTopics, intl, selectedTags, workloads, SID }) => {
     }, [fetchTopics, selectedTags, workloads, SID]);
 
     return <React.Fragment>
-        {!isGlobalFilter() && <TagsToolbar />}
         <PageHeader>
             <PageHeaderTitle title={`${intl.formatMessage(messages.insightsHeader)} ${intl.formatMessage(messages.topics).toLowerCase()}`} />
         </PageHeader>
