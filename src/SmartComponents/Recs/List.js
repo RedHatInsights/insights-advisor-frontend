@@ -1,7 +1,6 @@
 import './List.scss';
 
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
-import { RULES_FETCH_URL, isGlobalFilter } from '../../AppConstants';
 import React, { Suspense, lazy, useEffect, useState } from 'react';
 
 import API from '../../Utilities/Api';
@@ -10,11 +9,11 @@ import { AlertActionCloseButton } from '@patternfly/react-core/dist/esm/componen
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
+import { RULES_FETCH_URL } from '../../AppConstants';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 
 const RulesTable = lazy(() => import(/* webpackChunkName: "RulesTable" */ '../../PresentationalComponents/RulesTable/RulesTable'));
-const TagsToolbar = lazy(() => import(/* webpackChunkName: "TagsToolbar" */ '../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 
 const List = () => {
     const intl = useIntl();
@@ -34,7 +33,6 @@ const List = () => {
     }, []);
 
     return <React.Fragment>
-        {!isGlobalFilter() && <Suspense fallback={<Loading />}> <TagsToolbar /> </Suspense>}
         <PageHeader className='ins-c-recommendations-header'>
             <PageHeaderTitle title={`${intl.formatMessage(messages.insightsHeader)} ${intl.formatMessage(messages.recommendations).toLowerCase()}`} />
             <DownloadExecReport />

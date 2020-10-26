@@ -2,10 +2,10 @@ import './Details.scss';
 
 import * as AppActions from '../../AppActions';
 
-import { BASE_URL, SYSTEM_TYPES, UI_BASE, isGlobalFilter } from '../../AppConstants';
+import { BASE_URL, SYSTEM_TYPES, UI_BASE } from '../../AppConstants';
 import { Card, CardBody, CardFooter, CardHeader } from '@patternfly/react-core/dist/js/components/Card';
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
-import React, { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { encodeOptionsToURL, workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
 
 import API from '../../Utilities/Api';
@@ -38,7 +38,6 @@ import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
-const TagsToolbar = lazy(() => import('../../PresentationalComponents/TagsToolbar/TagsToolbar'));
 const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchRule, ruleFetchStatus, rule, systemFetchStatus, system, intl,
     topics, ruleAck, hostAcks, fetchHostAcks, setSystem, setRule, selectedTags, addNotification, workloads, SID }) => {
     const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
@@ -170,7 +169,6 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     }, [fetchRuleAck, rule.rule_status, rule.rule_id]);
 
     return <React.Fragment>
-        {!isGlobalFilter() && <Suspense fallback={<Loading />}> <TagsToolbar /> </Suspense>}
         {viewSystemsModalOpen && <ViewHostAcks
             handleModalToggle={(toggleModal) => setViewSystemsModalOpen(toggleModal)}
             isModalOpen={viewSystemsModalOpen}

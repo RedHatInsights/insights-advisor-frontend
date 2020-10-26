@@ -14,14 +14,12 @@ import { PageHeader } from '@redhat-cloud-services/frontend-components/component
 import PropTypes from 'prop-types';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
-import TagsToolbar from '../../PresentationalComponents/TagsToolbar/TagsToolbar';
 import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
 import TimesCircleIcon from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import { Truncate } from '@redhat-cloud-services/frontend-components/components/Truncate';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import { isGlobalFilter } from '../../AppConstants';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 
@@ -40,7 +38,6 @@ const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl,
     }, [fetchTopic, match.params.id, setFilters]);
 
     return <React.Fragment>
-        {!isGlobalFilter() && <TagsToolbar />}
         <PageHeader>
             <Breadcrumbs
                 current={topic.name}
