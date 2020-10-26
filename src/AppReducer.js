@@ -34,7 +34,7 @@ const initialState = Immutable({
     hostAcksFetchStatus: '',
     selectedTags: null,
     workloads: {},
-    SID: {}
+    SID: []
 });
 
 export const getAdvisorStore = (previousState) => (state = Immutable(previousState) || initialState, action) => {
@@ -192,6 +192,11 @@ export const getAdvisorStore = (previousState) => (state = Immutable(previousSta
         case ActionTypes.WORKLOADS_SET:
             return Immutable.merge(state, {
                 workloads: action.payload
+            });
+
+        case ActionTypes.SID_SET:
+            return Immutable.merge(state, {
+                SID: action.payload
             });
 
         default:
