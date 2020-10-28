@@ -64,4 +64,4 @@ export const workloadQueryBuilder = (workloads, SID) => generateFilter({
         ...workloads?.SAP?.isSelected && { sap_system: true },
         ...SID?.length > 0 && { sap_sids: SID }
     }
-});
+}, undefined, { arrayEnhancer: 'contains' });
