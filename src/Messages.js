@@ -939,5 +939,10 @@ export default defineMessages({
         id: 'inventoryIdNotFound',
         description: 'Thrown as error when classic id does not correspond to an inventory id',
         defaultMessage: 'No system found in inventory for the given Advisor ID'
+    },
+    invalidPathname: {
+        id: 'invalidPathname',
+        description: 'Message thrown when classic redirect receives invalid path',
+        defaultMessage: 'Invalid pathname'
     }
 });
