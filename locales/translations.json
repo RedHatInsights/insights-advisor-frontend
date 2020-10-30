@@ -49,6 +49,7 @@
   "incidentTooltip": "Indicates configurations that are currently affecting your systems",
   "insightsHeader": "Advisor",
   "installClient": "Install the client on the RHEL system.",
+  "invalidPathname": "Invalid pathname",
   "inventoryIdNotFound": "No system found in inventory for the given Advisor ID",
   "is": "is",
   "is not": "is not",

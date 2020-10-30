@@ -12,18 +12,29 @@ import { useIntl } from 'react-intl';
 
 const ClassicRedirect = () => {
     const [fetchStatus, setFetchStatus] = useState('pending');
-    const [inventoryId, setInventoryId] = useState();
+    const [redirect, setRedirect] = useState();
     const intl = useIntl();
     const dispatch = useDispatch();
-    const pathname = window.location.pathname.split('/');
-    const starting_index = pathname.some(val => val === 'beta') ? 6 : 5;
-    const id = pathname?.[starting_index];
-    const classicId = pathname?.[starting_index + 1];
+
+    const getData = (pathname) => {
+        const patharray = pathname.split('/');
+        const start = patharray.some(val => val === 'beta') ? 6 : 5;
+        switch (patharray?.[3]) {
+            case 'systemsasdf':
+                return [patharray?.[start], `/systems`];
+            case 'recommendationsafas':
+                return [patharray?.[start + 1], `/recommendations/${patharray?.[start]}`];
+            default:
+                throw new Error(intl.formatMessage(messages.invalidPathname));
+        }
+    };
 
     useEffect(() => {
         (async () => {
             try {
-                setInventoryId((await Api.get(`/api/inventory/v1/hosts?insights_id=${classicId}`)).data.results[0].id);
+                const [classicId, redirectBase] = getData(window.location.pathname);
+                const inventoryId = (await Api.get(`/api/inventory/v1/hosts?insights_id=${classicId}`)).data.results[0].id;
+                setRedirect(`${redirectBase}/${inventoryId}`);
                 setFetchStatus('fulfilled');
             } catch (error) {
                 dispatch(addNotification({
@@ -31,11 +42,12 @@ const ClassicRedirect = () => {
                 setFetchStatus('rejected');
             }
         })();
-    }, [setInventoryId, setFetchStatus, classicId, intl, dispatch]);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [setRedirect, setFetchStatus, intl, dispatch]);
 
     return <React.Fragment>
         {fetchStatus === 'pending' && <Loading/>}
-        {fetchStatus === 'fulfilled' && <Redirect to={`/recommendations/${id}/${inventoryId}/`}/>}
+        {fetchStatus === 'fulfilled' && <Redirect to={redirect}/>}
         {fetchStatus === 'rejected' && <MessageState
             icon={TimesCircleIcon} title={intl.formatMessage(messages.inventoryIdNotFound)}/>}
     </React.Fragment>;
