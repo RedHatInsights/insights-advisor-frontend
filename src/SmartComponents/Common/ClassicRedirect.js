@@ -20,9 +20,9 @@ const ClassicRedirect = () => {
         const patharray = pathname.split('/');
         const start = patharray.some(val => val === 'beta') ? 6 : 5;
         switch (patharray?.[3]) {
-            case 'systemsasdf':
+            case 'systems':
                 return [patharray?.[start], `/systems`];
-            case 'recommendationsafas':
+            case 'recommendations':
                 return [patharray?.[start + 1], `/recommendations/${patharray?.[start]}`];
             default:
                 throw new Error(intl.formatMessage(messages.invalidPathname));
