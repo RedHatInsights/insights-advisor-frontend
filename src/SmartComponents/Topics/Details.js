@@ -37,6 +37,14 @@ const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl,
         };
     }, [fetchTopic, match.params.id, setFilters]);
 
+    useEffect(() => {
+        if (topic && topic.name) {
+            const subnav = `${topic.name} - ${messages.topics.defaultMessage}`;
+            document.title = intl.formatMessage(messages.documentTitle, { subnav });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [topic]);
+
     return <React.Fragment>
         <PageHeader>
             <Breadcrumbs

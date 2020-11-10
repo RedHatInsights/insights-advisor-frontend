@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import '@redhat-cloud-services/frontend-components-inventory-insights/index.css';
 
 import * as pfReactTable from '@patternfly/react-table';
@@ -17,8 +18,11 @@ import { entitiesDetailsReducer } from '../../AppReducer';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { useStore } from 'react-redux';
+import messages from '../../Messages';
+import { useIntl } from 'react-intl';
 
 const InventoryDetails = ({ entity, match }) => {
+    const intl = useIntl();
     const [InventoryDetail, setInventoryDetail] = useState();
     const [AppInfo, setAppInfo] = useState();
     const [InvWrapper, setInvWrapper] = useState();
@@ -42,9 +46,15 @@ const InventoryDetails = ({ entity, match }) => {
         setInvWrapper(() => DetailWrapper);
     };
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { fetchInventoryDetails(); }, []);
     const Wrapper = InvWrapper || React.Fragment;
+
+    useEffect(() => {
+        if (entity && (entity.display_name || entity.id)) {
+            const subnav = `${entity.display_name || entity.id} - ${messages.systems.defaultMessage}`;
+            document.title = intl.formatMessage(messages.documentTitle, { subnav });
+        }
+    }, [entity]);
 
     return <Wrapper>
         <PageHeader className="pf-m-light ins-inventory-detail">

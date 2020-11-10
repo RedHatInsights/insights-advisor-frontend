@@ -13,6 +13,8 @@ import routerParams from '@redhat-cloud-services/frontend-components-utilities/f
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
 
 const List = ({ fetchTopics, intl, selectedTags, workloads, SID }) => {
+    document.title = intl.formatMessage(messages.documentTitle, { subnav: messages.topics.defaultMessage });
+
     useEffect(() => {
         let options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags });
         workloads && (options = { ...options, ...workloadQueryBuilder(workloads, SID) });

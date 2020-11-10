@@ -2,6 +2,11 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
+    documentTitle: {
+        id: 'documentTitle',
+        description: 'The title of the page as it appears in the browser tab',
+        defaultMessage: '{subnav} - Advisor | Red Hat Insights'
+    },
     rules: {
         id: 'rules',
         description: 'Used as a title',
