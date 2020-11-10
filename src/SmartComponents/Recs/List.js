@@ -1,5 +1,6 @@
 import './List.scss';
 
+import { PERMS, RULES_FETCH_URL } from '../../AppConstants';
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
 import React, { Suspense, lazy, useEffect, useState } from 'react';
 
@@ -9,14 +10,16 @@ import { AlertActionCloseButton } from '@patternfly/react-core/dist/esm/componen
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
-import { RULES_FETCH_URL } from '../../AppConstants';
+import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
+import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/files/RBACHook';
 
 const RulesTable = lazy(() => import(/* webpackChunkName: "RulesTable" */ '../../PresentationalComponents/RulesTable/RulesTable'));
 
 const List = () => {
     const intl = useIntl();
+    const permsExport = usePermissions('advisor', PERMS.export);
     const AdvisorRedHatDisabledRuleAlert = JSON.parse(sessionStorage.getItem('AdvisorRedHatDisabledRuleAlert') || 'true');
     const [redhatDisabledRuleAlert, setRedHatDisabledRuleAlert] = useState(AdvisorRedHatDisabledRuleAlert);
     const [redHatDisabledRuleCount, setRedHatDisabledRuleCount] = useState(0);
@@ -37,7 +40,11 @@ const List = () => {
     return <React.Fragment>
         <PageHeader className='ins-c-recommendations-header'>
             <PageHeaderTitle title={`${intl.formatMessage(messages.insightsHeader)} ${intl.formatMessage(messages.recommendations).toLowerCase()}`} />
-            <DownloadExecReport />
+            {!permsExport.isLoading &&
+                <Tooltip trigger={!permsExport.hasAccess ? 'mouseenter' : ''} content={intl.formatMessage(messages.permsAction)}>
+                    <DownloadExecReport isDisabled={!permsExport.hasAccess} />
+                </Tooltip>
+            }
             {redhatDisabledRuleAlert && redHatDisabledRuleCount > 0 &&
                 <Alert
                     className='alertOverride'

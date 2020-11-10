@@ -2,7 +2,7 @@ import './Details.scss';
 
 import * as AppActions from '../../AppActions';
 
-import { BASE_URL, SYSTEM_TYPES, UI_BASE } from '../../AppConstants';
+import { BASE_URL, PERMS, SYSTEM_TYPES, UI_BASE } from '../../AppConstants';
 import { Card, CardBody, CardFooter, CardHeader } from '@patternfly/react-core/dist/js/components/Card';
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
 import React, { useEffect, useRef, useState } from 'react';
@@ -30,16 +30,20 @@ import PropTypes from 'prop-types';
 import RuleDetails from '../../PresentationalComponents/RuleDetails/RuleDetails';
 import RuleLabels from '../../PresentationalComponents/RuleLabels/RuleLabels';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
+import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
 import { cveToRuleid } from '../../cveToRuleid.js';
-import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import { useIntl } from 'react-intl';
+import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/files/RBACHook';
 
-const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchRule, ruleFetchStatus, rule, systemFetchStatus, system, intl,
+const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchRule, ruleFetchStatus, rule, systemFetchStatus, system,
     topics, ruleAck, hostAcks, fetchHostAcks, setSystem, setRule, selectedTags, addNotification, workloads, SID }) => {
+    const intl = useIntl();
+    const permsDisableRec = usePermissions('advisor', PERMS.disableRec).hasAccess;
     const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [host, setHost] = useState(undefined);
@@ -146,16 +150,16 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
     const tagRef = useRef();
     const workloadRef = useRef();
     useEffect(() => {
-        const fetchAction = () => {fetchRulefn(); setIsRuleUpdated(true);};
+        const fetchAction = () => { fetchRulefn(); setIsRuleUpdated(true); };
 
         if (isRuleUpdated && ((selectedTags !== null && JSON.stringify(tagRef.current) !== JSON.stringify(selectedTags)) ||
-        (JSON.stringify(workloadRef.current) !== JSON.stringify(workloads)))) {
+            (JSON.stringify(workloadRef.current) !== JSON.stringify(workloads)))) {
             fetchAction();
         }
 
         workloadRef.current = workloads;
         tagRef.current = selectedTags;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchRulefn, selectedTags, workloads, SID]);
 
     useEffect(() => {
@@ -209,27 +213,31 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                         </React.Fragment>}>
                         <Flex>
                             <FlexItem align={{ default: 'alignRight' }}>
-                                <Dropdown
-                                    className='ins-c-rec-details__actions_dropdown'
-                                    onSelect={() => setActionsDropdownOpen(!actionsDropdownOpen)}
-                                    position='right'
-                                    toggle={<DropdownToggle
-                                        onToggle={(actionsDropdownOpen) => setActionsDropdownOpen(actionsDropdownOpen)}
-                                        toggleIndicator={CaretDownIcon}>Actions
-                                    </DropdownToggle>}
-                                    isOpen={actionsDropdownOpen}
-                                    dropdownItems={rule && rule.rule_status === 'enabled' ?
-                                        [<DropdownItem key='link'
-                                            onClick={() => { handleModalToggle(true); }}>
-                                            {intl.formatMessage(messages.disableRule)}</DropdownItem>]
-                                        : [<DropdownItem key='link'
-                                            onClick={() => { enableRule(rule); }}>
-                                            {intl.formatMessage(messages.enableRule)}</DropdownItem>]} />
+                                <Tooltip trigger={!permsDisableRec ? 'mouseenter' : ''} content={intl.formatMessage(messages.permsAction)}>
+                                    <Dropdown
+                                        className='ins-c-rec-details__actions_dropdown'
+                                        onSelect={() => setActionsDropdownOpen(!actionsDropdownOpen)}
+                                        position='right'
+                                        toggle={<DropdownToggle
+                                            isDisabled={!permsDisableRec}
+                                            onToggle={(actionsDropdownOpen) => setActionsDropdownOpen(actionsDropdownOpen)}
+                                            toggleIndicator={CaretDownIcon}>Actions
+                                        </DropdownToggle>}
+                                        isOpen={actionsDropdownOpen}
+                                        dropdownItems={rule && rule.rule_status === 'enabled' ?
+                                            [<DropdownItem key='link'
+                                                onClick={() => { handleModalToggle(true); }}>
+                                                {intl.formatMessage(messages.disableRule)}</DropdownItem>]
+                                            : [<DropdownItem key='link'
+                                                onClick={() => { enableRule(rule); }}>
+                                                {intl.formatMessage(messages.enableRule)}</DropdownItem>]} />
+                                </Tooltip>
                             </FlexItem>
                         </Flex>
                     </RuleDetails>
                 </Main>
-            </React.Fragment>}
+            </React.Fragment>
+        }
         {ruleFetchStatus === 'pending' && (<Loading />)}
         <Main>
             <React.Fragment>
@@ -284,7 +292,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                 {ruleFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.rulesTableFetchRulesError)} />)}
             </React.Fragment>
         </Main>
-    </React.Fragment>;
+    </React.Fragment >;
 };
 
 OverviewDetails.propTypes = {
@@ -296,7 +304,6 @@ OverviewDetails.propTypes = {
     systemFetchStatus: PropTypes.string,
     system: PropTypes.object,
     addNotification: PropTypes.func,
-    intl: PropTypes.any,
     fetchTopics: PropTypes.func,
     topics: PropTypes.array,
     ruleAck: PropTypes.object,
@@ -335,7 +342,7 @@ const mapDispatchToProps = dispatch => ({
     setSystem: data => dispatch(AppActions.setSystem(data))
 });
 
-export default injectIntl(routerParams(connect(
+export default routerParams(connect(
     mapStateToProps,
     mapDispatchToProps
-)(OverviewDetails)));
+)(OverviewDetails));

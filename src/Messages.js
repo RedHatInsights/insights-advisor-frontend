@@ -949,5 +949,20 @@ export default defineMessages({
         id: 'invalidPathname',
         description: 'Message thrown when classic redirect receives invalid path',
         defaultMessage: 'Invalid pathname'
+    },
+    permsTitle: {
+        id: 'permsTitle',
+        description: 'You do not have access to Advisor',
+        defaultMessage: 'You do not have access to Advisor'
+    },
+    permsBody: {
+        id: 'permsBody',
+        description: 'To view the content',
+        defaultMessage: 'To view the content of this page, you must be grated a minimum of advisor permissions from your Organization Administrator.'
+    },
+    permsAction: {
+        id: 'permsAction',
+        description: 'You do not have the required advisor permissions to perform this action',
+        defaultMessage: 'You do not have the required advisor permissions to perform this action'
     }
 });

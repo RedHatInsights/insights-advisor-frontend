@@ -5,7 +5,7 @@ import * as ReactRedux from 'react-redux';
 import * as pfReactTable from '@patternfly/react-table';
 import * as reactRouterDom from 'react-router-dom';
 
-import { DEBOUNCE_DELAY, SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
+import { DEBOUNCE_DELAY, PERMS, SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { connect, useStore } from 'react-redux';
 import { filterFetchBuilder, paramParser, pruneFilters, urlBuilder, workloadQueryBuilder } from '../Common/Tables';
@@ -18,13 +18,16 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import debounce from '../../Utilities/Debounce';
 import downloadReport from '../Common/DownloadHelper';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
-import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import { reactCore } from '@redhat-cloud-services/frontend-components-utilities/files/inventoryDependencies';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { systemReducer } from '../../AppReducer';
+import { useIntl } from 'react-intl';
+import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/files/RBACHook';
 
-const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters, setFilters, selectedTags, workloads, SID }) => {
+const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, filters, setFilters, selectedTags, workloads, SID }) => {
+    const intl = useIntl();
+    const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
     const inventory = useRef(null);
     const [InventoryTable, setInventory] = useState();
     const store = useStore();
@@ -239,7 +242,9 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, intl, filters
                     extraItems: [<li key='download-pd' role="menuitem">
                         <SystemsPdf filters={{ ...filterFetchBuilder(filters) }} selectedTags={selectedTags}
                             systemsCount={systems && systems.meta && systems.meta.count} />
-                    </li>]
+                    </li>],
+                    isDisabled: !permsExport,
+                    tooltipText: permsExport ? intl.formatMessage(messages.exportData) : intl.formatMessage(messages.permsAction)
                 }}
             />
             : systemsFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.systemTableFetchError)} />)
@@ -251,7 +256,6 @@ SystemsTable.propTypes = {
     systemsFetchStatus: PropTypes.string,
     systems: PropTypes.object,
     addNotification: PropTypes.func,
-    intl: PropTypes.any,
     filters: PropTypes.object,
     setFilters: PropTypes.func,
     selectedTags: PropTypes.array,
@@ -274,4 +278,4 @@ const mapDispatchToProps = dispatch => ({
     setFilters: (filters) => dispatch(AppActions.setFiltersSystems(filters))
 });
 
-export default injectIntl(routerParams(connect(mapStateToProps, mapDispatchToProps)(SystemsTable)));
+export default routerParams(connect(mapStateToProps, mapDispatchToProps)(SystemsTable));

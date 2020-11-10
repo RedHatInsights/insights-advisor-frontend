@@ -4,11 +4,19 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { batch, useDispatch } from 'react-redux';
 import { setSIDs, setSelectedTags, setWorkloads } from './AppActions';
 
+import LockIcon from '@patternfly/react-icons/dist/esm/icons/lock-icon';
+import MessageState from './PresentationalComponents/MessageState/MessageState';
+import { PERMS } from './AppConstants';
 import PropTypes from 'prop-types';
 import { Routes } from './Routes';
+import messages from './Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import { useIntl } from 'react-intl';
+import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/files/RBACHook';
 
 const App = (props) => {
+    const intl = useIntl();
+    const permsViewRecs = usePermissions('advisor', PERMS.viewRecs);
     const [auth, setAuth] = useState(false);
     const dispatch = useDispatch();
     const appNavClick = useMemo(() => ({
@@ -51,7 +59,9 @@ const App = (props) => {
         insights && insights.chrome && baseComponentUrl && appNavClick[baseComponentUrl] !== undefined && appNavClick[baseComponentUrl](false);
     }, [appNavClick, props.location]);
 
-    return (auth && <Routes childProps={props} />);
+    return (auth && !permsViewRecs?.isLoading && (permsViewRecs?.hasAccess ? <Routes childProps={props} /> :
+        <MessageState variant='large' icon={LockIcon}
+            title={intl.formatMessage(messages.permsTitle)} text={intl.formatMessage(messages.permsBody)} />));
 };
 
 App.propTypes = {

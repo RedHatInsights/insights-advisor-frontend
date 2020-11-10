@@ -10,7 +10,7 @@ import buildExecReport from './Build';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 
-const DownloadExecReport = () => {
+const DownloadExecReport = ({ isDisabled }) => {
     const intl = useIntl();
     const [loading, setLoading] = useState(false);
 
@@ -33,6 +33,7 @@ const DownloadExecReport = () => {
             asyncFunction={dataFetch}
             buttonProps={{
                 variant: 'link', icon: <ExportIcon className='iconOverride' />, component: 'a', className: 'downloadButtonOverride',
+                isAriaDisabled: isDisabled,
                 ...(loading ? { isDisabled: true } : null)
             }}
             type={intl.formatMessage(messages.insightsHeader)}
