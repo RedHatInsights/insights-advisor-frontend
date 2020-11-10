@@ -24,6 +24,8 @@ const List = () => {
     const [redhatDisabledRuleAlert, setRedHatDisabledRuleAlert] = useState(AdvisorRedHatDisabledRuleAlert);
     const [redHatDisabledRuleCount, setRedHatDisabledRuleCount] = useState(0);
 
+    document.title = intl.formatMessage(messages.documentTitle, { subnav: messages.recommendations.defaultMessage });
+
     useEffect(() => {
         (async () => {
             try {

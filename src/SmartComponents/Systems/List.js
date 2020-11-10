@@ -11,6 +11,8 @@ const SystemsTable = lazy(() => import(/* webpackChunkName: "SystemsTable" */ '.
 const List = () => {
     const intl = useIntl();
 
+    document.title = intl.formatMessage(messages.documentTitle, { subnav: messages.systems.defaultMessage });
+
     return <React.Fragment>
         <PageHeader>
             <PageHeaderTitle title={`${intl.formatMessage(messages.insightsHeader)} ${intl.formatMessage(messages.systems).toLowerCase()}`} />

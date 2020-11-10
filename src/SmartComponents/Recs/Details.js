@@ -172,6 +172,14 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchRuleAck, rule.rule_status, rule.rule_id]);
 
+    useEffect(() => {
+        if (rule && rule.description) {
+            const subnav = `${rule.description} - ${messages.recommendations.defaultMessage}`;
+            document.title = intl.formatMessage(messages.documentTitle, { subnav });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [rule]);
+
     return <React.Fragment>
         {viewSystemsModalOpen && <ViewHostAcks
             handleModalToggle={(toggleModal) => setViewSystemsModalOpen(toggleModal)}
