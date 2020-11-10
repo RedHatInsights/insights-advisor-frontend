@@ -34,12 +34,16 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import { connect } from 'react-redux';
 import debounce from '../../Utilities/Debounce';
 import downloadReport from '../Common/DownloadHelper';
-import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { strong } from '../../Utilities/intlHelper';
+import { useIntl } from 'react-intl';
+import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/files/RBACHook';
 
-const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, intl, selectedTags, workloads, SID }) => {
+const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, selectedTags, workloads, SID }) => {
+    const intl = useIntl();
+    const permsExport = usePermissions('advisor', AppConstants.PERMS.export).hasAccess;
+    const permsDisableRec = usePermissions('advisor', AppConstants.PERMS.disableRec).hasAccess;
     const [cols] = useState([
         { title: intl.formatMessage(messages.name), transforms: [sortable, cellWidth(45)] },
         { title: intl.formatMessage(messages.added), transforms: [sortable, cellWidth(15)] },
@@ -79,7 +83,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             options.tags ? {} : { ...filterFetchBuilder(filters), ...options },
             options.tags && encodeOptionsToURL({ ...filterFetchBuilder(filters), ...options })
         );
-    }, [fetchRules, filters, selectedTags, workloads, SID]);
+    }, [filters, selectedTags, workloads, SID, fetchRules]);
 
     const onSort = (_event, index, direction) => {
         const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
@@ -479,8 +483,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 // eslint-disable-next-line no-dupe-keys
                 label: intl.formatMessage(messages.exportJson),
                 onSelect: (_e, fileType) => downloadReport('hits', fileType, urlBuilder(filters, selectedTags)),
-                isDisabled: !filters.impacting,
-                tooltipText: intl.formatMessage(messages.exportData)
+                isDisabled: !permsExport || !filters.impacting,
+                tooltipText: permsExport ? intl.formatMessage(messages.exportData) : intl.formatMessage(messages.permsAction)
             }}
             actionsConfig={{ actions }}
             filterConfig={{ items: filterConfigItems }}
@@ -489,7 +493,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         {rulesFetchStatus === 'fulfilled' &&
             <Table aria-label={'rule-table'}
                 actionResolver={actionResolver} onCollapse={handleOnCollapse} sortBy={sortBy}
-                onSort={onSort} cells={cols} rows={rows}>
+                onSort={onSort} cells={cols} rows={rows} areActionsDisabled={()=> !permsDisableRec}>
                 <TableHeader />
                 <TableBody />
             </Table>}
@@ -514,7 +518,6 @@ RulesTable.propTypes = {
     filters: PropTypes.object,
     addNotification: PropTypes.func,
     setFilters: PropTypes.func,
-    intl: PropTypes.any,
     selectedTags: PropTypes.array,
     workloads: PropTypes.object,
     SID: PropTypes.Object
@@ -536,7 +539,7 @@ const mapDispatchToProps = dispatch => ({
     setFilters: (filters) => dispatch(AppActions.setFilters(filters))
 });
 
-export default injectIntl(routerParams(connect(
+export default routerParams(connect(
     mapStateToProps,
     mapDispatchToProps
-)(RulesTable)));
+)(RulesTable));

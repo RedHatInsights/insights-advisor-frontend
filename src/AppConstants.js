@@ -198,3 +198,9 @@ export const SYSTEM_FILTER_CATEGORIES = {
         ]
     }
 };
+
+export const PERMS = {
+    export: ['advisor:*:*', 'advisor:export:read'],
+    disableRec: ['advisor:*:*', 'advisor:disable-recommendations:write'],
+    viewRecs: ['advisor:*:*', 'advisor:recommendations-results:read']
+};
