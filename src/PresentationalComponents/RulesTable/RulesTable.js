@@ -158,7 +158,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     const buildFilterChips = () => {
         const localFilters = { ...filters };
-        delete localFilters.impacting;
         delete localFilters.topic;
         delete localFilters.sort;
         delete localFilters.offset;
@@ -314,13 +313,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         values.length > 0 ? setFilters({ ...filters, offset: 0, ...{ [param]: values } }) : removeFilterParam(param);
     };
 
-    const actions = [
-        '', {
-            label: intl.formatMessage(filters.impacting ? messages.rulesTableActionShow : messages.rulesTableActionHide),
-            onClick: () => toggleRulesWithHits(!filters.impacting)
-        }
-    ];
-
     const filterConfigItems = [{
         label: intl.formatMessage(messages.name).toLowerCase(),
         filterValues: {
@@ -328,8 +320,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             onChange: (event, value) => setSearchText(value),
             value: searchText,
             placeholder: intl.formatMessage(messages.search)
-        }
-    }, {
+        } }, {
         label: FC.total_risk.title,
         type: FC.total_risk.type,
         id: FC.total_risk.urlParam,
@@ -339,8 +330,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             onChange: (event, values) => addFilterParam(FC.total_risk.urlParam, values),
             value: filters.total_risk,
             items: FC.total_risk.values
-        }
-    }, {
+        } }, {
         label: FC.res_risk.title,
         type: FC.res_risk.type,
         id: FC.res_risk.urlParam,
@@ -350,8 +340,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             onChange: (event, values) => addFilterParam(FC.res_risk.urlParam, values),
             value: filters.res_risk,
             items: FC.res_risk.values
-        }
-    }, {
+        } }, {
         label: FC.impact.title,
         type: FC.impact.type,
         id: FC.impact.urlParam,
@@ -361,8 +350,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             onChange: (event, values) => addFilterParam(FC.impact.urlParam, values),
             value: filters.impact,
             items: FC.impact.values
-        }
-    }, {
+        } }, {
         label: FC.likelihood.title,
         type: FC.likelihood.type,
         id: FC.likelihood.urlParam,
@@ -372,8 +360,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             onChange: (event, values) => addFilterParam(FC.likelihood.urlParam, values),
             value: filters.likelihood,
             items: FC.likelihood.values
-        }
-    }, {
+        } }, {
         label: FC.category.title,
         type: FC.category.type,
         id: FC.category.urlParam,
@@ -383,8 +370,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             onChange: (event, values) => addFilterParam(FC.category.urlParam, values),
             value: filters.category,
             items: FC.category.values
-        }
-    }, {
+        } }, {
         label: FC.incident.title,
         type: FC.incident.type,
         id: FC.incident.urlParam,
@@ -394,8 +380,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             onChange: (event, values) => addFilterParam(FC.incident.urlParam, values),
             value: filters.incident,
             items: FC.incident.values
-        }
-    }, {
+        } }, {
         label: FC.has_playbook.title,
         type: FC.has_playbook.type,
         id: FC.has_playbook.urlParam,
@@ -405,8 +390,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             onChange: (event, values) => addFilterParam(FC.has_playbook.urlParam, values),
             value: filters.has_playbook,
             items: FC.has_playbook.values
-        }
-    }, {
+        } }, {
         label: FC.reboot.title,
         type: FC.reboot.type,
         id: FC.reboot.urlParam,
@@ -427,6 +411,16 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             onChange: (event, value) => toggleRulesDisabled(value),
             value: `${filters.rule_status}`,
             items: FC.rule_status.values
+        } }, {
+        label: FC.impacting.title,
+        type: FC.impacting.type,
+        id: FC.impacting.urlParam,
+        value: `radio-${FC.impacting.urlParam}`,
+        filterValues: {
+            key: `${FC.impacting.urlParam}-filter`,
+            onChange: (event, value) => toggleRulesWithHits(value),
+            value: `${filters.impacting}`,
+            items: FC.impacting.values
         }
     }];
 
@@ -437,7 +431,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 setSearchText('');
                 setFilters({
                     ...(filters.topic && { topic: filters.topic }),
-                    impacting: true, rule_status: 'enabled', limit: filters.limit, offset: filters.offset
+                    impacting: 'all', rule_status: 'enabled', limit: filters.limit, offset: filters.offset
                 });
             } else {
                 itemsToRemove.map(item => {
@@ -486,7 +480,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 isDisabled: !permsExport || !filters.impacting,
                 tooltipText: permsExport ? intl.formatMessage(messages.exportData) : intl.formatMessage(messages.permsAction)
             }}
-            actionsConfig={{ actions }}
             filterConfig={{ items: filterConfigItems }}
             activeFiltersConfig={activeFiltersConfig}
         />

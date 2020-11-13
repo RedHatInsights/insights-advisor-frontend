@@ -964,5 +964,20 @@ export default defineMessages({
         id: 'permsAction',
         description: 'You do not have the required advisor permissions to perform this action',
         defaultMessage: 'You do not have the required advisor permissions to perform this action'
+    },
+    allSystems: {
+        id: 'allSystems',
+        description: 'All systems',
+        defaultMessage: 'All systems'
+    },
+    systemsAffected: {
+        id: 'systemsAffected',
+        description: 'Systems affected',
+        defaultMessage: 'Systems affected'
+    },
+    systemsNotAffected: {
+        id: 'systemsNotAffected',
+        description: 'Systems not affected',
+        defaultMessage: 'Systems not affected'
     }
 });

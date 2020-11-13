@@ -187,6 +187,13 @@ export const FILTER_CATEGORIES = {
             { label: intlHelper(intl.formatMessage(messages.disabled), intlSettings), value: 'disabled' },
             { label: intlHelper(intl.formatMessage(messages.redhatDisabled), intlSettings), value: 'rhdisabled' }
         ]
+    },
+    impacting: {
+        type: 'radio', title: 'affected systems', urlParam: 'impacting', values: [
+            { label: intlHelper(intl.formatMessage(messages.allSystems), intlSettings), value: 'all' },
+            { label: intlHelper(intl.formatMessage(messages.systemsAffected), intlSettings), value: 'true' },
+            { label: intlHelper(intl.formatMessage(messages.systemsNotAffected), intlSettings), value: 'false' }
+        ]
     }
 };
 
