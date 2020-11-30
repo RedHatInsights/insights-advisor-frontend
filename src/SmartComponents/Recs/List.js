@@ -20,7 +20,7 @@ const RulesTable = lazy(() => import(/* webpackChunkName: "RulesTable" */ '../..
 const List = () => {
     const intl = useIntl();
     const permsExport = usePermissions('advisor', PERMS.export);
-    const AdvisorRedHatDisabledRuleAlert = JSON.parse(sessionStorage.getItem('AdvisorRedHatDisabledRuleAlert') || 'true');
+    const AdvisorRedHatDisabledRuleAlert = JSON.parse(localStorage.getItem('AdvisorRedHatDisabledRuleAlert') || 'true');
     const [redhatDisabledRuleAlert, setRedHatDisabledRuleAlert] = useState(AdvisorRedHatDisabledRuleAlert);
     const [redHatDisabledRuleCount, setRedHatDisabledRuleCount] = useState(0);
 
@@ -53,7 +53,7 @@ const List = () => {
                     title={intl.formatMessage(messages.redhatDisabledRuleAlertTitle)}
                     actionClose={<AlertActionCloseButton onClose={() => {
                         setRedHatDisabledRuleAlert(false);
-                        sessionStorage.setItem('AdvisorRedHatDisabledRuleAlert', 'false');
+                        localStorage.setItem('AdvisorRedHatDisabledRuleAlert', 'false');
                     }} />}
                 >
                     {intl.formatMessage(messages.redhatDisabledRuleAlert)}
