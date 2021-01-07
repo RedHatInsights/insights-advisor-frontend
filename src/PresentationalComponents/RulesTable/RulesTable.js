@@ -101,7 +101,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     };
 
     const toggleRulesDisabled = (rule_status) => {
-        setFilters({ ...filters, rule_status, offset: 0, ...(rule_status !== 'enabled' && { impacting: false }) });
+        setFilters({ ...filters, rule_status, offset: 0, ...(rule_status !== 'enabled' && { impacting: false } || { impacting: true }) });
     };
 
     const handleOnCollapse = (event, rowId, isOpen) => {
