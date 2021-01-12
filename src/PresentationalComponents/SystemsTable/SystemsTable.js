@@ -1,13 +1,11 @@
 import './SystemsTable.scss';
 
 import * as AppActions from '../../AppActions';
-import * as ReactRedux from 'react-redux';
 import * as pfReactTable from '@patternfly/react-table';
-import * as reactRouterDom from 'react-router-dom';
 
 import { DEBOUNCE_DELAY, PERMS, SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { connect, useStore } from 'react-redux';
+import { connect } from 'react-redux';
 import { filterFetchBuilder, paramParser, pruneFilters, urlBuilder, workloadQueryBuilder } from '../Common/Tables';
 
 import Failed from '../Loading/Failed';
@@ -19,18 +17,17 @@ import debounce from '../../Utilities/Debounce';
 import downloadReport from '../Common/DownloadHelper';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
 import messages from '../../Messages';
-import { reactCore } from '@redhat-cloud-services/frontend-components-utilities/files/inventoryDependencies';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { systemReducer } from '../../AppReducer';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/files/RBACHook';
 
+import { InventoryTable } from '@redhat-cloud-services/frontend-components/components/esm/Inventory';
+
 const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, filters, setFilters, selectedTags, workloads, SID }) => {
     const intl = useIntl();
     const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
     const inventory = useRef(null);
-    const [InventoryTable, setInventory] = useState();
-    const store = useStore();
     const results = systems.meta ? systems.meta.count : 0;
     const [searchText, setSearchText] = useState(filters.display_name || '');
     const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
@@ -144,39 +141,6 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, filters, setF
     };
 
     useEffect(() => {
-        (async () => {
-            const rows = [{
-                title: intl.formatMessage(messages.name), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(80)], key: 'display_name'
-            },
-            { title: intl.formatMessage(messages.numberRuleHits), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'hits' },
-            { title: intl.formatMessage(messages.critical), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'critical_hits' },
-            { title: intl.formatMessage(messages.important), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'important_hits' },
-            { title: intl.formatMessage(messages.moderate), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'moderate_hits' },
-            { title: intl.formatMessage(messages.low), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'low_hits' },
-            { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'updated' }];
-            const { inventoryConnector, mergeWithEntities, INVENTORY_ACTION_TYPES
-            } = await insights.loadInventory({
-                ReactRedux,
-                react: React,
-                reactRouterDom,
-                pfReactTable,
-                pfReact: reactCore
-            });
-            getRegistry().register({
-                ...mergeWithEntities(
-                    systemReducer(
-                        [...rows],
-                        INVENTORY_ACTION_TYPES
-                    )
-                )
-            });
-
-            const { InventoryTable } = inventoryConnector(store);
-            setInventory(() => InventoryTable);
-        })();
-    }, [intl, store]);
-
-    useEffect(() => {
         filters.display_name === undefined ? setSearchText('') : setSearchText(filters.display_name);
     }, [filters.display_name]);
 
@@ -218,37 +182,54 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, filters, setF
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchSystemsFn, filterBuilding, filters, selectedTags]);
 
-    return InventoryTable ?
-        systemsFetchStatus !== 'failed' ?
-            <InventoryTable
-                ref={inventory}
-                items={((systemsFetchStatus !== 'pending' && systems && systems.data) || []).map((system) => ({
-                    ...system,
-                    id: system.system_uuid
-                }))}
-                isFullView
-                sortBy={calculateSort()}
-                onSort={onSort}
-                hasCheckbox={false}
-                page={filters.offset / filters.limit + 1}
-                total={results}
-                isLoaded={systemsFetchStatus !== 'pending'}
-                perPage={Number(filters.limit)}
-                onRefresh={handleRefresh}
-                filterConfig={{ items: filterConfigItems }}
-                activeFiltersConfig={activeFiltersConfig}
-                exportConfig={{
-                    onSelect: (_e, fileType) => downloadReport('systems', fileType, urlBuilder(filters, selectedTags)),
-                    extraItems: [<li key='download-pd' role="menuitem">
-                        <SystemsPdf filters={{ ...filterFetchBuilder(filters) }} selectedTags={selectedTags}
-                            systemsCount={systems && systems.meta && systems.meta.count} />
-                    </li>],
-                    isDisabled: !permsExport,
-                    tooltipText: permsExport ? intl.formatMessage(messages.exportData) : intl.formatMessage(messages.permsAction)
-                }}
-            />
-            : systemsFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.systemTableFetchError)} />)
-        : <Loading />;
+    return systemsFetchStatus !== 'failed' ? <InventoryTable
+        ref={inventory}
+        items={((systemsFetchStatus !== 'pending' && systems && systems.data) || []).map((system) => ({
+            ...system,
+            id: system.system_uuid
+        }))}
+        isFullView
+        sortBy={calculateSort()}
+        onSort={onSort}
+        hasCheckbox={false}
+        page={filters.offset / filters.limit + 1}
+        total={results}
+        isLoaded={systemsFetchStatus !== 'pending'}
+        perPage={Number(filters.limit)}
+        onRefresh={handleRefresh}
+        filterConfig={{ items: filterConfigItems }}
+        activeFiltersConfig={activeFiltersConfig}
+        exportConfig={{
+            onSelect: (_e, fileType) => downloadReport('systems', fileType, urlBuilder(filters, selectedTags)),
+            extraItems: [<li key='download-pd' role="menuitem">
+                <SystemsPdf filters={{ ...filterFetchBuilder(filters) }} selectedTags={selectedTags}
+                    systemsCount={systems && systems.meta && systems.meta.count} />
+            </li>],
+            isDisabled: !permsExport,
+            tooltipText: permsExport ? intl.formatMessage(messages.exportData) : intl.formatMessage(messages.permsAction)
+        }}
+        fallback={Loading}
+        onLoad={({ mergeWithEntities, INVENTORY_ACTION_TYPES }) => {
+            const rows = [{
+                title: intl.formatMessage(messages.name), transforms: [pfReactTable.sortable, pfReactTable.cellWidth(80)], key: 'display_name'
+            },
+            { title: intl.formatMessage(messages.numberRuleHits), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'hits' },
+            { title: intl.formatMessage(messages.critical), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'critical_hits' },
+            { title: intl.formatMessage(messages.important), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'important_hits' },
+            { title: intl.formatMessage(messages.moderate), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'moderate_hits' },
+            { title: intl.formatMessage(messages.low), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'low_hits' },
+            { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable, pfReactTable.wrappable], key: 'updated' }];
+
+            getRegistry().register({
+                ...mergeWithEntities(
+                    systemReducer(
+                        [...rows],
+                        INVENTORY_ACTION_TYPES
+                    )
+                )
+            });
+        }}
+    /> : systemsFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.systemTableFetchError)} />);
 };
 
 SystemsTable.propTypes = {

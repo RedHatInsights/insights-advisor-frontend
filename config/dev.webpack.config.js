@@ -7,6 +7,12 @@ const { config: webpackConfig, plugins } = config({
     debug: true
 });
 
+plugins.push(
+    require('@redhat-cloud-services/frontend-components-config/federated-modules')({
+        root: resolve(__dirname, '../')
+    })
+);
+
 module.exports = (env) => {
     env && env.analyze === 'true' && plugins.push(new BundleAnalyzerPlugin());
 
