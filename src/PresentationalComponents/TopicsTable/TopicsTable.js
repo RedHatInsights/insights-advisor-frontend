@@ -83,7 +83,8 @@ const TopicsTable = ({ topics, topicsFetchStatus, intl }) => {
                     filterConfig={{ items: filterConfigItems }}
                     activeFiltersConfig={activeFiltersConfig}
                 />
-                <Table aria-label={'topics-table'} sortBy={sort} onSort={onSort} cells={cols} rows={rows} >
+                <Table aria-label={'topics-table'} sortBy={sort} onSort={onSort} cells={cols} rows={rows}
+                    ouiaId="topicTable">
                     <TableHeader />
                     <TableBody />
                     {rows.length === 0 && topicsFetchStatus !== 'pending' && setRows([{

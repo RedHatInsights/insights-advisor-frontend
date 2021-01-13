@@ -65,10 +65,12 @@ const DisableRule = ({ handleModalToggle, intl, isModalOpen, host, hosts, rule, 
         isOpen={isModalOpen}
         onClose={() => { handleModalToggle(false); setJustificaton(''); }}
         actions={[
-            <Button key="confirm" variant="primary" onClick={() => disableRule()}>
+            <Button key="confirm" variant="primary" onClick={() => disableRule()}
+                ouiaId="confirm">
                 {intl.formatMessage(messages.save)}
             </Button>,
-            <Button key="cancel" variant="link" onClick={() => { handleModalToggle(false); setJustificaton(''); }}>
+            <Button key="cancel" variant="link" onClick={() => { handleModalToggle(false); setJustificaton(''); }}
+                ouiaId="cancel">
                 {intl.formatMessage(messages.cancel)}
             </Button>
         ]}
