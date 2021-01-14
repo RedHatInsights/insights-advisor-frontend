@@ -50,6 +50,7 @@ const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl,
             <Breadcrumbs
                 current={topic.name}
                 match={match}
+                ouiaId="details"
             />
             {topicFetchStatus === 'fulfilled' &&
                 <React.Fragment>

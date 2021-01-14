@@ -129,6 +129,7 @@ const TopicsAdminTable = ({ topicsFetchStatus, fetchTopicsAdmin, topics, intl })
                     </span>
                 }, '', {
                     title: <Button
+                        ouiaId="hide"
                         variant='link'
                         onClick={ () => hideTopics(value) }
                     ><EditAltIcon/> {intl.formatMessage(messages.topicAdminEdit)}</Button>
@@ -154,6 +155,7 @@ const TopicsAdminTable = ({ topicsFetchStatus, fetchTopicsAdmin, topics, intl })
                 <PrimaryToolbar className='toolbar-padding-override'>
                     <Button
                         variant='primary'
+                        ouiaId="adminCreate"
                         onClick={ (_) => hideTopics(_) }
                     >
                         {intl.formatMessage(messages.topicAdminCreate)}
@@ -161,6 +163,7 @@ const TopicsAdminTable = ({ topicsFetchStatus, fetchTopicsAdmin, topics, intl })
                 </PrimaryToolbar>
                 { topicsFetchStatus === 'fulfilled' &&
                     <Table
+                        ouiaId="adminTable"
                         aria-label={'topics-admin-table'}
                         sortBy={sortBy}
                         onSort={onSort}

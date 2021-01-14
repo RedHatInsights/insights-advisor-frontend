@@ -274,7 +274,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                                     &nbsp;{value.hosts_acked_count && !value.impacted_systems_count ?
                                         intl.formatMessage(messages.ruleIsDisabledForAllSystems) :
                                         intl.formatMessage(messages.ruleIsDisabledForSystemsBody, { systems: value.hosts_acked_count })}
-                                    &nbsp; <Button isInline variant='link'
+                                    &nbsp; <Button isInline variant='link' ouiaId="viewSystem"
                                         onClick={() => { setViewSystemsModalRule(value); setViewSystemsModalOpen(true); }}>
                                         {intl.formatMessage(messages.viewSystems)}
                                     </Button>
@@ -500,6 +500,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         {rulesFetchStatus === 'pending' && (<Loading />)}
         {rulesFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.rulesTableFetchRulesError)} />)}
         <Pagination
+            ouiaId="page"
             itemCount={results}
             page={(filters.offset / filters.limit + 1)}
             perPage={Number(filters.limit)}

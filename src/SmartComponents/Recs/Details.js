@@ -198,6 +198,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
             <React.Fragment>
                 <PageHeader className='pageHeaderOverride'>
                     <Breadcrumbs
+                        ouiaId="override"
                         current={rule.description || ''}
                         match={match} />
                 </PageHeader>
@@ -218,6 +219,7 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                                         className='ins-c-rec-details__actions_dropdown'
                                         onSelect={() => setActionsDropdownOpen(!actionsDropdownOpen)}
                                         position='right'
+                                        ouiaId="actions"
                                         toggle={<DropdownToggle
                                             isDisabled={!permsDisableRec}
                                             onToggle={(actionsDropdownOpen) => setActionsDropdownOpen(actionsDropdownOpen)}
@@ -225,10 +227,10 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                                         </DropdownToggle>}
                                         isOpen={actionsDropdownOpen}
                                         dropdownItems={rule && rule.rule_status === 'enabled' ?
-                                            [<DropdownItem key='link'
+                                            [<DropdownItem key='link' ouiaId="disable"
                                                 onClick={() => { handleModalToggle(true); }}>
                                                 {intl.formatMessage(messages.disableRule)}</DropdownItem>]
-                                            : [<DropdownItem key='link'
+                                            : [<DropdownItem key='link' ouiaId="enable"
                                                 onClick={() => { enableRule(rule); }}>
                                                 {intl.formatMessage(messages.enableRule)}</DropdownItem>]} />
                                 </Tooltip>
@@ -253,7 +255,8 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                                     <React.Fragment>
                                         {intl.formatMessage(messages.ruleIsDisabledForSystemsBody, { systems: rule.hosts_acked_count })}
                                         &nbsp;
-                                        <Button isInline variant='link' onClick={() => setViewSystemsModalOpen(true)}>
+                                        <Button isInline variant='link' onClick={() => setViewSystemsModalOpen(true)}
+                                            ouiaId="viewSystems">
                                             {intl.formatMessage(messages.viewSystems)}
                                         </Button>
                                     </React.Fragment>
@@ -265,10 +268,12 @@ const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchR
                             </CardBody>
                             <CardFooter>
                                 {rule.hosts_acked_count > 0 && rule.rule_status === 'enabled' ?
-                                    <Button isInline variant='link' onClick={() => bulkHostActions()}>
+                                    <Button isInline variant='link' onClick={() => bulkHostActions()}
+                                        ouiaId="bulkHost">
                                         {intl.formatMessage(messages.enableRuleForSystems)}
                                     </Button>
-                                    : <Button isInline variant='link' onClick={() => enableRule(rule)}>
+                                    : <Button isInline variant='link' onClick={() => enableRule(rule)}
+                                        ouiaId="rule">
                                         {intl.formatMessage(messages.enableRule)}
                                     </Button>}
                             </CardFooter>

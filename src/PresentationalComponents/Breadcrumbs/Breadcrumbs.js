@@ -50,7 +50,7 @@ const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl })
     return (
         <React.Fragment>
             {(ruleFetchStatus === 'fulfilled' || items.length > 0) && (
-                <Breadcrumb>
+                <Breadcrumb ouiaId="detail">
                     {items.map((oneLink, key) => (
                         <BreadcrumbItem key={key}>
                             <Link to={oneLink.navigate}>{oneLink.title}</Link>

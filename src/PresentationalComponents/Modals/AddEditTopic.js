@@ -64,12 +64,14 @@ const AddEditTopic = ({ handleModalToggle, intl, isModalOpen, topic, addNotifica
     const footer = (
         <Split className='split-override' hasGutter>
             <SplitItem>
-                <Button key='confirm' variant='primary' onClick={ () => editTopic({ type: 'POST/PUT' }) }>
+                <Button key='confirm' variant='primary' onClick={ () => editTopic({ type: 'POST/PUT' }) }
+                    ouiaId="confirm">
                     {intl.formatMessage(messages.save)}
                 </Button>
             </SplitItem>
             <SplitItem>
-                <Button key='cancel' variant='secondary' onClick={ () => handleModalToggle(false) }>
+                <Button key='cancel' variant='secondary' onClick={ () => handleModalToggle(false) }
+                    ouiaId="cancel">
                     {intl.formatMessage(messages.cancel)}
                 </Button>
             </SplitItem>
@@ -77,6 +79,7 @@ const AddEditTopic = ({ handleModalToggle, intl, isModalOpen, topic, addNotifica
             <SplitItem>
                 <Button
                     key='delete'
+                    ouiaId="delete"
                     variant='danger'
                     isDisabled={ topic.slug ? false : true }
                     onClick={ () => editTopic({ type: 'DELETE' }) }
