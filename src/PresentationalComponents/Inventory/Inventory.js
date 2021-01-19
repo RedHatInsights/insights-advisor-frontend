@@ -1,8 +1,6 @@
 import './_Inventory.scss';
 
-import * as ReactRedux from 'react-redux';
 import * as pfReactTable from '@patternfly/react-table';
-import * as reactRouterDom from 'react-router-dom';
 
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -16,22 +14,19 @@ import { connect } from 'react-redux';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
-import { reactCore } from '@redhat-cloud-services/frontend-components-utilities/files/inventoryDependencies';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
 import { systemReducer } from '../../AppReducer';
-import { useStore } from 'react-redux';
+
+import { InventoryTable } from '@redhat-cloud-services/frontend-components/components/esm/Inventory';
 
 let page = 1;
 let pageSize = 50;
 let rule_id = '';
 const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification, items, afterDisableFn, onSortFn, filters }) => {
     const inventory = useRef(null);
-    const [InventoryTable, setInventoryTable] = useState();
     const [selected, setSelected] = useState([]);
     const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
     const [bulkSelect, setBulkSelect] = useState();
-
-    const store = useStore();
 
     const sortIndices = {
         1: 'display_name',
@@ -99,29 +94,6 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [rows]);
 
-    useEffect(() => {
-        (async () => {
-            const { inventoryConnector, mergeWithEntities, INVENTORY_ACTION_TYPES } = await insights.loadInventory({
-                ReactRedux, react: React, reactRouterDom, pfReactTable, pfReact: reactCore
-            });
-
-            getRegistry().register({
-                ...mergeWithEntities(
-                    systemReducer(
-                        [
-                            { title: intl.formatMessage(messages.name), transforms: [pfReactTable.sortable], key: 'display_name' },
-                            { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable], key: 'updated' }
-                        ],
-                        INVENTORY_ACTION_TYPES
-                    )
-                )
-            });
-
-            const { InventoryTable } = inventoryConnector(store);
-            setInventoryTable(() => InventoryTable);
-        })();
-    }, [intl, store]);
-
     return <React.Fragment>
         {disableRuleModalOpen && <DisableRule
             handleModalToggle={handleModalToggle}
@@ -130,7 +102,7 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
             afterFn={afterDisableFn}
             hosts={selected} />
         }
-        {InventoryTable ? <InventoryTable
+        <InventoryTable
             ref={inventory}
             items={items}
             sortBy={calculateSort()}
@@ -182,7 +154,21 @@ const Inventory = ({ tableProps, onSelectRows, rows, intl, rule, addNotification
                 checked: selected.length === items.length ? 1 : selected.length === pageSize ? null : 0,
                 onSelect: () => { selected.length > 0 ? onSelectRows(-1, false) : bulkSelectfn(); }
             }}
-        /> : <Loading />}
+            fallback={Loading}
+            onLoad={({ mergeWithEntities, INVENTORY_ACTION_TYPES }) => {
+                getRegistry().register({
+                    ...mergeWithEntities(
+                        systemReducer(
+                            [
+                                { title: intl.formatMessage(messages.name), transforms: [pfReactTable.sortable], key: 'display_name' },
+                                { title: intl.formatMessage(messages.lastSeen), transforms: [pfReactTable.sortable], key: 'updated' }
+                            ],
+                            INVENTORY_ACTION_TYPES
+                        )
+                    )
+                });
+            }}
+        />
     </React.Fragment>;
 };
 

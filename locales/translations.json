@@ -21,6 +21,7 @@
   "disableRuleForSystems": "Disable recommendation for selected systems",
   "disableRuleSingleSystem": "Disable only for this system",
   "disabled": "Disabled",
+  "documentTitle": "{subnav} - Advisor | Red Hat Insights",
   "downloadExecutiveLabel": "Download executive report",
   "enable": "Enable",
   "enableRule": "Enable recommendation",
