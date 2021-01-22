@@ -8,8 +8,6 @@ import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/i
 import { Text, TextVariants } from '@patternfly/react-core/dist/js/components/Text/Text';
 import { compact, intersection } from 'lodash';
 
-import { Card } from '@patternfly/react-core/dist/js/components/Card/Card';
-import { CardBody } from '@patternfly/react-core/dist/js/components/Card/CardBody';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/components/esm/InsightsLabel';
 import { Link } from 'react-router-dom';
@@ -55,13 +53,9 @@ const RuleDetails = ({ children, rule, resolutionRisk, intl, topics, header, isD
                 )}
                 {topics && rule.tags && topicLinks().length > 0 &&
                     <StackItem>
-                        <Card className="topicsCard" isCompact>
-                            <CardBody>
-                                <strong>{intl.formatMessage(messages.topicRelatedToRule)}</strong>
-                                <br />
-                                {barDividedList(topicLinks())}
-                            </CardBody>
-                        </Card>
+                        <strong>{intl.formatMessage(messages.topicRelatedToRule)}</strong>
+                        <br />
+                        {barDividedList(topicLinks())}
                     </StackItem>
                 }
                 {isDetailsPage && <RuleRating rule={rule} />}
