@@ -3,7 +3,7 @@ import * as ActionTypes from './AppConstants';
 
 import Advisor from '@redhat-cloud-services/frontend-components-inventory-insights';
 import Immutable from 'seamless-immutable';
-import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
+import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 
 const initialState = Immutable({
     rule: {},

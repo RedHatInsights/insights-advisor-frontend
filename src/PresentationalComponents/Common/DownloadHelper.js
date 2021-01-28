@@ -1,6 +1,6 @@
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
-import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/files/helpers';
+import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 
 const fileName = (exportTable) => {
     const defaultParams = {

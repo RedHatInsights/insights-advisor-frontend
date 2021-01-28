@@ -8,20 +8,20 @@ import { Text, TextVariants } from '@patternfly/react-core/dist/js/components/Te
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { Label } from '@patternfly/react-core/dist/js/components/Label/Label';
 import Loading from '../../PresentationalComponents/Loading/Loading';
-import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
+import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
-import { PageHeader } from '@redhat-cloud-services/frontend-components/components/PageHeader';
+import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import PropTypes from 'prop-types';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
 import TimesCircleIcon from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
-import { Truncate } from '@redhat-cloud-services/frontend-components/components/Truncate';
+import { Truncate } from '@redhat-cloud-services/frontend-components/Truncate';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 
 const Details = ({ match, fetchTopic, setFilters, topic, topicFetchStatus, intl, filters }) => {
     useEffect(() => {
