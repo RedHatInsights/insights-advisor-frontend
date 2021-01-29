@@ -5,24 +5,23 @@ import * as pfReactTable from '@patternfly/react-table';
 
 import { DEBOUNCE_DELAY, PERMS, SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { connect } from 'react-redux';
 import { filterFetchBuilder, paramParser, pruneFilters, urlBuilder, workloadQueryBuilder } from '../Common/Tables';
 
 import Failed from '../Loading/Failed';
+import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import Loading from '../Loading/Loading';
 import PropTypes from 'prop-types';
 import SystemsPdf from '../Export/SystemsPdf';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
+import { connect } from 'react-redux';
 import debounce from '../../Utilities/Debounce';
 import downloadReport from '../Common/DownloadHelper';
-import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
+import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
 import messages from '../../Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 import { systemReducer } from '../../AppReducer';
 import { useIntl } from 'react-intl';
-import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/files/RBACHook';
-
-import { InventoryTable } from '@redhat-cloud-services/frontend-components/components/esm/Inventory';
+import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 
 const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, filters, setFilters, selectedTags, workloads, SID }) => {
     const intl = useIntl();

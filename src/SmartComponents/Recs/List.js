@@ -1,7 +1,7 @@
 import './List.scss';
 
 import { PERMS, RULES_FETCH_URL } from '../../AppConstants';
-import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
+import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/PageHeader';
 import React, { Suspense, lazy, useEffect, useState } from 'react';
 
 import API from '../../Utilities/Api';
@@ -9,11 +9,11 @@ import { Alert } from '@patternfly/react-core/dist/esm/components/Alert/Alert';
 import { AlertActionCloseButton } from '@patternfly/react-core/dist/esm/components/Alert/AlertActionCloseButton';
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import Loading from '../../PresentationalComponents/Loading/Loading';
-import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
+import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
-import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/files/RBACHook';
+import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 
 const RulesTable = lazy(() => import(/* webpackChunkName: "RulesTable" */ '../../PresentationalComponents/RulesTable/RulesTable'));
 

@@ -1,12 +1,12 @@
-/* eslint-disable no-console */
-import React from 'react';
 import App from './App';
-import PropTypes from 'prop-types';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations';
 import { NotificationsPortal } from '@redhat-cloud-services/frontend-components-notifications';
+import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
+/* eslint-disable no-console */
+import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { getBaseName } from '@redhat-cloud-services/frontend-components-utilities/files/helpers';
+import { getBaseName } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 import { init } from './Store';
 import logger from 'redux-logger';
 import messages from '../locales/data.json';

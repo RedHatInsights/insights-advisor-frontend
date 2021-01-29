@@ -1,15 +1,15 @@
 import * as AppActions from '../../AppActions';
 
-import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
+import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/PageHeader';
 import React, { useEffect } from 'react';
 
-import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
+import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import PropTypes from 'prop-types';
 import TopicsTable from '../../PresentationalComponents/TopicsTable/TopicsTable';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
 
 const List = ({ fetchTopics, intl, selectedTags, workloads, SID }) => {

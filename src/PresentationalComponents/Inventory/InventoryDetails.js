@@ -1,21 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import '@redhat-cloud-services/frontend-components-inventory-insights/index.css';
 
+import { AppInfo, DetailWrapper, InventoryDetailHead } from '@redhat-cloud-services/frontend-components/Inventory';
 import { Grid, GridItem } from '@patternfly/react-core/dist/js/layouts/Grid/index';
 import React, { useEffect } from 'react';
 
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
-import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
-import { PageHeader } from '@redhat-cloud-services/frontend-components/components/PageHeader';
+import { Main } from '@redhat-cloud-services/frontend-components/Main';
+import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { entitiesDetailsReducer } from '../../AppReducer';
-import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
 import messages from '../../Messages';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 import { useIntl } from 'react-intl';
-
-import { AppInfo, InventoryDetailHead, DetailWrapper } from '@redhat-cloud-services/frontend-components/components/esm/Inventory';
 
 const InventoryDetails = ({ entity, match }) => {
     const intl = useIntl();

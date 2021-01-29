@@ -4,7 +4,7 @@ import * as AppActions from '../../AppActions';
 
 import { BASE_URL, PERMS, SYSTEM_TYPES, UI_BASE } from '../../AppConstants';
 import { Card, CardBody, CardFooter, CardHeader } from '@patternfly/react-core/dist/js/components/Card';
-import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
+import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/PageHeader';
 import React, { useEffect, useRef, useState } from 'react';
 import { encodeOptionsToURL, workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
 
@@ -13,7 +13,7 @@ import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import CaretDownIcon from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
-import { DateFormat } from '@redhat-cloud-services/frontend-components/components/DateFormat';
+import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
 import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
@@ -24,7 +24,7 @@ import { FlexItem } from '@patternfly/react-core/dist/js/layouts/Flex/FlexItem';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import { Label } from '@patternfly/react-core/dist/js/components/Label/Label';
 import Loading from '../../PresentationalComponents/Loading/Loading';
-import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
+import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import PropTypes from 'prop-types';
 import RuleDetails from '../../PresentationalComponents/RuleDetails/RuleDetails';
@@ -36,9 +36,9 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import { connect } from 'react-redux';
 import { cveToRuleid } from '../../cveToRuleid.js';
 import messages from '../../Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 import { useIntl } from 'react-intl';
-import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/files/RBACHook';
+import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 
 const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchRule, ruleFetchStatus, rule, systemFetchStatus, system,
     topics, ruleAck, hostAcks, fetchHostAcks, setSystem, setRule, selectedTags, addNotification, workloads, SID }) => {

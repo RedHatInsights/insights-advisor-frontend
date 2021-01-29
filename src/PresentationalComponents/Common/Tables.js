@@ -1,4 +1,4 @@
-import { generateFilter } from '@redhat-cloud-services/frontend-components-utilities/files/helpers';
+import { generateFilter } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 
 // Builds returns url params from table filters, pushes to url if history object is passed
 export const urlBuilder = (filters, selectedTags, workloads) => {

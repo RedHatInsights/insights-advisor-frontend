@@ -10,9 +10,9 @@ import { PERMS } from './AppConstants';
 import PropTypes from 'prop-types';
 import { Routes } from './Routes';
 import messages from './Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 import { useIntl } from 'react-intl';
-import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/files/RBACHook';
+import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 
 const App = (props) => {
     const intl = useIntl();

@@ -13,19 +13,19 @@ import EditAltIcon from '@patternfly/react-icons/dist/js/icons/edit-alt-icon';
 import Failed from '../Loading/Failed';
 import Immutable from 'seamless-immutable';
 import Loading from '../Loading/Loading';
-import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
+import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import MessageState from '../MessageState/MessageState';
-import { PageHeader } from '@redhat-cloud-services/frontend-components/components/PageHeader';
-import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/components/PrimaryToolbar';
+import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
+import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import PropTypes from 'prop-types';
 import StarIcon  from '@patternfly/react-icons/dist/js/icons/star-icon';
-import { TableToolbar } from '@redhat-cloud-services/frontend-components/components/TableToolbar';
+import { TableToolbar } from '@redhat-cloud-services/frontend-components/TableToolbar';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 
 const TopicsAdminTable = ({ topicsFetchStatus, fetchTopicsAdmin, topics, intl }) => {
 

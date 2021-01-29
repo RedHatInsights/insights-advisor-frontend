@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 
 const Breadcrumbs = ({ current, fetchRule, match, ruleFetchStatus, rule, intl }) => {
     const [items, setItems] = useState([]);

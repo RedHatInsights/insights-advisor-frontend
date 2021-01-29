@@ -2,7 +2,7 @@ import { notifications, notificationsMiddleware } from '@redhat-cloud-services/f
 
 import { compose } from 'redux';
 import { getAdvisorStore } from '../AppReducer';
-import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
+import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
 import promiseMiddleware from 'redux-promise-middleware';
 
 let registry;

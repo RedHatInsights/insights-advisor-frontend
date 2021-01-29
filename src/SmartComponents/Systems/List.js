@@ -1,8 +1,8 @@
-import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/components/PageHeader';
+import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/PageHeader';
 import React, { Suspense, lazy } from 'react';
 
 import Loading from '../../PresentationalComponents/Loading/Loading';
-import { Main } from '@redhat-cloud-services/frontend-components/components/Main';
+import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 

@@ -6,18 +6,17 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
+import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import Loading from '../Loading/Loading';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { connect } from 'react-redux';
-import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/files/Registry';
+import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/files/RouterParams';
+import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 import { systemReducer } from '../../AppReducer';
-
-import { InventoryTable } from '@redhat-cloud-services/frontend-components/components/esm/Inventory';
 
 let page = 1;
 let pageSize = 50;

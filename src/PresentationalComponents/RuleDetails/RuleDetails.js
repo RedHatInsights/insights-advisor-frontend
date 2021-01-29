@@ -9,7 +9,7 @@ import { Text, TextVariants } from '@patternfly/react-core/dist/js/components/Te
 import { compact, intersection } from 'lodash';
 
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
-import { InsightsLabel } from '@redhat-cloud-services/frontend-components/components/esm/InsightsLabel';
+import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
 import { Link } from 'react-router-dom';
 import PowerOffIcon from '@patternfly/react-icons/dist/js/icons/power-off-icon';
 import PropTypes from 'prop-types';
