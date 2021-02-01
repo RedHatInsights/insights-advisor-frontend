@@ -8,6 +8,7 @@ import messages from '../../Messages';
 import { truncate } from 'lodash';
 
 const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => {
+    const calcPercent = (value, total) => Math.round(Number(value / total * 100));
     const severityPie = [
         { x: intl.formatMessage(messages.critical), y: statsReports.total_risk[4] },
         { x: intl.formatMessage(messages.important), y: statsReports.total_risk[3] },
@@ -17,7 +18,7 @@ const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => 
         ...Object.entries(statsReports.total_risk).map(([key, value]) =>
             [TOTAL_RISK_LABEL[key].props.children, intl.formatMessage(messages.recNumAndPercentage, {
                 count: value,
-                total: Math.round(Number(value / statsReports.total * 100))
+                total: calcPercent(value, statsReports.total)
             })]).reverse()
     ];
 
@@ -31,7 +32,7 @@ const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => 
         ...Object.entries(statsReports.category).map(([key, value]) =>
             [key, intl.formatMessage(messages.recNumAndPercentage, {
                 count: value,
-                total: Math.round(Number(value / statsReports.total * 100))
+                total: calcPercent(value, statsReports.total)
             })])];
 
     const rulesDesc = (rule) => <Text>
@@ -51,7 +52,7 @@ const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => 
             <Column><Table withHeader rows={severityRows} /></Column>
             <Column>
                 <Chart
-                    chartType="pie"
+                    chartType='pie'
                     subTitle={intl.formatMessage(messages.severityHeader)}
                     title='100'
                     data={severityPie}
@@ -63,7 +64,7 @@ const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => 
             <Column><Table withHeader rows={categoryRows} /></Column>
             <Column>
                 <Chart
-                    chartType="pie"
+                    chartType='pie'
                     subTitle={intl.formatMessage(messages.categoryHeader)}
                     title='100'
                     data={categoryPie} />
