@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ReactMarkdown from 'react-markdown/with-html';
 import RuleRating from '../RuleRating/RuleRating';
-import { SeverityLine } from '@redhat-cloud-services/frontend-components-charts/dist/esm/SeverityLine';
+import { SeverityLine } from '@redhat-cloud-services/frontend-components-charts/esm/SeverityLine';
 import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
 import barDividedList from '../../Utilities/BarDividedList';
 import { injectIntl } from 'react-intl';
