@@ -82,7 +82,7 @@
     "@babel/preset-flow": "7.12.13",
     "@babel/preset-react": "7.12.13",
     "@formatjs/cli": "3.0.5",
-    "@redhat-cloud-services/frontend-components-config": "4.0.0",
+    "@redhat-cloud-services/frontend-components-config": "^4.0.2",
     "axios": "0.21.1",
     "babel-eslint": "10.1.0",
     "babel-jest": "26.6.3",
