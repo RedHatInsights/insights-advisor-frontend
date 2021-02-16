@@ -35,6 +35,7 @@ const SystemsPdf = ({ filters, selectedTags, systemsCount }) => {
 
     return useMemo(() => {
         return <DownloadButton
+            groupName={intl.formatMessage(messages.redHatInsights)}
             allPagesHaveTitle={false}
             label={loading ? intl.formatMessage(messages.loading) : intl.formatMessage(messages.exportPdf)}
             asyncFunction={dataFetch}
