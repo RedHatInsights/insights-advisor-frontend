@@ -521,7 +521,7 @@ RulesTable.propTypes = {
     setFilters: PropTypes.func,
     selectedTags: PropTypes.array,
     workloads: PropTypes.object,
-    SID: PropTypes.Object
+    SID: PropTypes.object
 };
 
 const mapStateToProps = ({ AdvisorStore, ownProps }) => ({

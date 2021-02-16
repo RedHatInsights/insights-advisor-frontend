@@ -7,15 +7,15 @@ import { setSIDs, setSelectedTags, setWorkloads } from './AppActions';
 import LockIcon from '@patternfly/react-icons/dist/esm/icons/lock-icon';
 import MessageState from './PresentationalComponents/MessageState/MessageState';
 import { PERMS } from './AppConstants';
-import PropTypes from 'prop-types';
 import { Routes } from './Routes';
 import messages from './Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
+import { useHistory } from 'react-router-dom';
 
-const App = (props) => {
+const App = () => {
     const intl = useIntl();
+    const { location, ...history } = useHistory();
     const permsViewRecs = usePermissions('advisor', PERMS.viewRecs);
     const [auth, setAuth] = useState(false);
     const dispatch = useDispatch();
@@ -41,10 +41,10 @@ const App = (props) => {
             });
         }
 
-        const baseComponentUrl = props.location.pathname.split('/')[1];
+        const baseComponentUrl = location.pathname.split('/')[1];
         const unregister = insights.chrome.on('APP_NAVIGATION', event => {
             if (event.domEvent) {
-                props.history.push(`/${event.navId}`);
+                history.push(`/${event.navId}`);
                 appNavClick[baseComponentUrl] !== undefined ? appNavClick[baseComponentUrl](true)
                     : appNavClick.recommendations;
             }
@@ -55,18 +55,13 @@ const App = (props) => {
     }, []);
 
     useEffect(() => {
-        const baseComponentUrl = props.location.pathname.split('/')[1];
+        const baseComponentUrl = location.pathname.split('/')[1];
         insights && insights.chrome && baseComponentUrl && appNavClick[baseComponentUrl] !== undefined && appNavClick[baseComponentUrl](false);
-    }, [appNavClick, props.location]);
+    }, [appNavClick, location]);
 
-    return (auth && !permsViewRecs?.isLoading && (permsViewRecs?.hasAccess ? <Routes childProps={props} /> :
+    return (auth && !permsViewRecs?.isLoading && (permsViewRecs?.hasAccess ? <Routes /> :
         <MessageState variant='large' icon={LockIcon}
             title={intl.formatMessage(messages.permsTitle)} text={intl.formatMessage(messages.permsBody)} />));
 };
 
-App.propTypes = {
-    location: PropTypes.object,
-    history: PropTypes.object
-};
-
-export default routerParams(App);
+export default App;
