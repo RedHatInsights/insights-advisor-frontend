@@ -12,6 +12,11 @@ export default defineMessages({
         description: 'Used as a title',
         defaultMessage: 'Rules'
     },
+    redHatInsights: {
+        id: 'redHatInsights',
+        description: 'Used as a title',
+        defaultMessage: 'Red Hat Insights'
+    },
     recommendation: {
         id: 'recommendation',
         description: 'Recommendation',

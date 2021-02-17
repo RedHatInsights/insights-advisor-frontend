@@ -29,6 +29,7 @@ const DownloadExecReport = ({ isDisabled }) => {
 
     return useMemo(() => {
         return <DownloadButton
+            groupName={intl.formatMessage(messages.redHatInsights)}
             label={loading ? intl.formatMessage(messages.loading) : intl.formatMessage(messages.downloadExecutiveLabel)}
             asyncFunction={dataFetch}
             buttonProps={{
