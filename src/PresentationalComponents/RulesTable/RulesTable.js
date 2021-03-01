@@ -96,10 +96,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         setFilters({ ...filters, offset: newOffset });
     };
 
-    const toggleRulesWithHits = (impacting) => {
-        setFilters({ ...filters, impacting, offset: 0 });
-    };
-
     const toggleRulesDisabled = (rule_status) => {
         setFilters({ ...filters, rule_status, offset: 0, ...(rule_status !== 'enabled' && { impacting: false }) });
     };
@@ -158,7 +154,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
 
     const buildFilterChips = () => {
         const localFilters = { ...filters };
-        delete localFilters.impacting;
         delete localFilters.topic;
         delete localFilters.sort;
         delete localFilters.offset;
@@ -314,13 +309,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         values.length > 0 ? setFilters({ ...filters, offset: 0, ...{ [param]: values } }) : removeFilterParam(param);
     };
 
-    const actions = [
-        '', {
-            label: intl.formatMessage(filters.impacting ? messages.rulesTableActionShow : messages.rulesTableActionHide),
-            onClick: () => toggleRulesWithHits(!filters.impacting)
-        }
-    ];
-
     const filterConfigItems = [{
         label: intl.formatMessage(messages.name).toLowerCase(),
         filterValues: {
@@ -428,7 +416,19 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             value: `${filters.rule_status}`,
             items: FC.rule_status.values
         }
-    }];
+    }, {
+        label: FC.impacting.title,
+        type: FC.impacting.type,
+        id: FC.impacting.urlParam,
+        value: `checkbox-${FC.impacting.urlParam}`,
+        filterValues: {
+            key: `${FC.impacting.urlParam}-filter`,
+            onChange: (e, values) => addFilterParam(FC.impacting.urlParam, values),
+            value: filters.impacting,
+            items: FC.impacting.values
+        }
+    }
+    ];
 
     const activeFiltersConfig = {
         filters: buildFilterChips(),
@@ -486,7 +486,6 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 isDisabled: !permsExport || !filters.impacting,
                 tooltipText: permsExport ? intl.formatMessage(messages.exportData) : intl.formatMessage(messages.permsAction)
             }}
-            actionsConfig={{ actions }}
             filterConfig={{ items: filterConfigItems }}
             activeFiltersConfig={activeFiltersConfig}
         />

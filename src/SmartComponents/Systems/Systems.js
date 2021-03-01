@@ -1,18 +1,19 @@
+import React, { Suspense, lazy } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-import React from 'react';
-import asyncComponent from '../../Utilities/asyncComponent';
+import Loading from '../../PresentationalComponents/Loading/Loading';
 
-const List = asyncComponent(() => import(/* webpackChunkName: "List" */ './List'));
-const Details = asyncComponent(() =>
-    import(/* webpackChunkName: "InventoryDetails" */ '../../PresentationalComponents/Inventory/InventoryDetails'));
-const ClassicRedirect = asyncComponent(() => import(/* webpackChunkName: "ClassicRedirect" */ '../Common/ClassicRedirect'));
+const List = lazy(() => import(/* webpackChunkName: "List" */ './List'));
+const Details = lazy(() => import(/* webpackChunkName: "InventoryDetails" */ '../../PresentationalComponents/Inventory/InventoryDetails'));
+const ClassicRedirect = lazy(() => import(/* webpackChunkName: "ClassicRedirect" */ '../Common/ClassicRedirect'));
+
+const suspenseHelper = component => <Suspense fallback={<Loading />}>{component}</Suspense>;
 
 const Systems = () => <React.Fragment>
     <Switch>
-        <Route exact path='/systems' component={List} />
-        <Route exact path='/systems/:inventoryId/' component={Details} />
-        <Route exact path='/systems/classic/:classicId' component={ClassicRedirect} />
+        <Route exact path='/systems' component={() => suspenseHelper(<List />)} />
+        <Route exact path='/systems/:inventoryId/' component={() => suspenseHelper(<Details />)} />
+        <Route exact path='/systems/classic/:classicId' component={() => suspenseHelper(<ClassicRedirect />)} />
         <Redirect path='*' to='/systems' push />
     </Switch>
 </React.Fragment>;

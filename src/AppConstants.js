@@ -169,15 +169,15 @@ export const FILTER_CATEGORIES = {
         ]
     },
     has_playbook: {
-        type: 'checkbox', title: 'Ansible support', urlParam: 'has_playbook', values: [
-            { label: 'Ansible remediation support', text: 'Ansible remediation support', value: 'true' },
-            { label: 'No Ansible remediation support', text: 'No Ansible remediation support', value: 'false' }
+        type: 'checkbox', title: 'ansible support', urlParam: 'has_playbook', values: [
+            { label: intlHelper(intl.formatMessage(messages.ansibleSupportYes), intlSettings), text: intlHelper(intl.formatMessage(messages.ansibleSupportYes), intlSettings), value: 'true' },
+            { label: intlHelper(intl.formatMessage(messages.ansibleSupportNo), intlSettings), text: intlHelper(intl.formatMessage(messages.ansibleSupportNo), intlSettings), value: 'false' }
         ]
     },
     reboot: {
-        type: 'checkbox', title: 'Reboot required', urlParam: 'reboot', values: [
-            { label: 'Yes', text: 'Yes', value: 'true' },
-            { label: 'No', text: 'No', value: 'false' }
+        type: 'checkbox', title: 'reboot required', urlParam: 'reboot', values: [
+            { label: intlHelper(intl.formatMessage(messages.yes), intlSettings), text: intlHelper(intl.formatMessage(messages.yes), intlSettings), value: 'true' },
+            { label: intlHelper(intl.formatMessage(messages.no), intlSettings), text: intlHelper(intl.formatMessage(messages.all), intlSettings), value: 'false' }
         ]
     },
     rule_status: {
@@ -186,6 +186,12 @@ export const FILTER_CATEGORIES = {
             { label: intlHelper(intl.formatMessage(messages.enabled), intlSettings), value: 'enabled' },
             { label: intlHelper(intl.formatMessage(messages.disabled), intlSettings), value: 'disabled' },
             { label: intlHelper(intl.formatMessage(messages.redhatDisabled), intlSettings), value: 'rhdisabled' }
+        ]
+    },
+    impacting: {
+        type: 'checkbox', title: 'systems impacted', urlParam: 'impacting', values: [
+            { label: intlHelper(intl.formatMessage(messages.oneOrMore), intlSettings), text: intlHelper(intl.formatMessage(messages.oneOrMore), intlSettings), value: 'true' },
+            { label: intlHelper(intl.formatMessage(messages.none), intlSettings), text: intlHelper(intl.formatMessage(messages.none), intlSettings), value: 'false' }
         ]
     }
 };
