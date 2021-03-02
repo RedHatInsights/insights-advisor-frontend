@@ -20,7 +20,7 @@ const initialState = Immutable({
     systemFetchStatus: '',
     systemtype: {},
     systemtypeFetchStatus: '',
-    filters: { impacting: true, rule_status: 'enabled', sort: '-total_risk', limit: 10, offset: 0 },
+    filters: { impacting: ['true'], rule_status: 'enabled', sort: '-total_risk', limit: 10, offset: 0 },
     filtersSystems: { sort: '-last_seen' },
     topic: {},
     topicFetchStatus: '',

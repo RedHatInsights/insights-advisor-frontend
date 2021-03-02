@@ -97,7 +97,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     };
 
     const toggleRulesDisabled = (rule_status) => {
-        setFilters({ ...filters, rule_status, offset: 0, ...(rule_status !== 'enabled' && { impacting: false }) });
+        setFilters({ ...filters, rule_status, offset: 0, ...(rule_status !== 'enabled' && { impacting: ['false'] }) });
     };
 
     const handleOnCollapse = (event, rowId, isOpen) => {
@@ -437,7 +437,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 setSearchText('');
                 setFilters({
                     ...(filters.topic && { topic: filters.topic }),
-                    impacting: true, rule_status: 'enabled', limit: filters.limit, offset: filters.offset
+                    impacting: ['true'], rule_status: 'enabled', limit: filters.limit, offset: filters.offset
                 });
             } else {
                 itemsToRemove.map(item => {
@@ -483,7 +483,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
                 // eslint-disable-next-line no-dupe-keys
                 label: intl.formatMessage(messages.exportJson),
                 onSelect: (_e, fileType) => downloadReport('hits', fileType, urlBuilder(filters, selectedTags)),
-                isDisabled: !permsExport || !filters.impacting,
+                isDisabled: !permsExport || !filters.impacting ||
+                    Array.isArray(filters.impacting) && !filters.impacting.every(item => item === 'true'),
                 tooltipText: permsExport ? intl.formatMessage(messages.exportData) : intl.formatMessage(messages.permsAction)
             }}
             filterConfig={{ items: filterConfigItems }}
@@ -520,7 +521,7 @@ RulesTable.propTypes = {
     setFilters: PropTypes.func,
     selectedTags: PropTypes.array,
     workloads: PropTypes.object,
-    SID: PropTypes.object
+    SID: PropTypes.array
 };
 
 const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
