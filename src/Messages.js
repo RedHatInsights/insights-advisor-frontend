@@ -969,5 +969,25 @@ export default defineMessages({
         id: 'permsAction',
         description: 'You do not have the required advisor permissions to perform this action',
         defaultMessage: 'You do not have the required advisor permissions to perform this action'
+    },
+    oneOrMore: {
+        id: 'oneOrMore',
+        description: '1 or more',
+        defaultMessage: '1 or more'
+    },
+    ansibleSupportYes: {
+        id: 'ansibleSupportYes',
+        description: 'Ansible remediation support',
+        defaultMessage: 'Ansible remediation support'
+    },
+    ansibleSupportNo: {
+        id: 'ansibleSupportNo',
+        description: 'No Ansible remediation support',
+        defaultMessage: 'No Ansible remediation support'
+    },
+    yes: {
+        id: 'yes',
+        description: 'yes',
+        defaultMessage: 'yes'
     }
 });

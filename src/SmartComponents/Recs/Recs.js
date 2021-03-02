@@ -1,22 +1,22 @@
+import React, { Suspense, lazy } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-import React from 'react';
-import asyncComponent from '../../Utilities/asyncComponent';
+import Loading from '../../PresentationalComponents/Loading/Loading';
 
-const List = asyncComponent(() => import(/* webpackChunkName: "List" */ './List'));
-const Details = asyncComponent(() => import(/* webpackChunkName: "Details" */ './Details'));
-const InventoryDetails = asyncComponent(() =>
-    import(/* webpackChunkName: "InventoryDetails" */ '../../PresentationalComponents/Inventory/InventoryDetails'));
-const ClassicRedirect = asyncComponent(() => import(/* webpackChunkName: "ClassicRedirect" */ '../Common/ClassicRedirect'));
+const List = lazy(() => import(/* webpackChunkName: "List" */ './List'));
+const Details = lazy(() => import(/* webpackChunkName: "Details" */ './Details'));
+const InventoryDetails = lazy(() => import(/* InventoryDetails: "Details" */ '../../PresentationalComponents/Inventory/InventoryDetails'));
+const ClassicRedirect = lazy(() => import(/* webpackChunkName: "ClassicRedirect" */ '../Common/ClassicRedirect'));
 
+const suspenseHelper = component => <Suspense fallback={<Loading />}>{component}</Suspense>;
 const Recs = () => <React.Fragment>
     <Switch>
-        <Route exact path='/recommendations' component={List} />
-        <Route exact path='/recommendations/by_id/:id' component={List} />
-        <Route exact path='/recommendations/:id' component={Details} />
-        <Route exact path='/recommendations/classic/:id/:classicId/' component={ClassicRedirect}/>
-        <Route path='/recommendations/by_id/:id/:inventoryId/' component={InventoryDetails} />
-        <Route path='/recommendations/:id/:inventoryId/' component={InventoryDetails} />
+        <Route exact path='/recommendations' component={() => suspenseHelper(<List />)} />
+        <Route exact path='/recommendations/by_id/:id' component={() => suspenseHelper(<List />)} />
+        <Route exact path='/recommendations/:id' component={() => suspenseHelper(<Details />)} />
+        <Route exact path='/recommendations/classic/:id/:classicId/' component={() => suspenseHelper(<ClassicRedirect />)}/>
+        <Route path='/recommendations/by_id/:id/:inventoryId/' component={() => suspenseHelper(<InventoryDetails />)} />
+        <Route path='/recommendations/:id/:inventoryId/' component={() => suspenseHelper(<InventoryDetails />)} />
         <Redirect path='*' to='/recommendations' push />
     </Switch>
 </React.Fragment>;

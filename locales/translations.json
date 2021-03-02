@@ -3,6 +3,8 @@
   "affectedSystems": "Affected systems",
   "all": "All",
   "ansible": "Ansible",
+  "ansibleSupportNo": "No Ansible remediation support",
+  "ansibleSupportYes": "Ansible remediation support",
   "availability": "Availability",
   "cancel": "Cancel",
   "category": "Category",
@@ -74,6 +76,7 @@
   "nonIncidentRules": "Non-incident recommendations",
   "none": "None",
   "numberRuleHits": "Recommendations",
+  "oneOrMore": "1 or more",
   "overview": "Overview",
   "overview.actioncall.title": "Get started with Red Hat Insights",
   "overview.actioncallnosystems.action": "Getting started documentation",
@@ -190,5 +193,6 @@
   "undefined": "Undefined",
   "veryLow": "Very Low",
   "viewAffectedSystems": "View {systems, plural, one {the affected system} other {# affected systems}}",
-  "viewSystems": "View systems"
+  "viewSystems": "View systems",
+  "yes": "yes"
 }
