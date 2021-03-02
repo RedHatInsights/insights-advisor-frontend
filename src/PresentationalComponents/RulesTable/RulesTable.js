@@ -188,7 +188,8 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             paramsObject.offset === undefined ? paramsObject.offset = 0 : paramsObject.offset = Number(paramsObject.offset[0]);
             paramsObject.limit === undefined ? paramsObject.limit = 10 : paramsObject.limit = Number(paramsObject.limit[0]);
             paramsObject.reboot !== undefined && !Array.isArray(paramsObject.reboot) && (paramsObject.reboot = [`${paramsObject.reboot}`]);
-
+            paramsObject.impacting !== undefined && !Array.isArray(paramsObject.impacting) &&
+                (paramsObject.impacting = [`${paramsObject.impacting}`]);
             setFilters({ ...filters, ...paramsObject });
         }
 
