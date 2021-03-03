@@ -27,7 +27,7 @@ const List = () => {
     document.title = intl.formatMessage(messages.documentTitle, { subnav: messages.recommendations.defaultMessage });
 
     useEffect(() => {
-        (async () => {
+        AdvisorRedHatDisabledRuleAlert && (async () => {
             try {
                 const response = (await API.get(`${RULES_FETCH_URL}?rule_status=rhdisabled`)).data;
                 setRedHatDisabledRuleCount(response.meta.count);
@@ -35,7 +35,7 @@ const List = () => {
                 setRedHatDisabledRuleCount(0);
             }
         })();
-    }, []);
+    }, [AdvisorRedHatDisabledRuleAlert]);
 
     return <React.Fragment>
         <PageHeader className='ins-c-recommendations-header'>
