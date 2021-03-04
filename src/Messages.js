@@ -988,6 +988,6 @@ export default defineMessages({
     yes: {
         id: 'yes',
         description: 'yes',
-        defaultMessage: 'yes'
+        defaultMessage: 'Yes'
     }
 });
