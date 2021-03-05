@@ -1,6 +1,7 @@
 import App from './App';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations';
 import { NotificationsPortal } from '@redhat-cloud-services/frontend-components-notifications';
+import AsyncComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 /* eslint-disable no-console */
@@ -16,6 +17,7 @@ const Widget = ({ useLogger }) => (
         <Provider store={(useLogger ? init(logger) : init()).getStore()}>
             <Router basename={getBaseName(window.location.pathname)}>
                 <React.Fragment>
+                    <AsyncComponent appName="inventory" module="./SampleSharedComponent" someProp="I am a prop send from advisor" />
                     <NotificationsPortal />
                     <App />
                 </React.Fragment>

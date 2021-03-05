@@ -9,4 +9,9 @@ routes[`/beta/apps/${APP_ID}`] = { host: `http://${frontendHost}:8002` };
 routes[`/beta/${SECTION}/${APP_ID}`] = { host: `http://${frontendHost}:8002`  };
 routes[`/${SECTION}/${APP_ID}`] = { host: `http://${frontendHost}:8002`  };
 
+routes[`/apps/inventory`] = { host: `http://${frontendHost}:8003` };
+routes[`/beta/apps/inventory`] = { host: `http://${frontendHost}:8003` };
+routes[`/beta/${SECTION}/inventory`] = { host: `http://${frontendHost}:8003`  };
+routes[`/${SECTION}/inventory`] = { host: `http://${frontendHost}:8003`  };
+
 module.exports = { routes };
