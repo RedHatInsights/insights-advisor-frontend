@@ -4,12 +4,14 @@ import * as AppActions from '../../AppActions';
 import * as AppConstants from '../../AppConstants';
 
 import { DEBOUNCE_DELAY, FILTER_CATEGORIES as FC } from '../../AppConstants';
+import { Link, useLocation } from 'react-router-dom';
 import { Pagination, PaginationVariant } from '@patternfly/react-core/dist/js/components/Pagination/Pagination';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/index';
 import { Table, TableBody, TableHeader, cellWidth, fitContent, sortable } from '@patternfly/react-table';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
 import { encodeOptionsToURL, filterFetchBuilder, paramParser, pruneFilters, urlBuilder, workloadQueryBuilder } from '../Common/Tables';
+import { useDispatch, useSelector } from 'react-redux';
 
 import API from '../../Utilities/Api';
 import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
@@ -21,7 +23,6 @@ import { DateFormat } from '@redhat-cloud-services/frontend-components/DateForma
 import DisableRule from '../Modals/DisableRule';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
-import { Link, useLocation } from 'react-router-dom';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import MessageState from '../MessageState/MessageState';
@@ -30,7 +31,6 @@ import RuleDetails from '../RuleDetails/RuleDetails';
 import RuleLabels from '../RuleLabels/RuleLabels';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications';
-import { useDispatch, useSelector } from 'react-redux';
 import debounce from '../../Utilities/Debounce';
 import downloadReport from '../Common/DownloadHelper';
 import messages from '../../Messages';
@@ -95,7 +95,7 @@ const RulesTable = () => {
             options.tags ? {} : { ...filterFetchBuilder(filters), ...options },
             options.tags && encodeOptionsToURL({ ...filterFetchBuilder(filters), ...options })
         );
-    }, [filters, selectedTags, workloads, SID]);
+    }, [filters, selectedTags, workloads, SID, dispatch]);
 
     const onSort = (_event, index, direction) => {
         const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
@@ -187,11 +187,10 @@ const RulesTable = () => {
         if (!filterBuilding && selectedTags !== null) {
             fetchRulesFn();
         }
-    }, [fetchRulesFn, filterBuilding, filters, selectedTags, searchText]);
+    }, [fetchRulesFn, filterBuilding, filters, selectedTags]);
 
     // Builds table filters from url params
     useEffect(() => {
-        setFilterBuilding(true);
         if (search && filterBuilding) {
             const paramsObject = paramParser();
             delete paramsObject.tags;
@@ -211,6 +210,7 @@ const RulesTable = () => {
         }
 
         setFilterBuilding(false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -510,7 +510,7 @@ const RulesTable = () => {
         {rulesFetchStatus === 'fulfilled' &&
             <Table aria-label={'rule-table'}
                 actionResolver={actionResolver} onCollapse={handleOnCollapse} sortBy={sortBy}
-                onSort={onSort} cells={cols} rows={rows} areActionsDisabled={()=> !permsDisableRec}>
+                onSort={onSort} cells={cols} rows={rows} areActionsDisabled={() => !permsDisableRec}>
                 <TableHeader />
                 <TableBody />
             </Table>}

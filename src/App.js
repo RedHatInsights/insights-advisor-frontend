@@ -3,6 +3,7 @@ import './App.scss';
 import React, { useEffect, useMemo, useState } from 'react';
 import { batch, useDispatch } from 'react-redux';
 import { setSIDs, setSelectedTags, setWorkloads } from './AppActions';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import LockIcon from '@patternfly/react-icons/dist/esm/icons/lock-icon';
 import MessageState from './PresentationalComponents/MessageState/MessageState';
@@ -11,9 +12,6 @@ import { Routes } from './Routes';
 import messages from './Messages';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
-import { useHistory, useLocation } from 'react-router-dom';
-
-console.log('KURVA ZASRANY ADVISOR');
 
 const App = () => {
     const intl = useIntl();
@@ -36,12 +34,10 @@ const App = () => {
         if (insights.chrome?.globalFilterScope) {
             insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
                 const [workloads, SID, selectedTags] = insights.chrome?.mapGlobalFilter?.(data, false, true) || [];
-                setTimeout(() => {
-                    batch(() => {
-                        dispatch(setWorkloads(workloads));
-                        dispatch(setSelectedTags(selectedTags));
-                        dispatch(setSIDs(SID));
-                    });
+                batch(() => {
+                    dispatch(setWorkloads(workloads));
+                    dispatch(setSelectedTags(selectedTags));
+                    dispatch(setSIDs(SID));
                 });
             });
         }
