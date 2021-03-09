@@ -4,12 +4,14 @@ import * as AppActions from '../../AppActions';
 import * as AppConstants from '../../AppConstants';
 
 import { DEBOUNCE_DELAY, FILTER_CATEGORIES as FC } from '../../AppConstants';
+import { Link, useLocation } from 'react-router-dom';
 import { Pagination, PaginationVariant } from '@patternfly/react-core/dist/js/components/Pagination/Pagination';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Stack, StackItem } from '@patternfly/react-core/dist/js/layouts/Stack/index';
 import { Table, TableBody, TableHeader, cellWidth, fitContent, sortable } from '@patternfly/react-table';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
 import { encodeOptionsToURL, filterFetchBuilder, paramParser, pruneFilters, urlBuilder, workloadQueryBuilder } from '../Common/Tables';
+import { useDispatch, useSelector } from 'react-redux';
 
 import API from '../../Utilities/Api';
 import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
@@ -21,27 +23,25 @@ import { DateFormat } from '@redhat-cloud-services/frontend-components/DateForma
 import DisableRule from '../Modals/DisableRule';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
-import { Link } from 'react-router-dom';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import MessageState from '../MessageState/MessageState';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
-import PropTypes from 'prop-types';
 import RuleDetails from '../RuleDetails/RuleDetails';
 import RuleLabels from '../RuleLabels/RuleLabels';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
-import { connect } from 'react-redux';
+import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications';
 import debounce from '../../Utilities/Debounce';
 import downloadReport from '../Common/DownloadHelper';
 import messages from '../../Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 import { strong } from '../../Utilities/intlHelper';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 
-const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, addNotification, selectedTags, workloads, SID }) => {
+const RulesTable = () => {
     const intl = useIntl();
+    const dispatch = useDispatch();
+    const { search } = useLocation();
     const permsExport = usePermissions('advisor', AppConstants.PERMS.export).hasAccess;
     const permsDisableRec = usePermissions('advisor', AppConstants.PERMS.disableRec).hasAccess;
     const [cols] = useState([
@@ -56,16 +56,27 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
             dataLabel: intl.formatMessage(messages.ansible)
         }
     ]);
+    const rules = useSelector(({ AdvisorStore }) => AdvisorStore.rules);
+    const rulesFetchStatus = useSelector(({ AdvisorStore }) => AdvisorStore.rulesFetchStatus);
+    const filters = useSelector(({ AdvisorStore }) => AdvisorStore.filters);
+    const selectedTags = useSelector(({ AdvisorStore }) => AdvisorStore.selectedTags);
+    const workloads = useSelector(({ AdvisorStore }) => AdvisorStore.workloads);
+    const SID = useSelector(({ AdvisorStore }) => AdvisorStore.SID);
+
     const [rows, setRows] = useState([]);
     const [sortBy, setSortBy] = useState({});
     const [filterBuilding, setFilterBuilding] = useState(true);
-    const [searchText, setSearchText] = useState(filters.text || '');
+    const [searchText, setSearchText] = useState(filters?.text || '');
     const [disableRuleOpen, setDisableRuleOpen] = useState(false);
     const [selectedRule, setSelectedRule] = useState({});
     const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
     const [viewSystemsModalRule, setViewSystemsModalRule] = useState({});
+
+    const addNotification = data => dispatch(addNotificationAction(data));
+    const setFilters = (filters) => dispatch(AppActions.setFilters(filters));
+
     const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
-    const results = rules.meta ? rules.meta.count : 0;
+    const results = rules?.meta?.count || 0;
     const sortIndices = { 1: 'description', 2: 'publish_date', 3: 'total_risk', 4: 'resolution_risk', 5: 'impacted_count', 6: 'playbook_count' };
 
     const ruleResolutionRisk = (rule) => {
@@ -76,14 +87,15 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     };
 
     const fetchRulesFn = useCallback(() => {
+        const fetchRulesAction = (options, search) => dispatch(AppActions.fetchRules(options, search));
         urlBuilder(filters, selectedTags, workloads);
         let options = selectedTags?.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)) });
         workloads && (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
-        fetchRules(
+        return fetchRulesAction(
             options.tags ? {} : { ...filterFetchBuilder(filters), ...options },
             options.tags && encodeOptionsToURL({ ...filterFetchBuilder(filters), ...options })
         );
-    }, [filters, selectedTags, workloads, SID, fetchRules]);
+    }, [filters, selectedTags, workloads, SID, dispatch]);
 
     const onSort = (_event, index, direction) => {
         const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
@@ -171,11 +183,15 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         }
     };
 
-    useEffect(() => { !filterBuilding && selectedTags !== null && fetchRulesFn(); }, [fetchRulesFn, filterBuilding, filters, selectedTags]);
+    useEffect(() => {
+        if (!filterBuilding && selectedTags !== null) {
+            fetchRulesFn();
+        }
+    }, [fetchRulesFn, filterBuilding, filters, selectedTags]);
 
     // Builds table filters from url params
     useEffect(() => {
-        if (window.location.search && filterBuilding) {
+        if (search && filterBuilding) {
             const paramsObject = paramParser();
             delete paramsObject.tags;
             delete paramsObject.sap_system;
@@ -494,7 +510,7 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
         {rulesFetchStatus === 'fulfilled' &&
             <Table aria-label={'rule-table'}
                 actionResolver={actionResolver} onCollapse={handleOnCollapse} sortBy={sortBy}
-                onSort={onSort} cells={cols} rows={rows} areActionsDisabled={()=> !permsDisableRec}>
+                onSort={onSort} cells={cols} rows={rows} areActionsDisabled={() => !permsDisableRec}>
                 <TableHeader />
                 <TableBody />
             </Table>}
@@ -513,35 +529,4 @@ const RulesTable = ({ rules, filters, rulesFetchStatus, setFilters, fetchRules, 
     </React.Fragment>;
 };
 
-RulesTable.propTypes = {
-    fetchRules: PropTypes.func,
-    rulesFetchStatus: PropTypes.string,
-    rules: PropTypes.object,
-    filters: PropTypes.object,
-    addNotification: PropTypes.func,
-    setFilters: PropTypes.func,
-    selectedTags: PropTypes.array,
-    workloads: PropTypes.object,
-    SID: PropTypes.array
-};
-
-const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
-    rules: AdvisorStore.rules,
-    rulesFetchStatus: AdvisorStore.rulesFetchStatus,
-    filters: AdvisorStore.filters,
-    selectedTags: AdvisorStore.selectedTags,
-    workloads: AdvisorStore.workloads,
-    SID: AdvisorStore.SID,
-    ...ownProps
-});
-
-const mapDispatchToProps = dispatch => ({
-    fetchRules: (options, search) => dispatch(AppActions.fetchRules(options, search)),
-    addNotification: data => dispatch(addNotification(data)),
-    setFilters: (filters) => dispatch(AppActions.setFilters(filters))
-});
-
-export default routerParams(connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(RulesTable));
+export default RulesTable;

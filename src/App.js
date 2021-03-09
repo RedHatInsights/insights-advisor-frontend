@@ -3,6 +3,7 @@ import './App.scss';
 import React, { useEffect, useMemo, useState } from 'react';
 import { batch, useDispatch } from 'react-redux';
 import { setSIDs, setSelectedTags, setWorkloads } from './AppActions';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import LockIcon from '@patternfly/react-icons/dist/esm/icons/lock-icon';
 import MessageState from './PresentationalComponents/MessageState/MessageState';
@@ -11,11 +12,11 @@ import { Routes } from './Routes';
 import messages from './Messages';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
-import { useHistory } from 'react-router-dom';
 
 const App = () => {
     const intl = useIntl();
-    const { location, ...history } = useHistory();
+    const { push } = useHistory();
+    const { pathname } = useLocation();
     const permsViewRecs = usePermissions('advisor', PERMS.viewRecs);
     const [auth, setAuth] = useState(false);
     const dispatch = useDispatch();
@@ -41,10 +42,10 @@ const App = () => {
             });
         }
 
-        const baseComponentUrl = location.pathname.split('/')[1];
+        const baseComponentUrl = pathname.split('/')[1];
         const unregister = insights.chrome.on('APP_NAVIGATION', event => {
             if (event.domEvent) {
-                history.push(`/${event.navId}`);
+                push(`/${event.navId}`);
                 appNavClick[baseComponentUrl] !== undefined ? appNavClick[baseComponentUrl](true)
                     : appNavClick.recommendations;
             }
@@ -55,9 +56,9 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        const baseComponentUrl = location.pathname.split('/')[1];
+        const baseComponentUrl = pathname.split('/')[1];
         insights && insights.chrome && baseComponentUrl && appNavClick[baseComponentUrl] !== undefined && appNavClick[baseComponentUrl](false);
-    }, [appNavClick, location]);
+    }, [appNavClick, pathname]);
 
     return (auth && !permsViewRecs?.isLoading && (permsViewRecs?.hasAccess ? <Routes /> :
         <MessageState variant='large' icon={LockIcon}
