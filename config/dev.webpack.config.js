@@ -10,7 +10,7 @@ const { config: webpackConfig, plugins } = config({
     customProxy: process.env.API_ENDOINT ? [
         {
             context: (path) => path.includes('/api/'),
-            target: process.env.API_ENDOINT ? process.env.API_ENDOINT : 'https://cloud.redhat.com',
+            target: process.env.API_ENDOINT,
             secure: true,
             changeOrigin: true,
             autoRewrite: true,
