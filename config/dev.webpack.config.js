@@ -5,6 +5,9 @@ const config = require('@redhat-cloud-services/frontend-components-config');
 const { config: webpackConfig, plugins } = config({
     rootFolder: resolve(__dirname, '../'),
     debug: true,
+    appUrl: '/insights/advisor',
+    betaEnv: 'prod',
+    deployment: 'apps',
     useProxy: process.env.API_ENDOINT ? true : false,
     localChrome: process.env.INSIGHTS_CHROME,
     customProxy: process.env.API_ENDOINT ? [
