@@ -332,7 +332,7 @@ const RulesTable = () => {
             key: 'text-filter',
             onChange: (event, value) => setSearchText(value),
             value: searchText,
-            placeholder: intl.formatMessage(messages.search)
+            placeholder: intl.formatMessage(messages.filterBy)
         }
     }, {
         label: FC.total_risk.title,
