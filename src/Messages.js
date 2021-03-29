@@ -287,6 +287,11 @@ export default defineMessages({
         description: 'Filter action, clear all filter chips',
         defaultMessage: 'Clear filters'
     },
+    filterBy: {
+        id: 'filterBy',
+        description: 'Filter by name',
+        defaultMessage: 'Filter by name'
+    },
     filterTagsInModal: {
         id: 'filterTagsInModal',
         description: 'Filter text input, for ManageTags Modal',
