@@ -15,11 +15,11 @@ const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => 
         { x: intl.formatMessage(messages.moderate), y: calcPercent(statsReports.total_risk[2], statsReports.total) },
         { x: intl.formatMessage(messages.low), y: calcPercent(statsReports.total_risk[1], statsReports.total) }];
     const severityRows = [[intl.formatMessage(messages.severity), intl.formatMessage(messages.poundOfRecs)],
-    ...Object.entries(statsReports.total_risk).map(([key, value]) =>
-        [TOTAL_RISK_LABEL[key].props.children, intl.formatMessage(messages.recNumAndPercentage, {
-            count: value,
-            total: calcPercent(value, statsReports.total)
-        })]).reverse()
+        ...Object.entries(statsReports.total_risk).map(([key, value]) =>
+            [TOTAL_RISK_LABEL[key].props.children, intl.formatMessage(messages.recNumAndPercentage, {
+                count: value,
+                total: calcPercent(value, statsReports.total)
+            })]).reverse()
     ];
 
     const categoryPie = [
@@ -29,11 +29,11 @@ const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => 
         { x: intl.formatMessage(messages.stability), y: calcPercent(statsReports.category.Stability, statsReports.total) }
     ];
     const categoryRows = [[intl.formatMessage(messages.category), intl.formatMessage(messages.poundOfRecs)],
-    ...Object.entries(statsReports.category).map(([key, value]) =>
-        [key, intl.formatMessage(messages.recNumAndPercentage, {
-            count: value,
-            total: calcPercent(value, statsReports.total)
-        })])];
+        ...Object.entries(statsReports.category).map(([key, value]) =>
+            [key, intl.formatMessage(messages.recNumAndPercentage, {
+                count: value,
+                total: calcPercent(value, statsReports.total)
+            })])];
 
     const rulesDesc = (rule) => <Text>
         <Text style={{ fontWeight: 700 }}> {rule.description}</Text>&nbsp;{truncate(rule.summary, { length: 280 })}
