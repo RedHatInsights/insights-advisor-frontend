@@ -10,30 +10,30 @@ import { truncate } from 'lodash';
 const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => {
     const calcPercent = (value, total) => Math.round(Number(value / total * 100));
     const severityPie = [
-        { x: intl.formatMessage(messages.critical), y: statsReports.total_risk[4] },
-        { x: intl.formatMessage(messages.important), y: statsReports.total_risk[3] },
-        { x: intl.formatMessage(messages.moderate), y: statsReports.total_risk[2] },
-        { x: intl.formatMessage(messages.low), y: statsReports.total_risk[1] }];
+        { x: intl.formatMessage(messages.critical), y: calcPercent(statsReports.total_risk[4], statsReports.total) },
+        { x: intl.formatMessage(messages.important), y: calcPercent(statsReports.total_risk[3], statsReports.total) },
+        { x: intl.formatMessage(messages.moderate), y: calcPercent(statsReports.total_risk[2], statsReports.total) },
+        { x: intl.formatMessage(messages.low), y: calcPercent(statsReports.total_risk[1], statsReports.total) }];
     const severityRows = [[intl.formatMessage(messages.severity), intl.formatMessage(messages.poundOfRecs)],
-        ...Object.entries(statsReports.total_risk).map(([key, value]) =>
-            [TOTAL_RISK_LABEL[key].props.children, intl.formatMessage(messages.recNumAndPercentage, {
-                count: value,
-                total: calcPercent(value, statsReports.total)
-            })]).reverse()
+    ...Object.entries(statsReports.total_risk).map(([key, value]) =>
+        [TOTAL_RISK_LABEL[key].props.children, intl.formatMessage(messages.recNumAndPercentage, {
+            count: value,
+            total: calcPercent(value, statsReports.total)
+        })]).reverse()
     ];
 
     const categoryPie = [
-        { x: intl.formatMessage(messages.availability), y: statsReports.category.Availability },
-        { x: intl.formatMessage(messages.performance), y: statsReports.category.Performance },
-        { x: intl.formatMessage(messages.security), y: statsReports.category.Security },
-        { x: intl.formatMessage(messages.stability), y: statsReports.category.Stability }
+        { x: intl.formatMessage(messages.availability), y: calcPercent(statsReports.category.Availability, statsReports.total) },
+        { x: intl.formatMessage(messages.performance), y: calcPercent(statsReports.category.Performance, statsReports.total) },
+        { x: intl.formatMessage(messages.security), y: calcPercent(statsReports.category.Security, statsReports.total) },
+        { x: intl.formatMessage(messages.stability), y: calcPercent(statsReports.category.Stability, statsReports.total) }
     ];
     const categoryRows = [[intl.formatMessage(messages.category), intl.formatMessage(messages.poundOfRecs)],
-        ...Object.entries(statsReports.category).map(([key, value]) =>
-            [key, intl.formatMessage(messages.recNumAndPercentage, {
-                count: value,
-                total: calcPercent(value, statsReports.total)
-            })])];
+    ...Object.entries(statsReports.category).map(([key, value]) =>
+        [key, intl.formatMessage(messages.recNumAndPercentage, {
+            count: value,
+            total: calcPercent(value, statsReports.total)
+        })])];
 
     const rulesDesc = (rule) => <Text>
         <Text style={{ fontWeight: 700 }}> {rule.description}</Text>&nbsp;{truncate(rule.summary, { length: 280 })}
@@ -75,7 +75,7 @@ const BuildExecReport = ({ statsSystems, statsReports, topActiveRec, intl }) => 
                 <Panel key={key} description={rulesDesc(rule)}>
                     <PanelItem title={intl.formatMessage(messages.systemsExposed)}>{`${rule.impacted_systems_count}`}</PanelItem>
                     <PanelItem title={intl.formatMessage(messages.totalRisk)}>
-                        <InsightsLabel variant={rule.total_risk}/>
+                        <InsightsLabel variant={rule.total_risk} />
                     </PanelItem>
                 </Panel>)}
         </Section>
