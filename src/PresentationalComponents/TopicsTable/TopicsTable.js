@@ -6,17 +6,18 @@ import { Link } from 'react-router-dom';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
-import PropTypes from 'prop-types';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import TimesCircleIcon from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
-import { connect } from 'react-redux';
-import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 import { sortBy } from 'lodash';
+import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
 
-const TopicsTable = ({ topics, topicsFetchStatus, intl }) => {
+const TopicsTable = () => {
+    const intl = useIntl();
+    const topics = useSelector(({ AdvisorStore }) => AdvisorStore.topics);
+    const topicsFetchStatus = useSelector(({ AdvisorStore }) => AdvisorStore.topicsFetchStatus);
     const [searchText, setSearchText] = useState('');
     const [cols] = useState([
         { title: intl.formatMessage(messages.name), transforms: [sortable] },
@@ -37,10 +38,10 @@ const TopicsTable = ({ topics, topicsFetchStatus, intl }) => {
                 props: { colSpan: 2 }
             }, {
                 title: <span key={key}> {value.featured &&
-                    <Label color="blue" icon={<StarIcon />}>{intl.formatMessage(messages.featured)}</Label>
+                    <Label color='blue' icon={<StarIcon />}>{intl.formatMessage(messages.featured)}</Label>
                 } </span>
             }, {
-                title: <span className="pf-m-center" key={key}> {value.impacted_systems_count}                </span>
+                title: <span className='pf-m-center' key={key}> {value.impacted_systems_count}</span>
             }]
         }] : [];
     });
@@ -84,7 +85,7 @@ const TopicsTable = ({ topics, topicsFetchStatus, intl }) => {
                     activeFiltersConfig={activeFiltersConfig}
                 />
                 <Table aria-label={'topics-table'} sortBy={sort} onSort={onSort} cells={cols} rows={rows}
-                    ouiaId="topicTable">
+                    ouiaId='topicTable' isStickyHeader>
                     <TableHeader />
                     <TableBody />
                     {rows.length === 0 && topicsFetchStatus !== 'pending' && setRows([{
@@ -108,14 +109,5 @@ const TopicsTable = ({ topics, topicsFetchStatus, intl }) => {
     </React.Fragment>;
 };
 
-TopicsTable.propTypes = {
-    topics: PropTypes.array,
-    topicsFetchStatus: PropTypes.string,
-    intl: PropTypes.any
-};
-
-export default injectIntl(routerParams(connect((state) => ({
-    topics: state.AdvisorStore.topics,
-    topicsFetchStatus: state.AdvisorStore.topicsFetchStatus
-}), null)(TopicsTable)));
+export default TopicsTable;
 

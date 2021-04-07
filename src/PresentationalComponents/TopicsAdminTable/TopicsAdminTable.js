@@ -4,6 +4,7 @@ import * as AppActions from '../../AppActions';
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { Table, TableBody, TableHeader, sortable } from '@patternfly/react-table';
+import { useDispatch, useSelector } from 'react-redux';
 
 import AddEditTopic from '../Modals/AddEditTopic';
 import BanIcon from '@patternfly/react-icons/dist/js/icons/ban-icon';
@@ -17,19 +18,19 @@ import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import MessageState from '../MessageState/MessageState';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
-import PropTypes from 'prop-types';
-import StarIcon  from '@patternfly/react-icons/dist/js/icons/star-icon';
+import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import { TableToolbar } from '@redhat-cloud-services/frontend-components/TableToolbar';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
-import { connect } from 'react-redux';
-import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
+import { useIntl } from 'react-intl';
 
-const TopicsAdminTable = ({ topicsFetchStatus, fetchTopicsAdmin, topics, intl }) => {
+const TopicsAdminTable = () => {
+    const intl = useIntl();
+    const dispatch = useDispatch();
+    const topics = useSelector(({ AdvisorStore }) => AdvisorStore.topics);
+    const topicsFetchStatus = useSelector(({ AdvisorStore }) => AdvisorStore.topicsFetchStatus);
 
-    const [cols] =  useState([
+    const [cols] = useState([
         { title: intl.formatMessage(messages.title), transforms: [sortable] },
         { title: intl.formatMessage(messages.tag), transforms: [sortable] },
         { title: intl.formatMessage(messages.topicSlug), transforms: [sortable] },
@@ -84,8 +85,10 @@ const TopicsAdminTable = ({ topicsFetchStatus, fetchTopicsAdmin, topics, intl })
     }, [topics]);
 
     useEffect(() => {
+        const fetchTopicsAdmin = () => dispatch(AppActions.fetchTopicsAdmin());
+
         fetchTopicsAdmin();
-    }, [fetchTopicsAdmin]);
+    }, [dispatch]);
 
     useEffect(() => {
         if (topicsArray.length === 0) {
@@ -123,7 +126,7 @@ const TopicsAdminTable = ({ topicsFetchStatus, fetchTopicsAdmin, topics, intl })
                 }, {
                     title: <span>
                         {value.featured ? <span>
-                            <StarIcon/> {intl.formatMessage(messages.featured)}
+                            <StarIcon /> {intl.formatMessage(messages.featured)}
                         </span> : <span></span>
                         }
                     </span>
@@ -131,8 +134,8 @@ const TopicsAdminTable = ({ topicsFetchStatus, fetchTopicsAdmin, topics, intl })
                     title: <Button
                         ouiaId="hide"
                         variant='link'
-                        onClick={ () => hideTopics(value) }
-                    ><EditAltIcon/> {intl.formatMessage(messages.topicAdminEdit)}</Button>
+                        onClick={() => hideTopics(value)}
+                    ><EditAltIcon /> {intl.formatMessage(messages.topicAdminEdit)}</Button>
                 }]
             }]));
             setRows(rows.asMutable());
@@ -156,54 +159,25 @@ const TopicsAdminTable = ({ topicsFetchStatus, fetchTopicsAdmin, topics, intl })
                     <Button
                         variant='primary'
                         ouiaId="adminCreate"
-                        onClick={ (_) => hideTopics(_) }
+                        onClick={(_) => hideTopics(_)}
                     >
                         {intl.formatMessage(messages.topicAdminCreate)}
                     </Button>
                 </PrimaryToolbar>
-                { topicsFetchStatus === 'fulfilled' &&
-                    <Table
-                        ouiaId="adminTable"
-                        aria-label={'topics-admin-table'}
-                        sortBy={sortBy}
-                        onSort={onSort}
-                        cells={cols}
-                        rows={rows}
-                    >
-                        <TableHeader/>
-                        <TableBody/>
+                {topicsFetchStatus === 'fulfilled' &&
+                    <Table ouiaId="adminTable" aria-label={'topics-admin-table'} sortBy={sortBy} onSort={onSort} cells={cols} rows={rows}
+                        isStickyHeader>
+                        <TableHeader />
+                        <TableBody />
                     </Table>
                 }
-                { topicsFetchStatus === 'pending' && (<Loading />)}
-                { topicsFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.systemTableFetchError)} />)}
-                <TableToolbar/>
+                {topicsFetchStatus === 'pending' && (<Loading />)}
+                {topicsFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.systemTableFetchError)} />)}
+                <TableToolbar />
             </React.Fragment>
         </Main>
     </React.Fragment>;
 
 };
 
-TopicsAdminTable.propTypes = {
-    fetchTopicsAdmin: PropTypes.func,
-    topicsFetchStatus: PropTypes.string,
-    topics: PropTypes.array,
-    addNotification: PropTypes.func,
-    history: PropTypes.object,
-    intl: PropTypes.any
-};
-
-const mapStateToProps = (state, ownProps) => ({
-    topics: state.AdvisorStore.topics,
-    topicsFetchStatus: state.AdvisorStore.topicsFetchStatus,
-    ...ownProps
-});
-
-const mapDispatchToProps = dispatch => ({
-    fetchTopicsAdmin: () => dispatch(AppActions.fetchTopicsAdmin()),
-    addNotification: data => dispatch(addNotification(data))
-});
-
-export default injectIntl(routerParams(connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(TopicsAdminTable)));
+export default TopicsAdminTable;
