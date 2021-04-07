@@ -182,6 +182,7 @@ const SystemsTable = ({ systemsFetchStatus, fetchSystems, systems, filters, setF
     }, [fetchSystemsFn, filterBuilding, filters, selectedTags]);
 
     return systemsFetchStatus !== 'failed' ? <InventoryTable
+        tableProps={{ isStickyHeader: true }}
         ref={inventory}
         items={((systemsFetchStatus !== 'pending' && systems && systems.data) || []).map((system) => ({
             ...system,
