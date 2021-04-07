@@ -509,8 +509,8 @@ const RulesTable = () => {
         />
         {rulesFetchStatus === 'fulfilled' &&
             <Table aria-label={'rule-table'}
-                actionResolver={actionResolver} onCollapse={handleOnCollapse} sortBy={sortBy}
-                onSort={onSort} cells={cols} rows={rows} areActionsDisabled={() => !permsDisableRec}>
+                actionResolver={actionResolver} onCollapse={handleOnCollapse} sortBy={sortBy} onSort={onSort} cells={cols} rows={rows}
+                areActionsDisabled={() => !permsDisableRec} isStickyHeader>
                 <TableHeader />
                 <TableBody />
             </Table>}
