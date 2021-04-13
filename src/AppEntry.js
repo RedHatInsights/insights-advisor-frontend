@@ -12,24 +12,28 @@ import logger from 'redux-logger';
 import messages from '../locales/data.json';
 
 const Widget = ({ useLogger }) => (
-    <IntlProvider locale={navigator.language.slice(0, 2)} messages={messages} onError={console.log}>
-        <Provider store={(useLogger ? init(logger) : init()).getStore()}>
-            <Router basename={getBaseName(window.location.pathname)}>
-                <React.Fragment>
-                    <NotificationsPortal />
-                    <App />
-                </React.Fragment>
-            </Router>
-        </Provider>
-    </IntlProvider>
+  <IntlProvider
+    locale={navigator.language.slice(0, 2)}
+    messages={messages}
+    onError={console.log}
+  >
+    <Provider store={(useLogger ? init(logger) : init()).getStore()}>
+      <Router basename={getBaseName(window.location.pathname)}>
+        <React.Fragment>
+          <NotificationsPortal />
+          <App />
+        </React.Fragment>
+      </Router>
+    </Provider>
+  </IntlProvider>
 );
 
 Widget.propTypes = {
-    useLogger: PropTypes.bool
+  useLogger: PropTypes.bool,
 };
 
 Widget.defaultProps = {
-    useLogger: false
+  useLogger: false,
 };
 
 export default Widget;
