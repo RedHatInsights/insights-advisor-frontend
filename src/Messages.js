@@ -170,7 +170,7 @@ export default defineMessages({
     rulesTableNoRuleHitsAnyRulesBody: {
         id: 'rulestable.norulehits.anyrulesbody',
         description: 'Recommendation table, no recommendations message for any known rules, body',
-        defaultMessage: 'None of your connected systems are affected by any known rules.'
+        defaultMessage: 'None of your connected systems are affected by any known recommendations.'
     },
     rulesTableNoRuleHitsDisabledRulesBody: {
         id: 'rulestable.norules.disabledrulesbody',
@@ -205,7 +205,7 @@ export default defineMessages({
     rulesTableFilterInputText: {
         id: 'rulestable.filter.inputtext',
         description: 'Search text placeholder for recommendation table',
-        defaultMessage: 'Find a rule...'
+        defaultMessage: 'Find a recommendation...'
     },
     exportData: {
         id: 'exportData',
