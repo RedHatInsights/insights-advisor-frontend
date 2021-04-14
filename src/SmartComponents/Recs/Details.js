@@ -3,10 +3,21 @@ import './Details.scss';
 import * as AppActions from '../../AppActions';
 
 import { BASE_URL, PERMS, SYSTEM_TYPES, UI_BASE } from '../../AppConstants';
-import { Card, CardBody, CardFooter, CardHeader } from '@patternfly/react-core/dist/js/components/Card';
-import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components/PageHeader';
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+} from '@patternfly/react-core/dist/js/components/Card';
+import {
+  PageHeader,
+  PageHeaderTitle,
+} from '@redhat-cloud-services/frontend-components/PageHeader';
 import React, { useEffect, useRef, useState } from 'react';
-import { encodeOptionsToURL, workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
+import {
+  encodeOptionsToURL,
+  workloadQueryBuilder,
+} from '../../PresentationalComponents/Common/Tables';
 
 import API from '../../Utilities/Api';
 import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
@@ -40,314 +51,492 @@ import routerParams from '@redhat-cloud-services/frontend-components-utilities/R
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 
-const OverviewDetails = ({ match, fetchRuleAck, fetchTopics, fetchSystem, fetchRule, ruleFetchStatus, rule, systemFetchStatus, system,
-    topics, ruleAck, hostAcks, fetchHostAcks, setSystem, setRule, selectedTags, addNotification, workloads, SID }) => {
-    const intl = useIntl();
-    const permsDisableRec = usePermissions('advisor', PERMS.disableRec).hasAccess;
-    const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
-    const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
-    const [host, setHost] = useState(undefined);
-    const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
-    const [filters, setFilters] = useState({ sort: '-updated' });
-    const [isRuleUpdated, setIsRuleUpdated] = useState(false);
+const OverviewDetails = ({
+  match,
+  fetchRuleAck,
+  fetchTopics,
+  fetchSystem,
+  fetchRule,
+  ruleFetchStatus,
+  rule,
+  systemFetchStatus,
+  system,
+  topics,
+  ruleAck,
+  hostAcks,
+  fetchHostAcks,
+  setSystem,
+  setRule,
+  selectedTags,
+  addNotification,
+  workloads,
+  SID,
+}) => {
+  const intl = useIntl();
+  const permsDisableRec = usePermissions('advisor', PERMS.disableRec).hasAccess;
+  const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
+  const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
+  const [host, setHost] = useState(undefined);
+  const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
+  const [filters, setFilters] = useState({ sort: '-updated' });
+  const [isRuleUpdated, setIsRuleUpdated] = useState(false);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const fetchRulefn = (newSort, rule = true, system = true) => {
-        let options = selectedTags !== null && selectedTags.length && ({ tags: selectedTags.map(tag => encodeURIComponent(tag)) });
-        workloads && (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
-        system && fetchSystem(
-            match.params.id,
-            options.tags ? {} : { ...options, ...filters, ...newSort },
-            options.tags && encodeOptionsToURL({ ...options, ...filters, ...newSort })
-        );
-        rule && fetchRule(
-            options.tags ? { rule_id: match.params.id } : { rule_id: match.params.id, ...options },
-            options.tags && encodeOptionsToURL(options)
-        );
-    };
+  const fetchRulefn = (newSort, rule = true, system = true) => {
+    let options = selectedTags !== null &&
+      selectedTags.length && {
+        tags: selectedTags.map((tag) => encodeURIComponent(tag)),
+      };
+    workloads &&
+      (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
+    system &&
+      fetchSystem(
+        match.params.id,
+        options.tags ? {} : { ...options, ...filters, ...newSort },
+        options.tags &&
+          encodeOptionsToURL({ ...options, ...filters, ...newSort })
+      );
+    rule &&
+      fetchRule(
+        options.tags
+          ? { rule_id: match.params.id }
+          : { rule_id: match.params.id, ...options },
+        options.tags && encodeOptionsToURL(options)
+      );
+  };
 
-    const ruleResolutionRisk = (rule) => {
-        const resolution = rule.resolution_set.find(resolution => resolution.system_type === SYSTEM_TYPES.rhel || SYSTEM_TYPES.ocp);
-        return resolution ? resolution.resolution_risk.risk : undefined;
-    };
+  const ruleResolutionRisk = (rule) => {
+    const resolution = rule.resolution_set.find(
+      (resolution) =>
+        resolution.system_type === SYSTEM_TYPES.rhel || SYSTEM_TYPES.ocp
+    );
+    return resolution ? resolution.resolution_risk.risk : undefined;
+  };
 
-    const handleModalToggle = (disableRuleModalOpen, host = undefined) => {
-        setDisableRuleModalOpen(disableRuleModalOpen);
-        setHost(host);
-    };
+  const handleModalToggle = (disableRuleModalOpen, host = undefined) => {
+    setDisableRuleModalOpen(disableRuleModalOpen);
+    setHost(host);
+  };
 
-    const enableRule = async (rule) => {
-        try {
-            await API.delete(`${BASE_URL}/ack/${rule.rule_id}/`);
-            addNotification({
-                variant: 'success', timeout: true, dismissable: true, title: intl.formatMessage(messages.ruleSuccessfullyEnabled)
-            });
-            fetchRulefn();
-        } catch (error) {
-            handleModalToggle(false);
-            addNotification({
-                variant: 'danger',
-                dismissable: true,
-                title: intl.formatMessage(messages.rulesTableHideReportsErrorDisabled),
-                description: `${error}`
-            });
-        }
-    };
+  const enableRule = async (rule) => {
+    try {
+      await API.delete(`${BASE_URL}/ack/${rule.rule_id}/`);
+      addNotification({
+        variant: 'success',
+        timeout: true,
+        dismissable: true,
+        title: intl.formatMessage(messages.ruleSuccessfullyEnabled),
+      });
+      fetchRulefn();
+    } catch (error) {
+      handleModalToggle(false);
+      addNotification({
+        variant: 'danger',
+        dismissable: true,
+        title: intl.formatMessage(messages.rulesTableHideReportsErrorDisabled),
+        description: `${error}`,
+      });
+    }
+  };
 
-    const afterDisableFn = () => {
-        setHost(undefined);
+  const afterDisableFn = () => {
+    setHost(undefined);
+    fetchRulefn();
+  };
+
+  const actionResolver = () => [
+    {
+      title: 'Disable recommendation for system',
+      onClick: (event, rowIndex, item) => handleModalToggle(true, item),
+    },
+  ];
+
+  const bulkHostActions = async () => {
+    const data = { systems: hostAcks.data.map((item) => item.system_uuid) };
+    try {
+      const response = await API.post(
+        `${BASE_URL}/rule/${rule.rule_id}/unack_hosts/`,
+        {},
+        data
+      );
+      addNotification({
+        variant: 'success',
+        timeout: true,
+        dismissable: true,
+        title: intl.formatMessage(messages.ruleSuccessfullyEnabled),
+      });
+      if (selectedTags.length > 0) {
         fetchRulefn();
+      } else {
+        setSystem({ host_ids: response.data.host_ids });
+        setRule({ ...rule, hosts_acked_count: 0 });
+      }
+    } catch (error) {
+      addNotification({
+        variant: 'danger',
+        dismissable: true,
+        title: intl.formatMessage(messages.error),
+        description: `${error}`,
+      });
+    }
+  };
+
+  const onSortFn = (sort) => {
+    setFilters({ sort });
+    sort === 'updated' && (sort = 'last_seen');
+    sort === '-updated' && (sort = '-last_seen');
+    fetchRulefn({ sort }, false);
+  };
+
+  useEffect(() => {
+    rule.rule_id &&
+      fetchHostAcks({ rule_id: rule.rule_id, limit: rule.hosts_acked_count });
+  }, [fetchHostAcks, rule.hosts_acked_count]);
+
+  useEffect(() => {
+    const isCVE =
+      cveToRuleid &&
+      cveToRuleid.find((mapping) => mapping.rule_id === match.params.id);
+
+    if (isCVE) {
+      window.location.href = `${UI_BASE}/vulnerability/cves/${
+        isCVE.cves[0].includes('CVE-')
+          ? `${isCVE.cves[0]}?security_rule=${match.params.id}`
+          : ''
+      }`;
+    } else {
+      fetchTopics();
+    }
+  }, []);
+
+  const tagRef = useRef();
+  const workloadRef = useRef();
+  useEffect(() => {
+    const fetchAction = () => {
+      fetchRulefn();
+      setIsRuleUpdated(true);
     };
 
-    const actionResolver = () => ([{
-        title: 'Disable recommendation for system',
-        onClick: (event, rowIndex, item) => (handleModalToggle(true, item))
-    }]);
+    if (
+      isRuleUpdated &&
+      ((selectedTags !== null &&
+        JSON.stringify(tagRef.current) !== JSON.stringify(selectedTags)) ||
+        JSON.stringify(workloadRef.current) !== JSON.stringify(workloads))
+    ) {
+      fetchAction();
+    }
 
-    const bulkHostActions = async () => {
-        const data = { systems: hostAcks.data.map(item => item.system_uuid) };
-        try {
-            const response = await API.post(`${BASE_URL}/rule/${rule.rule_id}/unack_hosts/`, {}, data);
-            addNotification({
-                variant: 'success', timeout: true, dismissable: true, title: intl.formatMessage(messages.ruleSuccessfullyEnabled)
-            });
-            if (selectedTags.length > 0) {
-                fetchRulefn();
-            } else {
-                setSystem({ host_ids: response.data.host_ids });
-                setRule({ ...rule, hosts_acked_count: 0 });
-            }
-        } catch (error) {
-            addNotification({ variant: 'danger', dismissable: true, title: intl.formatMessage(messages.error), description: `${error}` });
-        }
-    };
+    workloadRef.current = workloads;
+    tagRef.current = selectedTags;
+  }, [fetchRulefn, selectedTags, workloads, SID]);
 
-    const onSortFn = (sort) => {
-        setFilters({ sort });
-        sort === 'updated' && (sort = 'last_seen');
-        sort === '-updated' && (sort = '-last_seen');
-        fetchRulefn({ sort }, false);
-    };
+  useEffect(() => {
+    if (rule.rule_status !== 'enabled' && rule.rule_id && isRuleUpdated) {
+      fetchRuleAck({ rule_id: rule.rule_id });
+    } else if (!isRuleUpdated) {
+      fetchRulefn();
+      setIsRuleUpdated(true);
+    }
+  }, [fetchRuleAck, rule.rule_status, rule.rule_id]);
 
-    useEffect(() => {
-        rule.rule_id && fetchHostAcks({ rule_id: rule.rule_id, limit: rule.hosts_acked_count });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fetchHostAcks, rule.hosts_acked_count]);
+  useEffect(() => {
+    if (rule && rule.description) {
+      const subnav = `${rule.description} - ${messages.recommendations.defaultMessage}`;
+      document.title = intl.formatMessage(messages.documentTitle, { subnav });
+    }
+  }, [rule]);
 
-    useEffect(() => {
-        const isCVE = cveToRuleid && cveToRuleid.find(mapping => mapping.rule_id === match.params.id);
-
-        if (isCVE) {
-            window.location.href = `${UI_BASE}/vulnerability/cves/${isCVE.cves[0].includes('CVE-') ?
-                `${isCVE.cves[0]}?security_rule=${match.params.id}`
-                : ''}`;
-        } else {
-            fetchTopics();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    const tagRef = useRef();
-    const workloadRef = useRef();
-    useEffect(() => {
-        const fetchAction = () => { fetchRulefn(); setIsRuleUpdated(true); };
-
-        if (isRuleUpdated && ((selectedTags !== null && JSON.stringify(tagRef.current) !== JSON.stringify(selectedTags)) ||
-            (JSON.stringify(workloadRef.current) !== JSON.stringify(workloads)))) {
-            fetchAction();
-        }
-
-        workloadRef.current = workloads;
-        tagRef.current = selectedTags;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fetchRulefn, selectedTags, workloads, SID]);
-
-    useEffect(() => {
-        if (rule.rule_status !== 'enabled' && rule.rule_id && isRuleUpdated) {
-            fetchRuleAck({ rule_id: rule.rule_id });
-        } else if (!isRuleUpdated) {
-            fetchRulefn();
-            setIsRuleUpdated(true);
-        }
-        //eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fetchRuleAck, rule.rule_status, rule.rule_id]);
-
-    useEffect(() => {
-        if (rule && rule.description) {
-            const subnav = `${rule.description} - ${messages.recommendations.defaultMessage}`;
-            document.title = intl.formatMessage(messages.documentTitle, { subnav });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [rule]);
-
-    return <React.Fragment>
-        {viewSystemsModalOpen && <ViewHostAcks
-            handleModalToggle={(toggleModal) => setViewSystemsModalOpen(toggleModal)}
-            isModalOpen={viewSystemsModalOpen}
-            afterFn={fetchRulefn}
-            rule={rule}
-        />}
-        {disableRuleModalOpen && <DisableRule
-            handleModalToggle={handleModalToggle}
-            isModalOpen={disableRuleModalOpen}
-            rule={rule}
-            afterFn={afterDisableFn}
-            host={host} />
-        }
-        {ruleFetchStatus === 'fulfilled' &&
+  return (
+    <React.Fragment>
+      {viewSystemsModalOpen && (
+        <ViewHostAcks
+          handleModalToggle={(toggleModal) =>
+            setViewSystemsModalOpen(toggleModal)
+          }
+          isModalOpen={viewSystemsModalOpen}
+          afterFn={fetchRulefn}
+          rule={rule}
+        />
+      )}
+      {disableRuleModalOpen && (
+        <DisableRule
+          handleModalToggle={handleModalToggle}
+          isModalOpen={disableRuleModalOpen}
+          rule={rule}
+          afterFn={afterDisableFn}
+          host={host}
+        />
+      )}
+      {ruleFetchStatus === 'fulfilled' && (
+        <React.Fragment>
+          <PageHeader className="pageHeaderOverride">
+            <Breadcrumbs
+              ouiaId="override"
+              current={rule.description || ''}
+              match={match}
+            />
+          </PageHeader>
+          <Main className="pf-m-light pf-u-pt-sm">
+            <RuleDetails
+              resolutionRisk={ruleResolutionRisk(rule)}
+              isDetailsPage
+              rule={rule}
+              topics={topics}
+              header={
+                <React.Fragment>
+                  <PageHeaderTitle
+                    title={
+                      <React.Fragment>
+                        <RuleLabels rule={rule} />
+                        {rule.description}
+                      </React.Fragment>
+                    }
+                  />
+                  <p>
+                    {intl.formatMessage(messages.rulesDetailsPubishdate, {
+                      date: (
+                        <DateFormat
+                          date={new Date(rule.publish_date)}
+                          type="onlyDate"
+                        />
+                      ),
+                    })}
+                    <Label className="categoryLabel" color="blue">
+                      {rule.category.name}
+                    </Label>
+                  </p>
+                </React.Fragment>
+              }
+            >
+              <Flex>
+                <FlexItem align={{ default: 'alignRight' }}>
+                  <Tooltip
+                    trigger={!permsDisableRec ? 'mouseenter' : ''}
+                    content={intl.formatMessage(messages.permsAction)}
+                  >
+                    <Dropdown
+                      className="ins-c-rec-details__actions_dropdown"
+                      onSelect={() =>
+                        setActionsDropdownOpen(!actionsDropdownOpen)
+                      }
+                      position="right"
+                      ouiaId="actions"
+                      toggle={
+                        <DropdownToggle
+                          isDisabled={!permsDisableRec}
+                          onToggle={(actionsDropdownOpen) =>
+                            setActionsDropdownOpen(actionsDropdownOpen)
+                          }
+                          toggleIndicator={CaretDownIcon}
+                        >
+                          Actions
+                        </DropdownToggle>
+                      }
+                      isOpen={actionsDropdownOpen}
+                      dropdownItems={
+                        rule && rule.rule_status === 'enabled'
+                          ? [
+                              <DropdownItem
+                                key="link"
+                                ouiaId="disable"
+                                onClick={() => {
+                                  handleModalToggle(true);
+                                }}
+                              >
+                                {intl.formatMessage(messages.disableRule)}
+                              </DropdownItem>,
+                            ]
+                          : [
+                              <DropdownItem
+                                key="link"
+                                ouiaId="enable"
+                                onClick={() => {
+                                  enableRule(rule);
+                                }}
+                              >
+                                {intl.formatMessage(messages.enableRule)}
+                              </DropdownItem>,
+                            ]
+                      }
+                    />
+                  </Tooltip>
+                </FlexItem>
+              </Flex>
+            </RuleDetails>
+          </Main>
+        </React.Fragment>
+      )}
+      {ruleFetchStatus === 'pending' && <Loading />}
+      <Main>
+        <React.Fragment>
+          {ruleFetchStatus === 'fulfilled' && (
             <React.Fragment>
-                <PageHeader className='pageHeaderOverride'>
-                    <Breadcrumbs
-                        ouiaId="override"
-                        current={rule.description || ''}
-                        match={match} />
-                </PageHeader>
-                <Main className='pf-m-light pf-u-pt-sm'>
-                    <RuleDetails resolutionRisk={ruleResolutionRisk(rule)} isDetailsPage rule={rule} topics={topics} header={
-                        <React.Fragment>
-                            <PageHeaderTitle title={<React.Fragment><RuleLabels rule={rule} />{rule.description}</React.Fragment>} />
-                            <p>{intl.formatMessage(
-                                messages.rulesDetailsPubishdate, { date: <DateFormat date={new Date(rule.publish_date)} type="onlyDate" /> }
-                            )}
-                            <Label className="categoryLabel" color="blue">{rule.category.name}</Label>
-                            </p>
-                        </React.Fragment>}>
-                        <Flex>
-                            <FlexItem align={{ default: 'alignRight' }}>
-                                <Tooltip trigger={!permsDisableRec ? 'mouseenter' : ''} content={intl.formatMessage(messages.permsAction)}>
-                                    <Dropdown
-                                        className='ins-c-rec-details__actions_dropdown'
-                                        onSelect={() => setActionsDropdownOpen(!actionsDropdownOpen)}
-                                        position='right'
-                                        ouiaId="actions"
-                                        toggle={<DropdownToggle
-                                            isDisabled={!permsDisableRec}
-                                            onToggle={(actionsDropdownOpen) => setActionsDropdownOpen(actionsDropdownOpen)}
-                                            toggleIndicator={CaretDownIcon}>Actions
-                                        </DropdownToggle>}
-                                        isOpen={actionsDropdownOpen}
-                                        dropdownItems={rule && rule.rule_status === 'enabled' ?
-                                            [<DropdownItem key='link' ouiaId="disable"
-                                                onClick={() => { handleModalToggle(true); }}>
-                                                {intl.formatMessage(messages.disableRule)}</DropdownItem>]
-                                            : [<DropdownItem key='link' ouiaId="enable"
-                                                onClick={() => { enableRule(rule); }}>
-                                                {intl.formatMessage(messages.enableRule)}</DropdownItem>]} />
-                                </Tooltip>
-                            </FlexItem>
-                        </Flex>
-                    </RuleDetails>
-                </Main>
+              {(rule.hosts_acked_count > 0 ||
+                rule.rule_status !== 'enabled') && (
+                <Card className="cardOverride">
+                  <CardHeader>
+                    <Title headingLevel="h4" size="xl">
+                      <BellSlashIcon size="sm" />
+                      &nbsp;
+                      {intl.formatMessage(
+                        rule.hosts_acked_count > 0 &&
+                          rule.rule_status === 'enabled'
+                          ? messages.ruleIsDisabledForSystems
+                          : messages.ruleIsDisabled
+                      )}
+                    </Title>
+                  </CardHeader>
+                  <CardBody>
+                    {rule.hosts_acked_count > 0 &&
+                    rule.rule_status === 'enabled' ? (
+                      <React.Fragment>
+                        {intl.formatMessage(
+                          messages.ruleIsDisabledForSystemsBody,
+                          { systems: rule.hosts_acked_count }
+                        )}
+                        &nbsp;
+                        <Button
+                          isInline
+                          variant="link"
+                          onClick={() => setViewSystemsModalOpen(true)}
+                          ouiaId="viewSystems"
+                        >
+                          {intl.formatMessage(messages.viewSystems)}
+                        </Button>
+                      </React.Fragment>
+                    ) : (
+                      <React.Fragment>
+                        {intl.formatMessage(
+                          messages.ruleIsDisabledJustification
+                        )}
+                        <i>
+                          {ruleAck.justification ||
+                            intl.formatMessage(messages.none)}
+                        </i>
+                        {ruleAck.updated_at && (
+                          <span>
+                            &nbsp;
+                            <DateFormat
+                              date={new Date(ruleAck.updated_at)}
+                              type="onlyDate"
+                            />
+                          </span>
+                        )}
+                      </React.Fragment>
+                    )}
+                  </CardBody>
+                  <CardFooter>
+                    {rule.hosts_acked_count > 0 &&
+                    rule.rule_status === 'enabled' ? (
+                      <Button
+                        isInline
+                        variant="link"
+                        onClick={() => bulkHostActions()}
+                        ouiaId="bulkHost"
+                      >
+                        {intl.formatMessage(messages.enableRuleForSystems)}
+                      </Button>
+                    ) : (
+                      <Button
+                        isInline
+                        variant="link"
+                        onClick={() => enableRule(rule)}
+                        ouiaId="rule"
+                      >
+                        {intl.formatMessage(messages.enableRule)}
+                      </Button>
+                    )}
+                  </CardFooter>
+                </Card>
+              )}
+              {rule.rule_status === 'enabled' && (
+                <React.Fragment>
+                  <Title className="titleOverride" headingLevel="h3" size="2xl">
+                    {intl.formatMessage(messages.affectedSystems)}
+                  </Title>
+                  {systemFetchStatus === 'fulfilled' && (
+                    <Inventory
+                      tableProps={{ canSelectAll: false, actionResolver }}
+                      items={system.host_ids}
+                      rule={rule}
+                      afterDisableFn={afterDisableFn}
+                      filters={filters}
+                      onSortFn={onSortFn}
+                    />
+                  )}
+                  {systemFetchStatus === 'pending' && <Loading />}
+                </React.Fragment>
+              )}
+              {systemFetchStatus === 'fulfilled' &&
+                rule.rule_status !== 'enabled' && (
+                  <MessageState
+                    icon={BellSlashIcon}
+                    title={intl.formatMessage(messages.ruleIsDisabled)}
+                    text={intl.formatMessage(messages.ruleIsDisabledBody)}
+                  />
+                )}
             </React.Fragment>
-        }
-        {ruleFetchStatus === 'pending' && (<Loading />)}
-        <Main>
-            <React.Fragment>
-                {ruleFetchStatus === 'fulfilled' &&
-                    <React.Fragment>
-                        {(rule.hosts_acked_count > 0 || rule.rule_status !== 'enabled') && <Card className='cardOverride'>
-                            <CardHeader><Title headingLevel="h4" size="xl">
-                                <BellSlashIcon size='sm' />&nbsp;{intl.formatMessage(rule.hosts_acked_count > 0 && rule.rule_status === 'enabled' ?
-                                    messages.ruleIsDisabledForSystems : messages.ruleIsDisabled)}
-                            </Title></CardHeader>
-                            <CardBody>
-                                {rule.hosts_acked_count > 0 && rule.rule_status === 'enabled' ?
-                                    <React.Fragment>
-                                        {intl.formatMessage(messages.ruleIsDisabledForSystemsBody, { systems: rule.hosts_acked_count })}
-                                        &nbsp;
-                                        <Button isInline variant='link' onClick={() => setViewSystemsModalOpen(true)}
-                                            ouiaId="viewSystems">
-                                            {intl.formatMessage(messages.viewSystems)}
-                                        </Button>
-                                    </React.Fragment>
-                                    : <React.Fragment>
-                                        {intl.formatMessage(messages.ruleIsDisabledJustification)}
-                                        <i>{ruleAck.justification || intl.formatMessage(messages.none)}</i>
-                                        {ruleAck.updated_at && <span>&nbsp;<DateFormat date={new Date(ruleAck.updated_at)} type="onlyDate" /></span>}
-                                    </React.Fragment>}
-                            </CardBody>
-                            <CardFooter>
-                                {rule.hosts_acked_count > 0 && rule.rule_status === 'enabled' ?
-                                    <Button isInline variant='link' onClick={() => bulkHostActions()}
-                                        ouiaId="bulkHost">
-                                        {intl.formatMessage(messages.enableRuleForSystems)}
-                                    </Button>
-                                    : <Button isInline variant='link' onClick={() => enableRule(rule)}
-                                        ouiaId="rule">
-                                        {intl.formatMessage(messages.enableRule)}
-                                    </Button>}
-                            </CardFooter>
-                        </Card>}
-                        {rule.rule_status === 'enabled' && <React.Fragment>
-                            <Title className='titleOverride' headingLevel='h3' size='2xl'>
-                                {intl.formatMessage(messages.affectedSystems)}
-                            </Title>
-                            {systemFetchStatus === 'fulfilled' &&
-                                <Inventory
-                                    tableProps={{ canSelectAll: false, actionResolver }}
-                                    items={system.host_ids} rule={rule} afterDisableFn={afterDisableFn} filters={filters}
-                                    onSortFn={onSortFn} />}
-                            {systemFetchStatus === 'pending' && (<Loading />)}
-                        </React.Fragment>}
-                        {systemFetchStatus === 'fulfilled' && rule.rule_status !== 'enabled' && <MessageState icon={BellSlashIcon}
-                            title={intl.formatMessage(messages.ruleIsDisabled)}
-                            text={intl.formatMessage(messages.ruleIsDisabledBody)} />}
-                    </React.Fragment>}
-                {ruleFetchStatus === 'pending' && (<Loading />)}
-                {ruleFetchStatus === 'failed' && (<Failed message={intl.formatMessage(messages.rulesTableFetchRulesError)} />)}
-            </React.Fragment>
-        </Main>
-    </React.Fragment >;
+          )}
+          {ruleFetchStatus === 'pending' && <Loading />}
+          {ruleFetchStatus === 'failed' && (
+            <Failed
+              message={intl.formatMessage(messages.rulesTableFetchRulesError)}
+            />
+          )}
+        </React.Fragment>
+      </Main>
+    </React.Fragment>
+  );
 };
 
 OverviewDetails.propTypes = {
-    match: PropTypes.any,
-    fetchRule: PropTypes.func,
-    ruleFetchStatus: PropTypes.string,
-    rule: PropTypes.object,
-    fetchSystem: PropTypes.func,
-    systemFetchStatus: PropTypes.string,
-    system: PropTypes.object,
-    addNotification: PropTypes.func,
-    fetchTopics: PropTypes.func,
-    topics: PropTypes.array,
-    ruleAck: PropTypes.object,
-    hostAcks: PropTypes.object,
-    fetchRuleAck: PropTypes.func,
-    fetchHostAcks: PropTypes.func,
-    setRule: PropTypes.func,
-    setSystem: PropTypes.func,
-    selectedTags: PropTypes.array,
-    workloads: PropTypes.object,
-    SID: PropTypes.object
+  match: PropTypes.any,
+  fetchRule: PropTypes.func,
+  ruleFetchStatus: PropTypes.string,
+  rule: PropTypes.object,
+  fetchSystem: PropTypes.func,
+  systemFetchStatus: PropTypes.string,
+  system: PropTypes.object,
+  addNotification: PropTypes.func,
+  fetchTopics: PropTypes.func,
+  topics: PropTypes.array,
+  ruleAck: PropTypes.object,
+  hostAcks: PropTypes.object,
+  fetchRuleAck: PropTypes.func,
+  fetchHostAcks: PropTypes.func,
+  setRule: PropTypes.func,
+  setSystem: PropTypes.func,
+  selectedTags: PropTypes.array,
+  workloads: PropTypes.object,
+  SID: PropTypes.object,
 };
 
 const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
-    rule: AdvisorStore.rule,
-    ruleFetchStatus: AdvisorStore.ruleFetchStatus,
-    system: AdvisorStore.system,
-    systemFetchStatus: AdvisorStore.systemFetchStatus,
-    topics: AdvisorStore.topics,
-    ruleAck: AdvisorStore.ruleAck,
-    hostAcks: AdvisorStore.hostAcks,
-    selectedTags: AdvisorStore.selectedTags,
-    workloads: AdvisorStore.workloads,
-    SID: AdvisorStore.SID,
-    ...ownProps
+  rule: AdvisorStore.rule,
+  ruleFetchStatus: AdvisorStore.ruleFetchStatus,
+  system: AdvisorStore.system,
+  systemFetchStatus: AdvisorStore.systemFetchStatus,
+  topics: AdvisorStore.topics,
+  ruleAck: AdvisorStore.ruleAck,
+  hostAcks: AdvisorStore.hostAcks,
+  selectedTags: AdvisorStore.selectedTags,
+  workloads: AdvisorStore.workloads,
+  SID: AdvisorStore.SID,
+  ...ownProps,
 });
 
-const mapDispatchToProps = dispatch => ({
-    fetchRule: (options, search) => dispatch(AppActions.fetchRule(options, search)),
-    fetchSystem: (rule_id, options, search) => dispatch(AppActions.fetchSystem(rule_id, options, search)),
-    addNotification: data => dispatch(addNotification(data)),
-    fetchTopics: () => dispatch(AppActions.fetchTopics()),
-    fetchRuleAck: data => dispatch(AppActions.fetchRuleAck(data)),
-    fetchHostAcks: data => dispatch(AppActions.fetchHostAcks(data)),
-    setRule: data => dispatch(AppActions.setRule(data)),
-    setSystem: data => dispatch(AppActions.setSystem(data))
+const mapDispatchToProps = (dispatch) => ({
+  fetchRule: (options, search) =>
+    dispatch(AppActions.fetchRule(options, search)),
+  fetchSystem: (rule_id, options, search) =>
+    dispatch(AppActions.fetchSystem(rule_id, options, search)),
+  addNotification: (data) => dispatch(addNotification(data)),
+  fetchTopics: () => dispatch(AppActions.fetchTopics()),
+  fetchRuleAck: (data) => dispatch(AppActions.fetchRuleAck(data)),
+  fetchHostAcks: (data) => dispatch(AppActions.fetchHostAcks(data)),
+  setRule: (data) => dispatch(AppActions.setRule(data)),
+  setSystem: (data) => dispatch(AppActions.setSystem(data)),
 });
 
-export default routerParams(connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(OverviewDetails));
+export default routerParams(
+  connect(mapStateToProps, mapDispatchToProps)(OverviewDetails)
+);

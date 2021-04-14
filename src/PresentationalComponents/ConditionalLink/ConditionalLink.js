@@ -6,12 +6,13 @@ import PropTypes from 'prop-types';
  * If the condition is false, the component won't render, but the children will
  */
 
-const ConditionalLink = ({ condition, wrap, children }) => condition ? wrap(children) : children;
+const ConditionalLink = ({ condition, wrap, children }) =>
+  condition ? wrap(children) : children;
 
 ConditionalLink.propTypes = {
-    condition: PropTypes.any.isRequired,
-    wrap: PropTypes.any.isRequired,
-    children: PropTypes.any.isRequired
+  condition: PropTypes.any.isRequired,
+  wrap: PropTypes.any.isRequired,
+  children: PropTypes.any.isRequired,
 };
 
 export default ConditionalLink;
