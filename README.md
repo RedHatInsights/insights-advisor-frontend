@@ -1,4 +1,4 @@
-# Insights Frontend (IF)
+# Advisor Frontend (AF)
 
 [![Build Status](https://travis-ci.org/RedHatInsights/insights-advisor-frontend.svg?branch=master)](https://travis-ci.org/RedHatInsights/insights-advisor-frontend)
 ## Getting Started
