@@ -184,8 +184,8 @@ export default defineMessages({
     defaultMessage:
       'None of your connected systems are affected by enabled recommendations.',
   },
-  rulesTableNoRuleHitsAnyRulesBody: {
-    id: 'rulestable.norulehits.anyrulesbody',
+  noRecommendations: {
+    id: 'noRecommendations',
     description:
       'Recommendation table, no recommendations message for any known rules, body',
     defaultMessage:
@@ -439,10 +439,8 @@ export default defineMessages({
   overviewConnectsystemsBody: {
     id: 'overview.connectsystems.body',
     description: 'Overview, body for connecting first systems',
-    defaultMessage: `Connect at least 10 systems to get a better
-    description: 'System',
-        awareness of issues and optimizations
-        identified across your infastructure`,
+    defaultMessage:
+      'Connect at least 10 systems to get a better awareness of issues and optimizations identified across your infastructure',
   },
   overviewConnectsystemsAction: {
     id: 'overview.connectsystems.action',

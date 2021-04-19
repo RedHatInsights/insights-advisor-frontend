@@ -9,14 +9,23 @@ import PropTypes from 'prop-types';
 import { SYSTEMS_FETCH_URL } from '../../AppConstants';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
+import { workloadQueryBuilder } from '../Common/Tables';
 
-const SystemsPdf = ({ filters, selectedTags, systemsCount }) => {
+const SystemsPdf = ({ filters, systemsCount }) => {
   const intl = useIntl();
   const [loading, setLoading] = useState(false);
+  const selectedTags = useSelector(
+    ({ AdvisorStore }) => AdvisorStore.selectedTags
+  );
+  const workloads = useSelector(({ AdvisorStore }) => AdvisorStore.workloads);
+  const SID = useSelector(({ AdvisorStore }) => AdvisorStore.SID);
 
   const dataFetch = async () => {
     setLoading(true);
-    const options = selectedTags.length && { tags: selectedTags };
+    let options = selectedTags.length && { tags: selectedTags };
+    workloads &&
+      (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
     const [systems] = await Promise.all([
       (
         await API.get(
@@ -84,7 +93,6 @@ const SystemsPdf = ({ filters, selectedTags, systemsCount }) => {
 
 SystemsPdf.propTypes = {
   filters: PropTypes.object,
-  selectedTags: PropTypes.any,
   systemsCount: PropTypes.number,
 };
 

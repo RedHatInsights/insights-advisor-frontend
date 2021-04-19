@@ -65,7 +65,6 @@ const SystemsTable = () => {
     3: 'important_hits',
     4: 'moderate_hits',
     5: 'low_hits',
-
     6: 'last_seen',
   };
 
@@ -274,13 +273,15 @@ const SystemsTable = () => {
           downloadReport(
             'systems',
             fileType,
-            urlBuilder(filters, selectedTags)
+            filters,
+            selectedTags,
+            workloads,
+            SID
           ),
         extraItems: [
           <li key="download-pd" role="menuitem">
             <SystemsPdf
               filters={{ ...filterFetchBuilder(filters) }}
-              selectedTags={selectedTags}
               systemsCount={systems && systems.meta && systems.meta.count}
             />
           </li>,

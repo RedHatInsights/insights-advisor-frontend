@@ -1,6 +1,7 @@
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
 import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
+import { workloadQueryBuilder } from '../Common/Tables';
 
 const fileName = (exportTable) => {
   const defaultParams = {
@@ -10,15 +11,31 @@ const fileName = (exportTable) => {
   return `Insights-Advisor_${exportTable}--${defaultParams.date}`;
 };
 
-const downloadHelper = async (exportTable, format, params) => {
+const downloadHelper = async (
+  exportTable,
+  format,
+  filters,
+  selectedTags,
+  workloads,
+  SID
+) => {
   try {
-    const payload = await API.get(
-      `${BASE_URL}/export/${exportTable}.${
-        format === 'json' ? 'json' : 'csv'
-      }${params}`
-    );
-    let data = format === 'json' ? JSON.stringify(payload.data) : payload.data;
-    downloadFile(data, fileName(exportTable), format);
+    let options = selectedTags.length && { tags: selectedTags };
+    workloads &&
+      (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
+    const data = await Promise.all([
+      (
+        await API.get(
+          `${BASE_URL}/export/${exportTable}.${
+            format === 'json' ? 'json' : 'csv'
+          }`,
+          {},
+          { ...filters, ...options }
+        )
+      ).data,
+    ]);
+    let formattedData = format === 'json' ? JSON.stringify(data) : data;
+    downloadFile(formattedData, fileName(exportTable), format);
   } catch (error) {
     throw `${error}`;
   }
