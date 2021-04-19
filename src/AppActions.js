@@ -55,7 +55,7 @@ export const fetchRule = (options, search) => ({
 export const fetchSystem = (ruleId, options, search) => ({
   type: ActionTypes.SYSTEM_FETCH,
   payload: fetchData(
-    `${ActionTypes.RULES_FETCH_URL}${encodeURI(ruleId)}/systems`,
+    `${ActionTypes.RULES_FETCH_URL}${encodeURI(ruleId)}/systems/`,
     {},
     options,
     search && search

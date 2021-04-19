@@ -32,6 +32,8 @@ const Inventory = ({
   afterDisableFn,
   onSortFn,
   filters,
+  searchText,
+  setSearchText,
 }) => {
   const inventory = useRef(null);
   const [selected, setSelected] = useState([]);
@@ -107,6 +109,17 @@ const Inventory = ({
     onSelectRows(0, true);
   };
 
+  const filterConfigItems = [
+    {
+      label: intl.formatMessage(messages.name),
+      filterValues: {
+        key: 'text-filter',
+        onChange: (event, value) => setSearchText(value),
+        value: searchText,
+      },
+    },
+  ];
+
   useEffect(() => {
     const calculateSelectedItems = (rows) =>
       bulkSelect
@@ -136,6 +149,7 @@ const Inventory = ({
         sortBy={calculateSort()}
         onSort={onSort}
         onRefresh={onRefresh}
+        filterConfig={{ items: filterConfigItems }}
         page={page}
         total={items.length}
         perPage={pageSize}
@@ -248,6 +262,8 @@ Inventory.propTypes = {
   afterDisableFn: PropTypes.func,
   onSortFn: PropTypes.func,
   filters: PropTypes.object,
+  setSearchText: PropTypes.func,
+  searchText: PropTypes.string,
 };
 
 const mapDispatchToProps = (dispatch) => ({
