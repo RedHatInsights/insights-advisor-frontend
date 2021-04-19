@@ -18,12 +18,14 @@ import {
   encodeOptionsToURL,
   workloadQueryBuilder,
 } from '../../PresentationalComponents/Common/Tables';
+import { useDispatch, useSelector } from 'react-redux';
 
 import API from '../../Utilities/Api';
 import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import CaretDownIcon from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
+import { DEBOUNCE_DELAY } from '../../AppConstants';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
@@ -44,35 +46,17 @@ import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
-import { connect } from 'react-redux';
 import { cveToRuleid } from '../../cveToRuleid.js';
+import debounce from '../../Utilities/Debounce';
 import messages from '../../Messages';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 
-const OverviewDetails = ({
-  match,
-  fetchRuleAck,
-  fetchTopics,
-  fetchSystem,
-  fetchRule,
-  ruleFetchStatus,
-  rule,
-  systemFetchStatus,
-  system,
-  topics,
-  ruleAck,
-  hostAcks,
-  fetchHostAcks,
-  setSystem,
-  setRule,
-  selectedTags,
-  addNotification,
-  workloads,
-  SID,
-}) => {
+const OverviewDetails = ({ match }) => {
   const intl = useIntl();
+  const dispatch = useDispatch();
+
   const permsDisableRec = usePermissions('advisor', PERMS.disableRec).hasAccess;
   const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
@@ -80,32 +64,68 @@ const OverviewDetails = ({
   const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
   const [filters, setFilters] = useState({ sort: '-updated' });
   const [isRuleUpdated, setIsRuleUpdated] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
 
-  const fetchRulefn = (newSort, rule = true, system = true) => {
+  const rule = useSelector(({ AdvisorStore }) => AdvisorStore.rule);
+  const ruleFetchStatus = useSelector(
+    ({ AdvisorStore }) => AdvisorStore.ruleFetchStatus
+  );
+  const system = useSelector(({ AdvisorStore }) => AdvisorStore.system);
+  const systemFetchStatus = useSelector(
+    ({ AdvisorStore }) => AdvisorStore.systemFetchStatus
+  );
+  const topics = useSelector(({ AdvisorStore }) => AdvisorStore.topics);
+  const ruleAck = useSelector(({ AdvisorStore }) => AdvisorStore.ruleAck);
+  const hostAcks = useSelector(({ AdvisorStore }) => AdvisorStore.hostAcks);
+  const fetchHostAcksStatus = useSelector(
+    ({ AdvisorStore }) => AdvisorStore.hostAcksFetchStatus
+  );
+
+  const selectedTags = useSelector(
+    ({ AdvisorStore }) => AdvisorStore.selectedTags
+  );
+  const workloads = useSelector(({ AdvisorStore }) => AdvisorStore.workloads);
+  const SID = useSelector(({ AdvisorStore }) => AdvisorStore.SID);
+
+  const fetchRule = (options, search) =>
+    dispatch(AppActions.fetchRule(options, search));
+  const fetchSystem = (rule_id, options, search) =>
+    dispatch(AppActions.fetchSystem(rule_id, options, search));
+  const fetchTopics = () => dispatch(AppActions.fetchTopics());
+  const fetchRuleAck = (data) => dispatch(AppActions.fetchRuleAck(data));
+  const fetchHostAcks = (data) => dispatch(AppActions.fetchHostAcks(data));
+
+  const setRule = (data) => dispatch(AppActions.setRule(data));
+  const setSystem = (data) => dispatch(AppActions.setSystem(data));
+
+  const fetchRulefn = (newFilter, rule = true, system = true) => {
     let options = selectedTags !== null &&
       selectedTags.length && {
         tags: selectedTags.map((tag) => encodeURIComponent(tag)),
       };
     workloads &&
       (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
-    system &&
+    if (system) {
       fetchSystem(
         match.params.id,
-        options.tags ? {} : { ...options, ...filters, ...newSort },
+        options.tags ? {} : { ...options, ...filters, ...newFilter },
         options.tags &&
-          encodeOptionsToURL({ ...options, ...filters, ...newSort })
+          encodeOptionsToURL({ ...options, ...filters, ...newFilter })
       );
-    rule &&
+    }
+    if (rule) {
       fetchRule(
         options.tags
           ? { rule_id: match.params.id }
           : { rule_id: match.params.id, ...options },
         options.tags && encodeOptionsToURL(options)
       );
+    }
   };
 
   const ruleResolutionRisk = (rule) => {
-    const resolution = rule.resolution_set.find(
+    const resolution = rule?.resolution_set?.find(
       (resolution) =>
         resolution.system_type === SYSTEM_TYPES.rhel || SYSTEM_TYPES.ocp
     );
@@ -181,16 +201,18 @@ const OverviewDetails = ({
   };
 
   const onSortFn = (sort) => {
-    setFilters({ sort });
+    setFilters({ ...filters, sort });
     sort === 'updated' && (sort = 'last_seen');
     sort === '-updated' && (sort = '-last_seen');
     fetchRulefn({ sort }, false);
   };
 
   useEffect(() => {
-    rule.rule_id &&
-      fetchHostAcks({ rule_id: rule.rule_id, limit: rule.hosts_acked_count });
-  }, [fetchHostAcks, rule.hosts_acked_count]);
+    if (isRuleUpdated && systemFetchStatus === 'fulfilled') {
+      setFilters({ ...filters, name: debouncedSearchText });
+      fetchRulefn({ name: debouncedSearchText }, false);
+    }
+  }, [debouncedSearchText]);
 
   useEffect(() => {
     const isCVE =
@@ -210,6 +232,7 @@ const OverviewDetails = ({
 
   const tagRef = useRef();
   const workloadRef = useRef();
+
   useEffect(() => {
     const fetchAction = () => {
       fetchRulefn();
@@ -243,6 +266,11 @@ const OverviewDetails = ({
       const subnav = `${rule.description} - ${messages.recommendations.defaultMessage}`;
       document.title = intl.formatMessage(messages.documentTitle, { subnav });
     }
+
+    isRuleUpdated &&
+      rule.rule_id &&
+      fetchHostAcksStatus !== 'pending' &&
+      fetchHostAcks({ rule_id: rule.rule_id, limit: rule.hosts_acked_count });
   }, [rule]);
 
   return (
@@ -461,6 +489,10 @@ const OverviewDetails = ({
                       afterDisableFn={afterDisableFn}
                       filters={filters}
                       onSortFn={onSortFn}
+                      searchText={searchText}
+                      setSearchText={(searchText) => {
+                        setSearchText(searchText);
+                      }}
                     />
                   )}
                   {systemFetchStatus === 'pending' && <Loading />}
@@ -490,53 +522,6 @@ const OverviewDetails = ({
 
 OverviewDetails.propTypes = {
   match: PropTypes.any,
-  fetchRule: PropTypes.func,
-  ruleFetchStatus: PropTypes.string,
-  rule: PropTypes.object,
-  fetchSystem: PropTypes.func,
-  systemFetchStatus: PropTypes.string,
-  system: PropTypes.object,
-  addNotification: PropTypes.func,
-  fetchTopics: PropTypes.func,
-  topics: PropTypes.array,
-  ruleAck: PropTypes.object,
-  hostAcks: PropTypes.object,
-  fetchRuleAck: PropTypes.func,
-  fetchHostAcks: PropTypes.func,
-  setRule: PropTypes.func,
-  setSystem: PropTypes.func,
-  selectedTags: PropTypes.array,
-  workloads: PropTypes.object,
-  SID: PropTypes.object,
 };
 
-const mapStateToProps = ({ AdvisorStore, ownProps }) => ({
-  rule: AdvisorStore.rule,
-  ruleFetchStatus: AdvisorStore.ruleFetchStatus,
-  system: AdvisorStore.system,
-  systemFetchStatus: AdvisorStore.systemFetchStatus,
-  topics: AdvisorStore.topics,
-  ruleAck: AdvisorStore.ruleAck,
-  hostAcks: AdvisorStore.hostAcks,
-  selectedTags: AdvisorStore.selectedTags,
-  workloads: AdvisorStore.workloads,
-  SID: AdvisorStore.SID,
-  ...ownProps,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  fetchRule: (options, search) =>
-    dispatch(AppActions.fetchRule(options, search)),
-  fetchSystem: (rule_id, options, search) =>
-    dispatch(AppActions.fetchSystem(rule_id, options, search)),
-  addNotification: (data) => dispatch(addNotification(data)),
-  fetchTopics: () => dispatch(AppActions.fetchTopics()),
-  fetchRuleAck: (data) => dispatch(AppActions.fetchRuleAck(data)),
-  fetchHostAcks: (data) => dispatch(AppActions.fetchHostAcks(data)),
-  setRule: (data) => dispatch(AppActions.setRule(data)),
-  setSystem: (data) => dispatch(AppActions.setSystem(data)),
-});
-
-export default routerParams(
-  connect(mapStateToProps, mapDispatchToProps)(OverviewDetails)
-);
+export default routerParams(OverviewDetails);
