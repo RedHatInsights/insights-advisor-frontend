@@ -266,7 +266,7 @@ const RulesTable = () => {
       case 'rhdisabled':
         return messages.rulesTableNoRuleHitsRedHatDisabledRulesBody;
       default:
-        return messages.rulesTableNoRuleHitsAnyRulesBody;
+        return messages.noRecommendations;
     }
   };
 
@@ -728,7 +728,14 @@ const RulesTable = () => {
           // eslint-disable-next-line no-dupe-keys
           label: intl.formatMessage(messages.exportJson),
           onSelect: (_e, fileType) =>
-            downloadReport('hits', fileType, urlBuilder(filters, selectedTags)),
+            downloadReport(
+              'hits',
+              fileType,
+              filters,
+              selectedTags,
+              workloads,
+              SID
+            ),
           isDisabled:
             !permsExport ||
             !filters.impacting ||
