@@ -201,7 +201,7 @@ const RulesTable = () => {
             variant: 'success',
             timeout: true,
             dismissable: true,
-            title: intl.formatMessage(messages.ruleSuccessfullyEnabled),
+            title: intl.formatMessage(messages.recSuccessfullyEnabled),
           });
           fetchRulesFn();
         } catch (error) {
