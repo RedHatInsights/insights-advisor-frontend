@@ -1,5 +1,6 @@
+import * as AppActions from '../../AppActions';
+
 import React, { useState } from 'react';
-import { setAck, setRule, setSystem } from '../../AppActions';
 
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
@@ -11,24 +12,22 @@ import { Modal } from '@patternfly/react-core/dist/js/components/Modal/Modal';
 import PropTypes from 'prop-types';
 import { TextInput } from '@patternfly/react-core/dist/js/components/TextInput/TextInput';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
-import { connect } from 'react-redux';
-import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
+import { useDispatch } from 'react-redux';
+import { useIntl } from 'react-intl';
 
 const DisableRule = ({
   handleModalToggle,
-  intl,
   isModalOpen,
   host,
   hosts,
   rule,
   afterFn,
-  setAck,
-  addNotification,
-  setSystem,
-  setRule,
-  selectedTags,
 }) => {
+  const intl = useIntl();
+  const dispatch = useDispatch();
+  const setAck = (data) => dispatch(AppActions.setAck(data));
+  const notification = (data) => dispatch(addNotification(data));
   const [justification, setJustificaton] = useState('');
   const [singleSystem, setSingleSystem] = useState(
     host !== undefined || hosts.length > 0
@@ -37,22 +36,11 @@ const DisableRule = ({
   const bulkHostActions = async () => {
     const data = { systems: hosts, justification };
     try {
-      const response = await API.post(
-        `${BASE_URL}/rule/${rule.rule_id}/ack_hosts/`,
-        {},
-        data
-      );
-      if (selectedTags.length > 0) {
-        afterFn && afterFn();
-      } else {
-        setSystem({ host_ids: response.data.host_ids });
-        setRule({
-          ...rule,
-          hosts_acked_count: response.data.count + rule.hosts_acked_count,
-        });
-      }
+      await API.post(`${BASE_URL}/rule/${rule.rule_id}/ack_hosts/`, {}, data);
+
+      afterFn && afterFn();
     } catch (error) {
-      addNotification({
+      notification({
         variant: 'danger',
         dismissable: true,
         title: intl.formatMessage(messages.error),
@@ -81,16 +69,16 @@ const DisableRule = ({
           };
       try {
         await setAck(options);
-        addNotification({
+        notification({
           variant: 'success',
           timeout: true,
           dismissable: true,
-          title: intl.formatMessage(messages.ruleSuccessfullyDisabled),
+          title: intl.formatMessage(messages.recSuccessfullyDisabled),
         });
         setJustificaton('');
         afterFn && afterFn();
       } catch (error) {
-        addNotification({
+        notification({
           variant: 'danger',
           dismissable: true,
           title: intl.formatMessage(messages.error),
@@ -179,15 +167,9 @@ DisableRule.propTypes = {
   isModalOpen: PropTypes.bool,
   host: PropTypes.object,
   handleModalToggle: PropTypes.func,
-  intl: PropTypes.any,
   rule: PropTypes.object,
   afterFn: PropTypes.func,
-  setAck: PropTypes.func,
   hosts: PropTypes.array,
-  addNotification: PropTypes.func,
-  setRule: PropTypes.func,
-  setSystem: PropTypes.func,
-  selectedTags: PropTypes.array,
 };
 
 DisableRule.defaultProps = {
@@ -200,18 +182,4 @@ DisableRule.defaultProps = {
   hosts: [],
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  addNotification: (data) => dispatch(addNotification(data)),
-  setAck: (data) => dispatch(setAck(data)),
-  setRule: (data) => dispatch(setRule(data)),
-  setSystem: (data) => dispatch(setSystem(data)),
-});
-
-export default injectIntl(
-  connect(
-    ({ AdvisorStore }) => ({
-      selectedTags: AdvisorStore.selectedTags,
-    }),
-    mapDispatchToProps
-  )(DisableRule)
-);
+export default DisableRule;

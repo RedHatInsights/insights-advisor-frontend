@@ -4,9 +4,9 @@ import React, { useMemo, useState } from 'react';
 import { leadPage, tablePage } from './SystemsPdfBuild';
 
 import API from '../../Utilities/Api';
+import { BASE_URL } from '../../AppConstants';
 import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-generator';
 import PropTypes from 'prop-types';
-import { SYSTEMS_FETCH_URL } from '../../AppConstants';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -26,25 +26,23 @@ const SystemsPdf = ({ filters, systemsCount }) => {
     let options = selectedTags.length && { tags: selectedTags };
     workloads &&
       (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
-    const [systems] = await Promise.all([
-      (
-        await API.get(
-          SYSTEMS_FETCH_URL,
-          {},
-          { ...filters, ...options, limit: systemsCount }
-        )
-      ).data,
-    ]);
+    const systems = (
+      await API.get(
+        `${BASE_URL}/export/systems/`,
+        {},
+        { ...filters, ...options, limit: systemsCount }
+      )
+    ).data;
     const firstPage = leadPage({
-      systemsTotal: systems.meta.count,
-      systems: systems.data.slice(0, 18),
+      systemsTotal: systems?.length,
+      systems: systems.slice(0, 18),
       filters,
       tags: selectedTags,
       intl,
     });
 
-    const otherPages = systems.data
-      .slice(18, systems.data.length)
+    const otherPages = systems
+      .slice(18, systems.length)
       .reduce((resultArray, item, index) => {
         const chunkIndex = Math.floor(index / 31);
         !resultArray[chunkIndex] && (resultArray[chunkIndex] = []);

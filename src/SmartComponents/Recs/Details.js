@@ -45,10 +45,10 @@ import RuleLabels from '../../PresentationalComponents/RuleLabels/RuleLabels';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { cveToRuleid } from '../../cveToRuleid.js';
 import debounce from '../../Utilities/Debounce';
 import messages from '../../Messages';
+import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
@@ -95,9 +95,7 @@ const OverviewDetails = ({ match }) => {
   const fetchTopics = () => dispatch(AppActions.fetchTopics());
   const fetchRuleAck = (data) => dispatch(AppActions.fetchRuleAck(data));
   const fetchHostAcks = (data) => dispatch(AppActions.fetchHostAcks(data));
-
-  const setRule = (data) => dispatch(AppActions.setRule(data));
-  const setSystem = (data) => dispatch(AppActions.setSystem(data));
+  const addNotification = (data) => dispatch(notification(data));
 
   const fetchRulefn = (newFilter, rule = true, system = true) => {
     let options = selectedTags !== null &&
@@ -144,7 +142,7 @@ const OverviewDetails = ({ match }) => {
         variant: 'success',
         timeout: true,
         dismissable: true,
-        title: intl.formatMessage(messages.ruleSuccessfullyEnabled),
+        title: intl.formatMessage(messages.recSuccessfullyEnabled),
       });
       fetchRulefn();
     } catch (error) {
@@ -173,23 +171,20 @@ const OverviewDetails = ({ match }) => {
   const bulkHostActions = async () => {
     const data = { systems: hostAcks.data.map((item) => item.system_uuid) };
     try {
-      const response = await API.post(
-        `${BASE_URL}/rule/${rule.rule_id}/unack_hosts/`,
-        {},
-        data
-      );
+      await Promise.all([
+        await API.post(
+          `${BASE_URL}/rule/${rule.rule_id}/unack_hosts/`,
+          {},
+          data
+        ),
+      ]);
+      fetchRulefn();
       addNotification({
         variant: 'success',
         timeout: true,
         dismissable: true,
-        title: intl.formatMessage(messages.ruleSuccessfullyEnabled),
+        title: intl.formatMessage(messages.recSuccessfullyDisabled),
       });
-      if (selectedTags.length > 0) {
-        fetchRulefn();
-      } else {
-        setSystem({ host_ids: response.data.host_ids });
-        setRule({ ...rule, hosts_acked_count: 0 });
-      }
     } catch (error) {
       addNotification({
         variant: 'danger',
@@ -356,7 +351,7 @@ const OverviewDetails = ({ match }) => {
                           }
                           toggleIndicator={CaretDownIcon}
                         >
-                          Actions
+                          {intl.formatMessage(messages.actions)}
                         </DropdownToggle>
                       }
                       isOpen={actionsDropdownOpen}

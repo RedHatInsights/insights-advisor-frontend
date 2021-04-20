@@ -23,17 +23,15 @@ const downloadHelper = async (
     let options = selectedTags.length && { tags: selectedTags };
     workloads &&
       (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
-    const data = await Promise.all([
-      (
-        await API.get(
-          `${BASE_URL}/export/${exportTable}.${
-            format === 'json' ? 'json' : 'csv'
-          }`,
-          {},
-          { ...filters, ...options }
-        )
-      ).data,
-    ]);
+    const data = (
+      await API.get(
+        `${BASE_URL}/export/${exportTable}.${
+          format === 'json' ? 'json' : 'csv'
+        }`,
+        {},
+        { ...filters, ...options }
+      )
+    ).data;
     let formattedData = format === 'json' ? JSON.stringify(data) : data;
     downloadFile(formattedData, fileName(exportTable), format);
   } catch (error) {

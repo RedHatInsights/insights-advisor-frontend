@@ -104,13 +104,13 @@ export default defineMessages({
     description: 'Exclaiming that the recommendationis disabled',
     defaultMessage: 'Recommendation is disabled',
   },
-  ruleSuccessfullyDisabled: {
-    id: 'ruleSuccessfullyDisabled',
-    description: 'Explaining that the rule was disabled successfully',
+  recSuccessfullyDisabled: {
+    id: 'recSuccessfullyDisabled',
+    description: 'Explaining that the rec was disabled successfully',
     defaultMessage: 'Recommendation successfully disabled',
   },
-  ruleSuccessfullyEnabled: {
-    id: 'ruleSuccessfullyEnabled',
+  recSuccessfullyEnabled: {
+    id: 'recSuccessfullyEnabled',
     description: 'Explaining that the rule was enabled successfully',
     defaultMessage: 'Recommendation successfully enabled',
   },
@@ -1054,5 +1054,10 @@ export default defineMessages({
     id: 'yes',
     description: 'yes',
     defaultMessage: 'Yes',
+  },
+  actions: {
+    id: 'actions',
+    description: 'actions',
+    defaultMessage: 'Actions',
   },
 });

@@ -1,4 +1,5 @@
 {
+  "actions": "Actions",
   "added": "Added",
   "affectedSystems": "Affected systems",
   "all": "All",
@@ -107,6 +108,8 @@
   "readless": "Read less",
   "readmore": "Read more",
   "recNumAndPercentage": "{count} ({total}% of total)",
+  "recSuccessfullyDisabled": "Recommendation successfully disabled",
+  "recSuccessfullyEnabled": "Recommendation successfully enabled",
   "recommendation": "Recommendation",
   "recommendations": "Recommendations",
   "recommended": "Recommended",
@@ -130,8 +133,6 @@
   "ruleIsDisabledForSystemsBody": "Recommendation is disabled for {systems, plural, one {# system} other {# systems}}",
   "ruleIsDisabledJustification": "This recommendation has been disabled for all systems for the following reason:",
   "ruleIsDisabledTooltip": "Indicates this recommendation across all systems will not be shown in reports and dashboards.",
-  "ruleSuccessfullyDisabled": "Recommendation successfully disabled",
-  "ruleSuccessfullyEnabled": "Recommendation successfully enabled",
   "rules": "Rules",
   "rulesdetails.publishdate": "Publish date: {date}",
   "rulesdetails.totalriskbody": "The total risk of this remediation is <strong>{risk}</strong>, based on the combination of likelihood and impact to remediate.",
