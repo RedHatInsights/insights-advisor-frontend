@@ -658,6 +658,7 @@ const RulesTable = () => {
   ];
 
   const activeFiltersConfig = {
+    deleteTitle: intl.formatMessage(messages.resetFilters),
     filters: buildFilterChips(),
     onDelete: (event, itemsToRemove, isAll) => {
       if (isAll) {
