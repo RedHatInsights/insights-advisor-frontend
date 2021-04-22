@@ -25,6 +25,7 @@
   "disabled": "Disabled",
   "documentTitle": "{subnav} - Advisor | Red Hat Insights",
   "downloadExecutiveLabel": "Download executive report",
+  "dueTo": "- Due to browser limitations, showing the first 1000 systems",
   "enable": "Enable",
   "enableRule": "Enable recommendation",
   "enableRuleForSystems": "Enable this recommendation for all systems",

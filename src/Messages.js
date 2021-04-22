@@ -1060,4 +1060,10 @@ export default defineMessages({
     description: 'actions',
     defaultMessage: 'Actions',
   },
+  dueTo: {
+    id: 'dueTo',
+    description: 'Due to browser limitations, showing the first 1000 systems',
+    defaultMessage:
+      ' - Due to browser limitations, showing the first 1000 systems',
+  },
 });

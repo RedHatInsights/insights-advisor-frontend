@@ -30,9 +30,10 @@ const SystemsPdf = ({ filters, systemsCount }) => {
       await API.get(
         `${BASE_URL}/export/systems/`,
         {},
-        { ...filters, ...options, limit: systemsCount }
+        { ...filters, ...options }
       )
     ).data;
+
     const firstPage = leadPage({
       systemsTotal: systems?.length,
       systems: systems.slice(0, 18),
@@ -42,7 +43,7 @@ const SystemsPdf = ({ filters, systemsCount }) => {
     });
 
     const otherPages = systems
-      .slice(18, systems.length)
+      .slice(18, 982)
       .reduce((resultArray, item, index) => {
         const chunkIndex = Math.floor(index / 31);
         !resultArray[chunkIndex] && (resultArray[chunkIndex] = []);

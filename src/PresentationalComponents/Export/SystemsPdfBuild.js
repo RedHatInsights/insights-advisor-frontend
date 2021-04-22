@@ -134,6 +134,7 @@ export const leadPage = ({ systemsTotal, systems, filters, tags, intl }) => {
               {intl.formatMessage(messages.execReportHeaderSystems, {
                 systems: systemsTotal,
               })}
+              {systemsTotal > 1000 && intl.formatMessage(messages.dueTo)}
             </Text>
           ),
         })}
