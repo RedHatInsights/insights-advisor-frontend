@@ -104,7 +104,7 @@ const SystemsTable = () => {
 
   const filterConfigItems = [
     {
-      label: intl.formatMessage(messages.name),
+      label: intl.formatMessage(messages.name).toLowerCase(),
       filterValues: {
         key: 'text-filter',
         onChange: (event, value) => setSearchText(value),
@@ -138,6 +138,7 @@ const SystemsTable = () => {
   };
 
   const activeFiltersConfig = {
+    deleteTitle: intl.formatMessage(messages.resetFilters),
     filters: buildFilterChips(),
     onDelete: (event, itemsToRemove, isAll) => {
       if (isAll) {

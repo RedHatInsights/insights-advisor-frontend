@@ -312,10 +312,10 @@ export default defineMessages({
     description: 'The total hits label for the overview donut chart',
     defaultMessage: 'Total hits',
   },
-  clearFilters: {
-    id: 'clearFilters',
-    description: 'Filter action, clear all filter chips',
-    defaultMessage: 'Clear filters',
+  resetFilters: {
+    id: 'resetFilters',
+    description: 'Filter action, reset all filter chips',
+    defaultMessage: 'Reset filters',
   },
   filterBy: {
     id: 'filterBy',

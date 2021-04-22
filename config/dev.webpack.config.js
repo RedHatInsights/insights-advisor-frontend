@@ -5,6 +5,9 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 const config = require('@redhat-cloud-services/frontend-components-config');
 const { config: webpackConfig, plugins } = config({
   rootFolder: resolve(__dirname, '../'),
+  exposes: {
+    './RootApp': resolve(__dirname, '../src/DevEntry'),
+  },
   debug: true,
   appUrl: '/insights/advisor',
   betaEnv: 'prod',
