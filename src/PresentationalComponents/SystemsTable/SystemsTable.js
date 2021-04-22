@@ -281,10 +281,7 @@ const SystemsTable = () => {
           ),
         extraItems: [
           <li key="download-pd" role="menuitem">
-            <SystemsPdf
-              filters={{ ...filterFetchBuilder(filters) }}
-              systemsCount={systems && systems.meta && systems.meta.count}
-            />
+            <SystemsPdf filters={{ ...filterFetchBuilder(filters) }} />
           </li>,
         ],
         isDisabled: !permsExport,

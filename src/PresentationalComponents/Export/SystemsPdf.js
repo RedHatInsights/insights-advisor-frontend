@@ -12,7 +12,7 @@ import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { workloadQueryBuilder } from '../Common/Tables';
 
-const SystemsPdf = ({ filters, systemsCount }) => {
+const SystemsPdf = ({ filters }) => {
   const intl = useIntl();
   const [loading, setLoading] = useState(false);
   const selectedTags = useSelector(
