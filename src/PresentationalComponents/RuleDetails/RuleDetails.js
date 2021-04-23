@@ -20,16 +20,18 @@ import { compact, intersection } from 'lodash';
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
 import { Link } from 'react-router-dom';
+import Markdown from 'react-markdown';
 import PowerOffIcon from '@patternfly/react-icons/dist/js/icons/power-off-icon';
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactMarkdown from 'react-markdown/with-html';
 import RuleRating from '../RuleRating/RuleRating';
 import { SeverityLine } from '@redhat-cloud-services/frontend-components-charts/esm/SeverityLine';
 import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
 import barDividedList from '../../Utilities/BarDividedList';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
+import rehypeRaw from 'rehype-raw';
+import rehypeSanitize from 'rehype-sanitize';
 import { strong } from '../../Utilities/intlHelper';
 
 const RuleDetails = ({
@@ -58,7 +60,7 @@ const RuleDetails = ({
     typeof data === 'string' &&
     Boolean(data) && (
       <span className={isGeneric && 'genericOverride'}>
-        <ReactMarkdown source={data} escapeHtml={false} />
+        <Markdown rehypePlugins={[rehypeRaw, rehypeSanitize]}>{data}</Markdown>
       </span>
     );
 

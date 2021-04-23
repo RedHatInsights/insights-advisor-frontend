@@ -8,7 +8,7 @@ import {
 import React, { useMemo, useState } from 'react';
 
 import API from '../../Utilities/Api';
-import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-generator';
+import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
 import ExportIcon from '@patternfly/react-icons/dist/js/icons/export-icon';
 import buildExecReport from './Build';
 import messages from '../../Messages';

@@ -2,7 +2,7 @@
 
 import { createIntl, createIntlCache } from 'react-intl';
 
-import { intlHelper } from '@redhat-cloud-services/frontend-components-translations';
+import { intlHelper } from '@redhat-cloud-services/frontend-components-translations/';
 import messages from './Messages';
 import { strong } from './Utilities/intlHelper';
 

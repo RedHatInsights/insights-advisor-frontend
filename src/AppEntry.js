@@ -1,6 +1,6 @@
 import App from './App';
-import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations';
-import { NotificationsPortal } from '@redhat-cloud-services/frontend-components-notifications';
+import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
+import { NotificationsPortal } from '@redhat-cloud-services/frontend-components-notifications/';
 import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 /* eslint-disable no-console */

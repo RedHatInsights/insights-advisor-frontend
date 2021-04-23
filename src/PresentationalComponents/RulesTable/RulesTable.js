@@ -53,7 +53,7 @@ import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/Prima
 import RuleDetails from '../RuleDetails/RuleDetails';
 import RuleLabels from '../RuleLabels/RuleLabels';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
-import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications';
+import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import debounce from '../../Utilities/Debounce';
 import downloadReport from '../Common/DownloadHelper';
 import messages from '../../Messages';

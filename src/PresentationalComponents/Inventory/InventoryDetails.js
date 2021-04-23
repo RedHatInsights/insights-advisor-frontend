@@ -1,5 +1,3 @@
-import '@redhat-cloud-services/frontend-components-inventory-insights/index.css';
-
 import {
   AppInfo,
   DetailWrapper,

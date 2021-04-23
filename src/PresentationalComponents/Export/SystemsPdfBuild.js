@@ -4,7 +4,7 @@ import {
   Column,
   Section,
   Table,
-} from '@redhat-cloud-services/frontend-components-pdf-generator';
+} from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
 import { Link, StyleSheet, Text } from '@react-pdf/renderer';
 
 import PropTypes from 'prop-types';

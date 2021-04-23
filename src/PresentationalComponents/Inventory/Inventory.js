@@ -10,7 +10,7 @@ import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inven
 import Loading from '../Loading/Loading';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { connect } from 'react-redux';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
 import { injectIntl } from 'react-intl';

@@ -5,7 +5,7 @@ import { leadPage, tablePage } from './SystemsPdfBuild';
 
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
-import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-generator';
+import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
 import PropTypes from 'prop-types';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';

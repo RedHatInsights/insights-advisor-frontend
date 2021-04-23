@@ -10,7 +10,7 @@ import { List } from 'react-content-loader';
 import { Modal } from '@patternfly/react-core/dist/js/components/Modal/Modal';
 import OutlinedBellIcon from '@patternfly/react-icons/dist/js/icons/outlined-bell-icon';
 import PropTypes from 'prop-types';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
