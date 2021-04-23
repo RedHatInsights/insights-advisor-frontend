@@ -7,7 +7,7 @@ import {
   Paragraph,
   Section,
   Table,
-} from '@redhat-cloud-services/frontend-components-pdf-generator';
+} from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
 
 import PropTypes from 'prop-types';
 import React from 'react';

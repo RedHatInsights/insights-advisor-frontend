@@ -13,7 +13,7 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   encodeOptionsToURL,
   workloadQueryBuilder,
@@ -48,7 +48,7 @@ import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { cveToRuleid } from '../../cveToRuleid.js';
 import debounce from '../../Utilities/Debounce';
 import messages from '../../Messages';
-import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications';
+import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
@@ -225,27 +225,9 @@ const OverviewDetails = ({ match }) => {
     }
   }, []);
 
-  const tagRef = useRef();
-  const workloadRef = useRef();
-
   useEffect(() => {
-    const fetchAction = () => {
-      fetchRulefn();
-      setIsRuleUpdated(true);
-    };
-
-    if (
-      isRuleUpdated &&
-      ((selectedTags !== null &&
-        JSON.stringify(tagRef.current) !== JSON.stringify(selectedTags)) ||
-        JSON.stringify(workloadRef.current) !== JSON.stringify(workloads))
-    ) {
-      fetchAction();
-    }
-
-    workloadRef.current = workloads;
-    tagRef.current = selectedTags;
-  }, [fetchRulefn, selectedTags, workloads, SID]);
+    isRuleUpdated && fetchRulefn();
+  }, [selectedTags, workloads, SID]);
 
   useEffect(() => {
     if (rule.rule_status !== 'enabled' && rule.rule_id && isRuleUpdated) {

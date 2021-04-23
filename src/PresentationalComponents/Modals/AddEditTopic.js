@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
 import { Radio } from '@patternfly/react-core/dist/js/components/Radio/Radio';
 import { TextArea } from '@patternfly/react-core/dist/js/components/TextArea/TextArea';
 import { TextInput } from '@patternfly/react-core/dist/js/components/TextInput/TextInput';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { connect } from 'react-redux';
 import { fetchTopicsAdmin } from '../../AppActions';
 import { injectIntl } from 'react-intl';

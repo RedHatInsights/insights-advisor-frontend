@@ -11,7 +11,7 @@ import { FormGroup } from '@patternfly/react-core/dist/js/components/Form/FormGr
 import { Modal } from '@patternfly/react-core/dist/js/components/Modal/Modal';
 import PropTypes from 'prop-types';
 import { TextInput } from '@patternfly/react-core/dist/js/components/TextInput/TextInput';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import messages from '../../Messages';
 import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';

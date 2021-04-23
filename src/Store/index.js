@@ -1,7 +1,7 @@
 import {
   notifications,
   notificationsMiddleware,
-} from '@redhat-cloud-services/frontend-components-notifications';
+} from '@redhat-cloud-services/frontend-components-notifications/';
 
 import { compose } from 'redux';
 import { getAdvisorStore } from '../AppReducer';
