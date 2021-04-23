@@ -13,7 +13,7 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   encodeOptionsToURL,
   workloadQueryBuilder,
@@ -78,49 +78,46 @@ const OverviewDetails = ({ match }) => {
   const topics = useSelector(({ AdvisorStore }) => AdvisorStore.topics);
   const ruleAck = useSelector(({ AdvisorStore }) => AdvisorStore.ruleAck);
   const hostAcks = useSelector(({ AdvisorStore }) => AdvisorStore.hostAcks);
-  const fetchHostAcksStatus = useSelector(
-    ({ AdvisorStore }) => AdvisorStore.hostAcksFetchStatus
-  );
-
   const selectedTags = useSelector(
     ({ AdvisorStore }) => AdvisorStore.selectedTags
   );
   const workloads = useSelector(({ AdvisorStore }) => AdvisorStore.workloads);
   const SID = useSelector(({ AdvisorStore }) => AdvisorStore.SID);
-
-  const fetchRule = (options, search) =>
-    dispatch(AppActions.fetchRule(options, search));
-  const fetchSystem = (rule_id, options, search) =>
-    dispatch(AppActions.fetchSystem(rule_id, options, search));
-  const fetchTopics = () => dispatch(AppActions.fetchTopics());
-  const fetchRuleAck = (data) => dispatch(AppActions.fetchRuleAck(data));
   const fetchHostAcks = (data) => dispatch(AppActions.fetchHostAcks(data));
+  const fetchTopics = () => dispatch(AppActions.fetchTopics());
   const addNotification = (data) => dispatch(notification(data));
 
-  const fetchRulefn = (newFilter, rule = true, system = true) => {
-    let options = selectedTags !== null &&
-      selectedTags.length && {
-        tags: selectedTags.map((tag) => encodeURIComponent(tag)),
-      };
-    workloads &&
-      (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
-    if (system) {
-      fetchSystem(
-        match.params.id,
-        options.tags ? {} : { ...options, ...filters, ...newFilter },
-        options.tags &&
-          encodeOptionsToURL({ ...options, ...filters, ...newFilter })
-      );
-    }
-    if (rule) {
-      fetchRule(
-        options.tags
-          ? { rule_id: match.params.id }
-          : { rule_id: match.params.id, ...options },
-        options.tags && encodeOptionsToURL(options)
-      );
-    }
-  };
+  const fetchRulefn = useCallback(
+    (newFilter, rule = true, system = true) => {
+      const fetchRule = (options, search) =>
+        dispatch(AppActions.fetchRule(options, search));
+      const fetchSystem = (rule_id, options, search) =>
+        dispatch(AppActions.fetchSystem(rule_id, options, search));
+      let options = selectedTags !== null &&
+        selectedTags.length && {
+          tags: selectedTags.map((tag) => encodeURIComponent(tag)),
+        };
+      workloads &&
+        (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
+      if (system) {
+        fetchSystem(
+          match.params.id,
+          options.tags ? {} : { ...options, ...filters, ...newFilter },
+          options.tags &&
+            encodeOptionsToURL({ ...options, ...filters, ...newFilter })
+        );
+      }
+      if (rule) {
+        fetchRule(
+          options.tags
+            ? { rule_id: match.params.id }
+            : { rule_id: match.params.id, ...options },
+          options.tags && encodeOptionsToURL(options)
+        );
+      }
+    },
+    [selectedTags, workloads, SID, dispatch, match.params.id, filters]
+  );
 
   const ruleResolutionRisk = (rule) => {
     const resolution = rule?.resolution_set?.find(
@@ -150,15 +147,19 @@ const OverviewDetails = ({ match }) => {
       addNotification({
         variant: 'danger',
         dismissable: true,
-        title: intl.formatMessage(messages.rulesTableHideReportsErrorDisabled),
+        title: intl.formatMessage(messages.error),
         description: `${error}`,
       });
     }
   };
 
-  const afterDisableFn = () => {
+  const afterDisableFn = async () => {
     setHost(undefined);
-    fetchRulefn();
+    await fetchRulefn();
+    await fetchHostAcks({
+      rule_id: rule.rule_id,
+      limit: rule.hosts_acked_count,
+    });
   };
 
   const actionResolver = () => [
@@ -169,7 +170,7 @@ const OverviewDetails = ({ match }) => {
   ];
 
   const bulkHostActions = async () => {
-    const data = { systems: hostAcks.data.map((item) => item.system_uuid) };
+    const data = { systems: hostAcks?.data?.map((item) => item.system_uuid) };
     try {
       await Promise.all([
         await API.post(
@@ -183,7 +184,7 @@ const OverviewDetails = ({ match }) => {
         variant: 'success',
         timeout: true,
         dismissable: true,
-        title: intl.formatMessage(messages.recSuccessfullyDisabled),
+        title: intl.formatMessage(messages.recSuccessfullyEnabledForSystem),
       });
     } catch (error) {
       addNotification({
@@ -207,6 +208,7 @@ const OverviewDetails = ({ match }) => {
       setFilters({ ...filters, name: debouncedSearchText });
       fetchRulefn({ name: debouncedSearchText }, false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchText]);
 
   useEffect(() => {
@@ -223,32 +225,51 @@ const OverviewDetails = ({ match }) => {
     } else {
       fetchTopics();
     }
+
+    rule.rule_id &&
+      fetchHostAcks({ rule_id: rule.rule_id, limit: rule.hosts_acked_count });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    isRuleUpdated && fetchRulefn();
-  }, [selectedTags, workloads, SID]);
+  const tagRef = useRef();
+  const workloadRef = useRef();
+  const sidRef = useRef();
 
   useEffect(() => {
+    console.error('poop', workloads, workloadRef.current);
+
+    if (
+      isRuleUpdated &&
+      selectedTags !== null &&
+      (JSON.stringify(tagRef.current) !== JSON.stringify(selectedTags) ||
+        JSON.stringify(workloadRef.current) !== JSON.stringify(workloads) ||
+        JSON.stringify(sidRef.current) !== JSON.stringify(SID))
+    ) {
+      fetchRulefn({}, false);
+    }
+
+    tagRef.current = selectedTags;
+    workloadRef.current = workloads;
+    sidRef.current = SID;
+  }, [selectedTags, workloads, SID, fetchRulefn, isRuleUpdated]);
+
+  useEffect(() => {
+    const fetchRuleAck = (data) => dispatch(AppActions.fetchRuleAck(data));
+
     if (rule.rule_status !== 'enabled' && rule.rule_id && isRuleUpdated) {
       fetchRuleAck({ rule_id: rule.rule_id });
     } else if (!isRuleUpdated) {
-      fetchRulefn();
+      fetchRulefn({}, true, false);
       setIsRuleUpdated(true);
     }
-  }, [fetchRuleAck, rule.rule_status, rule.rule_id]);
 
-  useEffect(() => {
     if (rule && rule.description) {
       const subnav = `${rule.description} - ${messages.recommendations.defaultMessage}`;
       document.title = intl.formatMessage(messages.documentTitle, { subnav });
     }
 
-    isRuleUpdated &&
-      rule.rule_id &&
-      fetchHostAcksStatus !== 'pending' &&
-      fetchHostAcks({ rule_id: rule.rule_id, limit: rule.hosts_acked_count });
-  }, [rule]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rule, rule.rule_status, rule.rule_id]);
 
   return (
     <React.Fragment>

@@ -37,7 +37,13 @@ const DisableRule = ({
     const data = { systems: hosts, justification };
     try {
       await API.post(`${BASE_URL}/rule/${rule.rule_id}/ack_hosts/`, {}, data);
-
+      !singleSystem &&
+        notification({
+          variant: 'success',
+          dismissable: true,
+          timeout: true,
+          title: intl.formatMessage(messages.recSuccessfullyDisabledForSystem),
+        });
       afterFn && afterFn();
     } catch (error) {
       notification({
@@ -69,12 +75,21 @@ const DisableRule = ({
           };
       try {
         await setAck(options);
-        notification({
-          variant: 'success',
-          timeout: true,
-          dismissable: true,
-          title: intl.formatMessage(messages.recSuccessfullyDisabled),
-        });
+        singleSystem
+          ? notification({
+              variant: 'success',
+              timeout: true,
+              dismissable: true,
+              title: intl.formatMessage(
+                messages.recSuccessfullyDisabledForSystem
+              ),
+            })
+          : notification({
+              variant: 'success',
+              timeout: true,
+              dismissable: true,
+              title: intl.formatMessage(messages.recSuccessfullyDisabled),
+            });
         setJustificaton('');
         afterFn && afterFn();
       } catch (error) {

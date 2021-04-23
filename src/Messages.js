@@ -64,12 +64,6 @@ export default defineMessages({
     description: 'Recommendation table column title',
     defaultMessage: 'Ansible',
   },
-  rulesTableHideReportsErrorDisabled: {
-    id: 'rulestable.hidereports.errordisabling',
-    description:
-      'Recommendation table, hide reports action, error for disabling reporting on a recommendation',
-    defaultMessage: 'Disabling reports failed',
-  },
   rulesTableHideReportsErrorEnabled: {
     id: 'rulestable.hidereports.errorenabling',
     description:
@@ -103,6 +97,20 @@ export default defineMessages({
     id: 'ruleIsDisabled',
     description: 'Exclaiming that the recommendationis disabled',
     defaultMessage: 'Recommendation is disabled',
+  },
+  recSuccessfullyDisabledForSystem: {
+    id: 'recSuccessfullyDisabledForSystem',
+    description:
+      'Explaining that the rec was disabled successfully for systems',
+    defaultMessage:
+      'Recommendation successfully disabled for selected system(s)',
+  },
+  recSuccessfullyEnabledForSystem: {
+    id: 'recSuccessfullyEnabledForSystem',
+    description:
+      'Explaining that the rec was disabled successfully for systems',
+    defaultMessage:
+      'Recommendation successfully enabled for selected system(s)',
   },
   recSuccessfullyDisabled: {
     id: 'recSuccessfullyDisabled',
