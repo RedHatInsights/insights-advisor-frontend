@@ -236,8 +236,6 @@ const OverviewDetails = ({ match }) => {
   const sidRef = useRef();
 
   useEffect(() => {
-    console.error('poop', workloads, workloadRef.current);
-
     if (
       isRuleUpdated &&
       selectedTags !== null &&

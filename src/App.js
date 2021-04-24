@@ -40,6 +40,18 @@ const App = () => {
     insights.chrome.auth.getUser().then(() => setAuth(true));
     insights.chrome.identifyApp('advisor');
     insights.chrome?.globalFilterScope?.('insights');
+    if (insights.chrome?.globalFilterScope) {
+      insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
+        const [workloads, SID, selectedTags] =
+          insights.chrome?.mapGlobalFilter?.(data, false, true) || [];
+        batch(() => {
+          dispatch(setWorkloads(workloads));
+          dispatch(setSelectedTags(selectedTags));
+          dispatch(setSIDs(SID));
+        });
+      });
+    }
+
     const baseComponentUrl = pathname.split('/')[1];
     const unregister = insights.chrome.on('APP_NAVIGATION', (event) => {
       if (event.domEvent) {
@@ -60,21 +72,6 @@ const App = () => {
       baseComponentUrl &&
       appNavClick[baseComponentUrl] !== undefined &&
       appNavClick[baseComponentUrl](false);
-
-    const unregister = insights?.chrome?.on(
-      'GLOBAL_FILTER_UPDATE',
-      ({ data }) => {
-        const [workloads, SID, selectedTags] =
-          insights.chrome?.mapGlobalFilter?.(data, false, true) || [];
-        batch(() => {
-          dispatch(setWorkloads(workloads));
-          dispatch(setSelectedTags(selectedTags));
-          dispatch(setSIDs(SID));
-        });
-      }
-    );
-
-    return () => unregister();
   }, [appNavClick, pathname]);
 
   return (
