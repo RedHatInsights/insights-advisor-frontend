@@ -77,13 +77,11 @@ const OverviewDetails = ({ match }) => {
   );
   const topics = useSelector(({ AdvisorStore }) => AdvisorStore.topics);
   const ruleAck = useSelector(({ AdvisorStore }) => AdvisorStore.ruleAck);
-  const hostAcks = useSelector(({ AdvisorStore }) => AdvisorStore.hostAcks);
   const selectedTags = useSelector(
     ({ AdvisorStore }) => AdvisorStore.selectedTags
   );
   const workloads = useSelector(({ AdvisorStore }) => AdvisorStore.workloads);
   const SID = useSelector(({ AdvisorStore }) => AdvisorStore.SID);
-  const fetchHostAcks = (data) => dispatch(AppActions.fetchHostAcks(data));
   const fetchTopics = () => dispatch(AppActions.fetchTopics());
   const addNotification = (data) => dispatch(notification(data));
 
@@ -155,11 +153,7 @@ const OverviewDetails = ({ match }) => {
 
   const afterDisableFn = async () => {
     setHost(undefined);
-    await fetchRulefn();
-    await fetchHostAcks({
-      rule_id: rule.rule_id,
-      limit: rule.hosts_acked_count,
-    });
+    fetchRulefn();
   };
 
   const actionResolver = () => [
@@ -170,15 +164,19 @@ const OverviewDetails = ({ match }) => {
   ];
 
   const bulkHostActions = async () => {
-    const data = { systems: hostAcks?.data?.map((item) => item.system_uuid) };
     try {
-      await Promise.all([
-        await API.post(
-          `${BASE_URL}/rule/${rule.rule_id}/unack_hosts/`,
+      const hostAckResponse = (
+        await API.get(
+          `${BASE_URL}/hostack/`,
           {},
-          data
-        ),
-      ]);
+          { rule_id: rule.rule_id, limit: rule.hosts_acked_count }
+        )
+      ).data;
+      const data = {
+        systems: hostAckResponse?.data?.map((item) => item.system_uuid),
+      };
+
+      await API.post(`${BASE_URL}/rule/${rule.rule_id}/unack_hosts/`, {}, data);
       fetchRulefn();
       addNotification({
         variant: 'success',
@@ -225,9 +223,6 @@ const OverviewDetails = ({ match }) => {
     } else {
       fetchTopics();
     }
-
-    rule.rule_id &&
-      fetchHostAcks({ rule_id: rule.rule_id, limit: rule.hosts_acked_count });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
