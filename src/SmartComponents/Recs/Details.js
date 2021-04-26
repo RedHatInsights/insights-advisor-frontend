@@ -223,6 +223,7 @@ const OverviewDetails = ({ match }) => {
     } else {
       fetchTopics();
     }
+    fetchRulefn({}, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
