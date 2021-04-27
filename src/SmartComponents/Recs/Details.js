@@ -473,21 +473,18 @@ const OverviewDetails = ({ match }) => {
                   <Title className="titleOverride" headingLevel="h3" size="2xl">
                     {intl.formatMessage(messages.affectedSystems)}
                   </Title>
-                  {systemFetchStatus === 'fulfilled' && (
-                    <Inventory
-                      tableProps={{ canSelectAll: false, actionResolver }}
-                      items={system.host_ids}
-                      rule={rule}
-                      afterDisableFn={afterDisableFn}
-                      filters={filters}
-                      onSortFn={onSortFn}
-                      searchText={searchText}
-                      setSearchText={(searchText) => {
-                        setSearchText(searchText);
-                      }}
-                    />
-                  )}
-                  {systemFetchStatus === 'pending' && <Loading />}
+                  <Inventory
+                    tableProps={{ canSelectAll: false, actionResolver }}
+                    items={system.host_ids}
+                    rule={rule}
+                    afterDisableFn={afterDisableFn}
+                    filters={filters}
+                    onSortFn={onSortFn}
+                    searchText={searchText}
+                    setSearchText={(searchText) => {
+                      setSearchText(searchText);
+                    }}
+                  />
                 </React.Fragment>
               )}
               {systemFetchStatus === 'fulfilled' &&
