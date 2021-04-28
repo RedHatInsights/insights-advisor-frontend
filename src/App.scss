@@ -1,21 +1,35 @@
 // Importing Global Variables
-@import '~@redhat-cloud-services/frontend-components-utilities/styles/variables';
+@import "~@redhat-cloud-services/frontend-components-utilities/styles/variables";
 
 // Temp nav styles
 ul.navigation-secondary {
-    margin-top: 20px;
-    li {
-      cursor: pointer;
-      font-size: 15px;
-      width: 100%;
-      box-shadow: none;
-      padding: 5px 0;
-      color: #1d1d1d;
-      span { margin-left: 50px; }
-      &:active, &.active{
-        background: #f5f5f5;
-        color: var(--pf-global--link--Color);
-      }
-      &:hover { color: var(--pf-global--link--Color); }
+  margin-top: 20px;
+  li {
+    cursor: pointer;
+    font-size: 15px;
+    width: 100%;
+    box-shadow: none;
+    padding: 5px 0;
+    color: #1d1d1d;
+    span {
+      margin-left: 50px;
+    }
+    &:active,
+    &.active {
+      background: #f5f5f5;
+      color: var(--pf-global--link--Color);
+    }
+    &:hover {
+      color: var(--pf-global--link--Color);
     }
   }
+}
+
+// Style overrides
+
+//https://issues.redhat.com/browse/ADVISOR-1618
+.ins-c-chip-filters {
+  div:last-of-type {
+    margin-right: 0px !important;
+  }
+}
