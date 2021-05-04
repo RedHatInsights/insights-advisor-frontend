@@ -144,6 +144,7 @@ const Inventory = ({
         />
       )}
       <InventoryTable
+        disableDefaultColumns
         ref={inventory}
         items={items}
         sortBy={calculateSort()}
