@@ -249,6 +249,7 @@ const SystemsTable = () => {
 
   return systemsFetchStatus !== 'failed' ? (
     <InventoryTable
+      disableDefaultColumns
       tableProps={{ isStickyHeader: true }}
       ref={inventory}
       items={(
