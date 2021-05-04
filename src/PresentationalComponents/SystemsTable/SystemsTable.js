@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import './SystemsTable.scss';
 
 import * as AppActions from '../../AppActions';
@@ -8,7 +9,7 @@ import {
   PERMS,
   SYSTEM_FILTER_CATEGORIES as SFC,
 } from '../../AppConstants';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   filterFetchBuilder,
   paramParser,
@@ -24,9 +25,7 @@ import Loading from '../Loading/Loading';
 import SystemsPdf from '../Export/SystemsPdf';
 import debounce from '../../Utilities/Debounce';
 import downloadReport from '../Common/DownloadHelper';
-import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
 import messages from '../../Messages';
-import { systemReducer } from '../../AppReducer';
 import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
@@ -53,7 +52,6 @@ const SystemsTable = () => {
     dispatch(AppActions.setFiltersSystems(filters));
 
   const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
-  const inventory = useRef(null);
   const results = systems.meta ? systems.meta.count : 0;
   const [searchText, setSearchText] = useState(filters.display_name || '');
   const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
@@ -250,7 +248,6 @@ const SystemsTable = () => {
   return systemsFetchStatus !== 'failed' ? (
     <InventoryTable
       tableProps={{ isStickyHeader: true }}
-      ref={inventory}
       items={(
         (systemsFetchStatus !== 'pending' && systems && systems.data) ||
         []
@@ -290,51 +287,61 @@ const SystemsTable = () => {
           : intl.formatMessage(messages.permsAction),
       }}
       fallback={Loading}
-      onLoad={({ mergeWithEntities, INVENTORY_ACTION_TYPES }) => {
-        const rows = [
-          {
-            title: intl.formatMessage(messages.name),
-            transforms: [pfReactTable.sortable, pfReactTable.cellWidth(80)],
-            key: 'display_name',
-          },
-          {
-            title: intl.formatMessage(messages.numberRuleHits),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'hits',
-          },
-          {
-            title: intl.formatMessage(messages.critical),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'critical_hits',
-          },
-          {
-            title: intl.formatMessage(messages.important),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'important_hits',
-          },
-          {
-            title: intl.formatMessage(messages.moderate),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'moderate_hits',
-          },
-          {
-            title: intl.formatMessage(messages.low),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'low_hits',
-          },
-          {
-            title: intl.formatMessage(messages.lastSeen),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'updated',
-          },
-        ];
-
-        getRegistry().register({
-          ...mergeWithEntities(
-            systemReducer([...rows], INVENTORY_ACTION_TYPES)
+      autoRefresh
+      customFiltes={filters}
+      disableDefaultColumns
+      columns={[
+        {
+          title: intl.formatMessage(messages.name),
+          transforms: [pfReactTable.sortable, pfReactTable.cellWidth(80)],
+          key: 'display_name',
+          renderFunc: (name, id, { display_name }) => (
+            <span>{display_name}</span>
           ),
-        });
-      }}
+        },
+        {
+          title: intl.formatMessage(messages.numberRuleHits),
+          transforms: [pfReactTable.sortable, pfReactTable.wrappable],
+          key: 'hits',
+          renderFunc: (name, id, { hits }) => <span>{hits}</span>,
+        },
+        {
+          title: intl.formatMessage(messages.critical),
+          transforms: [pfReactTable.sortable, pfReactTable.wrappable],
+          key: 'critical_hits',
+          renderFunc: (name, id, { critical_hits }) => (
+            <span>{critical_hits}</span>
+          ),
+        },
+        {
+          title: intl.formatMessage(messages.important),
+          transforms: [pfReactTable.sortable, pfReactTable.wrappable],
+          key: 'important_hits',
+          renderFunc: (name, id, { important_hits }) => (
+            <span>{important_hits}</span>
+          ),
+        },
+        {
+          title: intl.formatMessage(messages.moderate),
+          transforms: [pfReactTable.sortable, pfReactTable.wrappable],
+          key: 'moderate_hits',
+          renderFunc: (name, id, { moderate_hits }) => (
+            <span>{moderate_hits}</span>
+          ),
+        },
+        {
+          title: intl.formatMessage(messages.low),
+          transforms: [pfReactTable.sortable, pfReactTable.wrappable],
+          key: 'low_hits',
+          renderFunc: (name, id, { low_hits }) => <span>{low_hits}</span>,
+        },
+        {
+          title: intl.formatMessage(messages.lastSeen),
+          transforms: [pfReactTable.sortable, pfReactTable.wrappable],
+          key: 'updated',
+          renderFunc: (name, id, { updated }) => <span>{updated}</span>,
+        },
+      ]}
     />
   ) : (
     systemsFetchStatus === 'failed' && (
