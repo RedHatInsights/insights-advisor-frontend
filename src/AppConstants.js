@@ -18,8 +18,6 @@ const intl = createIntl(
 );
 const intlSettings = { locale };
 
-export const BASE_FETCH_URL = '/api/insights/v1/';
-
 export const RULE_FETCH = 'RULE_FETCH';
 export const RULES_FETCH = 'RULES_FETCH';
 export const SYSTEM_FETCH = 'SYSTEM_FETCH';
