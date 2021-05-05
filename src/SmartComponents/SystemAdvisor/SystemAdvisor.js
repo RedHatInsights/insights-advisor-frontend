@@ -14,6 +14,7 @@ import {
   FILTER_CATEGORIES as FC,
   IMPACT_LABEL,
   LIKELIHOOD_LABEL,
+  RULE_CATEGORIES,
 } from '../../AppConstants';
 import {
   Bullseye,
@@ -285,7 +286,6 @@ const SystemAdvisor = () => {
           ],
         },
       ];
-
       const isValidSearchValue =
         searchValue.length === 0 ||
         rule.description.toLowerCase().includes(searchValue.toLowerCase());
@@ -298,9 +298,8 @@ const SystemAdvisor = () => {
               has_playbook: value.resolution.has_playbook,
               publish_date: rule.publish_date,
               total_risk: rule.total_risk,
-              category: rule.category.name,
+              category: RULE_CATEGORIES[rule.category.name.toLowerCase()],
             };
-
             return filterValues.find(
               (value) => String(value) === String(rowValue[key])
             );
