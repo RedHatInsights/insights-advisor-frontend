@@ -36,6 +36,7 @@ import {
   fitContent,
   sortable,
 } from '@patternfly/react-table';
+import { useDispatch, useSelector } from 'react-redux';
 
 import API from '../../Utilities/Api';
 import DateFormat from '@redhat-cloud-services/frontend-components/DateFormat';
@@ -43,22 +44,23 @@ import InsightsLabel from '@redhat-cloud-services/frontend-components/InsightsLa
 import { List } from 'react-content-loader';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
-import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
 import ReportDetails from '../../PresentationalComponents/ReportDetails';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
+import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import { capitalize } from '../../PresentationalComponents/Common/Tables';
-import { connect } from 'react-redux';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 
-const SystemAdvisor = ({
-  routerData,
-  entity,
-  systemProfile,
-  addNotification,
-}) => {
+const SystemAdvisor = () => {
   const intl = useIntl();
+  const dispatch = useDispatch();
+  const addNotification = (data) => dispatch(addNotificationAction(data));
+
+  const entity = useSelector(({ entityDetails }) => entityDetails.entity);
+  const systemProfile = useSelector(({ systemProfileStore }) =>
+    systemProfileStore ? systemProfileStore.systemProfile : {}
+  );
+  const routerData = useSelector(({ routerData }) => routerData);
 
   const [inventoryReportFetchStatus, setInventoryReportFetchStatus] = useState(
     'pending'
@@ -358,7 +360,7 @@ const SystemAdvisor = ({
             const chips = item[1].map((value) => ({
               name: category.values.find(
                 (values) => values.value === String(value)
-              ).text,
+              ).label,
               value,
             }));
             return {
@@ -468,10 +470,16 @@ const SystemAdvisor = ({
   };
 
   const onFilterChange = (param, values) => {
+    const removeFilterParam = (param) => {
+      const filter = { ...filters };
+      delete filter[param];
+      return filter;
+    };
+
     const newFilters =
       values.length > 0
         ? { ...filters, ...{ [param]: values } }
-        : this.removeFilterParam(param);
+        : removeFilterParam(param);
     setRows(
       buildRows(activeReports, kbaDetailsData, newFilters, rows, searchValue)
     );
@@ -740,23 +748,4 @@ const SystemAdvisor = ({
   );
 };
 
-SystemAdvisor.propTypes = {
-  entity: PropTypes.object,
-  addNotification: PropTypes.func,
-  routerData: PropTypes.object,
-  systemProfile: PropTypes.object,
-};
-
-const mapStateToProps = (state) => ({
-  entity: state.entityDetails.entity,
-  routerData: state.routerData,
-  systemProfile: state.systemProfileStore
-    ? state.systemProfileStore.systemProfile
-    : {},
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  addNotification: (data) => dispatch(addNotification(data)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(SystemAdvisor);
+export default SystemAdvisor;

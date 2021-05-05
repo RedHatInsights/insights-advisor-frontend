@@ -1,25 +1,25 @@
 import './report-details.scss';
 
 import {
-  BullseyeIcon,
-  ExternalLinkAltIcon,
-  InfoCircleIcon,
-  LightbulbIcon,
-  ThumbsUpIcon,
-} from '@patternfly/react-icons';
-import {
   Card,
   CardBody,
   CardHeader,
-  Stack,
-  StackItem,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/dist/esm/components/Card';
 import {
   Skeleton,
   SkeletonSize,
 } from '@redhat-cloud-services/frontend-components/Skeleton';
+import {
+  Stack,
+  StackItem,
+} from '@patternfly/react-core/dist/esm/layouts/Stack';
 
+import { BullseyeIcon } from '@patternfly/react-icons/dist/esm/icons/bullseye-icon';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
+import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
+import { LightbulbIcon } from '@patternfly/react-icons/dist/esm/icons/lightbulb-icon';
 import React from 'react';
+import { ThumbsUpIcon } from '@patternfly/react-icons/dist/esm/icons/thumbs-up-icon';
 import classNames from 'classnames';
 import doT from 'dot';
 import marked from 'marked';
