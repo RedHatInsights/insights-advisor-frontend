@@ -1,7 +1,7 @@
 /* eslint-disable new-cap */
 import * as ActionTypes from './AppConstants';
 
-import Advisor from '@redhat-cloud-services/frontend-components-inventory-insights/index';
+import Advisor from './SmartComponents/SystemAdvisor';
 import Immutable from 'seamless-immutable';
 import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 
