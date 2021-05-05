@@ -34,7 +34,7 @@ plugins.push(
       root: resolve(__dirname, '../'),
       exposes: {
         './RootApp': resolve(__dirname, '../src/AppEntry'),
-        './SystemAdvisor': resolve(
+        './SystemDetail': resolve(
           __dirname,
           '../src/SmartComponents/SystemAdvisor'
         ),
