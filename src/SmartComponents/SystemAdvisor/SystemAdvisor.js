@@ -63,9 +63,8 @@ const SystemAdvisor = () => {
   );
   const routerData = useSelector(({ routerData }) => routerData);
 
-  const [inventoryReportFetchStatus, setInventoryReportFetchStatus] = useState(
-    'pending'
-  );
+  const [inventoryReportFetchStatus, setInventoryReportFetchStatus] =
+    useState('pending');
   const [rows, setRows] = useState([]);
   const [activeReports, setActiveReports] = useState([]);
   const [kbaDetailsData, setKbaDetailsData] = useState([]);

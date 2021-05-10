@@ -26,9 +26,9 @@ const List = () => {
     <React.Fragment>
       <PageHeader>
         <PageHeaderTitle
-          title={`${intl.formatMessage(
-            messages.insightsHeader
-          )} ${intl.formatMessage(messages.systems).toLowerCase()}`}
+          title={`${intl.formatMessage(messages.insightsHeader)} ${intl
+            .formatMessage(messages.systems)
+            .toLowerCase()}`}
         />
       </PageHeader>
       <Main>

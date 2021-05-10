@@ -32,9 +32,9 @@ const List = ({ fetchTopics, intl, selectedTags, workloads, SID }) => {
     <React.Fragment>
       <PageHeader>
         <PageHeaderTitle
-          title={`${intl.formatMessage(
-            messages.insightsHeader
-          )} ${intl.formatMessage(messages.topics).toLowerCase()}`}
+          title={`${intl.formatMessage(messages.insightsHeader)} ${intl
+            .formatMessage(messages.topics)
+            .toLowerCase()}`}
         />
       </PageHeader>
       <Main>

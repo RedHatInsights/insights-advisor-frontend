@@ -57,9 +57,9 @@ const List = () => {
     <React.Fragment>
       <PageHeader className="ins-c-recommendations-header">
         <PageHeaderTitle
-          title={`${intl.formatMessage(
-            messages.insightsHeader
-          )} ${intl.formatMessage(messages.recommendations).toLowerCase()}`}
+          title={`${intl.formatMessage(messages.insightsHeader)} ${intl
+            .formatMessage(messages.recommendations)
+            .toLowerCase()}`}
         />
         {!permsExport.isLoading && (
           <Tooltip
