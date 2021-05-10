@@ -65,8 +65,10 @@ const RulesTable = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const { search } = useLocation();
-  const permsExport = usePermissions('advisor', AppConstants.PERMS.export)
-    .hasAccess;
+  const permsExport = usePermissions(
+    'advisor',
+    AppConstants.PERMS.export
+  ).hasAccess;
   const permsDisableRec = usePermissions(
     'advisor',
     AppConstants.PERMS.disableRec

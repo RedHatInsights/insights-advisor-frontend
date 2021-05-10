@@ -14,8 +14,7 @@ export const cveToRuleid = [
   },
   {
     rule_id: 'CVE_2015_7181_2_3_nss_nspr|NSS_NSPR_CVE_2015_7181_2_3',
-    name:
-      'CVE-2015-7181, CVE-2015-7182, CVE-2015-7183: NSS/NSPR privilege escalation',
+    name: 'CVE-2015-7181, CVE-2015-7182, CVE-2015-7183: NSS/NSPR privilege escalation',
     description:
       'CVE-2015-7181, CVE-2015-7182, CVE-2015-7183: NSS/NSPR privilege escalation',
     cves: ['CVE-2015-7181', 'CVE-2015-7182', 'CVE-2015-7183'],
@@ -35,8 +34,7 @@ export const cveToRuleid = [
   },
   {
     rule_id: 'CVE_2016_0728_kernel|KERNEL_CVE-2016-0728',
-    name:
-      'CVE-2016-0728: kernel privilege escalation in key management subsystem',
+    name: 'CVE-2016-0728: kernel privilege escalation in key management subsystem',
     description:
       'CVE-2016-0728: kernel privilege escalation in key management subsystem',
     cves: ['CVE-2016-0728'],
@@ -103,16 +101,14 @@ export const cveToRuleid = [
   },
   {
     rule_id: 'CVE_2016_2315_24_git|GIT_CVE_2016_2315_24',
-    name:
-      'CVE-2016-2315, CVE-2016-2324: Git code execution via crafted packfile',
+    name: 'CVE-2016-2315, CVE-2016-2324: Git code execution via crafted packfile',
     description:
       'CVE-2016-2315, CVE-2016-2324: Git code execution via crafted packfile',
     cves: ['CVE-2016-2315', 'CVE-2016-2324'],
   },
   {
     rule_id: 'CVE_2016_2315_24_git|GIT_DAEMON_CVE_2016_2315_24',
-    name:
-      'CVE-2016-2315, CVE-2016-2324: Git code execution via crafted packfile',
+    name: 'CVE-2016-2315, CVE-2016-2324: Git code execution via crafted packfile',
     description:
       'CVE-2016-2315, CVE-2016-2324: Git daemon remote code execution via crafted packfile',
     cves: ['CVE-2016-2315', 'CVE-2016-2324'],
@@ -218,16 +214,14 @@ export const cveToRuleid = [
   {
     rule_id:
       'CVE_2017_1000366_glibc|CVE_2017_1000364_KERNEL_CVE_2017_1000366_GLIBC_EXPLOITABLE',
-    name:
-      'CVE-2017-1000364, CVE-2017-1000366: kernel, glibc privilege escalation',
+    name: 'CVE-2017-1000364, CVE-2017-1000366: kernel, glibc privilege escalation',
     description:
       'CVE-2017-1000364, CVE-2017-1000366: kernel, glibc privilege escalation',
     cves: ['CVE-2017-1000364', 'CVE-2017-1000366'],
   },
   {
     rule_id: 'CVE_2017_1000368_sudo|CVE_2017_1000368_SUDO_2',
-    name:
-      'CVE-2017-1000368: sudo privilege escalation due to incomplete bugfix',
+    name: 'CVE-2017-1000368: sudo privilege escalation due to incomplete bugfix',
     description:
       'CVE-2017-1000368: sudo privilege escalation due to incomplete bugfix',
     cves: ['CVE-2017-1000368'],
@@ -331,8 +325,7 @@ export const cveToRuleid = [
   },
   {
     rule_id: 'CVE_2017_7184_kernel|KERNEL_CVE_2017_7184_EXPLOITABLE_2',
-    name:
-      'CVE-2017-7184: kernel privilege escalation via CAP_NET_ADMIN capability',
+    name: 'CVE-2017-7184: kernel privilege escalation via CAP_NET_ADMIN capability',
     description:
       'CVE-2017-7184: kernel privilege escalation via CAP_NET_ADMIN capability',
     cves: ['CVE-2017-7184'],
@@ -422,8 +415,7 @@ export const cveToRuleid = [
   },
   {
     rule_id: 'CVE_2018_12130_cpu_kernel|CVE_2018_12130_CPU_KERNEL_BAD_CMDLINE',
-    name:
-      'CVE-2018-12126, CVE-2018-12127, CVE-2018-12130, CVE-2019-11091: "MDS" CPU side-channel',
+    name: 'CVE-2018-12126, CVE-2018-12127, CVE-2018-12130, CVE-2019-11091: "MDS" CPU side-channel',
     description:
       'CVE-2018-12126, CVE-2018-12127, CVE-2018-12130, CVE-2019-11091: "MDS" CPU side-channel mitigation disabled',
     cves: [
@@ -435,8 +427,7 @@ export const cveToRuleid = [
   },
   {
     rule_id: 'CVE_2018_12130_cpu_kernel|CVE_2018_12130_CPU_KERNEL_NEED_UPDATE',
-    name:
-      'CVE-2018-12126, CVE-2018-12127, CVE-2018-12130, CVE-2019-11091: "MDS" CPU side-channel',
+    name: 'CVE-2018-12126, CVE-2018-12127, CVE-2018-12130, CVE-2019-11091: "MDS" CPU side-channel',
     description:
       'CVE-2018-12126, CVE-2018-12127, CVE-2018-12130, CVE-2019-11091: "MDS" CPU side-channel',
     cves: [
@@ -448,8 +439,7 @@ export const cveToRuleid = [
   },
   {
     rule_id: 'CVE_2018_12130_cpu_kernel|CVE_2018_12130_CPU_KERNEL_VULNERABLE_2',
-    name:
-      'CVE-2018-12126, CVE-2018-12127, CVE-2018-12130, CVE-2019-11091: "MDS" CPU side-channel',
+    name: 'CVE-2018-12126, CVE-2018-12127, CVE-2018-12130, CVE-2019-11091: "MDS" CPU side-channel',
     description:
       'CVE-2018-12126, CVE-2018-12127, CVE-2018-12130, CVE-2019-11091: "MDS" CPU side-channel reported by kernel',
     cves: [
@@ -482,8 +472,7 @@ export const cveToRuleid = [
   },
   {
     rule_id: 'CVE_2018_14634_kernel|CVE_2018_14634_2',
-    name:
-      'CVE-2018-14634: kernel privilege escalation via SUID-root binary integer overflow',
+    name: 'CVE-2018-14634: kernel privilege escalation via SUID-root binary integer overflow',
     description:
       'CVE-2018-14634: kernel privilege escalation via SUID-root binary integer overflow',
     cves: ['CVE-2018-14634'],
@@ -580,24 +569,21 @@ export const cveToRuleid = [
   },
   {
     rule_id: 'CVE_2019_11477_kernel|CVE_2019_11477_KERNEL',
-    name:
-      'CVE-2019-11477, CVE-2019-11478, CVE-2019-11479: "Sack Panic" kernel denial of service',
+    name: 'CVE-2019-11477, CVE-2019-11478, CVE-2019-11479: "Sack Panic" kernel denial of service',
     description:
       'CVE-2019-11477, CVE-2019-11478, CVE-2019-11479: "Sack Panic" kernel denial of service',
     cves: ['CVE-2019-11477', 'CVE-2019-11478', 'CVE-2019-11479'],
   },
   {
     rule_id: 'CVE_2019_14835_kernel|CVE_2019_14835_KERNEL_VULN_BAD',
-    name:
-      'CVE-2019-14835: kernel privilege escalation during guest live migration',
+    name: 'CVE-2019-14835: kernel privilege escalation during guest live migration',
     description:
       'CVE-2019-14835: kernel privilege escalation during guest live migration with virtualization',
     cves: ['CVE-2019-14835'],
   },
   {
     rule_id: 'CVE_2019_14835_kernel|CVE_2019_14835_KERNEL_VULN_NORMAL',
-    name:
-      'CVE-2019-14835: kernel privilege escalation during guest live migration',
+    name: 'CVE-2019-14835: kernel privilege escalation during guest live migration',
     description:
       'CVE-2019-14835: kernel privilege escalation during guest live migration',
     cves: ['CVE-2019-14835'],
@@ -647,8 +633,7 @@ export const cveToRuleid = [
   },
   {
     rule_id: 'bash_injection|VULNERABLE_BASH_DETECTED',
-    name:
-      'CVE-2014-6271, CVE-2014-7169: "Shellshock" Bash privilege escalation',
+    name: 'CVE-2014-6271, CVE-2014-7169: "Shellshock" Bash privilege escalation',
     description:
       'CVE-2014-6271, CVE-2014-7169: "Shellshock" Bash privilege escalation',
     cves: ['CVE-2014-6271', 'CVE-2014-7169'],
