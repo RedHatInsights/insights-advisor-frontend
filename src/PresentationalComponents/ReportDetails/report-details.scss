@@ -34,8 +34,7 @@
   .ins-c-inventory-advisor__card {
     .ins-m-card__flat {
       box-shadow: none;
-      border: 1px solid #dcdcdc;
-      border-radius: 5px;
+      border: 0px;
     }
 
     .pf-c-card__body svg {
@@ -46,7 +45,6 @@
       display: block;
       @include rem("padding", 9.5px);
       @include rem("margin-top", 5px);
-      @include rem("margin-bottom", 10px);
       color: #333;
       word-break: break-all;
       word-wrap: break-word;
@@ -76,13 +74,16 @@
 
     table {
       width: 100%;
-      @include rem("margin-top", 15px);
       tr {
         border-bottom: 1px solid #ededed;
+
+        :first-child::after {
+          border-left: 0 !important;
+        }
       }
       th,
       td {
-        @include rem("padding", 16px);
+        @include rem("padding", 8px);
       }
 
       // Inline style overwrite
