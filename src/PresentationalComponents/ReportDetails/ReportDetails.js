@@ -15,6 +15,7 @@ import {
 } from '@patternfly/react-core/dist/esm/layouts/Stack';
 
 import { BullseyeIcon } from '@patternfly/react-icons/dist/esm/icons/bullseye-icon';
+import { Divider } from '@patternfly/react-core/dist/esm/components/Divider';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons/dist/esm/icons/external-link-alt-icon';
 import { InfoCircleIcon } from '@patternfly/react-icons/dist/esm/icons/info-circle-icon';
 import { LightbulbIcon } from '@patternfly/react-icons/dist/esm/icons/lightbulb-icon';
@@ -109,7 +110,7 @@ const ReportDetails = ({ report, kbaDetail, kbaLoading }) => {
           hasGutter
         >
           <StackItem>
-            <Card className="ins-m-card__flat">
+            <Card className="ins-m-card__flat" isCompact>
               <CardHeader>
                 <BullseyeIcon className="ins-c-report-details-icon" />
                 <strong> Detected issues</strong>
@@ -119,8 +120,9 @@ const ReportDetails = ({ report, kbaDetail, kbaLoading }) => {
               </CardBody>
             </Card>
           </StackItem>
+          <Divider />
           <StackItem>
-            <Card className="ins-m-card__flat">
+            <Card className="ins-m-card__flat" isCompact>
               <CardHeader>
                 <ThumbsUpIcon className="ins-c-report-details-icon" />
                 <strong> Steps to resolve</strong>
@@ -135,43 +137,49 @@ const ReportDetails = ({ report, kbaDetail, kbaLoading }) => {
             </Card>
           </StackItem>
           {rule.node_id && (
-            <StackItem>
-              <Card className="ins-m-card__flat">
-                <CardHeader>
-                  <LightbulbIcon className="ins-c-report-details-icon" />
-                  <strong> Related Knowledgebase article </strong>
-                </CardHeader>
-                <CardBody>
-                  {kbaLoading ? (
-                    <Skeleton size={SkeletonSize.sm} />
-                  ) : (
-                    <a
-                      rel="noopener noreferrer"
-                      target="_blank"
-                      href={`${kbaDetail.view_uri}`}
-                    >
-                      {kbaDetail.publishedTitle
-                        ? kbaDetail.publishedTitle
-                        : `Knowledgebase article`}{' '}
-                      <ExternalLinkAltIcon />
-                    </a>
-                  )}
-                </CardBody>
-              </Card>
-            </StackItem>
+            <React.Fragment>
+              <Divider />
+              <StackItem>
+                <Card className="ins-m-card__flat" isCompact>
+                  <CardHeader>
+                    <LightbulbIcon className="ins-c-report-details-icon" />
+                    <strong> Related Knowledgebase article </strong>
+                  </CardHeader>
+                  <CardBody>
+                    {kbaLoading ? (
+                      <Skeleton size={SkeletonSize.sm} />
+                    ) : (
+                      <a
+                        rel="noopener noreferrer"
+                        target="_blank"
+                        href={`${kbaDetail.view_uri}`}
+                      >
+                        {kbaDetail.publishedTitle
+                          ? kbaDetail.publishedTitle
+                          : `Knowledgebase article`}{' '}
+                        <ExternalLinkAltIcon />
+                      </a>
+                    )}
+                  </CardBody>
+                </Card>
+              </StackItem>
+            </React.Fragment>
           )}
           {rule.more_info && (
-            <StackItem>
-              <Card className="ins-m-card__flat">
-                <CardHeader>
-                  <InfoCircleIcon className="ins-c-report-details-icon" />
-                  <strong> Additional info </strong>
-                </CardHeader>
-                <CardBody>
-                  {templateProcessor(rule.more_info, report.details)}
-                </CardBody>
-              </Card>
-            </StackItem>
+            <React.Fragment>
+              <Divider />
+              <StackItem>
+                <Card className="ins-m-card__flat" isCompact>
+                  <CardHeader>
+                    <InfoCircleIcon className="ins-c-report-details-icon" />
+                    <strong> Additional info </strong>
+                  </CardHeader>
+                  <CardBody>
+                    {templateProcessor(rule.more_info, report.details)}
+                  </CardBody>
+                </Card>
+              </StackItem>
+            </React.Fragment>
           )}
         </Stack>
       </CardBody>
