@@ -50,9 +50,10 @@ import ReportDetails from '../../PresentationalComponents/ReportDetails';
 import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import { capitalize } from '../../PresentationalComponents/Common/Tables';
 import messages from '../../Messages';
-import { useIntl } from 'react-intl';
+import PropTypes from 'prop-types';
+import { useIntl, IntlProvider } from 'react-intl';
 
-const SystemAdvisor = () => {
+const BaseSystemAdvisor = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const addNotification = (data) => dispatch(addNotificationAction(data));
@@ -746,4 +747,29 @@ const SystemAdvisor = () => {
   );
 };
 
+const SystemAdvisor = ({ customItnl, intlProps, ...props }) => {
+  const Wrapper = customItnl ? IntlProvider : Fragment;
+  return (
+    <Wrapper
+      {...(customItnl && {
+        locale: navigator.language.slice(0, 2),
+        messages,
+        onError: console.log,
+        ...intlProps,
+      })}
+    >
+      <BaseSystemAdvisor {...props} />
+    </Wrapper>
+  );
+};
+
 export default SystemAdvisor;
+
+SystemAdvisor.propTypes = {
+  customItnl: PropTypes.bool,
+  intlProps: PropTypes.shape({
+    locale: PropTypes.string,
+    messages: PropTypes.array,
+    onError: PropTypes.func,
+  }),
+};
