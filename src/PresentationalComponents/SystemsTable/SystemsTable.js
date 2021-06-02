@@ -112,7 +112,7 @@ const SystemsTable = () => {
       },
     },
     {
-      label: SFC.hits.title,
+      label: SFC.hits.title.toLowerCase(),
       type: SFC.hits.type,
       id: SFC.hits.urlParam,
       value: `checkbox-${SFC.hits.urlParam}`,
