@@ -111,7 +111,7 @@ const Inventory = ({
 
   const filterConfigItems = [
     {
-      label: intl.formatMessage(messages.name),
+      label: intl.formatMessage(messages.name).toLowerCase(),
       filterValues: {
         key: 'text-filter',
         onChange: (event, value) => setSearchText(value),
