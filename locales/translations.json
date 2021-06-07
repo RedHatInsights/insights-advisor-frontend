@@ -7,6 +7,7 @@
   "ansibleSupportNo": "No Ansible remediation support",
   "ansibleSupportYes": "Ansible remediation support",
   "availability": "Availability",
+  "byEnabling": "By enabling this recommendation, it will impact {systems, plural, one {# system} other {# systems}}.",
   "cancel": "Cancel",
   "category": "Category",
   "categoryHeader": "Recently identified recommendations by category",

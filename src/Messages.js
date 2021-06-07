@@ -1074,4 +1074,10 @@ export default defineMessages({
     defaultMessage:
       ' - Due to browser limitations, showing the first 1000 systems',
   },
+  byEnabling: {
+    id: 'byEnabling',
+    description: 'By enabling this recommendation',
+    defaultMessage:
+      'By enabling this recommendation, it will impact {systems, plural, one {# system} other {# systems}}.',
+  },
 });
