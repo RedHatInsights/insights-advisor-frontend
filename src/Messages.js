@@ -1080,4 +1080,9 @@ export default defineMessages({
     defaultMessage:
       'By enabling this recommendation, it will impact {systems, plural, one {# system} other {# systems}}.',
   },
+  operatingSystem: {
+    id: 'operatingSystem',
+    description: 'Operating system',
+    defaultMessage: 'Operating System',
+  },
 });

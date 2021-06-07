@@ -212,25 +212,6 @@ export const getAdvisorStore =
     }
   };
 
-export function systemReducer(cols, INVENTORY_ACTION_TYPES) {
-  return applyReducerHash({
-    [`${INVENTORY_ACTION_TYPES.LOAD_ENTITIES}_FULFILLED`]: (state) => {
-      const { [state.columns.length - 1]: lastCol } = state.columns;
-      cols[cols.length - 1] = {
-        ...lastCol,
-        ...cols[cols.length - 1],
-      };
-      return {
-        ...state,
-        columns: cols.map((cell) => ({
-          ...cell,
-          ...state.columns.find(({ key }) => cell.key === key),
-        })),
-      };
-    },
-  });
-}
-
 export function entitiesDetailsReducer(ActionTypes) {
   return applyReducerHash(
     {
