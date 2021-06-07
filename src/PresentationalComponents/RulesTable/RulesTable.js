@@ -426,11 +426,20 @@ const RulesTable = () => {
                 ),
               },
               {
-                title: (
-                  <div
-                    key={key}
-                  >{`${value.impacted_systems_count.toLocaleString()}`}</div>
-                ),
+                title:
+                  value.rule_status === 'rhdisabled' ? (
+                    <Tooltip
+                      content={intl.formatMessage(messages.byEnabling, {
+                        systems: value.impacted_systems_count,
+                      })}
+                    >
+                      <span>{intl.formatMessage(messages.nA)}</span>
+                    </Tooltip>
+                  ) : (
+                    <div
+                      key={key}
+                    >{`${value.impacted_systems_count.toLocaleString()}`}</div>
+                  ),
               },
               {
                 title: (
