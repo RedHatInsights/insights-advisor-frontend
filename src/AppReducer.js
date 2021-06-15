@@ -24,7 +24,7 @@ const initialState = Immutable({
     impacting: ['true'],
     rule_status: 'enabled',
     sort: '-total_risk',
-    limit: 10,
+    limit: 20,
     offset: 0,
   },
   filtersSystems: { sort: '-last_seen' },

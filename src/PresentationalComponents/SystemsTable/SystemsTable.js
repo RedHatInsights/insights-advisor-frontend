@@ -226,7 +226,7 @@ const SystemsTable = () => {
         ? (paramsObject.offset = 0)
         : (paramsObject.offset = Number(paramsObject.offset[0]));
       paramsObject.limit === undefined
-        ? (paramsObject.limit = 10)
+        ? (paramsObject.limit = 20)
         : (paramsObject.limit = Number(paramsObject.limit[0]));
       setFilters({ ...filters, ...paramsObject });
     } else if (
@@ -234,7 +234,7 @@ const SystemsTable = () => {
       filters.offset === undefined ||
       filters.hits === undefined
     ) {
-      setFilters({ ...filters, offset: 0, limit: 10, hits: ['all'] });
+      setFilters({ ...filters, offset: 0, limit: 20, hits: ['all'] });
     }
 
     setFilterBuilding(false);
@@ -250,7 +250,10 @@ const SystemsTable = () => {
   return systemsFetchStatus !== 'failed' ? (
     <InventoryTable
       disableDefaultColumns
-      tableProps={{ isStickyHeader: true }}
+      tableProps={{
+        isStickyHeader: true,
+        variant: pfReactTable.TableVariant.compact,
+      }}
       ref={inventory}
       items={(
         (systemsFetchStatus !== 'pending' && systems && systems.data) ||
