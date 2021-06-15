@@ -18,6 +18,7 @@ import {
   Table,
   TableBody,
   TableHeader,
+  TableVariant,
   cellWidth,
   fitContent,
   sortable,
@@ -299,7 +300,7 @@ const RulesTable = () => {
         ? (paramsObject.offset = 0)
         : (paramsObject.offset = Number(paramsObject.offset[0]));
       paramsObject.limit === undefined
-        ? (paramsObject.limit = 10)
+        ? (paramsObject.limit = 20)
         : (paramsObject.limit = Number(paramsObject.limit[0]));
       paramsObject.reboot !== undefined &&
         !Array.isArray(paramsObject.reboot) &&
@@ -763,6 +764,7 @@ const RulesTable = () => {
       {rulesFetchStatus === 'fulfilled' && (
         <Table
           aria-label={'rule-table'}
+          variant={TableVariant.compact}
           actionResolver={actionResolver}
           onCollapse={handleOnCollapse}
           sortBy={sortBy}
