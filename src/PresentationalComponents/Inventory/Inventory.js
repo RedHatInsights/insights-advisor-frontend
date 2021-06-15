@@ -28,7 +28,7 @@ const Inventory = ({
   intl,
   rule,
   addNotification,
-  items,
+  items = [],
   afterDisableFn,
   onSortFn,
   filters,
