@@ -1,6 +1,6 @@
 # Advisor Frontend (AF)
 
-[![Build Status](https://travis-ci.org/RedHatInsights/insights-advisor-frontend.svg?branch=master)](https://travis-ci.org/RedHatInsights/insights-advisor-frontend)
+[![Build Status](https://travis-ci.com/RedHatInsights/insights-advisor-frontend.svg?branch=master)](https://travis-ci.com/RedHatInsights/insights-advisor-frontend)
 ## Getting Started
 There is a [comprehensive quick start guide in the Storybook Documentation](https://github.com/RedHatInsights/insights-frontend-storybook/blob/master/src/docs/welcome/quickStart/DOC.md) to setting up an Insights environment complete with:
 - [Insights-Frontend-Starter-App](https://github.com/RedHatInsights/insights-frontend-starter-app)
