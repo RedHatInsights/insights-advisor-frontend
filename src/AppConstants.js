@@ -287,13 +287,19 @@ export const FILTER_CATEGORIES = {
     urlParam: 'reboot',
     values: [
       {
-        label: intlHelper(intl.formatMessage(messages.yes), intlSettings),
-        text: intlHelper(intl.formatMessage(messages.yes), intlSettings),
+        label: intlHelper(intl.formatMessage(messages.required), intlSettings),
+        text: intlHelper(intl.formatMessage(messages.required), intlSettings),
         value: 'true',
       },
       {
-        label: intlHelper(intl.formatMessage(messages.no), intlSettings),
-        text: intlHelper(intl.formatMessage(messages.all), intlSettings),
+        label: intlHelper(
+          intl.formatMessage(messages.notRequired),
+          intlSettings
+        ),
+        text: intlHelper(
+          intl.formatMessage(messages.notRequired),
+          intlSettings
+        ),
         value: 'false',
       },
     ],
