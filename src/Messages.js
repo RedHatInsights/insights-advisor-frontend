@@ -1080,4 +1080,14 @@ export default defineMessages({
     defaultMessage:
       'By enabling this recommendation, it will impact {systems, plural, one {# system} other {# systems}}.',
   },
+  required: {
+    id: 'required',
+    description: 'Required',
+    defaultMessage: 'Required',
+  },
+  notRequired: {
+    id: 'notRequired',
+    description: 'Not required',
+    defaultMessage: 'Not required',
+  },
 });
