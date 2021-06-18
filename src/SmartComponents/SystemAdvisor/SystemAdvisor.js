@@ -27,6 +27,7 @@ import {
   Tooltip,
   TooltipPosition,
 } from '@patternfly/react-core';
+import { IntlProvider, useIntl } from 'react-intl';
 import React, { Fragment, useEffect, useState } from 'react';
 import {
   SortByDirection,
@@ -45,13 +46,12 @@ import InsightsLabel from '@redhat-cloud-services/frontend-components/InsightsLa
 import { List } from 'react-content-loader';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
+import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
 import ReportDetails from '../../PresentationalComponents/ReportDetails';
 import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import { capitalize } from '../../PresentationalComponents/Common/Tables';
 import messages from '../../Messages';
-import PropTypes from 'prop-types';
-import { useIntl, IntlProvider } from 'react-intl';
 
 const BaseSystemAdvisor = () => {
   const intl = useIntl();
@@ -90,7 +90,6 @@ const BaseSystemAdvisor = () => {
   ).length;
 
   const cols = [
-    { title: '' },
     {
       title: intl.formatMessage(messages.topicAddEditDescription),
       transforms: [sortable],
@@ -200,30 +199,15 @@ const BaseSystemAdvisor = () => {
         : key === 0
         ? true
         : false;
+
       const reportRow = [
         {
           rule,
           resolution,
           isOpen,
           selected,
+          disableSelection: !resolution.has_playbook,
           cells: [
-            {
-              title: (
-                <div>
-                  {resolution.has_playbook ? (
-                    <input
-                      aria-label="select-checkbox"
-                      type="checkbox"
-                      checked={!!selected}
-                      onChange={(event) => onSelect(event, !selected, rule)}
-                      className="pf-c-check"
-                    />
-                  ) : (
-                    ''
-                  )}
-                </div>
-              ),
-            },
             { title: <div> {rule.description}</div> },
             {
               title: (
@@ -315,6 +299,19 @@ const BaseSystemAdvisor = () => {
 
     return builtRows;
   };
+
+  const onRowSelect = (_e, isSelected, rowId) =>
+    setRows(
+      buildRows(
+        activeReports,
+        kbaDetailsData,
+        filters,
+        rows.map((row, index) =>
+          index === rowId ? { ...row, selected: isSelected } : row
+        ),
+        searchValue
+      )
+    );
 
   const onBulkSelect = (isSelected) => {
     setIsSelected(isSelected);
@@ -431,10 +428,10 @@ const BaseSystemAdvisor = () => {
 
   const onSort = (_e, index, direction) => {
     const sortedReports = {
-      2: 'description',
-      3: 'publish_date',
-      4: 'total_risk',
-      5: 'has_playbook',
+      1: 'description',
+      2: 'publish_date',
+      3: 'total_risk',
+      4: 'has_playbook',
     };
     const key = index === 5 ? 'resolution' : 'rule';
     const sort = (key) =>
@@ -495,22 +492,6 @@ const BaseSystemAdvisor = () => {
     );
     setSearchValue(value);
     setRows(builtRows);
-  };
-
-  const onSelect = (_e, isSelected, rule) => {
-    setRows(
-      buildRows(
-        activeReports,
-        kbaDetailsData,
-        filters,
-        rows.map((oneRow) =>
-          oneRow.rule && oneRow.rule.rule_id === rule.rule_id
-            ? { ...oneRow, selected: isSelected }
-            : { ...oneRow }
-        ),
-        searchValue
-      )
-    );
   };
 
   const processRemediation = (selectedAnsibleRules) => {
@@ -668,7 +649,8 @@ const BaseSystemAdvisor = () => {
         ) : activeReports.length > 0 ? (
           <Fragment>
             <Table
-              aria-label={'rule-table'}
+              aria-label={'report-table'}
+              onSelect={onRowSelect}
               onCollapse={handleOnCollapse}
               rows={rows}
               cells={cols}
@@ -733,15 +715,19 @@ const BaseSystemAdvisor = () => {
           </MessageState>
         ))}
       {inventoryReportFetchStatus === 'failed' && entity && (
-        <MessageState
-          icon={TimesCircleIcon}
-          title="Error getting recommendations"
-          text={
-            entity
-              ? `There was an error fetching recommendations for this entity. Refresh your page to try again.`
-              : `This entity can not be found or might no longer be registered to Red Hat Insights.`
-          }
-        />
+        <Card>
+          <CardBody>
+            <MessageState
+              icon={TimesCircleIcon}
+              title="Error getting recommendations"
+              text={
+                entity
+                  ? `There was an error fetching recommendations for this entity. Refresh your page to try again.`
+                  : `This entity can not be found or might no longer be registered to Red Hat Insights.`
+              }
+            />
+          </CardBody>
+        </Card>
       )}
     </div>
   );
