@@ -154,7 +154,10 @@ const Inventory = ({
         page={page}
         total={items.length}
         perPage={pageSize}
-        tableProps={tableProps}
+        tableProps={{
+          variant: pfReactTable.TableVariant.compact,
+          ...tableProps,
+        }}
         dedicatedAction={
           <RemediationButton
             key="remediation-button"
