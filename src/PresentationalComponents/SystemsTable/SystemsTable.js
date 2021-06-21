@@ -68,6 +68,44 @@ const SystemsTable = () => {
     6: 'last_seen',
   };
 
+  const rows = [
+    {
+      title: intl.formatMessage(messages.name),
+      transforms: [pfReactTable.sortable, pfReactTable.cellWidth(80)],
+      key: 'display_name',
+    },
+    {
+      title: intl.formatMessage(messages.numberRuleHits),
+      transforms: [pfReactTable.sortable, pfReactTable.wrappable],
+      key: 'hits',
+    },
+    {
+      title: intl.formatMessage(messages.critical),
+      transforms: [pfReactTable.sortable, pfReactTable.wrappable],
+      key: 'critical_hits',
+    },
+    {
+      title: intl.formatMessage(messages.important),
+      transforms: [pfReactTable.sortable, pfReactTable.wrappable],
+      key: 'important_hits',
+    },
+    {
+      title: intl.formatMessage(messages.moderate),
+      transforms: [pfReactTable.sortable, pfReactTable.wrappable],
+      key: 'moderate_hits',
+    },
+    {
+      title: intl.formatMessage(messages.low),
+      transforms: [pfReactTable.sortable, pfReactTable.wrappable],
+      key: 'low_hits',
+    },
+    {
+      title: intl.formatMessage(messages.lastSeen),
+      transforms: [pfReactTable.sortable, pfReactTable.wrappable],
+      key: 'updated',
+    },
+  ];
+
   const onSort = ({ index, direction }) => {
     const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
     setFilters({ ...filters, sort: orderParam, offset: 0 });
@@ -166,15 +204,15 @@ const SystemsTable = () => {
     },
   };
 
-  const handleRefresh = (options) => {
+  const handleRefresh = ({ page, per_page }) => {
     if (systemsFetchStatus === 'fulfilled') {
       const { offset, limit } = filters;
-      const newOffset = options.page * options.per_page - options.per_page;
-      if (newOffset !== offset || limit !== options.per_page) {
+      const newOffset = page * per_page - per_page;
+      if (newOffset !== offset || limit !== per_page) {
         setFilters({
           ...filters,
-          limit: options.per_page,
-          offset: options.page * options.per_page - options.per_page,
+          limit: per_page,
+          offset: page * per_page - per_page,
         });
       }
     }
@@ -250,6 +288,22 @@ const SystemsTable = () => {
   return systemsFetchStatus !== 'failed' ? (
     <InventoryTable
       disableDefaultColumns
+      getEntities={(items, { per_page, page }) => {
+        handleRefresh({ page, per_page });
+
+        const results = ({ mergeWithEntities, INVENTORY_ACTION_TYPES }) => {
+          getRegistry().register({
+            ...mergeWithEntities(
+              systemReducer([...rows], INVENTORY_ACTION_TYPES)
+            ),
+          });
+        };
+
+        return Promise.resolve({
+          results,
+          total: results.length,
+        });
+      }}
       tableProps={{
         isStickyHeader: true,
         variant: pfReactTable.TableVariant.compact,
@@ -270,7 +324,6 @@ const SystemsTable = () => {
       total={results}
       isLoaded={systemsFetchStatus === 'fulfilled'}
       perPage={Number(filters.limit)}
-      onRefresh={handleRefresh}
       filterConfig={{ items: filterConfigItems }}
       activeFiltersConfig={activeFiltersConfig}
       exportConfig={{
@@ -294,51 +347,6 @@ const SystemsTable = () => {
           : intl.formatMessage(messages.permsAction),
       }}
       fallback={Loading}
-      onLoad={({ mergeWithEntities, INVENTORY_ACTION_TYPES }) => {
-        const rows = [
-          {
-            title: intl.formatMessage(messages.name),
-            transforms: [pfReactTable.sortable, pfReactTable.cellWidth(80)],
-            key: 'display_name',
-          },
-          {
-            title: intl.formatMessage(messages.numberRuleHits),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'hits',
-          },
-          {
-            title: intl.formatMessage(messages.critical),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'critical_hits',
-          },
-          {
-            title: intl.formatMessage(messages.important),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'important_hits',
-          },
-          {
-            title: intl.formatMessage(messages.moderate),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'moderate_hits',
-          },
-          {
-            title: intl.formatMessage(messages.low),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'low_hits',
-          },
-          {
-            title: intl.formatMessage(messages.lastSeen),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'updated',
-          },
-        ];
-
-        getRegistry().register({
-          ...mergeWithEntities(
-            systemReducer([...rows], INVENTORY_ACTION_TYPES)
-          ),
-        });
-      }}
     />
   ) : (
     systemsFetchStatus === 'failed' && (
