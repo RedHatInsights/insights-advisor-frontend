@@ -1,3 +1,5 @@
+@import '~@patternfly/patternfly/sass-utilities/_all';
+
 hr {
   border: 0.01rem solid #ccc;
   margin: var(--pf-global--spacer--md) 0 var(--pf-global--spacer--md) 0;
@@ -72,14 +74,35 @@ hr {
   }
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: $pf-global--breakpoint--lg) {
   .ins-c-center-text {
     text-align: left !important;
   }
-  .ins-c-rule-details__split {
+  .pf-l-split.ins-c-rule-details__split {
     display: block;
     .pf-l-split__item {
       margin: var(--pf-global--spacer--md);
+      .pf-l-stack.ins-c-rule-details__stack {
+        width: 100%;
+        .pf-l-stack__item { 
+          span.ins-c-rule-details__stackitem {
+            display: grid;
+            grid-column: 1 / 1;
+            .pf-c-label {
+              margin-bottom: var(--pf-global--spacer--sm);
+            }
+            .pf-l-stack.description-stack-override {
+              width: auto;
+              .pf-l-stack__item {
+                .ins-c-severity-line {
+                  display: block;
+                }
+              }
+
+            }
+          }
+        }
+      }
     }
   }
 }
