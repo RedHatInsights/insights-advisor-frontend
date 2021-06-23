@@ -8,7 +8,7 @@ import {
   PERMS,
   SYSTEM_FILTER_CATEGORIES as SFC,
 } from '../../AppConstants';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   filterFetchBuilder,
   paramParser,
@@ -68,7 +68,7 @@ const SystemsTable = () => {
     6: 'last_seen',
   };
 
-  const rows = [
+  const columns = [
     {
       title: intl.formatMessage(messages.name),
       transforms: [pfReactTable.sortable, pfReactTable.cellWidth(80)],
@@ -111,7 +111,7 @@ const SystemsTable = () => {
     setFilters({ ...filters, sort: orderParam, offset: 0 });
   };
 
-  const fetchSystemsFn = useCallback(() => {
+  const fetchSystemsFn = () => {
     const fetchSystemsAction = (url) => dispatch(AppActions.fetchSystems(url));
     urlBuilder(filters, selectedTags);
     let options = selectedTags.length && { tags: selectedTags };
@@ -119,7 +119,7 @@ const SystemsTable = () => {
       (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
 
     return fetchSystemsAction({ ...filterFetchBuilder(filters), ...options });
-  }, [selectedTags, workloads, SID, filters, dispatch]);
+  };
 
   const removeFilterParam = (param) => {
     const filter = { ...filters, offset: 0 };
@@ -276,32 +276,34 @@ const SystemsTable = () => {
     }
 
     setFilterBuilding(false);
+    fetchSystemsFn();
   }, []);
 
   useEffect(() => {
-    !filterBuilding &&
-      systemsFetchStatus !== 'pending' &&
-      selectedTags !== null &&
+    if (systemsFetchStatus !== 'pending') {
       fetchSystemsFn();
-  }, [fetchSystemsFn, filterBuilding, filters, selectedTags]);
+    }
+  }, [filters]);
 
+  const page = filters.offset / filters.limit + 1;
+  const sort = calculateSort();
   return systemsFetchStatus !== 'failed' ? (
     <InventoryTable
       disableDefaultColumns
-      getEntities={(items, { per_page, page }) => {
-        handleRefresh({ page, per_page });
-
-        const results = ({ mergeWithEntities, INVENTORY_ACTION_TYPES }) => {
-          getRegistry().register({
-            ...mergeWithEntities(
-              systemReducer([...rows], INVENTORY_ACTION_TYPES)
-            ),
-          });
-        };
-
+      onLoad={({ mergeWithEntities, INVENTORY_ACTION_TYPES }) => {
+        getRegistry().register({
+          ...mergeWithEntities(systemReducer(columns, INVENTORY_ACTION_TYPES), {
+            page: page || 1,
+            perPage: filters.limit || 20,
+            ...sort,
+          }),
+        });
+      }}
+      getEntities={(_items, { per_page, itemsPage }) => {
+        handleRefresh({ page: itemsPage, per_page });
         return Promise.resolve({
-          results,
-          total: results.length,
+          results: columns,
+          total: columns.length,
         });
       }}
       tableProps={{
@@ -317,10 +319,10 @@ const SystemsTable = () => {
         id: system.system_uuid,
       }))}
       isFullView
-      sortBy={calculateSort()}
+      sortBy={sort}
       onSort={onSort}
       hasCheckbox={false}
-      page={filters.offset / filters.limit + 1}
+      page={page}
       total={results}
       isLoaded={systemsFetchStatus === 'fulfilled'}
       perPage={Number(filters.limit)}
