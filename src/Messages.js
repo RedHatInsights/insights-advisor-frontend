@@ -792,7 +792,7 @@ export default defineMessages({
     id: 'riskOfChangeTextOne',
     description: 'Risk of change text explaining a value one',
     defaultMessage:
-      'The risk of change is <strong>very low</strong>, beacause the change takes very little time to implement and there is minimal impact to system operations.',
+      'The risk of change is <strong>very low</strong>, because the change takes very little time to implement and there is minimal impact to system operations.',
   },
   riskOfChangeTextTwo: {
     id: 'riskOfChangeTextTwo',
