@@ -102,7 +102,7 @@ const SystemsTable = () => {
     {
       title: intl.formatMessage(messages.lastSeen),
       transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-      key: 'updated',
+      key: 'last_seen',
     },
   ];
 
@@ -227,7 +227,7 @@ const SystemsTable = () => {
     const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
     return {
       index: sortIndex,
-      key: sortIndex !== 6 ? sortIndices[sortIndex] : 'updated',
+      key: sortIndex !== 6 ? sortIndices[sortIndex] : 'last_seen',
       direction: sortDirection,
     };
   };
@@ -289,7 +289,8 @@ const SystemsTable = () => {
   const sort = calculateSort();
   return systemsFetchStatus !== 'failed' ? (
     <InventoryTable
-      disableDefaultColumns
+      // disableDefaultColumns={['updated', 'system_profile']}
+      // columns={columns}
       onLoad={({ mergeWithEntities, INVENTORY_ACTION_TYPES }) => {
         getRegistry().register({
           ...mergeWithEntities(systemReducer(columns, INVENTORY_ACTION_TYPES), {
