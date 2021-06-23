@@ -6,7 +6,6 @@ import {
   DEBOUNCE_DELAY,
   PERMS,
   SYSTEM_FILTER_CATEGORIES as SFC,
-  SYSTEMS_FETCH,
 } from '../../AppConstants';
 import React, { useEffect, useRef, useState } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
