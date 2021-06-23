@@ -126,7 +126,7 @@
   "required": "Required",
   "resetFilters": "Reset filters",
   "riskOfChangeTextFour": "The risk of change is <strong>high</strong>, because the change takes a significant amount of time and planning to execute, and will impact the system and business operations of the host due to downtime.",
-  "riskOfChangeTextOne": "The risk of change is <strong>very low</strong>, beacause the change takes very little time to implement and there is minimal impact to system operations.",
+  "riskOfChangeTextOne": "The risk of change is <strong>very low</strong>, because the change takes very little time to implement and there is minimal impact to system operations.",
   "riskOfChangeTextThree": "The risk of change is <strong>moderate</strong>, because the change will likely require an outage window.",
   "riskOfChangeTextTwo": "The risk of change is <strong>low</strong>, because the change does not require that a system be taken offline.",
   "riskofchange": "Risk of change",
