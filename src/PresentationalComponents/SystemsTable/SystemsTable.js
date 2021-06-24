@@ -7,7 +7,7 @@ import {
   PERMS,
   SYSTEM_FILTER_CATEGORIES as SFC,
 } from '../../AppConstants';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import {
   filterFetchBuilder,
@@ -53,7 +53,6 @@ const SystemsTable = () => {
     dispatch(AppActions.setFiltersSystems(filters));
 
   const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
-  const inventory = useRef(null);
   const results = systems.meta ? systems.meta.count : 0;
   const [searchText, setSearchText] = useState(filters.display_name || '');
   const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
@@ -308,6 +307,8 @@ const SystemsTable = () => {
   const sort = calculateSort();
   return systemsFetchStatus !== 'failed' ? (
     <InventoryTable
+      initialLoading
+      autoRefresh
       disableDefaultColumns
       columns={(defaultColumns) => createColumns(defaultColumns)}
       onLoad={({
@@ -338,7 +339,6 @@ const SystemsTable = () => {
         isStickyHeader: true,
         variant: TableVariant.compact,
       }}
-      ref={inventory}
       items={((systemsFetchStatus !== 'pending' && systems?.data) || []).map(
         (system) => ({
           ...system,
