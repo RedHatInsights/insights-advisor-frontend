@@ -194,19 +194,19 @@ const SystemsTable = () => {
     },
   };
 
-  const handleRefresh = ({ page, per_page }) => {
-    if (systemsFetchStatus === 'fulfilled') {
-      const { offset, limit } = filters;
-      const newOffset = page * per_page - per_page;
-      if (newOffset !== offset || limit !== per_page) {
-        setFilters({
-          ...filters,
-          limit: per_page,
-          offset: page * per_page - per_page,
-        });
-      }
-    }
-  };
+  // const handleRefresh = ({ page, per_page }) => {
+  //   if (systemsFetchStatus === 'fulfilled') {
+  //     const { offset, limit } = filters;
+  //     const newOffset = page * per_page - per_page;
+  //     if (newOffset !== offset || limit !== per_page) {
+  //       setFilters({
+  //         ...filters,
+  //         limit: per_page,
+  //         offset: page * per_page - per_page,
+  //       });
+  //     }
+  //   }
+  // };
 
   const calculateSort = () => {
     const sortIndex = Number(
@@ -217,7 +217,7 @@ const SystemsTable = () => {
     const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
     return {
       index: sortIndex,
-      key: sortIndex !== 7 ? sortIndices[sortIndex] : 'last_seen',
+      key: sortIndex !== 7 ? sortIndices[sortIndex] : 'updated',
       direction: sortDirection,
     };
   };
@@ -324,13 +324,16 @@ const SystemsTable = () => {
           ...mergeWithDetail(),
         });
       }}
-      getEntities={(_items, { per_page, itemsPage }) => {
-        handleRefresh({ page: itemsPage, per_page });
-        return Promise.resolve({
-          results: columns,
-          total: results,
-        });
-      }}
+      // getEntities={(_items, { per_page, itemsPage }) => {
+      //   handleRefresh({ page: itemsPage, per_page });
+      //   return Promise.resolve({
+      //     results: systems?.data?.map((system) => ({
+      //       ...system,
+      //       id: system.system_uuid,
+      //     })),
+      //     total: results,
+      //   });
+      // }}
       tableProps={{
         isStickyHeader: true,
         variant: TableVariant.compact,
