@@ -302,7 +302,7 @@ const SystemsTable = () => {
     if (systemsFetchStatus !== 'pending') {
       fetchSystemsFn();
     }
-  }, [filters]);
+  }, [filters, selectedTags, workloads, SID]);
 
   const page = filters.offset / filters.limit + 1;
   const sort = calculateSort();
