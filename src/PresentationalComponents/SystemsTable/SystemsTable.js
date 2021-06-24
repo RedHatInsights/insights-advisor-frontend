@@ -1,14 +1,14 @@
 import './SystemsTable.scss';
 
 import * as AppActions from '../../AppActions';
-import * as pfReactTable from '@patternfly/react-table';
 
 import {
   DEBOUNCE_DELAY,
   PERMS,
   SYSTEM_FILTER_CATEGORIES as SFC,
 } from '../../AppConstants';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import {
   filterFetchBuilder,
   paramParser,
@@ -60,20 +60,48 @@ const SystemsTable = () => {
   const [filterBuilding, setFilterBuilding] = useState(true);
   const sortIndices = {
     0: 'display_name',
-    1: 'hits',
-    2: 'critical_hits',
-    3: 'important_hits',
-    4: 'moderate_hits',
-    5: 'low_hits',
-    6: 'last_seen',
+    2: 'hits',
+    3: 'critical_hits',
+    4: 'important_hits',
+    5: 'moderate_hits',
+    6: 'low_hits',
+    7: 'last_seen',
   };
+
+  const columns = [
+    {
+      title: intl.formatMessage(messages.numberRuleHits),
+      transforms: [sortable, wrappable],
+      key: 'hits',
+    },
+    {
+      title: intl.formatMessage(messages.critical),
+      transforms: [sortable, wrappable],
+      key: 'critical_hits',
+    },
+    {
+      title: intl.formatMessage(messages.important),
+      transforms: [sortable, wrappable],
+      key: 'important_hits',
+    },
+    {
+      title: intl.formatMessage(messages.moderate),
+      transforms: [sortable, wrappable],
+      key: 'moderate_hits',
+    },
+    {
+      title: intl.formatMessage(messages.low),
+      transforms: [sortable, wrappable],
+      key: 'low_hits',
+    },
+  ];
 
   const onSort = ({ index, direction }) => {
     const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
     setFilters({ ...filters, sort: orderParam, offset: 0 });
   };
 
-  const fetchSystemsFn = useCallback(() => {
+  const fetchSystemsFn = () => {
     const fetchSystemsAction = (url) => dispatch(AppActions.fetchSystems(url));
     urlBuilder(filters, selectedTags);
     let options = selectedTags.length && { tags: selectedTags };
@@ -81,7 +109,7 @@ const SystemsTable = () => {
       (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
 
     return fetchSystemsAction({ ...filterFetchBuilder(filters), ...options });
-  }, [selectedTags, workloads, SID, filters, dispatch]);
+  };
 
   const removeFilterParam = (param) => {
     const filter = { ...filters, offset: 0 };
@@ -166,19 +194,19 @@ const SystemsTable = () => {
     },
   };
 
-  const handleRefresh = (options) => {
-    if (systemsFetchStatus === 'fulfilled') {
-      const { offset, limit } = filters;
-      const newOffset = options.page * options.per_page - options.per_page;
-      if (newOffset !== offset || limit !== options.per_page) {
-        setFilters({
-          ...filters,
-          limit: options.per_page,
-          offset: options.page * options.per_page - options.per_page,
-        });
-      }
-    }
-  };
+  // const handleRefresh = ({ page, per_page }) => {
+  //   if (systemsFetchStatus === 'fulfilled') {
+  //     const { offset, limit } = filters;
+  //     const newOffset = page * per_page - per_page;
+  //     if (newOffset !== offset || limit !== per_page) {
+  //       setFilters({
+  //         ...filters,
+  //         limit: per_page,
+  //         offset: page * per_page - per_page,
+  //       });
+  //     }
+  //   }
+  // };
 
   const calculateSort = () => {
     const sortIndex = Number(
@@ -189,9 +217,38 @@ const SystemsTable = () => {
     const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
     return {
       index: sortIndex,
-      key: sortIndex !== 6 ? sortIndices[sortIndex] : 'updated',
+      key: sortIndex !== 7 ? sortIndices[sortIndex] : 'updated',
       direction: sortDirection,
     };
+  };
+
+  const createColumns = (defaultColumns) => {
+    let lastSeenColumn = defaultColumns.filter(({ key }) => key === 'updated');
+    let displayName = defaultColumns.filter(
+      ({ key }) => key === 'display_name'
+    );
+    let systemProfile = defaultColumns.filter(
+      ({ key }) => key === 'system_profile'
+    );
+
+    displayName = {
+      ...displayName[0],
+      transforms: [sortable, wrappable],
+      props: { isStatic: true },
+    };
+
+    lastSeenColumn = {
+      ...lastSeenColumn[0],
+      transforms: [sortable, wrappable],
+      props: { width: 20 },
+    };
+
+    systemProfile = {
+      ...systemProfile[0],
+      transforms: [wrappable],
+    };
+
+    return [displayName, systemProfile, ...columns, lastSeenColumn];
   };
 
   useEffect(() => {
@@ -238,39 +295,64 @@ const SystemsTable = () => {
     }
 
     setFilterBuilding(false);
+    fetchSystemsFn();
   }, []);
 
   useEffect(() => {
-    !filterBuilding &&
-      systemsFetchStatus !== 'pending' &&
-      selectedTags !== null &&
+    if (systemsFetchStatus !== 'pending') {
       fetchSystemsFn();
-  }, [fetchSystemsFn, filterBuilding, filters, selectedTags]);
+    }
+  }, [filters, selectedTags, workloads, SID]);
 
+  const page = filters.offset / filters.limit + 1;
+  const sort = calculateSort();
   return systemsFetchStatus !== 'failed' ? (
     <InventoryTable
       disableDefaultColumns
+      columns={(defaultColumns) => createColumns(defaultColumns)}
+      onLoad={({
+        mergeWithEntities,
+        INVENTORY_ACTION_TYPES,
+        mergeWithDetail,
+      }) => {
+        getRegistry().register({
+          ...mergeWithEntities(systemReducer(columns, INVENTORY_ACTION_TYPES), {
+            page: page || 1,
+            perPage: filters.limit || 20,
+            ...sort,
+          }),
+          ...mergeWithDetail(),
+        });
+      }}
+      // getEntities={(_items, { per_page, itemsPage }) => {
+      //   handleRefresh({ page: itemsPage, per_page });
+      //   return Promise.resolve({
+      //     results: systems?.data?.map((system) => ({
+      //       ...system,
+      //       id: system.system_uuid,
+      //     })),
+      //     total: results,
+      //   });
+      // }}
       tableProps={{
         isStickyHeader: true,
-        variant: pfReactTable.TableVariant.compact,
+        variant: TableVariant.compact,
       }}
       ref={inventory}
-      items={(
-        (systemsFetchStatus !== 'pending' && systems && systems.data) ||
-        []
-      ).map((system) => ({
-        ...system,
-        id: system.system_uuid,
-      }))}
+      items={((systemsFetchStatus !== 'pending' && systems?.data) || []).map(
+        (system) => ({
+          ...system,
+          id: system.system_uuid,
+        })
+      )}
       isFullView
-      sortBy={calculateSort()}
+      sortBy={sort}
       onSort={onSort}
       hasCheckbox={false}
-      page={filters.offset / filters.limit + 1}
+      page={page}
       total={results}
       isLoaded={systemsFetchStatus === 'fulfilled'}
       perPage={Number(filters.limit)}
-      onRefresh={handleRefresh}
       filterConfig={{ items: filterConfigItems }}
       activeFiltersConfig={activeFiltersConfig}
       exportConfig={{
@@ -294,51 +376,6 @@ const SystemsTable = () => {
           : intl.formatMessage(messages.permsAction),
       }}
       fallback={Loading}
-      onLoad={({ mergeWithEntities, INVENTORY_ACTION_TYPES }) => {
-        const rows = [
-          {
-            title: intl.formatMessage(messages.name),
-            transforms: [pfReactTable.sortable, pfReactTable.cellWidth(80)],
-            key: 'display_name',
-          },
-          {
-            title: intl.formatMessage(messages.numberRuleHits),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'hits',
-          },
-          {
-            title: intl.formatMessage(messages.critical),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'critical_hits',
-          },
-          {
-            title: intl.formatMessage(messages.important),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'important_hits',
-          },
-          {
-            title: intl.formatMessage(messages.moderate),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'moderate_hits',
-          },
-          {
-            title: intl.formatMessage(messages.low),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'low_hits',
-          },
-          {
-            title: intl.formatMessage(messages.lastSeen),
-            transforms: [pfReactTable.sortable, pfReactTable.wrappable],
-            key: 'updated',
-          },
-        ];
-
-        getRegistry().register({
-          ...mergeWithEntities(
-            systemReducer([...rows], INVENTORY_ACTION_TYPES)
-          ),
-        });
-      }}
     />
   ) : (
     systemsFetchStatus === 'failed' && (
