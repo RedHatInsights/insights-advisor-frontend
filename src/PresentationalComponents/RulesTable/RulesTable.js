@@ -371,11 +371,11 @@ const RulesTable = () => {
               {
                 title: (
                   <span key={key}>
-                    <RuleLabels rule={value} />
                     <Link key={key} to={`/recommendations/${value.rule_id}`}>
                       {' '}
                       {value.description}{' '}
                     </Link>
+                    <RuleLabels rule={value} />
                   </span>
                 ),
               },
