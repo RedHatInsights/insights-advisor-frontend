@@ -2,7 +2,7 @@ import './_Inventory.scss';
 
 import * as pfReactTable from '@patternfly/react-table';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
@@ -20,6 +20,7 @@ import { systemReducer } from '../../AppReducer';
 
 let page = 1;
 let pageSize = 50;
+let rule_id = '';
 const Inventory = ({
   tableProps,
   onSelectRows,
@@ -34,6 +35,7 @@ const Inventory = ({
   searchText,
   setSearchText,
 }) => {
+  const inventory = useRef(null);
   const [selected, setSelected] = useState([]);
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [bulkSelect, setBulkSelect] = useState();
@@ -57,6 +59,20 @@ const Inventory = ({
       key: sortIndex !== 2 ? sortIndices[sortIndex] : 'updated',
       direction: filters.sort[0] === '-' ? 'desc' : 'asc',
     };
+  };
+
+  const onRefresh = (options) => {
+    if (rule_id !== rule.rule_id) {
+      page = 1;
+      pageSize = 50;
+    }
+
+    if (inventory && inventory.current) {
+      page = options.page;
+      pageSize = options.per_page;
+      rule_id = rule.rule_id;
+      inventory.current.onRefreshData(options);
+    }
   };
 
   const remediationDataProvider = () => ({
@@ -130,10 +146,11 @@ const Inventory = ({
       <InventoryTable
         disableDefaultColumns
         initialLoading
-        autoRefresh
+        ref={inventory}
         items={items}
         sortBy={calculateSort()}
         onSort={onSort}
+        onRefresh={onRefresh}
         filterConfig={{ items: filterConfigItems }}
         page={page}
         total={items.length}
