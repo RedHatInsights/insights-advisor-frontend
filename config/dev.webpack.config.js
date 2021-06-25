@@ -11,7 +11,7 @@ const { config: webpackConfig, plugins } = config({
   debug: true,
   appUrl: '/insights/advisor',
   betaEnv: 'prod',
-  deployment: 'apps',
+  deployment: process.env.BETA ? 'beta/apps' : 'apps',
   useProxy: process.env.API_ENDOINT ? true : false,
   localChrome: process.env.INSIGHTS_CHROME,
   customProxy: process.env.API_ENDOINT
