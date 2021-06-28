@@ -27,7 +27,7 @@ const initialState = Immutable({
     limit: 20,
     offset: 0,
   },
-  filtersSystems: { sort: '-last_seen' },
+  filtersSystems: { sort: '-last_seen', limit: 20, offset: 0 },
   topic: {},
   topicFetchStatus: '',
   topics: [],
