@@ -240,13 +240,10 @@ const SystemsTable = () => {
           mergeWithDetail,
         }) => {
           getRegistry().register({
-            ...mergeWithEntities(
-              systemReducer(columns, INVENTORY_ACTION_TYPES),
-              {
-                page: Number(filters.offset / filters.limit + 1 || 1),
-                perPage: Number(filters.limit || 20),
-              }
-            ),
+            ...mergeWithEntities(systemReducer([], INVENTORY_ACTION_TYPES), {
+              page: Number(filters.offset / filters.limit + 1 || 1),
+              perPage: Number(filters.limit || 20),
+            }),
             ...mergeWithDetail(),
           });
         }}
