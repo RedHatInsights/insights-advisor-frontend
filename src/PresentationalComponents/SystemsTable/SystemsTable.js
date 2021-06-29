@@ -3,9 +3,9 @@ import './SystemsTable.scss';
 import * as AppActions from '../../AppActions';
 
 import {
-  DEBOUNCE_DELAY,
   PERMS,
   SYSTEM_FILTER_CATEGORIES as SFC,
+  SYSTEMS_FETCH_URL,
 } from '../../AppConstants';
 import React, { useEffect, useState } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
@@ -18,11 +18,10 @@ import {
 } from '../Common/Tables';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Failed from '../Loading/Failed';
+import API from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import Loading from '../Loading/Loading';
 import SystemsPdf from '../Export/SystemsPdf';
-import debounce from '../../Utilities/Debounce';
 import downloadReport from '../Common/DownloadHelper';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
 import messages from '../../Messages';
@@ -35,11 +34,6 @@ const SystemsTable = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const { search } = useLocation();
-
-  const systems = useSelector(({ AdvisorStore }) => AdvisorStore.systems);
-  const systemsFetchStatus = useSelector(
-    ({ AdvisorStore }) => AdvisorStore.systemsFetchStatus
-  );
   const filters = useSelector(
     ({ AdvisorStore }) => AdvisorStore.filtersSystems
   );
@@ -48,25 +42,11 @@ const SystemsTable = () => {
   );
   const workloads = useSelector(({ AdvisorStore }) => AdvisorStore.workloads);
   const SID = useSelector(({ AdvisorStore }) => AdvisorStore.SID);
-
   const setFilters = (filters) =>
     dispatch(AppActions.setFiltersSystems(filters));
 
   const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
-  const results = systems.meta ? systems.meta.count : 0;
-  const [searchText, setSearchText] = useState(filters.display_name || '');
-  const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
   const [filterBuilding, setFilterBuilding] = useState(true);
-  const sortIndices = {
-    0: 'display_name',
-    2: 'hits',
-    3: 'critical_hits',
-    4: 'important_hits',
-    5: 'moderate_hits',
-    6: 'low_hits',
-    7: 'last_seen',
-  };
-
   const columns = [
     {
       title: intl.formatMessage(messages.numberRuleHits),
@@ -95,24 +75,8 @@ const SystemsTable = () => {
     },
   ];
 
-  const onSort = ({ index, direction }) => {
-    const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
-    setFilters({ ...filters, sort: orderParam, offset: 0 });
-  };
-
-  const fetchSystemsFn = () => {
-    const fetchSystemsAction = (url) => dispatch(AppActions.fetchSystems(url));
-    urlBuilder(filters, selectedTags);
-    let options = selectedTags.length && { tags: selectedTags };
-    workloads &&
-      (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
-
-    return fetchSystemsAction({ ...filterFetchBuilder(filters), ...options });
-  };
-
   const removeFilterParam = (param) => {
     const filter = { ...filters, offset: 0 };
-    param === 'text' && setSearchText('');
     delete filter[param];
     param === 'hits' && filter.hits === undefined && (filter.hits = ['yes']);
     setFilters(filter);
@@ -128,16 +92,7 @@ const SystemsTable = () => {
       ? setFilters({ ...filters, offset: 0, ...{ [param]: values } })
       : removeFilterParam(param);
   };
-
   const filterConfigItems = [
-    {
-      label: intl.formatMessage(messages.name).toLowerCase(),
-      filterValues: {
-        key: 'text-filter',
-        onChange: (event, value) => setSearchText(value),
-        value: searchText,
-      },
-    },
     {
       label: SFC.hits.title.toLowerCase(),
       type: SFC.hits.type,
@@ -169,7 +124,6 @@ const SystemsTable = () => {
     filters: buildFilterChips(),
     onDelete: (event, itemsToRemove, isAll) => {
       if (isAll) {
-        setSearchText('');
         setFilters({
           sort: filters.sort,
           limit: filters.limit,
@@ -193,32 +147,18 @@ const SystemsTable = () => {
     },
   };
 
-  // const handleRefresh = ({ page, per_page }) => {
-  //   if (systemsFetchStatus === 'fulfilled') {
-  //     const { offset, limit } = filters;
-  //     const newOffset = page * per_page - per_page;
-  //     if (newOffset !== offset || limit !== per_page) {
-  //       setFilters({
-  //         ...filters,
-  //         limit: per_page,
-  //         offset: page * per_page - per_page,
-  //       });
-  //     }
-  //   }
-  // };
-
-  const calculateSort = () => {
-    const sortIndex = Number(
-      Object.entries(sortIndices)?.find(
-        (item) => item[1] === filters.sort || `-${item[1]}` === filters.sort
-      )[0]
-    );
-    const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
-    return {
-      index: sortIndex,
-      key: sortIndex !== 7 ? sortIndices[sortIndex] : 'updated',
-      direction: sortDirection,
+  const handleRefresh = (options) => {
+    const { limit, offset, sort, display_name, hits } = options;
+    const refreshedFilters = {
+      limit,
+      offset,
+      sort,
+      ...(display_name && {
+        display_name,
+      }),
+      ...(hits && { hits }),
     };
+    urlBuilder(refreshedFilters, selectedTags);
   };
 
   const createColumns = (defaultColumns) => {
@@ -251,135 +191,154 @@ const SystemsTable = () => {
   };
 
   useEffect(() => {
-    filters.display_name === undefined
-      ? setSearchText('')
-      : setSearchText(filters.display_name);
-  }, [filters.display_name]);
-
-  useEffect(() => {
-    if (!filterBuilding && systemsFetchStatus !== 'pending') {
-      const copyFilters = { ...filters };
-      delete copyFilters.display_name;
-      setFilters({
-        ...copyFilters,
-        ...(searchText.length ? { display_name: searchText } : {}),
-        offset: 0,
-      });
-    }
-  }, [debouncedSearchText]);
-
-  useEffect(() => {
-    if (search && filterBuilding) {
+    let combinedFitlers;
+    if (search) {
       const paramsObject = paramParser();
       delete paramsObject.tags;
-
       paramsObject.sort !== undefined &&
         (paramsObject.sort = paramsObject.sort[0]);
       paramsObject.display_name !== undefined &&
         (paramsObject.display_name = paramsObject.display_name[0]);
       paramsObject.hits === undefined && (paramsObject.hits = ['all']);
-      paramsObject.offset === undefined
+      paramsObject.offset === undefined || isNaN(paramsObject.offset)
         ? (paramsObject.offset = 0)
         : (paramsObject.offset = Number(paramsObject.offset[0]));
-      paramsObject.limit === undefined
+      paramsObject.limit === undefined || isNaN(paramsObject.limit)
         ? (paramsObject.limit = 20)
         : (paramsObject.limit = Number(paramsObject.limit[0]));
-      setFilters({ ...filters, ...paramsObject });
+      combinedFitlers = { ...filters, ...paramsObject };
+      setFilters(combinedFitlers);
     } else if (
       filters.limit === undefined ||
       filters.offset === undefined ||
       filters.hits === undefined
     ) {
-      setFilters({ ...filters, offset: 0, limit: 20, hits: ['all'] });
+      combinedFitlers = { ...filters, offset: 0, limit: 20, hits: ['all'] };
+      setFilters(combinedFitlers);
     }
-
     setFilterBuilding(false);
-    fetchSystemsFn();
+    urlBuilder(combinedFitlers, selectedTags);
   }, []);
 
-  useEffect(() => {
-    if (systemsFetchStatus !== 'pending') {
-      fetchSystemsFn();
-    }
-  }, [filters, selectedTags, workloads, SID]);
-
-  const page = filters.offset / filters.limit + 1;
-  const sort = calculateSort();
-  return systemsFetchStatus !== 'failed' ? (
-    <InventoryTable
-      initialLoading
-      autoRefresh
-      disableDefaultColumns
-      columns={(defaultColumns) => createColumns(defaultColumns)}
-      onLoad={({
-        mergeWithEntities,
-        INVENTORY_ACTION_TYPES,
-        mergeWithDetail,
-      }) => {
-        getRegistry().register({
-          ...mergeWithEntities(systemReducer(columns, INVENTORY_ACTION_TYPES), {
-            page: page || 1,
-            perPage: filters.limit || 20,
-            ...sort,
-          }),
-          ...mergeWithDetail(),
-        });
-      }}
-      // getEntities={(_items, { per_page, itemsPage }) => {
-      //   handleRefresh({ page: itemsPage, per_page });
-      //   return Promise.resolve({
-      //     results: systems?.data?.map((system) => ({
-      //       ...system,
-      //       id: system.system_uuid,
-      //     })),
-      //     total: results,
-      //   });
-      // }}
-      tableProps={{
-        isStickyHeader: true,
-        variant: TableVariant.compact,
-      }}
-      items={((systemsFetchStatus !== 'pending' && systems?.data) || []).map(
-        (system) => ({
-          ...system,
-          id: system.system_uuid,
-        })
-      )}
-      isFullView
-      sortBy={sort}
-      onSort={onSort}
-      hasCheckbox={false}
-      page={page}
-      total={results}
-      isLoaded={systemsFetchStatus === 'fulfilled'}
-      perPage={Number(filters.limit)}
-      filterConfig={{ items: filterConfigItems }}
-      activeFiltersConfig={activeFiltersConfig}
-      exportConfig={{
-        onSelect: (_e, fileType) =>
-          downloadReport(
-            'systems',
-            fileType,
-            filters,
+  return (
+    !filterBuilding && (
+      <InventoryTable
+        hideFilters={{ all: true, name: false }}
+        initialLoading
+        autoRefresh
+        disableDefaultColumns
+        customFilters={{
+          advisorFilters: filters,
+          selectedTags,
+          workloads,
+          SID,
+        }}
+        columns={(defaultColumns) => createColumns(defaultColumns)}
+        onLoad={({
+          mergeWithEntities,
+          INVENTORY_ACTION_TYPES,
+          mergeWithDetail,
+        }) => {
+          getRegistry().register({
+            ...mergeWithEntities(
+              systemReducer(columns, INVENTORY_ACTION_TYPES),
+              {
+                page: Number(filters.offset / filters.limit + 1 || 1),
+                perPage: Number(filters.limit || 20),
+              }
+            ),
+            ...mergeWithDetail(),
+          });
+        }}
+        getEntities={async (_items, config, showTags, defaultGetEntities) => {
+          const {
+            per_page,
+            page,
+            orderBy,
+            orderDirection,
+            advisorFilters,
             selectedTags,
             workloads,
-            SID
-          ),
-        extraItems: [
-          <li key="download-pd" role="menuitem">
-            <SystemsPdf filters={{ ...filterFetchBuilder(filters) }} />
-          </li>,
-        ],
-        isDisabled: !permsExport,
-        tooltipText: permsExport
-          ? intl.formatMessage(messages.exportData)
-          : intl.formatMessage(messages.permsAction),
-      }}
-      fallback={Loading}
-    />
-  ) : (
-    systemsFetchStatus === 'failed' && (
-      <Failed message={intl.formatMessage(messages.systemTableFetchError)} />
+            SID,
+          } = config;
+          const sort = `${orderDirection === 'ASC' ? '' : '-'}${
+            orderBy === 'updated' ? 'last_seen' : orderBy
+          }`;
+          let options = {
+            ...advisorFilters,
+            limit: per_page,
+            offset: page * per_page - per_page,
+            sort,
+            ...(config.filters.hostnameOrId && {
+              display_name: config?.filters?.hostnameOrId,
+            }),
+            ...(selectedTags.length && { tags: selectedTags }),
+          };
+
+          workloads &&
+            (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
+
+          const fetchedSystems = (await API.get(SYSTEMS_FETCH_URL, {}, options))
+            ?.data;
+
+          handleRefresh(options);
+          const results = await defaultGetEntities(
+            fetchedSystems.data.map((system) => system.system_uuid),
+            {
+              page,
+              per_page,
+              hasItems: true,
+              fields: { system_profile: ['operating_system'] },
+            },
+            showTags
+          );
+
+          const mergeArraysByDiffKeys = (advSystems, invSystems) =>
+            advSystems.map((advSys) => ({
+              ...invSystems.find(
+                (invSys) => invSys['id'] === advSys['system_uuid'] && invSys
+              ),
+              ...advSys,
+            }));
+
+          return Promise.resolve({
+            results: mergeArraysByDiffKeys(
+              fetchedSystems.data,
+              results.results
+            ),
+            total: fetchedSystems.meta.count,
+          });
+        }}
+        tableProps={{
+          isStickyHeader: true,
+          variant: TableVariant.compact,
+        }}
+        isFullView
+        hasCheckbox={false}
+        filterConfig={{ items: filterConfigItems }}
+        activeFiltersConfig={activeFiltersConfig}
+        exportConfig={{
+          onSelect: (_e, fileType) =>
+            downloadReport(
+              'systems',
+              fileType,
+              filters,
+              selectedTags,
+              workloads,
+              SID
+            ),
+          extraItems: [
+            <li key="download-pd" role="menuitem">
+              <SystemsPdf filters={{ ...filterFetchBuilder(filters) }} />
+            </li>,
+          ],
+          isDisabled: !permsExport,
+          tooltipText: permsExport
+            ? intl.formatMessage(messages.exportData)
+            : intl.formatMessage(messages.permsAction),
+        }}
+        fallback={Loading}
+      />
     )
   );
 };
