@@ -24,6 +24,7 @@ import Loading from '../Loading/Loading';
 import SystemsPdf from '../Export/SystemsPdf';
 import downloadReport from '../Common/DownloadHelper';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
+import { mergeArraysByDiffKeys } from '../Common/Tables';
 import messages from '../../Messages';
 import { systemReducer } from '../../AppReducer';
 import { useIntl } from 'react-intl';
@@ -289,14 +290,6 @@ const SystemsTable = () => {
             },
             showTags
           );
-
-          const mergeArraysByDiffKeys = (advSystems, invSystems) =>
-            advSystems.map((advSys) => ({
-              ...invSystems.find(
-                (invSys) => invSys['id'] === advSys['system_uuid'] && invSys
-              ),
-              ...advSys,
-            }));
 
           return Promise.resolve({
             results: mergeArraysByDiffKeys(
