@@ -130,3 +130,12 @@ export const workloadQueryBuilder = (workloads, SID) =>
     undefined,
     { arrayEnhancer: 'contains' }
   );
+
+// merges two array objects by different key names
+export const mergeArraysByDiffKeys = (advSystems, invSystems) =>
+  advSystems.map((advSys) => ({
+    ...invSystems.find(
+      (invSys) => invSys['id'] === advSys['system_uuid'] && invSys
+    ),
+    ...advSys,
+  }));

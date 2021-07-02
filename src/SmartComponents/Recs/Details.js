@@ -25,7 +25,6 @@ import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import CaretDownIcon from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
-import { DEBOUNCE_DELAY } from '../../AppConstants';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
@@ -46,7 +45,6 @@ import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { cveToRuleid } from '../../cveToRuleid.js';
-import debounce from '../../Utilities/Debounce';
 import messages from '../../Messages';
 import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
 import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
@@ -62,18 +60,11 @@ const OverviewDetails = ({ match }) => {
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [host, setHost] = useState(undefined);
   const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
-  const [filters, setFilters] = useState({ sort: '-updated' });
   const [isRuleUpdated, setIsRuleUpdated] = useState(false);
-  const [searchText, setSearchText] = useState('');
-  const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
 
   const rule = useSelector(({ AdvisorStore }) => AdvisorStore.rule);
   const ruleFetchStatus = useSelector(
     ({ AdvisorStore }) => AdvisorStore.ruleFetchStatus
-  );
-  const system = useSelector(({ AdvisorStore }) => AdvisorStore.system);
-  const systemFetchStatus = useSelector(
-    ({ AdvisorStore }) => AdvisorStore.systemFetchStatus
   );
   const topics = useSelector(({ AdvisorStore }) => AdvisorStore.topics);
   const ruleAck = useSelector(({ AdvisorStore }) => AdvisorStore.ruleAck);
@@ -100,9 +91,8 @@ const OverviewDetails = ({ match }) => {
       if (system) {
         fetchSystem(
           match.params.id,
-          options.tags ? {} : { ...options, ...filters, ...newFilter },
-          options.tags &&
-            encodeOptionsToURL({ ...options, ...filters, ...newFilter })
+          options.tags ? {} : { ...options, ...newFilter },
+          options.tags && encodeOptionsToURL({ ...options, ...newFilter })
         );
       }
       if (rule) {
@@ -114,7 +104,7 @@ const OverviewDetails = ({ match }) => {
         );
       }
     },
-    [selectedTags, workloads, SID, dispatch, match.params.id, filters]
+    [selectedTags, workloads, SID, dispatch, match.params.id]
   );
 
   const ruleResolutionRisk = (rule) => {
@@ -193,21 +183,6 @@ const OverviewDetails = ({ match }) => {
       });
     }
   };
-
-  const onSortFn = (sort) => {
-    setFilters({ ...filters, sort });
-    sort === 'updated' && (sort = 'last_seen');
-    sort === '-updated' && (sort = '-last_seen');
-    fetchRulefn({ sort }, false);
-  };
-
-  useEffect(() => {
-    if (isRuleUpdated && systemFetchStatus === 'fulfilled') {
-      setFilters({ ...filters, name: debouncedSearchText });
-      fetchRulefn({ name: debouncedSearchText }, false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchText]);
 
   useEffect(() => {
     const isCVE =
@@ -474,27 +449,26 @@ const OverviewDetails = ({ match }) => {
                     {intl.formatMessage(messages.affectedSystems)}
                   </Title>
                   <Inventory
-                    tableProps={{ canSelectAll: false, actionResolver }}
-                    items={system.host_ids}
+                    tableProps={{
+                      canSelectAll: false,
+                      actionResolver,
+                      isStickyHeader: true,
+                    }}
                     rule={rule}
                     afterDisableFn={afterDisableFn}
-                    filters={filters}
-                    onSortFn={onSortFn}
-                    searchText={searchText}
-                    setSearchText={(searchText) => {
-                      setSearchText(searchText);
-                    }}
+                    selectedTags={selectedTags}
+                    workloads={workloads}
+                    SID={SID}
                   />
                 </React.Fragment>
               )}
-              {systemFetchStatus === 'fulfilled' &&
-                rule.rule_status !== 'enabled' && (
-                  <MessageState
-                    icon={BellSlashIcon}
-                    title={intl.formatMessage(messages.ruleIsDisabled)}
-                    text={intl.formatMessage(messages.ruleIsDisabledBody)}
-                  />
-                )}
+              {rule.rule_status !== 'enabled' && (
+                <MessageState
+                  icon={BellSlashIcon}
+                  title={intl.formatMessage(messages.ruleIsDisabled)}
+                  text={intl.formatMessage(messages.ruleIsDisabledBody)}
+                />
+              )}
             </React.Fragment>
           )}
           {ruleFetchStatus === 'pending' && <Loading />}

@@ -1,79 +1,48 @@
 import './_Inventory.scss';
 
-import * as pfReactTable from '@patternfly/react-table';
+import React, { useEffect, useState } from 'react';
+import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
+import { urlBuilder, workloadQueryBuilder } from '../Common/Tables';
+import { useDispatch, useSelector } from 'react-redux';
 
-import React, { useEffect, useRef, useState } from 'react';
-
+import API from '../../Utilities/Api';
 import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import Loading from '../Loading/Loading';
 import PropTypes from 'prop-types';
+import { RULES_FETCH_URL } from '../../AppConstants';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/';
-import { connect } from 'react-redux';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
-import { injectIntl } from 'react-intl';
+import { mergeArraysByDiffKeys } from '../Common/Tables';
 import messages from '../../Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
+import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { systemReducer } from '../../AppReducer';
+import { useIntl } from 'react-intl';
 
-let page = 1;
-let pageSize = 50;
-let rule_id = '';
 const Inventory = ({
   tableProps,
-  onSelectRows,
-  rows,
-  intl,
   rule,
-  addNotification,
-  items = [],
   afterDisableFn,
-  onSortFn,
-  filters,
-  searchText,
-  setSearchText,
+  selectedTags,
+  workloads,
+  SID,
 }) => {
-  const inventory = useRef(null);
+  const intl = useIntl();
+  const dispatch = useDispatch();
   const [selected, setSelected] = useState([]);
+  // eslint-disable-next-line no-unused-vars
+  const [filters, setFilters] = useState({
+    limit: 20,
+    offset: 0,
+    sort: '-last_seen',
+  });
+  const entities = useSelector(({ entities }) => entities || {});
+  const onSelectRows = (id, selected) =>
+    dispatch({ type: 'SELECT_ENTITY', payload: { id, selected } });
+  const addNotification = (data) => dispatch(notification(data));
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [bulkSelect, setBulkSelect] = useState();
-
-  const sortIndices = {
-    1: 'display_name',
-    2: 'updated',
-  };
-
-  const onSort = ({ index, direction }) =>
-    onSortFn(`${direction === 'asc' ? '' : '-'}${sortIndices[index]}`);
-
-  const calculateSort = () => {
-    const sortIndex = Number(
-      Object.entries(sortIndices).find(
-        (item) => item[1] === filters.sort || `-${item[1]}` === filters.sort
-      )[0]
-    );
-    return {
-      index: sortIndex,
-      key: sortIndex !== 2 ? sortIndices[sortIndex] : 'updated',
-      direction: filters.sort[0] === '-' ? 'desc' : 'asc',
-    };
-  };
-
-  const onRefresh = (options) => {
-    if (rule_id !== rule.rule_id) {
-      page = 1;
-      pageSize = 50;
-    }
-
-    if (inventory && inventory.current) {
-      page = options.page;
-      pageSize = options.per_page;
-      rule_id = rule.rule_id;
-      inventory.current.onRefreshData(options);
-    }
-  };
 
   const remediationDataProvider = () => ({
     issues: [
@@ -105,32 +74,64 @@ const Inventory = ({
 
   const bulkSelectfn = () => {
     setBulkSelect(true);
-    setSelected(items);
     onSelectRows(0, true);
   };
 
-  const filterConfigItems = [
-    {
-      label: intl.formatMessage(messages.name).toLowerCase(),
-      filterValues: {
-        key: 'text-filter',
-        onChange: (event, value) => setSearchText(value),
-        value: searchText,
-      },
-    },
-  ];
+  const calculateSelectedItems = () =>
+    bulkSelect
+      ? setBulkSelect(false)
+      : setSelected(
+          entities?.rows
+            ?.filter((entity) => entity.selected === true)
+            .map((entity) => entity.id)
+        );
+
+  const createColumns = (defaultColumns) => {
+    let lastSeenColumn = defaultColumns.filter(({ key }) => key === 'updated');
+    let displayName = defaultColumns.filter(
+      ({ key }) => key === 'display_name'
+    );
+    let systemProfile = defaultColumns.filter(
+      ({ key }) => key === 'system_profile'
+    );
+
+    displayName = {
+      ...displayName[0],
+      transforms: [sortable, wrappable],
+      props: { isStatic: true },
+    };
+
+    lastSeenColumn = {
+      ...lastSeenColumn[0],
+      transforms: [sortable, wrappable],
+      props: { width: 20 },
+    };
+
+    systemProfile = {
+      ...systemProfile[0],
+      transforms: [wrappable],
+    };
+
+    return [displayName, systemProfile, lastSeenColumn];
+  };
+
+  const handleRefresh = (options) => {
+    const { limit, offset, sort, name } = options;
+    const refreshedFilters = {
+      limit,
+      offset,
+      sort,
+      ...(name && {
+        name,
+      }),
+    };
+    urlBuilder(refreshedFilters, selectedTags);
+  };
 
   useEffect(() => {
-    const calculateSelectedItems = (rows) =>
-      bulkSelect
-        ? setBulkSelect(false)
-        : setSelected(
-            rows
-              .filter((entity) => entity.selected === true)
-              .map((entity) => entity.id)
-          );
-    rows && calculateSelectedItems(rows);
-  }, [rows]);
+    entities?.rows?.length && calculateSelectedItems(entities.rows);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entities?.rows]);
 
   return (
     <React.Fragment>
@@ -144,20 +145,75 @@ const Inventory = ({
         />
       )}
       <InventoryTable
-        disableDefaultColumns
+        hasCheckbox
         initialLoading
-        ref={inventory}
-        items={items}
-        sortBy={calculateSort()}
-        onSort={onSort}
-        onRefresh={onRefresh}
-        filterConfig={{ items: filterConfigItems }}
-        page={page}
-        total={items.length}
-        perPage={pageSize}
+        autoRefresh
+        hideFilters={{ all: true, name: false }}
+        columns={(defaultColumns) => createColumns(defaultColumns)}
         tableProps={{
-          variant: pfReactTable.TableVariant.compact,
+          variant: TableVariant.compact,
           ...tableProps,
+        }}
+        customFilters={{
+          selectedTags,
+          workloads,
+          SID,
+        }}
+        getEntities={async (_items, config, showTags, defaultGetEntities) => {
+          const {
+            per_page,
+            page,
+            orderBy,
+            orderDirection,
+            selectedTags,
+            workloads,
+            SID,
+          } = config;
+          const sort = `${orderDirection === 'ASC' ? '' : '-'}${
+            orderBy === 'updated' ? 'last_seen' : orderBy
+          }`;
+          let options = {
+            ...filters,
+            limit: per_page,
+            offset: page * per_page - per_page,
+            sort,
+            ...(config.filters.hostnameOrId && {
+              name: config?.filters?.hostnameOrId,
+            }),
+            ...(selectedTags.length && { tags: selectedTags }),
+          };
+
+          workloads &&
+            (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
+
+          handleRefresh(options);
+
+          const fetchedSystems = (
+            await API.get(
+              `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/systems_detail/`,
+              {},
+              options
+            )
+          )?.data;
+
+          const results = await defaultGetEntities(
+            fetchedSystems.data.map((system) => system.system_uuid),
+            {
+              page,
+              per_page,
+              hasItems: true,
+              fields: { system_profile: ['operating_system'] },
+            },
+            showTags
+          );
+
+          return Promise.resolve({
+            results: mergeArraysByDiffKeys(
+              fetchedSystems.data,
+              results.results
+            ),
+            total: fetchedSystems.meta.count,
+          });
         }}
         dedicatedAction={
           <RemediationButton
@@ -190,10 +246,10 @@ const Inventory = ({
               },
             },
             {
-              ...(items && items.length > pageSize
+              ...(entities?.rows?.length > filters.limit
                 ? {
                     title: intl.formatMessage(messages.selectPage, {
-                      items: pageSize,
+                      items: filters.limit,
                     }),
                     onClick: () => {
                       onSelectRows(0, true);
@@ -202,12 +258,22 @@ const Inventory = ({
                 : {}),
             },
             {
-              ...(items && items.length > 0
+              ...(entities?.rows?.length > 0
                 ? {
                     title: intl.formatMessage(messages.selectAll, {
-                      items: items.length || 0,
+                      items: entities?.total || 0,
                     }),
-                    onClick: () => {
+                    onClick: async () => {
+                      const allSystems = (
+                        await API.get(
+                          `${RULES_FETCH_URL}${encodeURI(
+                            rule.rule_id
+                          )}/systems/`,
+                          {},
+                          {}
+                        )
+                      )?.data?.host_ids;
+                      setSelected(allSystems);
                       bulkSelectfn();
                     },
                   }
@@ -215,35 +281,30 @@ const Inventory = ({
             },
           ],
           checked:
-            selected.length === items.length
+            (selected.length === entities?.rows?.length ||
+              selected.length === entities?.total) &&
+            entities?.total > 0
               ? 1
-              : selected.length === pageSize
+              : selected.length === filters.limit
               ? null
               : 0,
           onSelect: () => {
             selected.length > 0 ? onSelectRows(-1, false) : bulkSelectfn();
+            calculateSelectedItems();
           },
         }}
         fallback={Loading}
-        onLoad={({ mergeWithEntities, INVENTORY_ACTION_TYPES }) => {
+        onLoad={({
+          mergeWithEntities,
+          INVENTORY_ACTION_TYPES,
+          mergeWithDetail,
+        }) => {
           getRegistry().register({
-            ...mergeWithEntities(
-              systemReducer(
-                [
-                  {
-                    title: intl.formatMessage(messages.name),
-                    transforms: [pfReactTable.sortable],
-                    key: 'display_name',
-                  },
-                  {
-                    title: intl.formatMessage(messages.lastSeen),
-                    transforms: [pfReactTable.sortable],
-                    key: 'updated',
-                  },
-                ],
-                INVENTORY_ACTION_TYPES
-              )
-            ),
+            ...mergeWithEntities(systemReducer([], INVENTORY_ACTION_TYPES), {
+              page: Number(filters.offset / filters.limit + 1 || 1),
+              perPage: Number(filters.limit || 20),
+            }),
+            ...mergeWithDetail(),
           });
         }}
       />
@@ -252,39 +313,12 @@ const Inventory = ({
 };
 
 Inventory.propTypes = {
-  rows: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      selected: PropTypes.bool,
-    })
-  ),
-  onSelectRows: PropTypes.func,
-  items: PropTypes.array,
   tableProps: PropTypes.any,
-  intl: PropTypes.any,
   rule: PropTypes.object,
-  addNotification: PropTypes.func,
   afterDisableFn: PropTypes.func,
-  onSortFn: PropTypes.func,
-  filters: PropTypes.object,
-  setSearchText: PropTypes.func,
-  searchText: PropTypes.string,
+  selectedTags: PropTypes.any,
+  workloads: PropTypes.any,
+  SID: PropTypes.any,
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  addNotification: (data) => dispatch(addNotification(data)),
-  onSelectRows: (id, selected) =>
-    dispatch({ type: 'SELECT_ENTITY', payload: { id, selected } }),
-});
-
-export default injectIntl(
-  routerParams(
-    connect(
-      ({ entities, props }) => ({
-        rows: entities && entities.rows,
-        ...props,
-      }),
-      mapDispatchToProps
-    )(Inventory)
-  )
-);
+export default Inventory;
