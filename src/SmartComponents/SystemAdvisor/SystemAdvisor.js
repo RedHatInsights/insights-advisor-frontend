@@ -34,6 +34,7 @@ import {
   Table,
   TableBody,
   TableHeader,
+  TableVariant,
   cellWidth,
   fitContent,
   sortable,
@@ -657,6 +658,7 @@ const BaseSystemAdvisor = () => {
               sortBy={sortBy}
               canSelectAll={false}
               onSort={onSort}
+              variant={TableVariant.compact}
               isStickyHeader
             >
               <TableHeader />
