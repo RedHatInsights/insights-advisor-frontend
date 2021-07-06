@@ -7,6 +7,7 @@ import {
 } from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
 import { Link, StyleSheet, Text } from '@react-pdf/renderer';
 
+import { BASE_URI } from '../../AppConstants';
 import PropTypes from 'prop-types';
 import React from 'react';
 import c_table_m_compact_cell_PaddingBottom from '@patternfly/react-tokens/dist/js/c_table_m_compact_cell_PaddingBottom';
@@ -84,7 +85,7 @@ export const tablePage = ({ page, systems, intl }) => {
         <Text key={system.system_uuid} style={styles.nameColumn}>
           <Link
             style={styles.link}
-            src={`https://cloud.redhat.com/insights/advisor/systems/${system.system_uuid}/`}
+            src={`${BASE_URI}/insights/advisor/systems/${system.system_uuid}/`}
           >
             {system.display_name}
           </Link>
