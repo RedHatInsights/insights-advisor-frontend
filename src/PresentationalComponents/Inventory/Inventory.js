@@ -31,11 +31,11 @@ const Inventory = ({
   const intl = useIntl();
   const dispatch = useDispatch();
   const [selected, setSelected] = useState([]);
-  // eslint-disable-next-line no-unused-vars
   const [filters, setFilters] = useState({
     limit: 20,
     offset: 0,
     sort: '-last_seen',
+    name: '',
   });
   const entities = useSelector(({ entities }) => entities || {});
   const onSelectRows = (id, selected) =>
@@ -125,6 +125,7 @@ const Inventory = ({
         name,
       }),
     };
+    setFilters({ ...options });
     urlBuilder(refreshedFilters, selectedTags);
   };
 
@@ -270,7 +271,7 @@ const Inventory = ({
                             rule.rule_id
                           )}/systems/`,
                           {},
-                          {}
+                          { name: filters.name }
                         )
                       )?.data?.host_ids;
                       setSelected(allSystems);
