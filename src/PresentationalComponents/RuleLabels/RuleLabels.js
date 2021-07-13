@@ -13,7 +13,7 @@ import messages from '../../Messages';
 
 const RuleLabels = ({ intl, rule }) => (
   <React.Fragment>
-    {rule.tags.search('incident') !== -1 && (
+    {rule?.tags?.search('incident') !== -1 && (
       <Tooltip
         content={intl.formatMessage(messages.incidentTooltip)}
         position={TooltipPosition.right}

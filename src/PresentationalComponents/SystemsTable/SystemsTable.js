@@ -20,7 +20,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import API from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
+import { Link } from 'react-router-dom';
 import Loading from '../Loading/Loading';
+import RuleLabels from '../RuleLabels/RuleLabels';
 import SystemsPdf from '../Export/SystemsPdf';
 import downloadReport from '../Common/DownloadHelper';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
@@ -101,9 +103,23 @@ const SystemsTable = () => {
       value: `checkbox-${SFC.hits.urlParam}`,
       filterValues: {
         key: `${SFC.hits.urlParam}-filter`,
-        onChange: (event, values) => addFilterParam(SFC.hits.urlParam, values),
+        onChange: (_e, values) => addFilterParam(SFC.hits.urlParam, values),
         value: filters.hits,
         items: SFC.hits.values,
+      },
+    },
+    {
+      label: SFC.incident.title,
+      type: SFC.incident.type,
+      id: SFC.incident.urlParam,
+      value: `checkbox-${SFC.incident.urlParam}`,
+      filterValues: {
+        key: `${SFC.incident.urlParam}-filter`,
+        onChange: (_e, values) => {
+          addFilterParam(SFC.incident.urlParam, values);
+        },
+        value: filters.incident,
+        items: SFC.incident.values,
       },
     },
   ];
@@ -149,11 +165,9 @@ const SystemsTable = () => {
   };
 
   const handleRefresh = (options) => {
-    const { limit, offset, sort, display_name, hits } = options;
+    const { display_name, hits } = options;
     const refreshedFilters = {
-      limit,
-      offset,
-      sort,
+      ...options,
       ...(display_name && {
         display_name,
       }),
@@ -170,11 +184,21 @@ const SystemsTable = () => {
     let systemProfile = defaultColumns.filter(
       ({ key }) => key === 'system_profile'
     );
-
     displayName = {
       ...displayName[0],
       transforms: [sortable, wrappable],
       props: { isStatic: true },
+      // eslint-disable-next-line react/display-name
+      renderFunc: (_data, _id, system) => (
+        <React.Fragment>
+          <Link key={_id} to={`/systems/${system.system_uuid}`}>
+            {`${system.display_name} `}
+          </Link>
+          {system.incident_hits > 0 && (
+            <RuleLabels rule={{ tags: 'incident' }} />
+          )}
+        </React.Fragment>
+      ),
     };
 
     lastSeenColumn = {
@@ -208,13 +232,21 @@ const SystemsTable = () => {
         ? (paramsObject.limit = 20)
         : (paramsObject.limit = Number(paramsObject.limit[0]));
       combinedFitlers = { ...filters, ...paramsObject };
+      paramsObject.incident !== undefined &&
+        !Array.isArray(paramsObject.incident) &&
+        (paramsObject.incident = [`${paramsObject.incident}`]);
       setFilters(combinedFitlers);
     } else if (
       filters.limit === undefined ||
       filters.offset === undefined ||
       filters.hits === undefined
     ) {
-      combinedFitlers = { ...filters, offset: 0, limit: 20, hits: ['all'] };
+      combinedFitlers = {
+        ...filters,
+        offset: 0,
+        limit: 20,
+        hits: ['all'],
+      };
       setFilters(combinedFitlers);
     }
     setFilterBuilding(false);
@@ -269,6 +301,9 @@ const SystemsTable = () => {
             sort,
             ...(config.filters.hostnameOrId && {
               display_name: config?.filters?.hostnameOrId,
+            }),
+            ...(Array.isArray(advisorFilters.incident) && {
+              incident: advisorFilters?.incident?.join(','),
             }),
             ...(selectedTags.length && { tags: selectedTags }),
           };
