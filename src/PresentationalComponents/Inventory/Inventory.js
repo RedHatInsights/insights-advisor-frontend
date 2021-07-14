@@ -2,7 +2,11 @@ import './_Inventory.scss';
 
 import React, { useEffect, useState } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
-import { urlBuilder, workloadQueryBuilder } from '../Common/Tables';
+import {
+  pruneFilters,
+  urlBuilder,
+  workloadQueryBuilder,
+} from '../Common/Tables';
 import { useDispatch, useSelector } from 'react-redux';
 
 import API from '../../Utilities/Api';
@@ -13,6 +17,7 @@ import Loading from '../Loading/Loading';
 import PropTypes from 'prop-types';
 import { RULES_FETCH_URL } from '../../AppConstants';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
+import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
 import messages from '../../Messages';
@@ -116,17 +121,76 @@ const Inventory = ({
   };
 
   const handleRefresh = (options) => {
-    const { limit, offset, sort, name } = options;
+    const { name } = options;
     const refreshedFilters = {
-      limit,
-      offset,
-      sort,
+      ...options,
       ...(name && {
         name,
       }),
     };
-    setFilters({ ...options });
     urlBuilder(refreshedFilters, selectedTags);
+  };
+  const removeFilterParam = (param) => {
+    const filter = { ...filters, offset: 0 };
+    delete filter[param];
+    setFilters(filter);
+  };
+  const addFilterParam = (param, values) => {
+    values.length > 0
+      ? setFilters({ ...filters, offset: 0, ...{ [param]: values } })
+      : removeFilterParam(param);
+  };
+  const filterConfigItems = [
+    {
+      label: SFC.rhel_version.title.toLowerCase(),
+      type: SFC.rhel_version.type,
+      id: SFC.rhel_version.urlParam,
+      value: `checkbox-${SFC.rhel_version.urlParam}`,
+      filterValues: {
+        key: `${SFC.rhel_version.urlParam}-filter`,
+        onChange: (_e, values) => {
+          addFilterParam(SFC.rhel_version.urlParam, values);
+        },
+        value: filters.rhel_version,
+        items: SFC.rhel_version.values,
+      },
+    },
+  ];
+
+  const buildFilterChips = () => {
+    const localFilters = { ...filters };
+    delete localFilters.sort;
+    delete localFilters.offset;
+    delete localFilters.limit;
+
+    return pruneFilters(localFilters, SFC);
+  };
+
+  const activeFiltersConfig = {
+    deleteTitle: intl.formatMessage(messages.resetFilters),
+    filters: buildFilterChips(),
+    onDelete: (_e, itemsToRemove, isAll) => {
+      if (isAll) {
+        setFilters({
+          sort: filters.sort,
+          limit: filters.limit,
+          offset: filters.offset,
+        });
+      } else {
+        itemsToRemove.map((item) => {
+          const newFilter = {
+            [item.urlParam]: Array.isArray(filters[item.urlParam])
+              ? filters[item.urlParam].filter(
+                  (value) => String(value) !== String(item.chips[0].value)
+                )
+              : '',
+          };
+          newFilter[item.urlParam].length > 0
+            ? setFilters({ ...filters, ...newFilter })
+            : removeFilterParam(item.urlParam);
+        });
+      }
+    },
   };
 
   useEffect(() => {
@@ -150,12 +214,15 @@ const Inventory = ({
         initialLoading
         autoRefresh
         hideFilters={{ all: true, name: false }}
+        filterConfig={{ items: filterConfigItems }}
+        activeFiltersConfig={activeFiltersConfig}
         columns={(defaultColumns) => createColumns(defaultColumns)}
         tableProps={{
           variant: TableVariant.compact,
           ...tableProps,
         }}
         customFilters={{
+          advisorFilters: filters,
           selectedTags,
           workloads,
           SID,
@@ -166,6 +233,7 @@ const Inventory = ({
             page,
             orderBy,
             orderDirection,
+            advisorFilters,
             selectedTags,
             workloads,
             SID,
@@ -174,7 +242,7 @@ const Inventory = ({
             orderBy === 'updated' ? 'last_seen' : orderBy
           }`;
           let options = {
-            ...filters,
+            ...advisorFilters,
             limit: per_page,
             offset: page * per_page - per_page,
             sort,
@@ -182,6 +250,9 @@ const Inventory = ({
               name: config?.filters?.hostnameOrId,
             }),
             ...(selectedTags.length && { tags: selectedTags }),
+            ...(Array.isArray(advisorFilters.rhel_version) && {
+              rhel_version: advisorFilters.rhel_version?.join(','),
+            }),
           };
 
           workloads &&

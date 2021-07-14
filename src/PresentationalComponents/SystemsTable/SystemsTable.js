@@ -109,7 +109,7 @@ const SystemsTable = () => {
       },
     },
     {
-      label: SFC.incident.title,
+      label: SFC.incident.title.toLowerCase(),
       type: SFC.incident.type,
       id: SFC.incident.urlParam,
       value: `checkbox-${SFC.incident.urlParam}`,
@@ -120,6 +120,20 @@ const SystemsTable = () => {
         },
         value: filters.incident,
         items: SFC.incident.values,
+      },
+    },
+    {
+      label: SFC.rhel_version.title.toLowerCase(),
+      type: SFC.rhel_version.type,
+      id: SFC.rhel_version.urlParam,
+      value: `checkbox-${SFC.rhel_version.urlParam}`,
+      filterValues: {
+        key: `${SFC.rhel_version.urlParam}-filter`,
+        onChange: (_e, values) => {
+          addFilterParam(SFC.rhel_version.urlParam, values);
+        },
+        value: filters.rhel_version,
+        items: SFC.rhel_version.values,
       },
     },
   ];
@@ -294,6 +308,7 @@ const SystemsTable = () => {
           const sort = `${orderDirection === 'ASC' ? '' : '-'}${
             orderBy === 'updated' ? 'last_seen' : orderBy
           }`;
+
           let options = {
             ...advisorFilters,
             limit: per_page,
@@ -304,6 +319,9 @@ const SystemsTable = () => {
             }),
             ...(Array.isArray(advisorFilters.incident) && {
               incident: advisorFilters?.incident?.join(','),
+            }),
+            ...(Array.isArray(advisorFilters.rhel_version) && {
+              rhel_version: advisorFilters.rhel_version?.join(','),
             }),
             ...(selectedTags.length && { tags: selectedTags }),
           };
