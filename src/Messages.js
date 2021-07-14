@@ -898,6 +898,16 @@ export default defineMessages({
     description: 'All',
     defaultMessage: 'All',
   },
+  os: {
+    id: 'os',
+    description: 'Operating system',
+    defaultMessage: 'Os',
+  },
+  operatingSystem: {
+    id: 'operatingSystem',
+    description: 'Operating system',
+    defaultMessage: 'Operating system',
+  },
   incidentRules: {
     id: 'incidentRules',
     description: 'Recommendationswith incidents',
@@ -917,6 +927,11 @@ export default defineMessages({
     id: 'nonIncidentSystems',
     description: 'Systems with no incidents',
     defaultMessage: 'Non-incident systems',
+  },
+  incidents: {
+    id: 'incidents',
+    description: 'Incidents',
+    defaultMessage: 'Incidents',
   },
   incident: {
     id: 'incident',
