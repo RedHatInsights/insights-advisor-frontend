@@ -124,6 +124,7 @@ const RulesTable = () => {
   const [selectedRule, setSelectedRule] = useState({});
   const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
   const [viewSystemsModalRule, setViewSystemsModalRule] = useState({});
+  const [isAllExpanded, setIsAllExpanded] = useState(false);
 
   const addNotification = (data) => dispatch(addNotificationAction(data));
   const setFilters = (filters) => dispatch(AppActions.setFilters(filters));
@@ -184,7 +185,7 @@ const RulesTable = () => {
     });
   };
 
-  const handleOnCollapse = (event, rowId, isOpen) => {
+  const handleOnCollapse = (_e, rowId, isOpen) => {
     const collapseRows = [...rows];
     collapseRows[rowId] = { ...collapseRows[rowId], isOpen };
     setRows(collapseRows);
@@ -703,6 +704,18 @@ const RulesTable = () => {
     fetchRulesFn();
   };
 
+  const onExpandAllClick = (_e, isOpen) => {
+    const allRows = [...rows];
+    setIsAllExpanded(isOpen);
+    allRows.map((row, key) => {
+      if (Object.prototype.hasOwnProperty.call(row, 'isOpen')) {
+        allRows[key] = { ...row, isOpen };
+      }
+    });
+
+    setRows(allRows);
+  };
+
   return (
     <React.Fragment>
       {viewSystemsModalOpen && (
@@ -724,6 +737,7 @@ const RulesTable = () => {
         />
       )}
       <PrimaryToolbar
+        expandAll={{ isAllExpanded, onClick: onExpandAllClick }}
         pagination={{
           itemCount: results,
           page: filters.offset / filters.limit + 1,
