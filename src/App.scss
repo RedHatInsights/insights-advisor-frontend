@@ -33,3 +33,8 @@ ul.navigation-secondary {
     margin-right: 0px !important;
   }
 }
+
+.pf-c-select__menu {
+  overflow-y: scroll;
+  max-height: 400px;
+}
