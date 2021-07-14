@@ -75,7 +75,7 @@ const BaseSystemAdvisor = () => {
   const [accountSettings, setAccountSettings] = useState({});
   const [searchValue, setSearchValue] = useState('');
   const [isSelected, setIsSelected] = useState(false);
-
+  const [isAllExpanded, setIsAllExpanded] = useState(false);
   const results = rows ? rows.length / 2 : 0;
   const satelliteManaged =
     (systemProfile && systemProfile.satellite_managed) || false; // system is managed by satellite
@@ -115,14 +115,13 @@ const BaseSystemAdvisor = () => {
     },
   ];
 
-  const onKebabClick = (action) => {
-    const isOpen = action === 'insights-expand-all';
+  const onExpandAllClick = (_e, isOpen) => {
+    setIsAllExpanded(isOpen);
     const allRows = [...rows];
 
-    allRows.map((row, key) => {
+    allRows.map((row) => {
       if (Object.prototype.hasOwnProperty.call(row, 'isOpen')) {
         row.isOpen = isOpen;
-        isOpen && handleOnCollapse(null, key, isOpen);
       }
     });
 
@@ -143,14 +142,6 @@ const BaseSystemAdvisor = () => {
       )}{' '}
       Remediate
     </RemediationButton>,
-    {
-      label: 'Collapse all',
-      onClick: () => onKebabClick('insights-collapse-all'),
-    },
-    {
-      label: 'Expand all',
-      onClick: () => onKebabClick('insights-expand-all'),
-    },
   ];
 
   const activeRuleFirst = (activeReports) => {
@@ -602,16 +593,17 @@ const BaseSystemAdvisor = () => {
         <Fragment />
       ) : (
         <PrimaryToolbar
+          expandAll={{ isAllExpanded, onClick: onExpandAllClick }}
           actionsConfig={{ actions }}
           bulkSelect={bulkSelect}
           filterConfig={{ items: filterConfigItems }}
           pagination={
-            <React.Fragment>
+            <Fragment>
               {' '}
               {results === 1
                 ? `${results} Recommendation`
                 : `${results} Recommendations`}{' '}
-            </React.Fragment>
+            </Fragment>
           }
           activeFiltersConfig={activeFiltersConfig}
         />
