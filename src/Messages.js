@@ -908,6 +908,16 @@ export default defineMessages({
     description: 'Recommendationswith no incidents',
     defaultMessage: 'Non-incident recommendations',
   },
+  incidentSystems: {
+    id: 'incidentSystems',
+    description: 'Systems with incidents',
+    defaultMessage: 'Incident systems',
+  },
+  nonIncidentSystems: {
+    id: 'nonIncidentSystems',
+    description: 'Systems with no incidents',
+    defaultMessage: 'Non-incident systems',
+  },
   incident: {
     id: 'incident',
     description: 'Incident',

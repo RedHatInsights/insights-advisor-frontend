@@ -360,6 +360,27 @@ export const SYSTEM_FILTER_CATEGORIES = {
       ...FILTER_CATEGORIES.total_risk.values,
     ],
   },
+  incident: {
+    type: 'checkbox',
+    title: 'incidents',
+    urlParam: 'incident',
+    values: [
+      {
+        label: intlHelper(
+          intl.formatMessage(messages.incidentSystems),
+          intlSettings
+        ),
+        value: 'true',
+      },
+      {
+        label: intlHelper(
+          intl.formatMessage(messages.nonIncidentSystems),
+          intlSettings
+        ),
+        value: 'false',
+      },
+    ],
+  },
 };
 
 export const PERMS = {
