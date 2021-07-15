@@ -366,7 +366,7 @@ const RulesTable = () => {
       } else {
         const rows = rules.data.flatMap((value, key) => [
           {
-            isOpen: false,
+            isOpen: isAllExpanded,
             rule: value,
             cells: [
               {
