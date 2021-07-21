@@ -281,8 +281,7 @@ const OverviewDetails = ({ match }) => {
                   <PageHeaderTitle
                     title={
                       <React.Fragment>
-                        <RuleLabels rule={rule} />
-                        {rule.description}
+                        {rule.description} <RuleLabels rule={rule} />
                       </React.Fragment>
                     }
                   />
