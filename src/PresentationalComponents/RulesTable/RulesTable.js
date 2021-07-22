@@ -42,6 +42,7 @@ import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-i
 import { BASE_URL } from '../../AppConstants';
 import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+import CategoryLabel from '../CategoryLabel/CategoryLabel';
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import DisableRule from '../Modals/DisableRule';
@@ -77,11 +78,15 @@ const RulesTable = () => {
   const [cols] = useState([
     {
       title: intl.formatMessage(messages.name),
-      transforms: [sortable, cellWidth(45)],
+      transforms: [sortable, cellWidth(40)],
     },
     {
       title: intl.formatMessage(messages.added),
-      transforms: [sortable, cellWidth(15)],
+      transforms: [sortable, cellWidth(10)],
+    },
+    {
+      title: intl.formatMessage(messages.category),
+      transforms: [sortable, cellWidth(10)],
     },
     {
       title: intl.formatMessage(messages.totalRisk),
@@ -134,10 +139,11 @@ const RulesTable = () => {
   const sortIndices = {
     1: 'description',
     2: 'publish_date',
-    3: 'total_risk',
-    4: 'resolution_risk',
-    5: 'impacted_count',
-    6: 'playbook_count',
+    3: 'category',
+    4: 'total_risk',
+    5: 'resolution_risk',
+    6: 'impacted_count',
+    7: 'playbook_count',
   };
 
   const ruleResolutionRisk = (rule) => {
@@ -388,6 +394,9 @@ const RulesTable = () => {
                     variant="relative"
                   />
                 ),
+              },
+              {
+                title: <CategoryLabel key={key} labelList={[value.category]} />,
               },
               {
                 title: (
