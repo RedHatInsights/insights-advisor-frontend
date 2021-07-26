@@ -1115,4 +1115,15 @@ export default defineMessages({
     description: 'Not required',
     defaultMessage: 'Not required',
   },
+  pathways: {
+    id: 'pathways',
+    description: 'pathways',
+    defaultMessage: 'Pathways',
+  },
+  recommendedPathways: {
+    id: 'recommendedPathways',
+    description: 'Recommended pathways group multiple Advisor',
+    defaultMessage:
+      'Recommended pathways group multiple Advisor recommendations under common actions to power more efficient remediation.',
+  },
 });

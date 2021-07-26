@@ -4,20 +4,30 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
+import {
+  Tab,
+  TabTitleText,
+  Tabs,
+} from '@patternfly/react-core/dist/esm/components/Tabs/index';
+import {
+  Tooltip,
+  TooltipPosition,
+} from '@patternfly/react-core/dist/esm/components/Tooltip/';
 
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
+import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
 import { PERMS } from '../../AppConstants';
-import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
+import { global_info_color_100 } from '@patternfly/react-tokens';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 
 const RulesTable = lazy(() =>
   import(
-    /* webpackChunkName: "RulesTable" */ '../../PresentationalComponents/RulesTable/RulesTable'
+    /* webpackChunkName: 'RulesTable' */ '../../PresentationalComponents/RulesTable/RulesTable'
   )
 );
 
@@ -27,6 +37,19 @@ const List = () => {
   document.title = intl.formatMessage(messages.documentTitle, {
     subnav: messages.recommendations.defaultMessage,
   });
+  const [activeTab, setActiveTab] = useState(0);
+
+  const questionTooltip = (text) => (
+    <Tooltip
+      key={text}
+      position={TooltipPosition.right}
+      content={<div>{text}</div>}
+    >
+      <span aria-label="Action">
+        <OutlinedQuestionCircleIcon color={global_info_color_100.value} />
+      </span>
+    </Tooltip>
+  );
 
   return (
     <React.Fragment>
@@ -46,9 +69,39 @@ const List = () => {
         )}
       </PageHeader>
       <Main>
-        <Suspense fallback={<Loading />}>
-          <RulesTable />
-        </Suspense>
+        <Tabs
+          className="ins-c-tab-header"
+          mountOnEnter
+          unmountOnExit
+          activeKey={activeTab}
+          onSelect={(_e, tab) => setActiveTab(tab)}
+        >
+          <Tab
+            eventKey={0}
+            title={
+              <TabTitleText>
+                {intl.formatMessage(messages.recommendations)}
+              </TabTitleText>
+            }
+          >
+            <Suspense fallback={<Loading />}>
+              <RulesTable />
+            </Suspense>
+          </Tab>
+          <Tab
+            eventKey={1}
+            title={
+              <TabTitleText>
+                {intl.formatMessage(messages.pathways)}{' '}
+                {questionTooltip(
+                  intl.formatMessage(messages.recommendedPathways)
+                )}
+              </TabTitleText>
+            }
+          >
+            {intl.formatMessage(messages.pathways)}
+          </Tab>
+        </Tabs>
       </Main>
     </React.Fragment>
   );
