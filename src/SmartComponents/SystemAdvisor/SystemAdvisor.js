@@ -50,6 +50,7 @@ import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryTo
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
 import ReportDetails from '../../PresentationalComponents/ReportDetails';
+import RuleLabels from '../../PresentationalComponents/RuleLabels/RuleLabels';
 import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import { capitalize } from '../../PresentationalComponents/Common/Tables';
 import messages from '../../Messages';
@@ -200,7 +201,13 @@ const BaseSystemAdvisor = () => {
           selected,
           disableSelection: !resolution.has_playbook,
           cells: [
-            { title: <div> {rule.description}</div> },
+            {
+              title: (
+                <span>
+                  {rule.description} <RuleLabels rule={rule} />
+                </span>
+              ),
+            },
             {
               title: (
                 <div key={key}>
