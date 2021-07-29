@@ -13,20 +13,20 @@ import {
 } from '@patternfly/react-core/dist/js/layouts/Stack/index';
 import {
   Text,
+  TextContent,
   TextVariants,
-} from '@patternfly/react-core/dist/js/components/Text/Text';
+} from '@patternfly/react-core/dist/js/components/Text/index';
 import { compact, intersection } from 'lodash';
 
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
 import { Link } from 'react-router-dom';
 import Markdown from 'react-markdown';
-import PowerOffIcon from '@patternfly/react-icons/dist/js/icons/power-off-icon';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { RebootRequired } from '../Common/Common';
 import RuleRating from '../RuleRating/RuleRating';
 import { SeverityLine } from '@redhat-cloud-services/frontend-components-charts/esm/SeverityLine';
-import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
 import barDividedList from '../../Utilities/BarDividedList';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
@@ -207,25 +207,7 @@ const RuleDetails = ({
                       </TextContent>
                     </StackItem>
                     <StackItem>
-                      <span className="system-reboot-message">
-                        <PowerOffIcon
-                          className={
-                            rule.reboot_required
-                              ? 'reboot-required-icon'
-                              : 'no-reboot-required-icon'
-                          }
-                        />
-                        <TextContent className="system-reboot-message__content">
-                          <Text component={TextVariants.p}>
-                            {intl.formatMessage(messages.systemReboot, {
-                              strong: (str) => strong(str),
-                              status: rule.reboot_required
-                                ? intl.formatMessage(messages.is)
-                                : intl.formatMessage(messages.isNot),
-                            })}
-                          </Text>
-                        </TextContent>
-                      </span>
+                      {RebootRequired(rule.reboot_required)}
                     </StackItem>
                   </Stack>
                 </span>
