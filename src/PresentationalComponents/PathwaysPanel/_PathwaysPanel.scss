@@ -1,0 +1,25 @@
+.ins-c-advisor__card--pathwayspanel {
+    .pf-c-card__expandable-content {
+        padding-bottom: var(--pf-global--spacer--lg);
+    }
+  
+    border-top-width: var(--pf-global--BorderWidth--md);
+    border-top-color: var(--pf-global--primary-color--100);
+    border-top-style: solid;
+    margin-bottom: var(--pf-global--gutter--md);
+
+    .ins-c-advisor__card--pathwaycard {
+        .body {
+            padding-bottom: var(--pf-global--spacer--sm);
+            padding-top: 0;
+        }
+        .footer {
+            padding-top: var(--pf-global--spacer--md);
+            padding-bottom: 0;
+        }
+        border: none;
+    }
+    div.pf-l-grid__item:not(:last-child) {
+        border-right: var(--pf-global--BorderWidth--md) solid var(--pf-global--BorderColor--100);
+    }
+}

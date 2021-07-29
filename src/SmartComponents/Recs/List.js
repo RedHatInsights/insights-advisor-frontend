@@ -30,6 +30,11 @@ const RulesTable = lazy(() =>
     /* webpackChunkName: 'RulesTable' */ '../../PresentationalComponents/RulesTable/RulesTable'
   )
 );
+const PathwaysPanel = lazy(() =>
+  import(
+    /* webpackChunkName: 'PathwaysPanel' */ '../../PresentationalComponents/PathwaysPanel/PathwaysPanel'
+  )
+);
 
 const List = () => {
   const intl = useIntl();
@@ -69,6 +74,9 @@ const List = () => {
         )}
       </PageHeader>
       <Main>
+        <Suspense fallback={<Loading />}>
+          <PathwaysPanel />
+        </Suspense>
         <Tabs
           className="ins-c-tab-header"
           mountOnEnter

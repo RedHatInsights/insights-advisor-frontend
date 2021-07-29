@@ -1126,4 +1126,14 @@ export default defineMessages({
     defaultMessage:
       'Recommended pathways group multiple Advisor recommendations under common actions to power more efficient remediation.',
   },
+  improveRecommended: {
+    id: 'improveRecommended',
+    description: 'Improve recommended pathways',
+    defaultMessage: 'Improve recommended pathways',
+  },
+  viewPathway: {
+    id: 'viewPathway',
+    description: 'View pathway',
+    defaultMessage: 'View pathway',
+  },
 });
