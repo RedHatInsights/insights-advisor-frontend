@@ -11,20 +11,23 @@ const insightsProxy = {
 
 const webpackProxy = {
   deployment: process.env.BETA ? 'beta/apps' : 'apps',
-  env: process.env.BETA ? 'ci-beta' : 'ci-stable',
-  useProxy: true,
-  useCloud: true,
   appUrl: process.env.BETA ? ['/beta/insights/advisor'] : ['/insights/advisor'],
+  env: `prod-stable`, // pick chrome env ['ci-beta', 'ci-stable', 'qa-beta', 'qa-stable', 'prod-beta', 'prod-stable']
+  useProxy: true,
+  proxyVerbose: true,
+  useCloud: false,
+  routes: {},
 };
 
 const { config: webpackConfig, plugins } = config({
   rootFolder: resolve(__dirname, '../'),
   debug: true,
+  useFileHash: false,
   ...(process.env.PROXY ? webpackProxy : insightsProxy),
   exposes: {
     './RootApp': resolve(__dirname, '../src/DevEntry'),
   },
-  env: 'prod',
+  env: 'prod-stable',
   localChrome: process.env.INSIGHTS_CHROME,
 });
 
