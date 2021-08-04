@@ -264,11 +264,7 @@ const OverviewDetails = ({ match }) => {
       {ruleFetchStatus === 'fulfilled' && (
         <React.Fragment>
           <PageHeader className="pageHeaderOverride">
-            <Breadcrumbs
-              ouiaId="override"
-              current={rule.description || ''}
-              match={match}
-            />
+            <Breadcrumbs ouiaId="override" current={rule.description || ''} />
           </PageHeader>
           <Main className="pf-m-light pf-u-pt-sm">
             <RuleDetails
