@@ -1,75 +1,58 @@
-import * as AppActions from '../../AppActions';
-
 import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Breadcrumb } from '@patternfly/react-core/dist/js/components/Breadcrumb/Breadcrumb';
 import { BreadcrumbItem } from '@patternfly/react-core/dist/js/components/Breadcrumb/BreadcrumbItem';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { injectIntl } from 'react-intl';
+import { fetchRule } from '../../AppActions';
 import messages from '../../Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
+import { useIntl } from 'react-intl';
+import { useLocation } from 'react-router-dom';
 
-const Breadcrumbs = ({
-  current,
-  fetchRule,
-  match,
-  ruleFetchStatus,
-  rule,
-  intl,
-}) => {
+const Breadcrumbs = ({ current }) => {
+  const intl = useIntl();
+  const dispatch = useDispatch();
+  const rule = useSelector(({ AdvisorStore }) => AdvisorStore.rule);
+  const ruleFetchStatus = useSelector(
+    ({ AdvisorStore }) => AdvisorStore.ruleFetchStatus
+  );
+  const location = useLocation().pathname?.split('/');
   const [items, setItems] = useState([]);
-  const [ruleDescriptionLoaded, setRuleDescription] = useState(false);
+
   const buildBreadcrumbs = useCallback(() => {
     const crumbs = [];
-    const splitUrl = match.url.split('/');
-
     // add base
     crumbs.push({
-      title: `${intl.formatMessage(messages.insightsHeader)} ${splitUrl[1]}`,
-      navigate: `/${splitUrl[1]}`,
+      title: `${intl.formatMessage(messages.insightsHeader)} ${location[1]}`,
+      navigate: `/${location[1]}`,
     });
 
     // if applicable, add :id breadcrumb
-    if (
-      match.params.id !== undefined &&
-      match.params.inventoryId !== undefined
-    ) {
+    if (location[1] === 'recommendations' && location.length === 4) {
       crumbs.push({
         title: rule.description,
-        navigate: `/${match.url.split('/')[1]}/${match.params.id}`,
+        navigate: `/${location[1]}/${location[2]}`,
       });
     }
 
     setItems(crumbs);
-  }, [
-    intl,
-    match.params.id,
-    match.params.inventoryId,
-    match.url,
-    rule.description,
-  ]);
+  }, [intl, location, rule.description]);
 
   useEffect(() => {
-    const splitUrl = match.url.split('/');
-    match.params.inventoryId !== undefined && splitUrl[1] !== 'systems'
-      ? fetchRule({ rule_id: match.params.id })
+    const getRuleName = (id) => dispatch(fetchRule(id));
+
+    location[1] === 'recommendations' && location.length === 4
+      ? getRuleName({ rule_id: location[2] })
       : buildBreadcrumbs();
-  }, [
-    buildBreadcrumbs,
-    fetchRule,
-    match.params.id,
-    match.params.inventoryId,
-    match.url,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    if (ruleFetchStatus === 'fulfilled' && !ruleDescriptionLoaded) {
-      setRuleDescription(true);
+    if (ruleFetchStatus === 'fulfilled') {
       buildBreadcrumbs();
     }
-  }, [buildBreadcrumbs, ruleFetchStatus, ruleDescriptionLoaded]);
+  }, [buildBreadcrumbs, ruleFetchStatus]);
 
   return (
     <React.Fragment>
@@ -90,23 +73,6 @@ const Breadcrumbs = ({
 
 Breadcrumbs.propTypes = {
   current: PropTypes.string,
-  fetchRule: PropTypes.func,
-  match: PropTypes.object,
-  rule: PropTypes.object,
-  ruleFetchStatus: PropTypes.string,
-  intl: PropTypes.any,
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  rule: state.AdvisorStore.rule,
-  ruleFetchStatus: state.AdvisorStore.ruleFetchStatus,
-  ...ownProps,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  fetchRule: (url) => dispatch(AppActions.fetchRule(url)),
-});
-
-export default injectIntl(
-  routerParams(connect(mapStateToProps, mapDispatchToProps)(Breadcrumbs))
-);
+export default Breadcrumbs;

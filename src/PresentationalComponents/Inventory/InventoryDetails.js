@@ -17,10 +17,9 @@ import { connect } from 'react-redux';
 import { entitiesDetailsReducer } from '../../AppReducer';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
 import messages from '../../Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
 import { useIntl } from 'react-intl';
 
-const InventoryDetails = ({ entity, match }) => {
+const InventoryDetails = ({ entity }) => {
   const intl = useIntl();
 
   useEffect(() => {
@@ -30,7 +29,7 @@ const InventoryDetails = ({ entity, match }) => {
       }`;
       document.title = intl.formatMessage(messages.documentTitle, { subnav });
     }
-  }, [entity]);
+  }, [entity, intl]);
 
   return (
     <DetailWrapper
@@ -41,12 +40,7 @@ const InventoryDetails = ({ entity, match }) => {
       }}
     >
       <PageHeader className="pf-m-light ins-inventory-detail">
-        {entity && (
-          <Breadcrumbs
-            current={entity.display_name || entity.id}
-            match={match}
-          />
-        )}
+        {entity && <Breadcrumbs current={entity.display_name || entity.id} />}
         <InventoryDetailHead hideBack fallback="" />
       </PageHeader>
       <Main>
@@ -64,7 +58,6 @@ InventoryDetails.propTypes = {
   history: PropTypes.object,
   entity: PropTypes.object,
   addAlert: PropTypes.func,
-  match: PropTypes.any,
 };
 
 const mapStateToProps = ({ entityDetails, props }) => ({
@@ -72,4 +65,4 @@ const mapStateToProps = ({ entityDetails, props }) => ({
   ...props,
 });
 
-export default routerParams(connect(mapStateToProps, null)(InventoryDetails));
+export default connect(mapStateToProps, null)(InventoryDetails);
