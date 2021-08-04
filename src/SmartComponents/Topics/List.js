@@ -10,12 +10,12 @@ import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import PropTypes from 'prop-types';
 import TopicsTable from '../../PresentationalComponents/TopicsTable/TopicsTable';
 import { connect } from 'react-redux';
-import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
+import { useIntl } from 'react-intl';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
 
-const List = ({ fetchTopics, intl, selectedTags, workloads, SID }) => {
+const List = ({ fetchTopics, selectedTags, workloads, SID }) => {
+  const intl = useIntl();
   document.title = intl.formatMessage(messages.documentTitle, {
     subnav: messages.topics.defaultMessage,
   });
@@ -47,7 +47,6 @@ const List = ({ fetchTopics, intl, selectedTags, workloads, SID }) => {
 List.displayName = 'list-topics';
 List.propTypes = {
   fetchTopics: PropTypes.func,
-  intl: PropTypes.any,
   selectedTags: PropTypes.array,
   workloads: PropTypes.object,
   SID: PropTypes.object,
@@ -62,6 +61,4 @@ const mapDispatchToProps = (dispatch) => ({
   fetchTopics: (options) => dispatch(AppActions.fetchTopics(options)),
 });
 
-export default injectIntl(
-  routerParams(connect(mapStateToProps, mapDispatchToProps)(List))
-);
+export default connect(mapStateToProps, mapDispatchToProps)(List);

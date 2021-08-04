@@ -71,7 +71,7 @@ const Details = ({
   return (
     <React.Fragment>
       <PageHeader>
-        <Breadcrumbs current={topic.name} match={match} ouiaId="details" />
+        <Breadcrumbs current={topic.name} ouiaId="details" />
         {topicFetchStatus === 'fulfilled' && (
           <React.Fragment>
             <Title headingLevel="h3" size="2xl" className="titleOverride">
