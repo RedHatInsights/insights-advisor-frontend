@@ -52,7 +52,9 @@ const Breadcrumbs = ({ current }) => {
     if (ruleFetchStatus === 'fulfilled') {
       buildBreadcrumbs();
     }
-  }, [buildBreadcrumbs, ruleFetchStatus]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ruleFetchStatus]);
 
   return (
     <React.Fragment>
