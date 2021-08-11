@@ -22,6 +22,7 @@ const webpackProxy = {
 const { config: webpackConfig, plugins } = config({
   rootFolder: resolve(__dirname, '../'),
   debug: true,
+  sassPrefix: '.advisor, .inventory',
   useFileHash: false,
   ...(process.env.PROXY ? webpackProxy : insightsProxy),
   exposes: {
