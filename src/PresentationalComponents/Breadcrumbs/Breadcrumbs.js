@@ -5,7 +5,7 @@ import { Breadcrumb } from '@patternfly/react-core/dist/js/components/Breadcrumb
 import { BreadcrumbItem } from '@patternfly/react-core/dist/js/components/Breadcrumb/BreadcrumbItem';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { fetchRule } from '../../AppActions';
+import { fetchRule } from '../../Store/AppActions';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';

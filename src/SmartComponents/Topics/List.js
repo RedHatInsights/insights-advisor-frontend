@@ -1,4 +1,4 @@
-import * as AppActions from '../../AppActions';
+import * as AppActions from '../../Store/AppActions';
 
 import {
   PageHeader,

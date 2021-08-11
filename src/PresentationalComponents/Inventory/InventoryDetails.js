@@ -14,7 +14,7 @@ import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { entitiesDetailsReducer } from '../../AppReducer';
+import { entitiesDetailsReducer } from '../../Store/AppReducer';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';

@@ -2,7 +2,7 @@ import './App.scss';
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { batch, useDispatch } from 'react-redux';
-import { setSIDs, setSelectedTags, setWorkloads } from './AppActions';
+import { setSIDs, setSelectedTags, setWorkloads } from './Store/AppActions';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import LockIcon from '@patternfly/react-icons/dist/esm/icons/lock-icon';

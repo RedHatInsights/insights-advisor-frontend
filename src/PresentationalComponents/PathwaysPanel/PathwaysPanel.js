@@ -20,6 +20,7 @@ import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import messages from '../../Messages';
 import propTypes from 'prop-types';
 import testdata from './testdata.json';
+// import { useGetPathwaysQuery } from '../../Services/Pathways';
 import { useIntl } from 'react-intl';
 
 const PathwaysPanel = () => {
@@ -27,6 +28,18 @@ const PathwaysPanel = () => {
   const [expanded, setExpanded] = useState(
     JSON.parse(localStorage.getItem('advisor_pathwayspanel_expanded') || 'true')
   );
+
+  // const { data, isUninitialized, isLoading, isFetching, isSuccess, isError } =
+  //   useGetPathwaysQuery();
+
+  // console.error(
+  //   data,
+  //   isUninitialized,
+  //   isLoading,
+  //   isFetching,
+  //   isSuccess,
+  //   isError
+  // );
 
   const pathwayCard = (pathway) => (
     <Card isFlat isPlain className={`ins-c-advisor__card--pathwaycard`}>

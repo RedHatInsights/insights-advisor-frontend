@@ -1,6 +1,6 @@
 import './Details.scss';
 
-import * as AppActions from '../../AppActions';
+import * as AppActions from '../../Store/AppActions';
 
 import { BASE_URL, PERMS, SYSTEM_TYPES, UI_BASE } from '../../AppConstants';
 import {

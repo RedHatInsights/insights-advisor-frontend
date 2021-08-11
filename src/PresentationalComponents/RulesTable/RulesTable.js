@@ -1,6 +1,6 @@
 import './_RulesTable.scss';
 
-import * as AppActions from '../../AppActions';
+import * as AppActions from '../../Store/AppActions';
 import * as AppConstants from '../../AppConstants';
 
 import { DEBOUNCE_DELAY, FILTER_CATEGORIES as FC } from '../../AppConstants';
