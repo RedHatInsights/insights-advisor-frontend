@@ -1,6 +1,6 @@
 import './_Details.scss';
 
-import * as AppActions from '../../AppActions';
+import * as AppActions from '../../Store/AppActions';
 
 import React, { useEffect } from 'react';
 import {

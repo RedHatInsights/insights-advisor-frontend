@@ -19,7 +19,7 @@ import { TextArea } from '@patternfly/react-core/dist/js/components/TextArea/Tex
 import { TextInput } from '@patternfly/react-core/dist/js/components/TextInput/TextInput';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { connect } from 'react-redux';
-import { fetchTopicsAdmin } from '../../AppActions';
+import { fetchTopicsAdmin } from '../../Store/AppActions';
 import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 

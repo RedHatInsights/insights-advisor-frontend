@@ -22,7 +22,7 @@ import { getRegistry } from '@redhat-cloud-services/frontend-components-utilitie
 import { mergeArraysByDiffKeys } from '../Common/Tables';
 import messages from '../../Messages';
 import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
-import { systemReducer } from '../../AppReducer';
+import { systemReducer } from '../../Store/AppReducer';
 import { useIntl } from 'react-intl';
 
 const Inventory = ({

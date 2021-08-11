@@ -1,6 +1,6 @@
 import './_TopicsAdminTable.scss';
 
-import * as AppActions from '../../AppActions';
+import * as AppActions from '../../Store/AppActions';
 
 import React, { useCallback, useEffect, useState } from 'react';
 import {

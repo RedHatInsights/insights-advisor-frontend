@@ -1,6 +1,6 @@
 import './SystemsTable.scss';
 
-import * as AppActions from '../../AppActions';
+import * as AppActions from '../../Store/AppActions';
 
 import {
   PERMS,
@@ -28,7 +28,7 @@ import downloadReport from '../Common/DownloadHelper';
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
 import messages from '../../Messages';
-import { systemReducer } from '../../AppReducer';
+import { systemReducer } from '../../Store/AppReducer';
 import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';

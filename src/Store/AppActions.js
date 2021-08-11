@@ -1,6 +1,6 @@
-import * as ActionTypes from './AppConstants';
+import * as ActionTypes from '../AppConstants';
 
-import API from './Utilities/Api';
+import API from '../Utilities/Api';
 
 const fetchData = async (url, headers, options, search) => {
   await insights.chrome.auth.getUser();

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableHeader } from '@patternfly/react-table';
-import { fetchHostAcks, setAck } from '../../AppActions';
+import { fetchHostAcks, setAck } from '../../Store/AppActions';
 
 import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
