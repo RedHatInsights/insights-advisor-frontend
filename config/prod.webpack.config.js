@@ -5,6 +5,7 @@ const path = require('path');
 
 const { config: webpackConfig, plugins } = config({
   rootFolder: resolve(__dirname, '../'),
+  sassPrefix: '.advisor, .inventory',
   debug: true,
 });
 
