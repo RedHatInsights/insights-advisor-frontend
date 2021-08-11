@@ -22,6 +22,10 @@ plugins.push(
           __dirname,
           '../src/PresentationalComponents/ReportDetails'
         ),
+        './AdvisorRecommendationDetails': resolve(
+          __dirname,
+          '../src/PresentationalComponents/RuleDetails'
+        ),
       },
     }
   )
