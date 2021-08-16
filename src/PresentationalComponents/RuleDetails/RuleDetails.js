@@ -41,6 +41,7 @@ const BaseRuleDetails = ({
   topics,
   header,
   isDetailsPage,
+  isOpenShift,
 }) => {
   const intl = useIntl();
   const topicLinks = () =>
@@ -70,9 +71,11 @@ const BaseRuleDetails = ({
         <Stack hasGutter>
           {header && <StackItem>{header}</StackItem>}
           <StackItem>
-            {isDetailsPage
-              ? ruleDescription(rule.generic, true)
-              : ruleDescription(rule.summary)}
+            {isOpenShift && ruleDescription(rule.generic, true)}
+            {!isOpenShift &&
+              (isDetailsPage
+                ? ruleDescription(rule.generic, true)
+                : ruleDescription(rule.summary))}
           </StackItem>
           {rule.node_id && (
             <StackItem>
@@ -244,6 +247,7 @@ BaseRuleDetails.propTypes = {
   topics: PropTypes.array,
   header: PropTypes.any,
   isDetailsPage: PropTypes.bool,
+  isOpenShift: PropTypes.bool.isRequired,
 };
 
 export default RuleDetails;
