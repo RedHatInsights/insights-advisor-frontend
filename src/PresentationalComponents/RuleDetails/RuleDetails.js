@@ -3,6 +3,7 @@ import './_RuleDetails.scss';
 
 import * as AppConstants from '../../AppConstants';
 
+import { IntlProvider, useIntl } from 'react-intl';
 import {
   Split,
   SplitItem,
@@ -28,21 +29,20 @@ import { RebootRequired } from '../Common/Common';
 import RuleRating from '../RuleRating/RuleRating';
 import { SeverityLine } from '@redhat-cloud-services/frontend-components-charts/esm/SeverityLine';
 import barDividedList from '../../Utilities/BarDividedList';
-import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
 import { strong } from '../../Utilities/intlHelper';
 
-const RuleDetails = ({
+const BaseRuleDetails = ({
   children,
   rule,
   resolutionRisk,
-  intl,
   topics,
   header,
   isDetailsPage,
 }) => {
+  const intl = useIntl();
   const topicLinks = () =>
     topics &&
     compact(
@@ -220,14 +220,30 @@ const RuleDetails = ({
   );
 };
 
-RuleDetails.propTypes = {
+// eslint-disable-next-line react/prop-types
+const RuleDetails = ({ customItnl, intlProps, ...props }) => {
+  const Wrapper = customItnl ? IntlProvider : React.Fragment;
+  return (
+    <Wrapper
+      {...(customItnl && {
+        locale: navigator.language.slice(0, 2),
+        messages,
+        onError: console.log,
+        ...intlProps,
+      })}
+    >
+      <BaseRuleDetails {...props} />
+    </Wrapper>
+  );
+};
+
+BaseRuleDetails.propTypes = {
   children: PropTypes.any,
   rule: PropTypes.object,
   resolutionRisk: PropTypes.number,
-  intl: PropTypes.any,
   topics: PropTypes.array,
   header: PropTypes.any,
   isDetailsPage: PropTypes.bool,
 };
 
-export default injectIntl(RuleDetails);
+export default RuleDetails;
