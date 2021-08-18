@@ -1,6 +1,7 @@
 import './Details.scss';
 
 import * as AppActions from '../../Store/AppActions';
+import * as AppConstants from '../../AppConstants';
 
 import { BASE_URL, PERMS, SYSTEM_TYPES, UI_BASE } from '../../AppConstants';
 import {
@@ -296,6 +297,13 @@ const OverviewDetails = ({ match }) => {
                   </p>
                 </React.Fragment>
               }
+              onFeedbackChanged={async (ruleId, calculatedRating) => {
+                await API.post(
+                  `${AppConstants.BASE_URL}/rating/`,
+                  {},
+                  { rule: ruleId, rating: calculatedRating }
+                );
+              }}
             >
               <Flex>
                 <FlexItem align={{ default: 'alignRight' }}>

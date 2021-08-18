@@ -41,6 +41,7 @@ const BaseRuleDetails = ({
   topics,
   header,
   isDetailsPage,
+  onFeedbackChanged,
   isOpenShift,
 }) => {
   const intl = useIntl();
@@ -96,7 +97,14 @@ const BaseRuleDetails = ({
               {barDividedList(topicLinks())}
             </StackItem>
           )}
-          {isDetailsPage && <RuleRating rule={rule} />}
+          {isDetailsPage && (
+            <RuleRating
+              intl={intl}
+              ruleId={rule.rule_id}
+              ruleRating={rule.rating}
+              updateRatingAction={onFeedbackChanged}
+            />
+          )}
           {!isDetailsPage && rule.impacted_systems_count > 0 && (
             <StackItem>
               <Link
@@ -247,7 +255,16 @@ BaseRuleDetails.propTypes = {
   topics: PropTypes.array,
   header: PropTypes.any,
   isDetailsPage: PropTypes.bool,
-  isOpenShift: PropTypes.bool.isRequired,
+  /**
+   * onFeedbackChanged - a callback used to update the rating of a particular rule
+   * @param {string} ruleId - ID (usually in plugin|error_key format) of the rule that needs to be updated
+   * @param {number} newRating rating (-1, 0, 1)
+   */
+  onFeedbackChanged: PropTypes.func,
+  /**
+   * isOpenShift - true when OpenShift rule is contained within `rule` param
+   */
+  isOpenShift: PropTypes.bool,
 };
 
 export default RuleDetails;
