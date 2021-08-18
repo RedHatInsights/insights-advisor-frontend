@@ -50,6 +50,7 @@
   "impactDescription": "The impact of the problem would be {level} if it occurred.",
   "impactLevel": "{level} impact",
   "important": "Important",
+  "improveRecommended": "Improve recommended pathways",
   "incident": "Incident",
   "incidentRules": "Incident recommendations",
   "incidentSystems": "Incident systems",
@@ -207,6 +208,7 @@
   "undefined": "Undefined",
   "veryLow": "Very Low",
   "viewAffectedSystems": "View {systems, plural, one {the affected system} other {# affected systems}}",
+  "viewPathway": "View pathway",
   "viewSystems": "View systems",
   "yes": "Yes"
 }
