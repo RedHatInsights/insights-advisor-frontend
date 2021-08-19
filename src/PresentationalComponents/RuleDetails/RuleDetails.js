@@ -230,9 +230,11 @@ const BaseRuleDetails = ({
                         </Text>
                       </TextContent>
                     </StackItem>
-                    <StackItem>
-                      {RebootRequired(rule.reboot_required)}
-                    </StackItem>
+                    {!isOpenShift && (
+                      <StackItem>
+                        {RebootRequired(rule.reboot_required)}
+                      </StackItem>
+                    )}
                   </Stack>
                 </span>
               </StackItem>
