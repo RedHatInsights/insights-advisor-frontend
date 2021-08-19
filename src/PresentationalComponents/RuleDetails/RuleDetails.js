@@ -100,7 +100,6 @@ const BaseRuleDetails = ({
           )}
           {isDetailsPage && (
             <RuleRating
-              intl={intl}
               ruleId={rule.rule_id}
               ruleRating={rule.rating}
               updateRatingAction={onFeedbackChanged}

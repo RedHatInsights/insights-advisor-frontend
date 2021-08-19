@@ -1,6 +1,7 @@
 import './_RuleRating.scss';
 
 import React, { useState } from 'react';
+import { useIntl } from 'react-intl';
 
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import OutlinedThumbsDownIcon from '@patternfly/react-icons/dist/js/icons/outlined-thumbs-down-icon';
@@ -10,7 +11,8 @@ import ThumbsDownIcon from '@patternfly/react-icons/dist/js/icons/thumbs-down-ic
 import ThumbsUpIcon from '@patternfly/react-icons/dist/js/icons/thumbs-up-icon';
 import messages from '../../Messages';
 
-const RuleRating = ({ intl, ruleId, ruleRating, updateRatingAction }) => {
+const RuleRating = ({ ruleId, ruleRating, updateRatingAction }) => {
+  const intl = useIntl();
   const [rating, setRating] = useState(ruleRating);
   const [submitted, setSubmitted] = useState(false);
   const [thankYou, setThankYou] = useState(
@@ -61,7 +63,6 @@ const RuleRating = ({ intl, ruleId, ruleRating, updateRatingAction }) => {
 };
 
 RuleRating.propTypes = {
-  intl: PropTypes.object.isRequired,
   ruleId: PropTypes.string.isRequired,
   ruleRating: PropTypes.number.isRequired,
   updateRatingAction: PropTypes.func.isRequired,
