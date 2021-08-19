@@ -43,6 +43,7 @@ const BaseRuleDetails = ({
   isDetailsPage,
   onFeedbackChanged,
   isOpenShift,
+  riskOfChangeDesc,
 }) => {
   const intl = useIntl();
   const topicLinks = () =>
@@ -225,7 +226,7 @@ const BaseRuleDetails = ({
                       <TextContent>
                         <Text component={TextVariants.p}>
                           {resolutionRisk
-                            ? AppConstants.RISK_OF_CHANGE_DESC[resolutionRisk]
+                            ? riskOfChangeDesc
                             : intl.formatMessage(messages.undefined)}
                         </Text>
                       </TextContent>
@@ -266,10 +267,11 @@ const RuleDetails = ({ customItnl, intlProps, ...props }) => {
 BaseRuleDetails.propTypes = {
   children: PropTypes.any,
   rule: PropTypes.object,
-  resolutionRisk: PropTypes.number,
   topics: PropTypes.array,
   header: PropTypes.any,
   isDetailsPage: PropTypes.bool,
+  resolutionRisk: PropTypes.number,
+  riskOfChangeDesc: PropTypes.string,
   /**
    * onFeedbackChanged - a callback used to update the rating of a particular rule
    * @param {string} ruleId - ID (usually in plugin|error_key format) of the rule that needs to be updated

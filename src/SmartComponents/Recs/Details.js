@@ -270,6 +270,9 @@ const OverviewDetails = ({ match }) => {
           <Main className="pf-m-light pf-u-pt-sm">
             <RuleDetails
               resolutionRisk={ruleResolutionRisk(rule)}
+              riskOfChangeDesc={
+                AppConstants.RISK_OF_CHANGE_DESC[ruleResolutionRisk(rule)]
+              }
               isDetailsPage
               rule={rule}
               topics={topics}

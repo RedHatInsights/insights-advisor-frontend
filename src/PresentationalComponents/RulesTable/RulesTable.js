@@ -505,6 +505,11 @@ const RulesTable = () => {
                       <RuleDetails
                         rule={value}
                         resolutionRisk={ruleResolutionRisk(value)}
+                        riskOfChangeDesc={
+                          AppConstants.RISK_OF_CHANGE_DESC[
+                            ruleResolutionRisk(value)
+                          ]
+                        }
                       />
                     </Stack>
                   </Main>
