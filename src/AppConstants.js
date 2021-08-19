@@ -407,10 +407,6 @@ export const SYSTEM_FILTER_CATEGORIES = {
         value: '8.0',
       },
       {
-        label: 'RHEL 7.10',
-        value: '7.10',
-      },
-      {
         label: 'RHEL 7.9',
         value: '7.9',
       },
