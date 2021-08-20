@@ -25,7 +25,6 @@ import classNames from 'classnames';
 import doT from 'dot';
 import marked from 'marked';
 import propTypes from 'prop-types';
-import sanitizeHtml from 'sanitize-html';
 
 const ReportDetails = ({ report, kbaDetail, kbaLoading }) => {
   const rule = report.rule || report;
@@ -39,34 +38,13 @@ const ReportDetails = ({ report, kbaDetail, kbaLoading }) => {
       varname: ['pydata'],
       strip: false,
     };
-    const sanitizeOptions = {
-      disallowedTagsMode: 'escape',
-      allowedAttributes: {
-        ...sanitizeHtml.defaults.allowedAttributes,
-        '*': ['style'],
-      },
-      transformTags: {
-        ul() {
-          return {
-            tagName: 'ul',
-            attribs: { class: 'pf-c-list' },
-          };
-        },
-      },
-      textFilter(text) {
-        return text
-          .replace(/&amp;/g, '&')
-          .replace(/&gt;/g, '>')
-          .replace(/&lt;/g, '<');
-      },
-    };
     const externalLinkIcon = '';
 
     try {
       const compiledDot = definitions
         ? doT.template(template, DOT_SETTINGS)(definitions)
         : template;
-      const compiledMd = marked(sanitizeHtml(compiledDot, sanitizeOptions));
+      const compiledMd = marked(compiledDot);
 
       return (
         <div
