@@ -41,6 +41,9 @@ const BaseRuleDetails = ({
   topics,
   header,
   isDetailsPage,
+  onFeedbackChanged,
+  isOpenShift,
+  riskOfChangeDesc,
 }) => {
   const intl = useIntl();
   const topicLinks = () =>
@@ -70,9 +73,11 @@ const BaseRuleDetails = ({
         <Stack hasGutter>
           {header && <StackItem>{header}</StackItem>}
           <StackItem>
-            {isDetailsPage
-              ? ruleDescription(rule.generic, true)
-              : ruleDescription(rule.summary)}
+            {isOpenShift && ruleDescription(rule.generic, true)}
+            {!isOpenShift &&
+              (isDetailsPage
+                ? ruleDescription(rule.generic, true)
+                : ruleDescription(rule.summary))}
           </StackItem>
           {rule.node_id && (
             <StackItem>
@@ -93,16 +98,35 @@ const BaseRuleDetails = ({
               {barDividedList(topicLinks())}
             </StackItem>
           )}
-          {isDetailsPage && <RuleRating rule={rule} />}
+          {isDetailsPage && (
+            <RuleRating
+              ruleId={rule.rule_id}
+              ruleRating={rule.rating}
+              updateRatingAction={onFeedbackChanged}
+            />
+          )}
           {!isDetailsPage && rule.impacted_systems_count > 0 && (
             <StackItem>
               <Link
                 key={`${rule.rule_id}-link`}
                 to={`/recommendations/${rule.rule_id}`}
               >
-                {intl.formatMessage(messages.viewAffectedSystems, {
-                  systems: rule.impacted_systems_count,
-                })}
+                {intl.formatMessage(
+                  ...(isOpenShift
+                    ? [
+                        // OpenShift's intl object should be used to obtain messages
+                        intl.messages.viewAffectedClusters,
+                        {
+                          clusters: rule.impacted_clusters_count,
+                        },
+                      ]
+                    : [
+                        messages.viewAffectedSystems,
+                        {
+                          systems: rule.impacted_systems_count,
+                        },
+                      ])
+                )}
               </Link>
             </StackItem>
           )}
@@ -201,14 +225,16 @@ const BaseRuleDetails = ({
                       <TextContent>
                         <Text component={TextVariants.p}>
                           {resolutionRisk
-                            ? AppConstants.RISK_OF_CHANGE_DESC[resolutionRisk]
+                            ? riskOfChangeDesc
                             : intl.formatMessage(messages.undefined)}
                         </Text>
                       </TextContent>
                     </StackItem>
-                    <StackItem>
-                      {RebootRequired(rule.reboot_required)}
-                    </StackItem>
+                    {!isOpenShift && (
+                      <StackItem>
+                        {RebootRequired(rule.reboot_required)}
+                      </StackItem>
+                    )}
                   </Stack>
                 </span>
               </StackItem>
@@ -240,10 +266,21 @@ const RuleDetails = ({ customItnl, intlProps, ...props }) => {
 BaseRuleDetails.propTypes = {
   children: PropTypes.any,
   rule: PropTypes.object,
-  resolutionRisk: PropTypes.number,
   topics: PropTypes.array,
   header: PropTypes.any,
   isDetailsPage: PropTypes.bool,
+  resolutionRisk: PropTypes.number,
+  riskOfChangeDesc: PropTypes.string,
+  /**
+   * onFeedbackChanged - a callback used to update the rating of a particular rule
+   * @param {string} ruleId - ID (usually in plugin|error_key format) of the rule that needs to be updated
+   * @param {number} newRating rating (-1, 0, 1)
+   */
+  onFeedbackChanged: PropTypes.func,
+  /**
+   * isOpenShift - true when OpenShift rule is contained within `rule` param
+   */
+  isOpenShift: PropTypes.bool,
 };
 
 export default RuleDetails;

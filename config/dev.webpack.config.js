@@ -17,6 +17,19 @@ const webpackProxy = {
   proxyVerbose: true,
   useCloud: false,
   routes: {},
+  customProxy: [
+    {
+      context: (path) => path.includes('/api/'),
+      target: 'https://console.redhat.com/',
+      secure: true,
+      changeOrigin: true,
+      autoRewrite: true,
+      ws: true,
+      onProxyReq: function (request) {
+        request.setHeader('origin', 'https://console.redhat.com/');
+      },
+    },
+  ],
 };
 
 const { config: webpackConfig, plugins } = config({

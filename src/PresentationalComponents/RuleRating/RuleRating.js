@@ -1,21 +1,19 @@
 import './_RuleRating.scss';
 
-import * as AppConstants from '../../AppConstants';
-
 import React, { useState } from 'react';
+import { useIntl } from 'react-intl';
 
-import API from '../../Utilities/Api';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import OutlinedThumbsDownIcon from '@patternfly/react-icons/dist/js/icons/outlined-thumbs-down-icon';
 import OutlinedThumbsUpIcon from '@patternfly/react-icons/dist/js/icons/outlined-thumbs-up-icon';
 import PropTypes from 'prop-types';
 import ThumbsDownIcon from '@patternfly/react-icons/dist/js/icons/thumbs-down-icon';
 import ThumbsUpIcon from '@patternfly/react-icons/dist/js/icons/thumbs-up-icon';
-import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
 
-const RuleRating = ({ intl, rule }) => {
-  const [rating, setRating] = useState(rule.rating);
+const RuleRating = ({ ruleId, ruleRating, updateRatingAction }) => {
+  const intl = useIntl();
+  const [rating, setRating] = useState(ruleRating);
   const [submitted, setSubmitted] = useState(false);
   const [thankYou, setThankYou] = useState(
     intl.formatMessage(messages.feedbackThankyou)
@@ -23,11 +21,7 @@ const RuleRating = ({ intl, rule }) => {
   const updateRuleRating = async (newRating) => {
     const calculatedRating = rating === newRating ? 0 : newRating;
     try {
-      await API.post(
-        `${AppConstants.BASE_URL}/rating/`,
-        {},
-        { rule: rule.rule_id, rating: calculatedRating }
-      );
+      await updateRatingAction(ruleId, calculatedRating);
       setRating(calculatedRating);
       setSubmitted(true);
       setTimeout(() => setThankYou(''), 3000);
@@ -69,8 +63,9 @@ const RuleRating = ({ intl, rule }) => {
 };
 
 RuleRating.propTypes = {
-  intl: PropTypes.any,
-  rule: PropTypes.object,
+  ruleId: PropTypes.string.isRequired,
+  ruleRating: PropTypes.number.isRequired,
+  updateRatingAction: PropTypes.func.isRequired,
 };
 
-export default injectIntl(RuleRating);
+export default RuleRating;
