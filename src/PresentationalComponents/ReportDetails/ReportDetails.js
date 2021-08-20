@@ -40,6 +40,7 @@ const ReportDetails = ({ report, kbaDetail, kbaLoading }) => {
       strip: false,
     };
     const sanitizeOptions = {
+      disallowedTagsMode: 'escape',
       allowedAttributes: {
         ...sanitizeHtml.defaults.allowedAttributes,
         '*': ['style'],
