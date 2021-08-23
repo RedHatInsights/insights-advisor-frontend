@@ -98,7 +98,7 @@ const BaseRuleDetails = ({
               {barDividedList(topicLinks())}
             </StackItem>
           )}
-          {isDetailsPage && (
+          {isDetailsPage && onFeedbackChanged && (
             <RuleRating
               ruleId={rule.rule_id}
               ruleRating={rule.rating}
