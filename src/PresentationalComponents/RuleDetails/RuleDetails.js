@@ -205,39 +205,45 @@ const BaseRuleDetails = ({
                   </Stack>
                 </span>
               </StackItem>
-              <hr></hr>
-              <StackItem>
-                <strong>{intl.formatMessage(messages.riskofchange)}</strong>
-              </StackItem>
-              <StackItem
-                className={`pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm`}
-              >
-                <span className="ins-c-rule-details__stackitem">
-                  <span>
-                    <InsightsLabel
-                      text={AppConstants.RISK_OF_CHANGE_LABEL[resolutionRisk]}
-                      value={resolutionRisk}
-                      hideIcon
-                    />
-                  </span>
-                  <Stack hasGutter className="description-stack-override">
-                    <StackItem>
-                      <TextContent>
-                        <Text component={TextVariants.p}>
-                          {resolutionRisk
-                            ? riskOfChangeDesc
-                            : intl.formatMessage(messages.undefined)}
-                        </Text>
-                      </TextContent>
-                    </StackItem>
-                    {!isOpenShift && (
-                      <StackItem>
-                        {RebootRequired(rule.reboot_required)}
-                      </StackItem>
-                    )}
-                  </Stack>
-                </span>
-              </StackItem>
+              {resolutionRisk && riskOfChangeDesc && (
+                <React.Fragment>
+                  <hr></hr>
+                  <StackItem>
+                    <strong>{intl.formatMessage(messages.riskofchange)}</strong>
+                  </StackItem>
+                  <StackItem
+                    className={`pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm`}
+                  >
+                    <span className="ins-c-rule-details__stackitem">
+                      <span>
+                        <InsightsLabel
+                          text={
+                            AppConstants.RISK_OF_CHANGE_LABEL[resolutionRisk]
+                          }
+                          value={resolutionRisk}
+                          hideIcon
+                        />
+                      </span>
+                      <Stack hasGutter className="description-stack-override">
+                        <StackItem>
+                          <TextContent>
+                            <Text component={TextVariants.p}>
+                              {resolutionRisk
+                                ? riskOfChangeDesc
+                                : intl.formatMessage(messages.undefined)}
+                            </Text>
+                          </TextContent>
+                        </StackItem>
+                        {!isOpenShift && (
+                          <StackItem>
+                            {RebootRequired(rule.reboot_required)}
+                          </StackItem>
+                        )}
+                      </Stack>
+                    </span>
+                  </StackItem>
+                </React.Fragment>
+              )}
             </Stack>
           </StackItem>
         </Stack>
