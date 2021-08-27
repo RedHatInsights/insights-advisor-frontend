@@ -1,6 +1,5 @@
 import './_RulesTable.scss';
 
-import * as AppActions from '../../Store/AppActions';
 import * as AppConstants from '../../AppConstants';
 
 import { DEBOUNCE_DELAY, FILTER_CATEGORIES as FC } from '../../AppConstants';
@@ -9,7 +8,7 @@ import {
   Pagination,
   PaginationVariant,
 } from '@patternfly/react-core/dist/js/components/Pagination/Pagination';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Stack,
   StackItem,
@@ -28,7 +27,6 @@ import {
   TooltipPosition,
 } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
 import {
-  encodeOptionsToURL,
   filterFetchBuilder,
   paramParser,
   pruneFilters,
@@ -37,14 +35,13 @@ import {
 } from '../Common/Tables';
 import { useDispatch, useSelector } from 'react-redux';
 
-import API from '../../Utilities/Api';
 import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
-import { BASE_URL } from '../../AppConstants';
 import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import CategoryLabel from '../CategoryLabel/CategoryLabel';
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
+import { DeleteApi } from '../../Utilities/Api';
 import DisableRule from '../Modals/DisableRule';
 import Failed from '../../PresentationalComponents/Loading/Failed';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
@@ -60,6 +57,8 @@ import debounce from '../../Utilities/Debounce';
 import downloadReport from '../Common/DownloadHelper';
 import messages from '../../Messages';
 import { strong } from '../../Utilities/intlHelper';
+import { updateRecFilters } from '../../Services/Filters';
+import { useGetRecsQuery } from '../../Services/Recs';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 
@@ -110,16 +109,11 @@ const RulesTable = () => {
       dataLabel: intl.formatMessage(messages.ansible),
     },
   ]);
-  const rules = useSelector(({ AdvisorStore }) => AdvisorStore.rules);
-  const rulesFetchStatus = useSelector(
-    ({ AdvisorStore }) => AdvisorStore.rulesFetchStatus
-  );
-  const filters = useSelector(({ AdvisorStore }) => AdvisorStore.filters);
-  const selectedTags = useSelector(
-    ({ AdvisorStore }) => AdvisorStore.selectedTags
-  );
-  const workloads = useSelector(({ AdvisorStore }) => AdvisorStore.workloads);
-  const SID = useSelector(({ AdvisorStore }) => AdvisorStore.SID);
+
+  const selectedTags = useSelector(({ filters }) => filters.selectedTags);
+  const workloads = useSelector(({ filters }) => filters.workloads);
+  const SID = useSelector(({ filters }) => filters.SID);
+  const filters = useSelector(({ filters }) => filters.recState);
 
   const [rows, setRows] = useState([]);
   const [sortBy, setSortBy] = useState({});
@@ -132,7 +126,24 @@ const RulesTable = () => {
   const [isAllExpanded, setIsAllExpanded] = useState(false);
 
   const addNotification = (data) => dispatch(addNotificationAction(data));
-  const setFilters = (filters) => dispatch(AppActions.setFilters(filters));
+  const setFilters = (filters) => dispatch(updateRecFilters(filters));
+
+  let options = {};
+  selectedTags?.length &&
+    (options = {
+      ...options,
+      ...{ tags: selectedTags.join(',') },
+    });
+  workloads &&
+    (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
+
+  const {
+    data: rules = [],
+    isFetching,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetRecsQuery({ ...filterFetchBuilder(filters), ...options });
 
   const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
   const results = rules?.meta?.count || 0;
@@ -155,21 +166,12 @@ const RulesTable = () => {
     return resolution ? resolution.resolution_risk.risk : undefined;
   };
 
-  const fetchRulesFn = useCallback(() => {
-    const fetchRulesAction = (options, search) =>
-      dispatch(AppActions.fetchRules(options, search));
-    urlBuilder(filters, selectedTags);
-    let options = selectedTags?.length && {
-      tags: selectedTags.map((tag) => encodeURIComponent(tag)),
-    };
-    workloads &&
-      (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
-    return fetchRulesAction(
-      options.tags ? {} : { ...filterFetchBuilder(filters), ...options },
-      options.tags &&
-        encodeOptionsToURL({ ...filterFetchBuilder(filters), ...options })
-    );
-  }, [filters, selectedTags, workloads, SID, dispatch]);
+  useEffect(() => {
+    if (!filterBuilding && selectedTags !== null) {
+      urlBuilder(filters, selectedTags);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters, selectedTags, workloads, SID]);
 
   const onSort = (_event, index, direction) => {
     const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
@@ -206,14 +208,14 @@ const RulesTable = () => {
         setDisableRuleOpen(true);
       } else {
         try {
-          await API.delete(`${BASE_URL}/ack/${rule.rule_id}/`);
+          await DeleteApi(`${AppConstants.BASE_URL}/ack/${rule.rule_id}/`);
           addNotification({
             variant: 'success',
             timeout: true,
             dismissable: true,
             title: intl.formatMessage(messages.recSuccessfullyEnabled),
           });
-          fetchRulesFn();
+          refetch();
         } catch (error) {
           addNotification({
             variant: 'danger',
@@ -246,13 +248,13 @@ const RulesTable = () => {
       ? [
           {
             title: intl.formatMessage(messages.disableRule),
-            onClick: (event, rowId) => hideReports(rowId),
+            onClick: (_event, rowId) => hideReports(rowId),
           },
         ]
       : [
           {
             title: intl.formatMessage(messages.enableRule),
-            onClick: (event, rowId) => hideReports(rowId),
+            onClick: (_event, rowId) => hideReports(rowId),
           },
         ];
   };
@@ -279,12 +281,6 @@ const RulesTable = () => {
         return messages.noRecommendations;
     }
   };
-
-  useEffect(() => {
-    if (!filterBuilding && selectedTags !== null) {
-      fetchRulesFn();
-    }
-  }, [fetchRulesFn, filterBuilding, filters, selectedTags]);
 
   // Builds table filters from url params
   useEffect(() => {
@@ -319,6 +315,7 @@ const RulesTable = () => {
     }
 
     setFilterBuilding(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -331,6 +328,7 @@ const RulesTable = () => {
       const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
       setSortBy({ index: sortIndex, direction: sortDirection });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.sort]);
 
   useEffect(() => {
@@ -518,19 +516,20 @@ const RulesTable = () => {
             ],
           },
         ]);
-        setRows(rows.asMutable());
+        setRows(rows);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rules]);
 
-  // Debounced function, sets text filter after specified time (800ms)
   useEffect(() => {
-    if (!filterBuilding && rulesFetchStatus !== 'pending') {
+    if (!filterBuilding && !isLoading) {
       const filter = { ...filters };
       const text = searchText.length ? { text: searchText } : {};
       delete filter.text;
       setFilters({ ...filter, ...text, offset: 0 });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchText]);
 
   const removeFilterParam = (param) => {
@@ -551,7 +550,7 @@ const RulesTable = () => {
       label: intl.formatMessage(messages.name).toLowerCase(),
       filterValues: {
         key: 'text-filter',
-        onChange: (event, value) => setSearchText(value),
+        onChange: (_event, value) => setSearchText(value),
         value: searchText,
         placeholder: intl.formatMessage(messages.filterBy),
       },
@@ -563,7 +562,7 @@ const RulesTable = () => {
       value: `checkbox-${FC.total_risk.urlParam}`,
       filterValues: {
         key: `${FC.total_risk.urlParam}-filter`,
-        onChange: (event, values) =>
+        onChange: (_event, values) =>
           addFilterParam(FC.total_risk.urlParam, values),
         value: filters.total_risk,
         items: FC.total_risk.values,
@@ -576,7 +575,7 @@ const RulesTable = () => {
       value: `checkbox-${FC.res_risk.urlParam}`,
       filterValues: {
         key: `${FC.res_risk.urlParam}-filter`,
-        onChange: (event, values) =>
+        onChange: (_event, values) =>
           addFilterParam(FC.res_risk.urlParam, values),
         value: filters.res_risk,
         items: FC.res_risk.values,
@@ -589,7 +588,8 @@ const RulesTable = () => {
       value: `checkbox-${FC.impact.urlParam}`,
       filterValues: {
         key: `${FC.impact.urlParam}-filter`,
-        onChange: (event, values) => addFilterParam(FC.impact.urlParam, values),
+        onChange: (_event, values) =>
+          addFilterParam(FC.impact.urlParam, values),
         value: filters.impact,
         items: FC.impact.values,
       },
@@ -601,7 +601,7 @@ const RulesTable = () => {
       value: `checkbox-${FC.likelihood.urlParam}`,
       filterValues: {
         key: `${FC.likelihood.urlParam}-filter`,
-        onChange: (event, values) =>
+        onChange: (_event, values) =>
           addFilterParam(FC.likelihood.urlParam, values),
         value: filters.likelihood,
         items: FC.likelihood.values,
@@ -614,7 +614,7 @@ const RulesTable = () => {
       value: `checkbox-${FC.category.urlParam}`,
       filterValues: {
         key: `${FC.category.urlParam}-filter`,
-        onChange: (event, values) =>
+        onChange: (_event, values) =>
           addFilterParam(FC.category.urlParam, values),
         value: filters.category,
         items: FC.category.values,
@@ -627,7 +627,7 @@ const RulesTable = () => {
       value: `checkbox-${FC.incident.urlParam}`,
       filterValues: {
         key: `${FC.incident.urlParam}-filter`,
-        onChange: (event, values) =>
+        onChange: (_event, values) =>
           addFilterParam(FC.incident.urlParam, values),
         value: filters.incident,
         items: FC.incident.values,
@@ -640,7 +640,7 @@ const RulesTable = () => {
       value: `checkbox-${FC.has_playbook.urlParam}`,
       filterValues: {
         key: `${FC.has_playbook.urlParam}-filter`,
-        onChange: (event, values) =>
+        onChange: (_event, values) =>
           addFilterParam(FC.has_playbook.urlParam, values),
         value: filters.has_playbook,
         items: FC.has_playbook.values,
@@ -653,7 +653,8 @@ const RulesTable = () => {
       value: `checkbox-${FC.reboot.urlParam}`,
       filterValues: {
         key: `${FC.reboot.urlParam}-filter`,
-        onChange: (event, values) => addFilterParam(FC.reboot.urlParam, values),
+        onChange: (_event, values) =>
+          addFilterParam(FC.reboot.urlParam, values),
         value: filters.reboot,
         items: FC.reboot.values,
       },
@@ -665,7 +666,7 @@ const RulesTable = () => {
       value: `radio-${FC.rule_status.urlParam}`,
       filterValues: {
         key: `${FC.rule_status.urlParam}-filter`,
-        onChange: (event, value) => toggleRulesDisabled(value),
+        onChange: (_event, value) => toggleRulesDisabled(value),
         value: `${filters.rule_status}`,
         items: FC.rule_status.values,
       },
@@ -687,7 +688,7 @@ const RulesTable = () => {
   const activeFiltersConfig = {
     deleteTitle: intl.formatMessage(messages.resetFilters),
     filters: buildFilterChips(),
-    onDelete: (event, itemsToRemove, isAll) => {
+    onDelete: (_event, itemsToRemove, isAll) => {
       if (isAll) {
         setSearchText('');
         setFilters({
@@ -715,7 +716,7 @@ const RulesTable = () => {
   };
 
   const afterViewSystemsFn = () => {
-    fetchRulesFn();
+    refetch();
   };
 
   const onExpandAllClick = (_e, isOpen) => {
@@ -747,7 +748,7 @@ const RulesTable = () => {
           handleModalToggle={setDisableRuleOpen}
           isModalOpen={disableRuleOpen}
           rule={selectedRule}
-          afterFn={fetchRulesFn}
+          afterFn={refetch}
         />
       )}
       <PrimaryToolbar
@@ -756,10 +757,10 @@ const RulesTable = () => {
           itemCount: results,
           page: filters.offset / filters.limit + 1,
           perPage: Number(filters.limit),
-          onSetPage(event, page) {
+          onSetPage(_event, page) {
             onSetPage(page);
           },
-          onPerPageSelect(event, perPage) {
+          onPerPageSelect(_event, perPage) {
             setFilters({ ...filters, limit: perPage, offset: 0 });
           },
           isCompact: true,
@@ -789,7 +790,13 @@ const RulesTable = () => {
         filterConfig={{ items: filterConfigItems }}
         activeFiltersConfig={activeFiltersConfig}
       />
-      {rulesFetchStatus === 'fulfilled' && (
+      {isFetching ? (
+        <Loading />
+      ) : isError ? (
+        <Failed
+          message={intl.formatMessage(messages.rulesTableFetchRulesError)}
+        />
+      ) : (
         <Table
           aria-label={'rule-table'}
           variant={TableVariant.compact}
@@ -806,21 +813,15 @@ const RulesTable = () => {
           <TableBody />
         </Table>
       )}
-      {rulesFetchStatus === 'pending' && <Loading />}
-      {rulesFetchStatus === 'failed' && (
-        <Failed
-          message={intl.formatMessage(messages.rulesTableFetchRulesError)}
-        />
-      )}
       <Pagination
         ouiaId="page"
         itemCount={results}
         page={filters.offset / filters.limit + 1}
         perPage={Number(filters.limit)}
-        onSetPage={(event, page) => {
+        onSetPage={(_e, page) => {
           onSetPage(page);
         }}
-        onPerPageSelect={(event, perPage) => {
+        onPerPageSelect={(_e, perPage) => {
           setFilters({ ...filters, limit: perPage, offset: 0 });
         }}
         widgetId={`pagination-options-menu-bottom`}

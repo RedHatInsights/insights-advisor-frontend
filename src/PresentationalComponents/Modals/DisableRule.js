@@ -1,20 +1,19 @@
-import * as AppActions from '../../Store/AppActions';
-
 import React, { useState } from 'react';
 
-import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import { Checkbox } from '@patternfly/react-core/dist/js/components/Checkbox/Checkbox';
 import { Form } from '@patternfly/react-core/dist/js/components/Form/Form';
 import { FormGroup } from '@patternfly/react-core/dist/js/components/Form/FormGroup';
 import { Modal } from '@patternfly/react-core/dist/js/components/Modal/Modal';
+import { Post } from '../../Utilities/Api';
 import PropTypes from 'prop-types';
 import { TextInput } from '@patternfly/react-core/dist/js/components/TextInput/TextInput';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import messages from '../../Messages';
 import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
+import { useSetAckMutation } from '../../Services/Acks';
 
 const DisableRule = ({
   handleModalToggle,
@@ -26,17 +25,19 @@ const DisableRule = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const setAck = (data) => dispatch(AppActions.setAck(data));
   const notification = (data) => dispatch(addNotification(data));
   const [justification, setJustificaton] = useState('');
   const [singleSystem, setSingleSystem] = useState(
     host !== undefined || hosts.length > 0
   );
 
+  // eslint-disable-next-line no-unused-vars
+  const [setAck, { isLoading }] = useSetAckMutation();
+
   const bulkHostActions = async () => {
     const data = { systems: hosts, justification };
     try {
-      await API.post(`${BASE_URL}/rule/${rule.rule_id}/ack_hosts/`, {}, data);
+      await Post(`${BASE_URL}/rule/${rule.rule_id}/ack_hosts/`, {}, data);
       !singleSystem &&
         notification({
           variant: 'success',
@@ -74,7 +75,7 @@ const DisableRule = ({
             },
           };
       try {
-        await setAck(options);
+        await setAck(options).unwrap();
         singleSystem
           ? notification({
               variant: 'success',

@@ -1,27 +1,26 @@
 import './Details.scss';
 
-import * as AppActions from '../../Store/AppActions';
-import * as AppConstants from '../../AppConstants';
-
-import { BASE_URL, PERMS, SYSTEM_TYPES, UI_BASE } from '../../AppConstants';
+import {
+  BASE_URL,
+  PERMS,
+  RISK_OF_CHANGE_DESC,
+  SYSTEM_TYPES,
+  UI_BASE,
+} from '../../AppConstants';
 import {
   Card,
   CardBody,
   CardFooter,
   CardHeader,
 } from '@patternfly/react-core/dist/js/components/Card';
+import { DeleteApi, Get, Post } from '../../Utilities/Api';
 import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  encodeOptionsToURL,
-  workloadQueryBuilder,
-} from '../../PresentationalComponents/Common/Tables';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import API from '../../Utilities/Api';
 import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
@@ -39,7 +38,6 @@ import { Label } from '@patternfly/react-core/dist/js/components/Label/Label';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
-import PropTypes from 'prop-types';
 import RuleDetails from '../../PresentationalComponents/RuleDetails/RuleDetails';
 import RuleLabels from '../../PresentationalComponents/RuleLabels/RuleLabels';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
@@ -48,65 +46,44 @@ import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { cveToRuleid } from '../../cveToRuleid.js';
 import messages from '../../Messages';
 import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
-import routerParams from '@redhat-cloud-services/frontend-components-utilities/RouterParams';
+import { useGetRecAcksQuery } from '../../Services/Acks';
+import { useGetRecQuery } from '../../Services/Recs';
+import { useGetTopicsQuery } from '../../Services/Topics';
 import { useIntl } from 'react-intl';
+import { useParams } from 'react-router-dom';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 
-const OverviewDetails = ({ match }) => {
+const OverviewDetails = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
+
+  const selectedTags = useSelector(({ filters }) => filters.selectedTags);
+  const workloads = useSelector(({ filters }) => filters.workloads);
+  const SID = useSelector(({ filters }) => filters.SID);
+  const ruleId = useParams().id;
+  const addNotification = (data) => dispatch(notification(data));
+
+  const {
+    data: rule = {},
+    isFetching,
+    isError,
+    refetch,
+  } = useGetRecQuery({ ruleId });
+
+  const {
+    data: recAck = {},
+    isFetching: recAckIsFetching,
+    refetch: recAckRefetch,
+  } = useGetRecAcksQuery({ ruleId });
+
+  const { data: topics = [], isFetching: topicIsFetching } =
+    useGetTopicsQuery();
 
   const permsDisableRec = usePermissions('advisor', PERMS.disableRec).hasAccess;
   const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [host, setHost] = useState(undefined);
   const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
-  const [isRuleUpdated, setIsRuleUpdated] = useState(false);
-
-  const rule = useSelector(({ AdvisorStore }) => AdvisorStore.rule);
-  const ruleFetchStatus = useSelector(
-    ({ AdvisorStore }) => AdvisorStore.ruleFetchStatus
-  );
-  const topics = useSelector(({ AdvisorStore }) => AdvisorStore.topics);
-  const ruleAck = useSelector(({ AdvisorStore }) => AdvisorStore.ruleAck);
-  const selectedTags = useSelector(
-    ({ AdvisorStore }) => AdvisorStore.selectedTags
-  );
-  const workloads = useSelector(({ AdvisorStore }) => AdvisorStore.workloads);
-  const SID = useSelector(({ AdvisorStore }) => AdvisorStore.SID);
-  const fetchTopics = () => dispatch(AppActions.fetchTopics());
-  const addNotification = (data) => dispatch(notification(data));
-
-  const fetchRulefn = useCallback(
-    (newFilter, rule = true, system = true) => {
-      const fetchRule = (options, search) =>
-        dispatch(AppActions.fetchRule(options, search));
-      const fetchSystem = (rule_id, options, search) =>
-        dispatch(AppActions.fetchSystem(rule_id, options, search));
-      let options = selectedTags !== null &&
-        selectedTags.length && {
-          tags: selectedTags.map((tag) => encodeURIComponent(tag)),
-        };
-      workloads &&
-        (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
-      if (system) {
-        fetchSystem(
-          match.params.id,
-          options.tags ? {} : { ...options, ...newFilter },
-          options.tags && encodeOptionsToURL({ ...options, ...newFilter })
-        );
-      }
-      if (rule) {
-        fetchRule(
-          options.tags
-            ? { rule_id: match.params.id }
-            : { rule_id: match.params.id, ...options },
-          options.tags && encodeOptionsToURL(options)
-        );
-      }
-    },
-    [selectedTags, workloads, SID, dispatch, match.params.id]
-  );
 
   const ruleResolutionRisk = (rule) => {
     const resolution = rule?.resolution_set?.find(
@@ -123,14 +100,14 @@ const OverviewDetails = ({ match }) => {
 
   const enableRule = async (rule) => {
     try {
-      await API.delete(`${BASE_URL}/ack/${rule.rule_id}/`);
+      await DeleteApi(`${BASE_URL}/ack/${rule.rule_id}/`);
       addNotification({
         variant: 'success',
         timeout: true,
         dismissable: true,
         title: intl.formatMessage(messages.recSuccessfullyEnabled),
       });
-      fetchRulefn();
+      refetch();
     } catch (error) {
       handleModalToggle(false);
       addNotification({
@@ -144,7 +121,8 @@ const OverviewDetails = ({ match }) => {
 
   const afterDisableFn = async () => {
     setHost(undefined);
-    fetchRulefn();
+    refetch();
+    recAckRefetch();
   };
 
   const actionResolver = () => [
@@ -157,7 +135,7 @@ const OverviewDetails = ({ match }) => {
   const bulkHostActions = async () => {
     try {
       const hostAckResponse = (
-        await API.get(
+        await Get(
           `${BASE_URL}/hostack/`,
           {},
           { rule_id: rule.rule_id, limit: rule.hosts_acked_count }
@@ -167,8 +145,8 @@ const OverviewDetails = ({ match }) => {
         systems: hostAckResponse?.data?.map((item) => item.system_uuid),
       };
 
-      await API.post(`${BASE_URL}/rule/${rule.rule_id}/unack_hosts/`, {}, data);
-      fetchRulefn();
+      await Post(`${BASE_URL}/rule/${rule.rule_id}/unack_hosts/`, {}, data);
+      refetch();
       addNotification({
         variant: 'success',
         timeout: true,
@@ -187,59 +165,23 @@ const OverviewDetails = ({ match }) => {
 
   useEffect(() => {
     const isCVE =
-      cveToRuleid &&
-      cveToRuleid.find((mapping) => mapping.rule_id === match.params.id);
+      cveToRuleid && cveToRuleid.find((mapping) => mapping.rule_id === ruleId);
 
     if (isCVE) {
       window.location.href = `${UI_BASE}/vulnerability/cves/${
         isCVE.cves[0].includes('CVE-')
-          ? `${isCVE.cves[0]}?security_rule=${match.params.id}`
+          ? `${isCVE.cves[0]}?security_rule=${ruleId}`
           : ''
       }`;
-    } else {
-      fetchTopics();
-    }
-    fetchRulefn({}, false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const tagRef = useRef();
-  const workloadRef = useRef();
-  const sidRef = useRef();
-
-  useEffect(() => {
-    if (
-      isRuleUpdated &&
-      selectedTags !== null &&
-      (JSON.stringify(tagRef.current) !== JSON.stringify(selectedTags) ||
-        JSON.stringify(workloadRef.current) !== JSON.stringify(workloads) ||
-        JSON.stringify(sidRef.current) !== JSON.stringify(SID))
-    ) {
-      fetchRulefn({}, false);
     }
 
-    tagRef.current = selectedTags;
-    workloadRef.current = workloads;
-    sidRef.current = SID;
-  }, [selectedTags, workloads, SID, fetchRulefn, isRuleUpdated]);
-
-  useEffect(() => {
-    const fetchRuleAck = (data) => dispatch(AppActions.fetchRuleAck(data));
-
-    if (rule.rule_status !== 'enabled' && rule.rule_id && isRuleUpdated) {
-      fetchRuleAck({ rule_id: rule.rule_id });
-    } else if (!isRuleUpdated) {
-      fetchRulefn({}, true, false);
-      setIsRuleUpdated(true);
-    }
-
-    if (rule && rule.description) {
+    if (rule?.description) {
       const subnav = `${rule.description} - ${messages.recommendations.defaultMessage}`;
       document.title = intl.formatMessage(messages.documentTitle, { subnav });
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rule, rule.rule_status, rule.rule_id]);
+  }, []);
 
   return (
     <React.Fragment>
@@ -249,7 +191,7 @@ const OverviewDetails = ({ match }) => {
             setViewSystemsModalOpen(toggleModal)
           }
           isModalOpen={viewSystemsModalOpen}
-          afterFn={fetchRulefn}
+          afterFn={() => refetch()}
           rule={rule}
         />
       )}
@@ -262,7 +204,7 @@ const OverviewDetails = ({ match }) => {
           host={host}
         />
       )}
-      {ruleFetchStatus === 'fulfilled' && (
+      {!isFetching && !topicIsFetching && (
         <React.Fragment>
           <PageHeader className="pageHeaderOverride">
             <Breadcrumbs ouiaId="override" current={rule.description || ''} />
@@ -270,9 +212,7 @@ const OverviewDetails = ({ match }) => {
           <Main className="pf-m-light pf-u-pt-sm">
             <RuleDetails
               resolutionRisk={ruleResolutionRisk(rule)}
-              riskOfChangeDesc={
-                AppConstants.RISK_OF_CHANGE_DESC[ruleResolutionRisk(rule)]
-              }
+              riskOfChangeDesc={RISK_OF_CHANGE_DESC[ruleResolutionRisk(rule)]}
               isDetailsPage
               rule={rule}
               topics={topics}
@@ -301,8 +241,8 @@ const OverviewDetails = ({ match }) => {
                 </React.Fragment>
               }
               onFeedbackChanged={async (ruleId, calculatedRating) => {
-                await API.post(
-                  `${AppConstants.BASE_URL}/rating/`,
+                await Post(
+                  `${BASE_URL}/rating/`,
                   {},
                   { rule: ruleId, rating: calculatedRating }
                 );
@@ -366,131 +306,128 @@ const OverviewDetails = ({ match }) => {
           </Main>
         </React.Fragment>
       )}
-      {ruleFetchStatus === 'pending' && <Loading />}
+      {isFetching && <Loading />}
       <Main>
-        <React.Fragment>
-          {ruleFetchStatus === 'fulfilled' && (
-            <React.Fragment>
-              {(rule.hosts_acked_count > 0 ||
-                rule.rule_status !== 'enabled') && (
-                <Card className="cardOverride">
-                  <CardHeader>
-                    <Title headingLevel="h4" size="xl">
-                      <BellSlashIcon size="sm" />
-                      &nbsp;
+        {!isFetching ? (
+          <React.Fragment>
+            {(rule.hosts_acked_count > 0 || rule.rule_status !== 'enabled') && (
+              <Card className="cardOverride">
+                <CardHeader>
+                  <Title headingLevel="h4" size="xl">
+                    <BellSlashIcon size="sm" />
+                    &nbsp;
+                    {intl.formatMessage(
+                      rule.hosts_acked_count > 0 &&
+                        rule.rule_status === 'enabled'
+                        ? messages.ruleIsDisabledForSystems
+                        : messages.ruleIsDisabled
+                    )}
+                  </Title>
+                </CardHeader>
+                <CardBody>
+                  {rule.hosts_acked_count > 0 &&
+                  rule.rule_status === 'enabled' ? (
+                    <React.Fragment>
                       {intl.formatMessage(
-                        rule.hosts_acked_count > 0 &&
-                          rule.rule_status === 'enabled'
-                          ? messages.ruleIsDisabledForSystems
-                          : messages.ruleIsDisabled
+                        messages.ruleIsDisabledForSystemsBody,
+                        {
+                          systems: rule.hosts_acked_count,
+                        }
                       )}
-                    </Title>
-                  </CardHeader>
-                  <CardBody>
-                    {rule.hosts_acked_count > 0 &&
-                    rule.rule_status === 'enabled' ? (
-                      <React.Fragment>
-                        {intl.formatMessage(
-                          messages.ruleIsDisabledForSystemsBody,
-                          { systems: rule.hosts_acked_count }
-                        )}
-                        &nbsp;
-                        <Button
-                          isInline
-                          variant="link"
-                          onClick={() => setViewSystemsModalOpen(true)}
-                          ouiaId="viewSystems"
-                        >
-                          {intl.formatMessage(messages.viewSystems)}
-                        </Button>
-                      </React.Fragment>
-                    ) : (
+                      &nbsp;
+                      <Button
+                        isInline
+                        variant="link"
+                        onClick={() => setViewSystemsModalOpen(true)}
+                        ouiaId="viewSystems"
+                      >
+                        {intl.formatMessage(messages.viewSystems)}
+                      </Button>
+                    </React.Fragment>
+                  ) : (
+                    !recAckIsFetching && (
                       <React.Fragment>
                         {intl.formatMessage(
                           messages.ruleIsDisabledJustification
                         )}
                         <i>
-                          {ruleAck.justification ||
+                          {recAck.justification ||
                             intl.formatMessage(messages.none)}
                         </i>
-                        {ruleAck.updated_at && (
+                        {recAck.updated_at && (
                           <span>
                             &nbsp;
                             <DateFormat
-                              date={new Date(ruleAck.updated_at)}
+                              date={new Date(recAck.updated_at)}
                               type="onlyDate"
                             />
                           </span>
                         )}
                       </React.Fragment>
-                    )}
-                  </CardBody>
-                  <CardFooter>
-                    {rule.hosts_acked_count > 0 &&
-                    rule.rule_status === 'enabled' ? (
-                      <Button
-                        isInline
-                        variant="link"
-                        onClick={() => bulkHostActions()}
-                        ouiaId="bulkHost"
-                      >
-                        {intl.formatMessage(messages.enableRuleForSystems)}
-                      </Button>
-                    ) : (
-                      <Button
-                        isInline
-                        variant="link"
-                        onClick={() => enableRule(rule)}
-                        ouiaId="rule"
-                      >
-                        {intl.formatMessage(messages.enableRule)}
-                      </Button>
-                    )}
-                  </CardFooter>
-                </Card>
-              )}
-              {rule.rule_status === 'enabled' && (
-                <React.Fragment>
-                  <Title className="titleOverride" headingLevel="h3" size="2xl">
-                    {intl.formatMessage(messages.affectedSystems)}
-                  </Title>
-                  <Inventory
-                    tableProps={{
-                      canSelectAll: false,
-                      actionResolver,
-                      isStickyHeader: true,
-                    }}
-                    rule={rule}
-                    afterDisableFn={afterDisableFn}
-                    selectedTags={selectedTags}
-                    workloads={workloads}
-                    SID={SID}
-                  />
-                </React.Fragment>
-              )}
-              {rule.rule_status !== 'enabled' && (
-                <MessageState
-                  icon={BellSlashIcon}
-                  title={intl.formatMessage(messages.ruleIsDisabled)}
-                  text={intl.formatMessage(messages.ruleIsDisabledBody)}
+                    )
+                  )}
+                </CardBody>
+                <CardFooter>
+                  {rule.hosts_acked_count > 0 &&
+                  rule.rule_status === 'enabled' ? (
+                    <Button
+                      isInline
+                      variant="link"
+                      onClick={() => bulkHostActions()}
+                      ouiaId="bulkHost"
+                    >
+                      {intl.formatMessage(messages.enableRuleForSystems)}
+                    </Button>
+                  ) : (
+                    <Button
+                      isInline
+                      variant="link"
+                      onClick={() => enableRule(rule)}
+                      ouiaId="rule"
+                    >
+                      {intl.formatMessage(messages.enableRule)}
+                    </Button>
+                  )}
+                </CardFooter>
+              </Card>
+            )}
+            {rule.rule_status === 'enabled' && (
+              <React.Fragment>
+                <Title className="titleOverride" headingLevel="h3" size="2xl">
+                  {intl.formatMessage(messages.affectedSystems)}
+                </Title>
+                <Inventory
+                  tableProps={{
+                    canSelectAll: false,
+                    actionResolver,
+                    isStickyHeader: true,
+                  }}
+                  rule={rule}
+                  afterDisableFn={afterDisableFn}
+                  selectedTags={selectedTags}
+                  workloads={workloads}
+                  SID={SID}
                 />
-              )}
-            </React.Fragment>
-          )}
-          {ruleFetchStatus === 'pending' && <Loading />}
-          {ruleFetchStatus === 'failed' && (
-            <Failed
-              message={intl.formatMessage(messages.rulesTableFetchRulesError)}
-            />
-          )}
-        </React.Fragment>
+              </React.Fragment>
+            )}
+            {rule.rule_status !== 'enabled' && (
+              <MessageState
+                icon={BellSlashIcon}
+                title={intl.formatMessage(messages.ruleIsDisabled)}
+                text={intl.formatMessage(messages.ruleIsDisabledBody)}
+              />
+            )}
+          </React.Fragment>
+        ) : isError ? (
+          <Failed
+            message={intl.formatMessage(messages.rulesTableFetchRulesError)}
+          />
+        ) : (
+          <Loading />
+        )}
       </Main>
     </React.Fragment>
   );
 };
 
-OverviewDetails.propTypes = {
-  match: PropTypes.any,
-};
-
-export default routerParams(OverviewDetails);
+export default OverviewDetails;

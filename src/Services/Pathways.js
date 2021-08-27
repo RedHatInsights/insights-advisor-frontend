@@ -1,25 +1,29 @@
-import * as AppConst from '../AppConstants';
-
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { AxiosBaseQuery } from '../Utilities/Api';
+import { BASE_URL } from '../AppConstants';
+import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const Pathways = createApi({
   reducerPath: 'pathways',
-  baseQuery: fetchBaseQuery({ baseUrl: AppConst.BASE_URL }),
+  baseQuery: AxiosBaseQuery({ baseUrl: BASE_URL }),
   endpoints: (build) => ({
-    getPathways: build.query({ query: () => `pathway` }),
-    getPathway: build.query({ query: (name) => `pathway/${name}/` }),
-    getPathwayRules: build.query({ query: (name) => `pathway/${name}/rules/` }),
+    getPathways: build.query({
+      query: (options) => ({ url: `pathway/`, options }),
+    }),
+    getPathway: build.query({
+      query: (name) => ({ url: `pathway/${name}/` }),
+    }),
+    getPathwayRules: build.query({
+      query: (name) => ({ url: `pathway/${name}/rules/` }),
+    }),
     getPathwaySystems: build.query({
-      query: (name) => `pathway/${name}/systems/`,
+      query: (name) => ({ url: `pathway/${name}/systems/` }),
     }),
   }),
 });
 
 export const {
   useGetPathwaysQuery,
-  useLazyGetPathwaysQuery,
   useGetPathwayQuery,
-  useLazyGetPathwayQuery,
   useGetPathwayRulesQuery,
   useGetPathwaySystemsQuery,
 } = Pathways;

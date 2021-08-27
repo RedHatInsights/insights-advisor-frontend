@@ -1,7 +1,5 @@
 import './SystemsTable.scss';
 
-import * as AppActions from '../../Store/AppActions';
-
 import {
   PERMS,
   SYSTEM_FILTER_CATEGORIES as SFC,
@@ -16,19 +14,20 @@ import {
   urlBuilder,
   workloadQueryBuilder,
 } from '../Common/Tables';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 
-import API from '../../Utilities/Api';
+import { Get } from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import { Link } from 'react-router-dom';
 import Loading from '../Loading/Loading';
 import RuleLabels from '../RuleLabels/RuleLabels';
 import SystemsPdf from '../Export/SystemsPdf';
 import downloadReport from '../Common/DownloadHelper';
-import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
 import messages from '../../Messages';
 import { systemReducer } from '../../Store/AppReducer';
+import { updateReducers } from '../../Store';
+import { updateSysFilters } from '../../Services/Filters';
 import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
@@ -36,18 +35,14 @@ import { usePermissions } from '@redhat-cloud-services/frontend-components-utili
 const SystemsTable = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const { search } = useLocation();
-  const filters = useSelector(
-    ({ AdvisorStore }) => AdvisorStore.filtersSystems
-  );
-  const selectedTags = useSelector(
-    ({ AdvisorStore }) => AdvisorStore.selectedTags
-  );
-  const workloads = useSelector(({ AdvisorStore }) => AdvisorStore.workloads);
-  const SID = useSelector(({ AdvisorStore }) => AdvisorStore.SID);
-  const setFilters = (filters) =>
-    dispatch(AppActions.setFiltersSystems(filters));
+  const store = useStore();
 
+  const { search } = useLocation();
+  const selectedTags = useSelector(({ filters }) => filters.selectedTags);
+  const workloads = useSelector(({ filters }) => filters.workloads);
+  const SID = useSelector(({ filters }) => filters.SID);
+  const filters = useSelector(({ filters }) => filters.recState);
+  const setFilters = (filters) => dispatch(updateSysFilters(filters));
   const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
   const [filterBuilding, setFilterBuilding] = useState(true);
   const columns = [
@@ -265,6 +260,7 @@ const SystemsTable = () => {
     }
     setFilterBuilding(false);
     urlBuilder(combinedFitlers, selectedTags);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -286,13 +282,15 @@ const SystemsTable = () => {
           INVENTORY_ACTION_TYPES,
           mergeWithDetail,
         }) => {
-          getRegistry().register({
-            ...mergeWithEntities(systemReducer([], INVENTORY_ACTION_TYPES), {
-              page: Number(filters.offset / filters.limit + 1 || 1),
-              perPage: Number(filters.limit || 20),
-            }),
-            ...mergeWithDetail(),
-          });
+          store.replaceReducer(
+            updateReducers({
+              ...mergeWithEntities(systemReducer([], INVENTORY_ACTION_TYPES), {
+                page: Number(filters.offset / filters.limit + 1 || 1),
+                perPage: Number(filters.limit || 20),
+              }),
+              ...mergeWithDetail(),
+            })
+          );
         }}
         getEntities={async (_items, config, showTags, defaultGetEntities) => {
           const {
@@ -329,7 +327,7 @@ const SystemsTable = () => {
           workloads &&
             (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
 
-          const fetchedSystems = (await API.get(SYSTEMS_FETCH_URL, {}, options))
+          const fetchedSystems = (await Get(SYSTEMS_FETCH_URL, {}, options))
             ?.data;
 
           handleRefresh(options);

@@ -18,45 +18,15 @@ const intl = createIntl(
 );
 const intlSettings = { locale };
 
-export const RULE_FETCH = 'RULE_FETCH';
-export const RULES_FETCH = 'RULES_FETCH';
-export const SYSTEM_FETCH = 'SYSTEM_FETCH';
-export const SYSTEMTYPE_FETCH = 'SYSTEMTYPE_FETCH';
-export const STATS_RULES_FETCH = 'STATS_RULES_FETCH';
-export const STATS_SYSTEMS_FETCH = 'STATS_SYSTEMS_FETCH';
-export const STATS_STALEHOSTS_FETCH = 'STATS_STALEHOSTS_FETCH';
-export const STATS_REPORTS_FETCH = 'STATS_REPORTS_FETCH';
-export const FILTERS_SET = 'FILTERS_SET';
-export const TOPIC_FETCH = 'TOPIC_FETCH';
-export const TOPICS_FETCH = 'TOPICS_FETCH';
-export const SYSTEMS_FETCH = 'SYSTEMS_FETCH';
-export const RULE_ACK_FETCH = 'RULE_ACK_FETCH';
-export const RULE_ACK_SET = 'RULE_ACK_SET';
-export const HOST_ACK_FETCH = 'HOST_ACK_FETCH';
-export const HOST_ACK_SET = 'HOST_ACK_SET';
-export const FILTERS_SYSTEMS_SET = 'FILTERS_SYSTEMS_SET';
-export const SELECTED_TAGS_SET = 'SELECTED_TAGS_SET';
-export const RULE_SET = 'RULE_SET';
-export const SYSTEM_SET = 'SYSTEM_SET';
-export const WORKLOADS_SET = 'WORKLOADS_SET';
-export const SID_SET = 'SID_SET';
-
 export const BASE_URI = document.baseURI;
 export const BASE_URL = '/api/insights/v1';
-export const INV_BASE_URL = '/api/inventory/v1';
+export const UI_BASE = './insights';
+export const DEBOUNCE_DELAY = 600;
 export const RULES_FETCH_URL = `${BASE_URL}/rule/`;
-export const STATS_RULES_FETCH_URL = `${BASE_URL}/stats/rules/`;
 export const STATS_SYSTEMS_FETCH_URL = `${BASE_URL}/stats/systems/`;
 export const STATS_REPORTS_FETCH_URL = `${BASE_URL}/stats/reports/`;
-export const STATS_STALEHOSTS_FETCH_URL = `${BASE_URL}/stats/stale_hosts/`;
-export const TOPICS_FETCH_URL = `${BASE_URL}/topic/`;
 export const SYSTEMS_FETCH_URL = `${BASE_URL}/system/`;
-export const RULE_ACK_URL = `${BASE_URL}/ack/`;
-export const HOST_ACK_URL = `${BASE_URL}/hostack/`;
-
-export const UI_BASE = './insights';
 export const SYSTEM_TYPES = { rhel: 105, ocp: 325 };
-export const DEBOUNCE_DELAY = 600;
 export const RULE_CATEGORIES = {
   availability: 1,
   security: 2,

@@ -1,0 +1,28 @@
+import { AxiosBaseQuery } from '../Utilities/Api';
+import { BASE_URL } from '../AppConstants';
+import { createApi } from '@reduxjs/toolkit/query/react';
+
+export const Recs = createApi({
+  reducerPath: 'recs',
+  baseQuery: AxiosBaseQuery({ baseUrl: BASE_URL }),
+  endpoints: (build) => ({
+    getRecs: build.query({
+      query: (options) => ({ url: `/rule/`, options }),
+    }),
+    getRec: build.query({
+      query: (options) => ({
+        url: `/rule/${options.ruleId}/`,
+        options,
+      }),
+    }),
+    getRecSystems: build.query({
+      query: (options, search) => ({
+        url: `/rule/${encodeURI(options.ruleId)}/systems/`,
+        options,
+        search,
+      }),
+    }),
+  }),
+});
+
+export const { useGetRecsQuery, useGetRecQuery, useGetRecsystemsQuery } = Recs;

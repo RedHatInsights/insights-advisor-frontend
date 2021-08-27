@@ -1,79 +1,68 @@
-import {
-  notifications,
-  notificationsMiddleware,
-} from '@redhat-cloud-services/frontend-components-notifications/';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { entitiesDetailsReducer, systemReducer } from './AppReducer';
 
-import { compose } from 'redux';
-// import { Pathways } from '../Services/Pathways';
-// import { configureStore } from '@reduxjs/toolkit';
-import { getAdvisorStore } from './AppReducer';
-import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
-// import logger from 'redux-logger';
+import { Acks } from '../Services/Acks';
+import { Pathways } from '../Services/Pathways';
+import { Recs } from '../Services/Recs';
+import { Systems } from '../Services/Systems';
+import { Topics } from '../Services/Topics';
+import filters from '../Services/Filters';
+import logger from 'redux-logger';
+import { notificationsMiddleware } from '@redhat-cloud-services/frontend-components-notifications/';
+import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import promiseMiddleware from 'redux-promise-middleware';
 
-let registry;
-
-const localStorage = (store) => (next) => (action) => {
-  next(action);
-  const activeStore = store.getState().AdvisorStore;
-  sessionStorage.setItem('AdvisorStore', JSON.stringify(activeStore));
+const reducer = {
+  [Pathways.reducerPath]: Pathways.reducer,
+  [Recs.reducerPath]: Recs.reducer,
+  [Topics.reducerPath]: Topics.reducer,
+  [Systems.reducerPath]: Systems.reducer,
+  [Acks.reducerPath]: Acks.reducer,
+  filters,
+  notifications: notificationsReducer,
+  systemReducer: systemReducer([], {}),
+  entitiesDetailsReducer: entitiesDetailsReducer({}),
 };
 
-export function init(...middleware) {
-  const composeEnhancers =
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-  registry = getRegistry(
-    {},
-    [
-      ...middleware,
-      promiseMiddleware,
-      notificationsMiddleware({
-        errorTitleKey: ['message'],
-        errorDescriptionKey: ['response.data.detail'],
-      }),
-      localStorage,
-    ],
-    composeEnhancers
+const middleware = (getDefaultMiddleware) =>
+  getDefaultMiddleware({
+    serializableCheck: {
+      ignoredActions: [
+        'LOAD_ENTITIES',
+        'LOAD_ENTITY',
+        'CLEAR_FILTERS',
+        'LOAD_ENTITY_FULFILLED',
+      ],
+    },
+    immutableCheck: {
+      ignoredPaths: ['entities'],
+    },
+  }).concat(
+    promiseMiddleware,
+    Pathways.middleware,
+    Recs.middleware,
+    Systems.middleware,
+    Topics.middleware,
+    Acks.middleware,
+    notificationsMiddleware({
+      errorTitleKey: ['message'],
+      errorDescriptionKey: ['response.data.detail'],
+    }),
+    process.env.NODE_ENV !== 'production' && logger
   );
 
-  const previousAdvisorStore = JSON.parse(
-    sessionStorage.getItem('AdvisorStore')
-  );
-  registry.register({ AdvisorStore: getAdvisorStore(previousAdvisorStore) });
-  registry.register({ notifications });
+const getStore = () => {
+  return configureStore({
+    reducer,
+    middleware,
+    devTools: process.env.NODE_ENV !== 'production',
+  });
+};
 
-  return registry;
-}
+const updateReducers = (newReducers = {}) =>
+  combineReducers({
+    ...reducer,
+    ...newReducers,
+  });
 
-export function getStore() {
-  return registry.getStore();
-}
-
-export function register(...args) {
-  return registry.register(...args);
-}
-
-// const getStore = () => {
-//   const reducer = {
-//     [Pathways.reducerPath]: Pathways.reducer,
-//   };
-
-//   return configureStore({
-//     reducer,
-//     middleware: (getDefaultMiddleware) => {
-//       const middleware = getDefaultMiddleware({
-//         // serializableCheck: false,
-//       });
-//       if (process.env.NODE_ENV !== 'production') {
-//         middleware.concat(logger);
-//       }
-
-//       middleware.concat(Pathways.middleware);
-
-//       return middleware;
-//     },
-//     devTools: process.env.NODE_ENV !== 'production',
-//   });
-// };
-
-// export { getStore };
+export { getStore, updateReducers };

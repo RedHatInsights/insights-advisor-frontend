@@ -3,9 +3,9 @@ import './_Export.scss';
 import React, { useMemo, useState } from 'react';
 import { leadPage, tablePage } from './SystemsPdfBuild';
 
-import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
 import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
+import { Get } from '../../Utilities/Api';
 import PropTypes from 'prop-types';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
@@ -27,11 +27,7 @@ const SystemsPdf = ({ filters }) => {
     workloads &&
       (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
     const systems = (
-      await API.get(
-        `${BASE_URL}/export/systems/`,
-        {},
-        { ...filters, ...options }
-      )
+      await Get(`${BASE_URL}/export/systems/`, {}, { ...filters, ...options })
     ).data;
 
     const firstPage = leadPage({
