@@ -7,9 +7,9 @@ import {
 } from '../../AppConstants';
 import React, { useMemo, useState } from 'react';
 
-import API from '../../Utilities/Api';
 import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
 import ExportIcon from '@patternfly/react-icons/dist/js/icons/export-icon';
+import { Get } from '../../Utilities/Api';
 import buildExecReport from './Build';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
@@ -21,10 +21,10 @@ const DownloadExecReport = ({ isDisabled }) => {
   const dataFetch = async () => {
     setLoading(true);
     const [statsSystems, statsReports, topActiveRec] = await Promise.all([
-      (await API.get(STATS_SYSTEMS_FETCH_URL)).data,
-      (await API.get(STATS_REPORTS_FETCH_URL)).data,
+      (await Get(STATS_SYSTEMS_FETCH_URL)).data,
+      (await Get(STATS_REPORTS_FETCH_URL)).data,
       (
-        await API.get(
+        await Get(
           RULES_FETCH_URL,
           {},
           { limit: 3, sort: '-total_risk,-impacted_count', impacting: true }

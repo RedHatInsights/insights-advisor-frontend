@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { getBaseName } from '@redhat-cloud-services/frontend-components-utilities/helpers';
-import { init } from './Store';
+import { getStore } from './Store';
 import messages from '../locales/data.json';
 
 const AppEntry = () => (
@@ -15,7 +15,7 @@ const AppEntry = () => (
     messages={messages}
     onError={console.log}
   >
-    <Provider store={init().getStore()}>
+    <Provider store={getStore()}>
       <Router basename={getBaseName(window.location.pathname)}>
         <NotificationsPortal />
         <App />

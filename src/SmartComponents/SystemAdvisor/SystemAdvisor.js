@@ -41,8 +41,8 @@ import {
 } from '@patternfly/react-table';
 import { useDispatch, useSelector } from 'react-redux';
 
-import API from '../../Utilities/Api';
 import DateFormat from '@redhat-cloud-services/frontend-components/DateFormat';
+import { Get } from '../../Utilities/Api';
 import InsightsLabel from '@redhat-cloud-services/frontend-components/InsightsLabel';
 import { List } from 'react-content-loader';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
@@ -405,7 +405,7 @@ const BaseSystemAdvisor = () => {
     const kbaIds = reportsData.map(({ rule }) => rule.node_id).filter((x) => x);
     try {
       const kbaDetailsFetch = (
-        await API.get(
+        await Get(
           `https://access.redhat.com/hydra/rest/search/kcs?q=id:(${kbaIds.join(
             ` OR `
           )})&fl=view_uri,id,publishedTitle&rows=${
@@ -558,12 +558,12 @@ const BaseSystemAdvisor = () => {
       try {
         const [settingsFetch, reportsFetch] = await Promise.all([
           (
-            await API.get(`${BASE_URL}/account_setting/`, {
+            await Get(`${BASE_URL}/account_setting/`, {
               credentials: 'include',
             })
           ).data,
           (
-            await API.get(`${BASE_URL}/system/${entity.id}/reports/`, {
+            await Get(`${BASE_URL}/system/${entity.id}/reports/`, {
               credentials: 'include',
             })
           ).data,

@@ -1,64 +1,49 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 
 import { Breadcrumb } from '@patternfly/react-core/dist/js/components/Breadcrumb/Breadcrumb';
 import { BreadcrumbItem } from '@patternfly/react-core/dist/js/components/Breadcrumb/BreadcrumbItem';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { fetchRule } from '../../Store/AppActions';
 import messages from '../../Messages';
+import { useGetRecQuery } from '../../Services/Recs';
 import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
 
 const Breadcrumbs = ({ current }) => {
   const intl = useIntl();
-  const dispatch = useDispatch();
-  const rule = useSelector(({ AdvisorStore }) => AdvisorStore.rule);
-  const ruleFetchStatus = useSelector(
-    ({ AdvisorStore }) => AdvisorStore.ruleFetchStatus
-  );
   const location = useLocation().pathname?.split('/');
   const [items, setItems] = useState([]);
+  const skip = !(location[1] === 'recommendations' && location.length === 4);
+  const { data, isFetching } = useGetRecQuery(
+    { ruleId: location[2] },
+    { skip }
+  );
 
-  const buildBreadcrumbs = useCallback(() => {
-    const crumbs = [];
-    // add base
-    crumbs.push({
-      title: `${intl.formatMessage(messages.insightsHeader)} ${location[1]}`,
-      navigate: `/${location[1]}`,
-    });
-
-    // if applicable, add :id breadcrumb
-    if (location[1] === 'recommendations' && location.length === 4) {
+  useEffect(() => {
+    const buildBreadcrumbs = () => {
+      const crumbs = [];
+      // add base
       crumbs.push({
-        title: rule.description,
-        navigate: `/${location[1]}/${location[2]}`,
+        title: `${intl.formatMessage(messages.insightsHeader)} ${location[1]}`,
+        navigate: `/${location[1]}`,
       });
-    }
 
-    setItems(crumbs);
-  }, [intl, location, rule.description]);
+      // if applicable, add :id breadcrumb
+      if (!skip) {
+        crumbs.push({
+          title: data?.description,
+          navigate: `/${location[1]}/${location[2]}`,
+        });
+      }
+      setItems(crumbs);
+    };
 
-  useEffect(() => {
-    const getRuleName = (id) => dispatch(fetchRule(id));
-
-    location[1] === 'recommendations' && location.length === 4
-      ? getRuleName({ rule_id: location[2] })
-      : buildBreadcrumbs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (ruleFetchStatus === 'fulfilled') {
-      buildBreadcrumbs();
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ruleFetchStatus]);
+    buildBreadcrumbs();
+  }, [data, intl, location, skip]);
 
   return (
     <React.Fragment>
-      {(ruleFetchStatus === 'fulfilled' || items.length > 0) && (
+      {!isFetching && items.length > 0 ? (
         <Breadcrumb ouiaId="detail">
           {items.map((oneLink, key) => (
             <BreadcrumbItem key={key}>
@@ -67,8 +52,9 @@ const Breadcrumbs = ({ current }) => {
           ))}
           <BreadcrumbItem isActive>{current}</BreadcrumbItem>
         </Breadcrumb>
+      ) : (
+        intl.formatMessage(messages.loading)
       )}
-      {ruleFetchStatus === 'pending' && intl.formatMessage(messages.loading)}
     </React.Fragment>
   );
 };

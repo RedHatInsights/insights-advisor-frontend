@@ -2,7 +2,7 @@ import './App.scss';
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { batch, useDispatch } from 'react-redux';
-import { setSIDs, setSelectedTags, setWorkloads } from './Store/AppActions';
+import { updateSID, updateTags, updateWorkloads } from './Services/Filters';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import LockIcon from '@patternfly/react-icons/dist/esm/icons/lock-icon';
@@ -45,9 +45,9 @@ const App = () => {
         const [workloads, SID, selectedTags] =
           insights.chrome?.mapGlobalFilter?.(data, false, true) || [];
         batch(() => {
-          dispatch(setWorkloads(workloads));
-          dispatch(setSelectedTags(selectedTags));
-          dispatch(setSIDs(SID));
+          dispatch(updateWorkloads(workloads));
+          dispatch(updateTags(selectedTags));
+          dispatch(updateSID(SID));
         });
       });
     }

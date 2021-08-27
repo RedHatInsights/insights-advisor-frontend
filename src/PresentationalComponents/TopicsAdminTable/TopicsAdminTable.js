@@ -1,7 +1,5 @@
 import './_TopicsAdminTable.scss';
 
-import * as AppActions from '../../Store/AppActions';
-
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Table,
@@ -9,7 +7,6 @@ import {
   TableHeader,
   sortable,
 } from '@patternfly/react-table';
-import { useDispatch, useSelector } from 'react-redux';
 
 import AddEditTopic from '../Modals/AddEditTopic';
 import BanIcon from '@patternfly/react-icons/dist/js/icons/ban-icon';
@@ -17,7 +14,6 @@ import { Button } from '@patternfly/react-core/dist/js/components/Button/Button'
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 import EditAltIcon from '@patternfly/react-icons/dist/js/icons/edit-alt-icon';
 import Failed from '../Loading/Failed';
-import Immutable from 'seamless-immutable';
 import Loading from '../Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import MessageState from '../MessageState/MessageState';
@@ -27,15 +23,19 @@ import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import { TableToolbar } from '@redhat-cloud-services/frontend-components/TableToolbar';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import messages from '../../Messages';
+import { useGetTopicsAdminQuery } from '../../Services/Topics';
 import { useIntl } from 'react-intl';
 
 const TopicsAdminTable = () => {
   const intl = useIntl();
-  const dispatch = useDispatch();
-  const topics = useSelector(({ AdvisorStore }) => AdvisorStore.topics);
-  const topicsFetchStatus = useSelector(
-    ({ AdvisorStore }) => AdvisorStore.topicsFetchStatus
-  );
+
+  const {
+    data: topics = [],
+    isLoading,
+    isFetching,
+    isError,
+    refetch,
+  } = useGetTopicsAdminQuery();
 
   const [cols] = useState([
     { title: intl.formatMessage(messages.title), transforms: [sortable] },
@@ -62,25 +62,24 @@ const TopicsAdminTable = () => {
         4: 'featured',
       };
       const attr = attrIndex[index];
+      const arrayCopy = [...topicsArray];
       setSortBy({ index, direction });
       setTopicsArray(
-        Immutable.from(
-          topicsArray.asMutable().sort((a, b) => {
-            if (direction === 'asc') {
-              if (attr === 'enabled' || attr === 'featured') {
-                return a[attr] > b[attr] ? -1 : 1;
-              } else {
-                return a[attr] > b[attr] ? 1 : -1;
-              }
+        arrayCopy.sort((a, b) => {
+          if (direction === 'asc') {
+            if (attr === 'enabled' || attr === 'featured') {
+              return a[attr] > b[attr] ? -1 : 1;
             } else {
-              if (attr === 'enabled' || attr === 'featured') {
-                return a[attr] > b[attr] ? 1 : -1;
-              } else {
-                return a[attr] > b[attr] ? -1 : 1;
-              }
+              return a[attr] > b[attr] ? 1 : -1;
             }
-          })
-        )
+          } else {
+            if (attr === 'enabled' || attr === 'featured') {
+              return a[attr] > b[attr] ? 1 : -1;
+            } else {
+              return a[attr] > b[attr] ? -1 : 1;
+            }
+          }
+        })
       );
     },
     [setSortBy, setTopicsArray, topicsArray]
@@ -95,15 +94,14 @@ const TopicsAdminTable = () => {
     }
   };
 
+  const handleModalToggleCallback = (modalToggle) => {
+    setAddEditTopicOpen(modalToggle);
+    refetch();
+  };
+
   useEffect(() => {
     setTopicsArray(topics);
   }, [topics]);
-
-  useEffect(() => {
-    const fetchTopicsAdmin = () => dispatch(AppActions.fetchTopicsAdmin());
-
-    fetchTopicsAdmin();
-  }, [dispatch]);
 
   useEffect(() => {
     if (topicsArray.length === 0) {
@@ -179,7 +177,7 @@ const TopicsAdminTable = () => {
           ],
         },
       ]);
-      setRows(rows.asMutable());
+      setRows(rows);
     }
   }, [topicsArray, intl]);
 
@@ -188,7 +186,7 @@ const TopicsAdminTable = () => {
       {addEditTopicOpen && (
         <AddEditTopic
           isModalOpen={addEditTopicOpen}
-          handleModalToggle={setAddEditTopicOpen}
+          handleModalToggleCallback={handleModalToggleCallback}
           topic={selectedTopic}
         />
       )}
@@ -208,7 +206,7 @@ const TopicsAdminTable = () => {
               {intl.formatMessage(messages.topicAdminCreate)}
             </Button>
           </PrimaryToolbar>
-          {topicsFetchStatus === 'fulfilled' && (
+          {!isLoading && !isFetching && (
             <Table
               ouiaId="adminTable"
               aria-label={'topics-admin-table'}
@@ -222,8 +220,8 @@ const TopicsAdminTable = () => {
               <TableBody />
             </Table>
           )}
-          {topicsFetchStatus === 'pending' && <Loading />}
-          {topicsFetchStatus === 'failed' && (
+          {isFetching && <Loading />}
+          {isError && (
             <Failed
               message={intl.formatMessage(messages.systemTableFetchError)}
             />

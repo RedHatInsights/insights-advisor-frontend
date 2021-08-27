@@ -1,12 +1,12 @@
 import './_AddEditTopic.scss';
 
+import { DeleteApi, Post, Put } from '../../Utilities/Api';
 import React, { useState } from 'react';
 import {
   Split,
   SplitItem,
 } from '@patternfly/react-core/dist/js/layouts/Split/index';
 
-import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import { Checkbox } from '@patternfly/react-core/dist/js/components/Checkbox/Checkbox';
@@ -17,20 +17,16 @@ import PropTypes from 'prop-types';
 import { Radio } from '@patternfly/react-core/dist/js/components/Radio/Radio';
 import { TextArea } from '@patternfly/react-core/dist/js/components/TextArea/TextArea';
 import { TextInput } from '@patternfly/react-core/dist/js/components/TextInput/TextInput';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/';
-import { connect } from 'react-redux';
-import { fetchTopicsAdmin } from '../../Store/AppActions';
-import { injectIntl } from 'react-intl';
 import messages from '../../Messages';
+import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
+import { useDispatch } from 'react-redux';
+import { useIntl } from 'react-intl';
 
-const AddEditTopic = ({
-  handleModalToggle,
-  intl,
-  isModalOpen,
-  topic,
-  addNotification,
-  fetchTopicsAdmin,
-}) => {
+const AddEditTopic = ({ handleModalToggleCallback, isModalOpen, topic }) => {
+  const intl = useIntl();
+  const dispatch = useDispatch();
+  const addNotification = (data) => dispatch(notification(data));
+
   const [name, setName] = useState(topic.name || '');
   const [description, setDescription] = useState(topic.description || '');
   const [tag, setTag] = useState(topic.tag || '');
@@ -42,11 +38,11 @@ const AddEditTopic = ({
     try {
       const data = { name, slug, tag, description, enabled, featured };
       if (type === 'DELETE') {
-        await API.delete(`${BASE_URL}/topic/${slug}`);
+        await DeleteApi(`${BASE_URL}/topic/${slug}`);
       } else if (topic.slug) {
-        await API.put(`${BASE_URL}/topic/${slug}/`, data);
+        await Put(`${BASE_URL}/topic/${slug}/`, data);
       } else {
-        await API.post(`${BASE_URL}/topic/`, {}, data);
+        await Post(`${BASE_URL}/topic/`, {}, data);
       }
     } catch (error) {
       addNotification({
@@ -58,8 +54,7 @@ const AddEditTopic = ({
         ),
       });
     } finally {
-      handleModalToggle(false);
-      fetchTopicsAdmin();
+      handleModalToggleCallback(false);
     }
   };
 
@@ -88,7 +83,7 @@ const AddEditTopic = ({
         <Button
           key="cancel"
           variant="secondary"
-          onClick={() => handleModalToggle(false)}
+          onClick={() => handleModalToggleCallback(false)}
           ouiaId="cancel"
         >
           {intl.formatMessage(messages.cancel)}
@@ -113,7 +108,7 @@ const AddEditTopic = ({
     <Modal
       title={intl.formatMessage(messages.topicAdminTitle)}
       isOpen={isModalOpen}
-      onClose={() => handleModalToggle(false)}
+      onClose={() => handleModalToggleCallback(false)}
       footer={footer}
       className="modal-width-override"
     >
@@ -219,17 +214,10 @@ const AddEditTopic = ({
 };
 
 AddEditTopic.propTypes = {
-  handleModalToggle: PropTypes.func,
+  handleModalToggleCallback: PropTypes.func,
   isModalOpen: PropTypes.bool,
   topic: PropTypes.object,
   intl: PropTypes.any,
-  addNotification: PropTypes.func,
-  fetchTopicsAdmin: PropTypes.func,
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  addNotification: (data) => dispatch(addNotification(data)),
-  fetchTopicsAdmin: () => dispatch(fetchTopicsAdmin()),
-});
-
-export default injectIntl(connect(null, mapDispatchToProps)(AddEditTopic));
+export default AddEditTopic;

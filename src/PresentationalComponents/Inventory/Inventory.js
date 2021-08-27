@@ -7,22 +7,22 @@ import {
   urlBuilder,
   workloadQueryBuilder,
 } from '../Common/Tables';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 
-import API from '../../Utilities/Api';
 import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
+import { Get } from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import Loading from '../Loading/Loading';
 import PropTypes from 'prop-types';
 import { RULES_FETCH_URL } from '../../AppConstants';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
 import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
-import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
 import messages from '../../Messages';
 import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { systemReducer } from '../../Store/AppReducer';
+import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 
 const Inventory = ({
@@ -33,6 +33,7 @@ const Inventory = ({
   workloads,
   SID,
 }) => {
+  const store = useStore();
   const intl = useIntl();
   const dispatch = useDispatch();
   const [selected, setSelected] = useState([]);
@@ -261,7 +262,7 @@ const Inventory = ({
           handleRefresh(options);
 
           const fetchedSystems = (
-            await API.get(
+            await Get(
               `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/systems_detail/`,
               {},
               options
@@ -337,7 +338,7 @@ const Inventory = ({
                     }),
                     onClick: async () => {
                       const allSystems = (
-                        await API.get(
+                        await Get(
                           `${RULES_FETCH_URL}${encodeURI(
                             rule.rule_id
                           )}/systems/`,
@@ -371,13 +372,15 @@ const Inventory = ({
           INVENTORY_ACTION_TYPES,
           mergeWithDetail,
         }) => {
-          getRegistry().register({
-            ...mergeWithEntities(systemReducer([], INVENTORY_ACTION_TYPES), {
-              page: Number(filters.offset / filters.limit + 1 || 1),
-              perPage: Number(filters.limit || 20),
-            }),
-            ...mergeWithDetail(),
-          });
+          store.replaceReducer(
+            updateReducers({
+              ...mergeWithEntities(systemReducer([], INVENTORY_ACTION_TYPES), {
+                page: Number(filters.offset / filters.limit + 1 || 1),
+                perPage: Number(filters.limit || 20),
+              }),
+              ...mergeWithDetail(),
+            })
+          );
         }}
       />
     </React.Fragment>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import Api from '../../Utilities/Api';
+import { Get } from '../../Utilities/Api';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { Redirect } from 'react-router-dom';
@@ -37,7 +37,7 @@ const ClassicRedirect = () => {
       try {
         const [classicId, redirectBase] = getData(window.location.pathname);
         const inventoryId = (
-          await Api.get(`/api/inventory/v1/hosts?insights_id=${classicId}`)
+          await Get(`/api/inventory/v1/hosts?insights_id=${classicId}`)
         ).data.results[0].id;
         setRedirect(`${redirectBase}/${inventoryId}`);
         setFetchStatus('fulfilled');

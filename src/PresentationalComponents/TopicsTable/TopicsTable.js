@@ -13,21 +13,18 @@ import { Link } from 'react-router-dom';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
+import PropTypes from 'prop-types';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import TimesCircleIcon from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
 import messages from '../../Messages';
 import { sortBy } from 'lodash';
 import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
 
-const TopicsTable = () => {
+const TopicsTable = ({ props }) => {
   const intl = useIntl();
-  const topics = useSelector(({ AdvisorStore }) => AdvisorStore.topics);
-  const topicsFetchStatus = useSelector(
-    ({ AdvisorStore }) => AdvisorStore.topicsFetchStatus
-  );
   const [searchText, setSearchText] = useState('');
+  const { data: topics, isLoading, isFetching, isError } = props;
   const [cols] = useState([
     { title: intl.formatMessage(messages.name), transforms: [sortable] },
     '',
@@ -123,7 +120,8 @@ const TopicsTable = () => {
   useEffect(() => {
     sort.index
       ? onSort(null, sort.index, sort.direction)
-      : setRows(buildRows(topics).asMutable());
+      : setRows(buildRows(topics));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [topics, searchText]);
 
   const filterConfigItems = [
@@ -142,9 +140,9 @@ const TopicsTable = () => {
 
   return (
     <React.Fragment>
-      {topicsFetchStatus === '' ||
-        (topicsFetchStatus === 'pending' && <Loading />)}
-      {topicsFetchStatus === 'fulfilled' && topics.length > 0 && (
+      {isLoading || isFetching ? (
+        <Loading />
+      ) : !isFetching && topics.length > 0 ? (
         <React.Fragment>
           <PrimaryToolbar
             filterConfig={{ items: filterConfigItems }}
@@ -162,7 +160,7 @@ const TopicsTable = () => {
             <TableHeader />
             <TableBody />
             {rows.length === 0 &&
-              topicsFetchStatus !== 'pending' &&
+              !isFetching &&
               setRows([
                 {
                   cells: [
@@ -189,18 +187,25 @@ const TopicsTable = () => {
               ])}
           </Table>
         </React.Fragment>
-      )}
-      {topicsFetchStatus === 'failed' ||
-        topicsFetchStatus === 'rejected' ||
-        (topicsFetchStatus === 'fulfilled' && topics.length === 0 && (
+      ) : (
+        isError && (
           <MessageState
             icon={TimesCircleIcon}
             title={intl.formatMessage(messages.topicsListNotopicsTitle)}
             text={intl.formatMessage(messages.topicsListNotopicsBody)}
           />
-        ))}
+        )
+      )}
     </React.Fragment>
   );
+};
+
+TopicsTable.propTypes = {
+  props: PropTypes.object,
+  data: PropTypes.array,
+  isLoading: PropTypes.bool,
+  isFetching: PropTypes.bool,
+  isError: PropTypes.bool,
 };
 
 export default TopicsTable;

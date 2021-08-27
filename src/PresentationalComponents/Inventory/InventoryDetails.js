@@ -8,20 +8,20 @@ import {
   GridItem,
 } from '@patternfly/react-core/dist/js/layouts/Grid/index';
 import React, { useEffect } from 'react';
+import { connect, useStore } from 'react-redux';
 
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { entitiesDetailsReducer } from '../../Store/AppReducer';
-import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
 import messages from '../../Messages';
+import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 
 const InventoryDetails = ({ entity }) => {
   const intl = useIntl();
-
+  const store = useStore();
   useEffect(() => {
     if (entity && (entity.display_name || entity.id)) {
       const subnav = `${entity.display_name || entity.id} - ${
@@ -34,9 +34,11 @@ const InventoryDetails = ({ entity }) => {
   return (
     <DetailWrapper
       onLoad={({ mergeWithDetail, INVENTORY_ACTION_TYPES }) => {
-        getRegistry().register({
-          ...mergeWithDetail(entitiesDetailsReducer(INVENTORY_ACTION_TYPES)),
-        });
+        store.replaceReducer(
+          updateReducers({
+            ...mergeWithDetail(entitiesDetailsReducer(INVENTORY_ACTION_TYPES)),
+          })
+        );
       }}
     >
       <PageHeader className="pf-m-light ins-inventory-detail">

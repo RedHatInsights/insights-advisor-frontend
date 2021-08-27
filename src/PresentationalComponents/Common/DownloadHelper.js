@@ -1,5 +1,5 @@
-import API from '../../Utilities/Api';
 import { BASE_URL } from '../../AppConstants';
+import { Get } from '../../Utilities/Api';
 import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 import { workloadQueryBuilder } from '../Common/Tables';
 
@@ -24,7 +24,7 @@ const downloadHelper = async (
     workloads &&
       (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
     const data = (
-      await API.get(
+      await Get(
         `${BASE_URL}/export/${exportTable}.${
           format === 'json' ? 'json' : 'csv'
         }`,
