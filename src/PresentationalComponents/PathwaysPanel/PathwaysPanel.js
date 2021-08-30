@@ -14,13 +14,14 @@ import React, { useState } from 'react';
 import ArrowRightIcon from '@patternfly/react-icons/dist/esm/icons/arrow-right-icon';
 import CategoryLabel from '../CategoryLabel/CategoryLabel';
 import { Link } from 'react-router-dom';
+import Loading from '../../PresentationalComponents/Loading/Loading';
+import MessageState from '../MessageState/MessageState';
 import { RebootRequired } from '../Common/Common';
 import RuleLabels from '../RuleLabels/RuleLabels';
 import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import messages from '../../Messages';
 import propTypes from 'prop-types';
-import testdata from './testdata.json';
-// import { useGetPathwaysQuery } from '../../Services/Pathways';
+import { useGetPathwaysQuery } from '../../Services/Pathways';
 import { useIntl } from 'react-intl';
 
 const PathwaysPanel = () => {
@@ -29,17 +30,17 @@ const PathwaysPanel = () => {
     JSON.parse(localStorage.getItem('advisor_pathwayspanel_expanded') || 'true')
   );
 
-  // const { data, isUninitialized, isLoading, isFetching, isSuccess, isError } =
-  //   useGetPathwaysQuery();
+  const { data, isUninitialized, isLoading, isFetching, isSuccess, isError } =
+    useGetPathwaysQuery();
 
-  // console.error(
-  //   data,
-  //   isUninitialized,
-  //   isLoading,
-  //   isFetching,
-  //   isSuccess,
-  //   isError
-  // );
+  console.error(
+    data,
+    isUninitialized,
+    isLoading,
+    isFetching,
+    isSuccess,
+    isError
+  );
 
   const pathwayCard = (pathway) => (
     <Card isFlat isPlain className={`ins-c-advisor__card--pathwaycard`}>
@@ -65,7 +66,7 @@ const PathwaysPanel = () => {
     </Card>
   );
 
-  return (
+  return !isLoading ? (
     <Card
       className={`ins-c-advisor_card ins-c-advisor__card--pathwayspanel`}
       id={`ins-c-advisor__card--pathwayspanel`}
@@ -89,13 +90,24 @@ const PathwaysPanel = () => {
         </CardTitle>
       </CardHeader>
       <CardExpandableContent>
-        <Grid hasGutter md={4} sm={12}>
-          {testdata.data.map((pathway) => (
-            <GridItem key={pathway.name}>{pathwayCard(pathway)}</GridItem>
-          ))}
-        </Grid>
+        {isFetching ? (
+          <Loading />
+        ) : data.length ? (
+          <Grid hasGutter md={4} sm={12}>
+            {data.map((pathway) => (
+              <GridItem key={pathway.name}>{pathwayCard(pathway)}</GridItem>
+            ))}
+          </Grid>
+        ) : (
+          <MessageState
+            icon={'none'}
+            text={intl.formatMessage(messages.noPathways)}
+          />
+        )}
       </CardExpandableContent>
     </Card>
+  ) : (
+    <Loading />
   );
 };
 

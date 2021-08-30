@@ -7,16 +7,16 @@ export const Pathways = createApi({
   baseQuery: AxiosBaseQuery({ baseUrl: BASE_URL }),
   endpoints: (build) => ({
     getPathways: build.query({
-      query: (options) => ({ url: `pathway/`, options }),
+      query: (options) => ({ url: `/pathway/`, options }),
     }),
     getPathway: build.query({
-      query: (name) => ({ url: `pathway/${name}/` }),
+      query: (name) => ({ url: `/pathway/${name}/` }),
     }),
     getPathwayRules: build.query({
-      query: (name) => ({ url: `pathway/${name}/rules/` }),
+      query: (name) => ({ url: `/pathway/${name}/rules/` }),
     }),
     getPathwaySystems: build.query({
-      query: (name) => ({ url: `pathway/${name}/systems/` }),
+      query: (name) => ({ url: `/pathway/${name}/systems/` }),
     }),
   }),
 });

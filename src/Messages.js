@@ -1136,4 +1136,9 @@ export default defineMessages({
     description: 'View pathway',
     defaultMessage: 'View pathway',
   },
+  noPathways: {
+    id: 'noPathways',
+    description: 'No pathways',
+    defaultMessage: 'No pathways',
+  },
 });
