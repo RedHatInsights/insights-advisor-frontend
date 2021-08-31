@@ -12,12 +12,12 @@ import { Grid, GridItem } from '@patternfly/react-core';
 import React, { useState } from 'react';
 
 import ArrowRightIcon from '@patternfly/react-icons/dist/esm/icons/arrow-right-icon';
-import CategoryLabel from '../CategoryLabel/CategoryLabel';
+import CategoryLabel from '../Labels/CategoryLabel';
 import { Link } from 'react-router-dom';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../MessageState/MessageState';
 import { RebootRequired } from '../Common/Common';
-import RuleLabels from '../RuleLabels/RuleLabels';
+import RuleLabels from '../Labels/RuleLabels';
 import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import messages from '../../Messages';
 import propTypes from 'prop-types';
@@ -29,19 +29,7 @@ const PathwaysPanel = () => {
   const [expanded, setExpanded] = useState(
     JSON.parse(localStorage.getItem('advisor_pathwayspanel_expanded') || 'true')
   );
-
-  const { data, isUninitialized, isLoading, isFetching, isSuccess, isError } =
-    useGetPathwaysQuery();
-
-  console.error(
-    data,
-    isUninitialized,
-    isLoading,
-    isFetching,
-    isSuccess,
-    isError
-  );
-
+  const { data, isLoading, isFetching } = useGetPathwaysQuery({ limit: 3 });
   const pathwayCard = (pathway) => (
     <Card isFlat isPlain className={`ins-c-advisor__card--pathwaycard`}>
       <CardBody className={`body`}>
@@ -54,7 +42,7 @@ const PathwaysPanel = () => {
       </CardBody>
       <CardBody className={`body`}>{pathway.description}</CardBody>
       <CardBody className={`body`}>
-        <RuleLabels rule={pathway.has_incident ? { tags: ['incident'] } : {}} />{' '}
+        {pathway.has_incident && <RuleLabels rule={{ tags: 'incident' }} />}{' '}
         {RebootRequired(pathway.reboot_required)}
       </CardBody>
       <CardFooter className={`footer`}>

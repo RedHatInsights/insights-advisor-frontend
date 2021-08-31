@@ -7,6 +7,9 @@ const List = lazy(() => import(/* webpackChunkName: "List" */ './List'));
 const Details = lazy(() =>
   import(/* webpackChunkName: "Details" */ './Details')
 );
+const DetailsPathways = lazy(() =>
+  import(/* webpackChunkName: "Details-Pathways" */ './DetailsPathways')
+);
 const InventoryDetails = lazy(() =>
   import(
     /* InventoryDetails: "Details" */ '../../PresentationalComponents/Inventory/InventoryDetails'
@@ -31,6 +34,16 @@ const Recs = () => (
         exact
         path="/recommendations/by_id/:id"
         component={() => suspenseHelper(<List />)}
+      />
+      <Route
+        exact
+        path="/recommendations/pathways"
+        component={() => suspenseHelper(<List />)}
+      />
+      <Route
+        exact
+        path="/recommendations/pathways/:id"
+        component={() => suspenseHelper(<DetailsPathways />)}
       />
       <Route
         exact

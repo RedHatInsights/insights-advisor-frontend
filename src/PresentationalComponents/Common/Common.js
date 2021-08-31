@@ -5,10 +5,16 @@ import {
   TextContent,
   TextVariants,
 } from '@patternfly/react-core/dist/js/components/Text/index';
+import {
+  Tooltip,
+  TooltipPosition,
+} from '@patternfly/react-core/dist/esm/components/Tooltip/';
 import { createIntl, createIntlCache } from 'react-intl';
 
+import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
 import PowerOffIcon from '@patternfly/react-icons/dist/esm/icons/power-off-icon';
 import React from 'react';
+import { global_info_color_100 } from '@patternfly/react-tokens';
 import messages from '../../Messages';
 import { strong } from '../../Utilities/intlHelper';
 
@@ -43,4 +49,16 @@ const RebootRequired = (reboot_required) => (
   </span>
 );
 
-export { RebootRequired };
+const QuestionTooltip = (text) => (
+  <Tooltip
+    key={text}
+    position={TooltipPosition.right}
+    content={<div>{text}</div>}
+  >
+    <span aria-label="Action">
+      <OutlinedQuestionCircleIcon color={global_info_color_100.value} />
+    </span>
+  </Tooltip>
+);
+
+export { RebootRequired, QuestionTooltip };

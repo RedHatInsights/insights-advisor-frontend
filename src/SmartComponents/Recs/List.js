@@ -10,17 +10,14 @@ import {
   TabTitleText,
   Tabs,
 } from '@patternfly/react-core/dist/esm/components/Tabs/index';
-import {
-  Tooltip,
-  TooltipPosition,
-} from '@patternfly/react-core/dist/esm/components/Tooltip/';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
-import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
 import { PERMS } from '../../AppConstants';
-import { global_info_color_100 } from '@patternfly/react-tokens';
+import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
+import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
@@ -28,6 +25,11 @@ import { usePermissions } from '@redhat-cloud-services/frontend-components-utili
 const RulesTable = lazy(() =>
   import(
     /* webpackChunkName: 'RulesTable' */ '../../PresentationalComponents/RulesTable/RulesTable'
+  )
+);
+const PathwaysTable = lazy(() =>
+  import(
+    /* webpackChunkName: 'PathwaysTable' */ '../../PresentationalComponents/PathwaysTable/PathwaysTable'
   )
 );
 const PathwaysPanel = lazy(() =>
@@ -38,23 +40,19 @@ const PathwaysPanel = lazy(() =>
 
 const List = () => {
   const intl = useIntl();
+  const { pathname } = useLocation();
+  const history = useHistory();
   const permsExport = usePermissions('advisor', PERMS.export);
   document.title = intl.formatMessage(messages.documentTitle, {
     subnav: messages.recommendations.defaultMessage,
   });
-  const [activeTab, setActiveTab] = useState(0);
-
-  const questionTooltip = (text) => (
-    <Tooltip
-      key={text}
-      position={TooltipPosition.right}
-      content={<div>{text}</div>}
-    >
-      <span aria-label="Action">
-        <OutlinedQuestionCircleIcon color={global_info_color_100.value} />
-      </span>
-    </Tooltip>
+  const [activeTab, setActiveTab] = useState(
+    pathname === '/recommendations/pathways' ? 1 : 0
   );
+  const changeTab = (tab) => {
+    setActiveTab(tab);
+    history.push(tab === 1 ? '/recommendations/pathways' : '/recommendations');
+  };
 
   return (
     <React.Fragment>
@@ -82,7 +80,7 @@ const List = () => {
           mountOnEnter
           unmountOnExit
           activeKey={activeTab}
-          onSelect={(_e, tab) => setActiveTab(tab)}
+          onSelect={(_e, tab) => changeTab(tab)}
         >
           <Tab
             eventKey={0}
@@ -101,13 +99,15 @@ const List = () => {
             title={
               <TabTitleText>
                 {intl.formatMessage(messages.pathways)}{' '}
-                {questionTooltip(
+                {QuestionTooltip(
                   intl.formatMessage(messages.recommendedPathways)
                 )}
               </TabTitleText>
             }
           >
-            {intl.formatMessage(messages.pathways)}
+            <Suspense fallback={<Loading />}>
+              <PathwaysTable />
+            </Suspense>
           </Tab>
         </Tabs>
       </Main>

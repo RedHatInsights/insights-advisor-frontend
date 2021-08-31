@@ -53,6 +53,8 @@ const ClassicRedirect = () => {
         setFetchStatus('rejected');
       }
     })();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setRedirect, setFetchStatus, intl, dispatch]);
 
   return (
