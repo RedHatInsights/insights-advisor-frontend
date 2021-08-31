@@ -30,11 +30,13 @@
         "reboot_required": true,
         "publish_date": "2021-07-27T20:52:39.404Z",
         "impacted_systems_count": 0,
-        "recommendation_level": 0
+        "recommendation_level": 99,
+        "has_incident": true
       },
       {
         "name": "string",
         "description": "string",
+        "has_incident": false,
         "component": "string",
         "resolution_risk": {
           "name": "string",
@@ -84,9 +86,10 @@
         "resolution_count": 0,
         "has_playbook": true,
         "reboot_required": true,
+        "has_incident": true,
         "publish_date": "2021-07-27T20:52:39.404Z",
         "impacted_systems_count": 100,
-        "recommendation_level": 0
+        "recommendation_level": 75
       }
     ]
   }

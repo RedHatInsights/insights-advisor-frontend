@@ -8,6 +8,11 @@ const filtersInitialState = {
     limit: 20,
     offset: 0,
   },
+  pathState: {
+    sort: '-impacted_systems_count',
+    limit: 20,
+    offset: 0,
+  },
   sysState: { sort: '-last_seen', limit: 20, offset: 0 },
   selectedTags: null,
   workloads: {},
@@ -24,6 +29,9 @@ const filters = createSlice({
     updateSysFilters(state, action) {
       state.sysState = action.payload;
     },
+    updatePathFilters(state, action) {
+      state.pathState = action.payload;
+    },
     updateTags(state, action) {
       state.selectedTags = action.payload;
     },
@@ -39,6 +47,7 @@ const filters = createSlice({
 export const {
   updateRecFilters,
   updateSysFilters,
+  updatePathFilters,
   updateTags,
   updateWorkloads,
   updateSID,

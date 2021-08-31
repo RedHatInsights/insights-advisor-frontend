@@ -66,15 +66,6 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    const baseComponentUrl = pathname.split('/')[1];
-    insights &&
-      insights.chrome &&
-      baseComponentUrl &&
-      appNavClick[baseComponentUrl] !== undefined &&
-      appNavClick[baseComponentUrl](false);
-  }, [appNavClick, pathname]);
-
   return (
     auth &&
     !permsViewRecs?.isLoading &&

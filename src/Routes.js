@@ -1,6 +1,6 @@
-import { Redirect, Route, Switch } from 'react-router-dom';
-import React, { lazy, Suspense } from 'react';
 import { Bullseye, Spinner } from '@patternfly/react-core';
+import React, { Suspense, lazy } from 'react';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 const Recs = lazy(() =>
   import(/* webpackChunkName: "Recs" */ './SmartComponents/Recs/Recs')
@@ -15,6 +15,17 @@ const Topics = lazy(() =>
 const paths = [
   { title: 'Recommendations', path: '/recommendations:?', component: Recs },
   { title: 'Recommendations', path: '/recommendations', component: Recs },
+  {
+    title: 'Pathways',
+    path: '/recommendations/pathways',
+    component: Recs,
+  },
+  {
+    title: 'Pathways',
+    path: '/recommendations/pathways:?',
+    component: Recs,
+  },
+
   { title: 'Systems', path: '/systems:?', component: Systems },
   { title: 'Systems', path: '/systems', component: Systems },
   { title: 'Topics', path: '/topics', component: Topics },

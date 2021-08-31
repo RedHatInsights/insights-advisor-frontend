@@ -20,7 +20,7 @@ import { Get } from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import { Link } from 'react-router-dom';
 import Loading from '../Loading/Loading';
-import RuleLabels from '../RuleLabels/RuleLabels';
+import RuleLabels from '../Labels/RuleLabels';
 import SystemsPdf from '../Export/SystemsPdf';
 import downloadReport from '../Common/DownloadHelper';
 import { mergeArraysByDiffKeys } from '../Common/Tables';

@@ -13,6 +13,7 @@ import { useIntl } from 'react-intl';
 
 const RuleLabels = ({ rule }) => {
   const intl = useIntl();
+
   return (
     <React.Fragment>
       {rule?.tags?.search('incident') !== -1 && (
@@ -25,7 +26,7 @@ const RuleLabels = ({ rule }) => {
           </Label>
         </Tooltip>
       )}
-      {rule.rule_status === 'disabled' && (
+      {rule?.rule_status === 'disabled' && (
         <Tooltip
           content={intl.formatMessage(messages.ruleIsDisabledTooltip)}
           position={TooltipPosition.right}
@@ -33,7 +34,7 @@ const RuleLabels = ({ rule }) => {
           <Label color="gray">{intl.formatMessage(messages.disabled)}</Label>
         </Tooltip>
       )}
-      {rule.rule_status === 'rhdisabled' && (
+      {rule?.rule_status === 'rhdisabled' && (
         <Tooltip
           content={intl.formatMessage(messages.ruleIsDisabledTooltip)}
           position={TooltipPosition.right}

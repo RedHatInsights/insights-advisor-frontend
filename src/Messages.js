@@ -1120,6 +1120,11 @@ export default defineMessages({
     description: 'pathways',
     defaultMessage: 'Pathways',
   },
+  pathway: {
+    id: 'pathway',
+    description: 'pathway',
+    defaultMessage: 'Pathway',
+  },
   recommendedPathways: {
     id: 'recommendedPathways',
     description: 'Recommended pathways group multiple Advisor',
@@ -1140,5 +1145,30 @@ export default defineMessages({
     id: 'noPathways',
     description: 'No pathways',
     defaultMessage: 'No pathways',
+  },
+  reboot: {
+    id: 'reboot',
+    description: 'Reboot',
+    defaultMessage: 'Reboot',
+  },
+  reclvl: {
+    id: 'reclvl',
+    description: 'Recommendation level',
+    defaultMessage: 'Recommendation level',
+  },
+  reclvldetails: {
+    id: 'reclvldetails',
+    description: 'Recommendation level explination',
+    defaultMessage: `Indicates a recommendation's urgency on a scale of high (fix immediately) to low (fix when convenient). Recommendations levels are constantly re-calculated based on your infrastructure's number of applicable recommendations, associated risks and total number of impacted systems.`,
+  },
+  noResults: {
+    id: 'noResults',
+    description: 'No results found',
+    defaultMessage: 'No results found',
+  },
+  adjustFilters: {
+    id: 'adjustFilters',
+    description: 'Adjust your filters and try again.',
+    defaultMessage: 'Adjust your filters and try again.',
   },
 });
