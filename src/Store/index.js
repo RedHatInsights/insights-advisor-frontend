@@ -7,7 +7,7 @@ import { Recs } from '../Services/Recs';
 import { Systems } from '../Services/Systems';
 import { Topics } from '../Services/Topics';
 import filters from '../Services/Filters';
-import logger from 'redux-logger';
+// import logger from 'redux-logger';
 import { notificationsMiddleware } from '@redhat-cloud-services/frontend-components-notifications/';
 import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import promiseMiddleware from 'redux-promise-middleware';
@@ -47,15 +47,15 @@ const middleware = (getDefaultMiddleware) =>
     notificationsMiddleware({
       errorTitleKey: ['message'],
       errorDescriptionKey: ['response.data.detail'],
-    }),
-    process.env.NODE_ENV !== 'production' && logger
+    })
+    // process?.env?.NODE_ENV !== 'production' && logger
   );
 
 const getStore = () => {
   return configureStore({
     reducer,
     middleware,
-    devTools: process.env.NODE_ENV !== 'production',
+    // devTools: process?.env?.NODE_ENV !== 'production',
   });
 };
 
