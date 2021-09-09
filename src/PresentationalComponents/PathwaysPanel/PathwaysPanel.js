@@ -29,7 +29,13 @@ const PathwaysPanel = () => {
   const [expanded, setExpanded] = useState(
     JSON.parse(localStorage.getItem('advisor_pathwayspanel_expanded') || 'true')
   );
-  const { data, isLoading, isFetching } = useGetPathwaysQuery({ limit: 3 });
+  const {
+    data = [],
+    isLoading,
+    isFetching,
+    isError,
+  } = useGetPathwaysQuery({ limit: 3 });
+
   const pathwayCard = (pathway) => (
     <Card isFlat isPlain className={`ins-c-advisor__card--pathwaycard`}>
       <CardBody className={`body`}>
@@ -80,7 +86,7 @@ const PathwaysPanel = () => {
       <CardExpandableContent>
         {isFetching ? (
           <Loading />
-        ) : data.length ? (
+        ) : !isError && data?.length ? (
           <Grid hasGutter md={4} sm={12}>
             {data.map((pathway) => (
               <GridItem key={pathway.name}>{pathwayCard(pathway)}</GridItem>
