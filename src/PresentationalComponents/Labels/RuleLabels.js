@@ -21,7 +21,7 @@ const RuleLabels = ({ rule }) => {
           content={intl.formatMessage(messages.incidentTooltip)}
           position={TooltipPosition.right}
         >
-          <Label color="red" className="incidentLabel">
+          <Label color="red" className="adv-c-label-incident">
             {intl.formatMessage(messages.incident)}
           </Label>
         </Tooltip>

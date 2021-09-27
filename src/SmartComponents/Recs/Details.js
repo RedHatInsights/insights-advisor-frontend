@@ -255,7 +255,7 @@ const OverviewDetails = () => {
                     content={intl.formatMessage(messages.permsAction)}
                   >
                     <Dropdown
-                      className="ins-c-rec-details__actions_dropdown"
+                      className="adv-c-dropdown-rec-details-actions"
                       onSelect={() =>
                         setActionsDropdownOpen(!actionsDropdownOpen)
                       }
