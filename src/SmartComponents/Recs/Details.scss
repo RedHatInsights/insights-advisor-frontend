@@ -21,7 +21,7 @@
 }
 
 @media only screen and (max-width: 768px) {
-  .adv-c-dropdown-rec-details-actions {
+  .ins-c-rec-details__actions_dropdown {
     @include rem('top', -55px);
   }
 }

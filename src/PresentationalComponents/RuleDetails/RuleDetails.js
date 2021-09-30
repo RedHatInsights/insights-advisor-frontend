@@ -68,7 +68,7 @@ const BaseRuleDetails = ({
     );
 
   return (
-    <Split className="adv-c-split-rule-details" hasGutter>
+    <Split className="ins-c-rule-details__split" hasGutter>
       <SplitItem>
         <Stack hasGutter>
           {header && <StackItem>{header}</StackItem>}
@@ -136,16 +136,16 @@ const BaseRuleDetails = ({
         <Stack gutter="sm">
           {children && <StackItem>{children}</StackItem>}
           <StackItem>
-            <Stack className="adv-c-stack-rule-details">
+            <Stack className="ins-c-rule-details__stack">
               <StackItem>
                 <strong>{intl.formatMessage(messages.totalRisk)}</strong>
               </StackItem>
               <StackItem className="pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm">
-                <span className="adv-c-stack-rule-detailsitem">
+                <span className="ins-c-rule-details__stackitem">
                   <span>
                     <InsightsLabel value={rule.total_risk} />
                   </span>
-                  <Stack hasGutter className="adv-c-stack-description">
+                  <Stack hasGutter className="description-stack-override">
                     <StackItem>
                       <TextContent>
                         <Text component={TextVariants.p}>
@@ -214,7 +214,7 @@ const BaseRuleDetails = ({
                   <StackItem
                     className={`pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm`}
                   >
-                    <span className="adv-c-stack-rule-detailsitem">
+                    <span className="ins-c-rule-details__stackitem">
                       <span>
                         <InsightsLabel
                           text={
@@ -224,7 +224,7 @@ const BaseRuleDetails = ({
                           hideIcon
                         />
                       </span>
-                      <Stack hasGutter className="adv-c-stack-description">
+                      <Stack hasGutter className="description-stack-override">
                         <StackItem>
                           <TextContent>
                             <Text component={TextVariants.p}>

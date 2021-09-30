@@ -56,7 +56,7 @@ const List = () => {
 
   return (
     <React.Fragment>
-      <PageHeader className="adv-l-page-header-recommendations">
+      <PageHeader className="ins-c-recommendations-header">
         <PageHeaderTitle
           title={`${intl.formatMessage(messages.insightsHeader)} ${intl
             .formatMessage(messages.recommendations)
@@ -76,7 +76,7 @@ const List = () => {
           <PathwaysPanel />
         </Suspense>
         <Tabs
-          className="adv-c-tabs"
+          className="ins-c-tab-header"
           mountOnEnter
           unmountOnExit
           activeKey={activeTab}
