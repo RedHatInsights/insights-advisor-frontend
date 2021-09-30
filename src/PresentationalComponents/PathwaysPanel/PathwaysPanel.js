@@ -37,7 +37,7 @@ const PathwaysPanel = () => {
   } = useGetPathwaysQuery({ limit: 3 });
 
   const pathwayCard = (pathway) => (
-    <Card isFlat isPlain className={`ins-c-advisor__card--pathwaycard`}>
+    <Card isFlat isPlain className={`adv-c-card-pathway`}>
       <CardBody className={`body`}>
         <CategoryLabel key={pathway.name} labelList={pathway.categories} />{' '}
         <Link to={`${pathway.name}`}>
@@ -62,8 +62,8 @@ const PathwaysPanel = () => {
 
   return !isLoading ? (
     <Card
-      className={`ins-c-advisor_card ins-c-advisor__card--pathwayspanel`}
-      id={`ins-c-advisor__card--pathwayspanel`}
+      className={`ins-c-advisor_card adv-c-card-pathways-panel`}
+      id={`adv-c-card-pathways-panel`}
       isExpanded={expanded}
     >
       <CardHeader

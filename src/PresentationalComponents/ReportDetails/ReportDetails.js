@@ -30,7 +30,7 @@ const ReportDetails = ({ report, kbaDetail, kbaLoading }) => {
   const rule = report.rule || report;
   const rulesCardClasses = classNames(
     'ins-c-inventory-advisor__card',
-    'ins-c-rules-card'
+    'adv-c-card-rules'
   );
   const templateProcessor = (template, definitions) => {
     const DOT_SETTINGS = {
