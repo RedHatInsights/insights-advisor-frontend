@@ -10,7 +10,7 @@ export const Pathways = createApi({
       query: (options) => ({ url: `/pathway/`, options }),
     }),
     getPathway: build.query({
-      query: (name) => ({ url: `/pathway/${name}/` }),
+      query: (options) => ({ url: `/pathway/${options.slug}/`, options }),
     }),
     getPathwayRules: build.query({
       query: (name) => ({ url: `/pathway/${name}/rules/` }),

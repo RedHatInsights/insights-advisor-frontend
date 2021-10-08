@@ -13,7 +13,9 @@ const Breadcrumbs = ({ current }) => {
   const intl = useIntl();
   const location = useLocation().pathname?.split('/');
   const [items, setItems] = useState([]);
-  const skip = !(location[1] === 'recommendations' && location.length === 4);
+  const skip =
+    !(location[1] === 'recommendations' && location.length === 4) ||
+    location[2] === 'pathways';
   const { data, isFetching } = useGetRecQuery(
     { ruleId: location[2] },
     { skip }
@@ -21,7 +23,7 @@ const Breadcrumbs = ({ current }) => {
 
   useEffect(() => {
     const buildBreadcrumbs = () => {
-      const crumbs = [];
+      let crumbs = [];
       // add base
       crumbs.push({
         title: `${intl.formatMessage(messages.insightsHeader)} ${location[1]}`,
@@ -35,11 +37,22 @@ const Breadcrumbs = ({ current }) => {
           navigate: `/${location[1]}/${location[2]}`,
         });
       }
+
+      if (location[2] === 'pathways') {
+        crumbs = [
+          {
+            title: 'Advisor pathways',
+            navigate: '/recommendations/pathways',
+          },
+        ];
+      }
+
       setItems(crumbs);
     };
 
     buildBreadcrumbs();
-  }, [data, intl, location, skip]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   return (
     <React.Fragment>

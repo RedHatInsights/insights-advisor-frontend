@@ -1,5 +1,6 @@
 import './_Inventory.scss';
 
+import { RULES_FETCH_URL, SYSTEMS_FETCH_URL } from '../../AppConstants';
 import React, { useEffect, useState } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import {
@@ -15,7 +16,6 @@ import { Get } from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import Loading from '../Loading/Loading';
 import PropTypes from 'prop-types';
-import { RULES_FETCH_URL } from '../../AppConstants';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
 import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
@@ -29,6 +29,7 @@ const Inventory = ({
   tableProps,
   rule,
   afterDisableFn,
+  pathway,
   selectedTags,
   workloads,
   SID,
@@ -261,13 +262,18 @@ const Inventory = ({
 
           handleRefresh(options);
 
-          const fetchedSystems = (
-            await Get(
-              `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/systems_detail/`,
-              {},
-              options
-            )
-          )?.data;
+          const fetchedSystems = pathway
+            ? (await Get(`${SYSTEMS_FETCH_URL}`, {}, { ...options, pathway }))
+                ?.data
+            : (
+                await Get(
+                  `${RULES_FETCH_URL}${encodeURI(
+                    rule.rule_id
+                  )}/systems_detail/`,
+                  {},
+                  options
+                )
+              )?.data;
 
           const results = await defaultGetEntities(
             fetchedSystems.data.map((system) => system.system_uuid),
@@ -291,7 +297,9 @@ const Inventory = ({
         dedicatedAction={
           <RemediationButton
             key="remediation-button"
-            isDisabled={selected.length === 0 || rule.playbook_count === 0}
+            isDisabled={
+              selected.length === 0 || rule?.playbook_count === 0 || true
+            }
             dataProvider={remediationDataProvider}
             onRemediationCreated={(result) => onRemediationCreated(result)}
           >
@@ -304,7 +312,7 @@ const Inventory = ({
             '',
             {
               label: intl.formatMessage(messages.disableRuleForSystems),
-              props: { isDisabled: selected.length === 0 },
+              props: { isDisabled: pathway || selected.length === 0 },
               onClick: () => handleModalToggle(true),
             },
           ],
@@ -337,15 +345,19 @@ const Inventory = ({
                       items: entities?.total || 0,
                     }),
                     onClick: async () => {
-                      const allSystems = (
-                        await Get(
-                          `${RULES_FETCH_URL}${encodeURI(
-                            rule.rule_id
-                          )}/systems/`,
-                          {},
-                          { name: filters.name }
-                        )
-                      )?.data?.host_ids;
+                      const allSystems = pathway
+                        ? (
+                            await Get(`${SYSTEMS_FETCH_URL}`, {}, { pathway })
+                          )?.data?.data?.map((system) => system.system_uuid)
+                        : (
+                            await Get(
+                              `${RULES_FETCH_URL}${encodeURI(
+                                rule.rule_id
+                              )}/systems/`,
+                              {},
+                              { name: filters.name }
+                            )
+                          )?.data?.host_ids;
                       setSelected(allSystems);
                       bulkSelectfn();
                     },
@@ -391,6 +403,7 @@ Inventory.propTypes = {
   tableProps: PropTypes.any,
   rule: PropTypes.object,
   afterDisableFn: PropTypes.func,
+  pathway: PropTypes.string,
   selectedTags: PropTypes.any,
   workloads: PropTypes.any,
   SID: PropTypes.any,
