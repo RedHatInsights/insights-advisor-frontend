@@ -2,22 +2,16 @@ import './_PathwaysPanel.scss';
 
 import {
   Card,
-  CardBody,
   CardExpandableContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@patternfly/react-core/dist/esm/components/Card/index';
 import { Grid, GridItem } from '@patternfly/react-core';
 import React, { useState } from 'react';
 
-import ArrowRightIcon from '@patternfly/react-icons/dist/esm/icons/arrow-right-icon';
-import CategoryLabel from '../Labels/CategoryLabel';
-import { Link } from 'react-router-dom';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../MessageState/MessageState';
-import { RebootRequired } from '../Common/Common';
-import RuleLabels from '../Labels/RuleLabels';
+import { PathwayCard } from '../Cards/Pathways';
 import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import messages from '../../Messages';
 import propTypes from 'prop-types';
@@ -29,36 +23,9 @@ const PathwaysPanel = () => {
   const [expanded, setExpanded] = useState(
     JSON.parse(localStorage.getItem('advisor_pathwayspanel_expanded') || 'true')
   );
-  const {
-    data = [],
-    isLoading,
-    isFetching,
-    isError,
-  } = useGetPathwaysQuery({ limit: 3 });
-
-  const pathwayCard = (pathway) => (
-    <Card isFlat isPlain className={`ins-c-advisor__card--pathwaycard`}>
-      <CardBody className={`body`}>
-        <CategoryLabel key={pathway.name} labelList={pathway.categories} />{' '}
-        <Link to={`${pathway.name}`}>
-          {intl.formatMessage(messages.topicCardSystemsaffected, {
-            systems: pathway.impacted_systems_count,
-          })}
-        </Link>
-      </CardBody>
-      <CardBody className={`body`}>{pathway.description}</CardBody>
-      <CardBody className={`body`}>
-        {pathway.has_incident && <RuleLabels rule={{ tags: 'incident' }} />}{' '}
-        {RebootRequired(pathway.reboot_required)}
-      </CardBody>
-      <CardFooter className={`footer`}>
-        <Link to={`${pathway.name}`}>
-          {`${intl.formatMessage(messages.viewPathway)} `}
-          <ArrowRightIcon />
-        </Link>
-      </CardFooter>
-    </Card>
-  );
+  const { data, isLoading, isFetching, isError } = useGetPathwaysQuery({
+    limit: 3,
+  });
 
   return !isLoading ? (
     <Card
@@ -86,10 +53,12 @@ const PathwaysPanel = () => {
       <CardExpandableContent>
         {isFetching ? (
           <Loading />
-        ) : !isError && data?.length ? (
+        ) : !isError && data.data?.length ? (
           <Grid hasGutter md={4} sm={12}>
-            {data.map((pathway) => (
-              <GridItem key={pathway.name}>{pathwayCard(pathway)}</GridItem>
+            {data.data.map((pathway) => (
+              <GridItem key={pathway.name}>
+                <PathwayCard {...pathway} />
+              </GridItem>
             ))}
           </Grid>
         ) : (

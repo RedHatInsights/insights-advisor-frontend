@@ -151,7 +151,10 @@ const PathwaysTable = () => {
               {
                 title: (
                   <span key={key}>
-                    <Link key={key} to={`/pathways/${pathway.name}`}>
+                    <Link
+                      key={key}
+                      to={`/recommendations/pathways/${pathway.slug}`}
+                    >
                       {' '}
                       {pathway.description}{' '}
                     </Link>

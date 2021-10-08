@@ -1171,4 +1171,20 @@ export default defineMessages({
     description: 'Adjust your filters and try again.',
     defaultMessage: 'Adjust your filters and try again.',
   },
+  totalRiskPathway: {
+    id: 'totalRiskPathway',
+    description: 'Total risk of pathway',
+    defaultMessage: 'Total risk of pathway',
+  },
+  resolution: {
+    id: 'resolution',
+    description: 'Resolution',
+    defaultMessage: 'Resolution',
+  },
+  thisPathway: {
+    id: 'thisPathway',
+    description: 'By enabling this recommendation',
+    defaultMessage:
+      'This pathway is expected to improve <strong>{category}</strong> on <strong>{systems, plural, one {# system} other {# systems}}</strong> and resolve <strong>{incidents, plural, one {# incident} other {# incidents}}</strong>.',
+  },
 });
