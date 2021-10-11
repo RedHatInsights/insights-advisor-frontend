@@ -105,31 +105,36 @@ const BaseRuleDetails = ({
               updateRatingAction={onFeedbackChanged}
             />
           )}
-          {!isDetailsPage && rule.impacted_systems_count > 0 && (
-            <StackItem>
-              <Link
-                key={`${rule.rule_id}-link`}
-                to={`/recommendations/${rule.rule_id}`}
-              >
-                {intl.formatMessage(
-                  ...(isOpenShift
-                    ? [
-                        // OpenShift's intl object should be used to obtain messages
-                        intl.messages.viewAffectedClusters,
-                        {
-                          clusters: rule.impacted_clusters_count,
-                        },
-                      ]
-                    : [
-                        messages.viewAffectedSystems,
-                        {
-                          systems: rule.impacted_systems_count,
-                        },
-                      ])
-                )}
-              </Link>
-            </StackItem>
-          )}
+          {!isDetailsPage &&
+            rule?.[
+              isOpenShift
+                ? 'impacted_clusters_count '
+                : 'impacted_systems_count '
+            ] > 0 && (
+              <StackItem>
+                <Link
+                  key={`${rule.rule_id}-link`}
+                  to={`/recommendations/${rule.rule_id}`}
+                >
+                  {intl.formatMessage(
+                    ...(isOpenShift
+                      ? [
+                          // OpenShift's intl object should be used to obtain messages
+                          intl.messages.viewAffectedClusters,
+                          {
+                            clusters: rule.impacted_clusters_count,
+                          },
+                        ]
+                      : [
+                          messages.viewAffectedSystems,
+                          {
+                            systems: rule.impacted_systems_count,
+                          },
+                        ])
+                  )}
+                </Link>
+              </StackItem>
+            )}
         </Stack>
       </SplitItem>
       <SplitItem>
