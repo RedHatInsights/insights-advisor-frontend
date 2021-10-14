@@ -107,9 +107,7 @@ const BaseRuleDetails = ({
           )}
           {!isDetailsPage &&
             rule?.[
-              isOpenShift
-                ? 'impacted_clusters_count '
-                : 'impacted_systems_count '
+              isOpenShift ? 'impacted_clusters_count' : 'impacted_systems_count'
             ] > 0 && (
               <StackItem>
                 <Link
