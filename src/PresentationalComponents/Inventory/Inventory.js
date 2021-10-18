@@ -140,6 +140,9 @@ const Inventory = ({
   };
 
   const handleRefresh = (options) => {
+    /* Rec table doesn't use the same sorting params as sys table, switching between the two results in the rec table blowing up cuz its trying to 
+    read the endpoint with incorrect sorting params, if we hold of on updating the sysable url params when using the this component in pathways, it
+    solves this issue for the time being*/
     const { name, display_name } = options;
     const refreshedFilters = {
       ...options,
@@ -150,7 +153,7 @@ const Inventory = ({
         display_name,
       }),
     };
-    urlBuilder(refreshedFilters, selectedTags);
+    !pathway && urlBuilder(refreshedFilters, selectedTags);
   };
   const removeFilterParam = (param) => {
     const filter = { ...filters, offset: 0 };

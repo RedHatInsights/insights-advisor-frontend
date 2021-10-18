@@ -18,6 +18,7 @@ import {
   TabTitleText,
   Tabs,
 } from '@patternfly/react-core/dist/esm/components/Tabs/index';
+import { updateRecFilters, updateSysFilters } from '../../Services/Filters';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
@@ -28,7 +29,6 @@ import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import messages from '../../Messages';
-import { updateRecFilters } from '../../Services/Filters';
 import { useGetPathwayQuery } from '../../Services/Pathways';
 import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
@@ -49,6 +49,8 @@ const PathwayDetails = () => {
   const workloads = useSelector(({ filters }) => filters.workloads);
   const SID = useSelector(({ filters }) => filters.SID);
   const recFilters = useSelector(({ filters }) => filters.recState);
+  const sysFilters = useSelector(({ filters }) => filters.sysState);
+
   let options = {};
   selectedTags?.length &&
     (options = {
@@ -65,16 +67,25 @@ const PathwayDetails = () => {
 
   useEffect(() => {
     const initiaRecFilters = { ...recFilters };
+    const initiaSysFilters = { ...sysFilters };
+    const defaultFilters = { pathway: pathwayName, limit: 20, offset: 0 };
     dispatch(
       updateRecFilters({
+        ...defaultFilters,
+        sort: 'category',
         impacting: true,
-        pathway: pathwayName,
-        limit: 20,
-        offset: 0,
+      })
+    );
+    dispatch(
+      updateSysFilters({
+        ...defaultFilters,
       })
     );
 
-    return () => dispatch(updateRecFilters(initiaRecFilters));
+    return () => {
+      dispatch(updateRecFilters(initiaRecFilters));
+      dispatch(updateSysFilters(initiaSysFilters));
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

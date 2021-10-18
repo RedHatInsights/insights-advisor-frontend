@@ -70,7 +70,7 @@ const PathwaysTable = () => {
     },
     {
       title: intl.formatMessage(messages.category),
-      transforms: [sortable, cellWidth(15)],
+      // transforms: [sortable, cellWidth(15)],
     },
     {
       title: intl.formatMessage(messages.systems),
@@ -78,12 +78,12 @@ const PathwaysTable = () => {
     },
     {
       title: intl.formatMessage(messages.reboot),
-      transforms: [sortable, cellWidth(10)],
+      // transforms: [sortable, cellWidth(10)],
     },
     {
       title: intl.formatMessage(messages.reclvl),
       transforms: [
-        sortable,
+        // sortable,
         cellWidth(20),
         fitContent,
         info({
@@ -96,11 +96,11 @@ const PathwaysTable = () => {
     },
   ];
   const sortIndices = {
-    0: 'description',
-    1: 'category',
+    0: 'name',
+    // 1: 'category',
     2: 'impacted_systems_count',
-    3: 'reboot_required',
-    4: 'recommendation_level',
+    // 3: 'reboot_required',
+    // 4: 'recommendation_level',
   };
   const [sortBy, setSortBy] = useState({});
   const [filterBuilding, setFilterBuilding] = useState(true);
@@ -156,7 +156,7 @@ const PathwaysTable = () => {
                       to={`/recommendations/pathways/${pathway.slug}`}
                     >
                       {' '}
-                      {pathway.description}{' '}
+                      {pathway.name}{' '}
                     </Link>
                     {pathway.has_incident && (
                       <RuleLabels rule={{ tags: 'incident' }} />
