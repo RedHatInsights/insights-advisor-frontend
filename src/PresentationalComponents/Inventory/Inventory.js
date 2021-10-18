@@ -123,11 +123,14 @@ const Inventory = ({
   };
 
   const handleRefresh = (options) => {
-    const { name } = options;
+    const { name, display_name } = options;
     const refreshedFilters = {
       ...options,
       ...(name && {
         name,
+      }),
+      ...(display_name && {
+        display_name,
       }),
     };
     urlBuilder(refreshedFilters, selectedTags);
@@ -248,9 +251,14 @@ const Inventory = ({
             limit: per_page,
             offset: page * per_page - per_page,
             sort,
-            ...(config.filters.hostnameOrId && {
-              name: config?.filters?.hostnameOrId,
-            }),
+            ...(config.filters.hostnameOrId &&
+              !pathway && {
+                name: config?.filters?.hostnameOrId,
+              }),
+            ...(config.filters.hostnameOrId &&
+              pathway && {
+                display_name: config?.filters?.hostnameOrId,
+              }),
             ...(selectedTags.length && { tags: selectedTags }),
             ...(Array.isArray(advisorFilters.rhel_version) && {
               rhel_version: advisorFilters.rhel_version?.join(','),

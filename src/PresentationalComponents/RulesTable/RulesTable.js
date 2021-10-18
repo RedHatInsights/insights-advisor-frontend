@@ -319,14 +319,13 @@ const RulesTable = () => {
   }, []);
 
   useEffect(() => {
-    if (filters.sort !== undefined) {
-      const sortIndex = Number(
-        Object.entries(sortIndices).find(
-          (item) => item[1] === filters.sort || `-${item[1]}` === filters.sort
-        )[0]
-      );
+    const sortIndex = Object.entries(sortIndices)?.find(
+      (item) => item[1] === filters.sort || `-${item[1]}` === filters.sort
+    );
+    if (filters.sort !== undefined && sortIndex) {
+      console.error(sortIndex);
       const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
-      setSortBy({ index: sortIndex, direction: sortDirection });
+      setSortBy({ index: Number(sortIndex[0]), direction: sortDirection });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.sort]);
