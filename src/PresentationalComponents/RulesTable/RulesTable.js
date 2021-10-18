@@ -323,7 +323,6 @@ const RulesTable = () => {
       (item) => item[1] === filters.sort || `-${item[1]}` === filters.sort
     );
     if (filters.sort !== undefined && sortIndex) {
-      console.error(sortIndex);
       const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
       setSortBy({ index: Number(sortIndex[0]), direction: sortDirection });
     }

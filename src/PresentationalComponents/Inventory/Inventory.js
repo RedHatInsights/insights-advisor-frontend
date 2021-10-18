@@ -1,6 +1,10 @@
 import './_Inventory.scss';
 
-import { RULES_FETCH_URL, SYSTEMS_FETCH_URL } from '../../AppConstants';
+import {
+  BASE_URL,
+  RULES_FETCH_URL,
+  SYSTEMS_FETCH_URL,
+} from '../../AppConstants';
 import React, { useEffect, useState } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import {
@@ -51,15 +55,28 @@ const Inventory = ({
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [bulkSelect, setBulkSelect] = useState();
 
-  const remediationDataProvider = () => ({
-    issues: [
-      {
-        id: `advisor:${rule.rule_id}`,
-        description: rule.description,
-      },
-    ],
-    systems: selected,
-  });
+  const remediationDataProvider = async () => {
+    if (pathway) {
+      const pathways = (
+        await Get(`${BASE_URL}/pathway/${encodeURI(pathway)}/rules/`, {}, {})
+      )?.data.data;
+      const issues = pathways.map((rec) => ({
+        id: `advisor:${rec.rule_id}`,
+        description: rec.description,
+      }));
+      return { issues, systems: selected };
+    } else {
+      return {
+        issues: [
+          {
+            id: `advisor:${rule.rule_id}`,
+            description: rule.description,
+          },
+        ],
+        systems: selected,
+      };
+    }
+  };
 
   const onRemediationCreated = (result) => {
     onSelectRows(-1, false);
@@ -306,7 +323,7 @@ const Inventory = ({
           <RemediationButton
             key="remediation-button"
             isDisabled={
-              selected.length === 0 || rule?.playbook_count === 0 || true
+              selected.length === 0 || (!pathway && rule?.playbook_count === 0)
             }
             dataProvider={remediationDataProvider}
             onRemediationCreated={(result) => onRemediationCreated(result)}
@@ -320,7 +337,7 @@ const Inventory = ({
             '',
             {
               label: intl.formatMessage(messages.disableRuleForSystems),
-              props: { isDisabled: pathway || selected.length === 0 },
+              props: { isDisabled: selected.length === 0 },
               onClick: () => handleModalToggle(true),
             },
           ],
