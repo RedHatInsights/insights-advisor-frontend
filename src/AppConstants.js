@@ -128,6 +128,54 @@ export const TOTAL_RISK_LABEL_LOWER = {
     intlSettings
   ),
 };
+
+export const PATHWAYS_FILTER_CATEGORIES = {
+  incident: {
+    type: 'checkbox',
+    title: 'incidents',
+    urlParam: 'has_incident',
+    values: [
+      {
+        label: intlHelper(
+          intl.formatMessage(messages.incidentRules),
+          intlSettings
+        ),
+        value: 'true',
+      },
+      {
+        label: intlHelper(
+          intl.formatMessage(messages.nonIncidentRules),
+          intlSettings
+        ),
+        value: 'false',
+      },
+    ],
+  },
+  reboot: {
+    type: 'checkbox',
+    title: 'reboot required',
+    urlParam: 'reboot_required',
+    values: [
+      {
+        label: intlHelper(intl.formatMessage(messages.required), intlSettings),
+        text: intlHelper(intl.formatMessage(messages.required), intlSettings),
+        value: 'true',
+      },
+      {
+        label: intlHelper(
+          intl.formatMessage(messages.notRequired),
+          intlSettings
+        ),
+        text: intlHelper(
+          intl.formatMessage(messages.notRequired),
+          intlSettings
+        ),
+        value: 'false',
+      },
+    ],
+  },
+};
+
 export const FILTER_CATEGORIES = {
   total_risk: {
     type: 'checkbox',

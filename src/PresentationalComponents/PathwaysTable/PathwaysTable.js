@@ -1,4 +1,8 @@
-import { DEBOUNCE_DELAY, FILTER_CATEGORIES as FC } from '../../AppConstants';
+import {
+  DEBOUNCE_DELAY,
+  FILTER_CATEGORIES as FC,
+  PATHWAYS_FILTER_CATEGORIES as PFC,
+} from '../../AppConstants';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Pagination,
@@ -231,29 +235,29 @@ const PathwaysTable = () => {
       },
     },
     {
-      label: FC.incident.title,
-      type: FC.incident.type,
-      id: FC.incident.urlParam,
-      value: `checkbox-${FC.incident.urlParam}`,
+      label: PFC.incident.title,
+      type: PFC.incident.type,
+      id: PFC.incident.urlParam,
+      value: `checkbox-${PFC.incident.urlParam}`,
       filterValues: {
-        key: `${FC.incident.urlParam}-filter`,
+        key: `${PFC.incident.urlParam}-filter`,
         onChange: (_event, values) =>
-          addFilterParam(FC.incident.urlParam, values),
-        value: filters.incident,
-        items: FC.incident.values,
+          addFilterParam(PFC.incident.urlParam, values),
+        value: filters.has_incident,
+        items: PFC.incident.values,
       },
     },
     {
-      label: FC.reboot.title,
-      type: FC.reboot.type,
-      id: FC.reboot.urlParam,
-      value: `checkbox-${FC.reboot.urlParam}`,
+      label: PFC.reboot.title,
+      type: PFC.reboot.type,
+      id: PFC.reboot.urlParam,
+      value: `checkbox-${PFC.reboot.urlParam}`,
       filterValues: {
-        key: `${FC.reboot.urlParam}-filter`,
+        key: `${PFC.reboot.urlParam}-filter`,
         onChange: (_event, values) =>
-          addFilterParam(FC.reboot.urlParam, values),
-        value: filters.reboot,
-        items: FC.reboot.values,
+          addFilterParam(PFC.reboot.urlParam, values),
+        value: filters.reboot_required,
+        items: PFC.reboot.values,
       },
     },
   ];
