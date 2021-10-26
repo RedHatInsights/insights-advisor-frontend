@@ -58,7 +58,11 @@ const Inventory = ({
   const remediationDataProvider = async () => {
     if (pathway) {
       const pathways = (
-        await Get(`${BASE_URL}/pathway/${encodeURI(pathway)}/rules/`, {}, {})
+        await Get(
+          `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
+          {},
+          {}
+        )
       )?.data.data;
       const issues = pathways.map((rec) => ({
         id: `advisor:${rec.rule_id}`,
@@ -291,8 +295,13 @@ const Inventory = ({
           handleRefresh(options);
 
           const fetchedSystems = pathway
-            ? (await Get(`${SYSTEMS_FETCH_URL}`, {}, { ...options, pathway }))
-                ?.data
+            ? (
+                await Get(
+                  `${SYSTEMS_FETCH_URL}`,
+                  {},
+                  { ...options, pathway: pathway.slug }
+                )
+              )?.data
             : (
                 await Get(
                   `${RULES_FETCH_URL}${encodeURI(
@@ -373,9 +382,17 @@ const Inventory = ({
                       items: entities?.total || 0,
                     }),
                     onClick: async () => {
+                      console.error(pathway);
                       const allSystems = pathway
                         ? (
-                            await Get(`${SYSTEMS_FETCH_URL}`, {}, { pathway })
+                            await Get(
+                              `${SYSTEMS_FETCH_URL}`,
+                              {},
+                              {
+                                pathway: pathway.slug,
+                                limit: pathway.impacted_systems_count,
+                              }
+                            )
                           )?.data?.data?.map((system) => system.system_uuid)
                         : (
                             await Get(
@@ -386,6 +403,8 @@ const Inventory = ({
                               { name: filters.name }
                             )
                           )?.data?.host_ids;
+
+                      console.error(allSystems);
                       setSelected(allSystems);
                       bulkSelectfn();
                     },
@@ -431,7 +450,7 @@ Inventory.propTypes = {
   tableProps: PropTypes.any,
   rule: PropTypes.object,
   afterDisableFn: PropTypes.func,
-  pathway: PropTypes.string,
+  pathway: PropTypes.object,
   selectedTags: PropTypes.any,
   workloads: PropTypes.any,
   SID: PropTypes.any,
