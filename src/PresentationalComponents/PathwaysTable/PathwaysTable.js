@@ -128,7 +128,7 @@ const PathwaysTable = () => {
     delete localFilters.offset;
     delete localFilters.limit;
 
-    return pruneFilters(localFilters, FC);
+    return pruneFilters(localFilters, { ...FC, ...PFC });
   };
 
   const rowBuilder = (pathways) =>
@@ -314,9 +314,9 @@ const PathwaysTable = () => {
       paramsObject.limit === undefined
         ? (paramsObject.limit = 20)
         : (paramsObject.limit = Number(paramsObject.limit[0]));
-      paramsObject.reboot !== undefined &&
-        !Array.isArray(paramsObject.reboot) &&
-        (paramsObject.reboot = [`${paramsObject.reboot}`]);
+      paramsObject.reboot_required !== undefined &&
+        !Array.isArray(paramsObject.reboot_required) &&
+        (paramsObject.reboot_required = [`${paramsObject.reboot_required}`]);
 
       setFilters({ ...filters, ...paramsObject });
     }
