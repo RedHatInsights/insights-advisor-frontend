@@ -176,7 +176,7 @@ const PathwayDetails = () => {
                     canSelectAll: false,
                     isStickyHeader: true,
                   }}
-                  pathway={pathwayName}
+                  pathway={pathway}
                   selectedTags={selectedTags}
                   workloads={workloads}
                   SID={SID}
