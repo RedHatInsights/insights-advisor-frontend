@@ -44,6 +44,7 @@ const BaseRuleDetails = ({
   onFeedbackChanged,
   isOpenShift,
   riskOfChangeDesc,
+  messageDescriptors,
 }) => {
   const intl = useIntl();
   const topicLinks = () =>
@@ -115,9 +116,12 @@ const BaseRuleDetails = ({
                   to={`/recommendations/${rule.rule_id}`}
                 >
                   {isOpenShift
-                    ? intl.formatMessage(intl.messages.viewAffectedClusters, {
-                        clusters: rule.impacted_clusters_count,
-                      })
+                    ? intl.formatMessage(
+                        messageDescriptors.viewAffectedClusters,
+                        {
+                          clusters: rule.impacted_clusters_count,
+                        }
+                      )
                     : intl.formatMessage(messages.viewAffectedSystems, {
                         systems: rule.impacted_systems_count,
                       })}
@@ -281,6 +285,10 @@ BaseRuleDetails.propTypes = {
    * isOpenShift - true when OpenShift rule is contained within `rule` param
    */
   isOpenShift: PropTypes.bool,
+  /**
+   * messageDescriptors - contains intl message descriptors when customItnl set to true
+   */
+  messageDescriptors: PropTypes.object,
 };
 
 export default RuleDetails;
