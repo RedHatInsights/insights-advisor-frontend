@@ -130,7 +130,7 @@ export const TOTAL_RISK_LABEL_LOWER = {
 };
 
 export const PATHWAYS_FILTER_CATEGORIES = {
-  incident: {
+  has_incident: {
     type: 'checkbox',
     title: 'incidents',
     urlParam: 'has_incident',
@@ -151,7 +151,7 @@ export const PATHWAYS_FILTER_CATEGORIES = {
       },
     ],
   },
-  reboot: {
+  reboot_required: {
     type: 'checkbox',
     title: 'reboot required',
     urlParam: 'reboot_required',

@@ -235,29 +235,29 @@ const PathwaysTable = () => {
       },
     },
     {
-      label: PFC.incident.title,
-      type: PFC.incident.type,
-      id: PFC.incident.urlParam,
-      value: `checkbox-${PFC.incident.urlParam}`,
+      label: PFC.has_incident.title,
+      type: PFC.has_incident.type,
+      id: PFC.has_incident.urlParam,
+      value: `checkbox-${PFC.has_incident.urlParam}`,
       filterValues: {
-        key: `${PFC.incident.urlParam}-filter`,
+        key: `${PFC.has_incident.urlParam}-filter`,
         onChange: (_event, values) =>
-          addFilterParam(PFC.incident.urlParam, values),
+          addFilterParam(PFC.has_incident.urlParam, values),
         value: filters.has_incident,
-        items: PFC.incident.values,
+        items: PFC.has_incident.values,
       },
     },
     {
-      label: PFC.reboot.title,
-      type: PFC.reboot.type,
-      id: PFC.reboot.urlParam,
-      value: `checkbox-${PFC.reboot.urlParam}`,
+      label: PFC.reboot_required.title,
+      type: PFC.reboot_required.type,
+      id: PFC.reboot_required.urlParam,
+      value: `checkbox-${PFC.reboot_required.urlParam}`,
       filterValues: {
-        key: `${PFC.reboot.urlParam}-filter`,
+        key: `${PFC.reboot_required.urlParam}-filter`,
         onChange: (_event, values) =>
-          addFilterParam(PFC.reboot.urlParam, values),
+          addFilterParam(PFC.reboot_required.urlParam, values),
         value: filters.reboot_required,
-        items: PFC.reboot.values,
+        items: PFC.reboot_required.values,
       },
     },
   ];
