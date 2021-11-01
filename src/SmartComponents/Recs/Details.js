@@ -62,6 +62,7 @@ const OverviewDetails = () => {
   const SID = useSelector(({ filters }) => filters.SID);
   const ruleId = useParams().id;
   const addNotification = (data) => dispatch(notification(data));
+  const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
 
   const {
     data: rule = {},
@@ -407,6 +408,8 @@ const OverviewDetails = () => {
                   selectedTags={selectedTags}
                   workloads={workloads}
                   SID={SID}
+                  permsExport={permsExport}
+                  exportTable="reports"
                 />
               </React.Fragment>
             )}

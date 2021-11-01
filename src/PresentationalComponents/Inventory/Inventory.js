@@ -28,6 +28,7 @@ import { addNotification as notification } from '@redhat-cloud-services/frontend
 import { systemReducer } from '../../Store/AppReducer';
 import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
+import downloadReport from '../Common/DownloadHelper';
 
 const Inventory = ({
   tableProps,
@@ -37,6 +38,8 @@ const Inventory = ({
   selectedTags,
   workloads,
   SID,
+  permsExport,
+  exportTable,
 }) => {
   const store = useStore();
   const intl = useIntl();
@@ -441,6 +444,26 @@ const Inventory = ({
             })
           );
         }}
+        exportConfig={
+          permsExport && {
+            label: intl.formatMessage(messages.exportCsv),
+            // eslint-disable-next-line no-dupe-keys
+            label: intl.formatMessage(messages.exportJson),
+            onSelect: (_e, fileType) =>
+              downloadReport(
+                exportTable,
+                fileType,
+                filters,
+                selectedTags,
+                workloads,
+                SID
+              ),
+            isDisabled: !permsExport || entities?.rows?.length === 0,
+            tooltipText: permsExport
+              ? intl.formatMessage(messages.exportData)
+              : intl.formatMessage(messages.permsAction),
+          }
+        }
       />
     </React.Fragment>
   );
@@ -454,6 +477,8 @@ Inventory.propTypes = {
   selectedTags: PropTypes.any,
   workloads: PropTypes.any,
   SID: PropTypes.any,
+  permsExport: PropTypes.bool,
+  exportTable: PropTypes.string,
 };
 
 export default Inventory;
