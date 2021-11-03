@@ -11,27 +11,46 @@ const fileName = (exportTable) => {
   return `Insights-Advisor_${exportTable}--${defaultParams.date}`;
 };
 
+function objectsToCSV(arr) {
+  const array = [Object.keys(arr[0])].concat(arr);
+  return array
+    .map((row) => {
+      return Object.values(row)
+        .map((value) => {
+          return typeof value === 'string' ? JSON.stringify(value) : value;
+        })
+        .toString();
+    })
+    .join('\n');
+}
+
 const downloadHelper = async (
   exportTable,
   format,
   filters,
   selectedTags,
   workloads,
-  SID
+  SID,
+  overrideData
 ) => {
   try {
-    let options = selectedTags?.length && { tags: selectedTags };
-    workloads &&
-      (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
-    const data = (
-      await Get(
-        `${BASE_URL}/export/${exportTable}.${
-          format === 'json' ? 'json' : 'csv'
-        }`,
-        {},
-        { ...filters, ...options }
-      )
-    ).data;
+    let data;
+    if (overrideData) {
+      data = format === 'json' ? overrideData : objectsToCSV(overrideData);
+    } else {
+      let options = selectedTags?.length && { tags: selectedTags };
+      workloads &&
+        (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
+      data = (
+        await Get(
+          `${BASE_URL}/export/${exportTable}.${
+            format === 'json' ? 'json' : 'csv'
+          }`,
+          {},
+          { ...filters, ...options }
+        )
+      ).data;
+    }
     let formattedData = format === 'json' ? JSON.stringify(data) : data;
     downloadFile(formattedData, fileName(exportTable), format);
   } catch (error) {
