@@ -115,7 +115,7 @@
   "pathways": "Pathways",
   "performance": "Performance",
   "permsAction": "You do not have the required advisor permissions to perform this action",
-  "permsBody": "To view the content of this page, you must be grated a minimum of advisor permissions from your Organization Administrator.",
+  "permsBody": "To view the content of this page, you must be granted permissions to use Advisor from your Organization Administrator.",
   "permsTitle": "You do not have access to Advisor",
   "poundOfRecs": "# of recommendations",
   "readless": "Read less",
