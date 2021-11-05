@@ -1059,7 +1059,7 @@ export default defineMessages({
     id: 'permsBody',
     description: 'To view the content',
     defaultMessage:
-      'To view the content of this page, you must be grated a minimum of advisor permissions from your Organization Administrator.',
+      'To view the content of this page, you must be granted permissions to use Advisor from your Organization Administrator.',
   },
   permsAction: {
     id: 'permsAction',
