@@ -249,7 +249,7 @@ const Inventory = ({
             ...(config.filters.hostnameOrId && {
               name: config?.filters?.hostnameOrId,
             }),
-            ...(selectedTags.length && { tags: selectedTags }),
+            ...(selectedTags?.length && { tags: selectedTags }),
             ...(Array.isArray(advisorFilters.rhel_version) && {
               rhel_version: advisorFilters.rhel_version?.join(','),
             }),
