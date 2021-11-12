@@ -20,7 +20,7 @@ const downloadHelper = async (
   SID
 ) => {
   try {
-    let options = selectedTags.length && { tags: selectedTags };
+    let options = selectedTags?.length && { tags: selectedTags };
     workloads &&
       (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
     const data = (

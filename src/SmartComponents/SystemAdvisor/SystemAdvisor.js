@@ -54,6 +54,7 @@ import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import { capitalize } from '../../PresentationalComponents/Common/Tables';
 import messages from '../../Messages';
+import { Provider } from 'react-redux';
 
 const BaseSystemAdvisor = () => {
   const intl = useIntl();
@@ -734,8 +735,9 @@ const BaseSystemAdvisor = () => {
   );
 };
 
-const SystemAdvisor = ({ customItnl, intlProps, ...props }) => {
+const SystemAdvisor = ({ customItnl, intlProps, store, ...props }) => {
   const Wrapper = customItnl ? IntlProvider : Fragment;
+  const ReduxProvider = store ? Provider : Fragment;
   return (
     <Wrapper
       {...(customItnl && {
@@ -745,7 +747,9 @@ const SystemAdvisor = ({ customItnl, intlProps, ...props }) => {
         ...intlProps,
       })}
     >
-      <BaseSystemAdvisor {...props} />
+      <ReduxProvider store={store}>
+        <BaseSystemAdvisor {...props} />
+      </ReduxProvider>
     </Wrapper>
   );
 };
@@ -759,4 +763,5 @@ SystemAdvisor.propTypes = {
     messages: PropTypes.array,
     onError: PropTypes.func,
   }),
+  store: PropTypes.object,
 };
