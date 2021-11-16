@@ -405,6 +405,18 @@ export const SYSTEM_FILTER_CATEGORIES = {
     urlParam: 'rhel_version',
     values: [
       {
+        label: 'RHEL 9.0',
+        value: '9.0',
+      },
+      {
+        label: 'RHEL 8.6',
+        value: '8.6',
+      },
+      {
+        label: 'RHEL 8.5',
+        value: '8.5',
+      },
+      {
         label: 'RHEL 8.4',
         value: '8.4',
       },
