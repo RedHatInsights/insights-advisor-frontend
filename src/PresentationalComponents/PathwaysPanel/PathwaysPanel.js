@@ -29,8 +29,8 @@ const PathwaysPanel = () => {
 
   return !isLoading ? (
     <Card
-      className={`ins-c-advisor_card ins-c-advisor__card--pathwayspanel`}
-      id={`ins-c-advisor__card--pathwayspanel`}
+      className={`adv-c-card adv-c-card-pathways-panel`}
+      id={`adv-c-card-pathwayspanel`}
       isExpanded={expanded}
     >
       <CardHeader
