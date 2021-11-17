@@ -23,7 +23,7 @@ const SystemsPdf = ({ filters }) => {
 
   const dataFetch = async () => {
     setLoading(true);
-    let options = selectedTags.length && { tags: selectedTags };
+    let options = selectedTags?.length && { tags: selectedTags };
     workloads &&
       (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
     const systems = (
