@@ -21,6 +21,8 @@ import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
+import { GridItem, Grid } from '@patternfly/react-core';
+import AppIntro from '../../PresentationalComponents/AppIntro/AppIntro';
 
 const RulesTable = lazy(() =>
   import(
@@ -63,12 +65,19 @@ const List = () => {
             .toLowerCase()}`}
         />
         {!permsExport.isLoading && (
-          <Tooltip
-            trigger={!permsExport.hasAccess ? 'mouseenter' : ''}
-            content={intl.formatMessage(messages.permsAction)}
-          >
-            <DownloadExecReport isDisabled={!permsExport.hasAccess} />
-          </Tooltip>
+          <Grid className={'pageHeaderElementsContainer'}>
+            <GridItem span={9}>
+              <Tooltip
+                trigger={!permsExport.hasAccess ? 'mouseenter' : ''}
+                content={intl.formatMessage(messages.permsAction)}
+              >
+                <DownloadExecReport isDisabled={!permsExport.hasAccess} />
+              </Tooltip>
+            </GridItem>
+            <GridItem span={3}>
+              <AppIntro />
+            </GridItem>
+          </Grid>
         )}
       </PageHeader>
       <Main>
