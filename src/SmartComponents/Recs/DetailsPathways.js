@@ -137,7 +137,7 @@ const PathwayDetails = () => {
       {isFetching && <Loading />}
       <Main>
         <Tabs
-          className="advisor__background--global-100"
+          className="adv__background--global-100"
           mountOnEnter
           unmountOnExit
           activeKey={activeTab}

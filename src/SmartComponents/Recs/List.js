@@ -76,7 +76,7 @@ const List = () => {
           <PathwaysPanel />
         </Suspense>
         <Tabs
-          className="advisor__background--global-100"
+          className="adv__background--global-100"
           mountOnEnter
           unmountOnExit
           activeKey={activeTab}

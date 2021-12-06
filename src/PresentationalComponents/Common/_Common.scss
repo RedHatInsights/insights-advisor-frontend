@@ -1,16 +1,13 @@
 .adv-system-reboot-message {
   display: inline-flex;
-
-  .adv-system-reboot-message__content {
+  .adv-c-text-system-reboot-message {
     position: relative;
   }
-
   .adv-c-icon-reboot-required {
     margin-top: 5px;
     margin-right: var(--pf-global--spacer--sm);
     color: var(--pf-global--palette--red-100);
   }
-
   .adv-c-icon-no-reboot-required {
     margin-top: 5px;
     margin-right: var(--pf-global--spacer--sm);

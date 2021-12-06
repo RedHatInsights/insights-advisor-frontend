@@ -134,12 +134,12 @@ const BaseRuleDetails = ({
         <Stack gutter="sm">
           {children && <StackItem>{children}</StackItem>}
           <StackItem>
-            <Stack className="ins-c-rule-details__stack">
+            <Stack className="adv-l-stack-rule-details">
               <StackItem>
                 <strong>{intl.formatMessage(messages.totalRisk)}</strong>
               </StackItem>
               <StackItem className="pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm">
-                <span className="ins-c-rule-details__stackitem">
+                <span className="adv-l-stack-rule-details-item">
                   <span>
                     <InsightsLabel value={rule.total_risk} />
                   </span>
@@ -212,7 +212,7 @@ const BaseRuleDetails = ({
                   <StackItem
                     className={`pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm`}
                   >
-                    <span className="ins-c-rule-details__stackitem">
+                    <span className="adv-l-stack-rule-detailsitem">
                       <span>
                         <InsightsLabel
                           text={

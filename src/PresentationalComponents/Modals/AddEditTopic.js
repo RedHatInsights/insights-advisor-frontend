@@ -184,14 +184,14 @@ const AddEditTopic = ({ handleModalToggleCallback, isModalOpen, topic }) => {
             id="disabled"
             label={intl.formatMessage(messages.topicAddEditDisabled)}
             onChange={() => setEnabled(!enabled)}
-            className="radio-override"
+            className="adv-c-radio"
           />
           <Radio
             isChecked={enabled}
             id="enabled"
             label={intl.formatMessage(messages.topicAddEditEnabled)}
             onChange={() => setEnabled(!enabled)}
-            className="radio-override"
+            className="adv-c-radio"
           />
         </FormGroup>
         <FormGroup
@@ -205,7 +205,7 @@ const AddEditTopic = ({ handleModalToggleCallback, isModalOpen, topic }) => {
             name="checkbox-featured"
             aria-label="update-featured"
             onChange={() => setFeatured(!featured)}
-            className="checkbox-override"
+            className="adv-c-check"
           />
         </FormGroup>
       </Form>

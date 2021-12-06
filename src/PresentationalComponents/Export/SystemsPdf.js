@@ -72,7 +72,8 @@ const SystemsPdf = ({ filters }) => {
         buttonProps={{
           variant: '',
           component: 'button',
-          className: 'pf-c-dropdown__menu-item systemsPdfOverride',
+          className:
+            'pf-c-dropdown__menu-item adv-c-dropdown-systems-pdf__menu-item',
           ...(loading ? { isDisabled: true } : null),
         }}
         reportName={`${intl.formatMessage(messages.insightsHeader)}:`}

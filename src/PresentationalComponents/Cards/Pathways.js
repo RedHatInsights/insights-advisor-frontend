@@ -51,7 +51,7 @@ const PathwayCard = (props) => {
     <Card
       isFlat
       isPlain
-      className={`adv-c-card-pathway advisor__background--global-100`}
+      className={`adv-c-card-pathway adv__background--global-100`}
     >
       <CardBody className={`body`}>
         <CategoryLabel key={name} labelList={categories} />{' '}
@@ -93,7 +93,7 @@ const TotalRisk = (props) => {
     <Card
       isFlat
       isPlain
-      className={`adv-c-card-pathway advisor__background--global-100`}
+      className={`adv-c-card-pathway adv__background--global-100`}
     >
       <CardTitle>{intl.formatMessage(messages.totalRiskPathway)}</CardTitle>
       <CardBody className={`body`}>
@@ -179,7 +179,7 @@ const Resolution = (props) => {
     <Card
       isFlat
       isPlain
-      className={`adv-c-card-pathway advisor__background--global-100`}
+      className={`adv-c-card-pathway adv__background--global-100`}
     >
       <CardTitle>{intl.formatMessage(messages.resolution)}</CardTitle>
       <Grid>
