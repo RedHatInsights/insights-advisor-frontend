@@ -43,7 +43,7 @@ const DisableRule = ({
           variant: 'success',
           dismissable: true,
           timeout: true,
-          title: intl.formatMessage(messages.recSuccessfullyDisabledForSystem),
+          title: intl.formatMessage(messages.recSuccessfullyDisabled),
         });
       afterFn && afterFn();
     } catch (error) {
@@ -76,21 +76,14 @@ const DisableRule = ({
           };
       try {
         await setAck(options).unwrap();
-        singleSystem
-          ? notification({
-              variant: 'success',
-              timeout: true,
-              dismissable: true,
-              title: intl.formatMessage(
-                messages.recSuccessfullyDisabledForSystem
-              ),
-            })
-          : notification({
-              variant: 'success',
-              timeout: true,
-              dismissable: true,
-              title: intl.formatMessage(messages.recSuccessfullyDisabled),
-            });
+
+        notification({
+          variant: 'success',
+          timeout: true,
+          dismissable: true,
+          title: intl.formatMessage(messages.recSuccessfullyDisabled),
+        });
+
         setJustificaton('');
         afterFn && afterFn();
       } catch (error) {

@@ -368,7 +368,9 @@ const SystemsTable = () => {
               filters,
               selectedTags,
               workloads,
-              SID
+              SID,
+              null,
+              dispatch
             ),
           extraItems: [
             <li key="download-pd" role="menuitem">
