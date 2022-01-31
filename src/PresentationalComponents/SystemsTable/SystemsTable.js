@@ -41,7 +41,7 @@ const SystemsTable = () => {
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const SID = useSelector(({ filters }) => filters.SID);
-  const filters = useSelector(({ filters }) => filters.recState);
+  const filters = useSelector(({ filters }) => filters.sysState);
   const setFilters = (filters) => dispatch(updateSysFilters(filters));
   const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
   const [filterBuilding, setFilterBuilding] = useState(true);
@@ -154,7 +154,7 @@ const SystemsTable = () => {
           sort: filters.sort,
           limit: filters.limit,
           offset: filters.offset,
-          hits: ['yes'],
+          hits: ['all'],
         });
       } else {
         itemsToRemove.map((item) => {
