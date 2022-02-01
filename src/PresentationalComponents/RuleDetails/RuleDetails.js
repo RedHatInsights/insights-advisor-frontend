@@ -210,9 +210,7 @@ const BaseRuleDetails = ({
                   <StackItem>
                     <strong>{intl.formatMessage(messages.riskofchange)}</strong>
                   </StackItem>
-                  <StackItem
-                    className={`pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm`}
-                  >
+                  <StackItem className="pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm">
                     <span className="adv-l-stack-rule-detailsitem">
                       <span>
                         <InsightsLabel
