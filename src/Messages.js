@@ -59,10 +59,20 @@ export default defineMessages({
     description: 'Systems title used in exec report',
     defaultMessage: 'Systems exposed',
   },
-  ansible: {
-    id: 'ansible',
-    description: 'Recommendation table column title',
-    defaultMessage: 'Ansible',
+  remediation: {
+    id: 'remediation',
+    description: 'Remediation table column title',
+    defaultMessage: 'Remediation',
+  },
+  playbook: {
+    id: 'playbook',
+    description: 'Remediation/Playbook table cell text',
+    defaultMessage: 'Playbook',
+  },
+  manual: {
+    id: 'manual',
+    description: 'Maunal table cell text',
+    defaultMessage: 'Manual',
   },
   rulesTableHideReportsErrorEnabled: {
     id: 'rulestable.hidereports.errorenabling',
@@ -463,7 +473,7 @@ export default defineMessages({
   overviewRemediateBody: {
     id: 'overview.remediate.body',
     description: 'Overview, body for remediate',
-    defaultMessage: `Easily generate an Ansible playbook to 
+    defaultMessage: `Easily generate an Ansible playbook to
         quickly and effectively remediate Insights findings`,
   },
   overviewRemediateAction: {
@@ -1075,13 +1085,13 @@ export default defineMessages({
   },
   ansibleSupportYes: {
     id: 'ansibleSupportYes',
-    description: 'Ansible remediation support',
-    defaultMessage: 'Ansible remediation support',
+    description: 'Ansible playbook',
+    defaultMessage: 'Ansible playbook',
   },
   ansibleSupportNo: {
     id: 'ansibleSupportNo',
-    description: 'No Ansible remediation support',
-    defaultMessage: 'No Ansible remediation support',
+    description: 'Manual',
+    defaultMessage: 'Manual',
   },
   yes: {
     id: 'yes',
