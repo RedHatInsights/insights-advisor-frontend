@@ -4,6 +4,9 @@ const BundleAnalyzerPlugin =
   require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const config = require('@redhat-cloud-services/frontend-components-config');
 
+const chromeEnv = process.env.CHROME_ENV
+  ? process.env.CHROME_ENV
+  : 'stage-stable';
 const insightsProxy = {
   https: false,
   ...(process.env.BETA && { deployment: 'beta/apps' }),
@@ -12,23 +15,22 @@ const insightsProxy = {
 const webpackProxy = {
   deployment: process.env.BETA ? 'beta/apps' : 'apps',
   appUrl: process.env.BETA ? ['/beta/insights/advisor'] : ['/insights/advisor'],
-  env: `prod-stable`, // pick chrome env ['ci-beta', 'ci-stable', 'qa-beta', 'qa-stable', 'prod-beta', 'prod-stable']
+  env: process.env.CHROME_ENV ? process.env.CHROME_ENV : 'stage-stable', // pick chrome env ['stage-beta', 'stage-stable', 'prod-beta', 'prod-stable']
   useProxy: true,
   proxyVerbose: true,
-  useCloud: false,
   routes: {},
   customProxy: [
-    {
-      context: (path) => path.includes('/api/'),
-      target: 'https://console.redhat.com/',
-      secure: true,
-      changeOrigin: true,
-      autoRewrite: true,
-      ws: true,
-      onProxyReq: function (request) {
-        request.setHeader('origin', 'https://console.redhat.com/');
-      },
-    },
+    // {
+    //   context: (path) => path.includes('/api/'),
+    //   target: chromeEnv.startsWith('stage') ? 'https://console.stage.redhat.com/' : 'https://console.redhat.com/',
+    //   secure: true,
+    //   changeOrigin: true,
+    //   autoRewrite: true,
+    //   ws: true,
+    //   onProxyReq: function (request) {
+    //     request.setHeader('origin', chromeEnv.startsWith('stage') ? 'https://console.stage.redhat.com/' : 'https://console.redhat.com/');
+    //   },
+    // },
   ],
 };
 
@@ -37,11 +39,11 @@ const { config: webpackConfig, plugins } = config({
   debug: true,
   sassPrefix: '.advisor, .inventory',
   useFileHash: false,
+  env: chromeEnv, // pick chrome env ['stage-beta', 'stage-stable', 'prod-beta', 'prod-stable']
   ...(process.env.PROXY ? webpackProxy : insightsProxy),
   exposes: {
     './RootApp': resolve(__dirname, '../src/DevEntry'),
   },
-  env: 'prod-stable',
   localChrome: process.env.INSIGHTS_CHROME,
 });
 

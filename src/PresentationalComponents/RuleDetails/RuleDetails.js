@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint max-len: 0 */
 import './_RuleDetails.scss';
 
@@ -21,7 +22,7 @@ import { compact, intersection } from 'lodash';
 
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
-import { Link } from 'react-router-dom';
+import { Link, Router } from 'react-router-dom';
 import Markdown from 'react-markdown';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -250,29 +251,32 @@ const BaseRuleDetails = ({
   );
 };
 
-// eslint-disable-next-line react/prop-types
-const RuleDetails = ({ customItnl, intlProps, ...props }) => {
-  const Wrapper = customItnl ? IntlProvider : React.Fragment;
+const RuleDetails = ({ intlProps, history, ...props }) => {
+  const RouterWrapper = history ? Router : React.Fragment;
+  const IntlWrapper = intlProps ? IntlProvider : React.Fragment;
+
   return (
-    <Wrapper
-      {...(customItnl && {
-        locale: navigator.language.slice(0, 2),
-        messages,
-        onError: console.log,
-        ...intlProps,
-      })}
-    >
-      <BaseRuleDetails {...props} />
-    </Wrapper>
+    <RouterWrapper {...(history && { history })}>
+      <IntlWrapper
+        {...(intlProps && {
+          locale: navigator.language.slice(0, 2),
+          messages,
+          onError: console.log,
+          ...intlProps,
+        })}
+      >
+        <BaseRuleDetails {...props} />
+      </IntlWrapper>
+    </RouterWrapper>
   );
 };
 
-BaseRuleDetails.propTypes = {
-  children: PropTypes.any,
-  rule: PropTypes.object,
+RuleDetails.propTypes = {
+  children: PropTypes.any.isRequired,
+  rule: PropTypes.object.isRequired,
   topics: PropTypes.array,
-  header: PropTypes.any,
-  isDetailsPage: PropTypes.bool,
+  header: PropTypes.any.isRequired,
+  isDetailsPage: PropTypes.bool.isRequired,
   resolutionRisk: PropTypes.number,
   riskOfChangeDesc: PropTypes.string,
   /**
@@ -282,13 +286,21 @@ BaseRuleDetails.propTypes = {
    */
   onFeedbackChanged: PropTypes.func,
   /**
-   * isOpenShift - true when OpenShift rule is contained within `rule` param
+   * isOpenShift - true when `rule` contains an OCP rule
    */
-  isOpenShift: PropTypes.bool,
+  isOpenShift: PropTypes.bool.isRequired,
   /**
-   * messageDescriptors - contains intl message descriptors when customItnl set to true
+   * intlProps - if provided, it will be passed to IntlProvider custom wrapper
+   */
+  intlProps: PropTypes.object,
+  /**
+   * messageDescriptors - allows to use custom message descriptors
    */
   messageDescriptors: PropTypes.object,
+  /**
+   * history - if provided, it will be passed to Router custom wrapper
+   */
+  history: PropTypes.object,
 };
 
 export default RuleDetails;
