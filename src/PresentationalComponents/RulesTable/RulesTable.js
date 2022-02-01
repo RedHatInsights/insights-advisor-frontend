@@ -100,13 +100,8 @@ const RulesTable = () => {
       transforms: [sortable, cellWidth(15)],
     },
     {
-      title: (
-        <React.Fragment>
-          <AnsibeTowerIcon size="md" /> {intl.formatMessage(messages.ansible)}
-        </React.Fragment>
-      ),
+      title: intl.formatMessage(messages.remediation),
       transforms: [sortable, cellWidth(15), fitContent],
-      dataLabel: intl.formatMessage(messages.ansible),
     },
   ]);
 
@@ -452,9 +447,12 @@ const RulesTable = () => {
                 title: (
                   <div className="ins-c-center-text " key={key}>
                     {value.playbook_count ? (
-                      <CheckCircleIcon className="ansibleCheck" />
+                      <span>
+                        <AnsibeTowerIcon size="sm" />{' '}
+                        {intl.formatMessage(messages.playbook)}
+                      </span>
                     ) : (
-                      intl.formatMessage(messages.no)
+                      intl.formatMessage(messages.manual)
                     )}
                   </div>
                 ),
