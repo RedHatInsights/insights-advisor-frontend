@@ -273,7 +273,7 @@ export const FILTER_CATEGORIES = {
   },
   has_playbook: {
     type: 'checkbox',
-    title: 'ansible support',
+    title: 'remediation',
     urlParam: 'has_playbook',
     values: [
       {
@@ -281,18 +281,10 @@ export const FILTER_CATEGORIES = {
           intl.formatMessage(messages.ansibleSupportYes),
           intlSettings
         ),
-        text: intlHelper(
-          intl.formatMessage(messages.ansibleSupportYes),
-          intlSettings
-        ),
         value: 'true',
       },
       {
         label: intlHelper(
-          intl.formatMessage(messages.ansibleSupportNo),
-          intlSettings
-        ),
-        text: intlHelper(
           intl.formatMessage(messages.ansibleSupportNo),
           intlSettings
         ),
