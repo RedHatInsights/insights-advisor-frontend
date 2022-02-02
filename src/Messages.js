@@ -141,8 +141,14 @@ export default defineMessages({
   },
   ruleIsDisabledBody: {
     id: 'ruleIsDisabledBody',
+    description: 'Explaining that the recommendations disabled',
+    defaultMessage: 'This recommendation was disabled and has no results.',
+  },
+  ruleIsDisabledBodyWithJustification: {
+    id: 'ruleIsDisabledBodyWithJustification',
     description: 'Explaining that the recommendationis disabled',
-    defaultMessage: 'This recommendation has been disabled and has no results.',
+    defaultMessage:
+      'This recommendation has been disabled because {reason} and has no results.',
   },
   ruleIsDisabledJustification: {
     id: 'ruleIsDisabledJustification',
@@ -202,6 +208,13 @@ export default defineMessages({
     defaultMessage:
       'None of your connected systems are affected by enabled recommendations.',
   },
+  rulesTableNoRuleHitsEnabledRulesBodySecondLine: {
+    id: 'rulestable.norulehits.enabledrulesbodysecondline',
+    description:
+      'Recommendation table, no recommendations message for enabled rules, body second line',
+    defaultMessage:
+      'To find more recommendations, expand your filter settings to include all recommendations.',
+  },
   noRecommendations: {
     id: 'noRecommendations',
     description:
@@ -213,13 +226,22 @@ export default defineMessages({
     id: 'rulestable.norules.disabledrulesbody',
     description:
       'Recommendation table, no recommendations message for any disabled rules, body',
-    defaultMessage: 'Currently there are no disabled recommendations.',
+    defaultMessage:
+      "We haven't detected any issues with your connected systems.",
+  },
+  rulesTableNoRuleHitsDisabledRulesBodySecondLine: {
+    id: 'rulestable.norules.disabledrulesbodysecondline',
+    description:
+      'Recommendation table, no recommendations message for any disabled rules, body second line',
+    defaultMessage:
+      'None of your connected systems are affected by enabled recommendations, and you currently have no disabled recommendations.',
   },
   rulesTableNoRuleHitsRedHatDisabledRulesBody: {
     id: 'rulestable.norules.redhatdisabledrulesbody',
     description:
       'Recommendation table, no recommendations message for any Red Hat disabled rules, body',
-    defaultMessage: 'Currently there are no Red Hat disabled recommendations.',
+    defaultMessage:
+      'This recommendation was disabled proactively by Red Hat and has no results.',
   },
   rulesTableNoRuleHitsAddDisabledButton: {
     id: 'rulestable.norulehits.adddisabledbutton',
@@ -634,6 +656,11 @@ export default defineMessages({
     description: 'Topics list, no topics body',
     defaultMessage:
       'Either no topics presently exist or there is an issue presenting them.',
+  },
+  topicsListNoHitsBody: {
+    id: 'topicslist.nohits.body',
+    description: 'Topics list, no topics body',
+    defaultMessage: 'To continue, edit your filter settings and search again.',
   },
   remediate: {
     id: 'remediate',

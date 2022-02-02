@@ -662,7 +662,7 @@ const BaseSystemAdvisor = () => {
                 <CardBody>
                   <MessageState
                     title="No matching recommendations found"
-                    text={`This filter criteria matches no recommendations. Try changing your filter settings.`}
+                    text={`To continue, edit your filter settings and search again.`}
                   />
                 </CardBody>
               </Card>

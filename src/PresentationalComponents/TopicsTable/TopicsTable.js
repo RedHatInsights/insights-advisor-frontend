@@ -173,11 +173,9 @@ const TopicsTable = ({ props }) => {
                               .formatMessage(messages.topics)
                               .toLowerCase(),
                           })}
-                          text={intl.formatMessage(messages.noHitsBody, {
-                            item: intl
-                              .formatMessage(messages.topics)
-                              .toLowerCase(),
-                          })}
+                          text={intl.formatMessage(
+                            messages.topicsListNoHitsBody
+                          )}
                         />
                       ),
                       props: { colSpan: 4 },
