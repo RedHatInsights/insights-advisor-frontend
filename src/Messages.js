@@ -27,10 +27,10 @@ export default defineMessages({
     description: 'Used as a title',
     defaultMessage: 'Recommendations',
   },
-  added: {
-    id: 'added',
+  modified: {
+    id: 'modified',
     description: 'Recommendation table column title',
-    defaultMessage: 'Added',
+    defaultMessage: 'Modified',
   },
   rule: {
     id: 'rule',
@@ -520,10 +520,10 @@ export default defineMessages({
     description: 'Register the system to Red Hat Insights',
     defaultMessage: 'Register the system to Red Hat Insights.',
   },
-  rulesDetailsPubishdate: {
-    id: 'rulesdetails.publishdate',
-    description: 'Recommendationsdetails, publish date',
-    defaultMessage: 'Publish date: {date}',
+  rulesDetailsModifieddate: {
+    id: 'rulesdetails.modifieddate',
+    description: 'Recommendationsdetails, modified date',
+    defaultMessage: 'Modified date: {date}',
   },
   affectedSystems: {
     id: 'affectedSystems',

@@ -1,7 +1,7 @@
 {
   "en": {
     "actions": "Actions",
-    "added": "Added",
+    "modified": "Modified",
     "adjustFilters": "Adjust your filters and try again.",
     "affectedSystems": "Affected systems",
     "all": "All",
@@ -157,7 +157,7 @@
     "ruleIsDisabledJustification": "This recommendation has been disabled for all systems for the following reason:",
     "ruleIsDisabledTooltip": "Indicates this recommendation across all systems will not be shown in reports and dashboards.",
     "rules": "Rules",
-    "rulesdetails.publishdate": "Publish date: {date}",
+    "rulesdetails.modifieddate": "Modified date: {date}",
     "rulesdetails.totalriskbody": "The total risk of this remediation is <strong>{risk}</strong>, based on the combination of likelihood and impact to remediate.",
     "rulestable.action.hide": "Hide recommendations with no impacted systems",
     "rulestable.action.hideDisabled": "Hide disabled recommendations",
