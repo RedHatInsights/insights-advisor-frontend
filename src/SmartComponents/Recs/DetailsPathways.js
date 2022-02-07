@@ -112,7 +112,7 @@ const PathwayDetails = () => {
               }
             />
             <p>
-              {intl.formatMessage(messages.rulesDetailsPubishdate, {
+              {intl.formatMessage(messages.rulesDetailsModifieddate, {
                 date: (
                   <DateFormat
                     date={new Date(pathway.publish_date)}
