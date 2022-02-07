@@ -97,7 +97,7 @@ const BaseSystemAdvisor = () => {
       transforms: [sortable],
     },
     {
-      title: intl.formatMessage(messages.added),
+      title: intl.formatMessage(messages.modified),
       transforms: [sortable, cellWidth(15)],
     },
     {

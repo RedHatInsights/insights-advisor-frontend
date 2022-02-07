@@ -80,7 +80,7 @@ const RulesTable = () => {
       transforms: [sortable, cellWidth(40)],
     },
     {
-      title: intl.formatMessage(messages.added),
+      title: intl.formatMessage(messages.modified),
       transforms: [sortable, cellWidth(10)],
     },
     {
