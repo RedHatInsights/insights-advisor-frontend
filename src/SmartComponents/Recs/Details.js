@@ -227,7 +227,7 @@ const OverviewDetails = () => {
                     }
                   />
                   <p>
-                    {intl.formatMessage(messages.rulesDetailsPubishdate, {
+                    {intl.formatMessage(messages.rulesDetailsModifieddate, {
                       date: (
                         <DateFormat
                           date={new Date(rule.publish_date)}
