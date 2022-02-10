@@ -27,10 +27,10 @@ export default defineMessages({
     description: 'Used as a title',
     defaultMessage: 'Recommendations',
   },
-  added: {
-    id: 'added',
+  modified: {
+    id: 'modified',
     description: 'Recommendation table column title',
-    defaultMessage: 'Added',
+    defaultMessage: 'Modified',
   },
   rule: {
     id: 'rule',
@@ -59,10 +59,20 @@ export default defineMessages({
     description: 'Systems title used in exec report',
     defaultMessage: 'Systems exposed',
   },
-  ansible: {
-    id: 'ansible',
-    description: 'Recommendation table column title',
-    defaultMessage: 'Ansible',
+  remediation: {
+    id: 'remediation',
+    description: 'Remediation table column title',
+    defaultMessage: 'Remediation',
+  },
+  playbook: {
+    id: 'playbook',
+    description: 'Remediation/Playbook table cell text',
+    defaultMessage: 'Playbook',
+  },
+  manual: {
+    id: 'manual',
+    description: 'Maunal table cell text',
+    defaultMessage: 'Manual',
   },
   rulesTableHideReportsErrorEnabled: {
     id: 'rulestable.hidereports.errorenabling',
@@ -98,29 +108,15 @@ export default defineMessages({
     description: 'Exclaiming that the recommendationis disabled',
     defaultMessage: 'Recommendation is disabled',
   },
-  recSuccessfullyDisabledForSystem: {
-    id: 'recSuccessfullyDisabledForSystem',
-    description:
-      'Explaining that the rec was disabled successfully for systems',
-    defaultMessage:
-      'Recommendation successfully disabled for selected system(s)',
-  },
-  recSuccessfullyEnabledForSystem: {
-    id: 'recSuccessfullyEnabledForSystem',
-    description:
-      'Explaining that the rec was disabled successfully for systems',
-    defaultMessage:
-      'Recommendation successfully enabled for selected system(s)',
-  },
   recSuccessfullyDisabled: {
     id: 'recSuccessfullyDisabled',
     description: 'Explaining that the rec was disabled successfully',
-    defaultMessage: 'Recommendation successfully disabled',
+    defaultMessage: 'Recommendation disabled',
   },
   recSuccessfullyEnabled: {
     id: 'recSuccessfullyEnabled',
     description: 'Explaining that the rule was enabled successfully',
-    defaultMessage: 'Recommendation successfully enabled',
+    defaultMessage: 'Recommendation enabled',
   },
   ruleIsDisabledTooltip: {
     id: 'ruleIsDisabledTooltip',
@@ -131,8 +127,14 @@ export default defineMessages({
   },
   ruleIsDisabledBody: {
     id: 'ruleIsDisabledBody',
+    description: 'Explaining that the recommendations disabled',
+    defaultMessage: 'This recommendation was disabled and has no results.',
+  },
+  ruleIsDisabledBodyWithJustification: {
+    id: 'ruleIsDisabledBodyWithJustification',
     description: 'Explaining that the recommendationis disabled',
-    defaultMessage: 'This recommendation has been disabled and has no results.',
+    defaultMessage:
+      'This recommendation has been disabled because {reason} and has no results.',
   },
   ruleIsDisabledJustification: {
     id: 'ruleIsDisabledJustification',
@@ -192,6 +194,13 @@ export default defineMessages({
     defaultMessage:
       'None of your connected systems are affected by enabled recommendations.',
   },
+  rulesTableNoRuleHitsEnabledRulesBodySecondLine: {
+    id: 'rulestable.norulehits.enabledrulesbodysecondline',
+    description:
+      'Recommendation table, no recommendations message for enabled rules, body second line',
+    defaultMessage:
+      'To find more recommendations, expand your filter settings to include all recommendations.',
+  },
   noRecommendations: {
     id: 'noRecommendations',
     description:
@@ -203,13 +212,22 @@ export default defineMessages({
     id: 'rulestable.norules.disabledrulesbody',
     description:
       'Recommendation table, no recommendations message for any disabled rules, body',
-    defaultMessage: 'Currently there are no disabled recommendations.',
+    defaultMessage:
+      "We haven't detected any issues with your connected systems.",
+  },
+  rulesTableNoRuleHitsDisabledRulesBodySecondLine: {
+    id: 'rulestable.norules.disabledrulesbodysecondline',
+    description:
+      'Recommendation table, no recommendations message for any disabled rules, body second line',
+    defaultMessage:
+      'None of your connected systems are affected by enabled recommendations, and you currently have no disabled recommendations.',
   },
   rulesTableNoRuleHitsRedHatDisabledRulesBody: {
     id: 'rulestable.norules.redhatdisabledrulesbody',
     description:
       'Recommendation table, no recommendations message for any Red Hat disabled rules, body',
-    defaultMessage: 'Currently there are no Red Hat disabled recommendations.',
+    defaultMessage:
+      'This recommendation was disabled proactively by Red Hat and has no results.',
   },
   rulesTableNoRuleHitsAddDisabledButton: {
     id: 'rulestable.norulehits.adddisabledbutton',
@@ -463,7 +481,7 @@ export default defineMessages({
   overviewRemediateBody: {
     id: 'overview.remediate.body',
     description: 'Overview, body for remediate',
-    defaultMessage: `Easily generate an Ansible playbook to 
+    defaultMessage: `Easily generate an Ansible playbook to
         quickly and effectively remediate Insights findings`,
   },
   overviewRemediateAction: {
@@ -510,10 +528,10 @@ export default defineMessages({
     description: 'Register the system to Red Hat Insights',
     defaultMessage: 'Register the system to Red Hat Insights.',
   },
-  rulesDetailsPubishdate: {
-    id: 'rulesdetails.publishdate',
-    description: 'Recommendationsdetails, publish date',
-    defaultMessage: 'Publish date: {date}',
+  rulesDetailsModifieddate: {
+    id: 'rulesdetails.modifieddate',
+    description: 'Recommendationsdetails, modified date',
+    defaultMessage: 'Modified date: {date}',
   },
   affectedSystems: {
     id: 'affectedSystems',
@@ -624,6 +642,11 @@ export default defineMessages({
     description: 'Topics list, no topics body',
     defaultMessage:
       'Either no topics presently exist or there is an issue presenting them.',
+  },
+  topicsListNoHitsBody: {
+    id: 'topicslist.nohits.body',
+    description: 'Topics list, no topics body',
+    defaultMessage: 'To continue, edit your filter settings and search again.',
   },
   remediate: {
     id: 'remediate',
@@ -1075,13 +1098,13 @@ export default defineMessages({
   },
   ansibleSupportYes: {
     id: 'ansibleSupportYes',
-    description: 'Ansible remediation support',
-    defaultMessage: 'Ansible remediation support',
+    description: 'Ansible playbook',
+    defaultMessage: 'Ansible playbook',
   },
   ansibleSupportNo: {
     id: 'ansibleSupportNo',
-    description: 'No Ansible remediation support',
-    defaultMessage: 'No Ansible remediation support',
+    description: 'Manual',
+    defaultMessage: 'Manual',
   },
   yes: {
     id: 'yes',

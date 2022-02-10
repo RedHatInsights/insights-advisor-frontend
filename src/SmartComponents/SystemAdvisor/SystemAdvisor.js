@@ -3,7 +3,6 @@ import './SystemAdvisor.scss';
 import {
   AnsibeTowerIcon,
   ChartSpikeIcon,
-  CheckCircleIcon,
   CheckIcon,
   ExternalLinkAltIcon,
   PficonSatelliteIcon,
@@ -98,7 +97,7 @@ const BaseSystemAdvisor = () => {
       transforms: [sortable],
     },
     {
-      title: intl.formatMessage(messages.added),
+      title: intl.formatMessage(messages.modified),
       transforms: [sortable, cellWidth(15)],
     },
     {
@@ -106,14 +105,8 @@ const BaseSystemAdvisor = () => {
       transforms: [sortable],
     },
     {
-      title: (
-        <span>
-          {AnsibeTowerIcon && <AnsibeTowerIcon size="md" />}{' '}
-          {intl.formatMessage(messages.ansible)}
-        </span>
-      ),
+      title: intl.formatMessage(messages.remediation),
       transforms: [sortable, fitContent],
-      dataLabel: intl.formatMessage(messages.ansible),
     },
   ];
 
@@ -139,10 +132,7 @@ const BaseSystemAdvisor = () => {
         addNotification(result.getNotification())
       }
     >
-      {AnsibeTowerIcon && (
-        <AnsibeTowerIcon size="sm" className="ins-c-background__default" />
-      )}{' '}
-      Remediate
+      {intl.formatMessage(messages.remediate)}
     </RemediationButton>,
   ];
 
@@ -239,9 +229,12 @@ const BaseSystemAdvisor = () => {
               title: (
                 <div className="ins-c-center-text" key={key}>
                   {resolution.has_playbook ? (
-                    <CheckCircleIcon className="successColorOverride" />
+                    <span>
+                      <AnsibeTowerIcon size="sm" />{' '}
+                      {intl.formatMessage(messages.playbook)}
+                    </span>
                   ) : (
-                    'No'
+                    intl.formatMessage(messages.manual)
                   )}
                 </div>
               ),
@@ -664,7 +657,7 @@ const BaseSystemAdvisor = () => {
                 <CardBody>
                   <MessageState
                     title="No matching recommendations found"
-                    text={`This filter criteria matches no recommendations. Try changing your filter settings.`}
+                    text={`To continue, edit your filter settings and search again.`}
                   />
                 </CardBody>
               </Card>

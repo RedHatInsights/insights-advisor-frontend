@@ -14,7 +14,6 @@ import {
 } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 
-import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { Get } from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
@@ -147,7 +146,7 @@ const Inventory = ({
   };
 
   const handleRefresh = (options) => {
-    /* Rec table doesn't use the same sorting params as sys table, switching between the two results in the rec table blowing up cuz its trying to 
+    /* Rec table doesn't use the same sorting params as sys table, switching between the two results in the rec table blowing up cuz its trying to
     read the endpoint with incorrect sorting params, if we hold of on updating the sysable url params when using the this component in pathways, it
     solves this issue for the time being*/
     const { name, display_name } = options;
@@ -343,8 +342,7 @@ const Inventory = ({
             dataProvider={remediationDataProvider}
             onRemediationCreated={(result) => onRemediationCreated(result)}
           >
-            <AnsibeTowerIcon size="sm" className="ins-c-background__default" />
-            &nbsp;{intl.formatMessage(messages.remediate)}
+            {intl.formatMessage(messages.remediate)}
           </RemediationButton>
         }
         actionsConfig={{
@@ -462,7 +460,8 @@ const Inventory = ({
                 selectedTags,
                 workloads,
                 SID,
-                overrideData
+                overrideData,
+                dispatch
               );
             },
             isDisabled: !permsExport || entities?.rows?.length === 0,

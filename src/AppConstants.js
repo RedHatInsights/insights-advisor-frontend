@@ -273,7 +273,7 @@ export const FILTER_CATEGORIES = {
   },
   has_playbook: {
     type: 'checkbox',
-    title: 'ansible support',
+    title: 'remediation',
     urlParam: 'has_playbook',
     values: [
       {
@@ -281,18 +281,10 @@ export const FILTER_CATEGORIES = {
           intl.formatMessage(messages.ansibleSupportYes),
           intlSettings
         ),
-        text: intlHelper(
-          intl.formatMessage(messages.ansibleSupportYes),
-          intlSettings
-        ),
         value: 'true',
       },
       {
         label: intlHelper(
-          intl.formatMessage(messages.ansibleSupportNo),
-          intlSettings
-        ),
-        text: intlHelper(
           intl.formatMessage(messages.ansibleSupportNo),
           intlSettings
         ),
@@ -528,4 +520,20 @@ export const PERMS = {
   export: ['advisor:*:*', 'advisor:exports:read'],
   disableRec: ['advisor:*:*', 'advisor:disable-recommendations:write'],
   viewRecs: ['advisor:*:*', 'advisor:recommendation-results:read'],
+};
+
+export const exportNotifications = {
+  pending: {
+    title: `Preparing export. Once complete, your download will start automatically.`,
+    variant: 'info',
+  },
+  success: {
+    title: `Downloading export`,
+    variant: 'success',
+  },
+  error: {
+    title: 'Couldn’t download export. Reinitiate this export to try again.',
+    variant: 'danger',
+    autoDismiss: false,
+  },
 };

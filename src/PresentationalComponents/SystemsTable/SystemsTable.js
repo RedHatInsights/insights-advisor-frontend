@@ -31,6 +31,7 @@ import { updateSysFilters } from '../../Services/Filters';
 import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
+import NoSystemsTable from './Components/NoSystemsTable';
 
 const SystemsTable = () => {
   const intl = useIntl();
@@ -358,6 +359,7 @@ const SystemsTable = () => {
         hasCheckbox={false}
         filterConfig={{ items: filterConfigItems }}
         activeFiltersConfig={activeFiltersConfig}
+        noSystemsTable={NoSystemsTable}
         exportConfig={{
           onSelect: (_e, fileType) =>
             downloadReport(
@@ -366,7 +368,9 @@ const SystemsTable = () => {
               filters,
               selectedTags,
               workloads,
-              SID
+              SID,
+              null,
+              dispatch
             ),
           extraItems: [
             <li key="download-pd" role="menuitem">
