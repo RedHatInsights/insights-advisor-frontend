@@ -175,14 +175,9 @@ const BaseSystemAdvisor = () => {
         (rowVal, rowKey) =>
           rowKey % 2 === 0 && rowVal.rule.rule_id === rule.rule_id && rowVal
       );
-      const selected = entity.length ? entity[0].selected : false;
-      const isOpen = rows.length
-        ? entity.length
-          ? entity[0].isOpen
-          : false
-        : key === 0
-        ? true
-        : false;
+
+      const selected = (entity.length && entity[0].selected) || false;
+      const isOpen = (entity.length && entity[0].isOpen) || false;
 
       const reportRow = [
         {
