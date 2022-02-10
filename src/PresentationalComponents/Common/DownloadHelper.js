@@ -1,6 +1,8 @@
-import { BASE_URL } from '../../AppConstants';
-import { Get } from '../../Utilities/Api';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
 import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
+
+import { BASE_URL, exportNotifications } from '../../AppConstants';
+import { Get } from '../../Utilities/Api';
 import { workloadQueryBuilder } from '../Common/Tables';
 
 const fileName = (exportTable) => {
@@ -31,7 +33,8 @@ const downloadHelper = async (
   selectedTags,
   workloads,
   SID,
-  overrideData
+  overrideData,
+  dispatch
 ) => {
   try {
     let data;
@@ -41,6 +44,7 @@ const downloadHelper = async (
       let options = selectedTags?.length && { tags: selectedTags };
       workloads &&
         (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
+      dispatch(addNotification(exportNotifications.pending));
       data = (
         await Get(
           `${BASE_URL}/export/${exportTable}.${
@@ -49,6 +53,11 @@ const downloadHelper = async (
           {},
           { ...filters, ...options }
         )
+          .then((result) => {
+            dispatch(addNotification(exportNotifications.success));
+            return result;
+          })
+          .catch(() => dispatch(addNotification(exportNotifications.error)))
       ).data;
     }
     let formattedData = format === 'json' ? JSON.stringify(data) : data;

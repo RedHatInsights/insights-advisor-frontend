@@ -108,29 +108,15 @@ export default defineMessages({
     description: 'Exclaiming that the recommendationis disabled',
     defaultMessage: 'Recommendation is disabled',
   },
-  recSuccessfullyDisabledForSystem: {
-    id: 'recSuccessfullyDisabledForSystem',
-    description:
-      'Explaining that the rec was disabled successfully for systems',
-    defaultMessage:
-      'Recommendation successfully disabled for selected system(s)',
-  },
-  recSuccessfullyEnabledForSystem: {
-    id: 'recSuccessfullyEnabledForSystem',
-    description:
-      'Explaining that the rec was disabled successfully for systems',
-    defaultMessage:
-      'Recommendation successfully enabled for selected system(s)',
-  },
   recSuccessfullyDisabled: {
     id: 'recSuccessfullyDisabled',
     description: 'Explaining that the rec was disabled successfully',
-    defaultMessage: 'Recommendation successfully disabled',
+    defaultMessage: 'Recommendation disabled',
   },
   recSuccessfullyEnabled: {
     id: 'recSuccessfullyEnabled',
     description: 'Explaining that the rule was enabled successfully',
-    defaultMessage: 'Recommendation successfully enabled',
+    defaultMessage: 'Recommendation enabled',
   },
   ruleIsDisabledTooltip: {
     id: 'ruleIsDisabledTooltip',

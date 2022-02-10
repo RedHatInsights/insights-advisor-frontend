@@ -727,7 +727,9 @@ const RulesTable = () => {
               filters,
               selectedTags,
               workloads,
-              SID
+              SID,
+              null,
+              dispatch
             ),
           isDisabled:
             !permsExport ||

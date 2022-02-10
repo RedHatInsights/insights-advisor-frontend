@@ -152,7 +152,7 @@ const OverviewDetails = () => {
         variant: 'success',
         timeout: true,
         dismissable: true,
-        title: intl.formatMessage(messages.recSuccessfullyEnabledForSystem),
+        title: intl.formatMessage(messages.recSuccessfullyEnabled),
       });
     } catch (error) {
       addNotification({

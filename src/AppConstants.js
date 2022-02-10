@@ -521,3 +521,19 @@ export const PERMS = {
   disableRec: ['advisor:*:*', 'advisor:disable-recommendations:write'],
   viewRecs: ['advisor:*:*', 'advisor:recommendation-results:read'],
 };
+
+export const exportNotifications = {
+  pending: {
+    title: `Preparing export. Once complete, your download will start automatically.`,
+    variant: 'info',
+  },
+  success: {
+    title: `Downloading export`,
+    variant: 'success',
+  },
+  error: {
+    title: 'Couldn’t download export. Reinitiate this export to try again.',
+    variant: 'danger',
+    autoDismiss: false,
+  },
+};
