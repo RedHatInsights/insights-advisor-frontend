@@ -39,7 +39,6 @@ import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-i
 import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import CategoryLabel from '../Labels/CategoryLabel';
-import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { DeleteApi } from '../../Utilities/Api';
 import DisableRule from '../Modals/DisableRule';
@@ -47,7 +46,6 @@ import Failed from '../../PresentationalComponents/Loading/Failed';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
-import MessageState from '../MessageState/MessageState';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import RuleDetails from '../RuleDetails/RuleDetails';
 import RuleLabels from '../Labels/RuleLabels';
@@ -61,6 +59,8 @@ import { updateRecFilters } from '../../Services/Filters';
 import { useGetRecsQuery } from '../../Services/Recs';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
+
+import { emptyRows } from './helpers';
 
 const RulesTable = () => {
   const intl = useIntl();
@@ -264,19 +264,6 @@ const RulesTable = () => {
     return pruneFilters(localFilters, FC);
   };
 
-  const noRuleHitsBodyMessage = (rule_status) => {
-    switch (rule_status) {
-      case 'enabled':
-        return messages.rulesTableNoRuleHitsEnabledRulesBody;
-      case 'disabled':
-        return messages.rulesTableNoRuleHitsDisabledRulesBody;
-      case 'rhdisabled':
-        return messages.rulesTableNoRuleHitsRedHatDisabledRulesBody;
-      default:
-        return messages.noRecommendations;
-    }
-  };
-
   // Builds table filters from url params
   useEffect(() => {
     if (search && filterBuilding) {
@@ -327,39 +314,7 @@ const RulesTable = () => {
   useEffect(() => {
     if (rules.data) {
       if (rules.data.length === 0) {
-        setRows([
-          {
-            cells: [
-              {
-                title: (
-                  <MessageState
-                    icon={CheckCircleIcon}
-                    iconClass="ansibleCheck"
-                    title={intl.formatMessage(
-                      messages.rulesTableNoRuleHitsTitle
-                    )}
-                    text={intl.formatMessage(
-                      noRuleHitsBodyMessage(filters.rule_status)
-                    )}
-                  >
-                    {filters.rule_status === 'enabled' && (
-                      <Button
-                        variant="link"
-                        style={{ paddingTop: 24 }}
-                        onClick={() => toggleRulesDisabled('all')}
-                      >
-                        {intl.formatMessage(
-                          messages.rulesTableNoRuleHitsAddDisabledButton
-                        )}
-                      </Button>
-                    )}
-                  </MessageState>
-                ),
-                props: { colSpan: 6 },
-              },
-            ],
-          },
-        ]);
+        setRows(emptyRows(filters, toggleRulesDisabled));
       } else {
         const rows = rules.data.flatMap((value, key) => [
           {
@@ -772,7 +727,9 @@ const RulesTable = () => {
               filters,
               selectedTags,
               workloads,
-              SID
+              SID,
+              null,
+              dispatch
             ),
           isDisabled:
             !permsExport ||

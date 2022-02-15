@@ -152,7 +152,7 @@ const OverviewDetails = () => {
         variant: 'success',
         timeout: true,
         dismissable: true,
-        title: intl.formatMessage(messages.recSuccessfullyEnabledForSystem),
+        title: intl.formatMessage(messages.recSuccessfullyEnabled),
       });
     } catch (error) {
       addNotification({
@@ -413,11 +413,24 @@ const OverviewDetails = () => {
                 />
               </React.Fragment>
             )}
+            {
+              // TODO this should also have a message specifically for RH disabled
+              // rules
+            }
             {rule.rule_status !== 'enabled' && (
               <MessageState
                 icon={BellSlashIcon}
                 title={intl.formatMessage(messages.ruleIsDisabled)}
-                text={intl.formatMessage(messages.ruleIsDisabledBody)}
+                text={
+                  recAck.justification
+                    ? intl.formatMessage(
+                        messages.ruleIsDisabledBodyWithJustification,
+                        {
+                          reason: recAck.justification,
+                        }
+                      )
+                    : intl.formatMessage(messages.ruleIsDisabledBody)
+                }
               />
             )}
           </React.Fragment>

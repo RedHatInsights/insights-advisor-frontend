@@ -108,29 +108,15 @@ export default defineMessages({
     description: 'Exclaiming that the recommendationis disabled',
     defaultMessage: 'Recommendation is disabled',
   },
-  recSuccessfullyDisabledForSystem: {
-    id: 'recSuccessfullyDisabledForSystem',
-    description:
-      'Explaining that the rec was disabled successfully for systems',
-    defaultMessage:
-      'Recommendation successfully disabled for selected system(s)',
-  },
-  recSuccessfullyEnabledForSystem: {
-    id: 'recSuccessfullyEnabledForSystem',
-    description:
-      'Explaining that the rec was disabled successfully for systems',
-    defaultMessage:
-      'Recommendation successfully enabled for selected system(s)',
-  },
   recSuccessfullyDisabled: {
     id: 'recSuccessfullyDisabled',
     description: 'Explaining that the rec was disabled successfully',
-    defaultMessage: 'Recommendation successfully disabled',
+    defaultMessage: 'Recommendation disabled',
   },
   recSuccessfullyEnabled: {
     id: 'recSuccessfullyEnabled',
     description: 'Explaining that the rule was enabled successfully',
-    defaultMessage: 'Recommendation successfully enabled',
+    defaultMessage: 'Recommendation enabled',
   },
   ruleIsDisabledTooltip: {
     id: 'ruleIsDisabledTooltip',
@@ -141,8 +127,14 @@ export default defineMessages({
   },
   ruleIsDisabledBody: {
     id: 'ruleIsDisabledBody',
+    description: 'Explaining that the recommendations disabled',
+    defaultMessage: 'This recommendation was disabled and has no results.',
+  },
+  ruleIsDisabledBodyWithJustification: {
+    id: 'ruleIsDisabledBodyWithJustification',
     description: 'Explaining that the recommendationis disabled',
-    defaultMessage: 'This recommendation has been disabled and has no results.',
+    defaultMessage:
+      'This recommendation has been disabled because {reason} and has no results.',
   },
   ruleIsDisabledJustification: {
     id: 'ruleIsDisabledJustification',
@@ -202,6 +194,13 @@ export default defineMessages({
     defaultMessage:
       'None of your connected systems are affected by enabled recommendations.',
   },
+  rulesTableNoRuleHitsEnabledRulesBodySecondLine: {
+    id: 'rulestable.norulehits.enabledrulesbodysecondline',
+    description:
+      'Recommendation table, no recommendations message for enabled rules, body second line',
+    defaultMessage:
+      'To find more recommendations, expand your filter settings to include all recommendations.',
+  },
   noRecommendations: {
     id: 'noRecommendations',
     description:
@@ -213,13 +212,22 @@ export default defineMessages({
     id: 'rulestable.norules.disabledrulesbody',
     description:
       'Recommendation table, no recommendations message for any disabled rules, body',
-    defaultMessage: 'Currently there are no disabled recommendations.',
+    defaultMessage:
+      "We haven't detected any issues with your connected systems.",
+  },
+  rulesTableNoRuleHitsDisabledRulesBodySecondLine: {
+    id: 'rulestable.norules.disabledrulesbodysecondline',
+    description:
+      'Recommendation table, no recommendations message for any disabled rules, body second line',
+    defaultMessage:
+      'None of your connected systems are affected by enabled recommendations, and you currently have no disabled recommendations.',
   },
   rulesTableNoRuleHitsRedHatDisabledRulesBody: {
     id: 'rulestable.norules.redhatdisabledrulesbody',
     description:
       'Recommendation table, no recommendations message for any Red Hat disabled rules, body',
-    defaultMessage: 'Currently there are no Red Hat disabled recommendations.',
+    defaultMessage:
+      'This recommendation was disabled proactively by Red Hat and has no results.',
   },
   rulesTableNoRuleHitsAddDisabledButton: {
     id: 'rulestable.norulehits.adddisabledbutton',
@@ -634,6 +642,11 @@ export default defineMessages({
     description: 'Topics list, no topics body',
     defaultMessage:
       'Either no topics presently exist or there is an issue presenting them.',
+  },
+  topicsListNoHitsBody: {
+    id: 'topicslist.nohits.body',
+    description: 'Topics list, no topics body',
+    defaultMessage: 'To continue, edit your filter settings and search again.',
   },
   remediate: {
     id: 'remediate',
@@ -1196,5 +1209,36 @@ export default defineMessages({
     description: 'By enabling this recommendation',
     defaultMessage:
       'This pathway is expected to improve <strong>{category}</strong> on <strong>{systems, plural, one {# system} other {# systems}}</strong> and resolve <strong>{incidents, plural, one {# incident} other {# incidents}}</strong>.',
+  },
+  introLearnMoreButton: {
+    id: 'introLearnMoreButton',
+    description: 'App intro label',
+    defaultMessage:
+      'Learn more about Insights with self-guided onboarding tours in the Resource Center.',
+  },
+  introExploreInsights: {
+    id: 'introExploreInsights',
+    description: 'App intro button label',
+    defaultMessage: 'Explore Insights',
+  },
+  introTakeTour: {
+    id: 'introTakeTour',
+    description: 'App intro button label',
+    defaultMessage: 'Take Advisor tour',
+  },
+  introLinkOperationInsights: {
+    id: 'introLinkOperationInsights',
+    description: 'App intro link label',
+    defaultMessage: 'Operation Insights',
+  },
+  introLinkSecurityInsights: {
+    id: 'introLinkSecurityInsights',
+    description: 'App intro link label',
+    defaultMessage: 'Security Insights',
+  },
+  introLinkBusinessInsights: {
+    id: 'introLinkBusinessInsights',
+    description: 'App intro link label',
+    defaultMessage: 'Business Insights',
   },
 });

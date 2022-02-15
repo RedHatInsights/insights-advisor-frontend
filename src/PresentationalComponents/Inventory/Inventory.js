@@ -460,7 +460,8 @@ const Inventory = ({
                 selectedTags,
                 workloads,
                 SID,
-                overrideData
+                overrideData,
+                dispatch
               );
             },
             isDisabled: !permsExport || entities?.rows?.length === 0,

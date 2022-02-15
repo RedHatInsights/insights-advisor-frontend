@@ -521,3 +521,37 @@ export const PERMS = {
   disableRec: ['advisor:*:*', 'advisor:disable-recommendations:write'],
   viewRecs: ['advisor:*:*', 'advisor:recommendation-results:read'],
 };
+
+export const exportNotifications = {
+  pending: {
+    title: `Preparing export. Once complete, your download will start automatically.`,
+    variant: 'info',
+  },
+  success: {
+    title: `Downloading export`,
+    variant: 'success',
+  },
+  error: {
+    title: 'Couldn’t download export. Reinitiate this export to try again.',
+    variant: 'danger',
+    autoDismiss: false,
+  },
+};
+
+export const linksForAppIntro = {
+  operationInsights: [
+    { title: 'Advisor', link: '/insights/advisor' },
+    { title: 'Drift', link: '/insights/drift' },
+    { title: 'Inventory', link: '/insights/inventory' },
+  ],
+  securityInsights: [
+    { title: 'Vulnerability', link: '/insights/vulnerability' },
+    { title: 'Compliance', link: '/insights/complience' },
+    { title: 'Policies', link: '/insights/policies' },
+    { title: 'Patch', link: '/insights/patch' },
+  ],
+  businessInsights: [
+    { title: 'Subscriptions', link: '/insights/subscriptions' },
+    { title: 'Remediations', link: '/insights/remediations' },
+  ],
+};
