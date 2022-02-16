@@ -1,13 +1,6 @@
 import './SystemAdvisor.scss';
 
-import {
-  AnsibeTowerIcon,
-  ChartSpikeIcon,
-  CheckIcon,
-  ExternalLinkAltIcon,
-  PficonSatelliteIcon,
-  TimesCircleIcon,
-} from '@patternfly/react-icons';
+import { AnsibeTowerIcon } from '@patternfly/react-icons';
 import {
   BASE_URL,
   FILTER_CATEGORIES as FC,
@@ -16,13 +9,8 @@ import {
   RULE_CATEGORIES,
 } from '../../AppConstants';
 import {
-  Bullseye,
-  Button,
   Card,
   CardBody,
-  ClipboardCopy,
-  Stack,
-  StackItem,
   Tooltip,
   TooltipPosition,
 } from '@patternfly/react-core';
@@ -44,7 +32,6 @@ import DateFormat from '@redhat-cloud-services/frontend-components/DateFormat';
 import { Get } from '../../Utilities/Api';
 import InsightsLabel from '@redhat-cloud-services/frontend-components/InsightsLabel';
 import { List } from 'react-content-loader';
-import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
@@ -54,6 +41,13 @@ import { addNotification as addNotificationAction } from '@redhat-cloud-services
 import { capitalize } from '../../PresentationalComponents/Common/Tables';
 import messages from '../../Messages';
 import { Provider } from 'react-redux';
+import {
+  HideResultsSatelliteManaged,
+  NoMatchingRecommendations,
+  NoRecommendations,
+  InsightsNotEnabled,
+  InventoryReportFetchFailed,
+} from './EmptyStates';
 
 const BaseSystemAdvisor = () => {
   const intl = useIntl();
@@ -171,13 +165,10 @@ const BaseSystemAdvisor = () => {
       const kbaDetail = Object.keys(kbaDetails).length
         ? kbaDetails.filter((article) => article.id === value.rule.node_id)[0]
         : {};
-      const entity = rows.filter(
-        (rowVal, rowKey) =>
-          rowKey % 2 === 0 && rowVal.rule.rule_id === rule.rule_id && rowVal
-      );
 
-      const selected = (entity.length && entity[0].selected) || false;
-      const isOpen = (entity.length && entity[0].isOpen) || false;
+      const match = rows.find((row) => row?.rule?.rule_id === rule.rule_id);
+      const selected = match?.selected;
+      const isOpen = match?.isOpen || false;
 
       const reportRow = [
         {
@@ -284,6 +275,39 @@ const BaseSystemAdvisor = () => {
     builtRows.forEach((row, index) =>
       row.parent ? (row.parent = index - 1) : null
     );
+
+    if (activeReports.length < 1 || builtRows.length < 1) {
+      let EmptyState =
+        (builtRows.length === 0 && NoMatchingRecommendations) ||
+        (entity.insights_id && NoRecommendations) ||
+        InsightsNotEnabled;
+
+      return [
+        {
+          heightAuto: true,
+          cells: [
+            {
+              props: { colSpan: 5 },
+              title: <EmptyState />,
+            },
+          ],
+        },
+      ];
+    }
+
+    if (inventoryReportFetchStatus === 'failed') {
+      return [
+        {
+          heightAuto: true,
+          cells: [
+            {
+              props: { colSpan: 5 },
+              title: <InventoryReportFetchFailed entity={entity} />,
+            },
+          ],
+        },
+      ];
+    }
 
     return builtRows;
   };
@@ -613,33 +637,14 @@ const BaseSystemAdvisor = () => {
       )}
       {inventoryReportFetchStatus === 'fulfilled' &&
         (hideResultsSatelliteManaged ? (
-          <MessageState
-            icon={PficonSatelliteIcon}
-            title="Satellite managed system"
-            text={
-              <span key="satellite managed system">
-                Insights results can not be displayed for this host, as the
-                &quot;Hide Satellite Managed Systems&quot; setting has been
-                enabled by an org admin.
-                <br />
-                For more information on this setting and how to modify it,
-                <a
-                  href="https://access.redhat.com/solutions/4281761"
-                  rel="noopener"
-                >
-                  {' '}
-                  Please visit this Knowledgebase article &nbsp;
-                  <ExternalLinkAltIcon />
-                </a>
-                .
-              </span>
-            }
-          />
-        ) : activeReports.length > 0 ? (
+          <HideResultsSatelliteManaged />
+        ) : (
           <Fragment>
             <Table
               aria-label={'report-table'}
-              onSelect={onRowSelect}
+              onSelect={
+                !(rows.length === 1 && rows[0].heightAuto) && onRowSelect
+              }
               onCollapse={handleOnCollapse}
               rows={rows}
               cells={cols}
@@ -652,73 +657,8 @@ const BaseSystemAdvisor = () => {
               <TableHeader />
               <TableBody />
             </Table>
-            {results === 0 && (
-              <Card>
-                <CardBody>
-                  <MessageState
-                    title="No matching recommendations found"
-                    text={`To continue, edit your filter settings and search again.`}
-                  />
-                </CardBody>
-              </Card>
-            )}
           </Fragment>
-        ) : entity.insights_id !== null ? (
-          <Card>
-            <CardBody>
-              <MessageState
-                icon={CheckIcon}
-                iconClass="ins-c-insights__check"
-                title="No recommendations"
-                text={`No known recommendations affect this system`}
-              />
-            </CardBody>
-          </Card>
-        ) : (
-          <MessageState
-            iconClass="chartSpikeIconColor"
-            icon={ChartSpikeIcon}
-            title="Get started with Red Hat Insights"
-            text={
-              <Bullseye>
-                <Stack hasGutter>
-                  <StackItem>
-                    1. Install the client on the RHEL system.
-                    <ClipboardCopy>yum install insights-client</ClipboardCopy>
-                  </StackItem>
-                  <StackItem>
-                    2. Register the system to Red Hat Insights.
-                    <ClipboardCopy>insights-client --register</ClipboardCopy>
-                  </StackItem>
-                </Stack>
-              </Bullseye>
-            }
-          >
-            <Button
-              component="a"
-              href="https://access.redhat.com/products/red-hat-insights#getstarted"
-              target="_blank"
-              variant="primary"
-            >
-              Getting started documentation
-            </Button>
-          </MessageState>
         ))}
-      {inventoryReportFetchStatus === 'failed' && entity && (
-        <Card>
-          <CardBody>
-            <MessageState
-              icon={TimesCircleIcon}
-              title="Error getting recommendations"
-              text={
-                entity
-                  ? `There was an error fetching recommendations for this entity. Refresh your page to try again.`
-                  : `This entity can not be found or might no longer be registered to Red Hat Insights.`
-              }
-            />
-          </CardBody>
-        </Card>
-      )}
     </div>
   );
 };
