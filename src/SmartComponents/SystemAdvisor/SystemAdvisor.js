@@ -48,6 +48,7 @@ import {
   InsightsNotEnabled,
   InventoryReportFetchFailed,
 } from './EmptyStates';
+import NotConnected from '@redhat-cloud-services/frontend-components/NotConnected';
 
 const BaseSystemAdvisor = () => {
   const intl = useIntl();
@@ -604,7 +605,15 @@ const BaseSystemAdvisor = () => {
     dataFetch();
   }, []);
 
-  return (
+  return inventoryReportFetchStatus === 'fulfilled' &&
+    entity.insights_id !== null &&
+    activeReports.length <= 0 ? (
+    <NotConnected
+      titleText={intl.formatMessage(messages.notConnectedTitle)}
+      bodyText={intl.formatMessage(messages.notConnectedBody)}
+      buttonText={intl.formatMessage(messages.notConnectedButton)}
+    />
+  ) : (
     <div className="ins-c-inventory-insights__overrides">
       {inventoryReportFetchStatus === 'pending' ||
       (inventoryReportFetchStatus === 'fulfilled' &&

@@ -1241,4 +1241,20 @@ export default defineMessages({
     description: 'App intro link label',
     defaultMessage: 'Business Insights',
   },
+  notConnectedTitle: {
+    id: 'notConnectedTitle',
+    description: 'Not Connected title text',
+    defaultMessage: 'This system is not yet connected to Insights',
+  },
+  notConnectedBody: {
+    id: 'notConnectedBody',
+    description: 'Not Connected body text',
+    defaultMessage:
+      'Activate the Insights client for this system to get started.',
+  },
+  notConnectedButton: {
+    id: 'notConnectedButton',
+    description: 'Not Connected button text',
+    defaultMessage: 'Learn about the Insights client',
+  },
 });
