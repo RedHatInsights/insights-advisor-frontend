@@ -606,8 +606,7 @@ const BaseSystemAdvisor = () => {
   }, []);
 
   return inventoryReportFetchStatus === 'fulfilled' &&
-    entity.insights_id !== null &&
-    activeReports.length <= 0 ? (
+    entity.insights_id === null ? (
     <NotConnected
       titleText={intl.formatMessage(messages.notConnectedTitle)}
       bodyText={intl.formatMessage(messages.notConnectedBody)}
