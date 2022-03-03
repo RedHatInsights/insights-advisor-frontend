@@ -21,6 +21,7 @@
     "start:beta": "NODE_ENV=development PROXY=true BETA=true webpack serve --config config/dev.webpack.config.js",
     "start": "NODE_ENV=development webpack serve --config config/dev.webpack.config.js",
     "start:proxy": "NODE_ENV=development PROXY=true webpack serve --config config/dev.webpack.config.js",
+    "start:proxy:beta": "BETA=true NODE_ENV=development PROXY=true webpack serve --config config/dev.webpack.config.js",
     "test": "jest --verbose --passWithNoTests",
     "translations": "npm-run-all translations:*",
     "translations:extract": "npx formatjs extract ./src/*.js --out-file ./build/messages/src/Messages.json",
