@@ -280,6 +280,8 @@ const BaseSystemAdvisor = () => {
       row.parent ? (row.parent = index - 1) : null
     );
 
+    systemAdvisorRef.current.rowCount = builtRows.length / 2;
+
     if (activeReports.length < 1 || builtRows.length < 1) {
       let EmptyState =
         (builtRows.length === 0 && NoMatchingRecommendations) ||
@@ -588,9 +590,6 @@ const BaseSystemAdvisor = () => {
 
         const activeRuleFirstReportsData = activeRuleFirst(reportsFetch);
         fetchKbaDetails(activeRuleFirstReportsData);
-
-        systemAdvisorRef.current.rowCount =
-          activeRuleFirstReportsData?.length || 0;
 
         setRows(
           buildRows(
