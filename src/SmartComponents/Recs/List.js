@@ -135,4 +135,3 @@ const List = () => {
 List.displayName = 'recommendations-list';
 
 export default List;
-
