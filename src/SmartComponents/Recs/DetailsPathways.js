@@ -180,6 +180,7 @@ const PathwayDetails = () => {
                   selectedTags={selectedTags}
                   workloads={workloads}
                   SID={SID}
+                  showTags={true}
                 />
               </Suspense>
             )}
