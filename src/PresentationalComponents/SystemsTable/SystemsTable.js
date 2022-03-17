@@ -33,11 +33,17 @@ import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import NoSystemsTable from './Components/NoSystemsTable';
+import { useLoadModule } from '@scalprum/react-core';
 
 const SystemsTable = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const store = useStore();
+  const [{ toGroupSelectionValue, buildOSFilterConfig } = {}] = useLoadModule({
+    appName: 'inventory',
+    scope: 'inventory',
+    module: './OsFilterHelpers',
+  });
 
   const { search } = useLocation();
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
@@ -88,10 +94,18 @@ const SystemsTable = () => {
       values.length > 1 &&
       values.includes('yes') &&
       values.shift();
-    values.length > 0
-      ? setFilters({ ...filters, offset: 0, ...{ [param]: values } })
+    const passValue =
+      param === SFC.rhel_version.urlParam
+        ? Object.values(values || {}).flatMap((majorOsVersion) =>
+            Object.keys(majorOsVersion)
+          )
+        : values;
+
+    passValue.length > 0
+      ? setFilters({ ...filters, offset: 0, ...{ [param]: passValue } })
       : removeFilterParam(param);
   };
+
   const filterConfigItems = [
     {
       label: SFC.hits.title.toLowerCase(),
@@ -119,20 +133,18 @@ const SystemsTable = () => {
         items: SFC.incident.values,
       },
     },
-    {
-      label: SFC.rhel_version.title.toLowerCase(),
-      type: SFC.rhel_version.type,
-      id: SFC.rhel_version.urlParam,
-      value: `checkbox-${SFC.rhel_version.urlParam}`,
-      filterValues: {
-        key: `${SFC.rhel_version.urlParam}-filter`,
-        onChange: (_e, values) => {
-          addFilterParam(SFC.rhel_version.urlParam, values);
-        },
-        value: filters.rhel_version,
-        items: SFC.rhel_version.values,
-      },
-    },
+    ...(buildOSFilterConfig
+      ? [
+          buildOSFilterConfig({
+            label: SFC.rhel_version.title.toLowerCase(),
+            type: SFC.rhel_version.type,
+            id: SFC.rhel_version.urlParam,
+            value: toGroupSelectionValue(filters.rhel_version || []),
+            onChange: (_e, value) =>
+              addFilterParam(SFC.rhel_version.urlParam, value),
+          }),
+        ]
+      : []),
   ];
 
   const buildFilterChips = () => {
