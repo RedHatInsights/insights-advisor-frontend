@@ -361,7 +361,7 @@ const RulesTable = () => {
                         }
                       )}
                     >
-                      <InsightsLabel value={value.total_risk} />
+                      <InsightsLabel value={value.total_risk} isCompact />
                     </Tooltip>
                   </div>
                 ),
@@ -377,6 +377,7 @@ const RulesTable = () => {
                       }
                       value={ruleResolutionRisk(value)}
                       hideIcon
+                      isCompact
                     />
                     <div></div>
                   </div>
