@@ -53,7 +53,11 @@ const IntroBody = ({ isPreProduction }) => {
     <Grid hasGutter>
       <GridItem>{intl.formatMessage(messages.introLearnMoreButton)}</GridItem>
       <GridItem>
-        <Button className={'advisor_pendo_intro'} id="advisor_pendo_intro">
+        <Button
+          className={'advisor_pendo_intro'}
+          id={'advisor_pendo_intro'}
+          ouiaId={'advisor_pendo_intro'}
+        >
           {intl.formatMessage(messages.introTakeTour)}
         </Button>
       </GridItem>
