@@ -273,7 +273,6 @@ const Inventory = ({
             orderBy,
             orderDirection,
             advisorFilters,
-            // selectedTags,
             filters,
             workloads,
             SID,
@@ -294,7 +293,6 @@ const Inventory = ({
               pathway && {
                 display_name: config?.filters?.hostnameOrId,
               }),
-            // ...(selectedTags?.length && { tags: selectedTags }),
             ...(Array.isArray(advisorFilters.rhel_version) && {
               rhel_version: advisorFilters.rhel_version?.join(','),
             }),
