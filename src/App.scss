@@ -42,3 +42,11 @@ ul.navigation-secondary {
 .adv__background--global-100 {
   background-color: var(--pf-global--BackgroundColor--100);
 }
+
+button.pf-c-menu-toggle {
+  padding: 6px 8px;
+
+  &.ins-c-tagfilter {
+    padding: 0;
+  }
+}
