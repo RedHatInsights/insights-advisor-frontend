@@ -17,6 +17,7 @@ import {
   GridItem,
 } from '@patternfly/react-core/dist/esm/layouts/Grid/index';
 
+import { Text } from '@patternfly/react-core';
 import ArrowRightIcon from '@patternfly/react-icons/dist/esm/icons/arrow-right-icon';
 import CategoryLabel from '../Labels/CategoryLabel';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
@@ -54,6 +55,7 @@ const PathwayCard = (props) => {
       className={`ins-c-advisor__card--pathwaycard advisor__background--global-100`}
     >
       <CardBody className={`body`}>
+        <Text className="pf-u-pb-sm pf-u-font-weight-bold">{name}</Text>
         <CategoryLabel key={name} labelList={categories} />{' '}
         <Link to={`/recommendations/pathways/${slug}`}>
           {intl.formatMessage(messages.topicCardSystemsaffected, {

@@ -50,6 +50,7 @@ const DownloadExecReport = ({ isDisabled }) => {
 
       return [report];
     } catch (e) {
+      setLoading(false);
       dispatch(addNotification(exportNotifications.error));
 
       return [];
