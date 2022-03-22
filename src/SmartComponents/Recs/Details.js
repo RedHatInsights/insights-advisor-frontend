@@ -207,7 +207,7 @@ const OverviewDetails = () => {
       )}
       {!isFetching && !topicIsFetching && (
         <React.Fragment>
-          <PageHeader className="pageHeaderOverride">
+          <PageHeader className="adv-c-page__header">
             <Breadcrumbs ouiaId="override" current={rule.description || ''} />
           </PageHeader>
           <Main className="pf-m-light pf-u-pt-sm">
@@ -235,7 +235,7 @@ const OverviewDetails = () => {
                         />
                       ),
                     })}
-                    <Label className="categoryLabel" color="blue">
+                    <Label className="adv-c-label-category" color="blue">
                       {rule.category.name}
                     </Label>
                   </p>
@@ -256,7 +256,7 @@ const OverviewDetails = () => {
                     content={intl.formatMessage(messages.permsAction)}
                   >
                     <Dropdown
-                      className="ins-c-rec-details__actions_dropdown"
+                      className="adv-c-dropdown-details-actions"
                       onSelect={() =>
                         setActionsDropdownOpen(!actionsDropdownOpen)
                       }
@@ -312,7 +312,7 @@ const OverviewDetails = () => {
         {!isFetching ? (
           <React.Fragment>
             {(rule.hosts_acked_count > 0 || rule.rule_status !== 'enabled') && (
-              <Card className="cardOverride">
+              <Card className="adv-c-card-details">
                 <CardHeader>
                   <Title headingLevel="h4" size="xl">
                     <BellSlashIcon size="sm" />
@@ -325,7 +325,7 @@ const OverviewDetails = () => {
                     )}
                   </Title>
                 </CardHeader>
-                <CardBody>
+                <CardBody className="adv-c-card__body">
                   {rule.hosts_acked_count > 0 &&
                   rule.rule_status === 'enabled' ? (
                     <React.Fragment>
@@ -394,7 +394,7 @@ const OverviewDetails = () => {
             )}
             {rule.rule_status === 'enabled' && (
               <React.Fragment>
-                <Title className="titleOverride" headingLevel="h3" size="2xl">
+                <Title className="pf-u-mb-lg" headingLevel="h3" size="2xl">
                   {intl.formatMessage(messages.affectedSystems)}
                 </Title>
                 <Inventory

@@ -1,31 +1,27 @@
 @import '~@redhat-cloud-services/frontend-components-utilities/styles/all';
 
-.pageHeaderOverride {
+.adv-c-page__header {
   padding-bottom: .1px;
 }
 
-.cardOverride {
+.adv-c-card-details {
   margin-bottom: var(--pf-global--spacer--md);
 }
 
-.titleOverride {
+.adv-c-title-details {
   margin-bottom: var(--pf-global--spacer--lg);
 }
 
-.pf-c-card__body {
+.adv-c-card__body {
   padding-bottom: var(--pf-global--spacer--md);
 }
 
-.categoryLabel {
+.adv-c-label-category {
   margin-left: var(--pf-global--spacer--md)
 }
 
 @media only screen and (max-width: 768px) {
-  .ins-c-rec-details__actions_dropdown {
+  .adv-c-dropdown-details-actions {
     @include rem('top', -55px);
   }
-}
-
-.ins-c-advisor__pathway-detail__cards {
-  padding-bottom: 0;
 }

@@ -52,9 +52,9 @@ const PathwayCard = (props) => {
     <Card
       isFlat
       isPlain
-      className={`ins-c-advisor__card--pathwaycard advisor__background--global-100`}
+      className="adv-c-card-pathway adv__background--global-100"
     >
-      <CardBody className={`body`}>
+      <CardBody className="body">
         <Text className="pf-u-pb-sm pf-u-font-weight-bold">{name}</Text>
         <CategoryLabel key={name} labelList={categories} />{' '}
         <Link to={`/recommendations/pathways/${slug}`}>
@@ -63,12 +63,12 @@ const PathwayCard = (props) => {
           })}
         </Link>
       </CardBody>
-      <CardBody className={`body`}>{description}</CardBody>
-      <CardBody className={`body`}>
+      <CardBody className="body">{description}</CardBody>
+      <CardBody className="body">
         {has_incident && <RuleLabels rule={{ tags: 'incident' }} />}{' '}
         {RebootRequired(reboot_required)}
       </CardBody>
-      <CardFooter className={`footer`}>
+      <CardFooter className="footer">
         <Link to={`/recommendations/pathways/${slug}`}>
           {`${intl.formatMessage(messages.viewPathway)} `}
           <ArrowRightIcon />
@@ -95,10 +95,10 @@ const TotalRisk = (props) => {
     <Card
       isFlat
       isPlain
-      className={`ins-c-advisor__card--pathwaycard advisor__background--global-100`}
+      className="adv-c-card-pathway adv__background--global-100"
     >
       <CardTitle>{intl.formatMessage(messages.totalRiskPathway)}</CardTitle>
-      <CardBody className={`body`}>
+      <CardBody className="body">
         <Grid>
           <GridItem span={6}>
             <div>
@@ -181,26 +181,26 @@ const Resolution = (props) => {
     <Card
       isFlat
       isPlain
-      className={`ins-c-advisor__card--pathwaycard advisor__background--global-100`}
+      className="adv-c-card-pathway adv__background--global-100"
     >
       <CardTitle>{intl.formatMessage(messages.resolution)}</CardTitle>
       <Grid>
         <GridItem span={7}>
-          <CardBody className={`body`}>
+          <CardBody className="body">
             <InsightsLabel
               text={RISK_OF_CHANGE_LABEL[resolution_risk.risk]}
               value={resolution_risk.risk}
               hideIcon
             />
           </CardBody>
-          <CardBody className={`body`}>
+          <CardBody className="body">
             <Title headingLevel="h5" size="md">
               {name}
             </Title>
           </CardBody>
 
-          <CardBody className={`body`}>{description}</CardBody>
-          <CardBody className={`body`}>
+          <CardBody className="body">{description}</CardBody>
+          <CardBody className="body">
             {RebootRequired(reboot_required)}
           </CardBody>
         </GridItem>

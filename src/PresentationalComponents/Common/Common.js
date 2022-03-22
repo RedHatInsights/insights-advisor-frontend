@@ -30,13 +30,15 @@ const intl = createIntl(
 );
 
 const RebootRequired = (reboot_required) => (
-  <span className="system-reboot-message">
+  <span className="adv-system-reboot-message">
     <PowerOffIcon
       className={
-        reboot_required ? 'reboot-required-icon' : 'no-reboot-required-icon'
+        reboot_required
+          ? 'adv-c-icon-reboot-required'
+          : 'adv-c-icon-no-reboot-required'
       }
     />
-    <TextContent className="system-reboot-message__content">
+    <TextContent className="adv-c-text-system-reboot-message">
       <Text component={TextVariants.p}>
         {intl.formatMessage(messages.systemReboot, {
           strong: (str) => strong(str),

@@ -31,7 +31,7 @@ const RuleRating = ({ ruleId, ruleRating, updateRatingAction }) => {
   };
 
   return (
-    <span className="ratingSpanOverride">
+    <span className="adv-rating-span">
       {intl.formatMessage(messages.ruleHelpful)}
       <Button
         variant="plain"

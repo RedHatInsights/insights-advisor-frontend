@@ -78,19 +78,15 @@ const Details = () => {
         {topic?.name && <Breadcrumbs current={topic?.name} ouiaId="details" />}
         {!isFetching && (
           <React.Fragment>
-            <Title headingLevel="h3" size="2xl" className="titleOverride">
+            <Title headingLevel="h3" size="2xl" className="pf-u-mb-lg">
               {topic.name}
               {topic.featured && (
-                <Label
-                  color="blue"
-                  className="labelOverride"
-                  icon={<StarIcon />}
-                >
+                <Label color="blue" className="adv-c-label" icon={<StarIcon />}>
                   {intl.formatMessage(messages.featured)}
                 </Label>
               )}
             </Title>
-            <TextContent className="textOverride">
+            <TextContent className="pf-u-mt-md">
               <Text component={TextVariants.p}>
                 <Truncate
                   text={topic.description}
@@ -109,7 +105,7 @@ const Details = () => {
         <React.Fragment>
           {!isError ? (
             <React.Fragment>
-              <Title headingLevel="h3" size="2xl" className="titleOverride">
+              <Title headingLevel="h3" size="2xl" className="pf-u-mb-lg">
                 {intl.formatMessage(messages.recommendations)}
               </Title>
               <RulesTable />
