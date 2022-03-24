@@ -13,6 +13,7 @@ import {
   pruneFilters,
   urlBuilder,
   workloadQueryBuilder,
+  buildTagFilter,
 } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 
@@ -194,6 +195,7 @@ const SystemsTable = () => {
     let systemProfile = defaultColumns.filter(
       ({ key }) => key === 'system_profile'
     );
+    let tags = defaultColumns.filter(({ key }) => key === 'tags');
     displayName = {
       ...displayName[0],
       transforms: [sortable, wrappable],
@@ -222,11 +224,15 @@ const SystemsTable = () => {
       transforms: [wrappable],
     };
 
-    return [displayName, systemProfile, ...columns, lastSeenColumn];
+    tags = {
+      ...tags[0],
+    };
+
+    return [displayName, tags, systemProfile, ...columns, lastSeenColumn];
   };
 
   useEffect(() => {
-    let combinedFitlers;
+    let combinedFilters;
     if (search) {
       const paramsObject = paramParser();
       delete paramsObject.tags;
@@ -241,35 +247,36 @@ const SystemsTable = () => {
       paramsObject.limit === undefined || isNaN(paramsObject.limit)
         ? (paramsObject.limit = 20)
         : (paramsObject.limit = Number(paramsObject.limit[0]));
-      combinedFitlers = { ...filters, ...paramsObject };
+      combinedFilters = { ...filters, ...paramsObject };
       paramsObject.incident !== undefined &&
         !Array.isArray(paramsObject.incident) &&
         (paramsObject.incident = [`${paramsObject.incident}`]);
-      setFilters(combinedFitlers);
+      setFilters(combinedFilters);
     } else if (
       filters.limit === undefined ||
       filters.offset === undefined ||
       filters.hits === undefined
     ) {
-      combinedFitlers = {
+      combinedFilters = {
         ...filters,
         offset: 0,
         limit: 20,
         hits: ['all'],
       };
-      setFilters(combinedFitlers);
+      setFilters(combinedFilters);
     }
     setFilterBuilding(false);
-    urlBuilder(combinedFitlers, selectedTags);
+    urlBuilder(combinedFilters, selectedTags);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     !filterBuilding && (
       <InventoryTable
-        hideFilters={{ all: true, name: false }}
+        hideFilters={{ all: true, name: false, tags: false }}
         initialLoading
         autoRefresh
+        showTags
         disableDefaultColumns
         customFilters={{
           advisorFilters: filters,
@@ -300,7 +307,7 @@ const SystemsTable = () => {
             orderBy,
             orderDirection,
             advisorFilters,
-            selectedTags,
+            filters,
             workloads,
             SID,
           } = config;
@@ -322,7 +329,8 @@ const SystemsTable = () => {
             ...(Array.isArray(advisorFilters.rhel_version) && {
               rhel_version: advisorFilters.rhel_version?.join(','),
             }),
-            ...(selectedTags?.length && { tags: selectedTags }),
+            ...(filters.tagFilters?.length &&
+              buildTagFilter(filters.tagFilters)),
           };
 
           workloads &&

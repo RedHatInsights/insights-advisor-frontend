@@ -410,6 +410,7 @@ const OverviewDetails = () => {
                   SID={SID}
                   permsExport={permsExport}
                   exportTable="reports"
+                  showTags={true}
                 />
               </React.Fragment>
             )}
