@@ -1143,10 +1143,10 @@ export default defineMessages({
     description: 'pathways',
     defaultMessage: 'Pathways',
   },
-  pathway: {
-    id: 'pathway',
-    description: 'pathway',
-    defaultMessage: 'Pathway',
+  pathwaysName: {
+    id: 'pathwaysName',
+    description: 'Column title for pathway name in pathways table',
+    defaultMessage: 'Name',
   },
   recommendedPathways: {
     id: 'recommendedPathways',
