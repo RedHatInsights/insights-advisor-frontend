@@ -933,13 +933,13 @@ export default defineMessages({
   },
   incidentRules: {
     id: 'incidentRules',
-    description: 'Recommendationswith incidents',
-    defaultMessage: 'Incident recommendations',
+    description: 'Pathways with incidents',
+    defaultMessage: 'Incident pathways',
   },
   nonIncidentRules: {
     id: 'nonIncidentRules',
-    description: 'Recommendationswith no incidents',
-    defaultMessage: 'Non-incident recommendations',
+    description: 'Pathways with no incidents',
+    defaultMessage: 'Non-incident pathways',
   },
   incidentSystems: {
     id: 'incidentSystems',
