@@ -456,23 +456,16 @@ const Inventory = ({
             label: intl.formatMessage(messages.exportCsv),
             // eslint-disable-next-line no-dupe-keys
             label: intl.formatMessage(messages.exportJson),
-            onSelect: (_e, fileType) => {
-              const overrideData = entities.rows.map((sys) => ({
-                display_name: sys.display_name,
-                os: `${sys.system_profile.operating_system.name} ${sys.system_profile.operating_system.major}.${sys.system_profile.operating_system.minor}`,
-                last_seen: sys.last_seen,
-              }));
-              return downloadReport(
+            onSelect: (_e, fileType) =>
+              downloadReport(
                 exportTable,
                 fileType,
-                filters,
+                { rule_id: rule.rule_id, ...filters },
                 selectedTags,
                 workloads,
                 SID,
-                overrideData,
                 dispatch
-              );
-            },
+              ),
             isDisabled: !permsExport || entities?.rows?.length === 0,
             tooltipText: permsExport
               ? intl.formatMessage(messages.exportData)
