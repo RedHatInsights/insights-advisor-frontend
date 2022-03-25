@@ -409,7 +409,7 @@ const OverviewDetails = () => {
                   workloads={workloads}
                   SID={SID}
                   permsExport={permsExport}
-                  exportTable="reports"
+                  exportTable="systems"
                   showTags={true}
                 />
               </React.Fragment>

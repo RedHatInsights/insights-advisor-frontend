@@ -389,7 +389,6 @@ const SystemsTable = () => {
               selectedTags,
               workloads,
               SID,
-              null,
               dispatch
             ),
           extraItems: [
