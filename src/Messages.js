@@ -1257,4 +1257,10 @@ export default defineMessages({
     description: 'Not Connected button text',
     defaultMessage: 'Learn about the Insights client',
   },
+  staticRemediationDesc: {
+    id: 'staticRemediationDesc',
+    description: 'static remediation description',
+    defaultMessage:
+      ' To fully remediate all recommendations, there may be additional steps needed.',
+  },
 });
