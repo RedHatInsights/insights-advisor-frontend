@@ -692,6 +692,11 @@ export default defineMessages({
       'Used in the system table title column, the last time a system has checked in',
     defaultMessage: 'Last seen',
   },
+  noTags: {
+    id: 'noTags',
+    description: 'No tags message, title',
+    defaultMessage: 'No tags',
+  },
   noHitsTitle: {
     id: 'nohits.title',
     description: 'No hits message, title',
