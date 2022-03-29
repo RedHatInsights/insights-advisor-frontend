@@ -192,6 +192,7 @@
     "severity": "Severity",
     "severityHeader": "Identified recommendations by severity",
     "stability": "Stability",
+    "staticRemediationDesc": "To fully remediate all recommendations, there may be additional steps needed.",
     "status": "Status",
     "summarychart.item": "{numIssues} {name} affecting {affectedSystems} {affectedSystems, plural, one {system} other {systems}}",
     "summarychart.itemnohits": "No {severity} hits.",

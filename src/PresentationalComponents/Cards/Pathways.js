@@ -175,7 +175,7 @@ const TotalRisk = (props) => {
 };
 const Resolution = (props) => {
   const intl = useIntl();
-  const { description, reboot_required, name, resolution_risk } = props;
+  const { reboot_required, name, resolution_risk } = props;
 
   return (
     <Card
@@ -199,7 +199,9 @@ const Resolution = (props) => {
             </Title>
           </CardBody>
 
-          <CardBody className="body">{description}</CardBody>
+          <CardBody className="body">
+            {intl.formatMessage(messages.staticRemediationDesc)}
+          </CardBody>
           <CardBody className="body">
             {RebootRequired(reboot_required)}
           </CardBody>
