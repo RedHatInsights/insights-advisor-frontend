@@ -69,7 +69,7 @@ const PathwaysTable = () => {
 
   const cols = [
     {
-      title: intl.formatMessage(messages.pathway),
+      title: intl.formatMessage(messages.pathwaysName),
       transforms: [sortable, cellWidth(45)],
     },
     {
