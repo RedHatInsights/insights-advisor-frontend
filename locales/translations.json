@@ -87,6 +87,7 @@
   "noPathways": "No pathways",
   "noRecommendations": "None of your connected systems are affected by any known recommendations.",
   "noResults": "No results found",
+  "noTags": "No tags",
   "nohits.body": "The filter criteria matches no {item}. Try changing your filter settings.",
   "nohits.title": "No matching {item} found",
   "nonIncidentRules": "Non-incident pathways",
