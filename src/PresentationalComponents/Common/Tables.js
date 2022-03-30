@@ -11,10 +11,13 @@ export const urlBuilder = (filters = {}) => {
         }`
     )
     .join('&')}`;
+
   const params = new URLSearchParams(queryString);
 
-  //Removes invalid 'undefined' url param value
+  //Removes invalid 'undefined' url param value and duplicate pathway param
   params.get('reports_shown') === 'undefined' && params.delete('reports_shown');
+  params.get('pathway') && params.delete('pathway');
+
   filters?.tags?.length
     ? params.set('tags', filters.tags)
     : params.delete('tags');

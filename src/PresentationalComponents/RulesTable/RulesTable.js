@@ -648,6 +648,7 @@ const RulesTable = () => {
           rule_status: 'enabled',
           limit: filters.limit,
           offset: filters.offset,
+          pathway: filters.pathway,
         });
       } else {
         itemsToRemove.map((item) => {
