@@ -639,6 +639,7 @@ const RulesTable = () => {
   const activeFiltersConfig = {
     deleteTitle: intl.formatMessage(messages.resetFilters),
     filters: buildFilterChips(),
+    showDeleteButton: true,
     onDelete: (_event, itemsToRemove, isAll) => {
       if (isAll) {
         setSearchText('');
@@ -731,11 +732,6 @@ const RulesTable = () => {
               null,
               dispatch
             ),
-          isDisabled:
-            !permsExport ||
-            !filters.impacting ||
-            (Array.isArray(filters.impacting) &&
-              !filters.impacting.every((item) => item === 'true')),
           tooltipText: permsExport
             ? intl.formatMessage(messages.exportData)
             : intl.formatMessage(messages.permsAction),
