@@ -143,6 +143,12 @@ export const workloadQueryBuilder = (workloads, SID) =>
     {
       system_profile: {
         ...(workloads?.SAP?.isSelected && { sap_system: true }),
+        ...(workloads?.['Ansible Automation Platform']?.isSelected && {
+          ansible: 'not_nil',
+        }),
+        ...(workloads?.['Microsoft SQL']?.isSelected && {
+          mssql: 'not_nil',
+        }),
         ...(SID?.length > 0 && { sap_sids: SID }),
       },
     },
