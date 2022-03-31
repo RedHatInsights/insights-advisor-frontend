@@ -728,7 +728,6 @@ const RulesTable = () => {
               selectedTags,
               workloads,
               SID,
-              null,
               dispatch
             ),
           isDisabled:
