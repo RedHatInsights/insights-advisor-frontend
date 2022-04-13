@@ -11,6 +11,7 @@ import {
   pruneFilters,
   urlBuilder,
   workloadQueryBuilder,
+  buildTagFilter,
 } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 
@@ -39,6 +40,7 @@ const Inventory = ({
   SID,
   permsExport,
   exportTable,
+  showTags,
 }) => {
   const store = useStore();
   const intl = useIntl();
@@ -124,6 +126,7 @@ const Inventory = ({
     let systemProfile = defaultColumns.filter(
       ({ key }) => key === 'system_profile'
     );
+    let tags = defaultColumns.filter(({ key }) => key === 'tags');
 
     displayName = {
       ...displayName[0],
@@ -142,7 +145,11 @@ const Inventory = ({
       transforms: [wrappable],
     };
 
-    return [displayName, systemProfile, lastSeenColumn];
+    tags = {
+      ...tags[0],
+    };
+
+    return [displayName, tags, systemProfile, lastSeenColumn];
   };
 
   const handleRefresh = (options) => {
@@ -244,7 +251,7 @@ const Inventory = ({
         hasCheckbox
         initialLoading
         autoRefresh
-        hideFilters={{ all: true, name: false }}
+        hideFilters={{ all: true, name: false, tags: !showTags }}
         filterConfig={{ items: filterConfigItems }}
         activeFiltersConfig={activeFiltersConfig}
         columns={(defaultColumns) => createColumns(defaultColumns)}
@@ -258,6 +265,7 @@ const Inventory = ({
           workloads,
           SID,
         }}
+        showTags={showTags}
         getEntities={async (_items, config, showTags, defaultGetEntities) => {
           const {
             per_page,
@@ -265,7 +273,7 @@ const Inventory = ({
             orderBy,
             orderDirection,
             advisorFilters,
-            selectedTags,
+            filters,
             workloads,
             SID,
           } = config;
@@ -285,10 +293,11 @@ const Inventory = ({
               pathway && {
                 display_name: config?.filters?.hostnameOrId,
               }),
-            ...(selectedTags?.length && { tags: selectedTags }),
             ...(Array.isArray(advisorFilters.rhel_version) && {
               rhel_version: advisorFilters.rhel_version?.join(','),
             }),
+            ...(filters.tagFilters?.length &&
+              buildTagFilter(filters.tagFilters)),
           };
 
           workloads &&
@@ -447,23 +456,16 @@ const Inventory = ({
             label: intl.formatMessage(messages.exportCsv),
             // eslint-disable-next-line no-dupe-keys
             label: intl.formatMessage(messages.exportJson),
-            onSelect: (_e, fileType) => {
-              const overrideData = entities.rows.map((sys) => ({
-                display_name: sys.display_name,
-                os: `${sys.system_profile.operating_system.name} ${sys.system_profile.operating_system.major}.${sys.system_profile.operating_system.minor}`,
-                last_seen: sys.last_seen,
-              }));
-              return downloadReport(
+            onSelect: (_e, fileType) =>
+              downloadReport(
                 exportTable,
                 fileType,
-                filters,
+                { rule_id: rule.rule_id, ...filters },
                 selectedTags,
                 workloads,
                 SID,
-                overrideData,
                 dispatch
-              );
-            },
+              ),
             isDisabled: !permsExport || entities?.rows?.length === 0,
             tooltipText: permsExport
               ? intl.formatMessage(messages.exportData)
@@ -485,6 +487,7 @@ Inventory.propTypes = {
   SID: PropTypes.any,
   permsExport: PropTypes.bool,
   exportTable: PropTypes.string,
+  showTags: PropTypes.bool,
 };
 
 export default Inventory;

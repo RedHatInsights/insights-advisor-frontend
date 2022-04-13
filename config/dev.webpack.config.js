@@ -11,6 +11,9 @@ const insightsProxy = {
   https: false,
   ...(process.env.BETA && { deployment: 'beta/apps' }),
 };
+const LOCAL_INVENTORY_FRONTEND = !!process.env.INVENTORY_FRONTEND_PORT;
+const INVENTORY_FRONTEND_HOST = 'stage.foo.redhat.com';
+const INVENTORY_FRONTEND_PORT = '8003';
 
 const webpackProxy = {
   deployment: process.env.BETA ? 'beta/apps' : 'apps',
@@ -18,7 +21,16 @@ const webpackProxy = {
   env: process.env.CHROME_ENV ? process.env.CHROME_ENV : 'stage-stable', // pick chrome env ['stage-beta', 'stage-stable', 'prod-beta', 'prod-stable']
   useProxy: true,
   proxyVerbose: true,
-  routes: {},
+  routes: {
+    ...(LOCAL_INVENTORY_FRONTEND && {
+      '/apps/inventory': {
+        host: `http://${INVENTORY_FRONTEND_HOST}:${INVENTORY_FRONTEND_PORT}`,
+      },
+      '/beta/apps/inventory': {
+        host: `http://${INVENTORY_FRONTEND_HOST}:${INVENTORY_FRONTEND_PORT}`,
+      },
+    }),
+  },
   customProxy: [
     // {
     //   context: (path) => path.includes('/api/'),

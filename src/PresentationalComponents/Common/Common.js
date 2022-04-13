@@ -14,7 +14,7 @@ import { createIntl, createIntlCache } from 'react-intl';
 import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
 import PowerOffIcon from '@patternfly/react-icons/dist/esm/icons/power-off-icon';
 import React from 'react';
-import { global_info_color_100 } from '@patternfly/react-tokens';
+import { global_secondary_color_100 } from '@patternfly/react-tokens';
 import messages from '../../Messages';
 import { strong } from '../../Utilities/intlHelper';
 
@@ -58,7 +58,7 @@ const QuestionTooltip = (text) => (
     content={<div>{text}</div>}
   >
     <span aria-label="Action">
-      <OutlinedQuestionCircleIcon color={global_info_color_100.value} />
+      <OutlinedQuestionCircleIcon color={global_secondary_color_100.value} />
     </span>
   </Tooltip>
 );
