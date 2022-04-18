@@ -215,7 +215,7 @@ const BaseSystemAdvisor = () => {
                       </span>
                     }
                   >
-                    <InsightsLabel value={rule.total_risk} />
+                    <InsightsLabel value={rule.total_risk} isCompact />
                   </Tooltip>
                 </div>
               ),
