@@ -34,7 +34,6 @@ import Failed from '../../PresentationalComponents/Loading/Failed';
 import { Flex } from '@patternfly/react-core/dist/js/layouts/Flex/Flex';
 import { FlexItem } from '@patternfly/react-core/dist/js/layouts/Flex/FlexItem';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
-import { Label } from '@patternfly/react-core/dist/js/components/Label/Label';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
@@ -52,6 +51,7 @@ import { useGetTopicsQuery } from '../../Services/Topics';
 import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
+import CategoryLabel from '../../PresentationalComponents/Labels/CategoryLabel';
 
 const OverviewDetails = () => {
   const intl = useIntl();
@@ -227,17 +227,17 @@ const OverviewDetails = () => {
                     }
                   />
                   <p>
-                    {intl.formatMessage(messages.rulesDetailsModifieddate, {
-                      date: (
-                        <DateFormat
-                          date={new Date(rule.publish_date)}
-                          type="onlyDate"
-                        />
-                      ),
-                    })}
-                    <Label className="adv-c-label-category" color="blue">
-                      {rule.category.name}
-                    </Label>
+                    <span className="pf-u-mr-md">
+                      {intl.formatMessage(messages.rulesDetailsModifieddate, {
+                        date: (
+                          <DateFormat
+                            date={new Date(rule.publish_date)}
+                            type="onlyDate"
+                          />
+                        ),
+                      })}
+                    </span>
+                    <CategoryLabel labelList={[rule.category]} />
                   </p>
                 </React.Fragment>
               }
@@ -409,7 +409,7 @@ const OverviewDetails = () => {
                   workloads={workloads}
                   SID={SID}
                   permsExport={permsExport}
-                  exportTable="reports"
+                  exportTable="systems"
                   showTags={true}
                 />
               </React.Fragment>

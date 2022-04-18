@@ -175,7 +175,7 @@ const TotalRisk = (props) => {
 };
 const Resolution = (props) => {
   const intl = useIntl();
-  const { description, reboot_required, name, resolution_risk } = props;
+  const { reboot_required, name, resolution_risk } = props;
 
   return (
     <Card
@@ -191,6 +191,7 @@ const Resolution = (props) => {
               text={RISK_OF_CHANGE_LABEL[resolution_risk.risk]}
               value={resolution_risk.risk}
               hideIcon
+              isCompact
             />
           </CardBody>
           <CardBody className="body">
@@ -199,14 +200,18 @@ const Resolution = (props) => {
             </Title>
           </CardBody>
 
-          <CardBody className="body">{description}</CardBody>
+          <CardBody className="body">
+            {intl.formatMessage(messages.staticRemediationDesc)}
+          </CardBody>
           <CardBody className="body">
             {RebootRequired(reboot_required)}
           </CardBody>
         </GridItem>
         <GridItem span={5}>
           <CardTitle>{intl.formatMessage(messages.reclvl)}</CardTitle>
-          <RecommendationLevel {...props} />
+          <CardBody className="body">
+            <RecommendationLevel {...props} />
+          </CardBody>
         </GridItem>
       </Grid>
     </Card>

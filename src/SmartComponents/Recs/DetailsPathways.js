@@ -111,7 +111,7 @@ const PathwayDetails = () => {
                 </React.Fragment>
               }
             />
-            <p>
+            <p className="pf-u-mb-lg">
               {intl.formatMessage(messages.rulesDetailsModifieddate, {
                 date: (
                   <DateFormat

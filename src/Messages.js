@@ -692,6 +692,11 @@ export default defineMessages({
       'Used in the system table title column, the last time a system has checked in',
     defaultMessage: 'Last seen',
   },
+  noTags: {
+    id: 'noTags',
+    description: 'No tags message, title',
+    defaultMessage: 'No tags',
+  },
   noHitsTitle: {
     id: 'nohits.title',
     description: 'No hits message, title',
@@ -1256,5 +1261,11 @@ export default defineMessages({
     id: 'notConnectedButton',
     description: 'Not Connected button text',
     defaultMessage: 'Learn about the Insights client',
+  },
+  staticRemediationDesc: {
+    id: 'staticRemediationDesc',
+    description: 'static remediation description',
+    defaultMessage:
+      ' To fully remediate all recommendations, there may be additional steps needed.',
   },
 });
