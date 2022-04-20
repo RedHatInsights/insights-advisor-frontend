@@ -142,7 +142,7 @@ const BaseRuleDetails = ({
               <StackItem className="pf-u-display-inline-flex alignCenterOverride pf-u-pb-sm pf-u-pt-sm">
                 <span className="adv-l-stack-rule-details-item">
                   <span>
-                    <InsightsLabel value={rule.total_risk} />
+                    <InsightsLabel value={rule.total_risk} isCompact />
                   </span>
                   <Stack hasGutter className="description-stack-override">
                     <StackItem>
@@ -219,6 +219,7 @@ const BaseRuleDetails = ({
                           }
                           value={resolutionRisk}
                           hideIcon
+                          isCompact
                         />
                       </span>
                       <Stack hasGutter className="description-stack-override">
