@@ -90,7 +90,9 @@ const TotalRisk = (props) => {
   } = props;
 
   const catString = (cats) =>
-    cats.length > 1 ? categories.map((cat) => cat.name).join(', ') : cats.name;
+    cats.length > 1
+      ? categories.map((cat) => cat.name).join(', ')
+      : cats[0]?.name;
   return (
     <Card
       isFlat
