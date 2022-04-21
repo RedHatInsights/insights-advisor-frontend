@@ -426,6 +426,8 @@ const Inventory = ({
               ? 1
               : selected.length === filters.limit
               ? null
+              : selected.length > 0
+              ? null
               : 0,
           onSelect: () => {
             selected.length > 0 ? onSelectRows(-1, false) : bulkSelectfn();
