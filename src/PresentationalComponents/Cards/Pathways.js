@@ -90,12 +90,14 @@ const TotalRisk = (props) => {
   } = props;
 
   const catString = (cats) =>
-    cats.length > 1 ? categories.map((cat) => cat.name).join(', ') : cats.name;
+    cats.length > 1
+      ? categories.map((cat) => cat.name).join(', ')
+      : cats[0]?.name;
   return (
     <Card
       isFlat
       isPlain
-      className="adv-c-card-pathway adv__background--global-100"
+      className="adv-c-card-pathway adv__background--global-100 pf-u-h-100"
     >
       <CardTitle>{intl.formatMessage(messages.totalRiskPathway)}</CardTitle>
       <CardBody className="body">
@@ -111,11 +113,11 @@ const TotalRisk = (props) => {
                     constrainToVisibleArea
                   />
                 }
-                height={300}
+                height={150}
                 width={300}
                 padding={{
                   bottom: 30,
-                  left: 35,
+                  left: 45,
                   right: 20,
                   top: 10,
                 }}
@@ -124,6 +126,7 @@ const TotalRisk = (props) => {
                 <ChartAxis dependentAxis showGrid />
                 <ChartGroup>
                   <ChartBar
+                    barWidth={16}
                     style={{
                       data: {
                         fill: ({ datum }) => datum.fill,
@@ -181,7 +184,7 @@ const Resolution = (props) => {
     <Card
       isFlat
       isPlain
-      className="adv-c-card-pathway adv__background--global-100"
+      className="adv-c-card-pathway adv__background--global-100 pf-u-h-100"
     >
       <CardTitle>{intl.formatMessage(messages.resolution)}</CardTitle>
       <Grid>
