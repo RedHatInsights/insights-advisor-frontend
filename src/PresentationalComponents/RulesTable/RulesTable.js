@@ -101,7 +101,7 @@ const RulesTable = () => {
       transforms: [sortable, cellWidth(15)],
     },
     {
-      title: intl.formatMessage(messages.riskofchange),
+      title: intl.formatMessage(messages.riskOfChange),
       transforms: [sortable, cellWidth(15)],
     },
     {
@@ -357,7 +357,7 @@ const RulesTable = () => {
                       key={key}
                       position={TooltipPosition.bottom}
                       content={intl.formatMessage(
-                        messages.rulesDetailsTotalriskBody,
+                        messages.rulesDetailsTotalRiskBody,
                         {
                           risk:
                             AppConstants.TOTAL_RISK_LABEL_LOWER[

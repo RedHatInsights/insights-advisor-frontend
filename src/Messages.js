@@ -358,21 +358,10 @@ export default defineMessages({
     description: 'Knowledgebase article',
     defaultMessage: 'Knowledgebase article',
   },
-  riskofchange: {
-    id: 'riskofchange',
-    description: 'Risk of Change',
-    defaultMessage: 'Risk of change',
-  },
   riskOfChange: {
     id: 'riskOfChange',
     description: 'Risk of Change',
     defaultMessage: 'Risk of change',
-  },
-  rulesDetailsTotalriskBody: {
-    id: 'rulesdetails.totalriskbody',
-    description: 'Text explaining the total risk value of this recommendation',
-    defaultMessage: `The total risk of this remediation is <strong>{risk}</strong>,
-                        based on the combination of likelihood and impact to remediate.`,
   },
   rulesDetailsTotalRiskBody: {
     id: 'rulesDetailsTotalRiskBody',
@@ -936,11 +925,6 @@ export default defineMessages({
     id: 'ruleHelpful',
     description: 'Asking the user if they find a recommendation helpful',
     defaultMessage: 'Is this recommendation helpful?',
-  },
-  feedbackThankyou: {
-    id: 'feedbackThankyou',
-    description: 'Thanking user for feedback',
-    defaultMessage: 'Thank you for your feedback!',
   },
   feedbackThankYou: {
     id: 'feedbackThankYou',
