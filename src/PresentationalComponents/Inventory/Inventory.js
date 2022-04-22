@@ -204,6 +204,20 @@ const Inventory = ({
     return pruneFilters(localFilters, SFC);
   };
 
+  const checkedStatus = () => {
+    if (
+      (selected.length === entities?.rows?.length ||
+        selected.length === entities?.total) &&
+      entities?.total > 0
+    ) {
+      return 1;
+    } else if (selected.length === filters.limit || selected.length > 0) {
+      return null;
+    } else {
+      return 0;
+    }
+  };
+
   const activeFiltersConfig = {
     deleteTitle: intl.formatMessage(messages.resetFilters),
     filters: buildFilterChips(),
@@ -419,16 +433,7 @@ const Inventory = ({
                 : {}),
             },
           ],
-          checked:
-            (selected.length === entities?.rows?.length ||
-              selected.length === entities?.total) &&
-            entities?.total > 0
-              ? 1
-              : selected.length === filters.limit
-              ? null
-              : selected.length > 0
-              ? null
-              : 0,
+          checked: checkedStatus(),
           onSelect: () => {
             selected.length > 0 ? onSelectRows(-1, false) : bulkSelectfn();
             calculateSelectedItems();
