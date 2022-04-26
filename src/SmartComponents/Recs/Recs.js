@@ -47,6 +47,11 @@ const Recs = () => (
       />
       <Route
         exact
+        path="/recommendations/pathways/systems/:id"
+        component={() => suspenseHelper(<DetailsPathways />)}
+      />
+      <Route
+        exact
         path="/recommendations/:id"
         component={() => suspenseHelper(<Details />)}
       />
