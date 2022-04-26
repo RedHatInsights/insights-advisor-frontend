@@ -25,6 +25,11 @@ const paths = [
     path: '/recommendations/pathways:?',
     component: Recs,
   },
+  {
+    title: 'Pathways',
+    path: '/recommendations/pathways/systems:?',
+    component: Recs,
+  },
 
   { title: 'Systems', path: '/systems:?', component: Systems },
   { title: 'Systems', path: '/systems', component: Systems },

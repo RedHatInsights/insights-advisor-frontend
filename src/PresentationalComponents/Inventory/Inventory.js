@@ -248,6 +248,7 @@ const Inventory = ({
         />
       )}
       <InventoryTable
+        id="tablesContainer"
         hasCheckbox
         initialLoading
         autoRefresh
