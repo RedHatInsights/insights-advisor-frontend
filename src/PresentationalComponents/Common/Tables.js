@@ -11,10 +11,13 @@ export const urlBuilder = (filters = {}) => {
         }`
     )
     .join('&')}`;
+
   const params = new URLSearchParams(queryString);
 
-  //Removes invalid 'undefined' url param value
+  //Removes invalid 'undefined' url param value and duplicate pathway param
   params.get('reports_shown') === 'undefined' && params.delete('reports_shown');
+  params.get('pathway') && params.delete('pathway');
+
   filters?.tags?.length
     ? params.set('tags', filters.tags)
     : params.delete('tags');
@@ -144,10 +147,14 @@ export const workloadQueryBuilder = (workloads, SID) =>
       system_profile: {
         ...(workloads?.SAP?.isSelected && { sap_system: true }),
         ...(workloads?.['Ansible Automation Platform']?.isSelected && {
-          ansible: 'not_nil',
+          ansible: {
+            not_nil: true,
+          },
         }),
         ...(workloads?.['Microsoft SQL']?.isSelected && {
-          mssql: 'not_nil',
+          mssql: {
+            not_nil: true,
+          },
         }),
         ...(SID?.length > 0 && { sap_sids: SID }),
       },
