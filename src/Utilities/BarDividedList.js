@@ -6,7 +6,7 @@ const BarDividedList = (list) =>
     <React.Fragment key={index}>
       {element}
       {index + 1 !== list.length && (
-        <strong className="verticalDivider">&nbsp;&#124;&nbsp;</strong>
+        <strong className="adv-verticalDivider">&nbsp;&#124;&nbsp;</strong>
       )}
     </React.Fragment>
   ));

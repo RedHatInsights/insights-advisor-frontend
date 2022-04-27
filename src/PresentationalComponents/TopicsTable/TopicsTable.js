@@ -67,7 +67,7 @@ const TopicsTable = ({ props }) => {
                     <span key={key}>
                       {' '}
                       {value.featured && (
-                        <Label color="blue" icon={<StarIcon />}>
+                        <Label color="blue" icon={<StarIcon />} isCompact>
                           {intl.formatMessage(messages.featured)}
                         </Label>
                       )}{' '}

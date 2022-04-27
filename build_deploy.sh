@@ -5,18 +5,23 @@
 # --------------------------------------------
 # name of app-sre "application" folder this component lives in; needs to match for quay
 export COMPONENT="insights-advisor"
-export APP_NAME=`node -e 'console.log(require("./package.json").insights.appname)'`
-export IMAGE="quay.io/cloudservices/$COMPONENT-frontend"
+export WORKSPACE=${WORKSPACE:-$APP_ROOT} # if running in jenkins, use the build's workspace
 export APP_ROOT=$(pwd)
-cat /etc/redhat-release
+export NODE_BUILD_VERSION=16
 COMMON_BUILDER=https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master
 
-set -ev
+set -exv
+# source is preferred to | bash -s in this case to avoid a subshell
+source <(curl -sSL $COMMON_BUILDER/src/frontend-build.sh)
+BUILD_RESULTS=$?
 
-npm ci
-npm run verify
+# Stubbed out for now
+mkdir -p $WORKSPACE/artifacts
+cat << EOF > $WORKSPACE/artifacts/junit-dummy.xml
+<testsuite tests="1">
+    <testcase classname="dummy" name="dummytest"/>
+</testsuite>
+EOF
 
-# Generate nginx config based on app name in package.json
-curl -sSL $COMMON_BUILDER/src/nginx_conf_gen.sh | bash -s
-
-curl -sSL $COMMON_BUILDER/src/quay_push.sh | bash -s
+# teardown_docker
+exit $BUILD_RESULTS

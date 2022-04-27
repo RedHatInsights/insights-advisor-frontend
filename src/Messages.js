@@ -692,6 +692,11 @@ export default defineMessages({
       'Used in the system table title column, the last time a system has checked in',
     defaultMessage: 'Last seen',
   },
+  noTags: {
+    id: 'noTags',
+    description: 'No tags message, title',
+    defaultMessage: 'No tags',
+  },
   noHitsTitle: {
     id: 'nohits.title',
     description: 'No hits message, title',
@@ -933,13 +938,13 @@ export default defineMessages({
   },
   incidentRules: {
     id: 'incidentRules',
-    description: 'Recommendationswith incidents',
-    defaultMessage: 'Incident recommendations',
+    description: 'Pathways with incidents',
+    defaultMessage: 'Incident pathways',
   },
   nonIncidentRules: {
     id: 'nonIncidentRules',
-    description: 'Recommendationswith no incidents',
-    defaultMessage: 'Non-incident recommendations',
+    description: 'Pathways with no incidents',
+    defaultMessage: 'Non-incident pathways',
   },
   incidentSystems: {
     id: 'incidentSystems',
@@ -1143,10 +1148,10 @@ export default defineMessages({
     description: 'pathways',
     defaultMessage: 'Pathways',
   },
-  pathway: {
-    id: 'pathway',
-    description: 'pathway',
-    defaultMessage: 'Pathway',
+  pathwaysName: {
+    id: 'pathwaysName',
+    description: 'Column title for pathway name in pathways table',
+    defaultMessage: 'Name',
   },
   recommendedPathways: {
     id: 'recommendedPathways',
@@ -1240,5 +1245,27 @@ export default defineMessages({
     id: 'introLinkBusinessInsights',
     description: 'App intro link label',
     defaultMessage: 'Business Insights',
+  },
+  notConnectedTitle: {
+    id: 'notConnectedTitle',
+    description: 'Not Connected title text',
+    defaultMessage: 'This system is not yet connected to Insights',
+  },
+  notConnectedBody: {
+    id: 'notConnectedBody',
+    description: 'Not Connected body text',
+    defaultMessage:
+      'Activate the Insights client for this system to get started.',
+  },
+  notConnectedButton: {
+    id: 'notConnectedButton',
+    description: 'Not Connected button text',
+    defaultMessage: 'Learn about the Insights client',
+  },
+  staticRemediationDesc: {
+    id: 'staticRemediationDesc',
+    description: 'static remediation description',
+    defaultMessage:
+      ' To fully remediate all recommendations, there may be additional steps needed.',
   },
 });

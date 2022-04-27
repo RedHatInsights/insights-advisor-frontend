@@ -15,7 +15,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
-import { PERMS } from '../../AppConstants';
+import { PERMS, featureFlags } from '../../AppConstants';
 import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
 import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/';
 import messages from '../../Messages';
@@ -23,6 +23,7 @@ import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import { GridItem, Grid } from '@patternfly/react-core';
 import AppIntro from '../../PresentationalComponents/AppIntro/AppIntro';
+import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const RulesTable = lazy(() =>
   import(
@@ -56,9 +57,11 @@ const List = () => {
     history.push(tab === 1 ? '/recommendations/pathways' : '/recommendations');
   };
 
+  const isAppTourEnabled = useFeatureFlag(featureFlags.appTour);
+
   return (
     <React.Fragment>
-      <PageHeader className="ins-c-recommendations-header">
+      <PageHeader className="adv-c-page-recommendations__header">
         <PageHeaderTitle
           title={`${intl.formatMessage(messages.insightsHeader)} ${intl
             .formatMessage(messages.recommendations)
@@ -66,7 +69,7 @@ const List = () => {
         />
         {!permsExport.isLoading && (
           <Grid className={'pageHeaderElementsContainer'}>
-            <GridItem span={9}>
+            <GridItem span={isAppTourEnabled ? 9 : 12}>
               <Tooltip
                 trigger={!permsExport.hasAccess ? 'mouseenter' : ''}
                 content={intl.formatMessage(messages.permsAction)}
@@ -74,51 +77,61 @@ const List = () => {
                 <DownloadExecReport isDisabled={!permsExport.hasAccess} />
               </Tooltip>
             </GridItem>
-            <GridItem span={3}>
-              <AppIntro />
-            </GridItem>
+            {isAppTourEnabled ? (
+              <GridItem span={3}>
+                <AppIntro />
+              </GridItem>
+            ) : null}
           </Grid>
         )}
       </PageHeader>
       <Main>
-        <Suspense fallback={<Loading />}>
-          <PathwaysPanel />
-        </Suspense>
-        <Tabs
-          className="advisor__background--global-100"
-          mountOnEnter
-          unmountOnExit
-          activeKey={activeTab}
-          onSelect={(_e, tab) => changeTab(tab)}
-        >
-          <Tab
-            eventKey={0}
-            title={
-              <TabTitleText>
-                {intl.formatMessage(messages.recommendations)}
-              </TabTitleText>
-            }
-          >
+        {insights.chrome.isBeta() ? (
+          <>
             <Suspense fallback={<Loading />}>
-              <RulesTable />
+              <PathwaysPanel />
             </Suspense>
-          </Tab>
-          <Tab
-            eventKey={1}
-            title={
-              <TabTitleText>
-                {intl.formatMessage(messages.pathways)}{' '}
-                {QuestionTooltip(
-                  intl.formatMessage(messages.recommendedPathways)
-                )}
-              </TabTitleText>
-            }
-          >
-            <Suspense fallback={<Loading />}>
-              <PathwaysTable />
-            </Suspense>
-          </Tab>
-        </Tabs>
+            <Tabs
+              className="adv__background--global-100"
+              mountOnEnter
+              unmountOnExit
+              activeKey={activeTab}
+              onSelect={(_e, tab) => changeTab(tab)}
+            >
+              <Tab
+                eventKey={0}
+                title={
+                  <TabTitleText>
+                    {intl.formatMessage(messages.recommendations)}
+                  </TabTitleText>
+                }
+              >
+                <Suspense fallback={<Loading />}>
+                  <RulesTable />
+                </Suspense>
+              </Tab>
+              <Tab
+                eventKey={1}
+                title={
+                  <TabTitleText>
+                    {intl.formatMessage(messages.pathways)}{' '}
+                    {QuestionTooltip(
+                      intl.formatMessage(messages.recommendedPathways)
+                    )}
+                  </TabTitleText>
+                }
+              >
+                <Suspense fallback={<Loading />}>
+                  <PathwaysTable />
+                </Suspense>
+              </Tab>
+            </Tabs>
+          </>
+        ) : (
+          <Suspense fallback={<Loading />}>
+            <RulesTable />
+          </Suspense>
+        )}
       </Main>
     </React.Fragment>
   );

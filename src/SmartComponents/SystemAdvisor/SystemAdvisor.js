@@ -15,7 +15,7 @@ import {
   TooltipPosition,
 } from '@patternfly/react-core';
 import { IntlProvider, useIntl } from 'react-intl';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import {
   SortByDirection,
   Table,
@@ -48,9 +48,13 @@ import {
   InsightsNotEnabled,
   InventoryReportFetchFailed,
 } from './EmptyStates';
+import NotConnected from '@redhat-cloud-services/frontend-components/NotConnected';
 
 const BaseSystemAdvisor = () => {
   const intl = useIntl();
+  const systemAdvisorRef = useRef({
+    rowCount: 0,
+  });
   const dispatch = useDispatch();
   const addNotification = (data) => dispatch(addNotificationAction(data));
 
@@ -71,7 +75,7 @@ const BaseSystemAdvisor = () => {
   const [searchValue, setSearchValue] = useState('');
   const [isSelected, setIsSelected] = useState(false);
   const [isAllExpanded, setIsAllExpanded] = useState(false);
-  const results = rows ? rows.length / 2 : 0;
+
   const satelliteManaged =
     (systemProfile && systemProfile.satellite_managed) || false; // system is managed by satellite
   const satelliteShowHosts = accountSettings.show_satellite_hosts || false; // setting to show satellite managed systems
@@ -211,7 +215,7 @@ const BaseSystemAdvisor = () => {
                       </span>
                     }
                   >
-                    <InsightsLabel value={rule.total_risk} />
+                    <InsightsLabel value={rule.total_risk} isCompact />
                   </Tooltip>
                 </div>
               ),
@@ -275,6 +279,8 @@ const BaseSystemAdvisor = () => {
     builtRows.forEach((row, index) =>
       row.parent ? (row.parent = index - 1) : null
     );
+
+    systemAdvisorRef.current.rowCount = builtRows.length / 2;
 
     if (activeReports.length < 1 || builtRows.length < 1) {
       let EmptyState =
@@ -584,6 +590,7 @@ const BaseSystemAdvisor = () => {
 
         const activeRuleFirstReportsData = activeRuleFirst(reportsFetch);
         fetchKbaDetails(activeRuleFirstReportsData);
+
         setRows(
           buildRows(
             activeRuleFirstReportsData,
@@ -604,7 +611,14 @@ const BaseSystemAdvisor = () => {
     dataFetch();
   }, []);
 
-  return (
+  return inventoryReportFetchStatus === 'fulfilled' &&
+    entity.insights_id === null ? (
+    <NotConnected
+      titleText={intl.formatMessage(messages.notConnectedTitle)}
+      bodyText={intl.formatMessage(messages.notConnectedBody)}
+      buttonText={intl.formatMessage(messages.notConnectedButton)}
+    />
+  ) : (
     <div className="ins-c-inventory-insights__overrides">
       {inventoryReportFetchStatus === 'pending' ||
       (inventoryReportFetchStatus === 'fulfilled' &&
@@ -620,9 +634,10 @@ const BaseSystemAdvisor = () => {
           pagination={
             <Fragment>
               {' '}
-              {results === 1
-                ? `${results} Recommendation`
-                : `${results} Recommendations`}{' '}
+              {`${systemAdvisorRef.current.rowCount} ${
+                (systemAdvisorRef.current.rowCount === 1 && 'Recommendation') ||
+                'Recommendations'
+              }`}{' '}
             </Fragment>
           }
           activeFiltersConfig={activeFiltersConfig}

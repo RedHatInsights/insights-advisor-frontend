@@ -11,7 +11,7 @@ import React from 'react';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 
-const RuleLabels = ({ rule }) => {
+const RuleLabels = ({ rule, isCompact }) => {
   const intl = useIntl();
 
   return (
@@ -21,7 +21,11 @@ const RuleLabels = ({ rule }) => {
           content={intl.formatMessage(messages.incidentTooltip)}
           position={TooltipPosition.right}
         >
-          <Label color="red" className="incidentLabel">
+          <Label
+            color="red"
+            className="adv-c-label-incident"
+            isCompact={isCompact}
+          >
             {intl.formatMessage(messages.incident)}
           </Label>
         </Tooltip>
@@ -31,7 +35,9 @@ const RuleLabels = ({ rule }) => {
           content={intl.formatMessage(messages.ruleIsDisabledTooltip)}
           position={TooltipPosition.right}
         >
-          <Label color="gray">{intl.formatMessage(messages.disabled)}</Label>
+          <Label color="gray" isCompact={isCompact}>
+            {intl.formatMessage(messages.disabled)}
+          </Label>
         </Tooltip>
       )}
       {rule?.rule_status === 'rhdisabled' && (
@@ -39,7 +45,7 @@ const RuleLabels = ({ rule }) => {
           content={intl.formatMessage(messages.ruleIsDisabledTooltip)}
           position={TooltipPosition.right}
         >
-          <Label color="gray">
+          <Label color="gray" isCompact={isCompact}>
             {intl.formatMessage(messages.redhatDisabled)}
           </Label>
         </Tooltip>
@@ -50,6 +56,11 @@ const RuleLabels = ({ rule }) => {
 
 RuleLabels.propTypes = {
   rule: PropTypes.object,
+  isCompact: PropTypes.bool,
+};
+
+RuleLabels.defaultProps = {
+  isCompact: true,
 };
 
 export default RuleLabels;

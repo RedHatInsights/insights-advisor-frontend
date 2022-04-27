@@ -1,7 +1,7 @@
 import { generateFilter } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 
 // Builds returns url params from table filters, pushes to url if history object is passed
-export const urlBuilder = (filters = {}, selectedTags = []) => {
+export const urlBuilder = (filters = {}) => {
   const url = new URL(window.location);
   const queryString = `${Object.keys(filters)
     .map(
@@ -11,12 +11,15 @@ export const urlBuilder = (filters = {}, selectedTags = []) => {
         }`
     )
     .join('&')}`;
+
   const params = new URLSearchParams(queryString);
 
-  //Removes invalid 'undefined' url param value
+  //Removes invalid 'undefined' url param value and duplicate pathway param
   params.get('reports_shown') === 'undefined' && params.delete('reports_shown');
-  selectedTags?.length
-    ? params.set('tags', selectedTags)
+  params.get('pathway') && params.delete('pathway');
+
+  filters?.tags?.length
+    ? params.set('tags', filters.tags)
     : params.delete('tags');
   window.history.replaceState(
     null,
@@ -24,6 +27,25 @@ export const urlBuilder = (filters = {}, selectedTags = []) => {
     `${url.origin}${url.pathname}?${params.toString()}${window.location.hash}`
   );
   return `?${queryString}`;
+};
+
+export const buildTagFilter = (tagFilters) => {
+  const tagsApiFilter = tagFilters
+    ? {
+        tags: tagFilters.flatMap((tagFilter) =>
+          tagFilter.values.map(
+            (tag) =>
+              `${encodeURIComponent(tagFilter.key)}/${encodeURIComponent(
+                tag.tagKey
+              )}=${encodeURIComponent(tag.value)}`
+          )
+        ),
+      }
+    : {};
+
+  return {
+    ...tagsApiFilter,
+  };
 };
 
 // transforms array of strings -> comma seperated strings, required by advisor api
@@ -124,6 +146,16 @@ export const workloadQueryBuilder = (workloads, SID) =>
     {
       system_profile: {
         ...(workloads?.SAP?.isSelected && { sap_system: true }),
+        ...(workloads?.['Ansible Automation Platform']?.isSelected && {
+          ansible: {
+            not_nil: true,
+          },
+        }),
+        ...(workloads?.['Microsoft SQL']?.isSelected && {
+          mssql: {
+            not_nil: true,
+          },
+        }),
         ...(SID?.length > 0 && { sap_sids: SID }),
       },
     },
