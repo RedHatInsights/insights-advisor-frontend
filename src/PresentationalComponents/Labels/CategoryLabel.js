@@ -9,7 +9,7 @@ import React from 'react';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 
-const CategoryLabel = ({ labelList }) => {
+const CategoryLabel = ({ labelList, isCompact }) => {
   const intl = useIntl();
   const sortedFrequency = (arr) =>
     Object.entries(
@@ -20,11 +20,11 @@ const CategoryLabel = ({ labelList }) => {
   );
 
   const label = (icon, text) => (
-    <Label icon={icon} variant="outline" color="blue">
+    <Label icon={icon} variant="outline" color="blue" isCompact={isCompact}>
       {text}
     </Label>
   );
-  const labels = (id) => {
+  const labels = (id, isCompact) => {
     if (id === 1) {
       return label(
         <AutomationIcon />,
@@ -32,24 +32,41 @@ const CategoryLabel = ({ labelList }) => {
       );
     }
     if (id === 2) {
-      return label(<LockIcon />, intl.formatMessage(messages.security));
+      return label(
+        <LockIcon />,
+        intl.formatMessage(messages.security),
+        isCompact
+      );
     }
     if (id === 3) {
-      return label(<CubeIcon />, intl.formatMessage(messages.stability));
+      return label(
+        <CubeIcon />,
+        intl.formatMessage(messages.stability),
+        isCompact
+      );
     }
     if (id === 4) {
-      return label(<PortIcon />, intl.formatMessage(messages.performance));
+      return label(
+        <PortIcon />,
+        intl.formatMessage(messages.performance),
+        isCompact
+      );
     }
   };
   return (
-    <LabelGroup numLabels={1}>
-      {sortedFrequencyList.map((id) => labels(Number(id[0])))}
+    <LabelGroup numLabels={1} isCompact={isCompact}>
+      {sortedFrequencyList.map((id) => labels(Number(id[0]), isCompact))}
     </LabelGroup>
   );
 };
 
 CategoryLabel.propTypes = {
   labelList: PropTypes.array,
+  isCompact: PropTypes.bool,
+};
+
+CategoryLabel.defaultProps = {
+  isCompact: true,
 };
 
 export default CategoryLabel;

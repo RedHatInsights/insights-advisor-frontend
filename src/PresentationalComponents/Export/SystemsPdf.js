@@ -16,10 +16,10 @@ const SystemsPdf = ({ filters }) => {
   const intl = useIntl();
   const [loading, setLoading] = useState(false);
   const selectedTags = useSelector(
-    ({ AdvisorStore }) => AdvisorStore.selectedTags
+    ({ AdvisorStore }) => AdvisorStore?.selectedTags
   );
-  const workloads = useSelector(({ AdvisorStore }) => AdvisorStore.workloads);
-  const SID = useSelector(({ AdvisorStore }) => AdvisorStore.SID);
+  const workloads = useSelector(({ AdvisorStore }) => AdvisorStore?.workloads);
+  const SID = useSelector(({ AdvisorStore }) => AdvisorStore?.SID);
 
   const dataFetch = async () => {
     setLoading(true);
@@ -72,7 +72,8 @@ const SystemsPdf = ({ filters }) => {
         buttonProps={{
           variant: '',
           component: 'button',
-          className: 'pf-c-dropdown__menu-item systemsPdfOverride',
+          className:
+            'pf-c-dropdown__menu-item adv-c-dropdown-systems-pdf__menu-item',
           ...(loading ? { isDisabled: true } : null),
         }}
         reportName={`${intl.formatMessage(messages.insightsHeader)}:`}

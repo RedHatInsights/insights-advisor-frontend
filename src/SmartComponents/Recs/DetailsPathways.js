@@ -95,7 +95,7 @@ const PathwayDetails = () => {
         <Loading />
       ) : (
         <React.Fragment>
-          <PageHeader className="pageHeaderOverride">
+          <PageHeader className="adv-c-page__header">
             <Breadcrumbs
               ouiaId="override"
               current={pathway.description || ''}
@@ -111,7 +111,7 @@ const PathwayDetails = () => {
                 </React.Fragment>
               }
             />
-            <p>
+            <p className="pf-u-mb-lg">
               {intl.formatMessage(messages.rulesDetailsModifieddate, {
                 date: (
                   <DateFormat
@@ -122,7 +122,7 @@ const PathwayDetails = () => {
               })}
             </p>
           </PageHeader>
-          <Main className="ins-c-advisor__pathway-detail__cards">
+          <Main className="pf-u-pb-0">
             <Grid hasGutter>
               <GridItem sm={12} md={6}>
                 <TotalRisk {...pathway} />
@@ -137,7 +137,7 @@ const PathwayDetails = () => {
       {isFetching && <Loading />}
       <Main>
         <Tabs
-          className="advisor__background--global-100"
+          className="adv__background--global-100"
           mountOnEnter
           unmountOnExit
           activeKey={activeTab}
@@ -180,6 +180,7 @@ const PathwayDetails = () => {
                   selectedTags={selectedTags}
                   workloads={workloads}
                   SID={SID}
+                  showTags={true}
                 />
               </Suspense>
             )}

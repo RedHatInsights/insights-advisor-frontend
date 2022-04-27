@@ -23,7 +23,7 @@ import React from 'react';
 import { ThumbsUpIcon } from '@patternfly/react-icons/dist/esm/icons/thumbs-up-icon';
 import classNames from 'classnames';
 import doT from 'dot';
-import marked from 'marked';
+import { marked } from 'marked';
 import propTypes from 'prop-types';
 
 const ReportDetails = ({ report, kbaDetail, kbaLoading }) => {

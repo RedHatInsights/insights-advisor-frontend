@@ -555,3 +555,7 @@ export const linksForAppIntro = {
     { title: 'Remediations', link: '/insights/remediations' },
   ],
 };
+
+export const featureFlags = {
+  appTour: 'advisor.app_tour',
+};

@@ -7,16 +7,16 @@ hr {
 
 .ins-c-rule-details__split {
   display: inline-flex;
-  justify-content: space-around;
+  justify-content: space-between;
   .pf-l-split__item {
     position: relative;
   }
 }
 
-.ins-c-rule-details__stack {
+.adv-l-stack-rule-details {
   width: 600px;
 
-  .ins-c-rule-details__stackitem {
+  .adv-l-stack-rule-details-item {
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -66,10 +66,10 @@ hr {
     display: block;
     .pf-l-split__item {
       margin: var(--pf-global--spacer--md);
-      .pf-l-stack.ins-c-rule-details__stack {
+      .pf-l-stack.adv-l-stack-rule-details {
         width: 100%;
         .pf-l-stack__item {
-          span.ins-c-rule-details__stackitem {
+          span.adv-l-stack-rule-detailsitem {
             display: grid;
             grid-column: 1 / 1;
             .pf-c-label {

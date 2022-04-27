@@ -7,7 +7,7 @@ import propTypes from 'prop-types';
 
 const Failed = ({ message }) => (
   <>
-    <Card className="ins-empty-rule-cards">
+    <Card className="adv-c-card-empty-rule">
       <CardHeader>
         <FrownOpenIcon size="lg" />
       </CardHeader>

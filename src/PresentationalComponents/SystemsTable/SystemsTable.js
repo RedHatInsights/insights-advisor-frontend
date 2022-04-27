@@ -6,21 +6,20 @@ import {
   SYSTEMS_FETCH_URL,
 } from '../../AppConstants';
 import React, { useEffect, useState } from 'react';
-import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
+import { TableVariant } from '@patternfly/react-table';
 import {
   filterFetchBuilder,
   paramParser,
   pruneFilters,
   urlBuilder,
   workloadQueryBuilder,
+  buildTagFilter,
 } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 
 import { Get } from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
-import { Link } from 'react-router-dom';
 import Loading from '../Loading/Loading';
-import RuleLabels from '../Labels/RuleLabels';
 import SystemsPdf from '../Export/SystemsPdf';
 import downloadReport from '../Common/DownloadHelper';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
@@ -32,11 +31,18 @@ import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import NoSystemsTable from './Components/NoSystemsTable';
+import { useLoadModule } from '@scalprum/react-core';
+import { systemsTableColumns } from './SystemsTableAssets';
 
 const SystemsTable = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const store = useStore();
+  const [{ toGroupSelectionValue, buildOSFilterConfig } = {}] = useLoadModule({
+    appName: 'inventory',
+    scope: 'inventory',
+    module: './OsFilterHelpers',
+  });
 
   const { search } = useLocation();
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
@@ -46,33 +52,6 @@ const SystemsTable = () => {
   const setFilters = (filters) => dispatch(updateSysFilters(filters));
   const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
   const [filterBuilding, setFilterBuilding] = useState(true);
-  const columns = [
-    {
-      title: intl.formatMessage(messages.numberRuleHits),
-      transforms: [sortable, wrappable],
-      key: 'hits',
-    },
-    {
-      title: intl.formatMessage(messages.critical),
-      transforms: [sortable, wrappable],
-      key: 'critical_hits',
-    },
-    {
-      title: intl.formatMessage(messages.important),
-      transforms: [sortable, wrappable],
-      key: 'important_hits',
-    },
-    {
-      title: intl.formatMessage(messages.moderate),
-      transforms: [sortable, wrappable],
-      key: 'moderate_hits',
-    },
-    {
-      title: intl.formatMessage(messages.low),
-      transforms: [sortable, wrappable],
-      key: 'low_hits',
-    },
-  ];
 
   const removeFilterParam = (param) => {
     const filter = { ...filters, offset: 0 };
@@ -87,10 +66,18 @@ const SystemsTable = () => {
       values.length > 1 &&
       values.includes('yes') &&
       values.shift();
-    values.length > 0
-      ? setFilters({ ...filters, offset: 0, ...{ [param]: values } })
+    const passValue =
+      param === SFC.rhel_version.urlParam
+        ? Object.values(values || {}).flatMap((majorOsVersion) =>
+            Object.keys(majorOsVersion)
+          )
+        : values;
+
+    passValue.length > 0
+      ? setFilters({ ...filters, offset: 0, ...{ [param]: passValue } })
       : removeFilterParam(param);
   };
+
   const filterConfigItems = [
     {
       label: SFC.hits.title.toLowerCase(),
@@ -118,20 +105,18 @@ const SystemsTable = () => {
         items: SFC.incident.values,
       },
     },
-    {
-      label: SFC.rhel_version.title.toLowerCase(),
-      type: SFC.rhel_version.type,
-      id: SFC.rhel_version.urlParam,
-      value: `checkbox-${SFC.rhel_version.urlParam}`,
-      filterValues: {
-        key: `${SFC.rhel_version.urlParam}-filter`,
-        onChange: (_e, values) => {
-          addFilterParam(SFC.rhel_version.urlParam, values);
-        },
-        value: filters.rhel_version,
-        items: SFC.rhel_version.values,
-      },
-    },
+    ...(buildOSFilterConfig
+      ? [
+          buildOSFilterConfig({
+            label: SFC.rhel_version.title.toLowerCase(),
+            type: SFC.rhel_version.type,
+            id: SFC.rhel_version.urlParam,
+            value: toGroupSelectionValue(filters.rhel_version || []),
+            onChange: (_e, value) =>
+              addFilterParam(SFC.rhel_version.urlParam, value),
+          }),
+        ]
+      : []),
   ];
 
   const buildFilterChips = () => {
@@ -186,47 +171,20 @@ const SystemsTable = () => {
     urlBuilder(refreshedFilters, selectedTags);
   };
 
+  const columns = systemsTableColumns(intl);
   const createColumns = (defaultColumns) => {
-    let lastSeenColumn = defaultColumns.filter(({ key }) => key === 'updated');
-    let displayName = defaultColumns.filter(
-      ({ key }) => key === 'display_name'
-    );
-    let systemProfile = defaultColumns.filter(
-      ({ key }) => key === 'system_profile'
-    );
-    displayName = {
-      ...displayName[0],
-      transforms: [sortable, wrappable],
-      props: { isStatic: true },
-      // eslint-disable-next-line react/display-name
-      renderFunc: (_data, _id, system) => (
-        <React.Fragment>
-          <Link key={_id} to={`/systems/${system.system_uuid}`}>
-            {`${system.display_name} `}
-          </Link>
-          {system.incident_hits > 0 && (
-            <RuleLabels rule={{ tags: 'incident' }} />
-          )}
-        </React.Fragment>
-      ),
-    };
+    const mappedColumns = columns.map((column) => {
+      const correspondingColumn = defaultColumns.find(
+        (defaultColumn) => defaultColumn.key === column.key
+      );
+      return { ...column, ...correspondingColumn };
+    });
 
-    lastSeenColumn = {
-      ...lastSeenColumn[0],
-      transforms: [sortable, wrappable],
-      props: { width: 20 },
-    };
-
-    systemProfile = {
-      ...systemProfile[0],
-      transforms: [wrappable],
-    };
-
-    return [displayName, systemProfile, ...columns, lastSeenColumn];
+    return mappedColumns;
   };
 
   useEffect(() => {
-    let combinedFitlers;
+    let combinedFilters;
     if (search) {
       const paramsObject = paramParser();
       delete paramsObject.tags;
@@ -241,35 +199,36 @@ const SystemsTable = () => {
       paramsObject.limit === undefined || isNaN(paramsObject.limit)
         ? (paramsObject.limit = 20)
         : (paramsObject.limit = Number(paramsObject.limit[0]));
-      combinedFitlers = { ...filters, ...paramsObject };
+      combinedFilters = { ...filters, ...paramsObject };
       paramsObject.incident !== undefined &&
         !Array.isArray(paramsObject.incident) &&
         (paramsObject.incident = [`${paramsObject.incident}`]);
-      setFilters(combinedFitlers);
+      setFilters(combinedFilters);
     } else if (
       filters.limit === undefined ||
       filters.offset === undefined ||
       filters.hits === undefined
     ) {
-      combinedFitlers = {
+      combinedFilters = {
         ...filters,
         offset: 0,
         limit: 20,
         hits: ['all'],
       };
-      setFilters(combinedFitlers);
+      setFilters(combinedFilters);
     }
     setFilterBuilding(false);
-    urlBuilder(combinedFitlers, selectedTags);
+    urlBuilder(combinedFilters, selectedTags);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     !filterBuilding && (
       <InventoryTable
-        hideFilters={{ all: true, name: false }}
+        hideFilters={{ all: true, name: false, tags: false }}
         initialLoading
         autoRefresh
+        showTags
         disableDefaultColumns
         customFilters={{
           advisorFilters: filters,
@@ -300,12 +259,14 @@ const SystemsTable = () => {
             orderBy,
             orderDirection,
             advisorFilters,
-            selectedTags,
+            filters,
             workloads,
             SID,
           } = config;
           const sort = `${orderDirection === 'ASC' ? '' : '-'}${
-            orderBy === 'updated' ? 'last_seen' : orderBy
+            (orderBy === 'updated' && 'last_seen') ||
+            (orderBy === 'system_profile' && 'rhel_version') ||
+            orderBy
           }`;
 
           let options = {
@@ -322,7 +283,8 @@ const SystemsTable = () => {
             ...(Array.isArray(advisorFilters.rhel_version) && {
               rhel_version: advisorFilters.rhel_version?.join(','),
             }),
-            ...(selectedTags?.length && { tags: selectedTags }),
+            ...(filters.tagFilters?.length &&
+              buildTagFilter(filters.tagFilters)),
           };
 
           workloads &&
@@ -369,7 +331,6 @@ const SystemsTable = () => {
               selectedTags,
               workloads,
               SID,
-              null,
               dispatch
             ),
           extraItems: [
