@@ -141,6 +141,7 @@ const SystemsTable = () => {
           limit: filters.limit,
           offset: filters.offset,
           hits: ['all'],
+          tags: selectedTags,
         });
       } else {
         itemsToRemove.map((item) => {
@@ -187,7 +188,7 @@ const SystemsTable = () => {
     let combinedFilters;
     if (search) {
       const paramsObject = paramParser();
-      // delete paramsObject.tags;
+      paramsObject.tags = selectedTags;
       paramsObject.sort !== undefined &&
         (paramsObject.sort = paramsObject.sort[0]);
       paramsObject.display_name !== undefined &&
@@ -199,10 +200,7 @@ const SystemsTable = () => {
       paramsObject.limit === undefined || isNaN(paramsObject.limit)
         ? (paramsObject.limit = 20)
         : (paramsObject.limit = Number(paramsObject.limit[0]));
-      // paramsObject.tags = selectedTags[0];
-
       combinedFilters = { ...filters, ...paramsObject };
-      console.log(combinedFilters);
       paramsObject.incident !== undefined &&
         !Array.isArray(paramsObject.incident) &&
         (paramsObject.incident = [`${paramsObject.incident}`]);
@@ -217,18 +215,17 @@ const SystemsTable = () => {
         offset: 0,
         limit: 20,
         hits: ['all'],
-        // tags: selectedTags,
+        tags: selectedTags,
       };
       setFilters(combinedFilters);
     }
     setFilterBuilding(false);
     urlBuilder(combinedFilters, selectedTags);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedTags]);
 
   return (
     !filterBuilding && (
-      //inventory table is the solve for the 5k res
       <InventoryTable
         hideFilters={{ all: true, name: false, tags: false }}
         initialLoading
@@ -237,10 +234,9 @@ const SystemsTable = () => {
         disableDefaultColumns
         customFilters={{
           advisorFilters: filters,
-          // selectedTags: selectedTags,
           workloads,
           SID,
-          tags: selectedTags,
+          selectedTags,
         }}
         columns={(defaultColumns) => createColumns(defaultColumns)}
         onLoad={({
@@ -253,19 +249,12 @@ const SystemsTable = () => {
               ...mergeWithEntities(systemReducer([], INVENTORY_ACTION_TYPES), {
                 page: Number(filters.offset / filters.limit + 1 || 1),
                 perPage: Number(filters.limit || 20),
-                // tags: selectedTags,
               }),
               ...mergeWithDetail(),
             })
           );
         }}
-        getEntities={async (
-          _items,
-          config,
-          showTags,
-          defaultGetEntities,
-          // selectedTags
-        ) => {
+        getEntities={async (_items, config, showTags, defaultGetEntities) => {
           const {
             per_page,
             page,
@@ -275,7 +264,6 @@ const SystemsTable = () => {
             filters,
             workloads,
             SID,
-            // selectedTags,
           } = config;
           const sort = `${orderDirection === 'ASC' ? '' : '-'}${
             (orderBy === 'updated' && 'last_seen') ||
@@ -286,7 +274,6 @@ const SystemsTable = () => {
           let options = {
             ...advisorFilters,
             limit: per_page,
-            // tags: selectedTags,
             offset: page * per_page - per_page,
             sort,
             ...(config.filters.hostnameOrId && {
@@ -303,11 +290,7 @@ const SystemsTable = () => {
           };
 
           workloads &&
-            (options = {
-              ...options,
-              // ...selectedTags,
-              ...workloadQueryBuilder(workloads, SID),
-            });
+            (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
 
           const fetchedSystems = (await Get(SYSTEMS_FETCH_URL, {}, options))
             ?.data;
