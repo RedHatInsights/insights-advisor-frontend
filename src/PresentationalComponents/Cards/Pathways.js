@@ -57,7 +57,7 @@ const PathwayCard = (props) => {
       <CardBody className="body">
         <Text className="pf-u-pb-sm pf-u-font-weight-bold">{name}</Text>
         <CategoryLabel key={name} labelList={categories} />{' '}
-        <Link to={`/recommendations/pathways/${slug}`}>
+        <Link to={`/recommendations/pathways/systems/${slug}`}>
           {intl.formatMessage(messages.topicCardSystemsaffected, {
             systems: impacted_systems_count,
           })}
