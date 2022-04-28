@@ -328,7 +328,7 @@ const RulesTable = () => {
                       {' '}
                       {value.description}{' '}
                     </Link>
-                    <RuleLabels rule={value} />
+                    <RuleLabels rule={value} isCompact />
                   </span>
                 ),
               },
@@ -342,7 +342,13 @@ const RulesTable = () => {
                 ),
               },
               {
-                title: <CategoryLabel key={key} labelList={[value.category]} />,
+                title: (
+                  <CategoryLabel
+                    key={key}
+                    labelList={[value.category]}
+                    isCompact
+                  />
+                ),
               },
               {
                 title: (

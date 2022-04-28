@@ -6,18 +6,18 @@ import { useIntl } from 'react-intl';
 
 const RecommendationLevel = (props) => {
   const intl = useIntl();
-  const { recommendation_level: lvl } = props;
+  const { recommendation_level: lvl, isCompact } = props;
 
-  const label = (text, lvl, color) => (
-    <Label color={color} isCompact>{`${text} - ${lvl}%`}</Label>
+  const label = (text, lvl, color, isCompact) => (
+    <Label color={color} isCompact={isCompact}>{`${text} - ${lvl}%`}</Label>
   );
 
   if (lvl >= 80) {
-    return label(intl.formatMessage(messages.high), lvl, 'red');
+    return label(intl.formatMessage(messages.high), lvl, 'red', isCompact);
   } else if (lvl < 80 && lvl >= 50) {
-    return label(intl.formatMessage(messages.medium), lvl, 'orange');
+    return label(intl.formatMessage(messages.medium), lvl, 'orange', isCompact);
   } else {
-    return label(intl.formatMessage(messages.low), lvl, 'blue');
+    return label(intl.formatMessage(messages.low), lvl, 'blue', isCompact);
   }
 };
 
