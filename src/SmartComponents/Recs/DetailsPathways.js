@@ -33,6 +33,7 @@ import { useGetPathwayQuery } from '../../Services/Pathways';
 import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
+import { useLocation } from 'react-router-dom';
 
 const RulesTable = lazy(() =>
   import(
@@ -63,7 +64,38 @@ const PathwayDetails = () => {
     ...options,
     slug: pathwayName,
   });
-  const [activeTab, setActiveTab] = useState(0);
+  const { pathname } = useLocation();
+
+  const [activeTab, setActiveTab] = useState(
+    pathname.includes('/recommendations/pathways/systems/') ? 1 : 0
+  );
+
+  const waitForElm = (selector) => {
+    return new Promise((resolve) => {
+      if (document.querySelector(selector)) {
+        return resolve(document.querySelector(selector));
+      }
+
+      const observer = new MutationObserver(() => {
+        if (document.querySelector(selector)) {
+          resolve(document.querySelector(selector));
+          observer.disconnect();
+        }
+      });
+    });
+  };
+
+  const scrollDown = () => {
+    if (pathname.includes('/recommendations/pathways/systems/')) {
+      setTimeout(() => {
+        waitForElm('#tablesContainer').then(() => {
+          document
+            .getElementById('tablesContainer')
+            .scrollIntoView({ behavior: 'smooth' });
+        });
+      }, 5000);
+    }
+  };
 
   useEffect(() => {
     const initiaRecFilters = { ...recFilters };
@@ -81,7 +113,7 @@ const PathwayDetails = () => {
         ...defaultFilters,
       })
     );
-
+    scrollDown();
     return () => {
       dispatch(updateRecFilters(initiaRecFilters));
       dispatch(updateSysFilters(initiaSysFilters));
