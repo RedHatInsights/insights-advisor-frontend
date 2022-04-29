@@ -537,21 +537,3 @@ export const exportNotifications = {
     autoDismiss: false,
   },
 };
-
-export const linksForAppIntro = {
-  operationInsights: [
-    { title: 'Advisor', link: '/insights/advisor' },
-    { title: 'Drift', link: '/insights/drift' },
-    { title: 'Inventory', link: '/insights/inventory' },
-  ],
-  securityInsights: [
-    { title: 'Vulnerability', link: '/insights/vulnerability' },
-    { title: 'Compliance', link: '/insights/complience' },
-    { title: 'Policies', link: '/insights/policies' },
-    { title: 'Patch', link: '/insights/patch' },
-  ],
-  businessInsights: [
-    { title: 'Subscriptions', link: '/insights/subscriptions' },
-    { title: 'Remediations', link: '/insights/remediations' },
-  ],
-};
