@@ -4,7 +4,9 @@
 # Export vars for helper scripts to use
 # --------------------------------------------
 # name of app-sre "application" folder this component lives in; needs to match for quay
-export COMPONENT="insights-advisor"
+export COMPONENT="advisor"
+# Needs to match the quay repo name set by app.yaml in app-interface
+export IMAGE="quay.io/cloudservices/insights-advisor-frontend"
 export WORKSPACE=${WORKSPACE:-$APP_ROOT} # if running in jenkins, use the build's workspace
 export APP_ROOT=$(pwd)
 export NODE_BUILD_VERSION=16
