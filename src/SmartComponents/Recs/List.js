@@ -15,7 +15,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
-import { PERMS, featureFlags } from '../../AppConstants';
+import { PERMS } from '../../AppConstants';
 import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
 import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/';
 import messages from '../../Messages';
@@ -23,7 +23,6 @@ import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import { GridItem, Grid } from '@patternfly/react-core';
 import AppIntro from '../../PresentationalComponents/AppIntro/AppIntro';
-import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const RulesTable = lazy(() =>
   import(
@@ -57,8 +56,6 @@ const List = () => {
     history.push(tab === 1 ? '/recommendations/pathways' : '/recommendations');
   };
 
-  const isAppTourEnabled = useFeatureFlag(featureFlags.appTour);
-
   return (
     <React.Fragment>
       <PageHeader className="adv-c-page-recommendations__header">
@@ -69,7 +66,7 @@ const List = () => {
         />
         {!permsExport.isLoading && (
           <Grid className={'pageHeaderElementsContainer'}>
-            <GridItem span={isAppTourEnabled ? 9 : 12}>
+            <GridItem span={9}>
               <Tooltip
                 trigger={!permsExport.hasAccess ? 'mouseenter' : ''}
                 content={intl.formatMessage(messages.permsAction)}
@@ -77,11 +74,9 @@ const List = () => {
                 <DownloadExecReport isDisabled={!permsExport.hasAccess} />
               </Tooltip>
             </GridItem>
-            {isAppTourEnabled ? (
-              <GridItem span={3}>
-                <AppIntro />
-              </GridItem>
-            ) : null}
+            <GridItem span={3}>
+              <AppIntro />
+            </GridItem>
           </Grid>
         )}
       </PageHeader>
