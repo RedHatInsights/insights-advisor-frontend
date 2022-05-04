@@ -121,14 +121,26 @@ const BaseSystemAdvisor = () => {
     setRows(allRows);
   };
 
+  const onRemediationCreated = (result) => {
+    onBulkSelect(false);
+    try {
+      result.remediation && addNotification(result.getNotification());
+    } catch (error) {
+      addNotification({
+        variant: 'danger',
+        dismissable: true,
+        title: intl.formatMessage(messages.error),
+        description: `${error}`,
+      });
+    }
+  };
+
   const actions = [
     <RemediationButton
       key="remediation-button"
       isDisabled={selectedAnsibleRules.length === 0}
       dataProvider={() => processRemediation(selectedAnsibleRules)}
-      onRemediationCreated={(result) =>
-        addNotification(result.getNotification())
-      }
+      onRemediationCreated={(result) => onRemediationCreated(result)}
     >
       {intl.formatMessage(messages.remediate)}
     </RemediationButton>,

@@ -10,9 +10,13 @@ import ThumbsDownIcon from '@patternfly/react-icons/dist/js/icons/thumbs-down-ic
 import ThumbsUpIcon from '@patternfly/react-icons/dist/js/icons/thumbs-up-icon';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 const RuleRating = ({ ruleId, ruleRating, updateRatingAction }) => {
   const intl = useIntl();
+
+  const { toggleFeedbackModal } = useChrome();
+
   const [rating, setRating] = useState(ruleRating);
   const [submitted, setSubmitted] = useState(false);
   const [thankYou, setThankYou] = useState(
@@ -25,6 +29,7 @@ const RuleRating = ({ ruleId, ruleRating, updateRatingAction }) => {
       setRating(calculatedRating);
       setSubmitted(true);
       setTimeout(() => setThankYou(''), 3000);
+      toggleFeedbackModal(true);
     } catch (error) {
       console.error(error); // eslint-disable-line no-console
     }
