@@ -389,16 +389,12 @@ const Inventory = ({
               },
             },
             {
-              ...(entities?.rows?.length > filters.limit
-                ? {
-                    title: intl.formatMessage(messages.selectPage, {
-                      items: filters.limit,
-                    }),
-                    onClick: () => {
-                      onSelectRows(0, true);
-                    },
-                  }
-                : {}),
+              title: intl.formatMessage(messages.selectPage, {
+                items: entities?.rows?.length,
+              }),
+              onClick: () => {
+                onSelectRows(0, true);
+              },
             },
             {
               ...(entities?.rows?.length > 0

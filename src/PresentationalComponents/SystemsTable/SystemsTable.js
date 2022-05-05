@@ -141,6 +141,7 @@ const SystemsTable = () => {
           limit: filters.limit,
           offset: filters.offset,
           hits: ['all'],
+          tags: selectedTags,
         });
       } else {
         itemsToRemove.map((item) => {
@@ -187,7 +188,7 @@ const SystemsTable = () => {
     let combinedFilters;
     if (search) {
       const paramsObject = paramParser();
-      delete paramsObject.tags;
+      paramsObject.tags = selectedTags;
       paramsObject.sort !== undefined &&
         (paramsObject.sort = paramsObject.sort[0]);
       paramsObject.display_name !== undefined &&
@@ -214,13 +215,14 @@ const SystemsTable = () => {
         offset: 0,
         limit: 20,
         hits: ['all'],
+        tags: selectedTags,
       };
       setFilters(combinedFilters);
     }
     setFilterBuilding(false);
     urlBuilder(combinedFilters, selectedTags);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedTags]);
 
   return (
     !filterBuilding && (
@@ -232,9 +234,9 @@ const SystemsTable = () => {
         disableDefaultColumns
         customFilters={{
           advisorFilters: filters,
-          selectedTags,
           workloads,
           SID,
+          selectedTags,
         }}
         columns={(defaultColumns) => createColumns(defaultColumns)}
         onLoad={({
