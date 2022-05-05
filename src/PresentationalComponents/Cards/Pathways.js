@@ -113,12 +113,15 @@ const TotalRisk = (props) => {
                     constrainToVisibleArea
                   />
                 }
+                domainPadding={{
+                  x: [20, 15],
+                }}
                 height={150}
                 width={300}
                 padding={{
                   bottom: 30,
                   left: 45,
-                  right: 20,
+                  right: 10,
                   top: 10,
                 }}
               >
