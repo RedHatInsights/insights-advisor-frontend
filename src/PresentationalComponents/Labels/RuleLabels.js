@@ -60,7 +60,7 @@ RuleLabels.propTypes = {
 };
 
 RuleLabels.defaultProps = {
-  isCompact: true,
+  isCompact: false,
 };
 
 export default RuleLabels;

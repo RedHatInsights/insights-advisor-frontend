@@ -155,7 +155,7 @@ const BuildExecReport = ({
               title={intl.formatMessage(messages.systemsExposed)}
             >{`${rule.impacted_systems_count}`}</PanelItem>
             <PanelItem title={intl.formatMessage(messages.totalRisk)}>
-              <InsightsLabel variant={rule.total_risk} isCompact />
+              <InsightsLabel variant={rule.total_risk} />
             </PanelItem>
           </Panel>
         ))}
