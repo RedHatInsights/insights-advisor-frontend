@@ -197,7 +197,6 @@ const Resolution = (props) => {
               text={RISK_OF_CHANGE_LABEL[resolution_risk.risk]}
               value={resolution_risk.risk}
               hideIcon
-              isCompact
             />
           </CardBody>
           <CardBody className="body">
