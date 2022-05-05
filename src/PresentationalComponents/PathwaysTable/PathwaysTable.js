@@ -163,14 +163,18 @@ const PathwaysTable = () => {
                       {pathway.name}{' '}
                     </Link>
                     {pathway.has_incident && (
-                      <RuleLabels rule={{ tags: 'incident' }} />
+                      <RuleLabels rule={{ tags: 'incident' }} isCompact />
                     )}
                   </span>
                 ),
               },
               {
                 title: (
-                  <CategoryLabel key={key} labelList={pathway.categories} />
+                  <CategoryLabel
+                    key={key}
+                    labelList={pathway.categories}
+                    isCompact
+                  />
                 ),
               },
               {
@@ -192,7 +196,7 @@ const PathwaysTable = () => {
                 ),
               },
               {
-                title: <RecommendationLevel key={key} {...pathway} />,
+                title: <RecommendationLevel key={key} {...pathway} isCompact />,
               },
             ],
           },
