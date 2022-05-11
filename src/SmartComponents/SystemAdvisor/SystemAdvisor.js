@@ -361,15 +361,12 @@ const BaseSystemAdvisor = () => {
     );
   };
   const checkedStatus = () => {
-    console.log(systemAdvisorRef.current.rowCount);
-    console.log(selectedItemsLength);
     if (selectedItemsLength === systemAdvisorRef.current.rowCount) {
       return 1;
     } else if (
-      selectedItemsLength > 0 &&
+      selectedItemsLength > 0 ||
       selectableItemsLength !== systemAdvisorRef.current.rowCount
     ) {
-      console.log('true');
       return null;
     } else {
       return 0;
