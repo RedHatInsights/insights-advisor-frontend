@@ -1221,31 +1221,6 @@ export default defineMessages({
     defaultMessage:
       'Learn more about Insights with self-guided onboarding tours in the Resource Center.',
   },
-  introExploreInsights: {
-    id: 'introExploreInsights',
-    description: 'App intro button label',
-    defaultMessage: 'Explore Insights',
-  },
-  introTakeTour: {
-    id: 'introTakeTour',
-    description: 'App intro button label',
-    defaultMessage: 'Take Advisor tour',
-  },
-  introLinkOperationInsights: {
-    id: 'introLinkOperationInsights',
-    description: 'App intro link label',
-    defaultMessage: 'Operation Insights',
-  },
-  introLinkSecurityInsights: {
-    id: 'introLinkSecurityInsights',
-    description: 'App intro link label',
-    defaultMessage: 'Security Insights',
-  },
-  introLinkBusinessInsights: {
-    id: 'introLinkBusinessInsights',
-    description: 'App intro link label',
-    defaultMessage: 'Business Insights',
-  },
   notConnectedTitle: {
     id: 'notConnectedTitle',
     description: 'Not Connected title text',

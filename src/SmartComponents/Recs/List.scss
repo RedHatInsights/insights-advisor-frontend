@@ -10,11 +10,6 @@
         font-size: var(--pf-global--FontSize--md);
         margin-top: var(--pf-global--spacer--lg);
     }
-    .pageHeaderElementsContainer{
-        display: inline-flex;
-        float: right;
-    }
-
     @media only screen and (max-width: 585px) {
         .pf-c-title {
             display: block;
