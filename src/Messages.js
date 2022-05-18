@@ -358,13 +358,13 @@ export default defineMessages({
     description: 'Knowledgebase article',
     defaultMessage: 'Knowledgebase article',
   },
-  riskofchange: {
-    id: 'riskofchange',
+  riskOfChange: {
+    id: 'riskOfChange',
     description: 'Risk of Change',
     defaultMessage: 'Risk of change',
   },
-  rulesDetailsTotalriskBody: {
-    id: 'rulesdetails.totalriskbody',
+  rulesDetailsTotalRiskBody: {
+    id: 'rulesDetailsTotalRiskBody',
     description: 'Text explaining the total risk value of this recommendation',
     defaultMessage: `The total risk of this remediation is <strong>{risk}</strong>,
                         based on the combination of likelihood and impact to remediate.`,
@@ -816,6 +816,16 @@ export default defineMessages({
       'Used in the SeverityLine tooltip to describe the likelihood of a rule',
     defaultMessage: 'The likelihood that this will be a problem is {level}.',
   },
+  riskOfChangeText: {
+    id: 'riskOfChangeText',
+    description: 'Risk of change text',
+    defaultMessage:
+      'The risk of change is <strong>{ level }</strong>, because the change takes very little time to implement and there is minimal impact to system operations.',
+  },
+  riskOfChangeLabel: {
+    id: 'riskOfChangeLabel',
+    defaultMessage: '{level}',
+  },
   riskOfChangeTextOne: {
     id: 'riskOfChangeTextOne',
     description: 'Risk of change text explaining a value one',
@@ -916,8 +926,8 @@ export default defineMessages({
     description: 'Asking the user if they find a recommendation helpful',
     defaultMessage: 'Is this recommendation helpful?',
   },
-  feedbackThankyou: {
-    id: 'feedbackThankyou',
+  feedbackThankYou: {
+    id: 'feedbackThankYou',
     description: 'Thanking user for feedback',
     defaultMessage: 'Thank you for your feedback!',
   },

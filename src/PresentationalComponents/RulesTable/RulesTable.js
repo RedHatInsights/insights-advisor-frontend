@@ -30,6 +30,7 @@ import {
   filterFetchBuilder,
   paramParser,
   pruneFilters,
+  ruleResolutionRisk,
   urlBuilder,
   workloadQueryBuilder,
 } from '../Common/Tables';
@@ -47,14 +48,22 @@ import { InsightsLabel } from '@redhat-cloud-services/frontend-components/Insigh
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
-import RuleDetails from '../RuleDetails/RuleDetails';
+import {
+  RuleDetails,
+  RuleDetailsMessagesKeys,
+  AdvisorProduct,
+} from '@redhat-cloud-services/frontend-components-advisor-components';
 import RuleLabels from '../Labels/RuleLabels';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import debounce from '../../Utilities/Debounce';
 import downloadReport from '../Common/DownloadHelper';
 import messages from '../../Messages';
-import { strong } from '../../Utilities/intlHelper';
+import {
+  formatMessages,
+  mapContentToValues,
+  strong,
+} from '../../Utilities/intlHelper';
 import { updateRecFilters } from '../../Services/Filters';
 import { useGetRecsQuery } from '../../Services/Recs';
 import { useIntl } from 'react-intl';
@@ -92,7 +101,7 @@ const RulesTable = () => {
       transforms: [sortable, cellWidth(15)],
     },
     {
-      title: intl.formatMessage(messages.riskofchange),
+      title: intl.formatMessage(messages.riskOfChange),
       transforms: [sortable, cellWidth(15)],
     },
     {
@@ -150,15 +159,6 @@ const RulesTable = () => {
     5: 'resolution_risk',
     6: 'impacted_count',
     7: 'playbook_count',
-  };
-
-  const ruleResolutionRisk = (rule) => {
-    const resolution = rule.resolution_set.find(
-      (resolution) =>
-        resolution.system_type === AppConstants.SYSTEM_TYPES.rhel ||
-        AppConstants.SYSTEM_TYPES.ocp
-    );
-    return resolution ? resolution.resolution_risk.risk : undefined;
   };
 
   useEffect(() => {
@@ -357,7 +357,7 @@ const RulesTable = () => {
                       key={key}
                       position={TooltipPosition.bottom}
                       content={intl.formatMessage(
-                        messages.rulesDetailsTotalriskBody,
+                        messages.rulesDetailsTotalRiskBody,
                         {
                           risk:
                             AppConstants.TOTAL_RISK_LABEL_LOWER[
@@ -459,13 +459,23 @@ const RulesTable = () => {
                         <React.Fragment></React.Fragment>
                       )}
                       <RuleDetails
+                        messages={formatMessages(
+                          intl,
+                          RuleDetailsMessagesKeys,
+                          mapContentToValues(intl, value)
+                        )}
+                        product={AdvisorProduct.rhel}
                         rule={value}
                         resolutionRisk={ruleResolutionRisk(value)}
-                        riskOfChangeDesc={
+                        resolutionRiskDesc={
                           AppConstants.RISK_OF_CHANGE_DESC[
                             ruleResolutionRisk(value)
                           ]
                         }
+                        isDetailsPage={false}
+                        showViewAffected
+                        linkComponent={Link}
+                        knowledgebaseUrl={`https://access.redhat.com/node/${value.node_id}`}
                       />
                     </Stack>
                   </Main>

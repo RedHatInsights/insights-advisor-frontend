@@ -1,4 +1,5 @@
 import { generateFilter } from '@redhat-cloud-services/frontend-components-utilities/helpers';
+import { SYSTEM_TYPES } from '../../AppConstants';
 
 // Builds returns url params from table filters, pushes to url if history object is passed
 export const urlBuilder = (filters = {}) => {
@@ -171,3 +172,11 @@ export const mergeArraysByDiffKeys = (advSystems, invSystems) =>
     ),
     ...advSys,
   }));
+
+export const ruleResolutionRisk = (rule) => {
+  const resolution = rule.resolution_set.find(
+    (resolution) =>
+      resolution.system_type === SYSTEM_TYPES.rhel || SYSTEM_TYPES.ocp
+  );
+  return resolution ? resolution.resolution_risk.risk : undefined;
+};
