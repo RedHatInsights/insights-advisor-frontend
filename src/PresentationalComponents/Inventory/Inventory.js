@@ -5,7 +5,7 @@ import {
   RULES_FETCH_URL,
   SYSTEMS_FETCH_URL,
 } from '../../AppConstants';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import {
   pruneFilters,
@@ -45,7 +45,6 @@ const Inventory = ({
   const store = useStore();
   const intl = useIntl();
   const dispatch = useDispatch();
-  const [selected, setSelected] = useState([]);
   const [filters, setFilters] = useState({
     limit: 20,
     offset: 0,
@@ -53,11 +52,12 @@ const Inventory = ({
     name: '',
   });
   const entities = useSelector(({ entities }) => entities || {});
-  const onSelectRows = (id, selected) =>
-    dispatch({ type: 'SELECT_ENTITY', payload: { id, selected } });
+  const selected = useSelector(({ entities }) => entities?.selected || []);
+
+  const onSelectRows = (id) =>
+    dispatch({ type: 'SELECT_ENTITY', payload: { id } });
   const addNotification = (data) => dispatch(notification(data));
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
-  const [bulkSelect, setBulkSelect] = useState();
 
   const remediationDataProvider = async () => {
     if (pathway) {
@@ -87,7 +87,7 @@ const Inventory = ({
   };
 
   const onRemediationCreated = (result) => {
-    onSelectRows(-1, false);
+    onSelectRows(-1);
     try {
       result.remediation && addNotification(result.getNotification());
     } catch (error) {
@@ -104,19 +104,13 @@ const Inventory = ({
     setDisableRuleModalOpen(disableRuleModalOpen);
   };
 
-  const bulkSelectfn = () => {
-    setBulkSelect(true);
-    onSelectRows(0, true);
+  const setPageAsSelected = () => {
+    let ids = [];
+    entities.rows.forEach((item) => {
+      ids.push(item.system_uuid);
+    });
+    onSelectRows(ids);
   };
-
-  const calculateSelectedItems = () =>
-    bulkSelect
-      ? setBulkSelect(false)
-      : setSelected(
-          entities?.rows
-            ?.filter((entity) => entity.selected === true)
-            .map((entity) => entity.id)
-        );
 
   const createColumns = (defaultColumns) => {
     let lastSeenColumn = defaultColumns.filter(({ key }) => key === 'updated');
@@ -245,11 +239,6 @@ const Inventory = ({
     },
   };
 
-  useEffect(() => {
-    entities?.rows?.length && calculateSelectedItems(entities.rows);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entities?.rows]);
-
   return (
     <React.Fragment>
       {disableRuleModalOpen && (
@@ -348,6 +337,11 @@ const Inventory = ({
             },
             showTags
           );
+          results.results.forEach((row) => {
+            if (selected.includes(row.id)) {
+              row.selected = true;
+            }
+          });
 
           return Promise.resolve({
             results: mergeArraysByDiffKeys(
@@ -385,7 +379,7 @@ const Inventory = ({
             {
               title: intl.formatMessage(messages.selectNone),
               onClick: () => {
-                onSelectRows(-1, false);
+                onSelectRows(-1);
               },
             },
             {
@@ -393,7 +387,7 @@ const Inventory = ({
                 items: entities?.rows?.length,
               }),
               onClick: () => {
-                onSelectRows(0, true);
+                setPageAsSelected();
               },
             },
             {
@@ -424,10 +418,11 @@ const Inventory = ({
                               { name: filters.name }
                             )
                           )?.data?.host_ids;
-
                       console.error(allSystems);
-                      setSelected(allSystems);
-                      bulkSelectfn();
+                      entities.rows.forEach((item) => {
+                        item.selected = true;
+                      });
+                      onSelectRows(allSystems);
                     },
                   }
                 : {}),
@@ -435,8 +430,7 @@ const Inventory = ({
           ],
           checked: checkedStatus(),
           onSelect: () => {
-            selected.length > 0 ? onSelectRows(-1, false) : bulkSelectfn();
-            calculateSelectedItems();
+            selected.length > 0 ? onSelectRows(-1) : setPageAsSelected();
           },
         }}
         fallback={Loading}
