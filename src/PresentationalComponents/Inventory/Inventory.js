@@ -5,7 +5,7 @@ import {
   RULES_FETCH_URL,
   SYSTEMS_FETCH_URL,
 } from '../../AppConstants';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import {
   pruneFilters,
@@ -14,6 +14,7 @@ import {
   buildTagFilter,
 } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
+import { hasPlaybook } from './helpers';
 
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { Get } from '../../Utilities/Api';
@@ -54,21 +55,79 @@ const Inventory = ({
   const entities = useSelector(({ entities }) => entities || {});
   const selected = useSelector(({ entities }) => entities?.selected || []);
 
-  const onSelectRows = (id = false) =>
+  const onSelectRows = (id) => {
     dispatch({ type: 'SELECT_ENTITY', payload: { id } });
+  };
   const addNotification = (data) => dispatch(notification(data));
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
 
-  const remediationDataProvider = async () => {
-    if (pathway) {
-      const pathways = (
+  const [pathwayRulesList, setPathwayRulesList] = useState();
+  const [pathwayReportList, setPathwayReportList] = useState();
+
+  const [pathwayDetails, setPathwayDetails] = useState(false);
+  const [disableRemediateButton, setDisableRemediateButton] = useState(true);
+
+  useEffect(() => {
+    pathwayCheck();
+  }, [selected.length]);
+
+  const pathwayCheck = async () => {
+    if (!pathwayDetails) {
+      let pathwayRules = (
         await Get(
           `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
           {},
           {}
         )
       )?.data.data;
-      const issues = pathways.map((rec) => ({
+
+      let pathwayReport = (
+        await Get(
+          `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
+          {},
+          {}
+        )
+      )?.data.rules;
+      setPathwayDetails(true);
+      setPathwayReportList(pathwayReport);
+      setPathwayRulesList(pathwayRules);
+    }
+    if (selected.length > 0) {
+      isRemediationButtonDisabled();
+    } else {
+      setDisableRemediateButton(true);
+    }
+  };
+
+  const isRemediationButtonDisabled = () => {
+    let playbookFound = false;
+    let ruleKeys = Object.keys(pathwayReportList);
+
+    for (let i = 0; i < selected.length; i++) {
+      let system = selected[i];
+      if (playbookFound) {
+        break;
+      }
+      ruleKeys.forEach((rule) => {
+        //Grab the rule assosciated with that system
+        if (pathwayReportList[rule].includes(system)) {
+          let assosciatedRule = pathwayReportList[rule];
+          //find that associated rule in the pathwayRules endpoint, check for playbook
+          let item = pathwayRulesList.find(
+            (report) => (report.rule_id = assosciatedRule)
+          );
+          if (item.resolution_set[0].has_playbook) {
+            playbookFound = true;
+            return setDisableRemediateButton(false);
+          }
+        }
+      });
+    }
+  };
+
+  const remediationDataProvider = async () => {
+    if (pathway) {
+      const issues = pathwayRulesList.map((rec) => ({
         id: `advisor:${rec.rule_id}`,
         description: rec.description,
       }));
@@ -354,9 +413,7 @@ const Inventory = ({
         dedicatedAction={
           <RemediationButton
             key="remediation-button"
-            isDisabled={
-              selected.length === 0 || (!pathway && rule?.playbook_count === 0)
-            }
+            isDisabled={disableRemediateButton}
             dataProvider={remediationDataProvider}
             onRemediationCreated={(result) => onRemediationCreated(result)}
           >
