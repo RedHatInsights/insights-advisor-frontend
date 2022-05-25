@@ -68,11 +68,35 @@ const Inventory = ({
           {}
         )
       )?.data.data;
-      const issues = pathways.map((rec) => ({
-        id: `advisor:${rec.rule_id}`,
-        description: rec.description,
-      }));
-      return { issues, systems: selected };
+
+      const systems = (
+        await Get(
+          `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
+          {},
+          {}
+        )
+      )?.data.rules;
+
+      let issues = [];
+      pathways.forEach((rec) => {
+        let filteredSystems = [];
+
+        systems[rec.rule_id].forEach((system) => {
+          if (selected.includes(system)) {
+            filteredSystems.push(system);
+          }
+        });
+
+        if (filteredSystems.length) {
+          issues.push({
+            id: `advisor:${rec.rule_id}`,
+            description: rec.description,
+            systems: filteredSystems,
+          });
+        }
+      });
+
+      return { issues };
     } else {
       return {
         issues: [
