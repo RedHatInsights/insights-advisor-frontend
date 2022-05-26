@@ -20,6 +20,7 @@ import {
 } from '@redhat-cloud-services/frontend-components/PageHeader';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
@@ -37,7 +38,12 @@ import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
-import RuleDetails from '../../PresentationalComponents/RuleDetails/RuleDetails';
+import {
+  RuleDetails,
+  RuleDetailsMessagesKeys,
+  AdvisorProduct,
+} from '@redhat-cloud-services/frontend-components-advisor-components';
+
 import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
@@ -52,6 +58,7 @@ import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import CategoryLabel from '../../PresentationalComponents/Labels/CategoryLabel';
+import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
 
 const OverviewDetails = () => {
   const intl = useIntl();
@@ -212,11 +219,17 @@ const OverviewDetails = () => {
           </PageHeader>
           <Main className="pf-m-light pf-u-pt-sm">
             <RuleDetails
-              resolutionRisk={ruleResolutionRisk(rule)}
-              riskOfChangeDesc={RISK_OF_CHANGE_DESC[ruleResolutionRisk(rule)]}
-              isDetailsPage
+              messages={formatMessages(
+                intl,
+                RuleDetailsMessagesKeys,
+                mapContentToValues(intl, rule)
+              )}
+              product={AdvisorProduct.rhel}
               rule={rule}
               topics={topics}
+              resolutionRisk={ruleResolutionRisk(rule)}
+              resolutionRiskDesc={RISK_OF_CHANGE_DESC[ruleResolutionRisk(rule)]}
+              isDetailsPage
               header={
                 <React.Fragment>
                   <PageHeaderTitle
@@ -241,13 +254,15 @@ const OverviewDetails = () => {
                   </p>
                 </React.Fragment>
               }
-              onFeedbackChanged={async (ruleId, calculatedRating) => {
+              onVoteClick={async (ruleId, calculatedRating) => {
                 await Post(
                   `${BASE_URL}/rating/`,
                   {},
                   { rule: ruleId, rating: calculatedRating }
                 );
               }}
+              knowledgebaseUrl={`https://access.redhat.com/node/${rule.node_id}`}
+              linkComponent={Link}
             >
               <Flex>
                 <FlexItem align={{ default: 'alignRight' }}>
