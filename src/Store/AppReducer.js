@@ -17,6 +17,10 @@ export function systemReducer(cols, INVENTORY_ACTION_TYPES) {
         })),
       };
     },
+    ['SELECT_ENTITIES']: (state, { payload: { selected } }) => ({
+      ...state,
+      rows: selectRows(state.rows, selected),
+    }),
   });
 }
 
@@ -36,3 +40,9 @@ function enableApplications(state) {
     activeApps: [{ title: 'Insights', name: 'insights', component: Advisor }],
   };
 }
+
+const selectRows = (rows, selected = []) =>
+  (rows || []).map((row) => ({
+    ...row,
+    selected: selected.includes(row.id),
+  }));
