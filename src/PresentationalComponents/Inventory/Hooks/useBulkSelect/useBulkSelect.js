@@ -45,13 +45,22 @@ const useBulkSelect = ({
   const checked = checkboxState(selectedIdsTotal, total);
   const title = compileTitle(selectedIdsTotal);
 
+  const mergeArraysUniqly = (arrayA, arrayB) =>
+    Array.from(new Set([...arrayA, ...arrayB]));
+
   const selectOne = (_, selected, _key, row) =>
     selected ? select(row[identifier]) : deselect(row[identifier]);
+
   const selectPage = () => {
-    !currentPageSelected
-      ? select(idsOnPage, undefined, true)
-      : deselect(idsOnPage);
+    let selectedItems =
+      selectedIds?.length > 0
+        ? mergeArraysUniqly(selectedIds, idsOnPage)
+        : idsOnPage;
+    currentPageSelected
+      ? deselect(idsOnPage)
+      : select(selectedItems, undefined, true);
   };
+
   const selectAll = async () => {
     const items = await itemIdsInTable();
     if (allSelected) {
