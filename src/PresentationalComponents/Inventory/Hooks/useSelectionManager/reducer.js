@@ -50,8 +50,9 @@ const deselect = (state = {}, action) => {
 
 const toggle = (state, action) => {
   const group = selectionGroup(action);
-  // eslint-disable-next-line prettier/prettier
-  return (state[group] || []).includes(action.item) ? deselect(state, action) : select(state, action);
+  return (state[group] || []).includes(action.item)
+    ? deselect(state, action)
+    : select(state, action);
 };
 
 const reset = (state, action) =>
