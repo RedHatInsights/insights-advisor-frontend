@@ -949,12 +949,12 @@ export default defineMessages({
   incidentRules: {
     id: 'incidentRules',
     description: 'Pathways with incidents',
-    defaultMessage: 'Incident pathways',
+    defaultMessage: 'Incident',
   },
   nonIncidentRules: {
     id: 'nonIncidentRules',
     description: 'Pathways with no incidents',
-    defaultMessage: 'Non-incident pathways',
+    defaultMessage: 'Non-incident',
   },
   incidentSystems: {
     id: 'incidentSystems',
