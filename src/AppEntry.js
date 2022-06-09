@@ -10,11 +10,7 @@ import { getStore } from './Store';
 import messages from '../locales/data.json';
 
 const AppEntry = () => (
-  <IntlProvider
-    locale={navigator.language.slice(0, 2)}
-    messages={messages}
-    onError={console.log}
-  >
+  <IntlProvider locale={navigator.language.slice(0, 2)} messages={messages}>
     <Provider store={getStore()}>
       <Router basename={getBaseName(window.location.pathname)}>
         <NotificationsPortal />
