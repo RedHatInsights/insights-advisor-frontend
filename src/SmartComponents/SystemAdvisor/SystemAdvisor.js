@@ -360,6 +360,18 @@ const BaseSystemAdvisor = () => {
       )
     );
   };
+  const checkedStatus = () => {
+    if (selectedItemsLength === systemAdvisorRef.current.rowCount) {
+      return 1;
+    } else if (
+      selectedItemsLength > 0 ||
+      selectableItemsLength !== systemAdvisorRef.current.rowCount
+    ) {
+      return null;
+    } else {
+      return 0;
+    }
+  };
 
   const bulkSelect = {
     items: [
@@ -373,7 +385,7 @@ const BaseSystemAdvisor = () => {
       },
     ],
     count: selectedItemsLength,
-    checked: selectedItemsLength === selectableItemsLength,
+    checked: checkedStatus(),
     onSelect: () => onBulkSelect(!isSelected),
   };
 
