@@ -1,0 +1,19 @@
+:8000 {
+    log
+    # Define the regex for an app match
+    @app_match {
+        path_regexp ^/apps/advisor(.*)
+    }
+    handle @app_match {
+        # Substitution for alias from nginx
+        uri strip_prefix /apps/advisor
+        file_server * {
+            root /opt/app-root/src/dist 
+            browse
+        }
+    }
+    handle / {
+        redir /apps/chrome/index.html permanent
+    }
+}
+    
