@@ -14,7 +14,7 @@ const filtersInitialState = {
     offset: 0,
   },
   sysState: { sort: '-last_seen', limit: 20, offset: 0 },
-  selectedTags: null,
+  selectedTags: [],
   workloads: {},
   SID: [],
 };
