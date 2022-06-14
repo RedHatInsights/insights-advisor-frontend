@@ -117,7 +117,6 @@ const Inventory = ({
         )
       )?.data.data;
 
-      
       const systems = (
         await Get(
           `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
