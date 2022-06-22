@@ -1,8 +1,6 @@
-export const compileTitle = (itemsTotal, titleOption) => {
-  if (typeof titleOption === 'string') {
-    return titleOption;
-  } else if (typeof titleOption === 'function') {
-    return titleOption(itemsTotal);
+export const compileTitle = (itemsTotal) => {
+  if (itemsTotal === 0) {
+    return null;
   } else {
     return `${itemsTotal} selected`;
   }
