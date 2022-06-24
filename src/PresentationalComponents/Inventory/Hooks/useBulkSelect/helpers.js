@@ -1,6 +1,16 @@
-export const compileTitle = (itemsTotal) => {
-  if (itemsTotal === 0) {
+import React from 'react';
+import { Spinner } from '@patternfly/react-core';
+
+export const compileTitle = (itemsTotal, loading) => {
+  if (itemsTotal === 0 && !loading) {
     return null;
+  } else if (loading) {
+    return (
+      <React.Fragment>
+        <Spinner size="sm" />
+        {`     ${itemsTotal} selected`}
+      </React.Fragment>
+    );
   } else {
     return `${itemsTotal} selected`;
   }
