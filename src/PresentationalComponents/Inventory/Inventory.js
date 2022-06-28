@@ -1,6 +1,6 @@
 import './_Inventory.scss';
 
-import { BASE_URL } from '../../AppConstants';
+import { BASE_URL, RULES_FETCH_URL } from '../../AppConstants';
 import React, { useEffect, useState } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import { pruneFilters, urlBuilder } from '../Common/Tables';
@@ -50,13 +50,15 @@ const Inventory = ({
   const addNotification = (data) => dispatch(notification(data));
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [curPageIds, setCurPageIds] = useState([]);
-  const [pathwayRulesList, setPathwayRulesList] = useState();
-  const [pathwayReportList, setPathwayReportList] = useState();
+  const [pathwayRulesList, setPathwayRulesList] = useState({});
+  const [pathwayReportList, setPathwayReportList] = useState({});
   const [isLoading, setIsLoading] = useState();
 
   const [hasPathwayDetails, setHasPathwayDetails] = useState(false);
   const [isRemediationButtonDisabled, setIsRemediationButtonDisabled] =
     useState(true);
+  //This value comes in from the backend as 0, or 1. To be consistent it is set to -1
+  const [rulesPlaybookCount, setRulesPlaybookCount] = useState(-1);
 
   const handleRefresh = (options) => {
     /* Rec table doesn't use the same sorting params as sys table, switching between the two results in the rec table blowing up cuz its trying to
@@ -75,6 +77,17 @@ const Inventory = ({
     !pathway && urlBuilder(refreshedFilters, selectedTags);
   };
 
+  const fetchSystems = getEntities(
+    handleRefresh,
+    pathway,
+    setCurPageIds,
+    setTotal,
+    selectedIds,
+    setFullFilters,
+    fullFilters,
+    rule
+  );
+
   const grabPageIds = () => {
     return curPageIds || [];
   };
@@ -92,19 +105,7 @@ const Inventory = ({
     identitfier: 'system_uuid',
     isLoading,
   });
-
-  const fetchSystems = getEntities(
-    handleRefresh,
-    pathway,
-    setCurPageIds,
-    setTotal,
-    selectedIds,
-    setFullFilters,
-    fullFilters,
-    rule
-  );
-
-  // Ensures rows are marked as selected
+  // Ensures rows are marked as selected, runs the check on remediation Status
   useEffect(() => {
     dispatch({
       type: 'SELECT_ENTITIES',
@@ -112,61 +113,87 @@ const Inventory = ({
         selected: selectedIds,
       },
     });
-    pathwayCheck();
+    checkRemediationButtonStatus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIds]);
 
+  useEffect(() => {
+    if (pathway) {
+      pathwayCheck();
+    } else {
+      rulesCheck();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const rulesCheck = async () => {
+    if (rulesPlaybookCount < 0) {
+      const associatedRuleDetails = (
+        await Get(
+          `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
+          {},
+          { name: filters.name }
+        )
+      )?.data.playbook_count;
+      setRulesPlaybookCount(associatedRuleDetails);
+    }
+  };
+
   const pathwayCheck = async () => {
     if (!hasPathwayDetails) {
-      let pathwayRules = (
-        await Get(
-          `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
-          {},
-          {}
-        )
-      )?.data.data;
+      if (pathway) {
+        let pathwayRules = (
+          await Get(
+            `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
+            {},
+            {}
+          )
+        )?.data.data;
 
-      let pathwayReport = (
-        await Get(
-          `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
-          {},
-          {}
-        )
-      )?.data.rules;
-      setHasPathwayDetails(true);
-      setPathwayReportList(pathwayReport);
-      setPathwayRulesList(pathwayRules);
-    }
-    if (selectedIds?.length > 0) {
-      checkRemediationButtonStatus();
-    } else {
-      setIsRemediationButtonDisabled(true);
+        let pathwayReport = (
+          await Get(
+            `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
+            {},
+            {}
+          )
+        )?.data.rules;
+        setHasPathwayDetails(true);
+        setPathwayReportList(pathwayReport);
+        setPathwayRulesList(pathwayRules);
+      }
     }
   };
 
   const checkRemediationButtonStatus = () => {
     let playbookFound = false;
     let ruleKeys = Object.keys(pathwayReportList);
-
-    for (let i = 0; i < selectedIds.length; i++) {
-      let system = selectedIds[i];
-      if (playbookFound) {
-        break;
-      }
-      ruleKeys.forEach((rule) => {
-        //Grab the rule assosciated with that system
-        if (pathwayReportList[rule].includes(system)) {
-          let assosciatedRule = pathwayReportList[rule];
-          //find that associated rule in the pathwayRules endpoint, check for playbook
-          let item = pathwayRulesList.find(
-            (report) => (report.rule_id = assosciatedRule)
-          );
-          if (item.resolution_set[0].has_playbook) {
-            playbookFound = true;
-            return setIsRemediationButtonDisabled(false);
-          }
+    if (selectedIds?.length <= 0 || selectedIds === undefined) {
+      setIsRemediationButtonDisabled(true);
+    } else if (pathway) {
+      for (let i = 0; i < selectedIds?.length; i++) {
+        let system = selectedIds[i];
+        if (playbookFound) {
+          break;
         }
-      });
+        ruleKeys.forEach((rule) => {
+          //Grab the rule assosciated with that system
+          if (pathwayReportList[rule].includes(system)) {
+            let assosciatedRule = pathwayReportList[rule];
+            //find that associated rule in the pathwayRules endpoint, check for playbook
+            let item = pathwayRulesList.find(
+              (report) => (report.rule_id = assosciatedRule)
+            );
+            if (item.resolution_set[0].has_playbook) {
+              playbookFound = true;
+              return setIsRemediationButtonDisabled(false);
+            }
+          }
+        });
+      }
+    } else {
+      if (rulesPlaybookCount > 0 && selectedIds?.length > 0) {
+        setIsRemediationButtonDisabled(false);
+      }
     }
   };
 
