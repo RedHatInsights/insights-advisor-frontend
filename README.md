@@ -24,6 +24,7 @@ SPANDX_CONFIG="./profiles/local-frontend.js" bash $PROXY_PATH/scripts/run.sh
 ### Testing
 - Travis is used to test the build for this code.
     - `npm run test` will run linters and tests
+    - `npx cypress open-ct` will run cypress test
 ### Deploying
 The follow six branches are used by IF
 - prod-stable, prod-beta

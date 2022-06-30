@@ -23,6 +23,7 @@
     "start:proxy": "NODE_ENV=development PROXY=true webpack serve --config config/dev.webpack.config.js",
     "start:proxy:beta": "BETA=true NODE_ENV=development PROXY=true webpack serve --config config/dev.webpack.config.js",
     "test": "jest --verbose --passWithNoTests --env=jsdom",
+    "test:ct": "cypress run-ct",
     "translations": "npm-run-all translations:*",
     "translations:extract": "npx formatjs extract ./src/*.js --out-file ./build/messages/src/Messages.json",
     "translations:compile": "npx formatjs compile ./build/messages/src/Messages.json --out-file ./locales/translations.json",
@@ -80,7 +81,7 @@
     "react": "17.0.2",
     "react-content-loader": "6.0.3",
     "react-dom": "17.0.2",
-    "react-intl": "5.20.10",
+    "react-intl": "^5.20.10",
     "react-markdown": "7.0.1",
     "react-redux": "7.2.5",
     "react-router-dom": "5.3.0",
@@ -99,6 +100,9 @@
     "@babel/preset-env": "7.15.4",
     "@babel/preset-flow": "7.14.5",
     "@babel/preset-react": "7.14.5",
+    "@cypress/code-coverage": "^3.9.12",
+    "@cypress/react": "^5.12.4",
+    "@cypress/webpack-dev-server": "^1.8.4",
     "@formatjs/cli": "4.2.33",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "1.2.1",
     "@redhat-cloud-services/frontend-components-config": "^4.6.13",
@@ -107,11 +111,14 @@
     "babel-jest": "27.1.1",
     "babel-loader": "8.2.2",
     "babel-plugin-dual-import": "1.2.1",
+    "babel-plugin-istanbul": "^6.1.1",
     "babel-plugin-lodash": "3.3.4",
     "commander": "8.1.0",
     "copy-webpack-plugin": "9.0.1",
+    "cypress": "^9.6.1",
     "eslint": "7.32.0",
     "eslint-loader": "4.0.2",
+    "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-react": "7.25.1",
     "eslint-plugin-react-hooks": "4.2.0",
     "file-loader": "6.2.0",
@@ -124,6 +131,7 @@
     "qs": "6.10.1",
     "rehype-raw": "6.1.0",
     "rehype-sanitize": "5.0.0",
+    "style-loader": "^3.3.1",
     "stylelint": "13.13.1",
     "stylelint-config-recommended-scss": "4.3.0",
     "stylelint-scss": "3.20.1",
@@ -135,5 +143,17 @@
   },
   "insights": {
     "appname": "advisor"
+  },
+  "nyc": {
+    "report-dir": "cypress-coverage",
+    "include": [
+      "src/Components",
+      "src/Services",
+      "src/Utilities"
+    ],
+    "exclude": [
+      "src/**/*.spec.ct.js",
+      "src/**/*.test.js"
+    ]
   }
 }
