@@ -1,6 +1,7 @@
 import React from 'react';
 import './_BarDividedList.scss';
 
+// Not used anywhere.
 const BarDividedList = (list) =>
   list.map((element, index) => (
     <React.Fragment key={index}>

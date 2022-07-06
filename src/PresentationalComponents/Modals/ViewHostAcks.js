@@ -16,6 +16,7 @@ import { useGetHostAcksQuery } from '../../Services/Acks';
 import { useIntl } from 'react-intl';
 
 const ViewHostAcks = ({ handleModalToggle, isModalOpen, rule, afterFn }) => {
+  // Long function body.
   const intl = useIntl();
   const dispatch = useDispatch();
   const addNotification = (data) => dispatch(notification(data));

@@ -17,6 +17,7 @@ import {
   FlexItem,
 } from '@patternfly/react-core';
 
+// TODO This should be a separate file under ./components
 const IntroCard = ({ title, Icon, appList }) => {
   return (
     <Card
@@ -47,7 +48,10 @@ const IntroCard = ({ title, Icon, appList }) => {
   );
 };
 
+// It's a bit odd that the component is named "IntroBody" and the path is "AppIntro"
 const IntroBody = ({ isPreProduction }) => {
+  // This should maybe be higher up in the component tree
+  // The texts/strings should be props and passed in
   const intl = useIntl();
   return (
     <Grid hasGutter>
@@ -61,6 +65,7 @@ const IntroBody = ({ isPreProduction }) => {
           {intl.formatMessage(messages.introTakeTour)}
         </Button>
       </GridItem>
+      // Huh?
       {!isPreProduction && (
         <>
           <GridItem>

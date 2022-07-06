@@ -21,7 +21,7 @@ import { useIntl } from 'react-intl';
 const PathwaysPanel = () => {
   const intl = useIntl();
   const [expanded, setExpanded] = useState(
-    JSON.parse(localStorage.getItem('advisor_pathwayspanel_expanded') || 'true')
+    JSON.parse(localStorage.getItem('advisor_pathwayspanel_expanded') || 'true') // a string as boolean. questionable.
   );
   const { data, isLoading, isFetching, isError } = useGetPathwaysQuery({
     limit: 3,

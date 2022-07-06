@@ -50,6 +50,7 @@ import {
 } from './EmptyStates';
 import NotConnected from '@redhat-cloud-services/frontend-components/NotConnected';
 
+// U so huge.
 const BaseSystemAdvisor = () => {
   const intl = useIntl();
   const systemAdvisorRef = useRef({
@@ -704,6 +705,9 @@ const BaseSystemAdvisor = () => {
 
 const SystemAdvisor = ({ customItnl, intlProps, store, ...props }) => {
   const Wrapper = customItnl ? IntlProvider : Fragment;
+  // Sus.
+  // Why do we need to do this. It is likely, probably due to this being used as a federated module
+  // This could/should maybe be moved elsewhere.
   const ReduxProvider = store ? Provider : Fragment;
   return (
     <Wrapper

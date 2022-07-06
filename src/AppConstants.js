@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
-
+// This is all awfully large.
+// Unless a const is used all over the app, it should move closer to where it is used.
 import { createIntl, createIntlCache } from 'react-intl';
 
 import { intlHelper } from '@redhat-cloud-services/frontend-components-translations/';
@@ -39,6 +40,8 @@ export const SEVERITY_MAP = {
   'medium-risk': 2,
   'low-risk': 1,
 };
+
+// Because arrays aren't cool enough.
 export const RISK_OF_CHANGE_DESC = {
   1: intlHelper(
     intl.formatMessage(messages.riskOfChangeTextOne, {

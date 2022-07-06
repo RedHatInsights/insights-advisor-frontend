@@ -22,6 +22,9 @@ const ClassicRedirect = lazy(() =>
 const suspenseHelper = (component) => (
   <Suspense fallback={<Loading />}>{component}</Suspense>
 );
+// These "sub routers" are nice, but can make it hard to trail.
+// Maybe we can move these into Routes.js directly.
+
 const Recs = () => (
   <React.Fragment>
     <Switch>

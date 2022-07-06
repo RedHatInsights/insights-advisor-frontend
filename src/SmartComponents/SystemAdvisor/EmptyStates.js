@@ -16,6 +16,7 @@ import {
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import PropTypes from 'prop-types';
 
+// These should be in separate files and in a components directory or presentational
 export const HideResultsSatelliteManaged = () => (
   <MessageState
     icon={PficonSatelliteIcon}

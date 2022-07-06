@@ -20,6 +20,8 @@ const App = () => {
   const permsViewRecs = usePermissions('advisor', PERMS.viewRecs);
   const [auth, setAuth] = useState(false);
   const dispatch = useDispatch();
+  // This navigation stuff looks more complex than in other apps
+  // We should figure out if we can do with less.
   const appNavClick = useMemo(
     () => ({
       recommendations(redirect) {

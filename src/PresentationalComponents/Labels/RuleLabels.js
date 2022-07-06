@@ -16,6 +16,8 @@ const RuleLabels = ({ rule, isCompact }) => {
 
   return (
     <React.Fragment>
+      // <insert "they are the same picture" meme>
+      // The following parts look a lot the same, they appear to differ in content and message.
       {rule?.tags?.search('incident') !== -1 && (
         <Tooltip
           content={intl.formatMessage(messages.incidentTooltip)}

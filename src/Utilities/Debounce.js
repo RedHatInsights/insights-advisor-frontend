@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+// We can maybe even should use lodashs debounce and not a custom one.
 const Debounce = (value, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(() => {

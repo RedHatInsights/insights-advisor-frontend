@@ -1,6 +1,8 @@
 import { generateFilter } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 import { SYSTEM_TYPES } from '../../AppConstants';
 
+// All this feels like it would be better in a helpers file or something.
+
 // Builds returns url params from table filters, pushes to url if history object is passed
 export const urlBuilder = (filters = {}) => {
   const url = new URL(window.location);

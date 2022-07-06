@@ -17,6 +17,7 @@ const suspenseHelper = (component) => (
   <Suspense fallback={<Loading />}>{component}</Suspense>
 );
 
+// This should move up the the Routes.js
 const Systems = () => (
   <React.Fragment>
     <Switch>

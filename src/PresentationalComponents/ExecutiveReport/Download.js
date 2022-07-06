@@ -22,6 +22,7 @@ const DownloadExecReport = ({ isDisabled }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
+  // These components should not fetch. or not be in here.
   const dataFetch = async () => {
     setLoading(true);
     dispatch(addNotification(exportNotifications.pending));

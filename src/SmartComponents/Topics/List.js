@@ -17,6 +17,7 @@ const List = () => {
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const SID = useSelector(({ filters }) => filters.SID);
+  // This should be in an useEffect and use the chrome API
   document.title = intl.formatMessage(messages.documentTitle, {
     subnav: messages.topics.defaultMessage,
   });

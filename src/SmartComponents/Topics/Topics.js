@@ -17,6 +17,7 @@ const Admin = lazy(() =>
 const reducer = (state, { type, payload }) =>
   ({ setLoaded: { ...state, loaded: true, isInternal: payload } }[type]);
 
+// What is this?
 const ProtectedRoute = ({ component: Component, ...props }) => {
   const [state, dispatch] = useReducer(reducer, {
     isInternal: false,
@@ -46,6 +47,7 @@ const ProtectedRoute = ({ component: Component, ...props }) => {
   );
 };
 
+// hi.
 const suspenseHelper = (component) => (
   <Suspense fallback={<Loading />}>{component}</Suspense>
 );

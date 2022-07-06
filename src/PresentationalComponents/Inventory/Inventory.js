@@ -43,6 +43,8 @@ const Inventory = ({
   exportTable,
   showTags,
 }) => {
+  // This function body is huuuuge. We should try to move out any "static" function
+  // We should also try to encapsulate related things in hooks
   const store = useStore();
   const intl = useIntl();
   const dispatch = useDispatch();

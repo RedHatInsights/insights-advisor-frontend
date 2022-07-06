@@ -59,6 +59,7 @@ const SystemsPdf = ({ filters }) => {
   };
 
   return useMemo(() => {
+    // This ain't right. This doesn't need to be in a memo
     return (
       <DownloadButton
         groupName={intl.formatMessage(messages.redHatInsights)}

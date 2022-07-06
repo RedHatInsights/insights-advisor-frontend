@@ -36,6 +36,7 @@ import messages from '../../Messages';
 import { strong } from '../../Utilities/intlHelper';
 import { useIntl } from 'react-intl';
 
+// There are like three components in here... separate files.
 const PathwayCard = (props) => {
   const intl = useIntl();
   const {

@@ -32,6 +32,7 @@ const ReportDetails = ({ report, kbaDetail, kbaLoading }) => {
     'ins-c-inventory-advisor__card',
     'ins-c-rules-card'
   );
+  // Very strange function...
   const templateProcessor = (template, definitions) => {
     const DOT_SETTINGS = {
       ...doT.templateSettings,
@@ -49,6 +50,8 @@ const ReportDetails = ({ report, kbaDetail, kbaLoading }) => {
       return (
         <div
           dangerouslySetInnerHTML={{
+            // I'm not sure what this is for, but my guess is markdown rendering
+            // There should be better ways to achieve the same.
             __html: compiledMd
               .replace(
                 /<ul>/gim,

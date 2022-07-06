@@ -20,6 +20,7 @@ const BuildExecReport = ({
   statsSystems,
   statsReports,
   topActiveRec,
+  // Not passing in intl like this. that is not what i mean for the record.
   intl,
 }) => {
   const calcPercent = (value, total) =>

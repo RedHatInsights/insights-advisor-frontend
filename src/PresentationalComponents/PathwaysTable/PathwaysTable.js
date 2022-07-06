@@ -43,6 +43,7 @@ import { useGetPathwaysQuery } from '../../Services/Pathways';
 import { useIntl } from 'react-intl';
 
 const PathwaysTable = () => {
+  // We should replace these tables with hooks or completely with the TableToolsTable
   const intl = useIntl();
   const dispatch = useDispatch();
   const { search } = useLocation();

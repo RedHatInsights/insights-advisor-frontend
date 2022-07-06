@@ -12,6 +12,7 @@ import { useIntl } from 'react-intl';
 const CategoryLabel = ({ labelList, isCompact }) => {
   const intl = useIntl();
   const sortedFrequency = (arr) =>
+    // 🧐
     Object.entries(
       arr.reduce((acc, curr) => ((acc[curr] = (acc[curr] || 0) + 1), acc), {})
     ).sort((a, b) => b[1] - a[1]);
@@ -19,11 +20,21 @@ const CategoryLabel = ({ labelList, isCompact }) => {
     labelList.map((label) => label.id)
   );
 
+  // This should be a component.
   const label = (icon, text) => (
     <Label icon={icon} variant="outline" color="blue" isCompact={isCompact}>
       {text}
     </Label>
   );
+  // This is not the way.
+  // this could be something like
+  // const labels = (id, isCompact) => ([
+  //   label(
+  //     <AutomationIcon />,
+  //     intl.formatMessage(messages.availability)
+  //   ),
+  //   ...
+  // ][id])
   const labels = (id, isCompact) => {
     if (id === 1) {
       return label(

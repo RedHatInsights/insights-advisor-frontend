@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 import { defineMessages } from 'react-intl';
 
+// This can for sure be split up.
 export default defineMessages({
   documentTitle: {
     id: 'documentTitle',

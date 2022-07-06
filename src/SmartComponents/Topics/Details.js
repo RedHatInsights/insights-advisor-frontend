@@ -6,6 +6,7 @@ import {
   TextVariants,
 } from '@patternfly/react-core/dist/js/components/Text/Text';
 
+// Too many components imported.
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { Label } from '@patternfly/react-core/dist/js/components/Label/Label';
 import Loading from '../../PresentationalComponents/Loading/Loading';

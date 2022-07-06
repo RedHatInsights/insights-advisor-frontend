@@ -6,7 +6,8 @@ import {
   Split,
   SplitItem,
 } from '@patternfly/react-core/dist/js/layouts/Split/index';
-
+// These imports need cleaning up.
+// And maybe splitting up the component
 import { BASE_URL } from '../../AppConstants';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
 import { Checkbox } from '@patternfly/react-core/dist/js/components/Checkbox/Checkbox';
@@ -24,9 +25,11 @@ import { useIntl } from 'react-intl';
 
 const AddEditTopic = ({ handleModalToggleCallback, isModalOpen, topic }) => {
   const intl = useIntl();
+  // There should maybe be a "useNotifications" hook somewhere.
   const dispatch = useDispatch();
   const addNotification = (data) => dispatch(notification(data));
-
+  // Presentational component shouldn't necessarily hold state.
+  // States and fetching should be as low as necessary, but as high as possible in the component tree
   const [name, setName] = useState(topic.name || '');
   const [description, setDescription] = useState(topic.description || '');
   const [tag, setTag] = useState(topic.tag || '');

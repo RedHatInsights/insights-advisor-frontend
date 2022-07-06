@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
   },
 });
 
+// why you lowercase?
 export const tablePage = ({ page, systems, intl }) => {
   const header = [
     { value: intl.formatMessage(messages.name), style: styles.nameColumn },
@@ -102,6 +103,7 @@ export const tablePage = ({ page, systems, intl }) => {
   ];
 
   return (
+    // that fragment is not needed at all/
     <React.Fragment key={page}>
       <Column>
         <Table

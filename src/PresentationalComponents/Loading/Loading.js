@@ -3,6 +3,7 @@ import { CardBody } from '@patternfly/react-core/dist/js/components/Card/CardBod
 import { List } from 'react-content-loader';
 import React from 'react';
 const Loading = () => (
+  // not needed fragment.
   <>
     <Card>
       <CardBody>

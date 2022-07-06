@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { entitiesDetailsReducer, systemReducer } from './AppReducer';
 
+// This "Services" should be in here under "Store"
 import { Acks } from '../Services/Acks';
 import { Pathways } from '../Services/Pathways';
 import { Recs } from '../Services/Recs';

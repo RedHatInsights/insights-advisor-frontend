@@ -16,6 +16,8 @@ const Breadcrumbs = ({ current }) => {
   const skip =
     !(location[1] === 'recommendations' && location.length === 4) ||
     location[2] === 'pathways';
+  // "Presentational components" shouldn't query data
+  // We should look into how the Breadcrumbs are built
   const { data, isFetching } = useGetRecQuery(
     { ruleId: location[2] },
     { skip }
@@ -51,6 +53,7 @@ const Breadcrumbs = ({ current }) => {
     };
 
     buildBreadcrumbs();
+    // We should also remove all of these eslint-disables and actually follow the recommendations.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 

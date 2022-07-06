@@ -9,6 +9,9 @@ import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 
+// We really don't need to do this.
+// There is so much lazy loading going on, which most likely has no measurable improvment.
+// Loading the components lazy in the/a router should be enough and every thing below should not be lazy loaded.
 const SystemsTable = lazy(() =>
   import(
     /* webpackChunkName: "SystemsTable" */ '../../PresentationalComponents/SystemsTable/SystemsTable'
@@ -17,7 +20,7 @@ const SystemsTable = lazy(() =>
 
 const List = () => {
   const intl = useIntl();
-
+  // There is now a chrome API to change the title, which should be used.
   document.title = intl.formatMessage(messages.documentTitle, {
     subnav: messages.systems.defaultMessage,
   });

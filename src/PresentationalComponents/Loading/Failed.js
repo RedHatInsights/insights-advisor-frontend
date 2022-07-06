@@ -6,6 +6,7 @@ import React from 'react';
 import propTypes from 'prop-types';
 
 const Failed = ({ message }) => (
+  // Not needed fragment
   <>
     <Card className="adv-c-card-empty-rule">
       <CardHeader>

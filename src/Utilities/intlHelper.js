@@ -10,6 +10,7 @@ import {
 import messages from '../Messages';
 import { ruleResolutionRisk } from '../PresentationalComponents/Common/Tables';
 
+// ok.
 export const strong = (str) => <strong>{str}</strong>;
 
 // takes `messageIds` list and formats the messages using `values`

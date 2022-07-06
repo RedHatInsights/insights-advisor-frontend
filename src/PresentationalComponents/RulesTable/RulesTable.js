@@ -72,6 +72,7 @@ import { usePermissions } from '@redhat-cloud-services/frontend-components-utili
 import { emptyRows } from './helpers';
 
 const RulesTable = () => {
+  // We should replace this table as a whole.
   const intl = useIntl();
   const dispatch = useDispatch();
   const { search } = useLocation();

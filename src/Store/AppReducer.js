@@ -3,6 +3,7 @@ import { applyReducerHash } from '@redhat-cloud-services/frontend-components-uti
 
 export function systemReducer(cols, INVENTORY_ACTION_TYPES) {
   return applyReducerHash({
+    // Scary. Why do we do this?
     [`${INVENTORY_ACTION_TYPES.LOAD_ENTITIES}_FULFILLED`]: (state) => {
       const { [state.columns.length - 1]: lastCol } = state.columns;
       cols[cols.length - 1] = {
@@ -17,6 +18,7 @@ export function systemReducer(cols, INVENTORY_ACTION_TYPES) {
         })),
       };
     },
+    // This is elsewhere too. only use one.
     ['SELECT_ENTITIES']: (state, { payload: { selected } }) => ({
       ...state,
       rows: selectRows(state.rows, selected),
@@ -33,6 +35,7 @@ export function entitiesDetailsReducer(ActionTypes) {
   );
 }
 
+// Up ^
 function enableApplications(state) {
   return {
     ...state,
@@ -41,6 +44,7 @@ function enableApplications(state) {
   };
 }
 
+// Up Up
 const selectRows = (rows, selected = []) =>
   (rows || []).map((row) => ({
     ...row,

@@ -22,6 +22,7 @@ const cache = createIntlCache();
 const locale = navigator.language.slice(0, 2);
 const intl = createIntl(
   {
+    // Yo, no.
     // eslint-disable-next-line no-console
     onError: console.log,
     locale,
@@ -29,6 +30,7 @@ const intl = createIntl(
   cache
 );
 
+// this directory and file make structurally no sense.
 const RebootRequired = (reboot_required) => (
   <span className="adv-system-reboot-message">
     <PowerOffIcon
