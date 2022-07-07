@@ -87,7 +87,7 @@ const PathwaysTable = () => {
     {
       title: intl.formatMessage(messages.reclvl),
       transforms: [
-        // sortable,
+        sortable,
         cellWidth(20),
         fitContent,
         info({
@@ -104,7 +104,7 @@ const PathwaysTable = () => {
     // 1: 'category',
     2: 'impacted_systems_count',
     // 3: 'reboot_required',
-    // 4: 'recommendation_level',
+    4: 'recommendation_level',
   };
   const [sortBy, setSortBy] = useState({});
   const [filterBuilding, setFilterBuilding] = useState(true);
