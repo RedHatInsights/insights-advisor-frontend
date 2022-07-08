@@ -19,54 +19,92 @@ const ClassicRedirect = lazy(() =>
   import(/* webpackChunkName: "ClassicRedirect" */ '../Common/ClassicRedirect')
 );
 
-const suspenseHelper = (component) => (
-  <Suspense fallback={<Loading />}>{component}</Suspense>
+// eslint-disable-next-line react/prop-types
+const SuspenseHelper = ({ children }) => (
+  <Suspense fallback={<Loading />}>{children}</Suspense>
 );
+
 const Recs = () => (
   <React.Fragment>
     <Switch>
       <Route
         exact
         path="/recommendations"
-        component={() => suspenseHelper(<List />)}
+        component={() => (
+          <SuspenseHelper>
+            <List />
+          </SuspenseHelper>
+        )}
       />
       <Route
         exact
         path="/recommendations/by_id/:id"
-        component={() => suspenseHelper(<List />)}
+        component={() => (
+          <SuspenseHelper>
+            <List />
+          </SuspenseHelper>
+        )}
       />
       <Route
         exact
         path="/recommendations/pathways"
-        component={() => suspenseHelper(<List />)}
+        component={() => (
+          <SuspenseHelper>
+            <List />
+          </SuspenseHelper>
+        )}
       />
       <Route
         exact
         path="/recommendations/pathways/:id"
-        component={() => suspenseHelper(<DetailsPathways />)}
+        component={() => (
+          <SuspenseHelper>
+            <DetailsPathways />
+          </SuspenseHelper>
+        )}
       />
       <Route
         exact
         path="/recommendations/pathways/systems/:id"
-        component={() => suspenseHelper(<DetailsPathways />)}
+        component={() => (
+          <SuspenseHelper>
+            <DetailsPathways />
+          </SuspenseHelper>
+        )}
       />
       <Route
         exact
         path="/recommendations/:id"
-        component={() => suspenseHelper(<Details />)}
+        component={() => (
+          <SuspenseHelper>
+            <Details />
+          </SuspenseHelper>
+        )}
       />
       <Route
         exact
         path="/recommendations/classic/:id/:classicId/"
-        component={() => suspenseHelper(<ClassicRedirect />)}
+        component={() => (
+          <SuspenseHelper>
+            <ClassicRedirect />
+          </SuspenseHelper>
+        )}
       />
       <Route
         path="/recommendations/by_id/:id/:inventoryId/"
-        component={() => suspenseHelper(<InventoryDetails />)}
+        component={() => (
+          <SuspenseHelper>
+            <InventoryDetails />
+          </SuspenseHelper>
+        )}
       />
       <Route
         path="/recommendations/:id/:inventoryId/"
-        component={() => suspenseHelper(<InventoryDetails />)}
+        component={() => (
+          <SuspenseHelper>
+            <InventoryDetails />{' '}
+          </SuspenseHelper>
+        )}
       />
       <Redirect path="*" to="/recommendations" push />
     </Switch>
