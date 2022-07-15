@@ -1,15 +1,16 @@
 .adv-system-reboot-message {
   display: inline-flex;
+  align-items: baseline;
   .adv-c-text-system-reboot-message {
     position: relative;
   }
   .adv-c-icon-reboot-required {
-    margin-top: 5px;
+    align-self: center;
     margin-right: var(--pf-global--spacer--sm);
     color: var(--pf-global--palette--red-100);
   }
   .adv-c-icon-no-reboot-required {
-    margin-top: 5px;
+    align-self: center;
     margin-right: var(--pf-global--spacer--sm);
     color: var(--pf-global--palette--black-400);
   }
