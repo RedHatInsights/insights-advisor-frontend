@@ -142,13 +142,13 @@ const fetchBatched = (fetchFunction, total, filter, batchSize = 100, rule) => {
 };
 /*Grabs all systemIds and maniupaltes the data into one large array of systems*/
 export const allCurrentSystemIds =
-  (fullFilters, total, rule, setLoading) => async () => {
-    setLoading(true);
+  (fullFilters, total, rule, setIsLoading) => async () => {
+    setIsLoading(true);
     const results = await (
       await fetchBatched(paginatedRequestHelper, total, fullFilters, 100, rule)
     ).map((item) => item.data);
 
     const merged = [].concat.apply([], results).map((item) => item.system_uuid);
-    setLoading(false);
+    setIsLoading(false);
     return merged;
   };
