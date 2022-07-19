@@ -20,7 +20,7 @@ const useBulkSelect = ({
   itemIdsInTable,
   itemIdsOnPage,
   identifier = 'id',
-  loading,
+  isLoading,
 }) => {
   const enableBulkSelect = !!onSelect;
   const {
@@ -38,7 +38,7 @@ const useBulkSelect = ({
 
   const isDisabled = total === 0;
   const checked = checkboxState(selectedIdsTotal, total);
-  const title = compileTitle(selectedIdsTotal, loading);
+  const title = compileTitle(selectedIdsTotal, isLoading);
 
   const mergeArraysUniqly = (arrayA, arrayB) =>
     Array.from(new Set([...arrayA, ...arrayB]));
@@ -108,7 +108,7 @@ const useBulkSelect = ({
                 : []),
             ],
             checked,
-            onSelect: selectedIds?.length > 0 ? () => clear() : selectAll,
+            onSelect: selectedIds?.length > 0 ? clear : selectAll,
           },
         },
       }
