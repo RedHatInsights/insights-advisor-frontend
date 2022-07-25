@@ -58,18 +58,21 @@ const PathwayCard = (props) => {
       <CardBody className="body">
         <Text className="pf-u-pb-sm pf-u-font-weight-bold">{name}</Text>
         <CategoryLabel key={name} labelList={categories} />{' '}
-        <Link to={`/recommendations/pathways/systems/${slug}`}>
+        <Link
+          to={`/recommendations/pathways/systems/${slug}`}
+          className="pf-u-font-size-sm"
+        >
           {intl.formatMessage(messages.topicCardSystemsaffected, {
             systems: impacted_systems_count,
           })}
         </Link>
       </CardBody>
-      <CardBody className="body">{description}</CardBody>
-      <CardBody className="body">
-        {has_incident && <RuleLabels rule={{ tags: 'incident' }} />}{' '}
+      <CardBody className="body pf-u-font-size-sm">{description}</CardBody>
+      <CardBody className="body pf-u-font-size-sm">
+        {has_incident && <RuleLabels rule={{ tags: 'incident' }} isCompact />}{' '}
         {RebootRequired(reboot_required)}
       </CardBody>
-      <CardFooter className="footer">
+      <CardFooter className="footer pf-u-font-size-sm">
         <Link to={`/recommendations/pathways/${slug}`}>
           {`${intl.formatMessage(messages.viewPathway)} `}
           <ArrowRightIcon />
