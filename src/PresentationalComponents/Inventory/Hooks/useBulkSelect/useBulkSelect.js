@@ -1,11 +1,6 @@
 import { useEffect } from 'react';
 import useSelectionManager from '../useSelectionManager';
-import {
-  compileTitle,
-  checkboxState,
-  selectOrUnselect,
-  checkCurrentPageSelected,
-} from './helpers';
+import { compileTitle, checkboxState, selectOrUnselect } from './helpers';
 
 /**
  * Provides properties for a Pattternfly (based) Table and Toolbar component to implement bulk selection
@@ -25,6 +20,7 @@ const useBulkSelect = ({
   itemIdsInTable,
   itemIdsOnPage,
   identifier = 'id',
+  isLoading,
 }) => {
   const enableBulkSelect = !!onSelect;
   const {
@@ -39,11 +35,10 @@ const useBulkSelect = ({
   const paginatedTotal = idsOnPage.length || total;
   const allSelected = selectedIdsTotal === total;
   const noneSelected = selectedIdsTotal === 0;
-  const currentPageSelected = checkCurrentPageSelected(idsOnPage, selectedIds);
 
   const isDisabled = total === 0;
   const checked = checkboxState(selectedIdsTotal, total);
-  const title = compileTitle(selectedIdsTotal);
+  const title = compileTitle(selectedIdsTotal, isLoading);
 
   const mergeArraysUniqly = (arrayA, arrayB) =>
     Array.from(new Set([...arrayA, ...arrayB]));
@@ -56,9 +51,7 @@ const useBulkSelect = ({
       selectedIds?.length > 0
         ? mergeArraysUniqly(selectedIds, idsOnPage)
         : idsOnPage;
-    currentPageSelected
-      ? deselect(idsOnPage)
-      : select(selectedItems, undefined, true);
+    select(selectedItems, undefined, true);
   };
 
   const selectAll = async () => {
@@ -72,6 +65,7 @@ const useBulkSelect = ({
 
   useEffect(() => {
     set(preselected);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(preselected)]);
 
   return enableBulkSelect
@@ -84,7 +78,7 @@ const useBulkSelect = ({
         },
         toolbarProps: {
           bulkSelect: {
-            toggleProps: { children: [title] },
+            toggleProps: title ? { children: [title] } : null,
             isDisabled,
             items: [
               {
@@ -97,9 +91,7 @@ const useBulkSelect = ({
               ...(itemIdsOnPage
                 ? [
                     {
-                      title: `${selectOrUnselect(
-                        currentPageSelected
-                      )} page (${paginatedTotal} items)`,
+                      title: `Select page (${paginatedTotal} items)`,
                       onClick: selectPage,
                     },
                   ]
@@ -116,7 +108,7 @@ const useBulkSelect = ({
                 : []),
             ],
             checked,
-            onSelect: !isDisabled ? selectPage : undefined,
+            onSelect: selectedIds?.length > 0 ? clear : selectAll,
           },
         },
       }

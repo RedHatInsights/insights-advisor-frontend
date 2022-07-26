@@ -82,11 +82,11 @@ const BaseSystemAdvisor = () => {
   const hideResultsSatelliteManaged = !satelliteShowHosts && satelliteManaged;
   const getSelectedItems = (rows) => rows.filter((entity) => entity.selected);
   const selectedAnsibleRules = getSelectedItems(rows).filter(
-    (r) => r.resolution && r.resolution.has_playbook
+    (r) => r.resolution?.has_playbook
   );
   const selectedItemsLength = getSelectedItems(rows).length;
   const selectableItemsLength = rows.filter(
-    (r) => r.resolution && r.resolution.has_playbook
+    (r) => r.resolution?.has_playbook
   ).length;
 
   const cols = [
@@ -191,9 +191,10 @@ const BaseSystemAdvisor = () => {
         {
           rule,
           resolution,
-          isOpen,
+          //make arrow button disappear when there is no resolution
+          isOpen: resolution ? isOpen : undefined,
           selected,
-          disableSelection: !resolution.has_playbook,
+          disableSelection: resolution ? !resolution.has_playbook : true,
           cells: [
             {
               title: (
@@ -236,7 +237,9 @@ const BaseSystemAdvisor = () => {
             {
               title: (
                 <div className="ins-c-center-text" key={key}>
-                  {resolution.has_playbook ? (
+                  {resolution === null ? (
+                    intl.formatMessage(messages.notAvailable)
+                  ) : resolution?.has_playbook ? (
                     <span>
                       <AnsibeTowerIcon size="sm" />{' '}
                       {intl.formatMessage(messages.playbook)}
@@ -249,7 +252,7 @@ const BaseSystemAdvisor = () => {
             },
           ],
         },
-        {
+        resolution && {
           parent: key,
           fullWidth: true,
           cells: [
@@ -278,7 +281,7 @@ const BaseSystemAdvisor = () => {
           .map((key) => {
             const filterValues = filters[key];
             const rowValue = {
-              has_playbook: value.resolution.has_playbook,
+              has_playbook: value.resolution?.has_playbook,
               publish_date: rule.publish_date,
               total_risk: rule.total_risk,
               category: RULE_CATEGORIES[rule.category.name.toLowerCase()],
@@ -289,14 +292,16 @@ const BaseSystemAdvisor = () => {
           })
           .every((x) => x);
 
-      return isValidSearchValue && isValidFilterValue ? reportRow : [];
+      return isValidSearchValue && isValidFilterValue
+        ? reportRow.filter((row) => row !== null)
+        : [];
     });
     //must recalculate parent for expandable table content whenever the array size changes
     builtRows.forEach((row, index) =>
       row.parent ? (row.parent = index - 1) : null
     );
 
-    systemAdvisorRef.current.rowCount = builtRows.length / 2;
+    systemAdvisorRef.current.rowCount = activeReports.length;
 
     if (activeReports.length < 1 || builtRows.length < 1) {
       let EmptyState =
@@ -550,7 +555,7 @@ const BaseSystemAdvisor = () => {
 
   const processRemediation = (selectedAnsibleRules) => {
     const playbookRows = selectedAnsibleRules.filter(
-      (r) => r.resolution && r.resolution.has_playbook
+      (r) => r.resolution?.has_playbook
     );
     const issues = playbookRows.map((r) => ({
       id: `advisor:${r.rule.rule_id}`,
