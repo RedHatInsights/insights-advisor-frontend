@@ -1,4 +1,6 @@
 /* eslint-disable react/prop-types */
+import './Pathways.scss';
+
 import {
   Card,
   CardBody,
@@ -27,7 +29,6 @@ import React from 'react';
 import { RebootRequired } from '../Common/Common';
 import RecommendationLevel from '../Labels/RecommendationLevel';
 import RuleLabels from '../Labels/RuleLabels';
-import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 import chart_color_black_100 from '@patternfly/react-tokens/dist/esm/chart_color_black_100';
 import chart_color_gold_400 from '@patternfly/react-tokens/dist/esm/chart_color_gold_400';
 import chart_color_orange_300 from '@patternfly/react-tokens/dist/esm/chart_color_orange_300';
@@ -190,38 +191,45 @@ const Resolution = (props) => {
     <Card
       isFlat
       isPlain
-      className="adv-c-card-pathway adv__background--global-100 pf-u-h-100"
+      className="adv-c-card-pathway adv__background--global-100 pf-u-h-100 flex-row"
     >
-      <CardTitle>{intl.formatMessage(messages.resolution)}</CardTitle>
-      <Grid>
-        <GridItem span={7}>
-          <CardBody className="body">
+      <div className="flex-coloumn">
+        <CardTitle>{intl.formatMessage(messages.resolution)}</CardTitle>
+
+        <div className="flex-row">
+          <div>
+            <p className="pf-u-font-weight-bold pf-u-font-size-sm pf-u-pl-lg">
+              {intl.formatMessage(messages.remediation)}
+            </p>
+            <p className="pf-u-font-size-md pf-u-pl-lg">{name}</p>
+          </div>
+
+          <CardBody className="body center">
+            <p className="pf-u-font-weight-bold pf-u-font-size-sm ">
+              {intl.formatMessage(messages.riskOfChange)}
+            </p>
             <InsightsLabel
               text={RISK_OF_CHANGE_LABEL[resolution_risk.risk]}
               value={resolution_risk.risk}
               hideIcon
             />
           </CardBody>
-          <CardBody className="body">
-            <Title headingLevel="h5" size="md">
-              {name}
-            </Title>
-          </CardBody>
+        </div>
 
-          <CardBody className="body">
-            {intl.formatMessage(messages.staticRemediationDesc)}
-          </CardBody>
-          <CardBody className="body">
-            {RebootRequired(reboot_required)}
-          </CardBody>
-        </GridItem>
-        <GridItem span={5}>
-          <CardTitle>{intl.formatMessage(messages.reclvl)}</CardTitle>
-          <CardBody className="body">
-            <RecommendationLevel {...props} />
-          </CardBody>
-        </GridItem>
-      </Grid>
+        <CardBody className="body">
+          {intl.formatMessage(messages.staticRemediationDesc)}
+        </CardBody>
+        <CardBody className="body">{RebootRequired(reboot_required)}</CardBody>
+      </div>
+
+      <div className="pathwayRight pf-u-p-lg ">
+        <p className="pf-u-font-weight-bold ">
+          {intl.formatMessage(messages.reclvl)}
+        </p>
+        <div>
+          <RecommendationLevel {...props} />
+        </div>
+      </div>
     </Card>
   );
 };
