@@ -727,7 +727,6 @@ const SystemAdvisor = ({ customItnl, intlProps, store, ...props }) => {
       {...(customItnl && {
         locale: navigator.language.slice(0, 2),
         messages,
-        onError: console.log,
         ...intlProps,
       })}
     >
@@ -745,7 +744,6 @@ SystemAdvisor.propTypes = {
   intlProps: PropTypes.shape({
     locale: PropTypes.string,
     messages: PropTypes.array,
-    onError: PropTypes.func,
   }),
   store: PropTypes.object,
 };
