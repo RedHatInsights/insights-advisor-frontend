@@ -1176,8 +1176,8 @@ export default defineMessages({
   },
   improveRecommended: {
     id: 'improveRecommended',
-    description: 'Recommended Pathways',
-    defaultMessage: 'Recommended Pathways',
+    description: 'Improve recommended pathways',
+    defaultMessage: 'Improve recommended pathways',
   },
   viewPathway: {
     id: 'viewPathway',
