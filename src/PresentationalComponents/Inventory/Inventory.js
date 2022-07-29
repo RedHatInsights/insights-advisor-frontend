@@ -29,7 +29,6 @@ import { systemReducer } from '../../Store/AppReducer';
 import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
-import useBulkSelect from './Hooks/useBulkSelect';
 
 const Inventory = ({
   tableProps,
@@ -46,66 +45,19 @@ const Inventory = ({
   const store = useStore();
   const intl = useIntl();
   const dispatch = useDispatch();
+  const [selected, setSelected] = useState([]);
   const [filters, setFilters] = useState({
     limit: 20,
     offset: 0,
     sort: '-last_seen',
     name: '',
   });
-  const [total, setTotal] = useState(0);
   const entities = useSelector(({ entities }) => entities || {});
+  const onSelectRows = (id, selected) =>
+    dispatch({ type: 'SELECT_ENTITY', payload: { id, selected } });
   const addNotification = (data) => dispatch(notification(data));
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
-  const [curPageIds, setCurPageIds] = useState([]);
-
-  const fetchAllSystems = async () => {
-    const allSystems = pathway
-      ? (
-          await Get(
-            `${SYSTEMS_FETCH_URL}`,
-            {},
-            {
-              pathway: pathway.slug,
-              limit: pathway.impacted_systems_count,
-            }
-          )
-        )?.data?.data?.map((system) => system.system_uuid)
-      : (
-          await Get(
-            `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/systems/`,
-            {},
-            { name: filters.name }
-          )
-        )?.data?.host_ids;
-    return allSystems;
-  };
-
-  const grabPageIds = () => {
-    return curPageIds || [];
-  };
-
-  const {
-    tableProps: bulkSelectTableProps,
-    toolbarProps,
-    selectedIds,
-    selectNone,
-  } = useBulkSelect({
-    total,
-    onSelect: () => {},
-    itemIdsInTable: fetchAllSystems,
-    itemIdsOnPage: grabPageIds,
-    identitfier: 'system_uuid',
-  });
-
-  // Ensures rows are marked as selected
-  useEffect(() => {
-    dispatch({
-      type: 'SELECT_ENTITIES',
-      payload: {
-        selected: selectedIds,
-      },
-    });
-  }, [selectedIds]);
+  const [bulkSelect, setBulkSelect] = useState();
 
   const remediationDataProvider = async () => {
     if (pathway) {
@@ -130,7 +82,7 @@ const Inventory = ({
         let filteredSystems = [];
 
         systems[rec.rule_id].forEach((system) => {
-          if (selectedIds.includes(system)) {
+          if (selected.includes(system)) {
             filteredSystems.push(system);
           }
         });
@@ -153,13 +105,13 @@ const Inventory = ({
             description: rule.description,
           },
         ],
-        systems: selectedIds,
+        systems: selected,
       };
     }
   };
 
   const onRemediationCreated = (result) => {
-    selectNone();
+    onSelectRows(-1, false);
     try {
       result.remediation && addNotification(result.getNotification());
     } catch (error) {
@@ -175,6 +127,20 @@ const Inventory = ({
   const handleModalToggle = (disableRuleModalOpen) => {
     setDisableRuleModalOpen(disableRuleModalOpen);
   };
+
+  const bulkSelectfn = () => {
+    setBulkSelect(true);
+    onSelectRows(0, true);
+  };
+
+  const calculateSelectedItems = () =>
+    bulkSelect
+      ? setBulkSelect(false)
+      : setSelected(
+          entities?.rows
+            ?.filter((entity) => entity.selected === true)
+            .map((entity) => entity.id)
+        );
 
   const createColumns = (defaultColumns) => {
     let lastSeenColumn = defaultColumns.filter(({ key }) => key === 'updated');
@@ -262,6 +228,20 @@ const Inventory = ({
     return pruneFilters(localFilters, SFC);
   };
 
+  const checkedStatus = () => {
+    if (
+      (selected.length === entities?.rows?.length ||
+        selected.length === entities?.total) &&
+      entities?.total > 0
+    ) {
+      return 1;
+    } else if (selected.length === filters.limit || selected.length > 0) {
+      return null;
+    } else {
+      return 0;
+    }
+  };
+
   const activeFiltersConfig = {
     deleteTitle: intl.formatMessage(messages.resetFilters),
     filters: buildFilterChips(),
@@ -289,6 +269,11 @@ const Inventory = ({
     },
   };
 
+  useEffect(() => {
+    entities?.rows?.length && calculateSelectedItems(entities.rows);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entities?.rows]);
+
   return (
     <React.Fragment>
       {disableRuleModalOpen && (
@@ -297,7 +282,7 @@ const Inventory = ({
           isModalOpen={disableRuleModalOpen}
           rule={rule}
           afterFn={afterDisableFn}
-          hosts={selectedIds}
+          hosts={selected}
         />
       )}
       <InventoryTable
@@ -312,7 +297,6 @@ const Inventory = ({
         tableProps={{
           variant: TableVariant.compact,
           ...tableProps,
-          ...bulkSelectTableProps,
         }}
         customFilters={{
           advisorFilters: filters,
@@ -388,20 +372,12 @@ const Inventory = ({
             },
             showTags
           );
-          setCurPageIds(
-            fetchedSystems.data.map((system) => system.system_uuid)
-          );
-          setTotal(fetchedSystems.meta.count);
+
           return Promise.resolve({
             results: mergeArraysByDiffKeys(
               fetchedSystems.data,
               results.results
-            ).map((item) => {
-              return {
-                ...item,
-                selected: selectedIds?.includes(item.id),
-              };
-            }),
+            ),
             total: fetchedSystems.meta.count,
           });
         }}
@@ -409,8 +385,7 @@ const Inventory = ({
           <RemediationButton
             key="remediation-button"
             isDisabled={
-              (selectedIds || []).length === 0 ||
-              (!pathway && rule?.playbook_count === 0)
+              selected.length === 0 || (!pathway && rule?.playbook_count === 0)
             }
             dataProvider={remediationDataProvider}
             onRemediationCreated={(result) => onRemediationCreated(result)}
@@ -423,12 +398,71 @@ const Inventory = ({
             '',
             {
               label: intl.formatMessage(messages.disableRuleForSystems),
-              props: { isDisabled: (selectedIds || []).length === 0 },
+              props: { isDisabled: selected.length === 0 },
               onClick: () => handleModalToggle(true),
             },
           ],
         }}
-        {...toolbarProps}
+        bulkSelect={{
+          count: selected.length,
+          items: [
+            {
+              title: intl.formatMessage(messages.selectNone),
+              onClick: () => {
+                onSelectRows(-1, false);
+              },
+            },
+            {
+              title: intl.formatMessage(messages.selectPage, {
+                items: entities?.rows?.length,
+              }),
+              onClick: () => {
+                onSelectRows(0, true);
+              },
+            },
+            {
+              ...(entities?.rows?.length > 0
+                ? {
+                    title: intl.formatMessage(messages.selectAll, {
+                      items: entities?.total || 0,
+                    }),
+                    onClick: async () => {
+                      console.error(pathway);
+                      const allSystems = pathway
+                        ? (
+                            await Get(
+                              `${SYSTEMS_FETCH_URL}`,
+                              {},
+                              {
+                                pathway: pathway.slug,
+                                limit: pathway.impacted_systems_count,
+                              }
+                            )
+                          )?.data?.data?.map((system) => system.system_uuid)
+                        : (
+                            await Get(
+                              `${RULES_FETCH_URL}${encodeURI(
+                                rule.rule_id
+                              )}/systems/`,
+                              {},
+                              { name: filters.name }
+                            )
+                          )?.data?.host_ids;
+
+                      console.error(allSystems);
+                      setSelected(allSystems);
+                      bulkSelectfn();
+                    },
+                  }
+                : {}),
+            },
+          ],
+          checked: checkedStatus(),
+          onSelect: () => {
+            selected.length > 0 ? onSelectRows(-1, false) : bulkSelectfn();
+            calculateSelectedItems();
+          },
+        }}
         fallback={Loading}
         onLoad={({
           mergeWithEntities,
