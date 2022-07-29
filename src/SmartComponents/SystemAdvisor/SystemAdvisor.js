@@ -82,11 +82,11 @@ const BaseSystemAdvisor = () => {
   const hideResultsSatelliteManaged = !satelliteShowHosts && satelliteManaged;
   const getSelectedItems = (rows) => rows.filter((entity) => entity.selected);
   const selectedAnsibleRules = getSelectedItems(rows).filter(
-    (r) => r.resolution?.has_playbook
+    (r) => r.resolution && r.resolution?.has_playbook
   );
   const selectedItemsLength = getSelectedItems(rows).length;
   const selectableItemsLength = rows.filter(
-    (r) => r.resolution?.has_playbook
+    (r) => r.resolution && r.resolution?.has_playbook
   ).length;
 
   const cols = [
@@ -545,7 +545,7 @@ const BaseSystemAdvisor = () => {
 
   const processRemediation = (selectedAnsibleRules) => {
     const playbookRows = selectedAnsibleRules.filter(
-      (r) => r.resolution?.has_playbook
+      (r) => r.resolution && r.resolution.has_playbook
     );
     const issues = playbookRows.map((r) => ({
       id: `advisor:${r.rule.rule_id}`,
