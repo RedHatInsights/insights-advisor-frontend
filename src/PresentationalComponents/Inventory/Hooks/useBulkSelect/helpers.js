@@ -1,10 +1,10 @@
 import React from 'react';
 import { Spinner } from '@patternfly/react-core';
 
-export const compileTitle = (itemsTotal, isLoading) => {
-  if (itemsTotal === 0 && !isLoading) {
+export const compileTitle = (itemsTotal, loading) => {
+  if (itemsTotal === 0 && !loading) {
     return null;
-  } else if (isLoading) {
+  } else if (loading) {
     return (
       <React.Fragment>
         <Spinner size="sm" />

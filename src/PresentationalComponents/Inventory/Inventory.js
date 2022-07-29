@@ -52,7 +52,7 @@ const Inventory = ({
   const [curPageIds, setCurPageIds] = useState([]);
   const [pathwayRulesList, setPathwayRulesList] = useState();
   const [pathwayReportList, setPathwayReportList] = useState();
-  const [isLoading, setIsLoading] = useState();
+  const [loading, setLoading] = useState();
 
   const [hasPathwayDetails, setHasPathwayDetails] = useState(false);
   const [isRemediationButtonDisabled, setIsRemediationButtonDisabled] =
@@ -87,10 +87,10 @@ const Inventory = ({
   } = useBulkSelect({
     total,
     onSelect: () => {},
-    itemIdsInTable: allCurrentSystemIds(fullFilters, total, rule, setIsLoading),
+    itemIdsInTable: allCurrentSystemIds(fullFilters, total, rule, setLoading),
     itemIdsOnPage: grabPageIds,
     identitfier: 'system_uuid',
-    isLoading,
+    loading,
   });
 
   const fetchSystems = getEntities(
