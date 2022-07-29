@@ -16,7 +16,7 @@ objects:
           - v1
       frontend:
         paths:
-          - /apps/advisor
+          - /insights/advisor
       image: ${IMAGE}:${IMAGE_TAG}
       navItems:
         - title: "Advisor"
