@@ -65,7 +65,7 @@ const PathwayCard = (props) => {
       </CardBody>
       <CardBody className="body">{description}</CardBody>
       <CardBody className="body">
-        {has_incident && <RuleLabels rule={{ tags: 'incident' }} isCompact />}{' '}
+        {has_incident && <RuleLabels rule={{ tags: 'incident' }} />}{' '}
         {RebootRequired(reboot_required)}
       </CardBody>
       <CardFooter className="footer">
