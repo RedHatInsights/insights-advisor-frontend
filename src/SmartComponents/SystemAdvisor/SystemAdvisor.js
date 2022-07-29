@@ -35,7 +35,7 @@ import { List } from 'react-content-loader';
 import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
-import { ReportDetails } from '@redhat-cloud-services/frontend-components-advisor-components';
+import ReportDetails from '../../PresentationalComponents/ReportDetails';
 import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import { capitalize } from '../../PresentationalComponents/Common/Tables';
@@ -256,10 +256,7 @@ const BaseSystemAdvisor = () => {
               title: (
                 <ReportDetails
                   key={`child-${key}`}
-                  report={{
-                    ...value,
-                    resolution: value.resolution.resolution,
-                  }}
+                  report={value}
                   kbaDetail={kbaDetail}
                   kbaLoading={kbaLoading}
                 />
