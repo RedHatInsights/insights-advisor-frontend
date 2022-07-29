@@ -74,11 +74,6 @@ export default defineMessages({
     description: 'Maunal table cell text',
     defaultMessage: 'Manual',
   },
-  notAvailable: {
-    id: 'notAvailable',
-    description: 'Not availabl table cell text',
-    defaultMessage: 'N/A',
-  },
   rulesTableHideReportsErrorEnabled: {
     id: 'rulestable.hidereports.errorenabling',
     description:
