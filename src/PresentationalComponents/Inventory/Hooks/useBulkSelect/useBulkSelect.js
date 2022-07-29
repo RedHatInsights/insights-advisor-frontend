@@ -1,6 +1,11 @@
 import { useEffect } from 'react';
 import useSelectionManager from '../useSelectionManager';
-import { compileTitle, checkboxState, selectOrUnselect } from './helpers';
+import {
+  compileTitle,
+  checkboxState,
+  selectOrUnselect,
+  checkCurrentPageSelected,
+} from './helpers';
 
 /**
  * Provides properties for a Pattternfly (based) Table and Toolbar component to implement bulk selection
@@ -34,6 +39,7 @@ const useBulkSelect = ({
   const paginatedTotal = idsOnPage.length || total;
   const allSelected = selectedIdsTotal === total;
   const noneSelected = selectedIdsTotal === 0;
+  const currentPageSelected = checkCurrentPageSelected(idsOnPage, selectedIds);
 
   const isDisabled = total === 0;
   const checked = checkboxState(selectedIdsTotal, total);
@@ -50,7 +56,9 @@ const useBulkSelect = ({
       selectedIds?.length > 0
         ? mergeArraysUniqly(selectedIds, idsOnPage)
         : idsOnPage;
-    select(selectedItems, undefined, true);
+    currentPageSelected
+      ? deselect(idsOnPage)
+      : select(selectedItems, undefined, true);
   };
 
   const selectAll = async () => {
@@ -64,7 +72,6 @@ const useBulkSelect = ({
 
   useEffect(() => {
     set(preselected);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(preselected)]);
 
   return enableBulkSelect
@@ -77,7 +84,7 @@ const useBulkSelect = ({
         },
         toolbarProps: {
           bulkSelect: {
-            toggleProps: title ? { children: [title] } : null,
+            toggleProps: { children: [title] },
             isDisabled,
             items: [
               {
@@ -90,7 +97,9 @@ const useBulkSelect = ({
               ...(itemIdsOnPage
                 ? [
                     {
-                      title: `Select page (${paginatedTotal} items)`,
+                      title: `${selectOrUnselect(
+                        currentPageSelected
+                      )} page (${paginatedTotal} items)`,
                       onClick: selectPage,
                     },
                   ]
@@ -107,7 +116,7 @@ const useBulkSelect = ({
                 : []),
             ],
             checked,
-            onSelect: selectedIds?.length > 0 ? () => clear() : selectAll,
+            onSelect: !isDisabled ? selectPage : undefined,
           },
         },
       }

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import { pruneFilters, urlBuilder } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
-import { getEntities, allCurrentSystemIds } from './helpers';
+import { getEntities, allCurrentSystemIds } from './helper';
 
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { Get } from '../../Utilities/Api';
@@ -98,8 +98,7 @@ const Inventory = ({
     setTotal,
     selectedIds,
     setFullFilters,
-    fullFilters,
-    rule
+    fullFilters
   );
 
   // Ensures rows are marked as selected
@@ -110,9 +109,13 @@ const Inventory = ({
         selected: selectedIds,
       },
     });
-    pathwayCheck();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIds]);
+
+  useEffect(() => {
+    pathwayCheck();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedIds?.length]);
 
   const pathwayCheck = async () => {
     if (!hasPathwayDetails) {

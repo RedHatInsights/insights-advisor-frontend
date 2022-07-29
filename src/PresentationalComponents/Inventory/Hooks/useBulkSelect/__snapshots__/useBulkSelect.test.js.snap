@@ -31,8 +31,12 @@ Object {
               "title": "Unselect all (0 items)",
             },
           ],
-          "onSelect": [Function],
-          "toggleProps": null,
+          "onSelect": undefined,
+          "toggleProps": Object {
+            "children": Array [
+              "0 selected",
+            ],
+          },
         },
       },
     },
@@ -64,8 +68,12 @@ Object {
               "title": "Unselect all (0 items)",
             },
           ],
-          "onSelect": [Function],
-          "toggleProps": null,
+          "onSelect": undefined,
+          "toggleProps": Object {
+            "children": Array [
+              "0 selected",
+            ],
+          },
         },
       },
     },
@@ -98,8 +106,12 @@ Object {
             "title": "Unselect all (0 items)",
           },
         ],
-        "onSelect": [Function],
-        "toggleProps": null,
+        "onSelect": undefined,
+        "toggleProps": Object {
+          "children": Array [
+            "0 selected",
+          ],
+        },
       },
     },
   },
@@ -215,7 +227,7 @@ Object {
         },
         Object {
           "onClick": [Function],
-          "title": "Select page (1 items)",
+          "title": "Unselect page (1 items)",
         },
         Object {
           "onClick": [Function],
