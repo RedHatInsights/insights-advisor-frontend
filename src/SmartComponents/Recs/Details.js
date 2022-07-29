@@ -261,11 +261,7 @@ const OverviewDetails = () => {
                   { rule: ruleId, rating: calculatedRating }
                 );
               }}
-              knowledgebaseUrl={
-                rule.node_id
-                  ? `https://access.redhat.com/node/${rule.node_id}`
-                  : ''
-              }
+              knowledgebaseUrl={`https://access.redhat.com/node/${rule.node_id}`}
               linkComponent={Link}
             >
               <Flex>

@@ -475,11 +475,7 @@ const RulesTable = () => {
                         isDetailsPage={false}
                         showViewAffected
                         linkComponent={Link}
-                        knowledgebaseUrl={
-                          value.node_id
-                            ? `https://access.redhat.com/node/${value.node_id}`
-                            : ''
-                        }
+                        knowledgebaseUrl={`https://access.redhat.com/node/${value.node_id}`}
                       />
                     </Stack>
                   </Main>
