@@ -57,12 +57,6 @@ const Inventory = ({
   const addNotification = (data) => dispatch(notification(data));
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [curPageIds, setCurPageIds] = useState([]);
-  const [pathwayRulesList, setPathwayRulesList] = useState();
-  const [pathwayReportList, setPathwayReportList] = useState();
-
-  const [hasPathwayDetails, setHasPathwayDetails] = useState(false);
-  const [isRemediationButtonDisabled, setIsRemediationButtonDisabled] =
-    useState(true);
 
   const fetchAllSystems = async () => {
     const allSystems = pathway
@@ -111,67 +105,7 @@ const Inventory = ({
         selected: selectedIds,
       },
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIds]);
-
-  useEffect(() => {
-    pathwayCheck();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedIds?.length]);
-
-  const pathwayCheck = async () => {
-    if (!hasPathwayDetails) {
-      let pathwayRules = (
-        await Get(
-          `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
-          {},
-          {}
-        )
-      )?.data.data;
-
-      let pathwayReport = (
-        await Get(
-          `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
-          {},
-          {}
-        )
-      )?.data.rules;
-      setHasPathwayDetails(true);
-      setPathwayReportList(pathwayReport);
-      setPathwayRulesList(pathwayRules);
-    }
-    if (selectedIds?.length > 0) {
-      checkRemediationButtonStatus();
-    } else {
-      setIsRemediationButtonDisabled(true);
-    }
-  };
-
-  const checkRemediationButtonStatus = () => {
-    let playbookFound = false;
-    let ruleKeys = Object.keys(pathwayReportList);
-
-    for (let i = 0; i < selectedIds.length; i++) {
-      let system = selectedIds[i];
-      if (playbookFound) {
-        break;
-      }
-      ruleKeys.forEach((rule) => {
-        //Grab the rule assosciated with that system
-        if (pathwayReportList[rule].includes(system)) {
-          let assosciatedRule = pathwayReportList[rule];
-          //find that associated rule in the pathwayRules endpoint, check for playbook
-          let item = pathwayRulesList.find(
-            (report) => (report.rule_id = assosciatedRule)
-          );
-          if (item.resolution_set[0].has_playbook) {
-            playbookFound = true;
-            return setIsRemediationButtonDisabled(false);
-          }
-        }
-      });
-    }
-  };
 
   const remediationDataProvider = async () => {
     if (pathway) {
@@ -474,7 +408,10 @@ const Inventory = ({
         dedicatedAction={
           <RemediationButton
             key="remediation-button"
-            isDisabled={isRemediationButtonDisabled}
+            isDisabled={
+              (selectedIds || []).length === 0 ||
+              (!pathway && rule?.playbook_count === 0)
+            }
             dataProvider={remediationDataProvider}
             onRemediationCreated={(result) => onRemediationCreated(result)}
           >
