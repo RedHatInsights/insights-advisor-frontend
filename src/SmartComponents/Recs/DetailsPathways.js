@@ -170,6 +170,8 @@ const PathwayDetails = () => {
       <Main>
         <Tabs
           className="adv__background--global-100"
+          mountOnEnter
+          unmountOnExit
           activeKey={activeTab}
           onSelect={(_e, tab) => setActiveTab(tab)}
         >
