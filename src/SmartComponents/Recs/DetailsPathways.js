@@ -128,11 +128,15 @@ const PathwayDetails = () => {
       ) : (
         <React.Fragment>
           <PageHeader className="adv-c-page__header">
-            <Breadcrumbs ouiaId="override" current={pathway.name || ''} />
+            <Breadcrumbs
+              ouiaId="override"
+              current={pathway.description || ''}
+            />
+            <CategoryLabel labelList={pathway.categories} />
             <PageHeaderTitle
               title={
                 <React.Fragment>
-                  {pathway.name}
+                  {pathway.description}
                   {pathway.has_incident && (
                     <RuleLabels rule={{ tags: 'incident' }} />
                   )}
@@ -148,11 +152,7 @@ const PathwayDetails = () => {
                   />
                 ),
               })}
-              <span className="pf-u-pl-sm">
-                <CategoryLabel labelList={pathway.categories} />
-              </span>
             </p>
-            <p className="pf-u-mb-lg">{pathway.description}</p>
           </PageHeader>
           <Main className="pf-u-pb-0">
             <Grid hasGutter>
