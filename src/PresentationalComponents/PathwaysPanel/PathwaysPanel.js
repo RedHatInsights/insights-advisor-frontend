@@ -11,7 +11,7 @@ import React, { useState } from 'react';
 
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../MessageState/MessageState';
-import { PathwayCard } from '../Cards/Pathways';
+import { PathwayCard } from '../Cards/PathwayCard';
 import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import messages from '../../Messages';
 import propTypes from 'prop-types';

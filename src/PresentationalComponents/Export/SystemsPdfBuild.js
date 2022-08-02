@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const tablePage = ({ page, systems, intl }) => {
+export const TablePage = ({ page, systems, intl }) => {
   const header = [
     { value: intl.formatMessage(messages.name), style: styles.nameColumn },
     {
@@ -113,7 +113,7 @@ export const tablePage = ({ page, systems, intl }) => {
   );
 };
 
-tablePage.propTypes = {
+TablePage.propTypes = {
   systems: PropTypes.object,
   page: PropTypes.number,
   intl: PropTypes.any,
@@ -155,7 +155,7 @@ export const leadPage = ({ systemsTotal, systems, filters, tags, intl }) => {
         {tags ? decodeURIComponent(tags) : intl.formatMessage(messages.noTags)}
       </Text>
       <Section key="systems" title="Systems">
-        {tablePage({ systems, intl })}
+        <TablePage systems={systems} intl={intl} />
       </Section>
     </React.Fragment>
   );

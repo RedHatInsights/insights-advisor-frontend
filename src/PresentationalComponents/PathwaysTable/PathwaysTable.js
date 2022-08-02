@@ -196,7 +196,12 @@ const PathwaysTable = () => {
                 ),
               },
               {
-                title: <RecommendationLevel key={key} {...pathway} isCompact />,
+                title: (
+                  <RecommendationLevel
+                    key={key}
+                    recLvl={pathway.recommendation_level}
+                  />
+                ),
               },
             ],
           },
