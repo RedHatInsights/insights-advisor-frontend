@@ -70,7 +70,7 @@ const PathwayCard = (props) => {
       <CardBody className="body pf-u-font-size-sm">{description}</CardBody>
       <CardBody className="body pf-u-font-size-sm">
         {has_incident && (
-          <RuleLabels rule={{ tags: 'incident' }} isCompact noMargin={true} />
+          <RuleLabels rule={{ tags: 'incident' }} isCompact noMargin />
         )}{' '}
         {RebootRequired(reboot_required)}
       </CardBody>
