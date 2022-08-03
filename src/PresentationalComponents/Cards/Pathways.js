@@ -69,7 +69,9 @@ const PathwayCard = (props) => {
       </CardBody>
       <CardBody className="body pf-u-font-size-sm">{description}</CardBody>
       <CardBody className="body pf-u-font-size-sm">
-        {has_incident && <RuleLabels rule={{ tags: 'incident' }} isCompact />}{' '}
+        {has_incident && (
+          <RuleLabels rule={{ tags: 'incident' }} isCompact noMargin />
+        )}{' '}
         {RebootRequired(reboot_required)}
       </CardBody>
       <CardFooter className="footer pf-u-font-size-sm">
@@ -105,7 +107,7 @@ const TotalRisk = (props) => {
     >
       <CardTitle>{intl.formatMessage(messages.totalRiskPathway)}</CardTitle>
       <CardBody className="body">
-        <Grid>
+        <Grid hasGutter>
           <GridItem span={6}>
             <div>
               <Chart
@@ -170,7 +172,7 @@ const TotalRisk = (props) => {
               </Chart>
             </div>
           </GridItem>
-          <GridItem span={6}>
+          <GridItem span={6} className="pf-u-font-size-sm">
             {intl.formatMessage(messages.thisPathway, {
               category: catString(categories),
               systems: impacted_systems_count,
@@ -196,34 +198,35 @@ const Resolution = (props) => {
       <div className="flex-coloumn">
         <CardTitle>{intl.formatMessage(messages.resolution)}</CardTitle>
 
-        <div className="flex-row">
-          <div>
+        <div className="flex-row ">
+          <div className="halfWidth">
             <p className="pf-u-font-weight-bold pf-u-font-size-sm pf-u-pl-lg">
               {intl.formatMessage(messages.remediation)}
             </p>
-            <p className="pf-u-font-size-md pf-u-pl-lg">{name}</p>
+            <p className="pf-u-font-size-sm pf-u-pl-lg">{name}</p>
           </div>
 
-          <CardBody className="body center">
-            <p className="pf-u-font-weight-bold pf-u-font-size-sm ">
+          <CardBody className=" pf-u-pl-xl halfWidth">
+            <p className="pf-u-font-weight-bold pf-u-font-size-sm">
               {intl.formatMessage(messages.riskOfChange)}
             </p>
             <InsightsLabel
               text={RISK_OF_CHANGE_LABEL[resolution_risk.risk]}
               value={resolution_risk.risk}
               hideIcon
+              isCompact
             />
           </CardBody>
         </div>
 
-        <CardBody className="body">
+        <CardBody className="body pf-u-font-size-sm">
           {intl.formatMessage(messages.staticRemediationDesc)}
         </CardBody>
         <CardBody className="body">{RebootRequired(reboot_required)}</CardBody>
       </div>
 
       <div className="pathwayRight pf-u-p-lg ">
-        <p className="pf-u-font-weight-bold ">
+        <p className="pf-u-font-weight-bold pf-u-font-size-sm">
           {intl.formatMessage(messages.reclvl)}
         </p>
         <div>

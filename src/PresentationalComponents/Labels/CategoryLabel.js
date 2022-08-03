@@ -66,7 +66,7 @@ CategoryLabel.propTypes = {
 };
 
 CategoryLabel.defaultProps = {
-  isCompact: false,
+  isCompact: true,
 };
 
 export default CategoryLabel;

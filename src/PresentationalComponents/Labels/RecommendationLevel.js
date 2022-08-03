@@ -8,8 +8,8 @@ const RecommendationLevel = (props) => {
   const intl = useIntl();
   const { recommendation_level: lvl, isCompact } = props;
 
-  const label = (text, lvl, color, isCompact) => (
-    <Label color={color} isCompact={isCompact}>{`${text} - ${lvl}%`}</Label>
+  const label = (text, lvl, color) => (
+    <Label color={color} isCompact>{`${text} - ${lvl}%`}</Label>
   );
 
   if (lvl >= 80) {

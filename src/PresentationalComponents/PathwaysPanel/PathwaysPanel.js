@@ -54,7 +54,10 @@ const PathwaysPanel = () => {
         {isFetching ? (
           <Loading />
         ) : !isError && data.data?.length ? (
-          <Grid hasGutter md={4} sm={12}>
+          <Grid
+            md={data.data?.length === 1 ? 8 : data.data?.length === 2 ? 6 : 4}
+            sm={12}
+          >
             {data.data.map((pathway) => (
               <GridItem key={pathway.name}>
                 <PathwayCard {...pathway} />
