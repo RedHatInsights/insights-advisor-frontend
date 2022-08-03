@@ -10,7 +10,7 @@ export IMAGE="quay.io/cloudservices/insights-advisor-frontend"
 export WORKSPACE=${WORKSPACE:-$APP_ROOT}  # if running in jenkins, use the build's workspace
 export APP_ROOT=$(pwd)
 export NODE_BUILD_VERSION=16
-COMMON_BUILDER=https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/56cb05b5da09d56da15dd2637ef8bb4c886f694d
+COMMON_BUILDER=https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/251f73631e3e63caef3c0e45e18fad75cda3c563
 
 # --------------------------------------------
 # Options that must be configured by app owner
