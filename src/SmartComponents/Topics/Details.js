@@ -81,7 +81,11 @@ const Details = () => {
             <Title headingLevel="h3" size="2xl" className="pf-u-mb-lg">
               {topic.name}
               {topic.featured && (
-                <Label color="blue" className="adv-c-label" icon={<StarIcon />}>
+                <Label
+                  color="blue"
+                  className="adv-c-label pf-m-compact"
+                  icon={<StarIcon />}
+                >
                   {intl.formatMessage(messages.featured)}
                 </Label>
               )}
