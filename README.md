@@ -10,8 +10,8 @@ There is a [comprehensive quick start guide in the Storybook Documentation](http
 Note: You will need to set up the Insights environment if you want to develop with the starter app due to the consumption of the chroming service as well as setting up your global/app navigation through the API.
 ## Running locally
 1. `npm install`
-2. `npm run start:proxy` And enjoy! Thats it! Local proxy is no longer required to run local advisor
-3. https://prod.foo.redhat.com:1337/insights/advisor/ (or whatever enviroment is specified)
+2. `npm run start:proxy` or `npm run start:proxy:beta` And enjoy! Thats it! Local proxy is no longer required to run local advisor
+3. https://stage.foo.redhat.com:1337/insights/advisor/ (or whatever enviroment is specified)
 
 Note: The API endpont can be specified by appending 
 `API_ENDOINT=foo_endpoint ` so yah  end up with something like `API_ENDOINT=https://ci.cloud.redhat.com  npm run start` if you wish to specify a ci API.
