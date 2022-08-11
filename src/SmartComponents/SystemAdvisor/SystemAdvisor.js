@@ -49,6 +49,7 @@ import {
   InventoryReportFetchFailed,
 } from './EmptyStates';
 import NotConnected from '@redhat-cloud-services/frontend-components/NotConnected';
+import { useLocation } from 'react-router-dom';
 
 const BaseSystemAdvisor = () => {
   const intl = useIntl();
@@ -166,6 +167,7 @@ const BaseSystemAdvisor = () => {
     collapseRows[rowId] = { ...collapseRows[rowId], isOpen };
     setRows(collapseRows);
   };
+  const location = useLocation().pathname?.split('/');
 
   const buildRows = (
     activeReports,
@@ -173,18 +175,35 @@ const BaseSystemAdvisor = () => {
     filters,
     rows,
     searchValue = '',
-    kbaLoading = false
+    kbaLoading = false,
+    isFirstLoad = false
   ) => {
-    const builtRows = activeReports.flatMap((value, key) => {
+    const url = window.location.href;
+    let newActiveReportsList = activeReports;
+    let isRulePresent = url.indexOf('activeRule') ? true : false;
+    if (isRulePresent) {
+      let activeRule = location[2];
+      //sorts activeReportsList by making the activeRecommendation ruleId having a higher priority when sorting
+      newActiveReportsList.sort((x, y) =>
+        x.rule.rule_id === activeRule
+          ? -1
+          : y.rule.rule_id === activeRule
+          ? 1
+          : 0
+      );
+    }
+
+    const builtRows = newActiveReportsList.flatMap((value, key) => {
       const rule = value.rule;
       const resolution = value.resolution;
       const kbaDetail = Object.keys(kbaDetails).length
         ? kbaDetails.filter((article) => article.id === value.rule.node_id)[0]
         : {};
-
       const match = rows.find((row) => row?.rule?.rule_id === rule.rule_id);
       const selected = match?.selected;
-      const isOpen = match?.isOpen || false;
+      const isOpen =
+        match?.isOpen || (isRulePresent && isFirstLoad && key === 0);
+
       const reportRow = [
         {
           rule,
@@ -468,7 +487,15 @@ const BaseSystemAdvisor = () => {
 
       setKbaDetailsData(kbaDetailsFetch);
       setRows(
-        buildRows(reportsData, kbaDetailsFetch, filters, rows, searchValue)
+        buildRows(
+          reportsData,
+          kbaDetailsFetch,
+          filters,
+          rows,
+          searchValue,
+          false,
+          true
+        )
       );
     } catch (error) {
       console.error(error, 'KBA fetch failed.');

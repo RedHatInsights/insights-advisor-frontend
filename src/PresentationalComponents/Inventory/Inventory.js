@@ -1,11 +1,12 @@
 import './_Inventory.scss';
 
 import { BASE_URL, RULES_FETCH_URL } from '../../AppConstants';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import { pruneFilters, urlBuilder } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { getEntities, allCurrentSystemIds } from './helpers';
+import { Link } from 'react-router-dom';
 
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { Get } from '../../Utilities/Api';
@@ -266,39 +267,56 @@ const Inventory = ({
     setDisableRuleModalOpen(disableRuleModalOpen);
   };
 
-  const createColumns = (defaultColumns) => {
-    let lastSeenColumn = defaultColumns.filter(({ key }) => key === 'updated');
-    let displayName = defaultColumns.filter(
-      ({ key }) => key === 'display_name'
-    );
-    let systemProfile = defaultColumns.filter(
-      ({ key }) => key === 'system_profile'
-    );
-    let tags = defaultColumns.filter(({ key }) => key === 'tags');
+  const createColumns = useCallback(
+    (defaultColumns) => {
+      let lastSeenColumn = defaultColumns.filter(
+        ({ key }) => key === 'updated'
+      );
+      let displayName = defaultColumns.filter(
+        ({ key }) => key === 'display_name'
+      );
+      let systemProfile = defaultColumns.filter(
+        ({ key }) => key === 'system_profile'
+      );
+      let tags = defaultColumns.filter(({ key }) => key === 'tags');
 
-    displayName = {
-      ...displayName[0],
-      transforms: [sortable, wrappable],
-      props: { isStatic: true },
-    };
+      displayName = {
+        ...displayName[0],
+        transforms: [sortable, wrappable],
+        props: { isStatic: true },
+        renderFunc: rule
+          ? (name, id) => {
+              return (
+                <Link
+                  className="pf-u-font-size-lg"
+                  to={`/recommendations/${rule.rule_id}/${id}?activeRule=true`}
+                >
+                  {name}
+                </Link>
+              );
+            }
+          : {},
+      };
 
-    lastSeenColumn = {
-      ...lastSeenColumn[0],
-      transforms: [sortable, wrappable],
-      props: { width: 20 },
-    };
+      lastSeenColumn = {
+        ...lastSeenColumn[0],
+        transforms: [sortable, wrappable],
+        props: { width: 20 },
+      };
 
-    systemProfile = {
-      ...systemProfile[0],
-      transforms: [wrappable],
-    };
+      systemProfile = {
+        ...systemProfile[0],
+        transforms: [wrappable],
+      };
 
-    tags = {
-      ...tags[0],
-    };
+      tags = {
+        ...tags[0],
+      };
 
-    return [displayName, tags, systemProfile, lastSeenColumn];
-  };
+      return [displayName, tags, systemProfile, lastSeenColumn];
+    },
+    [rule]
+  );
 
   const removeFilterParam = (param) => {
     const filter = { ...filters, offset: 0 };
