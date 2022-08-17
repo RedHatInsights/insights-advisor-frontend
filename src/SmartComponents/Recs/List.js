@@ -12,7 +12,7 @@ import {
 } from '@patternfly/react-core/dist/esm/components/Tabs/index';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
+import DownloadExecReport from './Components/DownloadExecReport';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import { PERMS } from '../../AppConstants';

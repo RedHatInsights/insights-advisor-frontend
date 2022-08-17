@@ -1,6 +1,7 @@
 import { SYSTEM_TYPES, BASE_URL } from '../../AppConstants';
 import { DeleteApi, Get, Post } from '../../Utilities/Api';
 import messages from '../../Messages';
+import './_Download.scss';
 
 export const ruleResolutionRisk = (rule) => {
   const resolution = rule?.resolution_set?.find(

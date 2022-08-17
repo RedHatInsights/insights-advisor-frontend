@@ -23,6 +23,11 @@ import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
 import { useLoadModule } from '@scalprum/react-core';
+import {
+  checkRemediationButtonStatus,
+  pathwayCheck,
+  rulesCheck,
+} from './helpers';
 
 const Inventory = ({
   tableProps,
@@ -123,89 +128,31 @@ const Inventory = ({
         selected: selectedIds,
       },
     });
-    checkRemediationButtonStatus();
+    checkRemediationButtonStatus(
+      pathwayReportList,
+      selectedIds,
+      setIsRemediationButtonDisabled,
+      pathway,
+      pathwayRulesList,
+      rulesPlaybookCount
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIds]);
 
   useEffect(() => {
     if (pathway) {
-      pathwayCheck();
+      pathwayCheck(
+        hasPathwayDetails,
+        pathway,
+        setHasPathwayDetails,
+        setPathwayReportList,
+        setPathwayRulesList
+      );
     } else {
-      rulesCheck();
+      rulesCheck(rule, rulesPlaybookCount, filters, setRulesPlaybookCount);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const rulesCheck = async () => {
-    if (rulesPlaybookCount < 0) {
-      const associatedRuleDetails = (
-        await Get(
-          `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
-          {},
-          { name: filters.name }
-        )
-      )?.data.playbook_count;
-      setRulesPlaybookCount(associatedRuleDetails);
-    }
-  };
-
-  const pathwayCheck = async () => {
-    if (!hasPathwayDetails) {
-      if (pathway) {
-        let pathwayRules = (
-          await Get(
-            `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
-            {},
-            {}
-          )
-        )?.data.data;
-
-        let pathwayReport = (
-          await Get(
-            `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
-            {},
-            {}
-          )
-        )?.data.rules;
-        setHasPathwayDetails(true);
-        setPathwayReportList(pathwayReport);
-        setPathwayRulesList(pathwayRules);
-      }
-    }
-  };
-
-  const checkRemediationButtonStatus = () => {
-    let playbookFound = false;
-    let ruleKeys = Object.keys(pathwayReportList);
-    if (selectedIds?.length <= 0 || selectedIds === undefined) {
-      setIsRemediationButtonDisabled(true);
-    } else if (pathway) {
-      for (let i = 0; i < selectedIds?.length; i++) {
-        let system = selectedIds[i];
-        if (playbookFound) {
-          break;
-        }
-        ruleKeys.forEach((rule) => {
-          //Grab the rule assosciated with that system
-          if (pathwayReportList[rule].includes(system)) {
-            let assosciatedRule = pathwayReportList[rule];
-            //find that associated rule in the pathwayRules endpoint, check for playbook
-            let item = pathwayRulesList.find(
-              (report) => (report.rule_id = assosciatedRule)
-            );
-            if (item.resolution_set[0].has_playbook) {
-              playbookFound = true;
-              return setIsRemediationButtonDisabled(false);
-            }
-          }
-        });
-      }
-    } else {
-      if (rulesPlaybookCount > 0 && selectedIds?.length > 0) {
-        setIsRemediationButtonDisabled(false);
-      }
-    }
-  };
 
   const remediationDataProvider = async () => {
     if (pathway) {

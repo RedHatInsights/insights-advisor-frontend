@@ -1,6 +1,10 @@
 import { Get } from '../../Utilities/Api';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
-import { RULES_FETCH_URL, SYSTEMS_FETCH_URL } from '../../AppConstants';
+import {
+  RULES_FETCH_URL,
+  SYSTEMS_FETCH_URL,
+  BASE_URL,
+} from '../../AppConstants';
 import { createOptions } from '../helper';
 
 /*This functions purpose is to grab the currently set filters, and return all associated systems for it.*/
@@ -138,3 +142,92 @@ export const allCurrentSystemIds =
     setIsLoading(false);
     return merged;
   };
+
+export const pathwayCheck = async (
+  hasPathwayDetails,
+  pathway,
+  setHasPathwayDetails,
+  setPathwayReportList,
+  setPathwayRulesList
+) => {
+  if (!hasPathwayDetails) {
+    if (pathway) {
+      let pathwayRules = (
+        await Get(
+          `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
+          {},
+          {}
+        )
+      )?.data.data;
+
+      let pathwayReport = (
+        await Get(
+          `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
+          {},
+          {}
+        )
+      )?.data.rules;
+      setHasPathwayDetails(true);
+      setPathwayReportList(pathwayReport);
+      setPathwayRulesList(pathwayRules);
+    }
+  }
+};
+
+export const rulesCheck = async (
+  rule,
+  rulesPlaybookCount,
+  filters,
+  setRulesPlaybookCount
+) => {
+  if (rulesPlaybookCount < 0) {
+    const associatedRuleDetails = (
+      await Get(
+        `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
+        {},
+        { name: filters.name }
+      )
+    )?.data.playbook_count;
+    setRulesPlaybookCount(associatedRuleDetails);
+  }
+};
+
+export const checkRemediationButtonStatus = (
+  pathwayReportList,
+  selectedIds,
+  setIsRemediationButtonDisabled,
+  pathway,
+  pathwayRulesList,
+  rulesPlaybookCount
+) => {
+  let playbookFound = false;
+  let ruleKeys = Object.keys(pathwayReportList);
+  if (selectedIds?.length <= 0 || selectedIds === undefined) {
+    setIsRemediationButtonDisabled(true);
+  } else if (pathway) {
+    for (let i = 0; i < selectedIds?.length; i++) {
+      let system = selectedIds[i];
+      if (playbookFound) {
+        break;
+      }
+      ruleKeys.forEach((rule) => {
+        //Grab the rule assosciated with that system
+        if (pathwayReportList[rule].includes(system)) {
+          let assosciatedRule = pathwayReportList[rule];
+          //find that associated rule in the pathwayRules endpoint, check for playbook
+          let item = pathwayRulesList.find(
+            (report) => (report.rule_id = assosciatedRule)
+          );
+          if (item.resolution_set[0].has_playbook) {
+            playbookFound = true;
+            return setIsRemediationButtonDisabled(false);
+          }
+        }
+      });
+    }
+  } else {
+    if (rulesPlaybookCount > 0 && selectedIds?.length > 0) {
+      setIsRemediationButtonDisabled(false);
+    }
+  }
+};

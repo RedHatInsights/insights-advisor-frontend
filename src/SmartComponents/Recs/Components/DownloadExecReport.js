@@ -1,21 +1,20 @@
-import './_Download.scss';
-
+import React, { useMemo, useState } from 'react';
 import {
   RULES_FETCH_URL,
   STATS_REPORTS_FETCH_URL,
   STATS_SYSTEMS_FETCH_URL,
   exportNotifications,
-} from '../../AppConstants';
-import React, { useMemo, useState } from 'react';
+} from '../../../AppConstants';
 
 import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
 import ExportIcon from '@patternfly/react-icons/dist/js/icons/export-icon';
-import { Get } from '../../Utilities/Api';
-import buildExecReport from './Build';
-import messages from '../../Messages';
+import buildExecReport from '../Build';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { Get } from '../../../Utilities/Api';
+import messages from '../../../Messages';
+import '../_Download.scss';
 
 const DownloadExecReport = ({ isDisabled }) => {
   const intl = useIntl();
