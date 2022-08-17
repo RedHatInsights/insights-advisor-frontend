@@ -173,8 +173,7 @@ const BaseSystemAdvisor = () => {
     filters,
     rows,
     searchValue = '',
-    kbaLoading = false,
-    isFirstLoad = false
+    kbaLoading = false
   ) => {
     const builtRows = activeReports.flatMap((value, key) => {
       const rule = value.rule;
@@ -185,8 +184,7 @@ const BaseSystemAdvisor = () => {
 
       const match = rows.find((row) => row?.rule?.rule_id === rule.rule_id);
       const selected = match?.selected;
-      const isOpen = match?.isOpen || (isFirstLoad && key === 0);
-
+      const isOpen = match?.isOpen || false;
       const reportRow = [
         {
           rule,
@@ -470,15 +468,7 @@ const BaseSystemAdvisor = () => {
 
       setKbaDetailsData(kbaDetailsFetch);
       setRows(
-        buildRows(
-          reportsData,
-          kbaDetailsFetch,
-          filters,
-          rows,
-          searchValue,
-          false,
-          true
-        )
+        buildRows(reportsData, kbaDetailsFetch, filters, rows, searchValue)
       );
     } catch (error) {
       console.error(error, 'KBA fetch failed.');
