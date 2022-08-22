@@ -180,14 +180,22 @@ const BaseSystemAdvisor = () => {
   ) => {
     const url = window.location.href;
     let newActiveReportsList = activeReports;
-    let isRulePresent = url.indexOf('activeRule') ? true : false;
+    let isRulePresent = url.indexOf('activeRule') > -1 ? true : false;
     if (isRulePresent) {
       let activeRule = location[2];
-      //sorts activeReportsList by making the activeRecommendation ruleId having a higher priority when sorting
+      //sorts activeReportsList by making the activeRecommendation ruleId having a higher priority when sorting, or by total_risk
       newActiveReportsList.sort((x, y) =>
         x.rule.rule_id === activeRule
           ? -1
           : y.rule.rule_id === activeRule
+          ? 1
+          : 0
+      );
+    } else if (isFirstLoad) {
+      newActiveReportsList.sort((x, y) =>
+        x.rule.total_risk > y.rule.total_risk
+          ? -1
+          : y.rule.total_risk > x.rule.total_risk
           ? 1
           : 0
       );
