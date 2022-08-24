@@ -1,6 +1,6 @@
 import './_Inventory.scss';
 
-import { BASE_URL, RULES_FETCH_URL } from '../../AppConstants';
+import { BASE_URL } from '../../AppConstants';
 import React, { useEffect, useState, useCallback } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import { pruneFilters, urlBuilder } from '../Common/Tables';
@@ -24,7 +24,7 @@ import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
 import { useLoadModule } from '@scalprum/react-core';
 import {
-  checkRemediationButtonStatus,
+  useRemediationButtonStatus,
   pathwayCheck,
   rulesCheck,
 } from './helpers';
@@ -60,10 +60,7 @@ const Inventory = ({
   const [pathwayRulesList, setPathwayRulesList] = useState({});
   const [pathwayReportList, setPathwayReportList] = useState({});
   const [isLoading, setIsLoading] = useState();
-
   const [hasPathwayDetails, setHasPathwayDetails] = useState(false);
-  const [isRemediationButtonDisabled, setIsRemediationButtonDisabled] =
-    useState(true);
   //This value comes in from the backend as 0, or 1. To be consistent it is set to -1
   const [rulesPlaybookCount, setRulesPlaybookCount] = useState(-1);
   const [{ toGroupSelectionValue, buildOSFilterConfig } = {}] = useLoadModule({
@@ -120,6 +117,14 @@ const Inventory = ({
     identitfier: 'system_uuid',
     isLoading,
   });
+
+  const { remediateButtonStatus } = useRemediationButtonStatus(
+    pathwayReportList,
+    selectedIds,
+    pathway,
+    pathwayRulesList,
+    rulesPlaybookCount
+  );
   // Ensures rows are marked as selected, runs the check on remediation Status
   useEffect(() => {
     dispatch({
@@ -128,14 +133,6 @@ const Inventory = ({
         selected: selectedIds,
       },
     });
-    checkRemediationButtonStatus(
-      pathwayReportList,
-      selectedIds,
-      setIsRemediationButtonDisabled,
-      pathway,
-      pathwayRulesList,
-      rulesPlaybookCount
-    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIds]);
 
@@ -400,7 +397,7 @@ const Inventory = ({
         dedicatedAction={
           <RemediationButton
             key="remediation-button"
-            isDisabled={isRemediationButtonDisabled}
+            isDisabled={remediateButtonStatus}
             dataProvider={remediationDataProvider}
             onRemediationCreated={(result) => onRemediationCreated(result)}
           >

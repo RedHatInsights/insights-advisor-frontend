@@ -5,7 +5,12 @@ import {
   SYSTEMS_FETCH_URL,
   BASE_URL,
 } from '../../AppConstants';
+<<<<<<< HEAD
 import { createOptions } from '../helper';
+=======
+import { useEffect } from 'react';
+import { useState } from 'react';
+>>>>>>> 7073bde (refactoring 2 custom hooks)
 
 /*This functions purpose is to grab the currently set filters, and return all associated systems for it.*/
 export const paginatedRequestHelper = async ({
@@ -192,18 +197,23 @@ export const rulesCheck = async (
   }
 };
 
-export const checkRemediationButtonStatus = (
+export const useRemediationButtonStatus = (
   pathwayReportList,
   selectedIds,
-  setIsRemediationButtonDisabled,
   pathway,
   pathwayRulesList,
   rulesPlaybookCount
 ) => {
   let playbookFound = false;
+  const [remediationButtonStatus, setRemediationButtonStatus] = useState(false);
   let ruleKeys = Object.keys(pathwayReportList);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedIds]);
+
   if (selectedIds?.length <= 0 || selectedIds === undefined) {
-    setIsRemediationButtonDisabled(true);
+    setRemediationButtonStatus(true);
   } else if (pathway) {
     for (let i = 0; i < selectedIds?.length; i++) {
       let system = selectedIds[i];
@@ -220,14 +230,16 @@ export const checkRemediationButtonStatus = (
           );
           if (item.resolution_set[0].has_playbook) {
             playbookFound = true;
-            return setIsRemediationButtonDisabled(false);
+            setRemediationButtonStatus(false);
+            return remediationButtonStatus;
           }
         }
       });
     }
   } else {
     if (rulesPlaybookCount > 0 && selectedIds?.length > 0) {
-      setIsRemediationButtonDisabled(false);
+      setRemediationButtonStatus(false);
+      return remediationButtonStatus;
     }
   }
 };
