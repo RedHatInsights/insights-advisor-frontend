@@ -21,14 +21,12 @@ import { useSelector } from 'react-redux';
 
 const PathwaysPanel = () => {
   const intl = useIntl();
-  const { sort, offset } = useSelector(
-    ({ filters: { pathState } }) => pathState
-  );
+  const { offset } = useSelector(({ filters: { pathState } }) => pathState);
   const [expanded, setExpanded] = useState(
     JSON.parse(localStorage.getItem('advisor_pathwayspanel_expanded') || 'true')
   );
   const { data, isLoading, isFetching, isError } = useGetPathwaysQuery({
-    sort,
+    sort: '-recommendation_level',
     offset,
     limit: 3,
   });
