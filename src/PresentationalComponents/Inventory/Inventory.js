@@ -284,18 +284,20 @@ const Inventory = ({
         ...displayName[0],
         transforms: [sortable, wrappable],
         props: { isStatic: true },
-        renderFunc: rule
-          ? (name, id) => {
-              return (
-                <Link
-                  className="pf-u-font-size-lg"
-                  to={`/recommendations/${rule.rule_id}/${id}?activeRule=true`}
-                >
-                  {name}
-                </Link>
-              );
+        ...(rule
+          ? {
+              renderFunc: (name, id) => {
+                return (
+                  <Link
+                    className="pf-u-font-size-lg"
+                    to={`/recommendations/${rule.rule_id}/${id}?activeRule=true`}
+                  >
+                    {name}
+                  </Link>
+                );
+              },
             }
-          : {},
+          : {}),
       };
 
       lastSeenColumn = {
