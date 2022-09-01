@@ -118,13 +118,6 @@ const Inventory = ({
     isLoading,
   });
 
-  const { remediateButtonStatus } = useRemediationButtonStatus(
-    pathwayReportList,
-    selectedIds,
-    pathway,
-    pathwayRulesList,
-    rulesPlaybookCount
-  );
   // Ensures rows are marked as selected, runs the check on remediation Status
   useEffect(() => {
     dispatch({
@@ -150,6 +143,14 @@ const Inventory = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const isRemediationButtonDisabled = useRemediationButtonStatus(
+    pathwayReportList,
+    selectedIds,
+    pathway,
+    pathwayRulesList,
+    rulesPlaybookCount
+  );
 
   const remediationDataProvider = async () => {
     if (pathway) {
@@ -397,7 +398,7 @@ const Inventory = ({
         dedicatedAction={
           <RemediationButton
             key="remediation-button"
-            isDisabled={remediateButtonStatus}
+            isDisabled={isRemediationButtonDisabled}
             dataProvider={remediationDataProvider}
             onRemediationCreated={(result) => onRemediationCreated(result)}
           >

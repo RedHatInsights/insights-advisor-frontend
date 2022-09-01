@@ -5,12 +5,8 @@ import {
   SYSTEMS_FETCH_URL,
   BASE_URL,
 } from '../../AppConstants';
-<<<<<<< HEAD
 import { createOptions } from '../helper';
-=======
-import { useEffect } from 'react';
-import { useState } from 'react';
->>>>>>> 7073bde (refactoring 2 custom hooks)
+import { useEffect, useState } from 'react';
 
 /*This functions purpose is to grab the currently set filters, and return all associated systems for it.*/
 export const paginatedRequestHelper = async ({
@@ -205,41 +201,42 @@ export const useRemediationButtonStatus = (
   rulesPlaybookCount
 ) => {
   let playbookFound = false;
-  const [remediationButtonStatus, setRemediationButtonStatus] = useState(false);
+  const [isRemediationButtonDisabled, setIsRemediationButtonDisabled] =
+    useState(true);
   let ruleKeys = Object.keys(pathwayReportList);
 
   useEffect(() => {
+    if (selectedIds?.length <= 0 || selectedIds === undefined) {
+      setIsRemediationButtonDisabled(true);
+    } else if (pathway) {
+      for (let i = 0; i < selectedIds?.length; i++) {
+        let system = selectedIds[i];
+        if (playbookFound) {
+          break;
+        }
+        ruleKeys.forEach((rule) => {
+          //Grab the rule assosciated with that system
+          if (pathwayReportList[rule].includes(system)) {
+            let assosciatedRule = pathwayReportList[rule];
+            //find that associated rule in the pathwayRules endpoint, check for playbook
+            let item = pathwayRulesList.find(
+              (report) => (report.rule_id = assosciatedRule)
+            );
+            if (item.resolution_set[0].has_playbook) {
+              playbookFound = true;
+              setIsRemediationButtonDisabled(false);
+              return isRemediationButtonDisabled;
+            }
+          }
+        });
+      }
+    } else {
+      if (rulesPlaybookCount > 0 && selectedIds?.length > 0) {
+        setIsRemediationButtonDisabled(false);
+        return isRemediationButtonDisabled;
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIds]);
-
-  if (selectedIds?.length <= 0 || selectedIds === undefined) {
-    setRemediationButtonStatus(true);
-  } else if (pathway) {
-    for (let i = 0; i < selectedIds?.length; i++) {
-      let system = selectedIds[i];
-      if (playbookFound) {
-        break;
-      }
-      ruleKeys.forEach((rule) => {
-        //Grab the rule assosciated with that system
-        if (pathwayReportList[rule].includes(system)) {
-          let assosciatedRule = pathwayReportList[rule];
-          //find that associated rule in the pathwayRules endpoint, check for playbook
-          let item = pathwayRulesList.find(
-            (report) => (report.rule_id = assosciatedRule)
-          );
-          if (item.resolution_set[0].has_playbook) {
-            playbookFound = true;
-            setRemediationButtonStatus(false);
-            return remediationButtonStatus;
-          }
-        }
-      });
-    }
-  } else {
-    if (rulesPlaybookCount > 0 && selectedIds?.length > 0) {
-      setRemediationButtonStatus(false);
-      return remediationButtonStatus;
-    }
-  }
+  return isRemediationButtonDisabled;
 };
