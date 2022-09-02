@@ -68,10 +68,11 @@ import { updateRecFilters } from '../../Services/Filters';
 import { useGetRecsQuery } from '../../Services/Recs';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
+import PropTypes from 'prop-types';
 
 import { emptyRows } from './helpers';
 
-const RulesTable = () => {
+const RulesTable = ({ isTabActive }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const { search } = useLocation();
@@ -266,7 +267,7 @@ const RulesTable = () => {
 
   // Builds table filters from url params
   useEffect(() => {
-    if (search && filterBuilding) {
+    if (isTabActive && search && filterBuilding) {
       const paramsObject = paramParser();
       delete paramsObject.tags;
 
@@ -800,6 +801,10 @@ const RulesTable = () => {
       />
     </React.Fragment>
   );
+};
+
+RulesTable.propTypes = {
+  isTabActive: PropTypes.bool,
 };
 
 export default RulesTable;

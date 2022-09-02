@@ -41,8 +41,9 @@ import messages from '../../Messages';
 import { updatePathFilters } from '../../Services/Filters';
 import { useGetPathwaysQuery } from '../../Services/Pathways';
 import { useIntl } from 'react-intl';
+import PropTypes from 'prop-types';
 
-const PathwaysTable = () => {
+const PathwaysTable = ({ isTabActive }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const { search } = useLocation();
@@ -306,7 +307,7 @@ const PathwaysTable = () => {
   }, [filters, selectedTags, workloads, SID]);
 
   useEffect(() => {
-    if (search && filterBuilding) {
+    if (isTabActive && search && filterBuilding) {
       const paramsObject = paramParser();
       delete paramsObject.tags;
 
@@ -412,6 +413,10 @@ const PathwaysTable = () => {
       />
     </React.Fragment>
   );
+};
+
+PathwaysTable.propTypes = {
+  isTabActive: PropTypes.bool,
 };
 
 export default PathwaysTable;

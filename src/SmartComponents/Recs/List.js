@@ -89,7 +89,7 @@ const List = () => {
             }
           >
             <Suspense fallback={<Loading />}>
-              <RulesTable />
+              <RulesTable isTabActive={activeTab === 0} />
             </Suspense>
           </Tab>
           <Tab
@@ -104,7 +104,7 @@ const List = () => {
             }
           >
             <Suspense fallback={<Loading />}>
-              <PathwaysTable />
+              <PathwaysTable isTabActive={activeTab === 1} />
             </Suspense>
           </Tab>
         </Tabs>
