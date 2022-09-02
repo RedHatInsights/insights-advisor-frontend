@@ -169,8 +169,8 @@ export const pathwayCheck = async (
         )
       )?.data.rules;
       setHasPathwayDetails(true);
-      setPathwayReportList(pathwayReport);
       setPathwayRulesList(pathwayRules);
+      setPathwayReportList(pathwayReport);
     }
   }
 };
@@ -200,7 +200,7 @@ export const useRemediationButtonStatus = (
   pathwayRulesList,
   rulesPlaybookCount
 ) => {
-  let playbookFound = false;
+  const [playbookFound, setPlaybookFound] = useState(false);
   const [isRemediationButtonDisabled, setIsRemediationButtonDisabled] =
     useState(true);
   let ruleKeys = Object.keys(pathwayReportList);
@@ -223,7 +223,7 @@ export const useRemediationButtonStatus = (
               (report) => (report.rule_id = assosciatedRule)
             );
             if (item.resolution_set[0].has_playbook) {
-              playbookFound = true;
+              setPlaybookFound(true);
               setIsRemediationButtonDisabled(false);
               return isRemediationButtonDisabled;
             }

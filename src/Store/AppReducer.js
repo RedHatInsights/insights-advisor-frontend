@@ -9,15 +9,11 @@ export function systemReducer() {
     }),
   });
 }
-
-export function entitiesDetailsReducer(ActionTypes) {
-  return applyReducerHash(
-    {
-      [`${ActionTypes.LOAD_ENTITY}_FULFILLED`]: enableApplications,
-    },
-    {}
-  );
-}
+const selectRows = (rows, selected = []) =>
+  (rows || []).map((row) => ({
+    ...row,
+    selected: selected.includes(row.id),
+  }));
 
 function enableApplications(state) {
   return {
@@ -27,8 +23,11 @@ function enableApplications(state) {
   };
 }
 
-const selectRows = (rows, selected = []) =>
-  (rows || []).map((row) => ({
-    ...row,
-    selected: selected.includes(row.id),
-  }));
+export function entitiesDetailsReducer(ActionTypes) {
+  return applyReducerHash(
+    {
+      [`${ActionTypes.LOAD_ENTITY}_FULFILLED`]: enableApplications,
+    },
+    {}
+  );
+}

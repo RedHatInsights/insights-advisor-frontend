@@ -57,9 +57,9 @@ const Inventory = ({
   const addNotification = (data) => dispatch(notification(data));
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [curPageIds, setCurPageIds] = useState([]);
+  const [isLoading, setIsLoading] = useState();
   const [pathwayRulesList, setPathwayRulesList] = useState({});
   const [pathwayReportList, setPathwayReportList] = useState({});
-  const [isLoading, setIsLoading] = useState();
   const [hasPathwayDetails, setHasPathwayDetails] = useState(false);
   //This value comes in from the backend as 0, or 1. To be consistent it is set to -1
   const [rulesPlaybookCount, setRulesPlaybookCount] = useState(-1);

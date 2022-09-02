@@ -11,6 +11,7 @@ import { useGetTopicsQuery } from '../../Services/Topics';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
+import type { ChromeAPI } from '@redhat-cloud-services/types';
 
 const List = () => {
   const intl = useIntl();
@@ -20,6 +21,7 @@ const List = () => {
   document.title = intl.formatMessage(messages.documentTitle, {
     subnav: messages.topics.defaultMessage,
   });
+  // ChromeAPI.updateDocumentTitle(intl.formatMessage(messages.documentTitle));
   let options = selectedTags?.length && { tags: selectedTags };
   workloads &&
     (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
