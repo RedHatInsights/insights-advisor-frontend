@@ -1,6 +1,6 @@
 # Advisor Frontend
 
-[![Build Status](https://travis-ci.com/RedHatInsights/insights-advisor-frontend.svg?branch=master)](https://app.travis-ci.com/github/RedHatInsights/insights-advisor-frontend) [![codecov](https://codecov.io/github/RedHatInsights/insights-advisor-frontend/branch/master/graph/badge.svg?token=g9fj8a4SW9)](https://codecov.io/github/RedHatInsights/insights-advisor-frontend)
+[![Build Status](https://travis-ci.com/RedHatInsights/insights-advisor-frontend.svg?branch=master)](https://app.travis-ci.com/github/RedHatInsights/insights-advisor-frontend)
 
 ## First time setup
 1. Make sure you have [Node.js](https://nodejs.org/en/) version >= 16 installed
@@ -10,30 +10,9 @@
 ## Running locally
 1. Install dependencies with `npm install`
 2. Run development server with `npm run start:proxy:beta`
-3. Local version of the app will be available at https://stage.foo.redhat.com:1337/preview/insights/advisor/
+3. Local version of the app will be available at https://stage.foo.redhat.com:1337/beta/insights/advisor/
 
 In case you want to use the stable environment instead of beta you can run the app with `npm run start:proxy` and access it from https://stage.foo.redhat.com:1337/insights/advisor/. Usually there is no difference between these two environments unless there is a large feature in progress which is hidden behind `isBeta` flag.
-
-### Running with another c.r.c. application
-
-Sometimes you need to test Advisor locally together with other applications and their federated modules. For example, Advisor imports InventoryTable module from the Inventory application at run time. In order to deploy more applications locally, do these steps:
-
-1. Run all required applications except Advisor with 
-```
-npm run start:proxy -- --port={PORT_NUMBER}
-``` 
-
-As a `PORT_NUMBER` assign the number of free port in your system.
-
-2. Run the Advisor application with the list of additional applications (the ones you ran in the previous step):
-```
-LOCAL_API=inventory:8003~https npm run start:proxy
-```
-
-If you want to run Inventory and, for instance, Vulnerability, then just add a new entry to LOCAL_API:
-```
-LOCAL_API=advisor:8003~https,vulnerability:8004~https npm run start:proxy
-``` 
 
 ## Testing
 Travis is used to test the build for this code.
@@ -45,7 +24,7 @@ Any push to the following branches will trigger a build in [insights-advisor-fro
 
 | Push to branch in this repo  | Updated branch in build repo  | Environment       | Available at
 | :--------------------------- | :---------------------------- | :---------------- | :-----------
-| master                       | stage-beta                    | stage beta        | https://console.stage.redhat.com/preview
+| master                       | stage-beta                    | stage beta        | https://console.stage.redhat.com/beta
 | master-stable                | stage-stable                  | stage stable      | https://console.stage.redhat.com
 | prod-beta                    | prod-beta                     | production beta   | https://console.redhat.com/beta
 | prod-stable                  | prod-stable                   | production stable | https://console.redhat.com
