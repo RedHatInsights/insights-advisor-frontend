@@ -49,6 +49,9 @@ const SystemsTable = () => {
   const workloads = useSelector(({ filters }) => filters.workloads);
   const SID = useSelector(({ filters }) => filters.SID);
   const filters = useSelector(({ filters }) => filters.sysState);
+  const operatingSystems = useSelector(
+    ({ entities }) => entities?.operatingSystems || []
+  );
   const setFilters = (filters) => dispatch(updateSysFilters(filters));
   const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
   const [filterBuilding, setFilterBuilding] = useState(true);
@@ -107,14 +110,17 @@ const SystemsTable = () => {
     },
     ...(buildOSFilterConfig
       ? [
-          buildOSFilterConfig({
-            label: SFC.rhel_version.title.toLowerCase(),
-            type: SFC.rhel_version.type,
-            id: SFC.rhel_version.urlParam,
-            value: toGroupSelectionValue(filters.rhel_version || []),
-            onChange: (_e, value) =>
-              addFilterParam(SFC.rhel_version.urlParam, value),
-          }),
+          buildOSFilterConfig(
+            {
+              label: SFC.rhel_version.title.toLowerCase(),
+              type: SFC.rhel_version.type,
+              id: SFC.rhel_version.urlParam,
+              value: toGroupSelectionValue(filters.rhel_version || []),
+              onChange: (_e, value) =>
+                addFilterParam(SFC.rhel_version.urlParam, value),
+            },
+            operatingSystems
+          ),
         ]
       : []),
   ];

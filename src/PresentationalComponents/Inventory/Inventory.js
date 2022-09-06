@@ -22,6 +22,7 @@ import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
+import { useLoadModule } from '@scalprum/react-core';
 
 const Inventory = ({
   tableProps,
@@ -60,6 +61,14 @@ const Inventory = ({
     useState(true);
   //This value comes in from the backend as 0, or 1. To be consistent it is set to -1
   const [rulesPlaybookCount, setRulesPlaybookCount] = useState(-1);
+  const [{ toGroupSelectionValue, buildOSFilterConfig } = {}] = useLoadModule({
+    appName: 'inventory',
+    scope: 'inventory',
+    module: './OsFilterHelpers',
+  });
+  const operatingSystems = useSelector(
+    ({ entities }) => entities?.operatingSystems || []
+  );
 
   const handleRefresh = (options) => {
     /* Rec table doesn't use the same sorting params as sys table, switching between the two results in the rec table blowing up cuz its trying to
@@ -326,25 +335,33 @@ const Inventory = ({
     setFilters(filter);
   };
   const addFilterParam = (param, values) => {
-    values.length > 0
-      ? setFilters({ ...filters, offset: 0, ...{ [param]: values } })
+    const passValue =
+      param === SFC.rhel_version.urlParam
+        ? Object.values(values || {}).flatMap((majorOsVersion) =>
+            Object.keys(majorOsVersion)
+          )
+        : values;
+
+    passValue.length > 0
+      ? setFilters({ ...filters, offset: 0, ...{ [param]: passValue } })
       : removeFilterParam(param);
   };
   const filterConfigItems = [
-    {
-      label: SFC.rhel_version.title.toLowerCase(),
-      type: SFC.rhel_version.type,
-      id: SFC.rhel_version.urlParam,
-      value: `checkbox-${SFC.rhel_version.urlParam}`,
-      filterValues: {
-        key: `${SFC.rhel_version.urlParam}-filter`,
-        onChange: (_e, values) => {
-          addFilterParam(SFC.rhel_version.urlParam, values);
-        },
-        value: filters.rhel_version,
-        items: SFC.rhel_version.values,
-      },
-    },
+    ...(buildOSFilterConfig
+      ? [
+          buildOSFilterConfig(
+            {
+              label: SFC.rhel_version.title.toLowerCase(),
+              type: SFC.rhel_version.type,
+              id: SFC.rhel_version.urlParam,
+              value: toGroupSelectionValue(filters.rhel_version || []),
+              onChange: (_e, value) =>
+                addFilterParam(SFC.rhel_version.urlParam, value),
+            },
+            operatingSystems
+          ),
+        ]
+      : []),
   ];
 
   const buildFilterChips = () => {
