@@ -6,9 +6,18 @@ const { config: webpackConfig, plugins } = config({
   rootFolder: resolve(__dirname, '../'),
   sassPrefix: '.rhell-advisor, .rhellAdvisor',
 });
-
 plugins.push(
-  new webpack.DefinePlugin({ insights: { chrome: { isProd: false } } })
+  new webpack.DefinePlugin({
+    insights: {
+      chrome: {
+        auth: {
+          getUser: () => {
+            return Promise.resolve({});
+          },
+        },
+      },
+    },
+  })
 );
 
 module.exports = {
