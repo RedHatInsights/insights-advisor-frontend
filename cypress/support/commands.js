@@ -23,3 +23,20 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+Cypress.Commands.add(
+  'ouiaId',
+  { prevSubject: 'optional' },
+  (subject, item, el = '') => {
+    const attr = `${el}[data-ouia-component-id="${item}"]`;
+    return subject ? cy.wrap(subject).find(attr) : cy.get(attr);
+  }
+);
+
+Cypress.Commands.add(
+  'ouiaType',
+  { prevSubject: 'optional' },
+  (subject, item, el = '') => {
+    const attr = `${el}[data-ouia-component-type="${item}"]`;
+    return subject ? cy.wrap(subject).find(attr) : cy.get(attr);
+  }
+);
