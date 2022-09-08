@@ -5,6 +5,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 export const Recs = createApi({
   reducerPath: 'recs',
   baseQuery: AxiosBaseQuery({ baseUrl: BASE_URL }),
+  keepUnusedDataFor: 5,
   endpoints: (build) => ({
     getRecs: build.query({
       query: (options) => ({ url: `/rule/`, options }),

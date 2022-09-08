@@ -35,7 +35,7 @@ import { List } from 'react-content-loader';
 import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
-import ReportDetails from '../../PresentationalComponents/ReportDetails';
+import { ReportDetails } from '@redhat-cloud-services/frontend-components-advisor-components';
 import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import { capitalize } from '../../PresentationalComponents/Common/Tables';
@@ -49,6 +49,7 @@ import {
   InventoryReportFetchFailed,
 } from './EmptyStates';
 import NotConnected from '@redhat-cloud-services/frontend-components/NotConnected';
+import { useLocation } from 'react-router-dom';
 
 const BaseSystemAdvisor = () => {
   const intl = useIntl();
@@ -82,11 +83,11 @@ const BaseSystemAdvisor = () => {
   const hideResultsSatelliteManaged = !satelliteShowHosts && satelliteManaged;
   const getSelectedItems = (rows) => rows.filter((entity) => entity.selected);
   const selectedAnsibleRules = getSelectedItems(rows).filter(
-    (r) => r.resolution && r.resolution.has_playbook
+    (r) => r.resolution?.has_playbook
   );
   const selectedItemsLength = getSelectedItems(rows).length;
   const selectableItemsLength = rows.filter(
-    (r) => r.resolution && r.resolution.has_playbook
+    (r) => r.resolution?.has_playbook
   ).length;
 
   const cols = [
@@ -166,6 +167,7 @@ const BaseSystemAdvisor = () => {
     collapseRows[rowId] = { ...collapseRows[rowId], isOpen };
     setRows(collapseRows);
   };
+  const location = useLocation().pathname?.split('/');
 
   const buildRows = (
     activeReports,
@@ -173,26 +175,51 @@ const BaseSystemAdvisor = () => {
     filters,
     rows,
     searchValue = '',
-    kbaLoading = false
+    kbaLoading = false,
+    isFirstLoad = false
   ) => {
-    const builtRows = activeReports.flatMap((value, key) => {
+    const url = window.location.href;
+    let newActiveReportsList = activeReports;
+    let isRulePresent = url.indexOf('activeRule') > -1 ? true : false;
+    if (isRulePresent) {
+      let activeRule = location[2];
+      //sorts activeReportsList by making the activeRecommendation ruleId having a higher priority when sorting, or by total_risk
+      newActiveReportsList.sort((x, y) =>
+        x.rule.rule_id === activeRule
+          ? -1
+          : y.rule.rule_id === activeRule
+          ? 1
+          : 0
+      );
+    } else if (isFirstLoad) {
+      newActiveReportsList.sort((x, y) =>
+        x.rule.total_risk > y.rule.total_risk
+          ? -1
+          : y.rule.total_risk > x.rule.total_risk
+          ? 1
+          : 0
+      );
+    }
+
+    const builtRows = newActiveReportsList.flatMap((value, key) => {
       const rule = value.rule;
       const resolution = value.resolution;
       const kbaDetail = Object.keys(kbaDetails).length
         ? kbaDetails.filter((article) => article.id === value.rule.node_id)[0]
         : {};
-
       const match = rows.find((row) => row?.rule?.rule_id === rule.rule_id);
       const selected = match?.selected;
-      const isOpen = match?.isOpen || false;
+      const isOpen =
+        match?.isOpen || (isRulePresent && isFirstLoad && key === 0);
 
       const reportRow = [
         {
           rule,
           resolution,
-          isOpen,
+          //make arrow button disappear when there is no resolution
+          isOpen: resolution ? isOpen : undefined,
           selected,
-          disableSelection: !resolution.has_playbook,
+          disableSelection: resolution ? !resolution.has_playbook : true,
           cells: [
             {
               title: (
@@ -235,7 +262,9 @@ const BaseSystemAdvisor = () => {
             {
               title: (
                 <div className="ins-c-center-text" key={key}>
-                  {resolution.has_playbook ? (
+                  {resolution === null ? (
+                    intl.formatMessage(messages.notAvailable)
+                  ) : resolution?.has_playbook ? (
                     <span>
                       <AnsibeTowerIcon size="sm" />{' '}
                       {intl.formatMessage(messages.playbook)}
@@ -248,7 +277,7 @@ const BaseSystemAdvisor = () => {
             },
           ],
         },
-        {
+        resolution && {
           parent: key,
           fullWidth: true,
           cells: [
@@ -256,7 +285,10 @@ const BaseSystemAdvisor = () => {
               title: (
                 <ReportDetails
                   key={`child-${key}`}
-                  report={value}
+                  report={{
+                    ...value,
+                    resolution: value.resolution.resolution,
+                  }}
                   kbaDetail={kbaDetail}
                   kbaLoading={kbaLoading}
                 />
@@ -274,7 +306,7 @@ const BaseSystemAdvisor = () => {
           .map((key) => {
             const filterValues = filters[key];
             const rowValue = {
-              has_playbook: value.resolution.has_playbook,
+              has_playbook: value.resolution?.has_playbook,
               publish_date: rule.publish_date,
               total_risk: rule.total_risk,
               category: RULE_CATEGORIES[rule.category.name.toLowerCase()],
@@ -285,14 +317,16 @@ const BaseSystemAdvisor = () => {
           })
           .every((x) => x);
 
-      return isValidSearchValue && isValidFilterValue ? reportRow : [];
+      return isValidSearchValue && isValidFilterValue
+        ? reportRow.filter((row) => row !== null)
+        : [];
     });
     //must recalculate parent for expandable table content whenever the array size changes
     builtRows.forEach((row, index) =>
       row.parent ? (row.parent = index - 1) : null
     );
 
-    systemAdvisorRef.current.rowCount = builtRows.length / 2;
+    systemAdvisorRef.current.rowCount = activeReports.length;
 
     if (activeReports.length < 1 || builtRows.length < 1) {
       let EmptyState =
@@ -461,7 +495,15 @@ const BaseSystemAdvisor = () => {
 
       setKbaDetailsData(kbaDetailsFetch);
       setRows(
-        buildRows(reportsData, kbaDetailsFetch, filters, rows, searchValue)
+        buildRows(
+          reportsData,
+          kbaDetailsFetch,
+          filters,
+          rows,
+          searchValue,
+          false,
+          true
+        )
       );
     } catch (error) {
       console.error(error, 'KBA fetch failed.');
@@ -538,7 +580,7 @@ const BaseSystemAdvisor = () => {
 
   const processRemediation = (selectedAnsibleRules) => {
     const playbookRows = selectedAnsibleRules.filter(
-      (r) => r.resolution && r.resolution.has_playbook
+      (r) => r.resolution?.has_playbook
     );
     const issues = playbookRows.map((r) => ({
       id: `advisor:${r.rule.rule_id}`,
@@ -710,7 +752,6 @@ const SystemAdvisor = ({ customItnl, intlProps, store, ...props }) => {
       {...(customItnl && {
         locale: navigator.language.slice(0, 2),
         messages,
-        onError: console.log,
         ...intlProps,
       })}
     >
@@ -728,7 +769,6 @@ SystemAdvisor.propTypes = {
   intlProps: PropTypes.shape({
     locale: PropTypes.string,
     messages: PropTypes.array,
-    onError: PropTypes.func,
   }),
   store: PropTypes.object,
 };

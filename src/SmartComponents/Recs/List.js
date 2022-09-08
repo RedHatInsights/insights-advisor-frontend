@@ -72,50 +72,42 @@ const List = () => {
         )}
       </PageHeader>
       <Main>
-        {insights.chrome.isBeta() ? (
-          <>
+        <Suspense fallback={<Loading />}>
+          <PathwaysPanel />
+        </Suspense>
+        <Tabs
+          className="adv__background--global-100"
+          activeKey={activeTab}
+          onSelect={(_e, tab) => changeTab(tab)}
+        >
+          <Tab
+            eventKey={0}
+            title={
+              <TabTitleText>
+                {intl.formatMessage(messages.recommendations)}
+              </TabTitleText>
+            }
+          >
             <Suspense fallback={<Loading />}>
-              <PathwaysPanel />
+              <RulesTable isTabActive={activeTab === 0} />
             </Suspense>
-            <Tabs
-              className="adv__background--global-100"
-              activeKey={activeTab}
-              onSelect={(_e, tab) => changeTab(tab)}
-            >
-              <Tab
-                eventKey={0}
-                title={
-                  <TabTitleText>
-                    {intl.formatMessage(messages.recommendations)}
-                  </TabTitleText>
-                }
-              >
-                <Suspense fallback={<Loading />}>
-                  <RulesTable />
-                </Suspense>
-              </Tab>
-              <Tab
-                eventKey={1}
-                title={
-                  <TabTitleText>
-                    {intl.formatMessage(messages.pathways)}{' '}
-                    {QuestionTooltip(
-                      intl.formatMessage(messages.recommendedPathways)
-                    )}
-                  </TabTitleText>
-                }
-              >
-                <Suspense fallback={<Loading />}>
-                  <PathwaysTable />
-                </Suspense>
-              </Tab>
-            </Tabs>
-          </>
-        ) : (
-          <Suspense fallback={<Loading />}>
-            <RulesTable />
-          </Suspense>
-        )}
+          </Tab>
+          <Tab
+            eventKey={1}
+            title={
+              <TabTitleText>
+                {intl.formatMessage(messages.pathways)}{' '}
+                {QuestionTooltip(
+                  intl.formatMessage(messages.recommendedPathways)
+                )}
+              </TabTitleText>
+            }
+          >
+            <Suspense fallback={<Loading />}>
+              <PathwaysTable isTabActive={activeTab === 1} />
+            </Suspense>
+          </Tab>
+        </Tabs>
       </Main>
     </React.Fragment>
   );

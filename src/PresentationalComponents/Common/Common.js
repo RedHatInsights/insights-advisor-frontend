@@ -22,8 +22,6 @@ const cache = createIntlCache();
 const locale = navigator.language.slice(0, 2);
 const intl = createIntl(
   {
-    // eslint-disable-next-line no-console
-    onError: console.log,
     locale,
   },
   cache
@@ -38,7 +36,7 @@ const RebootRequired = (reboot_required) => (
           : 'adv-c-icon-no-reboot-required'
       }
     />
-    <TextContent className="adv-c-text-system-reboot-message">
+    <TextContent className="adv-c-text-system-reboot-message pf-u-font-size-sm">
       <Text component={TextVariants.p}>
         {intl.formatMessage(messages.systemReboot, {
           strong: (str) => strong(str),

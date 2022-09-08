@@ -1,7 +1,7 @@
 import './_Export.scss';
 
-import React, { useMemo, useState } from 'react';
-import { leadPage, tablePage } from './SystemsPdfBuild';
+import React, { useState } from 'react';
+import { leadPage, TablePage } from './SystemsPdfBuild';
 
 import { BASE_URL } from '../../AppConstants';
 import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
@@ -52,39 +52,37 @@ const SystemsPdf = ({ filters }) => {
 
     return [
       firstPage,
-      ...otherPages.map((pageSystems, index) =>
-        tablePage({ page: index, systems: pageSystems, intl })
-      ),
+      ...otherPages.map((pageSystems, index) => (
+        <TablePage key={index} page={index} systems={pageSystems} intl={intl} />
+      )),
     ];
   };
 
-  return useMemo(() => {
-    return (
-      <DownloadButton
-        groupName={intl.formatMessage(messages.redHatInsights)}
-        allPagesHaveTitle={false}
-        label={
-          loading
-            ? intl.formatMessage(messages.loading)
-            : intl.formatMessage(messages.exportPdf)
-        }
-        asyncFunction={dataFetch}
-        buttonProps={{
-          variant: '',
-          component: 'button',
-          className:
-            'pf-c-dropdown__menu-item adv-c-dropdown-systems-pdf__menu-item',
-          ...(loading ? { isDisabled: true } : null),
-        }}
-        reportName={`${intl.formatMessage(messages.insightsHeader)}:`}
-        type={intl.formatMessage(messages.systems)}
-        fileName={`Advisor_systems--${new Date()
-          .toUTCString()
-          .replace(/ /g, '-')}.pdf`}
-        size={[841.89, 595.28]}
-      />
-    );
-  }, [loading]);
+  return (
+    <DownloadButton
+      groupName={intl.formatMessage(messages.redHatInsights)}
+      allPagesHaveTitle={false}
+      label={
+        loading
+          ? intl.formatMessage(messages.loading)
+          : intl.formatMessage(messages.exportPdf)
+      }
+      asyncFunction={dataFetch}
+      buttonProps={{
+        variant: '',
+        component: 'button',
+        className:
+          'pf-c-dropdown__menu-item adv-c-dropdown-systems-pdf__menu-item',
+        ...(loading ? { isDisabled: true } : null),
+      }}
+      reportName={`${intl.formatMessage(messages.insightsHeader)}:`}
+      type={intl.formatMessage(messages.systems)}
+      fileName={`Advisor_systems--${new Date()
+        .toUTCString()
+        .replace(/ /g, '-')}.pdf`}
+      size={[841.89, 595.28]}
+    />
+  );
 };
 
 SystemsPdf.propTypes = {

@@ -9,10 +9,8 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
 import React, { Suspense, lazy, useEffect, useState } from 'react';
-import {
-  Resolution,
-  TotalRisk,
-} from '../../PresentationalComponents/Cards/Pathways';
+import { TotalRiskCard } from '../../PresentationalComponents/Cards/TotalRiskCard';
+import { ResolutionCard } from '../../PresentationalComponents/Cards/ResolutionCard';
 import {
   Tab,
   TabTitleText,
@@ -128,15 +126,11 @@ const PathwayDetails = () => {
       ) : (
         <React.Fragment>
           <PageHeader className="adv-c-page__header">
-            <Breadcrumbs
-              ouiaId="override"
-              current={pathway.description || ''}
-            />
-            <CategoryLabel labelList={pathway.categories} />
+            <Breadcrumbs ouiaId="override" current={pathway.name || ''} />
             <PageHeaderTitle
               title={
                 <React.Fragment>
-                  {pathway.description}
+                  {pathway.name}
                   {pathway.has_incident && (
                     <RuleLabels rule={{ tags: 'incident' }} />
                   )}
@@ -152,15 +146,19 @@ const PathwayDetails = () => {
                   />
                 ),
               })}
+              <span className="pf-u-pl-sm">
+                <CategoryLabel labelList={pathway.categories} />
+              </span>
             </p>
+            <p className="pf-u-mb-lg">{pathway.description}</p>
           </PageHeader>
           <Main className="pf-u-pb-0">
             <Grid hasGutter>
               <GridItem sm={12} md={6}>
-                <TotalRisk {...pathway} />
+                <TotalRiskCard {...pathway} />
               </GridItem>
               <GridItem sm={12} md={6}>
-                <Resolution {...pathway} />
+                <ResolutionCard {...pathway} />
               </GridItem>
             </Grid>
           </Main>

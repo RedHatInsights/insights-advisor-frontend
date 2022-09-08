@@ -31,8 +31,7 @@ const DisableRule = ({
     host !== undefined || hosts.length > 0
   );
 
-  // eslint-disable-next-line no-unused-vars
-  const [setAck, { isLoading }] = useSetAckMutation();
+  const [setAck] = useSetAckMutation();
 
   const bulkHostActions = async () => {
     const data = { systems: hosts, justification };

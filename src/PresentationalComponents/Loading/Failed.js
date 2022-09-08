@@ -6,14 +6,12 @@ import React from 'react';
 import propTypes from 'prop-types';
 
 const Failed = ({ message }) => (
-  <>
-    <Card className="adv-c-card-empty-rule">
-      <CardHeader>
-        <FrownOpenIcon size="lg" />
-      </CardHeader>
-      <CardBody>{message}</CardBody>
-    </Card>
-  </>
+  <Card className="adv-c-card-empty-rule">
+    <CardHeader>
+      <FrownOpenIcon size="lg" />
+    </CardHeader>
+    <CardBody>{message}</CardBody>
+  </Card>
 );
 
 export default Failed;

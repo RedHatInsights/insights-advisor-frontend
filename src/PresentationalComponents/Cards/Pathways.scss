@@ -1,0 +1,22 @@
+@import '~@redhat-cloud-services/frontend-components-utilities/styles/all';
+
+.flex-row{
+    display:flex;
+    flex-direction: row;
+}
+.flex-coloumn{
+    display:flex;
+    flex-direction: column;
+}
+
+.pathwayRight {
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-left: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+    align-self: center;
+}
+.halfWidth{
+    width:50%;
+}

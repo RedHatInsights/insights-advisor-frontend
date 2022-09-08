@@ -4,25 +4,31 @@ import React from 'react';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 
-const RecommendationLevel = (props) => {
+export const RecommendationLevel = ({ recLvl, isCompact }) => {
   const intl = useIntl();
-  const { recommendation_level: lvl, isCompact } = props;
-
-  const label = (text, lvl, color, isCompact) => (
-    <Label color={color} isCompact={isCompact}>{`${text} - ${lvl}%`}</Label>
+  const label = (text, recLvl, color) => (
+    <Label color={color} isCompact>{`${text} - ${recLvl}%`}</Label>
   );
 
-  if (lvl >= 80) {
-    return label(intl.formatMessage(messages.high), lvl, 'red', isCompact);
-  } else if (lvl < 80 && lvl >= 50) {
-    return label(intl.formatMessage(messages.medium), lvl, 'orange', isCompact);
+  if (recLvl >= 80) {
+    return label(intl.formatMessage(messages.high), recLvl, 'red', isCompact);
+  } else if (recLvl < 80 && recLvl >= 50) {
+    return label(
+      intl.formatMessage(messages.medium),
+      recLvl,
+      'orange',
+      isCompact
+    );
   } else {
-    return label(intl.formatMessage(messages.low), lvl, 'blue', isCompact);
+    return label(intl.formatMessage(messages.low), recLvl, 'blue', isCompact);
   }
 };
 
 RecommendationLevel.propTypes = {
   props: PropTypes.array,
+};
+RecommendationLevel.defaultProps = {
+  isCompact: true,
 };
 
 export default RecommendationLevel;

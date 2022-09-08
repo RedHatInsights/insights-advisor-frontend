@@ -1,65 +1,40 @@
 import './Details.scss';
 
-import {
-  BASE_URL,
-  PERMS,
-  RISK_OF_CHANGE_DESC,
-  SYSTEM_TYPES,
-  UI_BASE,
-} from '../../AppConstants';
+import { PERMS, UI_BASE } from '../../AppConstants';
+import messages from '../../Messages';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useIntl } from 'react-intl';
+import { useParams } from 'react-router-dom';
+
 import {
   Card,
   CardBody,
   CardFooter,
   CardHeader,
 } from '@patternfly/react-core/dist/js/components/Card';
-import { DeleteApi, Get, Post } from '../../Utilities/Api';
-import {
-  PageHeader,
-  PageHeaderTitle,
-} from '@redhat-cloud-services/frontend-components/PageHeader';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-
 import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
-import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
-import CaretDownIcon from '@patternfly/react-icons/dist/js/icons/caret-down-icon';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
-import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
-import { Dropdown } from '@patternfly/react-core/dist/js/components/Dropdown/Dropdown';
-import { DropdownItem } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownItem';
-import { DropdownToggle } from '@patternfly/react-core/dist/js/components/Dropdown/DropdownToggle';
+import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
+
 import Failed from '../../PresentationalComponents/Loading/Failed';
-import { Flex } from '@patternfly/react-core/dist/js/layouts/Flex/Flex';
-import { FlexItem } from '@patternfly/react-core/dist/js/layouts/Flex/FlexItem';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import Loading from '../../PresentationalComponents/Loading/Loading';
-import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
-import {
-  RuleDetails,
-  RuleDetailsMessagesKeys,
-  AdvisorProduct,
-} from '@redhat-cloud-services/frontend-components-advisor-components';
-
-import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
-import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
-import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
+import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
-import { cveToRuleid } from '../../cveToRuleid.js';
-import messages from '../../Messages';
+
+import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
+import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
+
+import { cveToRuleid } from '../../cveToRuleid.js';
 import { useGetRecAcksQuery } from '../../Services/Acks';
 import { useGetRecQuery } from '../../Services/Recs';
 import { useGetTopicsQuery } from '../../Services/Topics';
-import { useIntl } from 'react-intl';
-import { useParams } from 'react-router-dom';
-import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
-import CategoryLabel from '../../PresentationalComponents/Labels/CategoryLabel';
-import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
-
+import { enableRule, bulkHostActions } from './helpers';
+import { DetailsRules } from './DetailsRules';
 const OverviewDetails = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -93,38 +68,9 @@ const OverviewDetails = () => {
   const [host, setHost] = useState(undefined);
   const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
 
-  const ruleResolutionRisk = (rule) => {
-    const resolution = rule?.resolution_set?.find(
-      (resolution) =>
-        resolution.system_type === SYSTEM_TYPES.rhel || SYSTEM_TYPES.ocp
-    );
-    return resolution ? resolution.resolution_risk.risk : undefined;
-  };
-
   const handleModalToggle = (disableRuleModalOpen, host = undefined) => {
     setDisableRuleModalOpen(disableRuleModalOpen);
     setHost(host);
-  };
-
-  const enableRule = async (rule) => {
-    try {
-      await DeleteApi(`${BASE_URL}/ack/${rule.rule_id}/`);
-      addNotification({
-        variant: 'success',
-        timeout: true,
-        dismissable: true,
-        title: intl.formatMessage(messages.recSuccessfullyEnabled),
-      });
-      refetch();
-    } catch (error) {
-      handleModalToggle(false);
-      addNotification({
-        variant: 'danger',
-        dismissable: true,
-        title: intl.formatMessage(messages.error),
-        description: `${error}`,
-      });
-    }
   };
 
   const afterDisableFn = async () => {
@@ -139,37 +85,6 @@ const OverviewDetails = () => {
       onClick: (event, rowIndex, item) => handleModalToggle(true, item),
     },
   ];
-
-  const bulkHostActions = async () => {
-    try {
-      const hostAckResponse = (
-        await Get(
-          `${BASE_URL}/hostack/`,
-          {},
-          { rule_id: rule.rule_id, limit: rule.hosts_acked_count }
-        )
-      ).data;
-      const data = {
-        systems: hostAckResponse?.data?.map((item) => item.system_uuid),
-      };
-
-      await Post(`${BASE_URL}/rule/${rule.rule_id}/unack_hosts/`, {}, data);
-      refetch();
-      addNotification({
-        variant: 'success',
-        timeout: true,
-        dismissable: true,
-        title: intl.formatMessage(messages.recSuccessfullyEnabled),
-      });
-    } catch (error) {
-      addNotification({
-        variant: 'danger',
-        dismissable: true,
-        title: intl.formatMessage(messages.error),
-        description: `${error}`,
-      });
-    }
-  };
 
   useEffect(() => {
     const isCVE =
@@ -213,118 +128,16 @@ const OverviewDetails = () => {
         />
       )}
       {!isFetching && !topicIsFetching && (
-        <React.Fragment>
-          <PageHeader className="adv-c-page__header">
-            <Breadcrumbs ouiaId="override" current={rule.description || ''} />
-          </PageHeader>
-          <Main className="pf-m-light pf-u-pt-sm">
-            <RuleDetails
-              messages={formatMessages(
-                intl,
-                RuleDetailsMessagesKeys,
-                mapContentToValues(intl, rule)
-              )}
-              product={AdvisorProduct.rhel}
-              rule={rule}
-              topics={topics}
-              resolutionRisk={ruleResolutionRisk(rule)}
-              resolutionRiskDesc={RISK_OF_CHANGE_DESC[ruleResolutionRisk(rule)]}
-              isDetailsPage
-              header={
-                <React.Fragment>
-                  <PageHeaderTitle
-                    title={
-                      <React.Fragment>
-                        {rule.description} <RuleLabels rule={rule} />
-                      </React.Fragment>
-                    }
-                  />
-                  <p>
-                    <span className="pf-u-mr-md">
-                      {intl.formatMessage(messages.rulesDetailsModifieddate, {
-                        date: (
-                          <DateFormat
-                            date={new Date(rule.publish_date)}
-                            type="onlyDate"
-                          />
-                        ),
-                      })}
-                    </span>
-                    <CategoryLabel labelList={[rule.category]} />
-                  </p>
-                </React.Fragment>
-              }
-              onVoteClick={async (ruleId, calculatedRating) => {
-                await Post(
-                  `${BASE_URL}/rating/`,
-                  {},
-                  { rule: ruleId, rating: calculatedRating }
-                );
-              }}
-              knowledgebaseUrl={
-                rule.node_id
-                  ? `https://access.redhat.com/node/${rule.node_id}`
-                  : ''
-              }
-              linkComponent={Link}
-            >
-              <Flex>
-                <FlexItem align={{ default: 'alignRight' }}>
-                  <Tooltip
-                    trigger={!permsDisableRec ? 'mouseenter' : ''}
-                    content={intl.formatMessage(messages.permsAction)}
-                  >
-                    <Dropdown
-                      className="adv-c-dropdown-details-actions"
-                      onSelect={() =>
-                        setActionsDropdownOpen(!actionsDropdownOpen)
-                      }
-                      position="right"
-                      ouiaId="actions"
-                      toggle={
-                        <DropdownToggle
-                          isDisabled={!permsDisableRec}
-                          onToggle={(actionsDropdownOpen) =>
-                            setActionsDropdownOpen(actionsDropdownOpen)
-                          }
-                          toggleIndicator={CaretDownIcon}
-                        >
-                          {intl.formatMessage(messages.actions)}
-                        </DropdownToggle>
-                      }
-                      isOpen={actionsDropdownOpen}
-                      dropdownItems={
-                        rule && rule.rule_status === 'enabled'
-                          ? [
-                              <DropdownItem
-                                key="link"
-                                ouiaId="disable"
-                                onClick={() => {
-                                  handleModalToggle(true);
-                                }}
-                              >
-                                {intl.formatMessage(messages.disableRule)}
-                              </DropdownItem>,
-                            ]
-                          : [
-                              <DropdownItem
-                                key="link"
-                                ouiaId="enable"
-                                onClick={() => {
-                                  enableRule(rule);
-                                }}
-                              >
-                                {intl.formatMessage(messages.enableRule)}
-                              </DropdownItem>,
-                            ]
-                      }
-                    />
-                  </Tooltip>
-                </FlexItem>
-              </Flex>
-            </RuleDetails>
-          </Main>
-        </React.Fragment>
+        <DetailsRules
+          rule={rule}
+          topics={topics}
+          permsDisableRec={permsDisableRec}
+          setActionsDropdownOpen={setActionsDropdownOpen}
+          actionsDropdownOpen={actionsDropdownOpen}
+          addNotification={addNotification}
+          handleModalToggle={handleModalToggle}
+          refetch={refetch}
+        />
       )}
       {isFetching && <Loading />}
       <Main>
@@ -393,7 +206,9 @@ const OverviewDetails = () => {
                     <Button
                       isInline
                       variant="link"
-                      onClick={() => bulkHostActions()}
+                      onClick={() =>
+                        bulkHostActions(refetch, addNotification, intl, rule)
+                      }
                       ouiaId="bulkHost"
                     >
                       {intl.formatMessage(messages.enableRuleForSystems)}
@@ -402,7 +217,15 @@ const OverviewDetails = () => {
                     <Button
                       isInline
                       variant="link"
-                      onClick={() => enableRule(rule)}
+                      onClick={() =>
+                        enableRule(
+                          rule,
+                          refetch,
+                          intl,
+                          addNotification,
+                          handleModalToggle
+                        )
+                      }
                       ouiaId="rule"
                     >
                       {intl.formatMessage(messages.enableRule)}

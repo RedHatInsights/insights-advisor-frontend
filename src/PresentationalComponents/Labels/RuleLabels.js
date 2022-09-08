@@ -11,7 +11,7 @@ import React from 'react';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 
-const RuleLabels = ({ rule, isCompact }) => {
+const RuleLabels = ({ rule, isCompact, noMargin }) => {
   const intl = useIntl();
 
   return (
@@ -23,7 +23,7 @@ const RuleLabels = ({ rule, isCompact }) => {
         >
           <Label
             color="red"
-            className="adv-c-label-incident"
+            className={noMargin ? null : 'adv-c-label-incident'}
             isCompact={isCompact}
           >
             {intl.formatMessage(messages.incident)}
@@ -57,10 +57,11 @@ const RuleLabels = ({ rule, isCompact }) => {
 RuleLabels.propTypes = {
   rule: PropTypes.object,
   isCompact: PropTypes.bool,
+  noMargin: PropTypes.bool,
 };
 
 RuleLabels.defaultProps = {
-  isCompact: false,
+  isCompact: true,
 };
 
 export default RuleLabels;

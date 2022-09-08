@@ -9,6 +9,7 @@ import {
 } from '@patternfly/react-core/dist/js/layouts/Grid/index';
 import React, { useEffect } from 'react';
 import { connect, useStore } from 'react-redux';
+import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
@@ -46,6 +47,9 @@ const InventoryDetails = ({ entity }) => {
         <InventoryDetailHead hideBack fallback="" />
       </PageHeader>
       <Main>
+        <Title className="pf-u-mb-lg" headingLevel="h3" size="2xl">
+          {intl.formatMessage(messages.recommendations)}
+        </Title>
         <Grid hasGutter>
           <GridItem span={12}>
             <AppInfo fallback="" />

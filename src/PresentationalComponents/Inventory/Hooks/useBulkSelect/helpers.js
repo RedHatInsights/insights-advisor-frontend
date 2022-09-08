@@ -1,8 +1,16 @@
-export const compileTitle = (itemsTotal, titleOption) => {
-  if (typeof titleOption === 'string') {
-    return titleOption;
-  } else if (typeof titleOption === 'function') {
-    return titleOption(itemsTotal);
+import React from 'react';
+import { Spinner } from '@patternfly/react-core';
+
+export const compileTitle = (itemsTotal, isLoading) => {
+  if (itemsTotal === 0 && !isLoading) {
+    return null;
+  } else if (isLoading) {
+    return (
+      <React.Fragment>
+        <Spinner size="sm" />
+        {`     ${itemsTotal} selected`}
+      </React.Fragment>
+    );
   } else {
     return `${itemsTotal} selected`;
   }

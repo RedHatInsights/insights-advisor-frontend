@@ -1,72 +1,49 @@
-# Advisor Frontend (AF)
+# Advisor Frontend
 
-[![Build Status](https://travis-ci.com/RedHatInsights/insights-advisor-frontend.svg?branch=master)](https://travis-ci.com/RedHatInsights/insights-advisor-frontend)
-## Getting Started
-There is a [comprehensive quick start guide in the Storybook Documentation](https://github.com/RedHatInsights/insights-frontend-storybook/blob/master/src/docs/welcome/quickStart/DOC.md) to setting up an Insights environment complete with:
-- [Insights-Frontend-Starter-App](https://github.com/RedHatInsights/insights-frontend-starter-app)
-- [Insights Chroming](https://github.com/RedHatInsights/insights-chrome)
-- [Insights Proxy](https://github.com/RedHatInsights/insights-proxy)
+[![Build Status](https://travis-ci.com/RedHatInsights/insights-advisor-frontend.svg?branch=master)](https://app.travis-ci.com/github/RedHatInsights/insights-advisor-frontend)
 
-Note: You will need to set up the Insights environment if you want to develop with the starter app due to the consumption of the chroming service as well as setting up your global/app navigation through the API.
+## First time setup
+1. Make sure you have [Node.js](https://nodejs.org/en/) version >= 16 installed
+2. Run [script to patch your `/etc/hosts`](https://github.com/RedHatInsights/insights-proxy/blob/master/scripts/patch-etc-hosts.sh)
+3. Make sure you are using [Red Hat proxy](http://hdn.corp.redhat.com/proxy.pac)
+
 ## Running locally
-1. `npm install`
-2. `npm run start:proxy` And enjoy! Thats it! Local proxy is no longer required to run local advisor
-3. https://prod.foo.redhat.com:1337/insights/advisor/ (or whatever enviroment is specified)
+1. Install dependencies with `npm install`
+2. Run development server with `npm run start:proxy:beta`
+3. Local version of the app will be available at https://stage.foo.redhat.com:1337/beta/insights/advisor/
 
-Note: The API endpont can be specified by appending 
-`API_ENDOINT=foo_endpoint ` so yah  end up with something like `API_ENDOINT=https://ci.cloud.redhat.com  npm run start` if you wish to specify a ci API.
+In case you want to use the stable environment instead of beta you can run the app with `npm run start:proxy` and access it from https://stage.foo.redhat.com:1337/insights/advisor/. Usually there is no difference between these two environments unless there is a large feature in progress which is hidden behind `isBeta` flag.
 
-Additionally, if you would prefer to run it the old way, `npm start` this requires [insights-proxy](https://github.com/RedHatInsights/insights-proxy) to be installed under PROXY_PATH and run (in another terminal) the following command:
+## Testing
+Travis is used to test the build for this code.
+- `npm run test` will run tests.
+- `npm run lint` will run all linters.
 
-```shell
-SPANDX_CONFIG="./profiles/local-frontend.js" bash $PROXY_PATH/scripts/run.sh
-```
-### Testing
-- Travis is used to test the build for this code.
-    - `npm run test` will run linters and tests
-    - `npx cypress open-ct` will run cypress test
-### Deploying
-The follow six branches are used by IF
-- prod-stable, prod-beta
-- ci-stable, ci-beta
-- qa-stable, qa-beta
+## Deploying
+Any push to the following branches will trigger a build in [insights-advisor-frontend-build repository](https://github.com/RedHatInsights/insights-advisor-frontend-build) which will deploy to corresponding environment. Travis is used to deploy the application.
 
-A push or merge to master will automatically release to ci-beta and qa-beta
-The same will happen with action against master-stable, it will automatically release to ci-stable and qa-stable
-The prod-beta and prod-stable environments are updated by a deliberate push, (to each branch)
+| Push to branch in this repo  | Updated branch in build repo  | Environment       | Available at
+| :--------------------------- | :---------------------------- | :---------------- | :-----------
+| master                       | stage-beta                    | stage beta        | https://console.stage.redhat.com/beta
+| master-stable                | stage-stable                  | stage stable      | https://console.stage.redhat.com
+| prod-beta                    | prod-beta                     | production beta   | https://console.redhat.com/beta
+| prod-stable                  | prod-stable                   | production stable | https://console.redhat.com
 
-### Nuggets and Tidbits
-##### Running the Frontend against a particular Insights API branch
-To start the Insights API against a particular branch in the insights-advisor-api git repo use the `scripts/setup_insights_api.sh` script, like so ...
+## Internationalization
 
-``` shell
-[insights-advisor-frontend]$ ./scripts/setup_insights_api.sh
-Usage: ./scripts/setup_insights_api.sh <branch>|-c
-Start an Insights API environment (as a set of containers) from <branch> in the insights-advisor-api git repo
+### Translation keys
+Translation keys are saved in [`messages.js`](https://github.com/RedHatInsights/insights-advisor-frontend/blob/master/src/Messages.js).
 
-    <branch> : checkout <branch> and start the containers
-    -c       : stop and cleanup the containers
+### Generating translation keys
+Each time you add a new translation keys you need to run `npm run translations`, which will automatically generate JSON files for every language into [`locales/`](https://github.com/RedHatInsights/insights-advisor-frontend/tree/master/locales) folder based on the entries in the [`messages.js`](https://github.com/RedHatInsights/insights-advisor-frontend/blob/master/src/Messages.js).
 
-[insights-advisor-frontend]$ ./scripts/setup_insights_api.sh stat_time_series
-...
-Running 'git clone --branch stat_time_series --single-branch git@github.com:RedHatInsights/insights-advisor-api.git /tmp/insights-advisor-api' ...
-...
+### Using translated strings
+There are two ways to use translated strings:
+1. With `intl.formatMessage(messages.messageId)`
+2. With `<FormattedMessage {...messages.messageId}/>`
 
-Finished setting up Insights API environment.
-The Insights API is available at http://localhost:8000/api/insights/v1/
-The Insights Frontend is available at https://ci.foo.redhat.com:1337
-```
+## Design System
+This project uses [Patternfly React](https://github.com/patternfly/patternfly-react).
 
-This starts a few containers related to the Insights API as well as an insights-proxy container.
-
-Make sure to still perform steps 1, 3 and 4 above.  That is, `npm install` and `npm start`.  Running `scripts/setup_insights_api.sh` essentially replaces step 2.
-
-Use docker commands, eg `docker ps` and `docker logs -f <container_name>` to access the logs from the API or other containers.
-
-##### Start insights-proxy directly with docker
-If you are running linux and have docker installed, you can skip the installation of the insights-proxy and run it directly with:
-``` shell
- docker run -v $PWD/config:/config --rm --net='host' -p1337:1337 -e PLATFORM=linux -ti docker.io/redhatinsights/insights-proxy
-```
-#### Running against a local API
-Set `apiHost` in the ./profiles/local-frontend.js to http://127.0.0.1:8000
+## Insights Components
+This app imports components from [Insights Front-end Components library](https://github.com/RedHatInsights/frontend-components). ESI tags are used to import [Insights Chrome](https://github.com/RedHatInsights/insights-chrome) which takes care of the header, sidebar, and footer.

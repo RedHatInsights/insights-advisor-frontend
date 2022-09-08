@@ -19,10 +19,6 @@ plugins.push(
           __dirname,
           '../src/SmartComponents/SystemAdvisor'
         ),
-        './AdvisorReportDetails': resolve(
-          __dirname,
-          '../src/PresentationalComponents/ReportDetails'
-        ),
       },
     }
   )

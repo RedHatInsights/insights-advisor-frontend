@@ -9,7 +9,7 @@ const filtersInitialState = {
     offset: 0,
   },
   pathState: {
-    sort: '-impacted_systems_count',
+    sort: '-recommendation_level',
     limit: 20,
     offset: 0,
   },
