@@ -11,17 +11,19 @@ import { useGetTopicsQuery } from '../../Services/Topics';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
-import type { ChromeAPI } from '@redhat-cloud-services/types';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 const List = () => {
+  const chrome = useChrome();
   const intl = useIntl();
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const SID = useSelector(({ filters }) => filters.SID);
-  document.title = intl.formatMessage(messages.documentTitle, {
-    subnav: messages.topics.defaultMessage,
-  });
-  // ChromeAPI.updateDocumentTitle(intl.formatMessage(messages.documentTitle));
+  chrome.updateDocumentTitle(
+    intl.formatMessage(messages.documentTitle, {
+      subnav: messages.topics.defaultMessage,
+    })
+  );
   let options = selectedTags?.length && { tags: selectedTags };
   workloads &&
     (options = { ...options, ...workloadQueryBuilder(workloads, SID) });

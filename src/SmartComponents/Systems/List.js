@@ -8,6 +8,7 @@ import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 const SystemsTable = lazy(() =>
   import(
@@ -16,12 +17,13 @@ const SystemsTable = lazy(() =>
 );
 
 const List = () => {
+  const chrome = useChrome();
   const intl = useIntl();
-
-  document.title = intl.formatMessage(messages.documentTitle, {
-    subnav: messages.systems.defaultMessage,
-  });
-
+  chrome.updateDocumentTitle(
+    intl.formatMessage(messages.documentTitle, {
+      subnav: messages.systems.defaultMessage,
+    })
+  );
   return (
     <React.Fragment>
       <PageHeader>

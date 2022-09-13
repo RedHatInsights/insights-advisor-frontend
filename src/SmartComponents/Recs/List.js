@@ -21,6 +21,7 @@ import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 const RulesTable = lazy(() =>
   import(
@@ -39,13 +40,17 @@ const PathwaysPanel = lazy(() =>
 );
 
 const List = () => {
+  const chrome = useChrome();
   const intl = useIntl();
   const { pathname } = useLocation();
   const history = useHistory();
   const permsExport = usePermissions('advisor', PERMS.export);
-  document.title = intl.formatMessage(messages.documentTitle, {
-    subnav: messages.recommendations.defaultMessage,
-  });
+  chrome.updateDocumentTitle(
+    intl.formatMessage(messages.documentTitle, {
+      subnav: messages.recommendations.defaultMessage,
+    })
+  );
+
   const [activeTab, setActiveTab] = useState(
     pathname === '/recommendations/pathways' ? 1 : 0
   );

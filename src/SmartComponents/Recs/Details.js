@@ -35,7 +35,10 @@ import { useGetRecQuery } from '../../Services/Recs';
 import { useGetTopicsQuery } from '../../Services/Topics';
 import { enableRule, bulkHostActions } from './helpers';
 import { DetailsRules } from './DetailsRules';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+
 const OverviewDetails = () => {
+  const chrome = useChrome();
   const intl = useIntl();
   const dispatch = useDispatch();
 
@@ -100,7 +103,9 @@ const OverviewDetails = () => {
 
     if (rule?.description) {
       const subnav = `${rule.description} - ${messages.recommendations.defaultMessage}`;
-      document.title = intl.formatMessage(messages.documentTitle, { subnav });
+      chrome.updateDocumentTitleintl.formatMessage(messages.documentTitle, {
+        subnav,
+      })();
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -19,8 +19,10 @@ import { entitiesDetailsReducer } from '../../Store/AppReducer';
 import messages from '../../Messages';
 import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 const InventoryDetails = ({ entity }) => {
+  const chrome = useChrome();
   const intl = useIntl();
   const store = useStore();
   useEffect(() => {
@@ -28,7 +30,9 @@ const InventoryDetails = ({ entity }) => {
       const subnav = `${entity.display_name || entity.id} - ${
         messages.systems.defaultMessage
       }`;
-      document.title = intl.formatMessage(messages.documentTitle, { subnav });
+      chrome.updateDocumentTitle(
+        intl.formatMessage(messages.documentTitle, { subnav })
+      );
     }
   }, [entity, intl]);
 

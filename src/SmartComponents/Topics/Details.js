@@ -26,8 +26,10 @@ import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 const Details = () => {
+  const chrome = useChrome();
   const intl = useIntl();
   const dispatch = useDispatch();
 
@@ -67,7 +69,9 @@ const Details = () => {
   useEffect(() => {
     if (topic && topic.name) {
       const subnav = `${topic.name} - ${messages.topics.defaultMessage}`;
-      document.title = intl.formatMessage(messages.documentTitle, { subnav });
+      chrome.updateDocumentTitle(
+        intl.formatMessage(messages.documentTitle, { subnav })
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [topic]);
