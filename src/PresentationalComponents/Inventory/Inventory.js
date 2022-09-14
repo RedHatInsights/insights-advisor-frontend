@@ -312,7 +312,16 @@ const Inventory = ({
       lastSeenColumn = {
         ...lastSeenColumn[0],
         transforms: [sortable, wrappable],
-        props: { width: 20 },
+        props: { width: 15 },
+      };
+
+      const firstImpacted = {
+        key: 'impacted_date',
+        title: 'First Impacted',
+        sortKey: 'impacted_date',
+        transforms: [sortable, wrappable],
+        props: { width: 15 },
+        renderFunc: lastSeenColumn.renderFunc,
       };
 
       systemProfile = {
@@ -324,7 +333,7 @@ const Inventory = ({
         ...tags[0],
       };
 
-      return [displayName, tags, systemProfile, lastSeenColumn];
+      return [displayName, tags, systemProfile, lastSeenColumn, firstImpacted];
     },
     [rule]
   );
