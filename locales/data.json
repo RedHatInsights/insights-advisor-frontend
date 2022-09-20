@@ -89,6 +89,7 @@
     "nonIncidentRules": "Non-incident",
     "nonIncidentSystems": "Non-incident systems",
     "none": "None",
+    "notAvailable": "N/A",
     "notConnectedBody": "Activate the Insights client for this system to get started.",
     "notConnectedButton": "Learn about the Insights client",
     "notConnectedTitle": "This system is not yet connected to Insights",
