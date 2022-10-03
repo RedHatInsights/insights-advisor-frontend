@@ -7,7 +7,7 @@ import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { getBaseName } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 import { getStore } from './Store';
-import messages from '../locales/data.json';
+import messages from '../locales/translations.json';
 
 const AppEntry = () => (
   <IntlProvider locale={navigator.language.slice(0, 2)} messages={messages}>
