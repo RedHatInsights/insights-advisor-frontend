@@ -318,8 +318,8 @@ const Inventory = ({
 
       systemProfile = {
         ...systemProfile[0],
-        sortKey: 'rhel_version',
         transforms: [wrappable],
+        props: { isStatic: true },
       };
 
       tags = {
