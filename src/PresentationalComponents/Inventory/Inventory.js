@@ -95,7 +95,8 @@ const Inventory = ({
     selectedIds,
     setFullFilters,
     fullFilters,
-    rule
+    rule,
+    setFilters
   );
 
   const grabPageIds = () => {
@@ -317,6 +318,7 @@ const Inventory = ({
 
       systemProfile = {
         ...systemProfile[0],
+        sortKey: 'rhel_version',
         transforms: [wrappable],
       };
 
