@@ -68,6 +68,12 @@ const PathwaysPanel = () => {
               </GridItem>
             ))}
           </Grid>
+        ) : isError ? (
+          <MessageState
+            icon={'none'}
+            title={intl.formatMessage(messages.noPathwaysAvailable)}
+            text={intl.formatMessage(messages.pathwaysPanelsError)}
+          />
         ) : (
           <MessageState
             icon={'none'}
