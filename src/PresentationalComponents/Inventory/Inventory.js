@@ -312,16 +312,7 @@ const Inventory = ({
       lastSeenColumn = {
         ...lastSeenColumn[0],
         transforms: [sortable, wrappable],
-        props: { width: 15 },
-      };
-
-      const firstImpacted = {
-        key: 'impacted_date',
-        title: 'First Impacted',
-        sortKey: 'impacted_date',
-        transforms: [sortable, wrappable],
-        props: { width: 15 },
-        renderFunc: lastSeenColumn.renderFunc,
+        props: { width: 20 },
       };
 
       systemProfile = {
@@ -333,9 +324,25 @@ const Inventory = ({
         ...tags[0],
       };
 
-      return [displayName, tags, systemProfile, lastSeenColumn, firstImpacted];
+      let columnList = [displayName, tags, systemProfile, lastSeenColumn];
+
+      // Add column for impacted_date which is relevant for the rec system details table, but not pathways system table
+      if (!pathway) {
+        const impacted_date = {
+          key: 'impacted_date',
+          title: 'First Impacted',
+          sortKey: 'impacted_date',
+          transforms: [sortable, wrappable],
+          props: { width: 15 },
+          renderFunc: lastSeenColumn.renderFunc,
+        };
+        columnList.push(impacted_date);
+        lastSeenColumn.props.width = 15;
+      }
+
+      return columnList;
     },
-    [rule]
+    [pathway, rule]
   );
 
   const removeFilterParam = (param) => {
