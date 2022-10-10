@@ -25,3 +25,26 @@ Cypress.Commands.add('mount', mount);
 
 // Example use:
 // cy.mount(<MyComponent />)
+
+global.window.__scalprum__ = {
+  scalprumOptions: {
+    cacheTimeout: 999999,
+  },
+  appsConfig: {
+    inventory: {},
+    remediations: {},
+  },
+  factories: {
+    inventory: {},
+    remediations: {
+      expiration: new Date('01-01-3000'),
+      modules: {
+        './RemediationButton': {
+          __esModule: true,
+          // eslint-disable-next-line react/display-name
+          default: () => 'Remediations',
+        },
+      },
+    },
+  },
+};
