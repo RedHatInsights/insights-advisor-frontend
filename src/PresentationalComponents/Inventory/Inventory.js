@@ -95,7 +95,8 @@ const Inventory = ({
     selectedIds,
     setFullFilters,
     fullFilters,
-    rule
+    rule,
+    setFilters
   );
 
   const grabPageIds = () => {
@@ -318,6 +319,7 @@ const Inventory = ({
       systemProfile = {
         ...systemProfile[0],
         transforms: [wrappable],
+        props: { isStatic: true },
       };
 
       tags = {

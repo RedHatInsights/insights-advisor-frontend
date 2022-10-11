@@ -11,7 +11,6 @@ export const paginatedRequestHelper = async ({
   filters,
   workloads,
   SID,
-  sort,
   pathway,
   rule,
 }) => {
@@ -19,7 +18,7 @@ export const paginatedRequestHelper = async ({
     ...advisorFilters,
     limit: per_page,
     offset: page * per_page - per_page,
-    sort,
+    sort: advisorFilters.sort,
     ...(filters?.hostnameOrId &&
       !pathway && {
         name: filters?.hostnameOrId,
@@ -63,7 +62,8 @@ export const getEntities =
     selectedIds,
     setFullFilters,
     fullFilters,
-    rule
+    rule,
+    setFilters
   ) =>
   async (_items, config, showTags, defaultGetEntities) => {
     const {
@@ -105,6 +105,7 @@ export const getEntities =
     handleRefresh(options);
     const allDetails = { ...config, pathway, handleRefresh, rule };
     setFullFilters(allDetails);
+    setFilters({ ...filters, sort: sort });
     const fetchedSystems = await paginatedRequestHelper(allDetails);
     const results = await defaultGetEntities(
       fetchedSystems.data.map((system) => system.system_uuid),
