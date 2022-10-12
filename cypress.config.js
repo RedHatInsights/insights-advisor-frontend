@@ -13,13 +13,7 @@ module.exports = defineConfig({
         framework: 'react',
         webpackConfig,
       });
+      // TODO: add coverage plugin
     },
   },
-  /* component: {
-    devServer: {
-      framework: 'react',
-      bundler: 'webpack',
-      webpackConfig,
-    },
-  }, */
 });
