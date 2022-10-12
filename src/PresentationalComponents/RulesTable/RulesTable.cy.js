@@ -23,7 +23,6 @@ import {
   checkRowCounts,
   removeAllChips,
   applyFilters,
-  filter,
 } from '@redhat-cloud-services/frontend-components-utilities';
 
 //I'm looking at the https://docs.cypress.io/guides/component-testing/custom-mount-react#React-Router
@@ -136,8 +135,6 @@ const filtersConf = {
 };
 const filterApply = (filters) => applyFilters(filters, filtersConf);
 const filterCombos = [{ impacting: ['1 or more'] }];
-const filterData = (filters = DEFAULT_FILTERS, values = data) =>
-  filter(filtersConf, values, filters);
 
 //the default count is 20, you can pass the other number if you need to
 const DEFAULT_ROW_COUNT = 20;
@@ -147,17 +144,6 @@ const DEFAULT_FILTERS = {
 };
 const TABLE_HEADERS = _.map(columns, (it) => it.title);
 const ROOT = 'table[aria-label=rule-table]';
-const data = _.orderBy(
-  fixtures,
-  [(it) => it.updated_at || '1970-01-01T01:00:00.001Z'],
-  ['desc']
-);
-let values = _.cloneDeep(fixtures['data']);
-const DEFAULT_DISPLAYED_SIZE = Math.min(
-  filterData(DEFAULT_FILTERS).length,
-  DEFAULT_ROW_COUNT
-);
-const dataUnsorted = _.cloneDeep(values);
 
 //Function I had to change to make the test work
 //sorting doesn't work - need separate function that catches the API response
