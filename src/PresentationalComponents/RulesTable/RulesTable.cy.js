@@ -7,6 +7,7 @@ import { IntlProvider } from '@redhat-cloud-services/frontend-components-transla
 import { getStore } from '../../Store';
 import fixtures from '../../../cypress/fixtures/rulesfixtures';
 import _ from 'lodash';
+import { columns, CATEGORIES } from '../../../cypress/support/globals';
 
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
@@ -20,37 +21,15 @@ import {
   CHIP_GROUP,
   changePagination,
   checkRowCounts,
-  itemsPerPage,
-  PAGINATION,
-  PAGINATION_MENU,
-  DROPDOWN_TOGGLE,
-  SORTING_ORDERS,
-  checkSorting,
   removeAllChips,
   applyFilters,
   filter,
-  checkNoMatchingRecs,
-  TOOLBAR_FILTER,
-  TITLE,
-  TABLE,
-  checkFiltering,
 } from '@redhat-cloud-services/frontend-components-utilities';
 
 //I'm looking at the https://docs.cypress.io/guides/component-testing/custom-mount-react#React-Router
 
-import { createIntl, createIntlCache } from 'react-intl';
-import { cellWidth, sortable, fitContent } from '@patternfly/react-table';
 import messages from '../../Messages';
-//declaring intl to provie it to the columns
-const cache = createIntlCache();
-const intl = createIntl(
-  {
-    // eslint-disable-next-line no-console
-    onError: console.error,
-    locale: navigator.language.slice(0, 2),
-  },
-  cache
-);
+
 //function and filters config for testing filters
 function* cumulativeCombinations(arr, current = []) {
   let i = 0;
@@ -67,12 +46,6 @@ function* cumulativeCombinations(arr, current = []) {
 const TOTAL_RISK = { Low: 1, Moderate: 2, Important: 3, Critical: 4 };
 const IMPACT = { Low: 1, Medium: 2, High: 3, Critical: 4 };
 const LIKELIHOOD = { Low: 1, Medium: 2, High: 3, Critical: 4 };
-const CATEGORIES = {
-  'Service Availability': ['service_availability'],
-  Security: ['security'],
-  'Fault Tolerance': ['fault_tolerance'],
-  Performance: ['performance'],
-};
 const CATEGORIES_MAP = {
   'Service Availability': 1,
   Security: 4,
@@ -166,37 +139,6 @@ const filterCombos = [{ impacting: ['1 or more'] }];
 const filterData = (filters = DEFAULT_FILTERS, values = data) =>
   filter(filtersConf, values, filters);
 
-//Columns should be in a separate file where we will store all the constants???
-export const columns = [
-  {
-    title: intl.formatMessage(messages.name),
-    transforms: [sortable, cellWidth(40)],
-  },
-  {
-    title: intl.formatMessage(messages.modified),
-    transforms: [sortable, cellWidth(10)],
-  },
-  {
-    title: intl.formatMessage(messages.category),
-    transforms: [sortable, cellWidth(10)],
-  },
-  {
-    title: intl.formatMessage(messages.totalRisk),
-    transforms: [sortable, cellWidth(15)],
-  },
-  {
-    title: intl.formatMessage(messages.riskOfChange),
-    transforms: [sortable, cellWidth(15)],
-  },
-  {
-    title: intl.formatMessage(messages.systems),
-    transforms: [sortable, cellWidth(15)],
-  },
-  {
-    title: intl.formatMessage(messages.remediation),
-    transforms: [sortable, cellWidth(15), fitContent],
-  },
-];
 //the default count is 20, you can pass the other number if you need to
 const DEFAULT_ROW_COUNT = 20;
 const DEFAULT_FILTERS = {
@@ -375,76 +317,6 @@ describe('pagination', () => {
   }); */
 });
 
-describe('sorting', () => {
-  beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
-
-    const store = getStore();
-
-    mount(
-      <MemoryRouter>
-        <IntlProvider
-          locale={navigator.language.slice(0, 2)}
-          messages={messages}
-        >
-          <Provider store={store}>
-            <RulesTable />
-          </Provider>
-        </IntlProvider>
-      </MemoryRouter>
-    );
-  });
-  //doesn't work, need a rewrite of the sorting function because it takes wrong "name" for the url
-  //example - it should be sort=description, not a sort=name
-  //should be solved differently because RHEL Advisor utilize the API sorting
-  /* _.zip(
-    [
-      'description',
-      'publish_date',
-      'category',
-      'total_risk',
-      'resolution_risk',
-      'impacted_count',
-      'playbook_count',
-    ],
-    TABLE_HEADERS
-  ).forEach(([category, label]) => {
-    SORTING_ORDERS.forEach((order) => {
-      it(`${order} by ${label}`, () => {
-        let sortingParameter = category;
-        // modify sortingParameters for certain values
-
-        if (category === 'last_checked_at') {
-          // map missing last_check_at to old times
-          sortingParameter = (it) =>
-            it.last_checked_at || '1970-01-01T01:00:00.001Z';
-        } else if (category === 'cluster_version') {
-          sortingParameter = (it) =>
-            (it.cluster_version || '0.0.0')
-              .split('.')
-              .map((n) => parseInt(n) + 100000) // add padding
-              .join('.');
-        }
-        checkSorting(
-          dataUnsorted,
-          sortingParameter,
-          label,
-          order,
-          'Name',
-          'name',
-          DEFAULT_ROW_COUNT,
-          label
-        );
-      });
-    });
-  }); */
-});
-
 describe('filtering', () => {
   beforeEach(() => {
     cy.intercept('*', {
@@ -491,16 +363,6 @@ describe('filtering', () => {
     checkRowCounts(DEFAULT_ROW_COUNT);
   });
 
-  /*
-  it('empty state is displayed when filters do not match any rule', () => {
-    removeAllChips();
-    filterApply({
-      name: 'Not existing recommendation',
-    });
-    checkNoMatchingRecs();
-    checkTableHeaders(TABLE_HEADERS);
-  }); */
-
   it('no filters show all recommendations', () => {
     removeAllChips();
     checkRowCounts(DEFAULT_ROW_COUNT);
@@ -508,135 +370,4 @@ describe('filtering', () => {
   });
   // DOESN"T WORK NEED A REWRITE  I would prefer to separate this into smaller chunks
   // that is easier to understand. Currently it's too abstract
-  /* describe('single filter', () => {
-    beforeEach(() => {
-      cy.intercept('*', {
-        statusCode: 201,
-        body: {
-          ...fixtures,
-        },
-      }).as('call');
-
-      const store = getStore();
-
-      mount(
-        <MemoryRouter>
-          <IntlProvider
-            locale={navigator.language.slice(0, 2)}
-            messages={messages}
-          >
-            <Provider store={store}>
-              <RulesTable />
-            </Provider>
-          </IntlProvider>
-        </MemoryRouter>
-      );
-    }); */
-
-  /* Object.entries(filtersConf).forEach(([k, v]) => {
-      v.values.forEach((filterValues) => {
-        it(`${k}: ${filterValues}`, () => {
-          // disabled recommendations have Disabled in their names
-          //had to add [2] index to point to the row values
-          let modifiedData = _.cloneDeep(data[2]);
-          modifiedData.forEach((it) => {
-            if (it.disabled) {
-              it.description = it.description + ' \nDisabled';
-            }
-          });
-          const filters = { [k]: filterValues };
-          checkFiltering(
-            filters,
-            filtersConf,
-            _.map(filterData(filters, modifiedData), 'description').slice(
-              0,
-              DEFAULT_ROW_COUNT
-            ),
-            'Name',
-            TABLE_HEADERS,
-            'No matching recommendations found',
-            true,
-            true
-          );
-        });
-      });
-    });
-  }); */
-
-  // DOESN"T WORK NEED A REWRITE
-  /* describe('combined filters', () => {
-    beforeEach(() => {
-      cy.intercept('*', {
-        statusCode: 201,
-        body: {
-          ...fixtures,
-        },
-      }).as('call');
-
-      const store = getStore();
-
-      mount(
-        <MemoryRouter>
-          <IntlProvider
-            locale={navigator.language.slice(0, 2)}
-            messages={messages}
-          >
-            <Provider store={store}>
-              <RulesTable />
-            </Provider>
-          </IntlProvider>
-        </MemoryRouter>
-      );
-    });
-
-    filterCombos.forEach((filters) => {
-      it(`${Object.keys(filters)}`, () => {
-        // disabled recommendations have Disabled in their names
-        let modifiedData = data[2];
-        modifiedData.forEach((it) => {
-          if (it.disabled) {
-            it.description = it.description + ' \nDisabled';
-          }
-        });
-        checkFiltering(
-          filters,
-          filtersConf,
-          _.map(filterData(filters, modifiedData), 'description').slice(
-            0,
-            DEFAULT_ROW_COUNT
-          ),
-          'Name',
-          TABLE_HEADERS,
-          'No matching recommendations found',
-          true,
-          true
-        );
-      });
-    });
-  });
-
-  it('clears text input after Name filter chip removal', () => {
-    filterApply({ name: 'cc' });
-    // remove the chip
-    cy.contains(CHIP_GROUP, 'Name')
-      .find('button')
-      .click()
-      .then(() => {
-        expect(window.location.search).to.not.contain('text=');
-      });
-    cy.get(TOOLBAR_FILTER).find('.pf-c-form-control').should('be.empty');
-  });
-
-  it('clears text input after resetting all filters', () => {
-    filterApply({ name: 'cc' });
-    // reset all filters
-    cy.get(TOOLBAR)
-      .find('button')
-      .contains('Reset filters')
-      .click()
-      .then(() => {
-        expect(window.location.search).to.not.contain('text=');
-      });
-    cy.get(TOOLBAR_FILTER).find('.pf-c-form-control').should('be.empty');
-  }); */
 });
