@@ -328,12 +328,12 @@ describe('filtering', () => {
     );
   });
   it('can clear filters', () => {
-    removeAllChips();
+    removeAllChips(); // TODO: check this test works correctly
     // apply some filters
     filterApply(filterCombos[0]);
     cy.get(CHIP_GROUP).should(
       'have.length',
-      Object.keys(filterCombos[0]).length
+      Object.keys(filterCombos[0]).length + 1
     );
     cy.get(CHIP_GROUP).should('exist');
     // clear filters
