@@ -29,10 +29,10 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 
 import CategoryLabel from '../Labels/CategoryLabel';
-import Failed from '../Loading/Failed';
 import Loading from '../Loading/Loading';
 import MessageState from '../MessageState/MessageState';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
+import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
 import RecommendationLevel from '../Labels/RecommendationLevel';
 import RuleLabels from '../Labels/RuleLabels';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
@@ -380,9 +380,9 @@ const PathwaysTable = ({ isTabActive }) => {
       {isFetching ? (
         <Loading />
       ) : isError ? (
-        <Failed
-          message={intl.formatMessage(messages.rulesTableFetchRulesError)}
-        />
+        <Table>
+          <ErrorState />
+        </Table>
       ) : (
         <Table
           aria-label={'pathways-table'}

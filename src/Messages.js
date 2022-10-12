@@ -1189,6 +1189,18 @@ export default defineMessages({
     description: 'No pathways',
     defaultMessage: 'No pathways',
   },
+  noPathwaysAvailable: {
+    id: 'noPathwaysAvailable',
+    description: 'No Pathways available',
+    defaultMessage: 'No pathways available',
+  },
+  pathwaysPanelsError: {
+    id: 'pathwaysPanelError',
+    description:
+      'There was a problem processing the request. Please try again.',
+    defaultMessage:
+      'There was a problem processing the request. Please try again.',
+  },
   reboot: {
     id: 'reboot',
     description: 'Reboot',

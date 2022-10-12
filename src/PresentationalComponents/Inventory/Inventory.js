@@ -95,7 +95,8 @@ const Inventory = ({
     selectedIds,
     setFullFilters,
     fullFilters,
-    rule
+    rule,
+    setFilters
   );
 
   const grabPageIds = () => {
@@ -318,15 +319,32 @@ const Inventory = ({
       systemProfile = {
         ...systemProfile[0],
         transforms: [wrappable],
+        props: { isStatic: true },
       };
 
       tags = {
         ...tags[0],
       };
 
-      return [displayName, tags, systemProfile, lastSeenColumn];
+      let columnList = [displayName, tags, systemProfile, lastSeenColumn];
+
+      // Add column for impacted_date which is relevant for the rec system details table, but not pathways system table
+      if (!pathway) {
+        const impacted_date = {
+          key: 'impacted_date',
+          title: 'First Impacted',
+          sortKey: 'impacted_date',
+          transforms: [sortable, wrappable],
+          props: { width: 15 },
+          renderFunc: lastSeenColumn.renderFunc,
+        };
+        columnList.push(impacted_date);
+        lastSeenColumn.props.width = 15;
+      }
+
+      return columnList;
     },
-    [rule]
+    [pathway, rule]
   );
 
   const removeFilterParam = (param) => {
