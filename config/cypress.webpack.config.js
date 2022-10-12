@@ -53,7 +53,6 @@ module.exports = {
       zlib: false,
       readline: false,
       tls: false,
-      cy: false,
     },
   },
 };
