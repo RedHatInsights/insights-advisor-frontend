@@ -19,6 +19,7 @@ import {
   tableIsSortedBy,
   hasChip,
   CHIP_GROUP,
+  CHIP,
   changePagination,
   checkRowCounts,
   removeAllChips,
@@ -328,12 +329,17 @@ describe('filtering', () => {
     );
   });
   it('can clear filters', () => {
-    removeAllChips(); // TODO: check this test works correctly
+    cy.get(CHIP_GROUP)
+      .find(CHIP)
+      .ouiaId('close', 'button')
+      .each(() => {
+        cy.get(CHIP_GROUP).find(CHIP).ouiaId('close', 'button').eq(0).click();
+      });
     // apply some filters
     filterApply(filterCombos[0]);
     cy.get(CHIP_GROUP).should(
       'have.length',
-      Object.keys(filterCombos[0]).length + 1
+      Object.keys(filterCombos[0]).length
     );
     cy.get(CHIP_GROUP).should('exist');
     // clear filters
@@ -354,6 +360,4 @@ describe('filtering', () => {
     checkRowCounts(DEFAULT_ROW_COUNT);
     checkPaginationTotal(fixtures.meta.count);
   });
-  // DOESN"T WORK NEED A REWRITE  I would prefer to separate this into smaller chunks
-  // that is easier to understand. Currently it's too abstract
 });
