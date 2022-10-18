@@ -43,7 +43,7 @@ import CategoryLabel from '../Labels/CategoryLabel';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { DeleteApi } from '../../Utilities/Api';
 import DisableRule from '../Modals/DisableRule';
-import Failed from '../../PresentationalComponents/Loading/Failed';
+import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { Main } from '@redhat-cloud-services/frontend-components/Main';
@@ -765,9 +765,9 @@ const RulesTable = ({ isTabActive }) => {
       {isFetching ? (
         <Loading />
       ) : isError ? (
-        <Failed
-          message={intl.formatMessage(messages.rulesTableFetchRulesError)}
-        />
+        <Table>
+          <ErrorState />
+        </Table>
       ) : (
         <Table
           aria-label={'rule-table'}

@@ -18,7 +18,7 @@ import { Button } from '@patternfly/react-core/dist/js/components/Button/Button'
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 
-import Failed from '../../PresentationalComponents/Loading/Failed';
+import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
@@ -278,9 +278,7 @@ const OverviewDetails = () => {
             )}
           </React.Fragment>
         ) : isError ? (
-          <Failed
-            message={intl.formatMessage(messages.rulesTableFetchRulesError)}
-          />
+          <ErrorState />
         ) : (
           <Loading />
         )}

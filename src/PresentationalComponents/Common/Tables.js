@@ -1,5 +1,5 @@
 import { generateFilter } from '@redhat-cloud-services/frontend-components-utilities/helpers';
-import { SYSTEM_TYPES } from '../../AppConstants';
+import { SYSTEM_FILTER_CATEGORIES, SYSTEM_TYPES } from '../../AppConstants';
 
 // Builds returns url params from table filters, pushes to url if history object is passed
 export const urlBuilder = (filters = {}) => {
@@ -90,17 +90,26 @@ export const pruneFilters = (localFilters, filterCategories) => {
           const category = filterCategories[item[0]];
           const chips = Array.isArray(item[1])
             ? item[1].map((value) => {
-                const selectedCategoryValue = category.values.find(
-                  (values) => values.value === String(value)
-                );
-                return selectedCategoryValue
-                  ? {
-                      name:
-                        selectedCategoryValue.text ||
-                        selectedCategoryValue.label,
-                      value,
-                    }
-                  : { name: value, value };
+                if (
+                  item[0] === SYSTEM_FILTER_CATEGORIES.rhel_version.urlParam
+                ) {
+                  return {
+                    name: `RHEL ${value}`,
+                    value,
+                  };
+                } else {
+                  const selectedCategoryValue = category.values.find(
+                    (values) => values.value === String(value)
+                  );
+                  return selectedCategoryValue
+                    ? {
+                        name:
+                          selectedCategoryValue.text ||
+                          selectedCategoryValue.label,
+                        value,
+                      }
+                    : { name: value, value };
+                }
               })
             : [
                 {

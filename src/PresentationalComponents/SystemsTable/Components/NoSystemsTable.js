@@ -13,7 +13,7 @@ import {
 const NoSystemsTable = () => (
   <Bullseye>
     <EmptyState variant={EmptyStateVariant.full}>
-      <Title headingLevel="h2" size="lg" style={{ fontWeight: 'bold' }}>
+      <Title headingLevel="h2" size="lg">
         No matching systems found
       </Title>
       <EmptyStateBody>
