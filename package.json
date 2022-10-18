@@ -22,7 +22,7 @@
     "start": "NODE_ENV=development webpack serve --config config/dev.webpack.config.js",
     "start:proxy": "NODE_ENV=development PROXY=true webpack serve --config config/dev.webpack.config.js",
     "start:proxy:beta": "BETA=true NODE_ENV=development PROXY=true webpack serve --config config/dev.webpack.config.js",
-    "test": "npm run test:ct && npm run test:jest",
+    "test": "ELECTRON_RUN_AS_NODE=1 npm run test:ct --headless && npm run test:jest",
     "test:jest": "jest --verbose --passWithNoTests --env=jsdom",
     "test:ct": "cypress run --component",
     "translations": "npm-run-all translations:*",
