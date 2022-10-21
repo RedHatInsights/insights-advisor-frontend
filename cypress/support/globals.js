@@ -11,7 +11,7 @@ const intl = createIntl(
   },
   cache
 );
-export const columns = [
+export const rulesTableColumns = [
   {
     title: intl.formatMessage(messages.name),
   },
@@ -23,9 +23,6 @@ export const columns = [
   },
   {
     title: intl.formatMessage(messages.totalRisk),
-  },
-  {
-    title: intl.formatMessage(messages.riskOfChange),
   },
   {
     title: intl.formatMessage(messages.systems),

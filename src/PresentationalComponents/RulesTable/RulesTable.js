@@ -91,27 +91,23 @@ const RulesTable = ({ isTabActive }) => {
     },
     {
       title: intl.formatMessage(messages.modified),
-      transforms: [sortable, cellWidth(10)],
+      transforms: [sortable, fitContent],
     },
     {
       title: intl.formatMessage(messages.category),
-      transforms: [sortable, cellWidth(10)],
+      transforms: [sortable, fitContent],
     },
     {
       title: intl.formatMessage(messages.totalRisk),
-      transforms: [sortable, cellWidth(15)],
-    },
-    {
-      title: intl.formatMessage(messages.riskOfChange),
-      transforms: [sortable, cellWidth(15)],
+      transforms: [sortable, fitContent],
     },
     {
       title: intl.formatMessage(messages.systems),
-      transforms: [sortable, cellWidth(15)],
+      transforms: [sortable, fitContent],
     },
     {
       title: intl.formatMessage(messages.remediation),
-      transforms: [sortable, cellWidth(15), fitContent],
+      transforms: [sortable, fitContent],
     },
   ]);
 
@@ -157,9 +153,8 @@ const RulesTable = ({ isTabActive }) => {
     2: 'publish_date',
     3: 'category',
     4: 'total_risk',
-    5: 'resolution_risk',
-    6: 'impacted_count',
-    7: 'playbook_count',
+    5: 'impacted_count',
+    6: 'playbook_count',
   };
 
   useEffect(() => {
@@ -370,23 +365,6 @@ const RulesTable = ({ isTabActive }) => {
                     >
                       <InsightsLabel value={value.total_risk} isCompact />
                     </Tooltip>
-                  </div>
-                ),
-              },
-              {
-                title: (
-                  <div key={key}>
-                    <InsightsLabel
-                      text={
-                        AppConstants.RISK_OF_CHANGE_LABEL[
-                          ruleResolutionRisk(value)
-                        ]
-                      }
-                      value={ruleResolutionRisk(value)}
-                      hideIcon
-                      isCompact
-                    />
-                    <div></div>
                   </div>
                 ),
               },
