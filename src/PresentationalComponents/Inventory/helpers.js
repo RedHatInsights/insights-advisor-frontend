@@ -13,6 +13,7 @@ export const paginatedRequestHelper = async ({
   SID,
   pathway,
   rule,
+  selectedTags,
 }) => {
   let options = {
     ...advisorFilters,
@@ -31,10 +32,9 @@ export const paginatedRequestHelper = async ({
       rhel_version: advisorFilters.rhel_version?.join(','),
     }),
     ...(filters.tagFilters?.length && buildTagFilter(filters.tagFilters)),
+    ...(workloads ? workloadQueryBuilder(workloads, SID) : {}),
+    ...(selectedTags?.length > 0 ? { tags: selectedTags.join(',') } : {}),
   };
-
-  workloads &&
-    (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
 
   return pathway
     ? (
@@ -97,10 +97,11 @@ export const getEntities =
         rhel_version: advisorFilters.rhel_version?.join(','),
       }),
       ...(filters.tagFilters?.length && buildTagFilter(filters.tagFilters)),
+      ...(config.selectedTags?.length > 0
+        ? { tags: config.selectedTags.join(',') }
+        : {}),
+      ...(workloads ? workloadQueryBuilder(workloads, SID) : {}),
     };
-
-    workloads &&
-      (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
 
     handleRefresh(options);
     const allDetails = { ...config, pathway, handleRefresh, rule };
