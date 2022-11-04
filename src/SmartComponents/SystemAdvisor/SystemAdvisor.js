@@ -22,7 +22,6 @@ import {
   TableBody,
   TableHeader,
   TableVariant,
-  cellWidth,
   fitContent,
   sortable,
 } from '@patternfly/react-table';
@@ -35,7 +34,7 @@ import { List } from 'react-content-loader';
 import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
-import { ReportDetails } from '@redhat-cloud-services/frontend-components-advisor-components';
+import { ReportDetails } from '@redhat-cloud-services/frontend-components-advisor-components/ReportDetails';
 import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import { capitalize } from '../../PresentationalComponents/Common/Tables';
@@ -51,7 +50,7 @@ import {
 import NotConnected from '@redhat-cloud-services/frontend-components/NotConnected';
 import { useLocation } from 'react-router-dom';
 
-const BaseSystemAdvisor = () => {
+const BaseSystemAdvisor = ({ entity }) => {
   const intl = useIntl();
   const systemAdvisorRef = useRef({
     rowCount: 0,
@@ -59,7 +58,6 @@ const BaseSystemAdvisor = () => {
   const dispatch = useDispatch();
   const addNotification = (data) => dispatch(addNotificationAction(data));
 
-  const entity = useSelector(({ entityDetails }) => entityDetails.entity);
   const systemProfile = useSelector(({ systemProfileStore }) =>
     systemProfileStore ? systemProfileStore.systemProfile : {}
   );
@@ -81,7 +79,7 @@ const BaseSystemAdvisor = () => {
     (systemProfile && systemProfile.satellite_managed) || false; // system is managed by satellite
   const satelliteShowHosts = accountSettings.show_satellite_hosts || false; // setting to show satellite managed systems
   const hideResultsSatelliteManaged = !satelliteShowHosts && satelliteManaged;
-  const getSelectedItems = (rows) => rows.filter((entity) => entity.selected);
+  const getSelectedItems = (rows) => rows.filter((row) => row.selected);
   const selectedAnsibleRules = getSelectedItems(rows).filter(
     (r) => r.resolution?.has_playbook
   );
@@ -97,11 +95,15 @@ const BaseSystemAdvisor = () => {
     },
     {
       title: intl.formatMessage(messages.modified),
-      transforms: [sortable, cellWidth(15)],
+      transforms: [sortable, fitContent],
+    },
+    {
+      title: intl.formatMessage(messages.firstImpacted),
+      transforms: [sortable, fitContent],
     },
     {
       title: intl.formatMessage(messages.totalRisk),
-      transforms: [sortable],
+      transforms: [sortable, fitContent],
     },
     {
       title: intl.formatMessage(messages.remediation),
@@ -230,9 +232,20 @@ const BaseSystemAdvisor = () => {
             },
             {
               title: (
-                <div key={key}>
+                <span>
                   <DateFormat
                     date={rule.publish_date}
+                    type="relative"
+                    tooltipProps={{ position: TooltipPosition.bottom }}
+                  />
+                </span>
+              ),
+            },
+            {
+              title: (
+                <div key={key}>
+                  <DateFormat
+                    date={value.impacted_date}
                     type="relative"
                     tooltipProps={{ position: TooltipPosition.bottom }}
                   />
@@ -722,6 +735,7 @@ const BaseSystemAdvisor = () => {
         ) : (
           <Fragment>
             <Table
+              id={'system-advisor-report-table'}
               aria-label={'report-table'}
               onSelect={
                 !(rows.length === 1 && rows[0].heightAuto) && onRowSelect
@@ -744,9 +758,19 @@ const BaseSystemAdvisor = () => {
   );
 };
 
+BaseSystemAdvisor.propTypes = {
+  entity: PropTypes.shape({
+    insights_id: PropTypes.string,
+    id: PropTypes.string,
+  }),
+};
+
 const SystemAdvisor = ({ customItnl, intlProps, store, ...props }) => {
   const Wrapper = customItnl ? IntlProvider : Fragment;
   const ReduxProvider = store ? Provider : Fragment;
+
+  const entity = useSelector(({ entityDetails }) => entityDetails.entity);
+
   return (
     <Wrapper
       {...(customItnl && {
@@ -756,13 +780,14 @@ const SystemAdvisor = ({ customItnl, intlProps, store, ...props }) => {
       })}
     >
       <ReduxProvider store={store}>
-        <BaseSystemAdvisor {...props} />
+        <BaseSystemAdvisor {...props} entity={entity} />
       </ReduxProvider>
     </Wrapper>
   );
 };
 
 export default SystemAdvisor;
+export { BaseSystemAdvisor };
 
 SystemAdvisor.propTypes = {
   customItnl: PropTypes.bool,

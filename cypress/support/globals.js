@@ -35,6 +35,24 @@ export const columns = [
   },
 ];
 
+export const systemAdvisorColumns = [
+  {
+    title: intl.formatMessage(messages.description),
+  },
+  {
+    title: intl.formatMessage(messages.modified),
+  },
+  {
+    title: intl.formatMessage(messages.firstImpacted),
+  },
+  {
+    title: intl.formatMessage(messages.totalRisk),
+  },
+  {
+    title: intl.formatMessage(messages.remediation),
+  },
+];
+
 export const CATEGORIES = {
   'Service Availability': ['service_availability'],
   Security: ['security'],
