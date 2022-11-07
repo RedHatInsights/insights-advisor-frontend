@@ -1,11 +1,10 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { mount } from '@cypress/react';
 import RulesTable from './RulesTable';
 import { Provider } from 'react-redux';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
 import { getStore } from '../../Store';
-import fixtures from '../../../cypress/fixtures/rulesfixtures';
+import fixtures from '../../../cypress/fixtures/recommendations.json';
 import _ from 'lodash';
 import { columns, CATEGORIES } from '../../../cypress/support/globals';
 
@@ -150,7 +149,7 @@ const ROOT = 'table[aria-label=rule-table]';
 //sorting doesn't work - need separate function that catches the API response
 
 //TESTS//
-describe('test', () => {
+describe('renders correctly', () => {
   beforeEach(() => {
     cy.intercept('*', {
       statusCode: 201,
@@ -161,7 +160,7 @@ describe('test', () => {
 
     const store = getStore();
 
-    mount(
+    cy.mount(
       <MemoryRouter>
         <IntlProvider
           locale={navigator.language.slice(0, 2)}
@@ -198,7 +197,7 @@ describe('defaults', () => {
 
     const store = getStore();
 
-    mount(
+    cy.mount(
       <MemoryRouter>
         <IntlProvider
           locale={navigator.language.slice(0, 2)}
@@ -253,7 +252,7 @@ describe('pagination', () => {
 
     const store = getStore();
 
-    mount(
+    cy.mount(
       <MemoryRouter>
         <IntlProvider
           locale={navigator.language.slice(0, 2)}
@@ -315,7 +314,7 @@ describe('filtering', () => {
 
     const store = getStore();
 
-    mount(
+    cy.mount(
       <MemoryRouter>
         <IntlProvider
           locale={navigator.language.slice(0, 2)}
