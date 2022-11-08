@@ -14,7 +14,7 @@ import {
   Tooltip,
   TooltipPosition,
 } from '@patternfly/react-core';
-import { IntlProvider, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import {
   SortByDirection,
@@ -39,7 +39,6 @@ import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import { capitalize } from '../../PresentationalComponents/Common/Tables';
 import messages from '../../Messages';
-import { Provider } from 'react-redux';
 import {
   NoMatchingRecommendations,
   NoRecommendations,
@@ -742,35 +741,11 @@ BaseSystemAdvisor.propTypes = {
   }),
 };
 
-const SystemAdvisor = ({ customItnl, intlProps, store, ...props }) => {
-  const Wrapper = customItnl ? IntlProvider : Fragment;
-  const ReduxProvider = store ? Provider : Fragment;
-
+const SystemAdvisor = ({ ...props }) => {
   const entity = useSelector(({ entityDetails }) => entityDetails.entity);
 
-  return (
-    <Wrapper
-      {...(customItnl && {
-        locale: navigator.language.slice(0, 2),
-        messages,
-        ...intlProps,
-      })}
-    >
-      <ReduxProvider store={store}>
-        <BaseSystemAdvisor {...props} entity={entity} />
-      </ReduxProvider>
-    </Wrapper>
-  );
+  return <BaseSystemAdvisor {...props} entity={entity} />;
 };
 
 export default SystemAdvisor;
 export { BaseSystemAdvisor };
-
-SystemAdvisor.propTypes = {
-  customItnl: PropTypes.bool,
-  intlProps: PropTypes.shape({
-    locale: PropTypes.string,
-    messages: PropTypes.array,
-  }),
-  store: PropTypes.object,
-};
