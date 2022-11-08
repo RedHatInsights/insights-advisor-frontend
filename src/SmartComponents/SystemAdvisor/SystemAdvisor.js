@@ -40,7 +40,6 @@ import { addNotification as addNotificationAction } from '@redhat-cloud-services
 import { capitalize } from '../../PresentationalComponents/Common/Tables';
 import messages from '../../Messages';
 import {
-  HideResultsSatelliteManaged,
   NoMatchingRecommendations,
   NoRecommendations,
   InsightsNotEnabled,
@@ -57,9 +56,6 @@ const BaseSystemAdvisor = ({ entity }) => {
   const dispatch = useDispatch();
   const addNotification = (data) => dispatch(addNotificationAction(data));
 
-  const systemProfile = useSelector(({ systemProfileStore }) =>
-    systemProfileStore ? systemProfileStore.systemProfile : {}
-  );
   const routerData = useSelector(({ routerData }) => routerData);
 
   const [inventoryReportFetchStatus, setInventoryReportFetchStatus] =
@@ -69,15 +65,10 @@ const BaseSystemAdvisor = ({ entity }) => {
   const [kbaDetailsData, setKbaDetailsData] = useState([]);
   const [sortBy, setSortBy] = useState({});
   const [filters, setFilters] = useState({});
-  const [accountSettings, setAccountSettings] = useState({});
   const [searchValue, setSearchValue] = useState('');
   const [isSelected, setIsSelected] = useState(false);
   const [isAllExpanded, setIsAllExpanded] = useState(false);
 
-  const satelliteManaged =
-    (systemProfile && systemProfile.satellite_managed) || false; // system is managed by satellite
-  const satelliteShowHosts = accountSettings.show_satellite_hosts || false; // setting to show satellite managed systems
-  const hideResultsSatelliteManaged = !satelliteShowHosts && satelliteManaged;
   const getSelectedItems = (rows) => rows.filter((row) => row.selected);
   const selectedAnsibleRules = getSelectedItems(rows).filter(
     (r) => r.resolution?.has_playbook
@@ -653,20 +644,14 @@ const BaseSystemAdvisor = ({ entity }) => {
   useEffect(() => {
     const dataFetch = async () => {
       try {
-        const [settingsFetch, reportsFetch] = await Promise.all([
-          (
-            await Get(`${BASE_URL}/account_setting/`, {
-              credentials: 'include',
-            })
-          ).data,
-          (
-            await Get(`${BASE_URL}/system/${entity.id}/reports/`, {
-              credentials: 'include',
-            })
-          ).data,
-        ]);
+        const reportsFetch = await Get(
+          `${BASE_URL}/system/${entity.id}/reports/`,
+          {
+            credentials: 'include',
+          }
+        );
 
-        const activeRuleFirstReportsData = activeRuleFirst(reportsFetch);
+        const activeRuleFirstReportsData = activeRuleFirst(reportsFetch.data);
         fetchKbaDetails(activeRuleFirstReportsData);
 
         setRows(
@@ -681,7 +666,6 @@ const BaseSystemAdvisor = ({ entity }) => {
         );
         setInventoryReportFetchStatus('fulfilled');
         setActiveReports(activeRuleFirstReportsData);
-        setAccountSettings(settingsFetch);
       } catch (error) {
         setInventoryReportFetchStatus('failed');
       }
@@ -699,8 +683,6 @@ const BaseSystemAdvisor = ({ entity }) => {
   ) : (
     <div className="ins-c-inventory-insights__overrides">
       {inventoryReportFetchStatus === 'pending' ||
-      (inventoryReportFetchStatus === 'fulfilled' &&
-        hideResultsSatelliteManaged) ||
       entity.insights_id === null ? (
         <Fragment />
       ) : (
@@ -728,31 +710,26 @@ const BaseSystemAdvisor = ({ entity }) => {
           </CardBody>
         </Card>
       )}
-      {inventoryReportFetchStatus === 'fulfilled' &&
-        (hideResultsSatelliteManaged ? (
-          <HideResultsSatelliteManaged />
-        ) : (
-          <Fragment>
-            <Table
-              id={'system-advisor-report-table'}
-              aria-label={'report-table'}
-              onSelect={
-                !(rows.length === 1 && rows[0].heightAuto) && onRowSelect
-              }
-              onCollapse={handleOnCollapse}
-              rows={rows}
-              cells={cols}
-              sortBy={sortBy}
-              canSelectAll={false}
-              onSort={onSort}
-              variant={TableVariant.compact}
-              isStickyHeader
-            >
-              <TableHeader />
-              <TableBody />
-            </Table>
-          </Fragment>
-        ))}
+      {inventoryReportFetchStatus === 'fulfilled' && (
+        <Fragment>
+          <Table
+            id={'system-advisor-report-table'}
+            aria-label={'report-table'}
+            onSelect={!(rows.length === 1 && rows[0].heightAuto) && onRowSelect}
+            onCollapse={handleOnCollapse}
+            rows={rows}
+            cells={cols}
+            sortBy={sortBy}
+            canSelectAll={false}
+            onSort={onSort}
+            variant={TableVariant.compact}
+            isStickyHeader
+          >
+            <TableHeader />
+            <TableBody />
+          </Table>
+        </Fragment>
+      )}
     </div>
   );
 };
