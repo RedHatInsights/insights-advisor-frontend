@@ -14,7 +14,7 @@ import {
   Tooltip,
   TooltipPosition,
 } from '@patternfly/react-core';
-import { IntlProvider, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import {
   SortByDirection,
@@ -40,7 +40,6 @@ import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import { capitalize } from '../../PresentationalComponents/Common/Tables';
 import messages from '../../Messages';
-import { Provider } from 'react-redux';
 import {
   HideResultsSatelliteManaged,
   NoMatchingRecommendations,
@@ -51,7 +50,7 @@ import {
 import NotConnected from '@redhat-cloud-services/frontend-components/NotConnected';
 import { useLocation } from 'react-router-dom';
 
-const BaseSystemAdvisor = () => {
+const BaseSystemAdvisor = ({ entity }) => {
   const intl = useIntl();
   const systemAdvisorRef = useRef({
     rowCount: 0,
@@ -59,7 +58,6 @@ const BaseSystemAdvisor = () => {
   const dispatch = useDispatch();
   const addNotification = (data) => dispatch(addNotificationAction(data));
 
-  const entity = useSelector(({ entityDetails }) => entityDetails.entity);
   const systemProfile = useSelector(({ systemProfileStore }) =>
     systemProfileStore ? systemProfileStore.systemProfile : {}
   );
@@ -744,31 +742,18 @@ const BaseSystemAdvisor = () => {
   );
 };
 
-const SystemAdvisor = ({ customItnl, intlProps, store, ...props }) => {
-  const Wrapper = customItnl ? IntlProvider : Fragment;
-  const ReduxProvider = store ? Provider : Fragment;
-  return (
-    <Wrapper
-      {...(customItnl && {
-        locale: navigator.language.slice(0, 2),
-        messages,
-        ...intlProps,
-      })}
-    >
-      <ReduxProvider store={store}>
-        <BaseSystemAdvisor {...props} />
-      </ReduxProvider>
-    </Wrapper>
-  );
+BaseSystemAdvisor.propTypes = {
+  entity: PropTypes.shape({
+    insights_id: PropTypes.string,
+    id: PropTypes.string,
+  }),
+};
+
+const SystemAdvisor = ({ ...props }) => {
+  const entity = useSelector(({ entityDetails }) => entityDetails.entity);
+
+  return <BaseSystemAdvisor {...props} entity={entity} />;
 };
 
 export default SystemAdvisor;
-
-SystemAdvisor.propTypes = {
-  customItnl: PropTypes.bool,
-  intlProps: PropTypes.shape({
-    locale: PropTypes.string,
-    messages: PropTypes.array,
-  }),
-  store: PropTypes.object,
-};
+export { BaseSystemAdvisor };
