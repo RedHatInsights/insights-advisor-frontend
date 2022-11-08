@@ -1,0 +1,89 @@
+[
+  {
+    "rule": {
+      "rule_id": "insights_core_egg_not_up2date|INSIGHTS_CORE_EGG_NOT_UP2DATE",
+      "created_at": "2021-03-02T05:45:53.706330Z",
+      "updated_at": "2022-11-02T11:45:58.749588Z",
+      "description": "System is not able to get the latest recommendations and may miss bug fixes when the Insights Client Core egg file is outdated",
+      "active": true,
+      "category": { "id": 1, "name": "Availability" },
+      "impact": { "name": "Management Availability", "impact": 2 },
+      "likelihood": 3,
+      "node_id": "3747741",
+      "tags": "insights_client",
+      "reboot_required": false,
+      "publish_date": "2021-03-13T18:44:00Z",
+      "summary": "System is not able to get the latest recommendations and may miss bug fixes when the Insights Client Core egg file is outdated.\n",
+      "generic": "The Insights Client Core egg file is outdated, which results in not being able to get the latest recommendations and may miss bug fixes for older recommendations.\n",
+      "reason": "The Insights Core egg file used on this host is outdated:\n\n* The current version: {{=pydata.cur}}\n* The latest version: {{=pydata.rel}}\n",
+      "more_info": "For more information about how to disable/enable automatic rule updates for Red Hat Insights, refer to:\n- [CHANGING RED HAT INSIGHTS AUTOMATIC RULE UPDATES](https://access.redhat.com/documentation/en-us/red_hat_insights/2020-10/html/client_configuration_guide_for_red_hat_insights/changing-automatic-rule-update)\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "{{?pydata.auto_update}}\nRed Hat recommends that you remove/comment the **auto_update=False** line in the `/etc/insights-client/insights-client.conf` or modify it to **auto_update=True** and then run the `insights-client` command again.\n{{??}}\nRed Hat recommends that you update the Red Hat Insights Client Core egg file manually:\n1. Update the egg to the latest manually:\n  ~~~\n  # curl https://api.access.redhat.com/r/insights/v1/static/core/insights-core.egg > /var/lib/insights/last_stable.egg\n  # curl https://api.access.redhat.com/r/insights/v1/static/core/insights-core.egg.asc > /var/lib/insights/last_stable.egg.asc\n  ~~~\n1. Check the version:\n  ~~~\n  # insights-client --version\n  ~~~\n{{?}}\n",
+          "resolution_risk": {
+            "name": "Update Insights Configuration",
+            "risk": 2
+          },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 2
+    },
+    "details": {
+      "cur": "3.0.246-1",
+      "rel": "3.0.301",
+      "rhel": "8.6",
+      "type": "rule",
+      "error_key": "INSIGHTS_CORE_EGG_NOT_UP2DATE"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "{{?pydata.auto_update}}\nRed Hat recommends that you remove/comment the **auto_update=False** line in the `/etc/insights-client/insights-client.conf` or modify it to **auto_update=True** and then run the `insights-client` command again.\n{{??}}\nRed Hat recommends that you update the Red Hat Insights Client Core egg file manually:\n1. Update the egg to the latest manually:\n  ~~~\n  # curl https://api.access.redhat.com/r/insights/v1/static/core/insights-core.egg > /var/lib/insights/last_stable.egg\n  # curl https://api.access.redhat.com/r/insights/v1/static/core/insights-core.egg.asc > /var/lib/insights/last_stable.egg.asc\n  ~~~\n1. Check the version:\n  ~~~\n  # insights-client --version\n  ~~~\n{{?}}\n",
+      "resolution_risk": { "name": "Update Insights Configuration", "risk": 2 },
+      "has_playbook": true
+    },
+    "impacted_date": "2022-11-02T10:08:50.888206Z"
+  },
+  {
+    "rule": {
+      "rule_id": "el8_to_el9_upgrade|RHEL8_TO_RHEL9_UPGRADE_AVAILABLE",
+      "created_at": "2022-05-31T05:45:49.161934Z",
+      "updated_at": "2022-11-02T11:45:53.260824Z",
+      "description": "RHEL 8 system is eligible for an in-place upgrade to RHEL 9 using the Leapp utility",
+      "active": true,
+      "category": { "id": 4, "name": "Performance" },
+      "impact": { "name": "Best Practice", "impact": 1 },
+      "likelihood": 1,
+      "node_id": "6955478",
+      "tags": "autoack kernel leapp",
+      "reboot_required": true,
+      "publish_date": "2022-06-05T03:22:00Z",
+      "summary": "Red Hat provides Leapp utility to assist customers to upgrade RHEL 8 to RHEL 9 in-place so that customers are able to migrate their business to a new platform with improved performance and new features.  \n",
+      "generic": "Red Hat provides `leapp` utility to support upgrade from **RHEL 8** to **RHEL 9**. The current **RHEL 8** version is eligible for upgrade to **RHEL 9** via `leapp` utility. Red Hat recommends that you install `leapp` packages.\n",
+      "reason": "{{? pydata.error_key == \"RHEL8_TO_RHEL9_UPGRADE_AVAILABLE\"}}\nThe current **RHEL** version **{{=pydata.supported_path[0]}}** is eligible for upgrade to **RHEL** version {{? pydata.supported_path.length > 2}}**{{=pydata.supported_path[2]}}** (default) or **{{=pydata.supported_path[1]}}**{{??}}**{{=pydata.supported_path[1]}}**{{?}} via the Leapp utility.\n{{?}}\n\n{{? pydata.error_key == \"RHEL8_TO_RHEL9_UPGRADE_AVAILABLE_RPMS\"}}\nThe Leapp utility is available on this system. The current **RHEL** version **{{=pydata.supported_path[0]}}** is eligible for upgrade to **RHEL** version {{? pydata.supported_path.length > 2}}**{{=pydata.supported_path[2]}}** (default) or **{{=pydata.supported_path[1]}}**{{??}}**{{=pydata.supported_path[1]}}**{{?}} via the Leapp utility.\n{{?}}\n",
+      "more_info": "",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Red Hat recommends that you upgrade to **RHEL9** with the following steps:\n\n{{? pydata.error_key == \"RHEL8_TO_RHEL9_UPGRADE_AVAILABLE\"}}\n1. Planning an upgrade according to these [points](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/upgrading_from_rhel_8_to_rhel_9/planning-an-upgrade_upgrading-from-rhel-8-to-rhel-9)\n1. Preparing a RHEL 8 system for the upgrade according to this [procedure](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/upgrading_from_rhel_8_to_rhel_9/assembly_preparing-for-the-upgrade_upgrading-from-rhel-8-to-rhel-9).\n\n1. Install `leapp` utility.\n   ~~~\n   # dnf install leapp-upgrade\n   ~~~\n1. Identify potential upgrade problems before upgrade.\n   ~~~\n   # leapp preupgrade --target {{? pydata.supported_path.length > 2}}{{=pydata.supported_path[2]}}{{??}}{{=pydata.supported_path[1]}}{{?}}\n   ~~~\n   **Note**: Check `/var/log/leapp/leapp-report.txt` or web console for any pre-check failure and refer to [Reviewing the pre-upgrade report](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/upgrading_from_rhel_8_to_rhel_9/reviewing-the-pre-upgrade-report_upgrading-from-rhel-8-to-rhel-9) for more details. \n1. Start the upgrade.\n   ~~~\n   # leapp upgrade --target {{? pydata.supported_path.length > 2}}{{=pydata.supported_path[2]}}{{??}}{{=pydata.supported_path[1]}}{{?}}\n   ~~~\n1. Reboot system.\n   ~~~\n   # reboot\n   ~~~\n{{?}}\n\n{{? pydata.error_key == \"RHEL8_TO_RHEL9_UPGRADE_AVAILABLE_RPMS\"}}\n1. Planning an upgrade according to these [points](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/upgrading_from_rhel_8_to_rhel_9/planning-an-upgrade_upgrading-from-rhel-8-to-rhel-9)\n1. Preparing a RHEL 8 system for the upgrade according to this [procedure](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/upgrading_from_rhel_8_to_rhel_9/assembly_preparing-for-the-upgrade_upgrading-from-rhel-8-to-rhel-9).\n\n1. Identify potential upgrade problems before upgrade.\n   ~~~\n   # leapp preupgrade --target {{? pydata.supported_path.length > 2}}{{=pydata.supported_path[2]}}{{??}}{{=pydata.supported_path[1]}}{{?}}\n   ~~~\n1. Start the upgrade.\n   ~~~\n   # leapp upgrade --target {{? pydata.supported_path.length > 2}}{{=pydata.supported_path[2]}}{{??}}{{=pydata.supported_path[1]}}{{?}}\n   ~~~\n   **Note**: Check `/var/log/leapp/leapp-report.txt` or web console for any pre-check failure and refer to [Reviewing the pre-upgrade report](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/upgrading_from_rhel_8_to_rhel_9/reviewing-the-pre-upgrade-report_upgrading-from-rhel-8-to-rhel-9) for more details.\n1. Reboot system.\n   ~~~\n   # reboot\n   ~~~\n{{?}}\nFor more details about upgrading, refer to [Upgrading to RHEL9](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/upgrading_from_rhel_8_to_rhel_9/index).\n",
+          "resolution_risk": { "name": "Upgrade RHEL", "risk": 3 },
+          "has_playbook": false
+        }
+      ],
+      "total_risk": 1
+    },
+    "details": {
+      "type": "rule",
+      "error_key": "RHEL8_TO_RHEL9_UPGRADE_AVAILABLE",
+      "supported_path": ["8.6", "9.0"]
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Red Hat recommends that you upgrade to **RHEL9** with the following steps:\n\n{{? pydata.error_key == \"RHEL8_TO_RHEL9_UPGRADE_AVAILABLE\"}}\n1. Planning an upgrade according to these [points](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/upgrading_from_rhel_8_to_rhel_9/planning-an-upgrade_upgrading-from-rhel-8-to-rhel-9)\n1. Preparing a RHEL 8 system for the upgrade according to this [procedure](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/upgrading_from_rhel_8_to_rhel_9/assembly_preparing-for-the-upgrade_upgrading-from-rhel-8-to-rhel-9).\n\n1. Install `leapp` utility.\n   ~~~\n   # dnf install leapp-upgrade\n   ~~~\n1. Identify potential upgrade problems before upgrade.\n   ~~~\n   # leapp preupgrade --target {{? pydata.supported_path.length > 2}}{{=pydata.supported_path[2]}}{{??}}{{=pydata.supported_path[1]}}{{?}}\n   ~~~\n   **Note**: Check `/var/log/leapp/leapp-report.txt` or web console for any pre-check failure and refer to [Reviewing the pre-upgrade report](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/upgrading_from_rhel_8_to_rhel_9/reviewing-the-pre-upgrade-report_upgrading-from-rhel-8-to-rhel-9) for more details. \n1. Start the upgrade.\n   ~~~\n   # leapp upgrade --target {{? pydata.supported_path.length > 2}}{{=pydata.supported_path[2]}}{{??}}{{=pydata.supported_path[1]}}{{?}}\n   ~~~\n1. Reboot system.\n   ~~~\n   # reboot\n   ~~~\n{{?}}\n\n{{? pydata.error_key == \"RHEL8_TO_RHEL9_UPGRADE_AVAILABLE_RPMS\"}}\n1. Planning an upgrade according to these [points](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/upgrading_from_rhel_8_to_rhel_9/planning-an-upgrade_upgrading-from-rhel-8-to-rhel-9)\n1. Preparing a RHEL 8 system for the upgrade according to this [procedure](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/upgrading_from_rhel_8_to_rhel_9/assembly_preparing-for-the-upgrade_upgrading-from-rhel-8-to-rhel-9).\n\n1. Identify potential upgrade problems before upgrade.\n   ~~~\n   # leapp preupgrade --target {{? pydata.supported_path.length > 2}}{{=pydata.supported_path[2]}}{{??}}{{=pydata.supported_path[1]}}{{?}}\n   ~~~\n1. Start the upgrade.\n   ~~~\n   # leapp upgrade --target {{? pydata.supported_path.length > 2}}{{=pydata.supported_path[2]}}{{??}}{{=pydata.supported_path[1]}}{{?}}\n   ~~~\n   **Note**: Check `/var/log/leapp/leapp-report.txt` or web console for any pre-check failure and refer to [Reviewing the pre-upgrade report](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/upgrading_from_rhel_8_to_rhel_9/reviewing-the-pre-upgrade-report_upgrading-from-rhel-8-to-rhel-9) for more details.\n1. Reboot system.\n   ~~~\n   # reboot\n   ~~~\n{{?}}\nFor more details about upgrading, refer to [Upgrading to RHEL9](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/upgrading_from_rhel_8_to_rhel_9/index).\n",
+      "resolution_risk": { "name": "Upgrade RHEL", "risk": 3 },
+      "has_playbook": false
+    },
+    "impacted_date": "2022-11-02T10:08:50.888206Z"
+  }
+]

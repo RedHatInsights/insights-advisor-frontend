@@ -18,6 +18,7 @@ import propTypes from 'prop-types';
 import { useGetPathwaysQuery } from '../../Services/Pathways';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
+import { workloadQueryBuilder } from '../Common/Tables';
 
 const PathwaysPanel = () => {
   const intl = useIntl();
@@ -25,10 +26,19 @@ const PathwaysPanel = () => {
   const [expanded, setExpanded] = useState(
     JSON.parse(localStorage.getItem('advisor_pathwayspanel_expanded') || 'true')
   );
+  const selectedTags = useSelector(({ filters }) => filters.selectedTags);
+  const workloads = useSelector(({ filters }) => filters.workloads);
+  const SID = useSelector(({ filters }) => filters.SID);
+
+  const options = {
+    ...(selectedTags?.length > 0 ? { tags: selectedTags.join(',') } : {}),
+    ...(workloads ? workloadQueryBuilder(workloads, SID) : {}),
+  };
   const { data, isLoading, isFetching, isError } = useGetPathwaysQuery({
     sort: '-recommendation_level',
     offset,
     limit: 3,
+    ...options,
   });
 
   return !isLoading ? (

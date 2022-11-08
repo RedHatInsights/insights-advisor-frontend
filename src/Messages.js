@@ -1270,4 +1270,9 @@ export default defineMessages({
     defaultMessage:
       ' To fully remediate all recommendations, there may be additional steps needed.',
   },
+  firstImpacted: {
+    id: 'firstImpacted',
+    description: 'First impacted',
+    defaultMessage: 'First impacted',
+  },
 });
