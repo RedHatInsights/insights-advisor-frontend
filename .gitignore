@@ -31,3 +31,5 @@ sitemap.xml
 cypress/downloads
 cypress/screenshots
 cypress/videos
+cypress-coverage
+.nyc_output

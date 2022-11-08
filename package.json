@@ -149,7 +149,8 @@
   "nyc": {
     "report-dir": "cypress-coverage",
     "include": [
-      "src/Services",
+      "src/PresentationalComponents",
+      "src/SmartComponents",
       "src/Utilities"
     ],
     "exclude": [
