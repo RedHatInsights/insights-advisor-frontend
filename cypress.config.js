@@ -7,10 +7,10 @@ module.exports = defineConfig({
   viewportWidth: 1000,
   viewportHeight: 660,
   video: false,
-  env: {
-    BABEL_ENV: 'component',
-  },
   component: {
+    env: {
+      BABEL_ENV: 'component',
+    },
     devServer(devServerConfig) {
       return devServer({
         ...devServerConfig,
