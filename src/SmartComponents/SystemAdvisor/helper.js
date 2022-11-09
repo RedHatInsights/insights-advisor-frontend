@@ -17,6 +17,7 @@ import {
 import { InventoryReportFetchFailed } from '../../PresentationalComponents/EmptyStates/InventoryReportFetchFailed';
 import { InsightsNotEnabled } from '../../PresentationalComponents/EmptyStates/InsightsNotEnabled';
 import { NoMatchingRecommendations } from '../../PresentationalComponents/EmptyStates/NoMatchingRecommendations';
+import { NoRecommendations } from '../../PresentationalComponents/EmptyStates/NoRecommendations';
 
 export const activeRuleFirst = (activeReports, routerData) => {
   const reports = [...activeReports];
@@ -30,6 +31,7 @@ export const activeRuleFirst = (activeReports, routerData) => {
 
   return activeRuleIndex !== -1 ? [activeReport[0], ...reports] : activeReports;
 };
+
 export const processRemediation = (selectedAnsibleRules, entity) => {
   const playbookRows = selectedAnsibleRules.filter(
     (r) => r.resolution?.has_playbook
@@ -229,7 +231,7 @@ export const buildRows = (
   if (activeReports.length < 1 || builtRows.length < 1) {
     let EmptyState =
       (builtRows.length === 0 && NoMatchingRecommendations) ||
-      (entity.insights_id && NoMatchingRecommendations) ||
+      (entity.insights_id && NoRecommendations) ||
       InsightsNotEnabled;
 
     return [

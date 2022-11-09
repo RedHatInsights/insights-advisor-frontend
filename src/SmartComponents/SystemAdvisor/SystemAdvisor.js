@@ -1,10 +1,8 @@
 import './SystemAdvisor.scss';
-
 import { BASE_URL, FILTER_CATEGORIES as FC } from '../../AppConstants';
 import { Card, CardBody } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-
 import {
   SortByDirection,
   Table,
@@ -14,26 +12,23 @@ import {
   fitContent,
   sortable,
 } from '@patternfly/react-table';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Get } from '../../Utilities/Api';
 import { List } from 'react-content-loader';
 import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
-
 import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import messages from '../../Messages';
-
 import NotConnected from '@redhat-cloud-services/frontend-components/NotConnected';
 import get from 'lodash/get';
 import {
+  activeRuleFirst,
+  buildRows,
   processRemediation,
   buildFilterChips,
-  buildRows,
-  activeRuleFirst,
 } from './helper';
-import { useDispatch } from 'react-redux';
 
 const BaseSystemAdvisor = ({ entity }) => {
   const intl = useIntl();
@@ -88,68 +83,6 @@ const BaseSystemAdvisor = ({ entity }) => {
     },
   ];
 
-  const filterConfigItems = [
-    {
-      label: 'description',
-      filterValues: {
-        key: 'text-filter',
-        onChange: (_e, value) => onInputChange(value),
-        value: searchValue,
-      },
-    },
-    {
-      label: FC.total_risk.title,
-      type: FC.total_risk.type,
-      id: FC.total_risk.urlParam,
-      value: `checkbox-${FC.total_risk.urlParam}`,
-      filterValues: {
-        key: `${FC.total_risk.urlParam}-filter`,
-        onChange: (_e, values) =>
-          onFilterChange(FC.total_risk.urlParam, values),
-        value: filters.total_risk,
-        items: FC.total_risk.values,
-      },
-    },
-    {
-      label: FC.category.title,
-      type: FC.category.type,
-      id: FC.category.urlParam,
-      value: `checkbox-${FC.category.urlParam}`,
-      filterValues: {
-        key: `${FC.category.urlParam}-filter`,
-        onChange: (_e, values) => onFilterChange(FC.category.urlParam, values),
-        value: filters.category,
-        items: FC.category.values,
-      },
-    },
-    {
-      label: FC.has_playbook.title,
-      type: FC.has_playbook.type,
-      id: FC.has_playbook.urlParam,
-      value: `checkbox-${FC.has_playbook.urlParam}`,
-      filterValues: {
-        key: `${FC.has_playbook.urlParam}-filter`,
-        onChange: (_e, values) =>
-          onFilterChange(FC.has_playbook.urlParam, values),
-        value: filters.has_playbook,
-        items: FC.has_playbook.values,
-      },
-    },
-  ];
-
-  const actions = [
-    <RemediationButton
-      key="remediation-button"
-      isDisabled={selectedAnsibleRules.length === 0}
-      dataProvider={() => processRemediation(selectedAnsibleRules, entity)}
-      onRemediationCreated={(result) =>
-        onRemediationCreated(result, onBulkSelect)
-      }
-    >
-      {intl.formatMessage(messages.remediate)}
-    </RemediationButton>,
-  ];
-
   const onExpandAllClick = (_e, isOpen) => {
     setIsAllExpanded(isOpen);
     const allRows = [...rows];
@@ -163,11 +96,37 @@ const BaseSystemAdvisor = ({ entity }) => {
     setRows(allRows);
   };
 
+  const onRemediationCreated = (result) => {
+    onBulkSelect(false);
+    try {
+      result.remediation && addNotification(result.getNotification());
+    } catch (error) {
+      addNotification({
+        variant: 'danger',
+        dismissable: true,
+        title: intl.formatMessage(messages.error),
+        description: `${error}`,
+      });
+    }
+  };
+
+  const actions = [
+    <RemediationButton
+      key="remediation-button"
+      isDisabled={selectedAnsibleRules.length === 0}
+      dataProvider={() => processRemediation(selectedAnsibleRules, entity)}
+      onRemediationCreated={(result) => onRemediationCreated(result)}
+    >
+      {intl.formatMessage(messages.remediate)}
+    </RemediationButton>,
+  ];
+
   const handleOnCollapse = (_e, rowId, isOpen) => {
     const collapseRows = [...rows];
     collapseRows[rowId] = { ...collapseRows[rowId], isOpen };
     setRows(collapseRows);
   };
+  const location = useLocation().pathname?.split('/');
 
   const onRowSelect = (_e, isSelected, rowId) =>
     setRows(
@@ -286,19 +245,6 @@ const BaseSystemAdvisor = ({ entity }) => {
             )
           );
         }
-      });
-    }
-  };
-  const onRemediationCreated = (result, onBulkSelect) => {
-    onBulkSelect(false);
-    try {
-      result.remediation && addNotification(result.getNotification());
-    } catch (error) {
-      addNotification({
-        variant: 'danger',
-        dismissable: true,
-        title: intl.formatMessage(messages.error),
-        description: `${error}`,
       });
     }
   };
@@ -438,6 +384,55 @@ const BaseSystemAdvisor = ({ entity }) => {
     setRows(builtRows);
   };
 
+  const filterConfigItems = [
+    {
+      label: 'description',
+      filterValues: {
+        key: 'text-filter',
+        onChange: (_e, value) => onInputChange(value),
+        value: searchValue,
+      },
+    },
+    {
+      label: FC.total_risk.title,
+      type: FC.total_risk.type,
+      id: FC.total_risk.urlParam,
+      value: `checkbox-${FC.total_risk.urlParam}`,
+      filterValues: {
+        key: `${FC.total_risk.urlParam}-filter`,
+        onChange: (_e, values) =>
+          onFilterChange(FC.total_risk.urlParam, values),
+        value: filters.total_risk,
+        items: FC.total_risk.values,
+      },
+    },
+    {
+      label: FC.category.title,
+      type: FC.category.type,
+      id: FC.category.urlParam,
+      value: `checkbox-${FC.category.urlParam}`,
+      filterValues: {
+        key: `${FC.category.urlParam}-filter`,
+        onChange: (_e, values) => onFilterChange(FC.category.urlParam, values),
+        value: filters.category,
+        items: FC.category.values,
+      },
+    },
+    {
+      label: FC.has_playbook.title,
+      type: FC.has_playbook.type,
+      id: FC.has_playbook.urlParam,
+      value: `checkbox-${FC.has_playbook.urlParam}`,
+      filterValues: {
+        key: `${FC.has_playbook.urlParam}-filter`,
+        onChange: (_e, values) =>
+          onFilterChange(FC.has_playbook.urlParam, values),
+        value: filters.has_playbook,
+        items: FC.has_playbook.values,
+      },
+    },
+  ];
+
   useEffect(() => {
     const dataFetch = async () => {
       try {
@@ -446,15 +441,17 @@ const BaseSystemAdvisor = ({ entity }) => {
           {
             credentials: 'include',
           }
-        );
+        ).data;
+
         const activeRuleFirstReportsData = activeRuleFirst(
           reportsFetch,
           routerData
         );
         fetchKbaDetails(activeRuleFirstReportsData);
+
         setRows(
           buildRows(
-            reportsFetch,
+            activeRuleFirstReportsData,
             {},
             filters,
             rows,
@@ -468,7 +465,6 @@ const BaseSystemAdvisor = ({ entity }) => {
           )
         );
         setInventoryReportFetchStatus('fulfilled');
-        //reports fetch
         setActiveReports(activeRuleFirstReportsData);
       } catch (error) {
         setInventoryReportFetchStatus('failed');
