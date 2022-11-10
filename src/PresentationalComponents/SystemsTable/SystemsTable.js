@@ -281,13 +281,41 @@ const SystemsTable = () => {
             page,
             per_page,
             sort,
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+            ...(config.filters.hostnameOrId && {
+              display_name: config?.filters?.hostnameOrId,
+            }),
+            ...(Array.isArray(advisorFilters.incident) && {
+              incident: advisorFilters?.incident?.join(','),
+            }),
+            ...(Array.isArray(advisorFilters.rhel_version) && {
+              rhel_version: advisorFilters.rhel_version?.join(','),
+            }),
+            ...(filters.tagFilters?.length &&
+              buildTagFilter(filters.tagFilters)),
+            ...(selectedTags?.length > 0
+              ? { tags: selectedTags.join(',') }
+              : {}),
+            ...(workloads ? workloadQueryBuilder(workloads, SID) : {}),
+          };
+=======
+>>>>>>> 2edab01 (createOptions Function)
             null,
             filters,
             selectedTags,
             workloads,
+<<<<<<< HEAD
             SID,
             true
           );
+=======
+            SID
+          );
+>>>>>>> b69cc9b (createOptions Function)
+
+>>>>>>> 2edab01 (createOptions Function)
           const fetchedSystems = (await Get(SYSTEMS_FETCH_URL, {}, options))
             ?.data;
 
