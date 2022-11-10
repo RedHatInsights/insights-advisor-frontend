@@ -10,5 +10,7 @@ jobs:
         run: npm install
       - name: Component tests
         run: npm run test:ct
+      - name: Jest tests
+        run: npm run test
       - name: Create coverage
         run: npm run coverage
