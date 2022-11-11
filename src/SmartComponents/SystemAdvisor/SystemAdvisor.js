@@ -25,9 +25,9 @@ import NotConnected from '@redhat-cloud-services/frontend-components/NotConnecte
 import get from 'lodash/get';
 import {
   activeRuleFirst,
-  buildRows,
   processRemediation,
   buildFilterChips,
+  buildRows,
 } from './helper';
 
 const BaseSystemAdvisor = ({ entity }) => {
@@ -95,7 +95,6 @@ const BaseSystemAdvisor = ({ entity }) => {
 
     setRows(allRows);
   };
-
   const onRemediationCreated = (result) => {
     onBulkSelect(false);
     try {
@@ -126,7 +125,6 @@ const BaseSystemAdvisor = ({ entity }) => {
     collapseRows[rowId] = { ...collapseRows[rowId], isOpen };
     setRows(collapseRows);
   };
-  const location = useLocation().pathname?.split('/');
 
   const onRowSelect = (_e, isSelected, rowId) =>
     setRows(
@@ -143,7 +141,8 @@ const BaseSystemAdvisor = ({ entity }) => {
         location,
         systemAdvisorRef,
         entity,
-        intl
+        intl,
+        inventoryReportFetchStatus
       )
     );
 
@@ -166,7 +165,8 @@ const BaseSystemAdvisor = ({ entity }) => {
         location,
         systemAdvisorRef,
         entity,
-        intl
+        intl,
+        inventoryReportFetchStatus
       )
     );
   };
@@ -213,7 +213,8 @@ const BaseSystemAdvisor = ({ entity }) => {
           location,
           systemAdvisorRef,
           entity,
-          intl
+          intl,
+          inventoryReportFetchStatus
         )
       );
       setFilters({});
@@ -233,7 +234,8 @@ const BaseSystemAdvisor = ({ entity }) => {
               location,
               systemAdvisorRef,
               entity,
-              intl
+              intl,
+              inventoryReportFetchStatus
             )
           );
           setSearchValue('');
@@ -283,7 +285,8 @@ const BaseSystemAdvisor = ({ entity }) => {
           location,
           systemAdvisorRef,
           entity,
-          intl
+          intl,
+          inventoryReportFetchStatus
         )
       );
     } catch (error) {
@@ -332,7 +335,8 @@ const BaseSystemAdvisor = ({ entity }) => {
         location,
         systemAdvisorRef,
         entity,
-        intl
+        intl,
+        inventoryReportFetchStatus
       )
     );
   };
@@ -360,7 +364,8 @@ const BaseSystemAdvisor = ({ entity }) => {
         location,
         systemAdvisorRef,
         entity,
-        intl
+        intl,
+        inventoryReportFetchStatus
       )
     );
     setFilters(newFilters);
@@ -378,7 +383,8 @@ const BaseSystemAdvisor = ({ entity }) => {
       location,
       systemAdvisorRef,
       entity,
-      intl
+      intl,
+      inventoryReportFetchStatus
     );
     setSearchValue(value);
     setRows(builtRows);
@@ -441,10 +447,10 @@ const BaseSystemAdvisor = ({ entity }) => {
           {
             credentials: 'include',
           }
-        ).data;
+        );
 
         const activeRuleFirstReportsData = activeRuleFirst(
-          reportsFetch,
+          reportsFetch.data,
           routerData
         );
         fetchKbaDetails(activeRuleFirstReportsData);
@@ -452,7 +458,7 @@ const BaseSystemAdvisor = ({ entity }) => {
         setRows(
           buildRows(
             activeRuleFirstReportsData,
-            {},
+            kbaDetailsData,
             filters,
             rows,
             searchValue,
@@ -461,7 +467,8 @@ const BaseSystemAdvisor = ({ entity }) => {
             location,
             systemAdvisorRef,
             entity,
-            intl
+            intl,
+            inventoryReportFetchStatus
           )
         );
         setInventoryReportFetchStatus('fulfilled');

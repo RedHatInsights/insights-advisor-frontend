@@ -75,13 +75,14 @@ export const buildRows = (
   kbaDetails,
   filters,
   rows,
-  searchValue = '',
+  searchValue,
   kbaLoading = false,
   isFirstLoad = false,
   location,
   systemAdvisorRef,
   entity,
-  intl
+  intl,
+  inventoryReportFetchStatus
 ) => {
   const url = window.location.href;
   let newActiveReportsList = activeReports;
@@ -130,9 +131,20 @@ export const buildRows = (
           },
           {
             title: (
-              <div key={key}>
+              <span>
                 <DateFormat
                   date={rule.publish_date}
+                  type="relative"
+                  tooltipProps={{ position: TooltipPosition.bottom }}
+                />
+              </span>
+            ),
+          },
+          {
+            title: (
+              <div key={key}>
+                <DateFormat
+                  date={value.impacted_date}
                   type="relative"
                   tooltipProps={{ position: TooltipPosition.bottom }}
                 />
@@ -247,7 +259,7 @@ export const buildRows = (
     ];
   }
 
-  if (InventoryReportFetchFailed === 'failed') {
+  if (inventoryReportFetchStatus === 'failed') {
     return [
       {
         heightAuto: true,
