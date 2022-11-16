@@ -68,9 +68,15 @@ export const getEntities =
       SID,
       selectedTags,
     } = config;
-    const sort = `${orderDirection === 'ASC' ? '' : '-'}${
-      orderBy === 'updated' ? 'last_seen' : orderBy
-    }`;
+
+    //operating_system is currently not supported, but will be down the line.
+    const sort =
+      orderBy === 'operating_system'
+        ? 'rhel_version'
+        : `${orderDirection === 'ASC' ? '' : '-'}${
+            orderBy === 'updated' ? 'last_seen' : orderBy
+          }`;
+
     let options = createOptions(
       advisorFilters,
       page,
@@ -82,7 +88,6 @@ export const getEntities =
       workloads,
       SID
     );
-
     handleRefresh(options);
     const allDetails = { ...config, pathway, handleRefresh, rule, sort };
     setFullFilters(allDetails);
