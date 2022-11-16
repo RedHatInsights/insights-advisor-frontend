@@ -293,10 +293,11 @@ const SystemsTable = () => {
             }),
             ...(filters.tagFilters?.length &&
               buildTagFilter(filters.tagFilters)),
+            ...(selectedTags?.length > 0
+              ? { tags: selectedTags.join(',') }
+              : {}),
+            ...(workloads ? workloadQueryBuilder(workloads, SID) : {}),
           };
-
-          workloads &&
-            (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
 
           const fetchedSystems = (await Get(SYSTEMS_FETCH_URL, {}, options))
             ?.data;
