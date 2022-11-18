@@ -95,8 +95,7 @@ const Inventory = ({
     selectedIds,
     setFullFilters,
     fullFilters,
-    rule,
-    setFilters
+    rule
   );
 
   const grabPageIds = () => {
