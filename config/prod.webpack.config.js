@@ -15,10 +15,7 @@ plugins.push(
       root: resolve(__dirname, '../'),
       exposes: {
         './RootApp': resolve(__dirname, '../src/AppEntry'),
-        './SystemDetail': resolve(
-          __dirname,
-          '../src/SmartComponents/SystemAdvisor'
-        ),
+        './SystemDetail': resolve(__dirname, '../src/Modules/SystemDetail'),
       },
     }
   )
