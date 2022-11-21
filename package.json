@@ -24,7 +24,7 @@
     "start:proxy:beta": "BETA=true NODE_ENV=development PROXY=true webpack serve --config config/dev.webpack.config.js",
     "test": "npm run test:jest",
     "test:jest": "jest --verbose --passWithNoTests --env=jsdom",
-    "test:ct": "cypress run --component",
+    "test:ct": "BABEL_ENV=component cypress run --component",
     "test:openct": "cypress open --component",
     "translations": "npm-run-all translations:*",
     "translations:extract": "npx formatjs extract ./src/*.js --out-file ./build/messages/src/Messages.json",
@@ -32,12 +32,15 @@
     "translations:datafile": "node scripts/createDataJson.js",
     "travis:build": "NODE_ENV=production webpack --config config/prod.webpack.config.js",
     "travis:verify": "npm-run-all travis:build lint test",
-    "verify": "npm-run-all build lint test"
+    "verify": "npm-run-all build lint test",
+    "coverage:clean": "rm -rf .nyc_output coverage reports",
+    "coverage": "bash coverage.sh && npm run coverage:clean"
   },
   "sassIncludes": {
     "patternfly": "node_modules/patternfly/dist/sass"
   },
   "jest": {
+    "coverageDirectory": "./jest-coverage",
     "collectCoverage": true,
     "collectCoverageFrom": [
       "src/**/*.js",
@@ -93,12 +96,10 @@
   },
   "devDependencies": {
     "@babel/core": "7.15.5",
-    "@babel/plugin-proposal-class-properties": "7.14.5",
     "@babel/plugin-proposal-decorators": "7.15.4",
-    "@babel/plugin-proposal-object-rest-spread": "7.14.7",
-    "@babel/plugin-syntax-dynamic-import": "7.8.3",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-transform-async-to-generator": "7.14.5",
-    "@babel/plugin-transform-runtime": "7.15.0",
+    "@babel/plugin-transform-runtime": "^7.19.6",
     "@babel/preset-env": "7.15.4",
     "@babel/preset-flow": "7.14.5",
     "@babel/preset-react": "7.14.5",
@@ -149,7 +150,8 @@
   "nyc": {
     "report-dir": "cypress-coverage",
     "include": [
-      "src/Services",
+      "src/PresentationalComponents",
+      "src/SmartComponents",
       "src/Utilities"
     ],
     "exclude": [
