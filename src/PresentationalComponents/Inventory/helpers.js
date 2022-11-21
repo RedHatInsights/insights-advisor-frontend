@@ -1,7 +1,7 @@
-import { workloadQueryBuilder, buildTagFilter } from '../Common/Tables';
 import { Get } from '../../Utilities/Api';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
 import { RULES_FETCH_URL, SYSTEMS_FETCH_URL } from '../../AppConstants';
+import { createOptions } from '../helper';
 
 /*This functions purpose is to grab the currently set filters, and return all associated systems for it.*/
 export const paginatedRequestHelper = async ({
@@ -13,28 +13,20 @@ export const paginatedRequestHelper = async ({
   SID,
   pathway,
   rule,
+  selectedTags,
+  sort,
 }) => {
-  let options = {
-    ...advisorFilters,
-    limit: per_page,
-    offset: page * per_page - per_page,
-    sort: advisorFilters.sort,
-    ...(filters?.hostnameOrId &&
-      !pathway && {
-        name: filters?.hostnameOrId,
-      }),
-    ...(filters.hostnameOrId &&
-      pathway && {
-        display_name: filters?.hostnameOrId,
-      }),
-    ...(Array.isArray(advisorFilters.rhel_version) && {
-      rhel_version: advisorFilters.rhel_version?.join(','),
-    }),
-    ...(filters.tagFilters?.length && buildTagFilter(filters.tagFilters)),
-  };
-
-  workloads &&
-    (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
+  let options = createOptions(
+    advisorFilters,
+    page,
+    per_page,
+    sort,
+    pathway,
+    filters,
+    selectedTags,
+    workloads,
+    SID
+  );
 
   return pathway
     ? (
@@ -62,8 +54,7 @@ export const getEntities =
     selectedIds,
     setFullFilters,
     fullFilters,
-    rule,
-    setFilters
+    rule
   ) =>
   async (_items, config, showTags, defaultGetEntities) => {
     const {
@@ -75,37 +66,31 @@ export const getEntities =
       filters,
       workloads,
       SID,
+      selectedTags,
     } = config;
-    const sort = `${orderDirection === 'ASC' ? '' : '-'}${
-      orderBy === 'updated' ? 'last_seen' : orderBy
-    }`;
 
-    let options = {
-      ...advisorFilters,
-      limit: per_page,
-      offset: page * per_page - per_page,
+    //operating_system is currently not supported, but will be down the line.
+    const sort =
+      orderBy === 'operating_system'
+        ? 'rhel_version'
+        : `${orderDirection === 'ASC' ? '' : '-'}${
+            orderBy === 'updated' ? 'last_seen' : orderBy
+          }`;
+
+    let options = createOptions(
+      advisorFilters,
+      page,
+      per_page,
       sort,
-      ...(config?.filters?.hostnameOrId &&
-        !pathway && {
-          name: config?.filters?.hostnameOrId,
-        }),
-      ...(config.filters.hostnameOrId &&
-        pathway && {
-          display_name: config?.filters?.hostnameOrId,
-        }),
-      ...(Array.isArray(advisorFilters.rhel_version) && {
-        rhel_version: advisorFilters.rhel_version?.join(','),
-      }),
-      ...(filters.tagFilters?.length && buildTagFilter(filters.tagFilters)),
-    };
-
-    workloads &&
-      (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
-
+      pathway,
+      filters,
+      selectedTags,
+      workloads,
+      SID
+    );
     handleRefresh(options);
-    const allDetails = { ...config, pathway, handleRefresh, rule };
+    const allDetails = { ...config, pathway, handleRefresh, rule, sort };
     setFullFilters(allDetails);
-    setFilters({ ...filters, sort: sort });
     const fetchedSystems = await paginatedRequestHelper(allDetails);
     const results = await defaultGetEntities(
       fetchedSystems.data.map((system) => system.system_uuid),

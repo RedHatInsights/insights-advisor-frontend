@@ -47,6 +47,7 @@ import {
 } from './EmptyStates';
 import NotConnected from '@redhat-cloud-services/frontend-components/NotConnected';
 import { useLocation } from 'react-router-dom';
+import get from 'lodash/get';
 
 const BaseSystemAdvisor = ({ entity }) => {
   const intl = useIntl();
@@ -515,26 +516,27 @@ const BaseSystemAdvisor = ({ entity }) => {
 
   const onSort = (_e, index, direction) => {
     const sortedReports = {
-      1: 'description',
-      2: 'publish_date',
-      3: 'total_risk',
-      4: 'has_playbook',
+      2: 'rule.description',
+      3: 'rule.publish_date',
+      4: 'impacted_date',
+      5: 'rule.total_risk',
+      6: 'resolution.has_playbook',
     };
-    const key = index === 5 ? 'resolution' : 'rule';
-    const sort = (key) =>
-      activeReports
-        .concat()
-        .sort((firstItem, secondItem) =>
-          firstItem[key][sortedReports[index]] >
-          secondItem[key][sortedReports[index]]
-            ? 1
-            : secondItem[key][sortedReports[index]] >
-              firstItem[key][sortedReports[index]]
-            ? -1
-            : 0
-        );
-    const sortedReportsDirectional =
-      direction === SortByDirection.asc ? sort(key) : sort(key).reverse();
+    const d = direction === SortByDirection.asc ? 1 : -1;
+
+    const sort = () =>
+      activeReports.concat().sort((firstItem, secondItem) => {
+        let fst = get(firstItem, sortedReports[index]);
+        let snd = get(secondItem, sortedReports[index]);
+
+        if (index === 3 || index === 4) {
+          fst = new Date(fst);
+          snd = new Date(snd);
+        }
+        return fst > snd ? d : snd > fst ? -d : 0;
+      });
+
+    const sortedReportsDirectional = sort();
 
     setActiveReports(sortedReportsDirectional);
     setSortBy({

@@ -11,7 +11,7 @@ const intl = createIntl(
   },
   cache
 );
-export const columns = [
+export const rulesTableColumns = [
   {
     title: intl.formatMessage(messages.name),
   },
@@ -25,28 +25,7 @@ export const columns = [
     title: intl.formatMessage(messages.totalRisk),
   },
   {
-    title: intl.formatMessage(messages.riskOfChange),
-  },
-  {
     title: intl.formatMessage(messages.systems),
-  },
-  {
-    title: intl.formatMessage(messages.remediation),
-  },
-];
-
-export const systemAdvisorColumns = [
-  {
-    title: intl.formatMessage(messages.description),
-  },
-  {
-    title: intl.formatMessage(messages.modified),
-  },
-  {
-    title: intl.formatMessage(messages.firstImpacted),
-  },
-  {
-    title: intl.formatMessage(messages.totalRisk),
   },
   {
     title: intl.formatMessage(messages.remediation),

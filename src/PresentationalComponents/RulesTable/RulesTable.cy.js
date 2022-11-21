@@ -1,13 +1,15 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { mount } from '@cypress/react';
 import RulesTable from './RulesTable';
 import { Provider } from 'react-redux';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
 import { getStore } from '../../Store';
-import fixtures from '../../../cypress/fixtures/rulesfixtures';
+import fixtures from '../../../cypress/fixtures/recommendations.json';
 import _ from 'lodash';
-import { columns, CATEGORIES } from '../../../cypress/support/globals';
+import {
+  rulesTableColumns,
+  CATEGORIES,
+} from '../../../cypress/support/globals';
 
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
@@ -143,14 +145,14 @@ const DEFAULT_FILTERS = {
   impacting: ['1 or more'],
   status: 'Enabled',
 };
-const TABLE_HEADERS = _.map(columns, (it) => it.title);
+const TABLE_HEADERS = _.map(rulesTableColumns, (it) => it.title);
 const ROOT = 'table[aria-label=rule-table]';
 
 //Function I had to change to make the test work
 //sorting doesn't work - need separate function that catches the API response
 
 //TESTS//
-describe('test', () => {
+describe('renders correctly', () => {
   beforeEach(() => {
     cy.intercept('*', {
       statusCode: 201,
@@ -161,7 +163,7 @@ describe('test', () => {
 
     const store = getStore();
 
-    mount(
+    cy.mount(
       <MemoryRouter>
         <IntlProvider
           locale={navigator.language.slice(0, 2)}
@@ -198,7 +200,7 @@ describe('defaults', () => {
 
     const store = getStore();
 
-    mount(
+    cy.mount(
       <MemoryRouter>
         <IntlProvider
           locale={navigator.language.slice(0, 2)}
@@ -253,7 +255,7 @@ describe('pagination', () => {
 
     const store = getStore();
 
-    mount(
+    cy.mount(
       <MemoryRouter>
         <IntlProvider
           locale={navigator.language.slice(0, 2)}
@@ -315,7 +317,7 @@ describe('filtering', () => {
 
     const store = getStore();
 
-    mount(
+    cy.mount(
       <MemoryRouter>
         <IntlProvider
           locale={navigator.language.slice(0, 2)}
