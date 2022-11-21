@@ -23,6 +23,7 @@ yarn-error.log*
 .nyc_output
 codecov*
 .git/
+jest-coverage/*
 
 mockData/
 
