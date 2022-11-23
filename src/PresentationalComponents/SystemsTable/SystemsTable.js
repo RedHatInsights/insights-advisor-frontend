@@ -285,7 +285,8 @@ const SystemsTable = () => {
             filters,
             selectedTags,
             workloads,
-            SID
+            SID,
+            true
           );
           const fetchedSystems = (await Get(SYSTEMS_FETCH_URL, {}, options))
             ?.data;
