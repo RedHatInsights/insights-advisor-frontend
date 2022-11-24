@@ -9,7 +9,8 @@ export const createOptions = (
   filters,
   selectedTags,
   workloads,
-  SID
+  SID,
+  systemsPage
 ) => {
   let options = {
     ...advisorFilters,
@@ -17,8 +18,14 @@ export const createOptions = (
     offset: page * per_page - per_page,
     sort: sort,
     ...(filters?.hostnameOrId &&
-      !pathway && {
+      !pathway &&
+      !systemsPage && {
         name: filters?.hostnameOrId,
+      }),
+    ...(filters?.hostnameOrId &&
+      !pathway &&
+      systemsPage && {
+        display_name: filters?.hostnameOrId,
       }),
     ...(filters.hostnameOrId &&
       pathway && {
