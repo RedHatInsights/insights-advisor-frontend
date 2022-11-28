@@ -1,7 +1,8 @@
 root: true
-extends: 
+extends:
   - '@redhat-cloud-services/eslint-config-redhat-cloud-services'
   - 'plugin:react-hooks/recommended'
+  - 'plugin:cypress/recommended'
 globals:
   insights: 'readonly'
   shallow: readonly

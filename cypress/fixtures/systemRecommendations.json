@@ -1,0 +1,389 @@
+[
+  {
+    "rule": {
+      "rule_id": "gfo104_AKPy3L|T7548V_34USEY_ALDO02_WP5DBA",
+      "created_at": "2022-03-29T00:53:09.935Z",
+      "updated_at": "2022-10-26T10:26:03.972Z",
+      "description": "ad hendrerit arcu.",
+      "active": true,
+      "category": { "id": 3, "name": "Security" },
+      "impact": { "name": "tincidunt", "impact": 3 },
+      "likelihood": 2,
+      "node_id": "300533",
+      "tags": "lk0 GKXLi",
+      "reboot_required": false,
+      "publish_date": "2022-04-13T02:57:58.173Z",
+      "summary": "Sit metus varius venenatis cras pulvinar, neque pharetra himenaeos euismod, non nostra inceptos viverra. Cursus vitae rhoncus, ante.\n",
+      "generic": "Nec feugiat curae duis placerat morbi mollis eget curabitur odio, gravida lorem vitae sit semper etiam mauris posuere.\n",
+      "reason": "Lectus habitasse porttitor nam malesuada convallis quisque maecenas nam egestas posuere, dictum curabitur varius sapien curabitur aptent diam nostra consequat. Dapibus nibh sapien lorem condimentum, leo felis netus.\n",
+      "more_info": "Bibendum netus scelerisque tempor condimentum, metus aliquam etiam.\n",
+      "resolution_set": [
+        {
+          "system_type": 104,
+          "resolution": "Bibendum fringilla suscipit aenean ornare, ut sagittis nullam.\n",
+          "resolution_risk": { "name": "oQh0u GIb", "risk": 2 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 1
+    },
+    "details": {
+      "cur": "3.0.225-1",
+      "rel": "3.0.317",
+      "rhel": "9.10",
+      "type": "rule",
+      "error_key": "T7548V_34USEY_ALDO02_WP5DBA"
+    },
+    "resolution": {
+      "system_type": 104,
+      "resolution": "Bibendum fringilla suscipit aenean ornare, ut sagittis nullam.\n",
+      "resolution_risk": { "name": "oQh0u GIb", "risk": 2 },
+      "has_playbook": true
+    },
+    "impacted_date": "2022-11-09T05:45:33.010Z"
+  },
+  {
+    "rule": {
+      "rule_id": "RTTAgQ_xt3H7B|WE66GK_I5NVW2_4RZ76P_P40RYT",
+      "created_at": "2022-04-07T15:36:20.438Z",
+      "updated_at": "2022-10-12T07:09:53.528Z",
+      "description": "erat blandit ad.",
+      "active": true,
+      "category": { "id": 4, "name": "Stability" },
+      "impact": { "name": "vestibulum", "impact": 4 },
+      "likelihood": 1,
+      "node_id": "300821",
+      "tags": "9HU NRhApyFZP",
+      "reboot_required": true,
+      "publish_date": "2022-04-05T23:58:25.354Z",
+      "summary": "Consequat hac etiam urna ligula aptent viverra, metus consequat quam fringilla pellentesque malesuada, adipiscing orci mollis massa senectus.\n",
+      "generic": "Magna elit mattis dictumst accumsan felis orci euismod lacus porta, vulputate tempus inceptos proin primis auctor arcu justo.\n",
+      "reason": "Iaculis torquent arcu habitant metus maecenas cubilia vestibulum luctus curae, habitasse sapien scelerisque sollicitudin duis dapibus arcu interdum ornare aenean, lacinia eleifend posuere mi ullamcorper potenti lorem mi.\n",
+      "more_info": "Nullam feugiat a nam urna, malesuada nulla aenean.\n",
+      "resolution_set": [
+        {
+          "system_type": 101,
+          "resolution": "Tempor lectus ut mauris nulla, netus cras sociosqu.\n",
+          "resolution_risk": { "name": "KD43F BBQ", "risk": 2 },
+          "has_playbook": false
+        }
+      ],
+      "total_risk": 4
+    },
+    "details": {
+      "cur": "3.0.209-1",
+      "rel": "3.0.323",
+      "rhel": "9.6",
+      "type": "rule",
+      "error_key": "WE66GK_I5NVW2_4RZ76P_P40RYT"
+    },
+    "resolution": {
+      "system_type": 101,
+      "resolution": "Tempor lectus ut mauris nulla, netus cras sociosqu.\n",
+      "resolution_risk": { "name": "KD43F BBQ", "risk": 2 },
+      "has_playbook": false
+    },
+    "impacted_date": "2022-12-27T14:06:42.558Z"
+  },
+  {
+    "rule": {
+      "rule_id": "K5NvPZ_IVqWxm|AUDQJU_LQJS0C_QMY994_ZDQ6FM",
+      "created_at": "2022-03-04T20:40:46.219Z",
+      "updated_at": "2022-10-25T20:05:26.527Z",
+      "description": "quam euismod accumsan.",
+      "active": true,
+      "category": { "id": 2, "name": "Performance" },
+      "impact": { "name": "consequat", "impact": 2 },
+      "likelihood": 2,
+      "node_id": "300271",
+      "tags": "WbOh3BN 7N",
+      "reboot_required": false,
+      "publish_date": "2022-03-16T16:36:10.039Z",
+      "summary": "Vitae rhoncus luctus ipsum nisl hendrerit ac lacus dolor tortor, purus turpis fringilla morbi aptent nunc molestie nullam.\n",
+      "generic": "Iaculis ac vivamus massa himenaeos nunc vestibulum metus, ullamcorper ultrices non lectus augue taciti. Pharetra fusce pulvinar, euismod.\n",
+      "reason": "A netus habitant et dapibus ad primis placerat vel, commodo laoreet quisque aliquam auctor risus leo, platea ullamcorper hendrerit quam vivamus euismod sociosqu. Quis integer fermentum accumsan, rutrum.\n",
+      "more_info": "Dictum egestas augue adipiscing aenean, aliquet quisque hendrerit.\n",
+      "resolution_set": [
+        {
+          "system_type": 102,
+          "resolution": "Platea torquent ornare nostra ultrices, platea leo sodales.\n",
+          "resolution_risk": { "name": "ACKuq bRo", "risk": 3 },
+          "has_playbook": false
+        }
+      ],
+      "total_risk": 1
+    },
+    "details": {
+      "cur": "3.0.232-1",
+      "rel": "3.0.324",
+      "rhel": "8.6",
+      "type": "rule",
+      "error_key": "AUDQJU_LQJS0C_QMY994_ZDQ6FM"
+    },
+    "resolution": {
+      "system_type": 102,
+      "resolution": "Platea torquent ornare nostra ultrices, platea leo sodales.\n",
+      "resolution_risk": { "name": "ACKuq bRo", "risk": 3 },
+      "has_playbook": false
+    },
+    "impacted_date": "2022-11-04T21:24:06.210Z"
+  },
+  {
+    "rule": {
+      "rule_id": "45RWiV_bYeh23|XEH95H_4XZGT1_5T2I12_KPR3KR",
+      "created_at": "2022-03-24T03:50:43.908Z",
+      "updated_at": "2022-11-23T10:49:52.813Z",
+      "description": "ultrices lectus potenti.",
+      "active": true,
+      "category": { "id": 2, "name": "Performance" },
+      "impact": { "name": "mauris", "impact": 2 },
+      "likelihood": 2,
+      "node_id": "300247",
+      "tags": "kyDpJhW e4EOViJEK",
+      "reboot_required": true,
+      "publish_date": "2022-03-26T21:35:34.777Z",
+      "summary": "Conubia id ipsum aptent sem molestie senectus dictumst lacinia pretium, posuere metus risus facilisis nam curae fusce nec.\n",
+      "generic": "Vehicula velit aenean sed aptent integer fusce, nunc malesuada pharetra habitasse urna ultrices, ullamcorper non egestas neque cras.\n",
+      "reason": "Consequat scelerisque justo nibh accumsan eleifend tempus blandit, platea habitasse in scelerisque eget feugiat, torquent eget curae dictumst magna dui. Morbi aliquam auctor at amet, taciti ipsum tempor.\n",
+      "more_info": "Orci accumsan nam cursus vulputate, turpis nibh luctus.\n",
+      "resolution_set": [
+        {
+          "system_type": 100,
+          "resolution": "Class enim justo tellus vehicula, viverra curae massa.\n",
+          "resolution_risk": { "name": "JNpFx eqz", "risk": 1 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 2
+    },
+    "details": {
+      "cur": "3.0.206-1",
+      "rel": "3.0.309",
+      "rhel": "6.10",
+      "type": "rule",
+      "error_key": "XEH95H_4XZGT1_5T2I12_KPR3KR"
+    },
+    "resolution": {
+      "system_type": 100,
+      "resolution": "Class enim justo tellus vehicula, viverra curae massa.\n",
+      "resolution_risk": { "name": "JNpFx eqz", "risk": 1 },
+      "has_playbook": true
+    },
+    "impacted_date": "2022-12-21T02:11:48.937Z"
+  },
+  {
+    "rule": {
+      "rule_id": "uw6s5v_XGlycB|U54AJC_OI1DOY_SLZ2RH_KLVPLR",
+      "created_at": "2022-04-17T13:16:19.058Z",
+      "updated_at": "2022-11-02T07:01:27.316Z",
+      "description": "sapien quisque sociosqu.",
+      "active": true,
+      "category": { "id": 3, "name": "Security" },
+      "impact": { "name": "rhoncus", "impact": 4 },
+      "likelihood": 4,
+      "node_id": "300579",
+      "tags": "6NI04S6nWd orJXZhCm",
+      "reboot_required": false,
+      "publish_date": "2022-03-27T07:30:23.645Z",
+      "summary": "Erat pretium metus odio eget nec semper, orci arcu sed accumsan non venenatis, a sed ipsum euismod ante.\n",
+      "generic": "Dictum morbi erat consequat quis orci tincidunt nisi himenaeos ad, blandit fames cras enim imperdiet aliquam libero potenti.\n",
+      "reason": "Donec duis nostra class dictum ipsum class condimentum a suspendisse, turpis convallis tortor turpis elit habitant malesuada ut eleifend massa, diam est ullamcorper sollicitudin et enim nostra class.\n",
+      "more_info": "Nam ultricies facilisis adipiscing, ac platea, morbi facilisis.\n",
+      "resolution_set": [
+        {
+          "system_type": 102,
+          "resolution": "Maecenas non litora nullam ornare, bibendum nulla lacus.\n",
+          "resolution_risk": { "name": "DDrKK xUg", "risk": 3 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 4
+    },
+    "details": {
+      "cur": "3.0.237-1",
+      "rel": "3.0.319",
+      "rhel": "7.8",
+      "type": "rule",
+      "error_key": "U54AJC_OI1DOY_SLZ2RH_KLVPLR"
+    },
+    "resolution": {
+      "system_type": 102,
+      "resolution": "Maecenas non litora nullam ornare, bibendum nulla lacus.\n",
+      "resolution_risk": { "name": "DDrKK xUg", "risk": 3 },
+      "has_playbook": true
+    },
+    "impacted_date": "2022-12-13T03:15:53.176Z"
+  },
+  {
+    "rule": {
+      "rule_id": "77UcYm_Vr6yl2|ZKUH3N_8FLDMK_BZGUQQ_TW6OCO",
+      "created_at": "2022-03-12T22:24:54.486Z",
+      "updated_at": "2022-10-17T15:04:22.087Z",
+      "description": "dui pellentesque ultrices.",
+      "active": true,
+      "category": { "id": 2, "name": "Performance" },
+      "impact": { "name": "neque", "impact": 1 },
+      "likelihood": 2,
+      "node_id": "300877",
+      "tags": "JqH0OIgNk lHBAc1C",
+      "reboot_required": true,
+      "publish_date": "2022-03-05T03:17:53.601Z",
+      "summary": "Ipsum adipiscing est pretium imperdiet quis maecenas torquent suscipit nisl, pellentesque quisque hac leo integer placerat sem aptent.\n",
+      "generic": "Libero accumsan aenean pellentesque odio vel nisi erat nam varius, leo sed nec taciti volutpat class ipsum odio.\n",
+      "reason": "Felis viverra est class tempor dapibus, vel per morbi auctor per, pretium at venenatis etiam. Consequat aliquam lacinia et bibendum laoreet nec laoreet, commodo felis eget mollis praesent.\n",
+      "more_info": "Mollis bibendum condimentum torquent ante, quisque orci quis.\n",
+      "resolution_set": [
+        {
+          "system_type": 100,
+          "resolution": "Phasellus ipsum ornare porttitor consequat, ut sodales nisl.\n",
+          "resolution_risk": { "name": "5S0DR E7w", "risk": 4 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 3
+    },
+    "details": {
+      "cur": "3.0.222-1",
+      "rel": "3.0.328",
+      "rhel": "8.9",
+      "type": "rule",
+      "error_key": "ZKUH3N_8FLDMK_BZGUQQ_TW6OCO"
+    },
+    "resolution": {
+      "system_type": 100,
+      "resolution": "Phasellus ipsum ornare porttitor consequat, ut sodales nisl.\n",
+      "resolution_risk": { "name": "5S0DR E7w", "risk": 4 },
+      "has_playbook": true
+    },
+    "impacted_date": "2022-12-28T02:20:33.135Z"
+  },
+  {
+    "rule": {
+      "rule_id": "eTyZ4z_FNwNge|XDYFJL_YSKM9M_U71LVV_GOKXS1",
+      "created_at": "2022-03-04T18:42:45.575Z",
+      "updated_at": "2022-11-19T19:39:11.267Z",
+      "description": "lorem ut inceptos.",
+      "active": true,
+      "category": { "id": 4, "name": "Stability" },
+      "impact": { "name": "platea", "impact": 1 },
+      "likelihood": 2,
+      "node_id": "300464",
+      "tags": "m2SL 1Mi3X",
+      "reboot_required": false,
+      "publish_date": "2022-03-07T07:31:22.338Z",
+      "summary": "Quisque accumsan vitae orci fringilla odio convallis, ut tincidunt etiam hendrerit cras vel, turpis bibendum faucibus commodo laoreet.\n",
+      "generic": "Rutrum nibh purus felis aliquam aliquet nulla, ante litora fermentum erat quisque consequat, mattis iaculis velit erat iaculis.\n",
+      "reason": "Aenean imperdiet adipiscing lacus luctus eu ornare, felis nullam sociosqu conubia vel lobortis eget, viverra orci nullam gravida eget. Nibh sit fames duis urna volutpat, nec enim laoreet.\n",
+      "more_info": "Odio iaculis libero quis ut, ac fames adipiscing.\n",
+      "resolution_set": [
+        {
+          "system_type": 103,
+          "resolution": "Netus ullamcorper quam sodales taciti, at feugiat lacus.\n",
+          "resolution_risk": { "name": "QOOWJ 760", "risk": 3 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 2
+    },
+    "details": {
+      "cur": "3.0.221-1",
+      "rel": "3.0.348",
+      "rhel": "9.6",
+      "type": "rule",
+      "error_key": "XDYFJL_YSKM9M_U71LVV_GOKXS1"
+    },
+    "resolution": {
+      "system_type": 103,
+      "resolution": "Netus ullamcorper quam sodales taciti, at feugiat lacus.\n",
+      "resolution_risk": { "name": "QOOWJ 760", "risk": 3 },
+      "has_playbook": true
+    },
+    "impacted_date": "2022-11-02T16:47:20.104Z"
+  },
+  {
+    "rule": {
+      "rule_id": "mh0zT5_zh9Ipn|J44WBE_KA8E10_K4Z09Y_1M57J3",
+      "created_at": "2022-03-13T02:58:46.860Z",
+      "updated_at": "2022-10-17T17:26:32.855Z",
+      "description": "aliquet netus cursus.",
+      "active": true,
+      "category": { "id": 4, "name": "Stability" },
+      "impact": { "name": "adipiscing", "impact": 3 },
+      "likelihood": 2,
+      "node_id": "300666",
+      "tags": "595UT6 Q6",
+      "reboot_required": false,
+      "publish_date": "2022-03-14T08:27:35.062Z",
+      "summary": "Dictumst euismod vehicula in arcu convallis sed pulvinar, aliquam bibendum eget metus vestibulum velit. Euismod at ipsum, class.\n",
+      "generic": "Posuere venenatis tortor fringilla arcu sit magna, interdum convallis scelerisque turpis fringilla nec, quisque varius proin sit ornare.\n",
+      "reason": "Bibendum maecenas porttitor magna nostra commodo vulputate hendrerit inceptos sem, neque rhoncus viverra pulvinar ante ipsum semper platea lacus id, ut sem urna suspendisse malesuada taciti cursus felis.\n",
+      "more_info": "Condimentum tincidunt netus taciti nec, taciti dictumst etiam.\n",
+      "resolution_set": [
+        {
+          "system_type": 100,
+          "resolution": "A massa sociosqu curae pharetra, volutpat nulla etiam.\n",
+          "resolution_risk": { "name": "FIaKu 4UM", "risk": 2 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 4
+    },
+    "details": {
+      "cur": "3.0.214-1",
+      "rel": "3.0.348",
+      "rhel": "9.4",
+      "type": "rule",
+      "error_key": "J44WBE_KA8E10_K4Z09Y_1M57J3"
+    },
+    "resolution": {
+      "system_type": 100,
+      "resolution": "A massa sociosqu curae pharetra, volutpat nulla etiam.\n",
+      "resolution_risk": { "name": "FIaKu 4UM", "risk": 2 },
+      "has_playbook": true
+    },
+    "impacted_date": "2022-11-04T03:31:01.434Z"
+  },
+  {
+    "rule": {
+      "rule_id": "tLsezo_P2sAzt|2T7SHS_A6Z0KE_W4TVSJ_CRKHI8",
+      "created_at": "2022-03-03T02:45:49.391Z",
+      "updated_at": "2022-10-16T06:01:13.530Z",
+      "description": "quam tristique mattis.",
+      "active": true,
+      "category": { "id": 4, "name": "Stability" },
+      "impact": { "name": "tellus", "impact": 1 },
+      "likelihood": 3,
+      "node_id": "300538",
+      "tags": "1GJDP63yK rSANFz1l5",
+      "reboot_required": true,
+      "publish_date": "2022-03-11T02:50:37.869Z",
+      "summary": "Turpis senectus adipiscing luctus id placerat etiam, est himenaeos curae diam porta at, porttitor nunc quisque ac nisi.\n",
+      "generic": "Sollicitudin faucibus ipsum hendrerit arcu ornare per, sed blandit auctor augue vehicula interdum, a conubia elementum porta etiam.\n",
+      "reason": "Donec sollicitudin faucibus fames et orci diam, sit nibh est sociosqu odio faucibus convallis, bibendum lobortis erat accumsan nec. Fames lacinia potenti cras ornare tincidunt, sodales tristique per.\n",
+      "more_info": "Donec mattis est praesent orci, vel ornare morbi.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Fusce ac elementum habitasse dui, quis ligula duis.\n",
+          "resolution_risk": { "name": "VSr73 SfY", "risk": 3 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 2
+    },
+    "details": {
+      "cur": "3.0.239-1",
+      "rel": "3.0.316",
+      "rhel": "6.5",
+      "type": "rule",
+      "error_key": "2T7SHS_A6Z0KE_W4TVSJ_CRKHI8"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Fusce ac elementum habitasse dui, quis ligula duis.\n",
+      "resolution_risk": { "name": "VSr73 SfY", "risk": 3 },
+      "has_playbook": true
+    },
+    "impacted_date": "2022-12-08T10:23:59.807Z"
+  }
+]

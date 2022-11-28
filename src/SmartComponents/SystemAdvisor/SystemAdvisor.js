@@ -14,7 +14,7 @@ import {
   Tooltip,
   TooltipPosition,
 } from '@patternfly/react-core';
-import { IntlProvider, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import {
   SortByDirection,
@@ -22,7 +22,6 @@ import {
   TableBody,
   TableHeader,
   TableVariant,
-  cellWidth,
   fitContent,
   sortable,
 } from '@patternfly/react-table';
@@ -35,14 +34,12 @@ import { List } from 'react-content-loader';
 import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
-import { ReportDetails } from '@redhat-cloud-services/frontend-components-advisor-components';
+import { ReportDetails } from '@redhat-cloud-services/frontend-components-advisor-components/ReportDetails';
 import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import { capitalize } from '../../PresentationalComponents/Common/Tables';
 import messages from '../../Messages';
-import { Provider } from 'react-redux';
 import {
-  HideResultsSatelliteManaged,
   NoMatchingRecommendations,
   NoRecommendations,
   InsightsNotEnabled,
@@ -50,8 +47,9 @@ import {
 } from './EmptyStates';
 import NotConnected from '@redhat-cloud-services/frontend-components/NotConnected';
 import { useLocation } from 'react-router-dom';
+import get from 'lodash/get';
 
-const BaseSystemAdvisor = () => {
+const BaseSystemAdvisor = ({ entity }) => {
   const intl = useIntl();
   const systemAdvisorRef = useRef({
     rowCount: 0,
@@ -59,10 +57,6 @@ const BaseSystemAdvisor = () => {
   const dispatch = useDispatch();
   const addNotification = (data) => dispatch(addNotificationAction(data));
 
-  const entity = useSelector(({ entityDetails }) => entityDetails.entity);
-  const systemProfile = useSelector(({ systemProfileStore }) =>
-    systemProfileStore ? systemProfileStore.systemProfile : {}
-  );
   const routerData = useSelector(({ routerData }) => routerData);
 
   const [inventoryReportFetchStatus, setInventoryReportFetchStatus] =
@@ -72,16 +66,11 @@ const BaseSystemAdvisor = () => {
   const [kbaDetailsData, setKbaDetailsData] = useState([]);
   const [sortBy, setSortBy] = useState({});
   const [filters, setFilters] = useState({});
-  const [accountSettings, setAccountSettings] = useState({});
   const [searchValue, setSearchValue] = useState('');
   const [isSelected, setIsSelected] = useState(false);
   const [isAllExpanded, setIsAllExpanded] = useState(false);
 
-  const satelliteManaged =
-    (systemProfile && systemProfile.satellite_managed) || false; // system is managed by satellite
-  const satelliteShowHosts = accountSettings.show_satellite_hosts || false; // setting to show satellite managed systems
-  const hideResultsSatelliteManaged = !satelliteShowHosts && satelliteManaged;
-  const getSelectedItems = (rows) => rows.filter((entity) => entity.selected);
+  const getSelectedItems = (rows) => rows.filter((row) => row.selected);
   const selectedAnsibleRules = getSelectedItems(rows).filter(
     (r) => r.resolution?.has_playbook
   );
@@ -97,11 +86,15 @@ const BaseSystemAdvisor = () => {
     },
     {
       title: intl.formatMessage(messages.modified),
-      transforms: [sortable, cellWidth(15)],
+      transforms: [sortable, fitContent],
+    },
+    {
+      title: intl.formatMessage(messages.firstImpacted),
+      transforms: [sortable, fitContent],
     },
     {
       title: intl.formatMessage(messages.totalRisk),
-      transforms: [sortable],
+      transforms: [sortable, fitContent],
     },
     {
       title: intl.formatMessage(messages.remediation),
@@ -230,9 +223,20 @@ const BaseSystemAdvisor = () => {
             },
             {
               title: (
-                <div key={key}>
+                <span>
                   <DateFormat
                     date={rule.publish_date}
+                    type="relative"
+                    tooltipProps={{ position: TooltipPosition.bottom }}
+                  />
+                </span>
+              ),
+            },
+            {
+              title: (
+                <div key={key}>
+                  <DateFormat
+                    date={value.impacted_date}
                     type="relative"
                     tooltipProps={{ position: TooltipPosition.bottom }}
                   />
@@ -512,26 +516,27 @@ const BaseSystemAdvisor = () => {
 
   const onSort = (_e, index, direction) => {
     const sortedReports = {
-      1: 'description',
-      2: 'publish_date',
-      3: 'total_risk',
-      4: 'has_playbook',
+      2: 'rule.description',
+      3: 'rule.publish_date',
+      4: 'impacted_date',
+      5: 'rule.total_risk',
+      6: 'resolution.has_playbook',
     };
-    const key = index === 5 ? 'resolution' : 'rule';
-    const sort = (key) =>
-      activeReports
-        .concat()
-        .sort((firstItem, secondItem) =>
-          firstItem[key][sortedReports[index]] >
-          secondItem[key][sortedReports[index]]
-            ? 1
-            : secondItem[key][sortedReports[index]] >
-              firstItem[key][sortedReports[index]]
-            ? -1
-            : 0
-        );
-    const sortedReportsDirectional =
-      direction === SortByDirection.asc ? sort(key) : sort(key).reverse();
+    const d = direction === SortByDirection.asc ? 1 : -1;
+
+    const sort = () =>
+      activeReports.concat().sort((firstItem, secondItem) => {
+        let fst = get(firstItem, sortedReports[index]);
+        let snd = get(secondItem, sortedReports[index]);
+
+        if (index === 3 || index === 4) {
+          fst = new Date(fst);
+          snd = new Date(snd);
+        }
+        return fst > snd ? d : snd > fst ? -d : 0;
+      });
+
+    const sortedReportsDirectional = sort();
 
     setActiveReports(sortedReportsDirectional);
     setSortBy({
@@ -641,20 +646,14 @@ const BaseSystemAdvisor = () => {
   useEffect(() => {
     const dataFetch = async () => {
       try {
-        const [settingsFetch, reportsFetch] = await Promise.all([
-          (
-            await Get(`${BASE_URL}/account_setting/`, {
-              credentials: 'include',
-            })
-          ).data,
-          (
-            await Get(`${BASE_URL}/system/${entity.id}/reports/`, {
-              credentials: 'include',
-            })
-          ).data,
-        ]);
+        const reportsFetch = await Get(
+          `${BASE_URL}/system/${entity.id}/reports/`,
+          {
+            credentials: 'include',
+          }
+        );
 
-        const activeRuleFirstReportsData = activeRuleFirst(reportsFetch);
+        const activeRuleFirstReportsData = activeRuleFirst(reportsFetch.data);
         fetchKbaDetails(activeRuleFirstReportsData);
 
         setRows(
@@ -669,7 +668,6 @@ const BaseSystemAdvisor = () => {
         );
         setInventoryReportFetchStatus('fulfilled');
         setActiveReports(activeRuleFirstReportsData);
-        setAccountSettings(settingsFetch);
       } catch (error) {
         setInventoryReportFetchStatus('failed');
       }
@@ -687,8 +685,6 @@ const BaseSystemAdvisor = () => {
   ) : (
     <div className="ins-c-inventory-insights__overrides">
       {inventoryReportFetchStatus === 'pending' ||
-      (inventoryReportFetchStatus === 'fulfilled' &&
-        hideResultsSatelliteManaged) ||
       entity.insights_id === null ? (
         <Fragment />
       ) : (
@@ -716,59 +712,42 @@ const BaseSystemAdvisor = () => {
           </CardBody>
         </Card>
       )}
-      {inventoryReportFetchStatus === 'fulfilled' &&
-        (hideResultsSatelliteManaged ? (
-          <HideResultsSatelliteManaged />
-        ) : (
-          <Fragment>
-            <Table
-              aria-label={'report-table'}
-              onSelect={
-                !(rows.length === 1 && rows[0].heightAuto) && onRowSelect
-              }
-              onCollapse={handleOnCollapse}
-              rows={rows}
-              cells={cols}
-              sortBy={sortBy}
-              canSelectAll={false}
-              onSort={onSort}
-              variant={TableVariant.compact}
-              isStickyHeader
-            >
-              <TableHeader />
-              <TableBody />
-            </Table>
-          </Fragment>
-        ))}
+      {inventoryReportFetchStatus === 'fulfilled' && (
+        <Fragment>
+          <Table
+            id={'system-advisor-report-table'}
+            aria-label={'report-table'}
+            onSelect={!(rows.length === 1 && rows[0].heightAuto) && onRowSelect}
+            onCollapse={handleOnCollapse}
+            rows={rows}
+            cells={cols}
+            sortBy={sortBy}
+            canSelectAll={false}
+            onSort={onSort}
+            variant={TableVariant.compact}
+            isStickyHeader
+          >
+            <TableHeader />
+            <TableBody />
+          </Table>
+        </Fragment>
+      )}
     </div>
   );
 };
 
-const SystemAdvisor = ({ customItnl, intlProps, store, ...props }) => {
-  const Wrapper = customItnl ? IntlProvider : Fragment;
-  const ReduxProvider = store ? Provider : Fragment;
-  return (
-    <Wrapper
-      {...(customItnl && {
-        locale: navigator.language.slice(0, 2),
-        messages,
-        ...intlProps,
-      })}
-    >
-      <ReduxProvider store={store}>
-        <BaseSystemAdvisor {...props} />
-      </ReduxProvider>
-    </Wrapper>
-  );
+BaseSystemAdvisor.propTypes = {
+  entity: PropTypes.shape({
+    insights_id: PropTypes.string,
+    id: PropTypes.string,
+  }),
+};
+
+const SystemAdvisor = ({ ...props }) => {
+  const entity = useSelector(({ entityDetails }) => entityDetails.entity);
+
+  return <BaseSystemAdvisor {...props} entity={entity} />;
 };
 
 export default SystemAdvisor;
-
-SystemAdvisor.propTypes = {
-  customItnl: PropTypes.bool,
-  intlProps: PropTypes.shape({
-    locale: PropTypes.string,
-    messages: PropTypes.array,
-  }),
-  store: PropTypes.object,
-};
+export { BaseSystemAdvisor };

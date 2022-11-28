@@ -12,8 +12,6 @@ import {
   paramParser,
   pruneFilters,
   urlBuilder,
-  workloadQueryBuilder,
-  buildTagFilter,
 } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 
@@ -33,6 +31,7 @@ import { usePermissions } from '@redhat-cloud-services/frontend-components-utili
 import NoSystemsTable from './Components/NoSystemsTable';
 import { useLoadModule } from '@scalprum/react-core';
 import { systemsTableColumns } from './SystemsTableAssets';
+import { createOptions } from '../helper';
 
 const SystemsTable = () => {
   const intl = useIntl();
@@ -277,27 +276,18 @@ const SystemsTable = () => {
             orderBy
           }`;
 
-          let options = {
-            ...advisorFilters,
-            limit: per_page,
-            offset: page * per_page - per_page,
+          let options = createOptions(
+            advisorFilters,
+            page,
+            per_page,
             sort,
-            ...(config.filters.hostnameOrId && {
-              display_name: config?.filters?.hostnameOrId,
-            }),
-            ...(Array.isArray(advisorFilters.incident) && {
-              incident: advisorFilters?.incident?.join(','),
-            }),
-            ...(Array.isArray(advisorFilters.rhel_version) && {
-              rhel_version: advisorFilters.rhel_version?.join(','),
-            }),
-            ...(filters.tagFilters?.length &&
-              buildTagFilter(filters.tagFilters)),
-          };
-
-          workloads &&
-            (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
-
+            null,
+            filters,
+            selectedTags,
+            workloads,
+            SID,
+            true
+          );
           const fetchedSystems = (await Get(SYSTEMS_FETCH_URL, {}, options))
             ?.data;
 

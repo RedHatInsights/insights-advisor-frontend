@@ -1,6 +1,7 @@
 # Advisor Frontend
 
 [![Build Status](https://travis-ci.com/RedHatInsights/insights-advisor-frontend.svg?branch=master)](https://app.travis-ci.com/github/RedHatInsights/insights-advisor-frontend)
+[![codecov](https://codecov.io/github/RedHatInsights/insights-advisor-frontend/branch/master/graph/badge.svg?token=g9fj8a4SW9)](https://codecov.io/github/RedHatInsights/insights-advisor-frontend)
 
 ## First time setup
 1. Make sure you have [Node.js](https://nodejs.org/en/) version >= 16 installed
@@ -26,16 +27,16 @@ Any push to the following branches will trigger a build in [insights-advisor-fro
 | :--------------------------- | :---------------------------- | :---------------- | :-----------
 | master                       | stage-beta                    | stage beta        | https://console.stage.redhat.com/beta
 | master-stable                | stage-stable                  | stage stable      | https://console.stage.redhat.com
-| prod-beta                    | prod-beta                     | production beta   | https://console.redhat.com/beta 
+| prod-beta                    | prod-beta                     | production beta   | https://console.redhat.com/beta
 | prod-stable                  | prod-stable                   | production stable | https://console.redhat.com
 
 ## Internationalization
 
 ### Translation keys
-Translation keys are saved in [`messages.js`](https://github.com/RedHatInsights/insights-advisor-frontend/blob/master/src/Messages.js). 
+Translation keys are saved in [`messages.js`](https://github.com/RedHatInsights/insights-advisor-frontend/blob/master/src/Messages.js).
 
 ### Generating translation keys
-Each time you add a new translation keys you need to run `npm run translations`, which will automatically generate JSON files for every language into [`locales/`](https://github.com/RedHatInsights/insights-advisor-frontend/tree/master/locales) folder based on the entries in the [`messages.js`](https://github.com/RedHatInsights/insights-advisor-frontend/blob/master/src/Messages.js). 
+Each time you add a new translation keys you need to run `npm run translations`, which will automatically generate JSON files for every language into [`locales/`](https://github.com/RedHatInsights/insights-advisor-frontend/tree/master/locales) folder based on the entries in the [`messages.js`](https://github.com/RedHatInsights/insights-advisor-frontend/blob/master/src/Messages.js).
 
 ### Using translated strings
 There are two ways to use translated strings:
