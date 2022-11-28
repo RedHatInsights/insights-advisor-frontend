@@ -46,26 +46,41 @@ function* cumulativeCombinations(arr, current = []) {
   }
 }
 const TOTAL_RISK = { Low: 1, Moderate: 2, Important: 3, Critical: 4 };
+const RISK_OF_CHANGE = { 'Very Low': 1, Low: 2, Moderate: 3, High: 4 };
 const IMPACT = { Low: 1, Medium: 2, High: 3, Critical: 4 };
 const LIKELIHOOD = { Low: 1, Medium: 2, High: 3, Critical: 4 };
 const CATEGORIES_MAP = {
-  'Service Availability': 1,
-  Security: 4,
-  'Fault Tolerance': 3,
-  Performance: 2,
+  Availability: 1,
+  Security: 2,
+  Stability: 3,
+  Performance: 4,
 };
 const STATUS = ['All', 'Enabled', 'Disabled'];
 const IMPACTING = { '1 or more': 'true', None: 'false' };
+const INCIDENT = { Incident: 'true', 'Non-incident': 'false' };
+const REMEDIATION = { 'Ansible playbook': true, Manual: false };
+const REBOOT = { Required: true, 'Not required': false };
+
+// missing: incidents, remediation, rebootRequired
+
 //Filters configuration
 const filtersConf = {
   name: {
     selectorText: 'Name',
-    values: ['Reboot', 'Kernel'],
+    values: ['foobar'],
     type: 'input',
     filterFunc: (it, value) =>
       it.description.toLowerCase().includes(value.toLowerCase()),
     urlParam: 'text',
     urlValue: (it) => it.replace(/ /g, '+'),
+  },
+  riskOfChange: {
+    selectorText: 'Risk of change',
+    values: Array.from(cumulativeCombinations(Object.keys(RISK_OF_CHANGE))),
+    type: 'checkbox',
+    urlParam: 'res_risk',
+    urlValue: (it) =>
+      encodeURIComponent(_.map(it, (x) => RISK_OF_CHANGE[x]).join(',')),
   },
   risk: {
     selectorText: 'Total risk',
@@ -108,6 +123,29 @@ const filtersConf = {
     urlParam: 'category',
     urlValue: (it) =>
       encodeURIComponent(_.map(it, (x) => CATEGORIES_MAP[x]).join(',')),
+  },
+  incidents: {
+    selectorText: 'Incidents',
+    values: Array.from(cumulativeCombinations(Object.keys(INCIDENT))),
+    type: 'checkbox',
+    urlParam: 'incident',
+    urlValue: (it) =>
+      encodeURIComponent(_.map(it, (x) => INCIDENT[x]).join(',')),
+  },
+  remediation: {
+    selectorText: 'Remediation',
+    values: Array.from(cumulativeCombinations(Object.keys(REMEDIATION))),
+    type: 'checkbox',
+    urlParam: 'has_playbook',
+    urlValue: (it) =>
+      encodeURIComponent(_.map(it, (x) => REMEDIATION[x]).join(',')),
+  },
+  reboot: {
+    selectorText: 'Reboot required',
+    values: Array.from(cumulativeCombinations(Object.keys(REBOOT))),
+    type: 'checkbox',
+    urlParam: 'reboot',
+    urlValue: (it) => encodeURIComponent(_.map(it, (x) => REBOOT[x]).join(',')),
   },
   status: {
     selectorText: 'Status',
@@ -361,5 +399,25 @@ describe('filtering', () => {
     removeAllChips();
     checkRowCounts(DEFAULT_ROW_COUNT);
     checkPaginationTotal(fixtures.meta.count);
+  });
+
+  describe('sends a request with correct parameters', () => {
+    Object.entries(filtersConf).forEach(([key, config]) => {
+      const { urlParam, values, urlValue, selectorText } = config;
+
+      it(`apply ${selectorText} filter`, () => {
+        // initial call
+        cy.wait('@call');
+
+        if (selectorText === filtersConf.impacting.selectorText) {
+          removeAllChips();
+          cy.wait(['@call', '@call']);
+        }
+        filterApply({ [key]: values[0] });
+        cy.wait('@call')
+          .its('request.url')
+          .should('include', `${urlParam}=${urlValue(values[0])}`);
+      });
+    });
   });
 });
