@@ -26,6 +26,7 @@ import {
   checkRowCounts,
   removeAllChips,
   applyFilters,
+  SORTING_ORDERS,
 } from '@redhat-cloud-services/frontend-components-utilities';
 
 //I'm looking at the https://docs.cypress.io/guides/component-testing/custom-mount-react#React-Router
@@ -417,6 +418,40 @@ describe('filtering', () => {
         cy.wait('@call')
           .its('request.url')
           .should('include', `${urlParam}=${urlValue(values[0])}`);
+      });
+    });
+  });
+
+  describe.only('sorting', () => {
+    function checkSortingUrl(label, order, dataField) {
+      // get appropriate locators
+      const header = `th[data-label="${label}"]`;
+      // sort by column and verify URL
+      if (order === 'ascending') {
+        cy.get(header).find('button').click();
+        cy.url().should('include', `sort=${dataField}`);
+      } else {
+        cy.get(header).find('button').dblclick();
+        cy.url().should('include', `sort=${dataField}`);
+      }
+    }
+
+    _.zip(
+      [
+        'description',
+        'publish_date',
+        'category',
+        'total_risk',
+        'impacted_count',
+        'playbook_count',
+      ],
+      TABLE_HEADERS
+    ).forEach(([category, label]) => {
+      let sortingParameter = category;
+      SORTING_ORDERS.forEach((order) => {
+        it(`${order} by ${label}`, () => {
+          checkSortingUrl(label, order, sortingParameter);
+        });
       });
     });
   });
