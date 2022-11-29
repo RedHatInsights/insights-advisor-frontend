@@ -33,8 +33,8 @@ export const rulesTableColumns = [
 ];
 
 export const CATEGORIES = {
-  'Service Availability': ['service_availability'],
   Security: ['security'],
-  'Fault Tolerance': ['fault_tolerance'],
+  Availability: ['availability'],
   Performance: ['performance'],
+  Stability: ['stability'],
 };
