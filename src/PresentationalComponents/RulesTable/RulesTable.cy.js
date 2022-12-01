@@ -46,6 +46,18 @@ function* cumulativeCombinations(arr, current = []) {
     }
   }
 }
+const mountComponent = () => {
+  const store = getStore();
+  cy.mount(
+    <MemoryRouter>
+      <IntlProvider locale={navigator.language.slice(0, 2)} messages={messages}>
+        <Provider store={store}>
+          <RulesTable />
+        </Provider>
+      </IntlProvider>
+    </MemoryRouter>
+  );
+};
 const TOTAL_RISK = { Low: 1, Moderate: 2, Important: 3, Critical: 4 };
 const RISK_OF_CHANGE = { 'Very Low': 1, Low: 2, Moderate: 3, High: 4 };
 const IMPACT = { Low: 1, Medium: 2, High: 3, Critical: 4 };
@@ -187,10 +199,6 @@ const DEFAULT_FILTERS = {
 const TABLE_HEADERS = _.map(rulesTableColumns, (it) => it.title);
 const ROOT = 'table[aria-label=rule-table]';
 
-//Function I had to change to make the test work
-//sorting doesn't work - need separate function that catches the API response
-
-//TESTS//
 describe('renders correctly', () => {
   beforeEach(() => {
     cy.intercept('*', {
@@ -199,21 +207,7 @@ describe('renders correctly', () => {
         ...fixtures,
       },
     }).as('call');
-
-    const store = getStore();
-
-    cy.mount(
-      <MemoryRouter>
-        <IntlProvider
-          locale={navigator.language.slice(0, 2)}
-          messages={messages}
-        >
-          <Provider store={store}>
-            <RulesTable />
-          </Provider>
-        </IntlProvider>
-      </MemoryRouter>
-    );
+    mountComponent();
   });
   it('The Rules table renders', () => {
     cy.get(ROOT).should('have.length', 1);
@@ -236,28 +230,8 @@ describe('defaults', () => {
         ...fixtures,
       },
     }).as('call');
-
-    const store = getStore();
-
-    cy.mount(
-      <MemoryRouter>
-        <IntlProvider
-          locale={navigator.language.slice(0, 2)}
-          messages={messages}
-        >
-          <Provider store={store}>
-            <RulesTable />
-          </Provider>
-        </IntlProvider>
-      </MemoryRouter>
-    );
+    mountComponent();
   });
-  //this test doesn't work because RHEL Advisor do not apply default filters on to the URL
-  //at the first render.
-  /* it(`shows maximum ${DEFAULT_ROW_COUNT} rules`, () => {
-    checkRowCounts(DEFAULT_DISPLAYED_SIZE);
-    expect(window.location.search).to.contain(`limit=${DEFAULT_ROW_COUNT}`);
-  }); */
   it(`pagination is set to ${DEFAULT_ROW_COUNT}`, () => {
     cy.get('.pf-c-options-menu__toggle-text')
       .find('b')
@@ -291,21 +265,7 @@ describe('pagination', () => {
         ...fixtures,
       },
     }).as('call');
-
-    const store = getStore();
-
-    cy.mount(
-      <MemoryRouter>
-        <IntlProvider
-          locale={navigator.language.slice(0, 2)}
-          messages={messages}
-        >
-          <Provider store={store}>
-            <RulesTable />
-          </Provider>
-        </IntlProvider>
-      </MemoryRouter>
-    );
+    mountComponent();
   });
   it('shows correct total number of rules', () => {
     checkPaginationTotal(fixtures.meta.count);
@@ -323,26 +283,6 @@ describe('pagination', () => {
       });
     });
   });
-  //don't know how to make it work :(
-  /* it('can iterate over pages', () => {
-    cy.wrap(itemsPerPage(values.length)).each((el, index, list) => {
-      checkRowCounts(el).then(() => {
-        expect(window.location.search).to.contain(
-          `offset=${DEFAULT_ROW_COUNT * index}`
-        );
-      });
-      cy.get(TOOLBAR)
-        .find(PAGINATION)
-        .find('button[data-action="next"]')
-        .then(($button) => {
-          if (index === list.length - 1) {
-            cy.wrap($button).should('be.disabled');
-          } else {
-            cy.wrap($button).click();
-          }
-        });
-    });
-  }); */
 });
 
 describe('filtering', () => {
@@ -353,21 +293,7 @@ describe('filtering', () => {
         ...fixtures,
       },
     }).as('call');
-
-    const store = getStore();
-
-    cy.mount(
-      <MemoryRouter>
-        <IntlProvider
-          locale={navigator.language.slice(0, 2)}
-          messages={messages}
-        >
-          <Provider store={store}>
-            <RulesTable />
-          </Provider>
-        </IntlProvider>
-      </MemoryRouter>
-    );
+    mountComponent();
   });
   it('can clear filters', () => {
     cy.get(CHIP_GROUP)
@@ -430,21 +356,7 @@ describe('Sorting', () => {
         ...fixtures,
       },
     }).as('call');
-
-    const store = getStore();
-
-    cy.mount(
-      <MemoryRouter>
-        <IntlProvider
-          locale={navigator.language.slice(0, 2)}
-          messages={messages}
-        >
-          <Provider store={store}>
-            <RulesTable />
-          </Provider>
-        </IntlProvider>
-      </MemoryRouter>
-    );
+    mountComponent();
   });
   function checkSortingUrl(label, order, dataField) {
     // get appropriate locators
