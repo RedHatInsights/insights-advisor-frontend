@@ -174,7 +174,7 @@ const BaseSystemAdvisor = ({ entity }) => {
     const url = window.location.href;
     let newActiveReportsList = activeReports;
     let isRulePresent = url.indexOf('activeRule') > -1 ? true : false;
-    if (isRulePresent) {
+    if (isRulePresent && isFirstLoad) {
       let activeRule = location[2];
       //sorts activeReportsList by making the activeRecommendation ruleId having a higher priority when sorting, or by total_risk
       newActiveReportsList.sort((x, y) =>
