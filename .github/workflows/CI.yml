@@ -1,11 +1,11 @@
-name: Deploy
+name: CI
 on:
   push:
     branches: ['master', 'master-stable', 'prod-beta', 'prod-stable']
   pull_request:
     branches: ['master']
 jobs:
-  Deploy:
+  CI:
     runs-on: ubuntu-latest
     env:
       BRANCH: "${{ github.ref_name }}:-${{ github.head_ref }}"
@@ -18,13 +18,13 @@ jobs:
         uses: actions/checkout@v2
       - name: Install dependencies
         run: npm install
+      - name: Lint
+        run: npm run lint
       - name: Jest tests
         run: npm run test
       - name: Component tests
         run: npm run test:ct
       - name: Create coverage
         run: npm run coverage
-      - name: Lint
-        run: npm run lint
       - name: Deploy
-        run: npm run travis:verify && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
+        run: npm run travis:build && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
