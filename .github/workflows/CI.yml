@@ -1,0 +1,30 @@
+name: CI
+on:
+  push:
+    branches: ['master', 'master-stable', 'prod-beta', 'prod-stable']
+  pull_request:
+    branches: ['master']
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    env:
+      BRANCH: "${{ github.ref_name }}:-${{ github.head_ref }}"
+      TRAVIS_PULL_REQUEST_BRANCH: ${{ github.ref_name }}
+      TRAVIS_BRANCH: ${{ github.head_ref }}
+      REPO: "git@github.com:RedHatInsights/insights-advisor-frontend-build"
+      REPO_DIR: "insights-advisor-frontend-build"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint
+      - name: Jest tests
+        run: npm run test
+      - name: Component tests
+        run: npm run test:ct
+      - name: Create coverage
+        run: npm run coverage
+      - name: Deploy
+        run: npm run travis:build && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
