@@ -38,3 +38,13 @@ export const CATEGORIES = {
   Performance: ['performance'],
   Stability: ['stability'],
 };
+
+export const topicsTableColumns = [
+  { title: intl.formatMessage(messages.name) },
+  {
+    title: intl.formatMessage(messages.featured),
+  },
+  {
+    title: intl.formatMessage(messages.affectedSystems),
+  },
+];
