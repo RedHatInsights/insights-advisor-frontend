@@ -57,7 +57,6 @@ describe('defaults', () => {
   beforeEach(() => {
     mountComponent();
   });
-  //couldn't check the url paramater because it's not applied to the url on the first render
   it('sorting using Featured', () => {
     const column = 'Featured';
     tableIsSortedBy(column);
@@ -96,22 +95,22 @@ describe('sorting', () => {
     columnField,
     dataField,
   }) {
-    // get appropriate locators
     const header = `th[data-label="${label}"]`;
 
-    // sort by column and verify URL
     if (order === 'ascending') {
       cy.get(header).find('button').click();
     } else {
-      cy.get(header).find('button').click().click(); // TODO dblclick fails for unknown reason in RecsListTable when sorting by Clusters
+      cy.get(header).find('button').click().click();
     }
 
     let sortedValues = _.map(
-      _.orderBy(
-        data,
-        [sortingField],
-        [order === 'descending' ? 'desc' : 'asc']
-      ),
+      sortingField === 'featured' && order === 'descending'
+        ? _.sortBy(data, [(result) => result.featured]).reverse()
+        : _.orderBy(
+            data,
+            [sortingField],
+            [order === 'descending' ? 'desc' : 'asc']
+          ),
       dataField
     );
 
