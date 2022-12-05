@@ -195,7 +195,7 @@ const TopicsAdminTable = () => {
           {intl.formatMessage(messages.topicAdminTitle)}
         </Title>
       </PageHeader>
-      <Section>
+      <Section className="pf-l-page__main-section pf-c-page__main-section">
         <React.Fragment>
           <PrimaryToolbar className="toolbar-padding-override">
             <Button

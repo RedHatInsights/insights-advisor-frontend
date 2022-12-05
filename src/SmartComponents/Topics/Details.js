@@ -105,7 +105,7 @@ const Details = () => {
         )}
         {isFetching || (isLoading && <Loading />)}
       </PageHeader>
-      <Section>
+      <Section className="pf-l-page__main-section pf-c-page__main-section">
         <React.Fragment>
           {!isError ? (
             <React.Fragment>

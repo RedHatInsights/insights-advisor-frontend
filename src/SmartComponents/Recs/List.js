@@ -71,7 +71,7 @@ const List = () => {
           </Tooltip>
         )}
       </PageHeader>
-      <Section>
+      <Section className="pf-l-page__main-section pf-c-page__main-section">
         <Suspense fallback={<Loading />}>
           <PathwaysPanel />
         </Suspense>

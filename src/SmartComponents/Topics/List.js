@@ -40,7 +40,7 @@ const List = () => {
             .toLowerCase()}`}
         />
       </PageHeader>
-      <Section>
+      <Section className="pf-l-page__main-section pf-c-page__main-section">
         <TopicsTable props={{ data, isLoading, isFetching, isError }} />
       </Section>
     </React.Fragment>
