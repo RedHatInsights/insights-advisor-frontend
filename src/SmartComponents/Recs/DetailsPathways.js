@@ -24,7 +24,7 @@ import CategoryLabel from '../../PresentationalComponents/Labels/CategoryLabel';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import Loading from '../../PresentationalComponents/Loading/Loading';
-import { Main } from '@redhat-cloud-services/frontend-components/Main';
+import { Section } from '@redhat-cloud-services/frontend-components/Section';
 import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import messages from '../../Messages';
 import { useGetPathwayQuery } from '../../Services/Pathways';
@@ -152,7 +152,7 @@ const PathwayDetails = () => {
             </p>
             <p className="pf-u-mb-lg">{pathway.description}</p>
           </PageHeader>
-          <Main className="pf-u-pb-0">
+          <Section className="pf-u-pb-0">
             <Grid hasGutter>
               <GridItem sm={12} md={6}>
                 <TotalRiskCard {...pathway} />
@@ -161,11 +161,11 @@ const PathwayDetails = () => {
                 <ResolutionCard {...pathway} />
               </GridItem>
             </Grid>
-          </Main>
+          </Section>
         </React.Fragment>
       )}
       {isFetching && <Loading />}
-      <Main>
+      <Section>
         <Tabs
           className="adv__background--global-100"
           activeKey={activeTab}
@@ -214,7 +214,7 @@ const PathwayDetails = () => {
             )}
           </Tab>
         </Tabs>
-      </Main>
+      </Section>
     </React.Fragment>
   );
 };

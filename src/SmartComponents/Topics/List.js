@@ -3,7 +3,7 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
 
-import { Main } from '@redhat-cloud-services/frontend-components/Main';
+import { Section } from '@redhat-cloud-services/frontend-components/Section';
 import React from 'react';
 import TopicsTable from '../../PresentationalComponents/TopicsTable/TopicsTable';
 import messages from '../../Messages';
@@ -40,9 +40,9 @@ const List = () => {
             .toLowerCase()}`}
         />
       </PageHeader>
-      <Main>
+      <Section>
         <TopicsTable props={{ data, isLoading, isFetching, isError }} />
-      </Main>
+      </Section>
     </React.Fragment>
   );
 };
