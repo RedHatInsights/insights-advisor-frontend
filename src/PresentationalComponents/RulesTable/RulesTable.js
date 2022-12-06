@@ -266,11 +266,15 @@ const RulesTable = ({ isTabActive }) => {
       const paramsObject = paramParser();
       delete paramsObject.tags;
 
+      if (
+        paramsObject.sort[0] === '-recommendation_level' ||
+        paramsObject.sort === undefined
+      ) {
+        paramsObject.sort = '-total_risk';
+      }
       paramsObject.text === undefined
         ? setSearchText('')
         : setSearchText(paramsObject.text);
-      paramsObject.sort =
-        paramsObject.sort === undefined ? '-total_risk' : paramsObject.sort[0];
       paramsObject.has_playbook !== undefined &&
         !Array.isArray(paramsObject.has_playbook) &&
         (paramsObject.has_playbook = [`${paramsObject.has_playbook}`]);
