@@ -2,7 +2,7 @@
     {
         "name": "Gambezon",
         "slug": "aws",
-        "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla non arcu lacinia neque faucibus fringilla. Aenean placerat. Integer rutrum, orci vestibulum ullamcorper ultricies, lacus quam ultricies odio, vitae placerat pede sem sit amet enim. Quisque porta. ",
+        "description": "TEST",
         "tag": "aws",
         "featured": true,
         "enabled": true,
@@ -20,7 +20,7 @@
     {
         "name": "nginx",
         "slug": "nginx",
-        "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla non arcu lacinia neque faucibus fringilla. Aenean placerat. Integer rutrum, orci vestibulum ullamcorper ultricies, lacus quam ultricies odio, vitae placerat pede sem sit amet enim. Quisque porta. ",
+        "description": "ABZ",
         "tag": "nginx",
         "featured": false,
         "enabled": true,
@@ -29,7 +29,7 @@
     {
         "name": "Satellite",
         "slug": "satellite6",
-        "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla non arcu lacinia neque faucibus fringilla. Aenean placerat. Integer rutrum, orci vestibulum ullamcorper ultricies, lacus quam ultricies odio, vitae placerat pede sem sit amet enim. Quisque porta. ",
+        "description": "Quisque porta.",
         "tag": "satellite6",
         "featured": false,
         "enabled": true,

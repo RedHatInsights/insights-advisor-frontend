@@ -17,8 +17,8 @@ import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import TimesCircleIcon from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
 import messages from '../../Messages';
-import { orderBy } from 'lodash';
 import { useIntl } from 'react-intl';
+import { sortTopics } from '../helper';
 
 const TopicsTable = ({ props }) => {
   const intl = useIntl();
@@ -92,16 +92,8 @@ const TopicsTable = ({ props }) => {
     });
 
   const onSort = (_event, index, direction) => {
-    let sortingName = '';
-    index === 0
-      ? (sortingName = 'name')
-      : index === 2
-      ? (sortingName = 'featured')
-      : (sortingName = 'impacted_systems_count');
     setSort({ index, direction });
-    setRows(
-      buildRows(orderBy(topics, [(result) => result[sortingName]], direction))
-    );
+    setRows(buildRows(sortTopics(topics, index, direction)));
   };
 
   const activeFiltersConfig = {
