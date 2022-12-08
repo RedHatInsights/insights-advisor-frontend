@@ -28,7 +28,6 @@ import {
 } from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
 import {
   filterFetchBuilder,
-  paramParser,
   pruneFilters,
   ruleResolutionRisk,
   urlBuilder,
@@ -70,7 +69,7 @@ import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import PropTypes from 'prop-types';
 
-import { emptyRows } from './helpers';
+import { emptyRows, urlFilterBuilder } from './helpers';
 
 const RulesTable = ({ isTabActive }) => {
   const intl = useIntl();
@@ -263,37 +262,7 @@ const RulesTable = ({ isTabActive }) => {
   // Builds table filters from url params
   useEffect(() => {
     if (isTabActive && search && filterBuilding) {
-      const paramsObject = paramParser();
-      delete paramsObject.tags;
-
-      if (
-        paramsObject.sort[0] === '-recommendation_level' ||
-        paramsObject.sort === undefined
-      ) {
-        paramsObject.sort = '-total_risk';
-      }
-      paramsObject.text === undefined
-        ? setSearchText('')
-        : setSearchText(paramsObject.text);
-      paramsObject.has_playbook !== undefined &&
-        !Array.isArray(paramsObject.has_playbook) &&
-        (paramsObject.has_playbook = [`${paramsObject.has_playbook}`]);
-      paramsObject.incident !== undefined &&
-        !Array.isArray(paramsObject.incident) &&
-        (paramsObject.incident = [`${paramsObject.incident}`]);
-      paramsObject.offset === undefined
-        ? (paramsObject.offset = 0)
-        : (paramsObject.offset = Number(paramsObject.offset[0]));
-      paramsObject.limit === undefined
-        ? (paramsObject.limit = 20)
-        : (paramsObject.limit = Number(paramsObject.limit[0]));
-      paramsObject.reboot !== undefined &&
-        !Array.isArray(paramsObject.reboot) &&
-        (paramsObject.reboot = [`${paramsObject.reboot}`]);
-      paramsObject.impacting !== undefined &&
-        !Array.isArray(paramsObject.impacting) &&
-        (paramsObject.impacting = [`${paramsObject.impacting}`]);
-      setFilters({ ...filters, ...paramsObject });
+      urlFilterBuilder(sortIndices, setSearchText, setFilters, filters);
     }
 
     setFilterBuilding(false);
