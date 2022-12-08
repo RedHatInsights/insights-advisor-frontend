@@ -104,13 +104,11 @@ describe('sorting', () => {
     }
 
     let sortedValues = _.map(
-      sortingField === 'featured' && order === 'descending'
-        ? _.sortBy(data, [(result) => result.featured]).reverse()
-        : _.orderBy(
-            data,
-            [sortingField],
-            [order === 'descending' ? 'desc' : 'asc']
-          ),
+      _.orderBy(
+        data,
+        [sortingField],
+        [order === 'descending' ? 'desc' : 'asc']
+      ),
       dataField
     );
 

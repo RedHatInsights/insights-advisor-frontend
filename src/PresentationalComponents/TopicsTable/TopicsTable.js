@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  SortByDirection,
   Table,
   TableBody,
   TableHeader,
@@ -18,7 +17,7 @@ import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
 import TimesCircleIcon from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
 import messages from '../../Messages';
-import { sortBy } from 'lodash';
+import { orderBy } from 'lodash';
 import { useIntl } from 'react-intl';
 
 const TopicsTable = ({ props }) => {
@@ -93,17 +92,16 @@ const TopicsTable = ({ props }) => {
     });
 
   const onSort = (_event, index, direction) => {
-    const sortedReports = {
-      0: sortBy(topics, [(result) => result.name]),
-      2: sortBy(topics, [(result) => result.featured]),
-      3: sortBy(topics, [(result) => result.impacted_systems_count]),
-    };
-    const sortedTopicsDirectional =
-      direction === SortByDirection.asc
-        ? sortedReports[index]
-        : sortedReports[index].reverse();
+    let sortingName = '';
+    index === 0
+      ? (sortingName = 'name')
+      : index === 2
+      ? (sortingName = 'featured')
+      : (sortingName = 'impacted_systems_count');
     setSort({ index, direction });
-    setRows(buildRows(sortedTopicsDirectional));
+    setRows(
+      buildRows(orderBy(topics, [(result) => result[sortingName]], direction))
+    );
   };
 
   const activeFiltersConfig = {
