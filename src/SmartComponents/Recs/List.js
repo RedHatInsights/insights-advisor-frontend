@@ -14,7 +14,6 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import Loading from '../../PresentationalComponents/Loading/Loading';
-import { Section } from '@redhat-cloud-services/frontend-components/Section';
 import { PERMS } from '../../AppConstants';
 import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
 import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/';
@@ -71,7 +70,7 @@ const List = () => {
           </Tooltip>
         )}
       </PageHeader>
-      <Section className="pf-l-page__main-section pf-c-page__main-section">
+      <section className="pf-l-page__main-section pf-c-page__main-section">
         <Suspense fallback={<Loading />}>
           <PathwaysPanel />
         </Suspense>
@@ -108,7 +107,7 @@ const List = () => {
             </Suspense>
           </Tab>
         </Tabs>
-      </Section>
+      </section>
     </React.Fragment>
   );
 };

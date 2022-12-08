@@ -15,7 +15,6 @@ import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-
 import EditAltIcon from '@patternfly/react-icons/dist/js/icons/edit-alt-icon';
 import Failed from '../Loading/Failed';
 import Loading from '../Loading/Loading';
-import { Section } from '@redhat-cloud-services/frontend-components/Section';
 import MessageState from '../MessageState/MessageState';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
@@ -195,7 +194,7 @@ const TopicsAdminTable = () => {
           {intl.formatMessage(messages.topicAdminTitle)}
         </Title>
       </PageHeader>
-      <Section className="pf-l-page__main-section pf-c-page__main-section">
+      <section className="pf-l-page__main-section pf-c-page__main-section">
         <React.Fragment>
           <PrimaryToolbar className="toolbar-padding-override">
             <Button
@@ -228,7 +227,7 @@ const TopicsAdminTable = () => {
           )}
           <TableToolbar />
         </React.Fragment>
-      </Section>
+      </section>
     </React.Fragment>
   );
 };

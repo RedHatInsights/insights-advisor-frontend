@@ -3,7 +3,6 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
 
-import { Section } from '@redhat-cloud-services/frontend-components/Section';
 import React from 'react';
 import TopicsTable from '../../PresentationalComponents/TopicsTable/TopicsTable';
 import messages from '../../Messages';
@@ -40,9 +39,9 @@ const List = () => {
             .toLowerCase()}`}
         />
       </PageHeader>
-      <Section className="pf-l-page__main-section pf-c-page__main-section">
+      <section className="pf-l-page__main-section pf-c-page__main-section">
         <TopicsTable props={{ data, isLoading, isFetching, isError }} />
-      </Section>
+      </section>
     </React.Fragment>
   );
 };

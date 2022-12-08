@@ -25,7 +25,6 @@ import MessageState from '../../PresentationalComponents/MessageState/MessageSta
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 
-import { Section } from '@redhat-cloud-services/frontend-components/Section';
 import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 
@@ -140,7 +139,7 @@ const OverviewDetails = () => {
         />
       )}
       {isFetching && <Loading />}
-      <Section className="pf-l-page__main-section pf-c-page__main-section">
+      <section className="pf-l-page__main-section pf-c-page__main-section">
         {!isFetching ? (
           <React.Fragment>
             {(rule.hosts_acked_count > 0 || rule.rule_status !== 'enabled') && (
@@ -282,7 +281,7 @@ const OverviewDetails = () => {
         ) : (
           <Loading />
         )}
-      </Section>
+      </section>
     </React.Fragment>
   );
 };

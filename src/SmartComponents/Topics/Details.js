@@ -9,7 +9,6 @@ import {
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { Label } from '@patternfly/react-core/dist/js/components/Label/Label';
 import Loading from '../../PresentationalComponents/Loading/Loading';
-import { Section } from '@redhat-cloud-services/frontend-components/Section';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
@@ -105,7 +104,7 @@ const Details = () => {
         )}
         {isFetching || (isLoading && <Loading />)}
       </PageHeader>
-      <Section className="pf-l-page__main-section pf-c-page__main-section">
+      <section className="pf-l-page__main-section pf-c-page__main-section">
         <React.Fragment>
           {!isError ? (
             <React.Fragment>
@@ -122,7 +121,7 @@ const Details = () => {
             />
           )}
         </React.Fragment>
-      </Section>
+      </section>
     </React.Fragment>
   );
 };
