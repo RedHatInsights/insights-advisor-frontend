@@ -27,6 +27,9 @@ import {
   removeAllChips,
   applyFilters,
   SORTING_ORDERS,
+  TOOLBAR_FILTER,
+  DROPDOWN,
+  TEXT_INPUT,
 } from '@redhat-cloud-services/frontend-components-utilities';
 
 //I'm looking at the https://docs.cypress.io/guides/component-testing/custom-mount-react#React-Router
@@ -250,6 +253,11 @@ describe('defaults', () => {
     cy.get(CHIP_GROUP).find('.pf-c-chip__text').should('have.length', 2);
     //couldn't check the url paramater because it's not applied to the url on the first render
     //expect(window.location.search).to.contain(`status=enabled and systems impacted`);
+  });
+
+  it('name filter is a default filter', () => {
+    cy.get(TOOLBAR_FILTER).find(DROPDOWN).should('have.text', 'Name');
+    cy.get(TOOLBAR_FILTER).find(TEXT_INPUT).should('exist');
   });
 
   it('reset filters button is displayed', () => {
