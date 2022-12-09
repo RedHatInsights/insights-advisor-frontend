@@ -38,3 +38,21 @@ export const CATEGORIES = {
   Performance: ['performance'],
   Stability: ['stability'],
 };
+
+export const pathwaysTableColumns = [
+  {
+    title: intl.formatMessage(messages.pathwaysName),
+  },
+  {
+    title: intl.formatMessage(messages.category),
+  },
+  {
+    title: intl.formatMessage(messages.systems),
+  },
+  {
+    title: intl.formatMessage(messages.reboot),
+  },
+  {
+    title: intl.formatMessage(messages.reclvl),
+  },
+];
