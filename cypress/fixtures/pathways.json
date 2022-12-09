@@ -21,7 +21,7 @@
             "publish_date": "2022-08-04T10:25:57.294000Z",
             "has_playbook": true,
             "impacted_systems_count": 15,
-            "retuturutu_required": true,
+            "reboot_required": true,
             "has_incident": false,
             "categories": [
                 {
@@ -48,7 +48,7 @@
             "publish_date": "2022-08-04T10:25:57.294000Z",
             "has_playbook": true,
             "impacted_systems_count": 28,
-            "retuturutu_required": true,
+            "reboot_required": true,
             "has_incident": false,
             "categories": [
                 {
@@ -83,7 +83,7 @@
             "publish_date": "2022-08-04T10:25:57.294000Z",
             "has_playbook": true,
             "impacted_systems_count": 6,
-            "retuturutu_required": false,
+            "reboot_required": false,
             "has_incident": true,
             "categories": [
                 {
@@ -114,7 +114,7 @@
             "publish_date": "2022-08-04T10:25:57.294000Z",
             "has_playbook": true,
             "impacted_systems_count": 12,
-            "retuturutu_required": false,
+            "reboot_required": false,
             "has_incident": false,
             "categories": [
                 {
