@@ -1,4 +1,5 @@
 import { buildTagFilter, workloadQueryBuilder } from './Common/Tables';
+import { orderBy } from 'lodash';
 
 export const createOptions = (
   advisorFilters,
@@ -39,4 +40,14 @@ export const createOptions = (
     ...(selectedTags?.length > 0 ? { tags: selectedTags.join(',') } : {}),
   };
   return options;
+};
+
+export const sortTopics = (data, index, direction) => {
+  let sortingName = '';
+  index === 0
+    ? (sortingName = 'name')
+    : index === 2
+    ? (sortingName = 'featured')
+    : (sortingName = 'impacted_systems_count');
+  return orderBy(data, [(result) => result[sortingName]], direction);
 };

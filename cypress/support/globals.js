@@ -56,3 +56,13 @@ export const pathwaysTableColumns = [
     title: intl.formatMessage(messages.reclvl),
   },
 ];
+
+export const topicsTableColumns = [
+  { title: intl.formatMessage(messages.name) },
+  {
+    title: intl.formatMessage(messages.featured),
+  },
+  {
+    title: intl.formatMessage(messages.affectedSystems),
+  },
+];

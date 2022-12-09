@@ -1,0 +1,38 @@
+[
+    {
+        "name": "Gambezon",
+        "slug": "aws",
+        "description": "TEST",
+        "tag": "aws",
+        "featured": true,
+        "enabled": true,
+        "impacted_systems_count": 40
+    },
+    {
+        "name": "HTTP",
+        "slug": "httpd",
+        "description": "HTTP Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla non arcu lacinia neque faucibus fringilla. Aenean placerat. Integer rutrum, orci vestibulum ullamcorper ultricies, lacus quam ultricies odio, vitae placerat pede sem sit amet enim. Quisque porta. ",
+        "tag": "httpd",
+        "featured": false,
+        "enabled": true,
+        "impacted_systems_count": 2
+    },
+    {
+        "name": "nginx",
+        "slug": "nginx",
+        "description": "ABZ",
+        "tag": "nginx",
+        "featured": false,
+        "enabled": true,
+        "impacted_systems_count": 0
+    },
+    {
+        "name": "Satellite",
+        "slug": "satellite6",
+        "description": "Quisque porta.",
+        "tag": "satellite6",
+        "featured": false,
+        "enabled": true,
+        "impacted_systems_count": 694
+    }
+  ]
