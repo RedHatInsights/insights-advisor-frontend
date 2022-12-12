@@ -1,0 +1,50 @@
+{
+    "rule_id": "Please don't panic",
+    "created_at": "2020-04-27T14:37:39.827643Z",
+    "updated_at": "2022-01-07T06:15:53.114089Z",
+    "description": "Lorem ipsum dolor sit amet, ostrud exercitation",
+    "active": true,
+    "category": {
+        "id": 3,
+        "name": "Stability"
+    },
+    "impact": {
+        "name": "Kernel Panic",
+        "impact": 4
+    },
+    "likelihood": 4,
+    "node_id": "3570921",
+    "tags": "cpu kernel panic sbr_kernel",
+    "playbook_count": 1,
+    "reboot_required": true,
+    "publish_date": "2018-12-11T01:35:00Z",
+    "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation \n",
+    "generic": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation \n",
+    "reason": "This host is running **kernel-{{=pydata.kvra}}** with `kvm_intel` module loaded. The CPU model of this host is **{{=pydata.name}}** and the `EPT` feature {{?!pydata.has_ept}}is not supported on this CPU{{??}}{{?pydata.boot_disabled}}has been disabled{{?}}{{?}}.\nKernel panic can occur due to a bug in the mitigation control of KVM introduced by L1TF bug fix.\n",
+    "more_info": "For guidance on upgrading the kernel to a specific version, refer to [How do I upgrade the kernel to a particular version manually?](https://access.redhat.com/solutions/161803).\n",
+    "impacted_systems_count": 7,
+    "reports_shown": true,
+    "rule_status": "enabled",
+    "resolution_set": [
+        {
+            "system_type": 105,
+            "resolution": "Red Hat recommends that you perform the following steps:\n\n{{?pydata.cur_lock && pydata.rcm_locks}}\n* Unset the release lock.\n  ~~~\n  # subscription-manager release --unset\n  ~~~\n{{?}}\n\n{{?pydata.no_base &&\n  (pydata.cur_lock==null || (pydata.cur_lock && pydata.rcm_locks))}}\n* Enable the RHEL base repo:\n  ~~~\n  # subscription-manager repos --enable={{=pydata.no_base}}\n  ~~~\n  Note: To fix the issue in the base channel, you have to enable the base channel at first.\n{{?}}\n\n{{?pydata.cur_lock && pydata.req_repos && pydata.rcm_locks==null}}\n* {{?Object.keys(pydata.req_repos).length > 1}}Enable one of the following channels{{??}}Enable the following channel{{?}}:\n  ~~~\n  {{~pydata.req_repos:e}}# subscription-manager repos --enable={{=e}}\n  {{~}}\n  ~~~\n  Note: Red Hat only provides the resolution in the required channel{{?Object.keys(pydata.req_repos).length > 1}}s{{?}}. \n{{?}}\n* Upgrade the kernel to {{?pydata.kvra.indexOf(\"el7\") != -1}}**3.10.0-951.el7**{{?}}{{?pydata.kvra.indexOf(\"el6\") != -1}}**2.6.32-754.6.3.el6**{{?}} or later:\n  ~~~\n  # yum update kernel\n  ~~~\n* Reboot the system with the new kernel:\n  ~~~\n  # reboot\n  ~~~\n",
+            "resolution_risk": {
+                "name": "Upgrade Kernel",
+                "risk": 3
+            },
+            "has_playbook": true
+        }
+    ],
+    "total_risk": 4,
+    "hosts_acked_count": 0,
+    "rating": 0,
+    "pathway": {
+        "name": "Upgrade Kernel",
+        "component": "kernel",
+        "resolution_risk": {
+            "name": "Upgrade Kernel",
+            "risk": 3
+        }
+    }
+}
