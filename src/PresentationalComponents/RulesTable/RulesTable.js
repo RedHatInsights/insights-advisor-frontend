@@ -46,7 +46,6 @@ import DisableRule from '../Modals/DisableRule';
 import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
 import Loading from '../../PresentationalComponents/Loading/Loading';
-import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import {
   RuleDetails,
@@ -406,7 +405,7 @@ const RulesTable = ({ isTabActive }) => {
             cells: [
               {
                 title: (
-                  <Main className="pf-m-light">
+                  <section className="pf-l-page__main-section pf-c-page__main-section">
                     <Stack hasGutter>
                       {value.hosts_acked_count ? (
                         <StackItem>
@@ -461,7 +460,7 @@ const RulesTable = ({ isTabActive }) => {
                         }
                       />
                     </Stack>
-                  </Main>
+                  </section>
                 ),
               },
             ],

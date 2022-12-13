@@ -27,7 +27,6 @@ import {
   RuleDetailsMessagesKeys,
   AdvisorProduct,
 } from '@redhat-cloud-services/frontend-components-advisor-components';
-import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import messages from '../../Messages';
 import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
 import { ruleResolutionRisk, enableRule } from './helpers';
@@ -49,7 +48,7 @@ export const DetailsRules = ({
       <PageHeader className="adv-c-page__header">
         <Breadcrumbs ouiaId="override" current={rule.description || ''} />
       </PageHeader>
-      <Main className="pf-m-light pf-u-pt-sm">
+      <section className="pf-l-page__main-section pf-c-page__main-section pf-m-light pf-u-pt-sm">
         <RuleDetails
           messages={formatMessages(
             intl,
@@ -157,7 +156,7 @@ export const DetailsRules = ({
             </FlexItem>
           </Flex>
         </RuleDetails>
-      </Main>
+      </section>
     </React.Fragment>
   );
 };
