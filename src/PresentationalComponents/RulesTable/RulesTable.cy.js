@@ -400,3 +400,42 @@ describe('Sorting', () => {
     });
   });
 });
+
+const urlParamsList = [
+  'impacting=true&rule_status=enabled&sort=-total_risk&limit=20&offset=0#SIDs=&tags=',
+  'impacting=false&rule_status=enabled&sort=-recommendation_level&limit=20&offset=0#SIDs=&tags=',
+];
+
+urlParamsList.forEach((urlParams, index) => {
+  describe(`pre-filled url search parameters ${index}`, () => {
+    beforeEach(() => {
+      cy.intercept('*', {
+        statusCode: 201,
+        body: {
+          ...fixtures,
+        },
+      }).as('call');
+
+      cy.mount(
+        <MemoryRouter
+          initialEntries={[`/recommendations?${urlParams}`]}
+          initialIndex={0}
+        >
+          <IntlProvider
+            locale={navigator.language.slice(0, 2)}
+            messages={messages}
+          >
+            <Provider store={getStore()}>
+              <RulesTable />
+            </Provider>
+          </IntlProvider>
+        </MemoryRouter>
+      );
+    });
+
+    it('Sorts properly even if url doesnt match params for table', () => {
+      const column = 'Total risk';
+      tableIsSortedBy(column);
+    });
+  });
+});
