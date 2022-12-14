@@ -41,19 +41,19 @@ export const CATEGORIES = {
 
 export const pathwaysTableColumns = [
   {
-    title: intl.formatMessage(messages.pathwaysName),
+    title: 'Name',
   },
   {
-    title: intl.formatMessage(messages.category),
+    title: 'Category',
   },
   {
-    title: intl.formatMessage(messages.systems),
+    title: 'Systems',
   },
   {
-    title: intl.formatMessage(messages.reboot),
+    title: 'Reboot',
   },
   {
-    title: intl.formatMessage(messages.reclvl),
+    title: 'Recommendation level',
   },
 ];
 
