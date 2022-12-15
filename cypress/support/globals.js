@@ -39,6 +39,24 @@ export const CATEGORIES = {
   Stability: ['stability'],
 };
 
+export const pathwaysTableColumns = [
+  {
+    title: 'Name',
+  },
+  {
+    title: 'Category',
+  },
+  {
+    title: 'Systems',
+  },
+  {
+    title: 'Reboot',
+  },
+  {
+    title: 'Recommendation level',
+  },
+];
+
 export const topicsTableColumns = [
   { title: intl.formatMessage(messages.name) },
   {
