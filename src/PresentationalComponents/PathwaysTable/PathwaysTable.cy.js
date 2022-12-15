@@ -49,7 +49,7 @@ describe('Pathways table tests', () => {
   });
 
   describe('defaults', () => {
-    it('The Rules table renders', () => {
+    it('The Pathways table renders', () => {
       cy.get(ROOT).should('have.length', 1);
     });
     it('renders toolbar', () => {
