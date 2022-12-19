@@ -2,6 +2,7 @@ import React from 'react';
 import { Text } from '@patternfly/react-core';
 import EmptyState from './Components/EmptyState';
 import { FormattedMessage } from 'react-intl';
+import { paramParser } from '../Common/Tables';
 
 export const emptyRows = (filters, toggleRulesDisabled) => [
   {
@@ -61,4 +62,43 @@ export const messageMapping = () => {
       ),
     },
   };
+};
+
+export const urlFilterBuilder = (
+  sortIndices,
+  setSearchText,
+  setFilters,
+  filters
+) => {
+  let sortingValues = Object.values(sortIndices);
+  const paramsObject = paramParser();
+  delete paramsObject.tags;
+  if (
+    !sortingValues?.includes(paramsObject.sort[0]) ||
+    !sortingValues?.includes(`-${paramsObject.sort[0]}`)
+  ) {
+    paramsObject.sort = '-total_risk';
+  }
+  paramsObject.text === undefined
+    ? setSearchText('')
+    : setSearchText(paramsObject.text);
+  paramsObject.has_playbook !== undefined &&
+    !Array.isArray(paramsObject.has_playbook) &&
+    (paramsObject.has_playbook = [`${paramsObject.has_playbook}`]);
+  paramsObject.incident !== undefined &&
+    !Array.isArray(paramsObject.incident) &&
+    (paramsObject.incident = [`${paramsObject.incident}`]);
+  paramsObject.offset === undefined
+    ? (paramsObject.offset = 0)
+    : (paramsObject.offset = Number(paramsObject.offset[0]));
+  paramsObject.limit === undefined
+    ? (paramsObject.limit = 20)
+    : (paramsObject.limit = Number(paramsObject.limit[0]));
+  paramsObject.reboot !== undefined &&
+    !Array.isArray(paramsObject.reboot) &&
+    (paramsObject.reboot = [`${paramsObject.reboot}`]);
+  paramsObject.impacting !== undefined &&
+    !Array.isArray(paramsObject.impacting) &&
+    (paramsObject.impacting = [`${paramsObject.impacting}`]);
+  setFilters({ ...filters, ...paramsObject });
 };

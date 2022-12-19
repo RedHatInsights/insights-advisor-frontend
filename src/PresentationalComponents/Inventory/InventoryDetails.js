@@ -12,7 +12,6 @@ import { connect, useStore } from 'react-redux';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
 
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
-import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import PropTypes from 'prop-types';
 import { entitiesDetailsReducer } from '../../Store/AppReducer';
@@ -46,7 +45,7 @@ const InventoryDetails = ({ entity }) => {
         {entity && <Breadcrumbs current={entity.display_name || entity.id} />}
         <InventoryDetailHead hideBack fallback="" />
       </PageHeader>
-      <Main>
+      <section className="pf-l-page__main-section pf-c-page__main-section">
         <Title className="pf-u-mb-lg" headingLevel="h3" size="2xl">
           {intl.formatMessage(messages.recommendations)}
         </Title>
@@ -55,7 +54,7 @@ const InventoryDetails = ({ entity }) => {
             <AppInfo fallback="" />
           </GridItem>
         </Grid>
-      </Main>
+      </section>
     </DetailWrapper>
   );
 };

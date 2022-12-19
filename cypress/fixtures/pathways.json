@@ -1,0 +1,493 @@
+{
+    "meta": {
+        "count": 16
+    },
+    "links": {
+        "first": "/api/insights/v1/pathway/?limit=20&offset=0&sort=-name",
+        "next": "/api/insights/v1/pathway/?limit=20&offset=0&sort=-name",
+        "previous": "/api/insights/v1/pathway/?limit=20&offset=0&sort=-name",
+        "last": "/api/insights/v1/pathway/?limit=20&offset=0&sort=-name"
+    },
+    "data": [
+        {
+            "slug": "upgrade-bass",
+            "name": "Upgrade bass",
+            "description": "Upgrade your bass to avoid problems with tuturutu failures, bass panic situations, or system dang.",
+            "component": "bass",
+            "resolution_risk": {
+                "name": "Upgrade bass",
+                "risk": 3
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 15,
+            "reboot_required": true,
+            "has_incident": false,
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "Availability"
+                }
+            ],
+            "recommendation_level": 78,
+            "incident_count": 0,
+            "critical_risk_count": 0,
+            "high_risk_count": 11,
+            "medium_risk_count": 5,
+            "low_risk_count": 0
+        },
+        {
+            "slug": "update-bass-tuturutu-options",
+            "name": "Update bass tuturutu options",
+            "description": "Stay on top of system tuturutu failures, bass panics, kdump failures and other issues by updating your bass tuturutu options.",
+            "component": "grub",
+            "resolution_risk": {
+                "name": "Update bass tuturutu Options",
+                "risk": 3
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 28,
+            "reboot_required": true,
+            "has_incident": false,
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "Availability"
+                },
+                {
+                    "id": 3,
+                    "name": "Stability"
+                },
+                {
+                    "id": 4,
+                    "name": "Performance"
+                }
+            ],
+            "recommendation_level": 90,
+            "incident_count": 0,
+            "critical_risk_count": 2,
+            "high_risk_count": 2,
+            "medium_risk_count": 25,
+            "low_risk_count": 0
+        },
+        {
+            "slug": "update-service-configuration",
+            "name": "Lorem Ipsum",
+            "description": "Improve security posture and prevent availability issues by updating the service configuration of httpd.",
+            "component": "httpd",
+            "resolution_risk": {
+                "name": "Update Service Configuration",
+                "risk": 1
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 6,
+            "reboot_required": false,
+            "has_incident": true,
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "Availability"
+                },
+                {
+                    "id": 2,
+                    "name": "Security"
+                }
+            ],
+            "recommendation_level": 80,
+            "incident_count": 1,
+            "critical_risk_count": 0,
+            "high_risk_count": 6,
+            "medium_risk_count": 0,
+            "low_risk_count": 0
+        },
+        {
+            "slug": "sysctl-parameter-tuning",
+            "name": "Tuning tuning",
+            "description": "Avoid issues with system memory, bass panics, and improve dang of DBs by modifying bass parameters using sysctl.",
+            "component": "sysctl.vm",
+            "resolution_risk": {
+                "name": "Sysctl Parameter Tuning",
+                "risk": 2
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 12,
+            "reboot_required": false,
+            "has_incident": false,
+            "categories": [
+                {
+                    "id": 4,
+                    "name": "Performance"
+                }
+            ],
+            "recommendation_level": 66,
+            "incident_count": 0,
+            "critical_risk_count": 0,
+            "high_risk_count": 0,
+            "medium_risk_count": 1,
+            "low_risk_count": 11
+        },
+        {
+            "slug": "upgrade-bass",
+            "name": "Upgrade bass",
+            "description": "Upgrade your bass to avoid problems with tuturutu failures, bass panic situations, or system dang.",
+            "component": "bass",
+            "resolution_risk": {
+                "name": "Upgrade bass",
+                "risk": 3
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 15,
+            "reboot_required": true,
+            "has_incident": false,
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "Availability"
+                }
+            ],
+            "recommendation_level": 78,
+            "incident_count": 0,
+            "critical_risk_count": 0,
+            "high_risk_count": 11,
+            "medium_risk_count": 5,
+            "low_risk_count": 0
+        },
+        {
+            "slug": "update-bass-tuturutu-options",
+            "name": "Update bass tuturutu options",
+            "description": "Stay on top of system tuturutu failures, bass panics, kdump failures and other issues by updating your bass tuturutu options.",
+            "component": "grub",
+            "resolution_risk": {
+                "name": "Update bass tuturutu Options",
+                "risk": 3
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 28,
+            "reboot_required": true,
+            "has_incident": false,
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "Availability"
+                },
+                {
+                    "id": 3,
+                    "name": "Stability"
+                },
+                {
+                    "id": 4,
+                    "name": "Performance"
+                }
+            ],
+            "recommendation_level": 90,
+            "incident_count": 0,
+            "critical_risk_count": 2,
+            "high_risk_count": 2,
+            "medium_risk_count": 25,
+            "low_risk_count": 0
+        },
+        {
+            "slug": "update-service-configuration",
+            "name": "Lorem Ipsum",
+            "description": "Improve security posture and prevent availability issues by updating the service configuration of httpd.",
+            "component": "httpd",
+            "resolution_risk": {
+                "name": "Update Service Configuration",
+                "risk": 1
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 6,
+            "reboot_required": false,
+            "has_incident": true,
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "Availability"
+                },
+                {
+                    "id": 2,
+                    "name": "Security"
+                }
+            ],
+            "recommendation_level": 80,
+            "incident_count": 1,
+            "critical_risk_count": 0,
+            "high_risk_count": 6,
+            "medium_risk_count": 0,
+            "low_risk_count": 0
+        },
+        {
+            "slug": "sysctl-parameter-tuning",
+            "name": "Tuning tuning",
+            "description": "Avoid issues with system memory, bass panics, and improve dang of DBs by modifying bass parameters using sysctl.",
+            "component": "sysctl.vm",
+            "resolution_risk": {
+                "name": "Sysctl Parameter Tuning",
+                "risk": 2
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 12,
+            "reboot_required": false,
+            "has_incident": false,
+            "categories": [
+                {
+                    "id": 4,
+                    "name": "Performance"
+                }
+            ],
+            "recommendation_level": 66,
+            "incident_count": 0,
+            "critical_risk_count": 0,
+            "high_risk_count": 0,
+            "medium_risk_count": 1,
+            "low_risk_count": 11
+        },
+        {
+            "slug": "upgrade-bass",
+            "name": "Upgrade bass",
+            "description": "Upgrade your bass to avoid problems with tuturutu failures, bass panic situations, or system dang.",
+            "component": "bass",
+            "resolution_risk": {
+                "name": "Upgrade bass",
+                "risk": 3
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 15,
+            "reboot_required": true,
+            "has_incident": false,
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "Availability"
+                }
+            ],
+            "recommendation_level": 78,
+            "incident_count": 0,
+            "critical_risk_count": 0,
+            "high_risk_count": 11,
+            "medium_risk_count": 5,
+            "low_risk_count": 0
+        },
+        {
+            "slug": "update-bass-tuturutu-options",
+            "name": "Update bass tuturutu options",
+            "description": "Stay on top of system tuturutu failures, bass panics, kdump failures and other issues by updating your bass tuturutu options.",
+            "component": "grub",
+            "resolution_risk": {
+                "name": "Update bass tuturutu Options",
+                "risk": 3
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 28,
+            "reboot_required": true,
+            "has_incident": false,
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "Availability"
+                },
+                {
+                    "id": 3,
+                    "name": "Stability"
+                },
+                {
+                    "id": 4,
+                    "name": "Performance"
+                }
+            ],
+            "recommendation_level": 90,
+            "incident_count": 0,
+            "critical_risk_count": 2,
+            "high_risk_count": 2,
+            "medium_risk_count": 25,
+            "low_risk_count": 0
+        },
+        {
+            "slug": "update-service-configuration",
+            "name": "Lorem Ipsum",
+            "description": "Improve security posture and prevent availability issues by updating the service configuration of httpd.",
+            "component": "httpd",
+            "resolution_risk": {
+                "name": "Update Service Configuration",
+                "risk": 1
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 6,
+            "reboot_required": false,
+            "has_incident": true,
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "Availability"
+                },
+                {
+                    "id": 2,
+                    "name": "Security"
+                }
+            ],
+            "recommendation_level": 80,
+            "incident_count": 1,
+            "critical_risk_count": 0,
+            "high_risk_count": 6,
+            "medium_risk_count": 0,
+            "low_risk_count": 0
+        },
+        {
+            "slug": "sysctl-parameter-tuning",
+            "name": "Tuning tuning",
+            "description": "Avoid issues with system memory, bass panics, and improve dang of DBs by modifying bass parameters using sysctl.",
+            "component": "sysctl.vm",
+            "resolution_risk": {
+                "name": "Sysctl Parameter Tuning",
+                "risk": 2
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 12,
+            "reboot_required": false,
+            "has_incident": false,
+            "categories": [
+                {
+                    "id": 4,
+                    "name": "Performance"
+                }
+            ],
+            "recommendation_level": 66,
+            "incident_count": 0,
+            "critical_risk_count": 0,
+            "high_risk_count": 0,
+            "medium_risk_count": 1,
+            "low_risk_count": 11
+        },
+        {
+            "slug": "upgrade-bass",
+            "name": "Upgrade bass",
+            "description": "Upgrade your bass to avoid problems with tuturutu failures, bass panic situations, or system dang.",
+            "component": "bass",
+            "resolution_risk": {
+                "name": "Upgrade bass",
+                "risk": 3
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 15,
+            "reboot_required": true,
+            "has_incident": false,
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "Availability"
+                }
+            ],
+            "recommendation_level": 78,
+            "incident_count": 0,
+            "critical_risk_count": 0,
+            "high_risk_count": 11,
+            "medium_risk_count": 5,
+            "low_risk_count": 0
+        },
+        {
+            "slug": "update-bass-tuturutu-options",
+            "name": "Update bass tuturutu options",
+            "description": "Stay on top of system tuturutu failures, bass panics, kdump failures and other issues by updating your bass tuturutu options.",
+            "component": "grub",
+            "resolution_risk": {
+                "name": "Update bass tuturutu Options",
+                "risk": 3
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 28,
+            "reboot_required": true,
+            "has_incident": false,
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "Availability"
+                },
+                {
+                    "id": 3,
+                    "name": "Stability"
+                },
+                {
+                    "id": 4,
+                    "name": "Performance"
+                }
+            ],
+            "recommendation_level": 90,
+            "incident_count": 0,
+            "critical_risk_count": 2,
+            "high_risk_count": 2,
+            "medium_risk_count": 25,
+            "low_risk_count": 0
+        },
+        {
+            "slug": "update-service-configuration",
+            "name": "Lorem Ipsum",
+            "description": "Improve security posture and prevent availability issues by updating the service configuration of httpd.",
+            "component": "httpd",
+            "resolution_risk": {
+                "name": "Update Service Configuration",
+                "risk": 1
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 6,
+            "reboot_required": false,
+            "has_incident": true,
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "Availability"
+                },
+                {
+                    "id": 2,
+                    "name": "Security"
+                }
+            ],
+            "recommendation_level": 80,
+            "incident_count": 1,
+            "critical_risk_count": 0,
+            "high_risk_count": 6,
+            "medium_risk_count": 0,
+            "low_risk_count": 0
+        },
+        {
+            "slug": "sysctl-parameter-tuning",
+            "name": "Tuning tuning",
+            "description": "Avoid issues with system memory, bass panics, and improve dang of DBs by modifying bass parameters using sysctl.",
+            "component": "sysctl.vm",
+            "resolution_risk": {
+                "name": "Sysctl Parameter Tuning",
+                "risk": 2
+            },
+            "publish_date": "2022-08-04T10:25:57.294000Z",
+            "has_playbook": true,
+            "impacted_systems_count": 12,
+            "reboot_required": false,
+            "has_incident": false,
+            "categories": [
+                {
+                    "id": 4,
+                    "name": "Performance"
+                }
+            ],
+            "recommendation_level": 66,
+            "incident_count": 0,
+            "critical_risk_count": 0,
+            "high_risk_count": 0,
+            "medium_risk_count": 1,
+            "low_risk_count": 11
+        }
+    ]
+}

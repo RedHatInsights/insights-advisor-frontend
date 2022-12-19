@@ -5,7 +5,6 @@ import {
 import React, { Suspense, lazy } from 'react';
 
 import Loading from '../../PresentationalComponents/Loading/Loading';
-import { Main } from '@redhat-cloud-services/frontend-components/Main';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 
@@ -31,11 +30,11 @@ const List = () => {
             .toLowerCase()}`}
         />
       </PageHeader>
-      <Main>
+      <section className="pf-l-page__main-section pf-c-page__main-section">
         <Suspense fallback={<Loading />}>
           <SystemsTable />
         </Suspense>
-      </Main>
+      </section>
     </React.Fragment>
   );
 };

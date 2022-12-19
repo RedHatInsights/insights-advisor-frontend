@@ -27,6 +27,9 @@ import {
   removeAllChips,
   applyFilters,
   SORTING_ORDERS,
+  TOOLBAR_FILTER,
+  DROPDOWN,
+  TEXT_INPUT,
 } from '@redhat-cloud-services/frontend-components-utilities';
 
 //I'm looking at the https://docs.cypress.io/guides/component-testing/custom-mount-react#React-Router
@@ -252,6 +255,11 @@ describe('defaults', () => {
     //expect(window.location.search).to.contain(`status=enabled and systems impacted`);
   });
 
+  it('name filter is a default filter', () => {
+    cy.get(TOOLBAR_FILTER).find(DROPDOWN).should('have.text', 'Name');
+    cy.get(TOOLBAR_FILTER).find(TEXT_INPUT).should('exist');
+  });
+
   it('reset filters button is displayed', () => {
     cy.get('button').contains('Reset filters').should('exist');
   });
@@ -389,6 +397,45 @@ describe('Sorting', () => {
       it(`${order} by ${label}`, () => {
         checkSortingUrl(label, order, sortingParameter);
       });
+    });
+  });
+});
+
+const urlParamsList = [
+  'impacting=true&rule_status=enabled&sort=-total_risk&limit=20&offset=0#SIDs=&tags=',
+  'impacting=false&rule_status=enabled&sort=-recommendation_level&limit=20&offset=0#SIDs=&tags=',
+];
+
+urlParamsList.forEach((urlParams, index) => {
+  describe(`pre-filled url search parameters ${index}`, () => {
+    beforeEach(() => {
+      cy.intercept('*', {
+        statusCode: 201,
+        body: {
+          ...fixtures,
+        },
+      }).as('call');
+
+      cy.mount(
+        <MemoryRouter
+          initialEntries={[`/recommendations?${urlParams}`]}
+          initialIndex={0}
+        >
+          <IntlProvider
+            locale={navigator.language.slice(0, 2)}
+            messages={messages}
+          >
+            <Provider store={getStore()}>
+              <RulesTable />
+            </Provider>
+          </IntlProvider>
+        </MemoryRouter>
+      );
+    });
+
+    it('Sorts properly even if url doesnt match params for table', () => {
+      const column = 'Total risk';
+      tableIsSortedBy(column);
     });
   });
 });
