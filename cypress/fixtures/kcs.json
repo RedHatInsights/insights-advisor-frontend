@@ -1,0 +1,59 @@
+[
+  {
+    "publishedTitle": "Scelerisque odio diam placerat semper pretium etiam, sollicitudin nisl enim risus lacinia.",
+    "id": "300533",
+    "view_uri": "http://foo.bar/articles/300533"
+  },
+  {
+    "publishedTitle": "Tristique cubilia diam sit tempus curae, lectus pellentesque amet.",
+    "id": "300821",
+    "view_uri": "http://foo.bar/articles/300821"
+  },
+  {
+    "publishedTitle": "Orci cursus sodales non molestie cras, mauris eros quisque blandit lacinia, non libero odio magna.",
+    "id": "300271",
+    "view_uri": "http://foo.bar/articles/300271"
+  },
+  {
+    "id": "300271",
+    "view_uri": "http://foo.bar/articles/additional/300271"
+  },
+  {
+    "id": "300271",
+    "view_uri": "http://foo.bar/articles/additional/300271/2"
+  },
+  {
+    "publishedTitle": "Luctus vitae cubilia eget quam sem, tincidunt pharetra laoreet.",
+    "id": "300247",
+    "view_uri": "http://foo.bar/articles/300247"
+  },
+  {
+    "publishedTitle": "Scelerisque dolor facilisis ut molestie libero litora amet nisl nunc, egestas nullam accumsan habitasse augue suscipit pulvinar.",
+    "id": "300579",
+    "view_uri": "http://foo.bar/articles/300579"
+  },
+  {
+    "publishedTitle": "Lorem quisque consectetur cras inceptos molestie hac quisque velit, magna consectetur eu dolor integer rutrum nisi.",
+    "id": "300877",
+    "view_uri": "http://foo.bar/articles/300877"
+  },
+  {
+    "publishedTitle": "Magna at curabitur sollicitudin inceptos eu, mollis per himenaeos leo, nec quis dui tristique.",
+    "id": "300464",
+    "view_uri": "http://foo.bar/articles/300464"
+  },
+  {
+    "id": "300464",
+    "view_uri": "http://foo.bar/articles/additional/300464"
+  },
+  {
+    "publishedTitle": "Eros tristique porttitor sit sollicitudin nisl, sit habitant nibh rutrum.",
+    "id": "300666",
+    "view_uri": "http://foo.bar/articles/300666"
+  },
+  {
+    "publishedTitle": "Condimentum commodo ornare nisl ac, ullamcorper habitant et.",
+    "id": "300538",
+    "view_uri": "http://foo.bar/articles/300538"
+  }
+]
