@@ -1,9 +1,11 @@
 import _ from 'lodash';
 import React from 'react';
 import fixtures from '../../../cypress/fixtures/systemRecommendations.json';
+import fixturesKcs from '../../../cypress/fixtures/kcs.json';
 import { BaseSystemAdvisor as SystemAdvisor } from './SystemAdvisor';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
+  applyFilters,
   checkTableHeaders,
   SORTING_ORDERS,
   TABLE,
@@ -24,6 +26,13 @@ const ROOT = 'table[id=system-advisor-report-table]';
 const SYSTEM_ID = '123';
 const SYSTEM_INSIGHTS_ID = '456';
 
+const filtersConf = {
+  description: {
+    selectorText: 'Description',
+    type: 'input',
+  },
+}; // is not complete
+
 /*eslint-disable camelcase*/
 describe('system rules table', () => {
   beforeEach(() => {
@@ -33,14 +42,10 @@ describe('system rules table', () => {
     });
     cy.intercept(`/api/insights/v1/system/${SYSTEM_ID}/reports/`, fixtures);
     cy.intercept('https://access.redhat.com/hydra/rest/search/kcs**', {
-      docs: [
-        {
-          publishedTitle: 'foobar',
-          id: '123',
-          view_uri: 'https://access.redhat.com/articles/123',
-        },
-      ],
-    });
+      response: {
+        docs: fixturesKcs,
+      },
+    }).as('kcs');
     cy.mount(
       <Wrapper>
         <SystemAdvisor
@@ -64,10 +69,36 @@ describe('system rules table', () => {
   });
 
   it('renders "First impacted" date correctly', () => {
-    const date = dateStringByType('relative')(
-      new Date(fixtures[0].impacted_date)
-    );
+    const {
+      rule: { description },
+      impacted_date,
+    } = fixtures[0];
+    const date = dateStringByType('relative')(new Date(impacted_date));
+
+    applyFilters({ description }, filtersConf);
     cy.get('td[data-label="First impacted"]').first().should('contain', date);
+  });
+
+  it('request to kcs contains all required ids', () => {
+    cy.wait('@kcs')
+      .its('request.url')
+      .should(
+        'include',
+        fixtures.map(({ rule }) => rule.node_id).join('%20OR%20')
+      );
+  });
+
+  it('link to kcs has correct title and url', () => {
+    const {
+      rule: { description, node_id },
+    } = fixtures[0];
+    const kcsEntry = fixturesKcs.find(({ id }) => id === node_id);
+
+    applyFilters({ description }, filtersConf);
+    cy.ouiaId('ExpandCollapseAll').click();
+    cy.get('.ins-c-report-details__kba a')
+      .should('include.text', kcsEntry?.publishedTitle)
+      .should('have.attr', 'href', kcsEntry?.view_uri);
   });
 
   describe('sorting', () => {
@@ -96,7 +127,7 @@ describe('system rules table', () => {
       SORTING_ORDERS.forEach((order) => {
         it(`${order} by ${label}`, () => {
           checkSorting(
-            fixtures,
+            _.orderBy(fixtures, ['rule.total_risk'], ['desc']), // sorted by total risk with first table render
             sortingParameter,
             label,
             order,
