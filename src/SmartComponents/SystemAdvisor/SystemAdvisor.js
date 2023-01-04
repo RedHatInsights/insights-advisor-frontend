@@ -489,9 +489,7 @@ const BaseSystemAdvisor = ({ entity }) => {
         await Get(
           `https://access.redhat.com/hydra/rest/search/kcs?q=id:(${kbaIds.join(
             ` OR `
-          )})&fl=view_uri,id,publishedTitle&rows=${
-            kbaIds.length
-          }&redhat_client=$ADVISOR`,
+          )})&fl=view_uri,id,publishedTitle&redhat_client=$ADVISOR`,
           {},
           { credentials: 'include' }
         )
