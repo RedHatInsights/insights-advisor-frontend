@@ -36,16 +36,56 @@ const mountComponent = () => {
   );
 };
 
+describe('test mock data', () => {
+  it('has total risk set to 4 (critical)', () => {
+    expect(rulesfixtures.total_risk).to.eq(4);
+  });
+  it('reboot is required', () => {
+    expect(rulesfixtures.reboot_required).to.eq(true);
+  });
+});
+
 describe('defaults', () => {
   beforeEach(() => {
     mountComponent();
   });
-  it('The Rules description renders', () => {
+  it('The Rules description component renders', () => {
     cy.get(ROOT).should('have.length', 1);
   });
-  it('header shows description', () => {
+  it('title and description are correct', () => {
     cy.ouiaType('PF4/Title', 'h1')
       .should(($el) => expect($el.text().trim()).to.equal(ruleDescription))
       .and('have.length', 1);
+    cy.get('.ins-c-rule-details__description').should(
+      'have.text',
+      rulesfixtures.generic.trim()
+    );
+  });
+  it('rule voting is rendered', () => {
+    cy.get('.ins-c-rule-details__vote').should(
+      'contain',
+      'Is this recommendation helpful?'
+    );
+  });
+  it('shows correct total risk and risk of change labels', () => {
+    cy.get('.ins-c-rule-details__total-risk').should('contain', 'Critical');
+    cy.get('.ins-c-rule-details__risk-of-ch-label').should(
+      'have.text',
+      'Moderate'
+    );
+  });
+  it('tells that reboot is required', () => {
+    cy.get('.ins-c-rule-details__reboot').should(
+      'have.text',
+      'System reboot is required.'
+    );
+  });
+  it('the request is sent when voted', () => {
+    cy.intercept('/api/insights/v1/rating', { statusCode: 200 }).as('rating');
+    cy.ouiaId('thumbsUp')
+      .click()
+      .then(() => {
+        cy.wait('@rating');
+      });
   });
 });
