@@ -207,7 +207,12 @@ const OverviewDetails = () => {
                       isInline
                       variant="link"
                       onClick={() =>
-                        bulkHostActions(refetch, addNotification, intl, rule)
+                        bulkHostActions({
+                          refetch,
+                          addNotification,
+                          intl,
+                          rule,
+                        })
                       }
                       ouiaId="bulkHost"
                     >
