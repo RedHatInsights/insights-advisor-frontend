@@ -7,14 +7,7 @@ on:
 jobs:
   CICD:
     runs-on: ubuntu-latest
-    env:
-      BRANCH: "${{ github.head_ref }}"
-      TRAVIS_BRANCH: ${{ github.base_ref }}
-      REPO: "git@github.com:RedHatInsights/insights-advisor-frontend-build"
-      REPO_DIR: "insights-advisor-frontend-build"
     steps:
-      - name: "Name target branch"
-        run: echo "$TRAVIS_BRANCH"
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install dependencies
@@ -27,5 +20,3 @@ jobs:
         run: npm run test:ct
       - name: Create coverage
         run: npm run coverage
-      - name: Deploy
-        run: npm run travis:build && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
