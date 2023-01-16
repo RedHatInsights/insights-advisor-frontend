@@ -8,8 +8,6 @@ coverage:
         patch: false
         flags:
           - unit
-        paths:
-          - "src"
        # advanced settings
         branches:
           - master
