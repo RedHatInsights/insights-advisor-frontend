@@ -3,9 +3,9 @@ coverage:
     project:
       default:
         # basic
-        target: 0%
+        target: 32%
         threshold: 10%
-        patch: off
+        patch: false
         flags:
           - unit
         paths:
