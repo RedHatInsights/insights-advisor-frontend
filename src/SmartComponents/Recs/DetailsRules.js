@@ -42,6 +42,7 @@ export const DetailsRules = ({
   refetch,
 }) => {
   const intl = useIntl();
+
   return (
     <React.Fragment>
       <PageHeader className="adv-c-page__header">
