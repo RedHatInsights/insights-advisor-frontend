@@ -74,6 +74,7 @@ export const urlFilterBuilder = (
   const paramsObject = paramParser();
   delete paramsObject.tags;
   if (
+    !sortingValues?.includes(paramsObject.sort) ||
     !sortingValues?.includes(paramsObject.sort[0]) ||
     !sortingValues?.includes(`-${paramsObject.sort[0]}`)
   ) {
