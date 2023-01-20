@@ -295,7 +295,6 @@ const SystemsTable = () => {
           const results = await defaultGetEntities(
             fetchedSystems.data.map((system) => system.system_uuid),
             {
-              page,
               per_page,
               hasItems: true,
               fields: { system_profile: ['operating_system'] },
