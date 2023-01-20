@@ -1,9 +1,9 @@
 import './App.scss';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect } from 'react';
 import { batch, useDispatch } from 'react-redux';
 import { updateSID, updateTags, updateWorkloads } from './Services/Filters';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import LockIcon from '@patternfly/react-icons/dist/esm/icons/lock-icon';
 import MessageState from './PresentationalComponents/MessageState/MessageState';
@@ -16,28 +16,11 @@ import { usePermissions } from '@redhat-cloud-services/frontend-components-utili
 const App = () => {
   const intl = useIntl();
   const { push } = useHistory();
-  const { pathname } = useLocation();
   const permsViewRecs = usePermissions('advisor', PERMS.viewRecs);
-  const [auth, setAuth] = useState(false);
   const dispatch = useDispatch();
-  const appNavClick = useMemo(
-    () => ({
-      recommendations(redirect) {
-        insights.chrome.appNavClick({ id: 'recommendations', redirect });
-      },
-      systems(redirect) {
-        insights.chrome.appNavClick({ id: 'systems', redirect });
-      },
-      topics(redirect) {
-        insights.chrome.appNavClick({ id: 'topics', redirect });
-      },
-    }),
-    []
-  );
 
   useEffect(() => {
     insights.chrome.init();
-    insights.chrome.auth.getUser().then(() => setAuth(true));
     insights.chrome.identifyApp('advisor');
     insights.chrome?.globalFilterScope?.('insights');
     if (insights.chrome?.globalFilterScope) {
@@ -52,13 +35,9 @@ const App = () => {
       });
     }
 
-    const baseComponentUrl = pathname.split('/')[1];
     const unregister = insights.chrome.on('APP_NAVIGATION', (event) => {
       if (event.domEvent) {
         push(`/${event.navId}`);
-        appNavClick[baseComponentUrl] !== undefined
-          ? appNavClick[baseComponentUrl](true)
-          : appNavClick.recommendations;
       }
     });
 
@@ -67,7 +46,6 @@ const App = () => {
   }, []);
 
   return (
-    auth &&
     !permsViewRecs?.isLoading &&
     (permsViewRecs?.hasAccess ? (
       <Routes />
