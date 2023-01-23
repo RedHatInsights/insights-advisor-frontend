@@ -12,7 +12,6 @@ import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-g
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
 import ExportIcon from '@patternfly/react-icons/dist/js/icons/export-icon';
 import { Get } from '../../Utilities/Api';
-import buildExecReport from './Build';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -24,6 +23,9 @@ const DownloadExecReport = ({ isDisabled }) => {
 
   const dataFetch = async () => {
     setLoading(true);
+    const { BuildExecReport } = await import(
+      /* webpackChunkName: 'BuildExecReport' */ './BuildExecReport'
+    );
     dispatch(addNotification(exportNotifications.pending));
 
     try {
@@ -39,7 +41,7 @@ const DownloadExecReport = ({ isDisabled }) => {
         ).data,
       ]);
 
-      const report = buildExecReport({
+      const report = BuildExecReport({
         statsReports,
         statsSystems,
         topActiveRec,

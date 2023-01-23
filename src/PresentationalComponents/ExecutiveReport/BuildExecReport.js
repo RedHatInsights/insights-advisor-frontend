@@ -16,7 +16,7 @@ import { Text } from '@react-pdf/renderer';
 import messages from '../../Messages';
 import { truncate } from 'lodash';
 
-const BuildExecReport = ({
+export const BuildExecReport = ({
   statsSystems,
   statsReports,
   topActiveRec,
@@ -170,5 +170,3 @@ BuildExecReport.propTypes = {
   topActiveRec: PropTypes.object,
   intl: PropTypes.any,
 };
-
-export default BuildExecReport;
