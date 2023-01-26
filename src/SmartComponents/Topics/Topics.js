@@ -1,5 +1,6 @@
 import React, { Suspense, lazy, useEffect, useReducer } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import PropTypes from 'prop-types';
@@ -22,9 +23,10 @@ const ProtectedRoute = ({ component: Component, ...props }) => {
     isInternal: false,
     loaded: false,
   });
+  const chrome = useChrome();
 
   useEffect(() => {
-    insights.chrome.auth
+    chrome.auth
       .getUser()
       .then((data) =>
         dispatch({ type: 'setLoaded', payload: data.identity.user.is_internal })

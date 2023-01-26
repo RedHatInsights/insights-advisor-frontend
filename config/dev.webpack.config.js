@@ -67,6 +67,11 @@ plugins.push(
         './RootApp': resolve(__dirname, '../src/AppEntry'),
         './SystemDetail': resolve(__dirname, '../src/Modules/SystemDetail'),
       },
+      shared: [
+        {
+          'react-router-dom': { singleton: true, requiredVersion: '*' },
+        },
+      ],
     }
   )
 );

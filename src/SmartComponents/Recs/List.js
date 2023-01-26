@@ -10,7 +10,7 @@ import {
   TabTitleText,
   Tabs,
 } from '@patternfly/react-core/dist/esm/components/Tabs/index';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import Loading from '../../PresentationalComponents/Loading/Loading';
@@ -40,7 +40,7 @@ const PathwaysPanel = lazy(() =>
 const List = () => {
   const intl = useIntl();
   const { pathname } = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const permsExport = usePermissions('advisor', PERMS.export);
   document.title = intl.formatMessage(messages.documentTitle, {
     subnav: messages.recommendations.defaultMessage,
@@ -50,7 +50,7 @@ const List = () => {
   );
   const changeTab = (tab) => {
     setActiveTab(tab);
-    history.push(tab === 1 ? '/recommendations/pathways' : '/recommendations');
+    navigate(tab === 1 ? '/recommendations/pathways' : '/recommendations');
   };
 
   return (

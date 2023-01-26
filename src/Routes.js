@@ -1,6 +1,6 @@
 import { Bullseye, Spinner } from '@patternfly/react-core';
 import React, { Suspense, lazy } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 const Recs = lazy(() =>
   import(/* webpackChunkName: "Recs" */ './SmartComponents/Recs/Recs')
@@ -36,7 +36,7 @@ const paths = [
   { title: 'Topics', path: '/topics', component: Topics },
 ];
 
-export const Routes = () => (
+export const RhelRoutes = () => (
   <Suspense
     fallback={
       <Bullseye>
@@ -44,18 +44,21 @@ export const Routes = () => (
       </Bullseye>
     }
   >
-    <Switch>
+    <Routes>
       {paths.map((path) => (
         <Route
           key={path.title}
           path={path.path}
-          component={path.component}
+          element={<path.component />}
           rootClass={path.rootClass}
         />
       ))}
-      <Redirect path="/recommendations" to={`${paths[1].path}`} push />
-      {/* Finally, catch all unmatched routes */}
-      <Redirect path="*" to={`${paths[1].path}`} push />
-    </Switch>
+      <Route
+        element={
+          <Navigate path="/recommendations" to={`${paths[1].path}`} push />
+        }
+      />
+      <Route element={<Navigate path="*" to={`${paths[1].path}`} push />} />
+    </Routes>
   </Suspense>
 );
