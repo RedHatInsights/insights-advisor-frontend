@@ -11,7 +11,6 @@ import { Link } from 'react-router-dom';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { Get } from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
-import Loading from '../Loading/Loading';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
 import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
@@ -22,7 +21,7 @@ import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
-import { useLoadModule } from '@scalprum/react-core';
+import { useLoadModule, Spinner } from '@scalprum/react-core';
 
 const Inventory = ({
   tableProps,
@@ -471,7 +470,7 @@ const Inventory = ({
           ],
         }}
         {...toolbarProps}
-        fallback={Loading}
+        fallback={Spinner}
         onLoad={({
           mergeWithEntities,
           INVENTORY_ACTION_TYPES,
