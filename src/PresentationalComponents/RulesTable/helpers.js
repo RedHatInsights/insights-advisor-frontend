@@ -73,11 +73,15 @@ export const urlFilterBuilder = (
   let sortingValues = Object.values(sortIndices);
   const paramsObject = paramParser();
   delete paramsObject.tags;
-  if (
-    !sortingValues?.includes(paramsObject.sort) ||
-    !sortingValues?.includes(paramsObject.sort[0]) ||
-    !sortingValues?.includes(`-${paramsObject.sort[0]}`)
-  ) {
+
+  if (Array.isArray(paramsObject.sort)) {
+    if (
+      !sortingValues?.includes(paramsObject.sort[0]) ||
+      !sortingValues?.includes(`-${paramsObject.sort[0]}`)
+    ) {
+      paramsObject.sort = '-total_risk';
+    }
+  } else if (!sortingValues?.includes(paramsObject.sort)) {
     paramsObject.sort = '-total_risk';
   }
   paramsObject.text === undefined
