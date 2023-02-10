@@ -17,10 +17,12 @@ import messages from '../../Messages';
 import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import SystemAdvisor from '../../SmartComponents/SystemAdvisor';
+import { useParams } from 'react-router-dom';
 
 const InventoryDetails = ({ entity }) => {
   const intl = useIntl();
   const store = useStore();
+  const { inventoryId } = useParams();
   useEffect(() => {
     if (entity && (entity.display_name || entity.id)) {
       const subnav = `${entity.display_name || entity.id} - ${
@@ -45,18 +47,14 @@ const InventoryDetails = ({ entity }) => {
         <InventoryDetailHead hideBack fallback="" />
       </PageHeader>
       <section className="pf-l-page__main-section pf-c-page__main-section">
-        {entity && (
-          <>
-            <Title className="pf-u-mb-lg" headingLevel="h3" size="2xl">
-              {intl.formatMessage(messages.recommendations)}
-            </Title>
-            <Grid hasGutter>
-              <GridItem span={12}>
-                <SystemAdvisor fallback="" />
-              </GridItem>
-            </Grid>
-          </>
-        )}
+        <Title className="pf-u-mb-lg" headingLevel="h3" size="2xl">
+          {intl.formatMessage(messages.recommendations)}
+        </Title>
+        <Grid hasGutter>
+          <GridItem span={12}>
+            <SystemAdvisor fallback="" inventoryId={inventoryId} />
+          </GridItem>
+        </Grid>
       </section>
     </DetailWrapper>
   );

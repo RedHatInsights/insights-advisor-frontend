@@ -99,7 +99,7 @@ export const getFilters = (
   },
 ];
 
-export const useProcessRemediation = (entity) =>
+export const useProcessRemediation = (inventoryId) =>
   useCallback(
     (selectedAnsibleRules) => {
       const playbookRows = selectedAnsibleRules.filter(
@@ -109,9 +109,9 @@ export const useProcessRemediation = (entity) =>
         id: `advisor:${r.rule.rule_id}`,
         description: r.rule.description,
       }));
-      return issues.length ? { issues, systems: [entity.id] } : false;
+      return issues.length ? { issues, systems: [inventoryId] } : false;
     },
-    [entity]
+    [inventoryId]
   );
 
 export const useBuildRows = (
@@ -295,7 +295,7 @@ export const useBuildRows = (
       if (activeReports.length < 1 || builtRows.length < 1) {
         let EmptyState =
           (builtRows.length === 0 && NoMatchingRecommendations) ||
-          (entity.insights_id && NoRecommendations) ||
+          (entity?.insights_id && NoRecommendations) ||
           InsightsNotEnabled;
 
         return [

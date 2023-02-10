@@ -29,7 +29,7 @@ import {
   useProcessRemediation,
 } from './SystemAdvisorAssets';
 
-const BaseSystemAdvisor = ({ entity }) => {
+const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   const intl = useIntl();
   const systemAdvisorRef = useRef({
     rowCount: 0,
@@ -339,7 +339,7 @@ const BaseSystemAdvisor = ({ entity }) => {
     setRows(builtRows);
   };
 
-  const processRemediation = useProcessRemediation(entity);
+  const processRemediation = useProcessRemediation(inventoryId);
   const filterConfigItems = getFilters(
     filters,
     searchValue,
@@ -351,7 +351,7 @@ const BaseSystemAdvisor = ({ entity }) => {
     const dataFetch = async () => {
       try {
         const reportsFetch = await Get(
-          `${BASE_URL}/system/${entity.id}/reports/`,
+          `${BASE_URL}/system/${inventoryId}/reports/`,
           {
             credentials: 'include',
           }
@@ -380,7 +380,7 @@ const BaseSystemAdvisor = ({ entity }) => {
   }, []);
 
   return inventoryReportFetchStatus === 'fulfilled' &&
-    entity.insights_id === null ? (
+    entity?.insights_id === null ? (
     <NotConnected
       titleText={intl.formatMessage(messages.notConnectedTitle)}
       bodyText={intl.formatMessage(messages.notConnectedBody)}
@@ -389,7 +389,7 @@ const BaseSystemAdvisor = ({ entity }) => {
   ) : (
     <div className="ins-c-inventory-insights__overrides">
       {inventoryReportFetchStatus === 'pending' ||
-      entity.insights_id === null ? (
+      entity?.insights_id === null ? (
         <Fragment />
       ) : (
         <PrimaryToolbar
@@ -445,6 +445,7 @@ BaseSystemAdvisor.propTypes = {
     insights_id: PropTypes.string,
     id: PropTypes.string,
   }),
+  inventoryId: PropTypes.string.isRequired,
 };
 
 const SystemAdvisor = ({ ...props }) => {
