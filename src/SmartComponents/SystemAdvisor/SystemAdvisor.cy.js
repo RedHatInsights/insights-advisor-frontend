@@ -53,6 +53,7 @@ describe('system rules table', () => {
             id: SYSTEM_ID,
             insights_id: SYSTEM_INSIGHTS_ID,
           }}
+          inventoryId={SYSTEM_ID}
         />
       </Wrapper>
     );
