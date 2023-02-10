@@ -1,4 +1,3 @@
-import Advisor from '../SmartComponents/SystemAdvisor';
 import { applyReducerHash } from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 
 export function systemReducer() {
@@ -23,7 +22,6 @@ function enableApplications(state) {
   return {
     ...state,
     loaded: true,
-    activeApps: [{ title: 'Insights', name: 'insights', component: Advisor }],
   };
 }
 

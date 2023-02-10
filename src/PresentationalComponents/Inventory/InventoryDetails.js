@@ -1,5 +1,4 @@
 import {
-  AppInfo,
   DetailWrapper,
   InventoryDetailHead,
 } from '@redhat-cloud-services/frontend-components/Inventory';
@@ -10,7 +9,6 @@ import {
 import React, { useEffect } from 'react';
 import { connect, useStore } from 'react-redux';
 import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
-
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import PropTypes from 'prop-types';
@@ -18,6 +16,7 @@ import { entitiesDetailsReducer } from '../../Store/AppReducer';
 import messages from '../../Messages';
 import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
+import SystemAdvisor from '../../SmartComponents/SystemAdvisor';
 
 const InventoryDetails = ({ entity }) => {
   const intl = useIntl();
@@ -46,14 +45,18 @@ const InventoryDetails = ({ entity }) => {
         <InventoryDetailHead hideBack fallback="" />
       </PageHeader>
       <section className="pf-l-page__main-section pf-c-page__main-section">
-        <Title className="pf-u-mb-lg" headingLevel="h3" size="2xl">
-          {intl.formatMessage(messages.recommendations)}
-        </Title>
-        <Grid hasGutter>
-          <GridItem span={12}>
-            <AppInfo fallback="" />
-          </GridItem>
-        </Grid>
+        {entity && (
+          <>
+            <Title className="pf-u-mb-lg" headingLevel="h3" size="2xl">
+              {intl.formatMessage(messages.recommendations)}
+            </Title>
+            <Grid hasGutter>
+              <GridItem span={12}>
+                <SystemAdvisor fallback="" />
+              </GridItem>
+            </Grid>
+          </>
+        )}
       </section>
     </DetailWrapper>
   );
