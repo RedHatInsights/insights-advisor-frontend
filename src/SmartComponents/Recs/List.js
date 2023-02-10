@@ -1,5 +1,3 @@
-import './List.scss';
-
 import {
   PageHeader,
   PageHeaderTitle,
@@ -20,20 +18,12 @@ import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
+import PathwaysPanel from '../../PresentationalComponents/PathwaysPanel/PathwaysPanel';
+import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 
-const RulesTable = lazy(() =>
-  import(
-    /* webpackChunkName: 'RulesTable' */ '../../PresentationalComponents/RulesTable/RulesTable'
-  )
-);
 const PathwaysTable = lazy(() =>
   import(
     /* webpackChunkName: 'PathwaysTable' */ '../../PresentationalComponents/PathwaysTable/PathwaysTable'
-  )
-);
-const PathwaysPanel = lazy(() =>
-  import(
-    /* webpackChunkName: 'PathwaysPanel' */ '../../PresentationalComponents/PathwaysPanel/PathwaysPanel'
   )
 );
 
@@ -71,9 +61,7 @@ const List = () => {
         )}
       </PageHeader>
       <section className="pf-l-page__main-section pf-c-page__main-section">
-        <Suspense fallback={<Loading />}>
-          <PathwaysPanel />
-        </Suspense>
+        <PathwaysPanel />
         <Tabs
           className="adv__background--global-100"
           activeKey={activeTab}
@@ -87,9 +75,7 @@ const List = () => {
               </TabTitleText>
             }
           >
-            <Suspense fallback={<Loading />}>
-              <RulesTable isTabActive={activeTab === 0} />
-            </Suspense>
+            <RulesTable isTabActive={activeTab === 0} />
           </Tab>
           <Tab
             eventKey={1}
@@ -102,9 +88,11 @@ const List = () => {
               </TabTitleText>
             }
           >
-            <Suspense fallback={<Loading />}>
-              <PathwaysTable isTabActive={activeTab === 1} />
-            </Suspense>
+            {activeTab === 1 && (
+              <Suspense fallback={<Loading />}>
+                <PathwaysTable isTabActive={activeTab === 1} />
+              </Suspense>
+            )}
           </Tab>
         </Tabs>
       </section>

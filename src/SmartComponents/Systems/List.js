@@ -2,17 +2,10 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
-import React, { Suspense, lazy } from 'react';
-
-import Loading from '../../PresentationalComponents/Loading/Loading';
+import React from 'react';
+import SystemsTable from '../../PresentationalComponents/SystemsTable/SystemsTable';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
-
-const SystemsTable = lazy(() =>
-  import(
-    /* webpackChunkName: "SystemsTable" */ '../../PresentationalComponents/SystemsTable/SystemsTable'
-  )
-);
 
 const List = () => {
   const intl = useIntl();
@@ -31,9 +24,7 @@ const List = () => {
         />
       </PageHeader>
       <section className="pf-l-page__main-section pf-c-page__main-section">
-        <Suspense fallback={<Loading />}>
-          <SystemsTable />
-        </Suspense>
+        <SystemsTable />
       </section>
     </React.Fragment>
   );

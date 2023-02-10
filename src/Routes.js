@@ -2,38 +2,88 @@ import { Bullseye, Spinner } from '@patternfly/react-core';
 import React, { Suspense, lazy } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-const Recs = lazy(() =>
-  import(/* webpackChunkName: "Recs" */ './SmartComponents/Recs/Recs')
+const RecsList = lazy(() =>
+  import(/* webpackChunkName: "RecsList" */ './SmartComponents/Recs/List')
 );
-const Systems = lazy(() =>
-  import(/* webpackChunkName: "Systems" */ './SmartComponents/Systems/Systems')
+const RecsDetails = lazy(() =>
+  import(/* webpackChunkName: "RecsDetails" */ './SmartComponents/Recs/Details')
 );
-const Topics = lazy(() =>
-  import(/* webpackChunkName: "Topics" */ './SmartComponents/Topics/Topics')
+const DetailsPathways = lazy(() =>
+  import(
+    /* webpackChunkName: "Details-Pathways" */ './SmartComponents/Recs/DetailsPathways'
+  )
+);
+const InventoryDetails = lazy(() =>
+  import(
+    /* InventoryDetails: "Details" */ './PresentationalComponents/Inventory/InventoryDetails'
+  )
+);
+const SystemsList = lazy(() =>
+  import(/* webpackChunkName: "List" */ './SmartComponents/Systems/List')
+);
+const TopicsList = lazy(() =>
+  import(/* webpackChunkName: "TopicsList" */ './SmartComponents/Topics/List')
+);
+const TopicDetails = lazy(() =>
+  import(
+    /* webpackChunkName: "TopicDetails" */ './SmartComponents/Topics/Details'
+  )
+);
+const TopicAdmin = lazy(() =>
+  import(
+    /* webpackChunkName: "TopicAdmin" */ './PresentationalComponents/TopicsAdminTable/TopicsAdminTable'
+  )
+);
+const AdminProtectedRoute = lazy(() =>
+  import(
+    /* webpackChunkName: "TopicAdmin" */ './PresentationalComponents/TopicsAdminTable/TopicsAdminTable'
+  )
 );
 
 const paths = [
-  { title: 'Recommendations', path: '/recommendations:?', component: Recs },
-  { title: 'Recommendations', path: '/recommendations', component: Recs },
+  //Recommendations nav -> recommendations tab is active
+  { title: 'Recommendations', path: '/recommendations', component: RecsList },
+  //Recommendations nav -> pathways tab is active
   {
-    title: 'Pathways',
+    title: 'Recommendations Pathways',
     path: '/recommendations/pathways',
-    component: Recs,
+    component: RecsList,
+  },
+  //Pathway details =>  recommendations tab is active
+  {
+    title: 'Pathway details',
+    path: '/recommendations/pathways/:id',
+    component: DetailsPathways,
+  },
+  //Pathway details =>  systems tab is active
+  {
+    title: 'Pathway details',
+    path: '/recommendations/pathways/systems/:id',
+    component: DetailsPathways,
   },
   {
-    title: 'Pathways',
-    path: '/recommendations/pathways:?',
-    component: Recs,
+    title: 'Recommendation details',
+    path: '/recommendations/:id',
+    component: RecsDetails,
   },
   {
-    title: 'Pathways',
-    path: '/recommendations/pathways/systems:?',
-    component: Recs,
+    title: 'Inventory details',
+    path: '/recommendations/:id/:inventoryId/',
+    component: InventoryDetails,
   },
-
-  { title: 'Systems', path: '/systems:?', component: Systems },
-  { title: 'Systems', path: '/systems', component: Systems },
-  { title: 'Topics', path: '/topics', component: Topics },
+  {
+    title: 'Inventory details',
+    path: '/recommendations/pathways/:id/:inventoryId/',
+    component: InventoryDetails,
+  },
+  { title: 'Systems', path: '/systems', component: SystemsList },
+  {
+    title: 'System detail',
+    path: '/systems/:inventoryId/',
+    component: InventoryDetails,
+  },
+  { title: 'Topics', path: '/topics', component: TopicsList },
+  { title: 'Topic details', path: '/topics/:id', component: TopicDetails },
 ];
 
 export const Routes = () => (
@@ -49,10 +99,16 @@ export const Routes = () => (
         <Route
           key={path.title}
           path={path.path}
+          exact
           component={path.component}
           rootClass={path.rootClass}
         />
       ))}
+      <AdminProtectedRoute
+        exact
+        path="/topics/admin/manage"
+        component={() => <TopicAdmin />}
+      />
       <Redirect path="/recommendations" to={`${paths[1].path}`} push />
       {/* Finally, catch all unmatched routes */}
       <Redirect path="*" to={`${paths[1].path}`} push />
