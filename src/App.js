@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { batch, useDispatch } from 'react-redux';
 import { updateSID, updateTags, updateWorkloads } from './Services/Filters';
 import { useHistory } from 'react-router-dom';
-
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import LockIcon from '@patternfly/react-icons/dist/esm/icons/lock-icon';
 import MessageState from './PresentationalComponents/MessageState/MessageState';
 import { PERMS } from './AppConstants';
@@ -18,15 +18,15 @@ const App = () => {
   const { push } = useHistory();
   const permsViewRecs = usePermissions('advisor', PERMS.viewRecs);
   const dispatch = useDispatch();
+  const chrome = useChrome();
 
   useEffect(() => {
-    insights.chrome.init();
-    insights.chrome.identifyApp('advisor');
-    insights.chrome?.globalFilterScope?.('insights');
-    if (insights.chrome?.globalFilterScope) {
-      insights.chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
+    chrome.identifyApp('advisor');
+    chrome?.globalFilterScope?.('insights');
+    if (chrome?.globalFilterScope) {
+      chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
         const [workloads, SID, selectedTags] =
-          insights.chrome?.mapGlobalFilter?.(data, false, true) || [];
+          chrome?.mapGlobalFilter?.(data, false, true) || [];
         batch(() => {
           dispatch(updateWorkloads(workloads));
           dispatch(updateTags(selectedTags));
@@ -35,7 +35,7 @@ const App = () => {
       });
     }
 
-    const unregister = insights.chrome.on('APP_NAVIGATION', (event) => {
+    const unregister = chrome.on('APP_NAVIGATION', (event) => {
       if (event.domEvent) {
         push(`/${event.navId}`);
       }
