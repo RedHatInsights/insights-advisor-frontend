@@ -30,7 +30,6 @@ const DeleteApi = (url, data = {}, headers = {}) => {
 const AxiosBaseQuery =
   ({ baseUrl } = { baseUrl: '' }) =>
   async ({ url, headers, options, search, method }) => {
-    await insights.chrome.auth.getUser();
     method === undefined && (method = 'get');
     try {
       const result =
