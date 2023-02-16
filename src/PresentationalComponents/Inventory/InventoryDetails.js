@@ -41,6 +41,7 @@ const InventoryDetails = ({ entity }) => {
           })
         );
       }}
+      inventoryId={inventoryId}
     >
       <PageHeader className="pf-m-light ins-inventory-detail">
         {entity && <Breadcrumbs current={entity.display_name || entity.id} />}
