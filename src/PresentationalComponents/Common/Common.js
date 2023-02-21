@@ -14,7 +14,7 @@ import { createIntl, createIntlCache } from 'react-intl';
 import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
 import PowerOffIcon from '@patternfly/react-icons/dist/esm/icons/power-off-icon';
 import React from 'react';
-import { global_secondary_color_100 } from '@patternfly/react-tokens';
+import { global_secondary_color_100 } from '@patternfly/react-tokens/dist/js/global_secondary_color_100';
 import messages from '../../Messages';
 import { strong } from '../../Utilities/intlHelper';
 
