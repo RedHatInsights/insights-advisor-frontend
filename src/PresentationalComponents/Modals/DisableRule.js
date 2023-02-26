@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 
 import { BASE_URL } from '../../AppConstants';
-import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
-import { Checkbox } from '@patternfly/react-core/dist/js/components/Checkbox/Checkbox';
-import { Form } from '@patternfly/react-core/dist/js/components/Form/Form';
-import { FormGroup } from '@patternfly/react-core/dist/js/components/Form/FormGroup';
-import { Modal } from '@patternfly/react-core/dist/js/components/Modal/Modal';
+import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
+import { Checkbox } from '@patternfly/react-core/dist/esm/components/Checkbox/Checkbox';
+import { Form } from '@patternfly/react-core/dist/esm/components/Form/Form';
+import { FormGroup } from '@patternfly/react-core/dist/esm/components/Form/FormGroup';
+import { Modal } from '@patternfly/react-core/dist/esm/components/Modal/Modal';
 import { Post } from '../../Utilities/Api';
 import PropTypes from 'prop-types';
-import { TextInput } from '@patternfly/react-core/dist/js/components/TextInput/TextInput';
+import { TextInput } from '@patternfly/react-core/dist/esm/components/TextInput/TextInput';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import messages from '../../Messages';
 import { useDispatch } from 'react-redux';

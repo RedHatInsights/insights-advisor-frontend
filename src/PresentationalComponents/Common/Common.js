@@ -4,7 +4,7 @@ import {
   Text,
   TextContent,
   TextVariants,
-} from '@patternfly/react-core/dist/js/components/Text/index';
+} from '@patternfly/react-core/dist/esm/components/Text/index';
 import {
   Tooltip,
   TooltipPosition,

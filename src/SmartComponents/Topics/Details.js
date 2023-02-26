@@ -4,18 +4,18 @@ import React, { useEffect } from 'react';
 import {
   Text,
   TextVariants,
-} from '@patternfly/react-core/dist/js/components/Text/Text';
+} from '@patternfly/react-core/dist/esm/components/Text/Text';
 
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
-import { Label } from '@patternfly/react-core/dist/js/components/Label/Label';
+import { Label } from '@patternfly/react-core/dist/esm/components/Label/Label';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
-import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
-import { TextContent } from '@patternfly/react-core/dist/js/components/Text/TextContent';
-import TimesCircleIcon from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
-import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
+import StarIcon from '@patternfly/react-icons/dist/esm/icons/star-icon';
+import { TextContent } from '@patternfly/react-core/dist/esm/components/Text/TextContent';
+import TimesCircleIcon from '@patternfly/react-icons/dist/esm/icons/times-circle-icon';
+import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import { Truncate } from '@redhat-cloud-services/frontend-components/Truncate';
 import messages from '../../Messages';
 import { updateRecFilters } from '../../Services/Filters';
