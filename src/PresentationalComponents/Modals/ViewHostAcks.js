@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableHeader } from '@patternfly/react-table';
 
 import { BASE_URL } from '../../AppConstants';
-import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { DeleteApi } from '../../Utilities/Api';
 import { List } from 'react-content-loader';
-import { Modal } from '@patternfly/react-core/dist/js/components/Modal/Modal';
-import OutlinedBellIcon from '@patternfly/react-icons/dist/js/icons/outlined-bell-icon';
+import { Modal } from '@patternfly/react-core/dist/esm/components/Modal/Modal';
+import OutlinedBellIcon from '@patternfly/react-icons/dist/esm/icons/outlined-bell-icon';
 import PropTypes from 'prop-types';
 import messages from '../../Messages';
 import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';

@@ -5,10 +5,10 @@ import {
 import {
   Grid,
   GridItem,
-} from '@patternfly/react-core/dist/js/layouts/Grid/index';
+} from '@patternfly/react-core/dist/esm/layouts/Grid/index';
 import React, { useEffect } from 'react';
 import { connect, useStore } from 'react-redux';
-import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
+import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import PropTypes from 'prop-types';

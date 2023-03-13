@@ -7,12 +7,12 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   Pagination,
   PaginationVariant,
-} from '@patternfly/react-core/dist/js/components/Pagination/Pagination';
+} from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
 import React, { useEffect, useState } from 'react';
 import {
   Stack,
   StackItem,
-} from '@patternfly/react-core/dist/js/layouts/Stack/index';
+} from '@patternfly/react-core/dist/esm/layouts/Stack/index';
 import {
   Table,
   TableBody,
@@ -25,7 +25,7 @@ import {
 import {
   Tooltip,
   TooltipPosition,
-} from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
+} from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
 import {
   filterFetchBuilder,
   pruneFilters,
@@ -35,9 +35,9 @@ import {
 } from '../Common/Tables';
 import { useDispatch, useSelector } from 'react-redux';
 
-import AnsibeTowerIcon from '@patternfly/react-icons/dist/js/icons/ansibeTower-icon';
-import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
-import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+import AnsibeTowerIcon from '@patternfly/react-icons/dist/esm/icons/ansibeTower-icon';
+import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
+import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
 import CategoryLabel from '../Labels/CategoryLabel';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { DeleteApi } from '../../Utilities/Api';

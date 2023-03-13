@@ -7,7 +7,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   Pagination,
   PaginationVariant,
-} from '@patternfly/react-core/dist/js/components/Pagination/Pagination';
+} from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
 import React, { useEffect, useState } from 'react';
 import {
   Table,
@@ -35,7 +35,7 @@ import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/Prima
 import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
 import RecommendationLevel from '../Labels/RecommendationLevel';
 import RuleLabels from '../Labels/RuleLabels';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
+import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import debounce from '../../Utilities/Debounce';
 import messages from '../../Messages';
 import { updatePathFilters } from '../../Services/Filters';

@@ -12,11 +12,11 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-} from '@patternfly/react-core/dist/js/components/Card';
-import BellSlashIcon from '@patternfly/react-icons/dist/js/icons/bell-slash-icon';
-import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
+} from '@patternfly/react-core/dist/esm/components/Card';
+import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
+import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
-import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
+import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 
 import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';

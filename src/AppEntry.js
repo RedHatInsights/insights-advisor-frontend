@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import App from './App';
-import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
+import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/index';
 import { NotificationsPortal } from '@redhat-cloud-services/frontend-components-notifications/';
 import { Provider } from 'react-redux';
 import React, { useMemo } from 'react';
