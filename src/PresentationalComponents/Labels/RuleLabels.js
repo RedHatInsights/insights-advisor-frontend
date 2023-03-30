@@ -3,9 +3,9 @@ import './_RuleLabels.scss';
 import {
   Tooltip,
   TooltipPosition,
-} from '@patternfly/react-core/dist/js/components/Tooltip/Tooltip';
+} from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
 
-import { Label } from '@patternfly/react-core/dist/js/components/Label/Label';
+import { Label } from '@patternfly/react-core/dist/esm/components/Label/Label';
 import PropTypes from 'prop-types';
 import React from 'react';
 import messages from '../../Messages';

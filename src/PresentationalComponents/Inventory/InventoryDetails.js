@@ -1,16 +1,14 @@
 import {
-  AppInfo,
   DetailWrapper,
   InventoryDetailHead,
 } from '@redhat-cloud-services/frontend-components/Inventory';
 import {
   Grid,
   GridItem,
-} from '@patternfly/react-core/dist/js/layouts/Grid/index';
+} from '@patternfly/react-core/dist/esm/layouts/Grid/index';
 import React, { useEffect } from 'react';
 import { connect, useStore } from 'react-redux';
-import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
-
+import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import PropTypes from 'prop-types';
@@ -18,10 +16,13 @@ import { entitiesDetailsReducer } from '../../Store/AppReducer';
 import messages from '../../Messages';
 import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
+import SystemAdvisor from '../../SmartComponents/SystemAdvisor';
+import { useParams } from 'react-router-dom';
 
 const InventoryDetails = ({ entity }) => {
   const intl = useIntl();
   const store = useStore();
+  const { inventoryId } = useParams();
   useEffect(() => {
     if (entity && (entity.display_name || entity.id)) {
       const subnav = `${entity.display_name || entity.id} - ${
@@ -40,6 +41,7 @@ const InventoryDetails = ({ entity }) => {
           })
         );
       }}
+      inventoryId={inventoryId}
     >
       <PageHeader className="pf-m-light ins-inventory-detail">
         {entity && <Breadcrumbs current={entity.display_name || entity.id} />}
@@ -51,7 +53,7 @@ const InventoryDetails = ({ entity }) => {
         </Title>
         <Grid hasGutter>
           <GridItem span={12}>
-            <AppInfo fallback="" />
+            <SystemAdvisor fallback="" inventoryId={inventoryId} />
           </GridItem>
         </Grid>
       </section>

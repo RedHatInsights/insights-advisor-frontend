@@ -9,18 +9,18 @@ import {
 } from '@patternfly/react-table';
 
 import AddEditTopic from '../Modals/AddEditTopic';
-import BanIcon from '@patternfly/react-icons/dist/js/icons/ban-icon';
-import { Button } from '@patternfly/react-core/dist/js/components/Button/Button';
-import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
-import EditAltIcon from '@patternfly/react-icons/dist/js/icons/edit-alt-icon';
+import BanIcon from '@patternfly/react-icons/dist/esm/icons/ban-icon';
+import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
+import CheckCircleIcon from '@patternfly/react-icons/dist/esm/icons/check-circle-icon';
+import EditAltIcon from '@patternfly/react-icons/dist/esm/icons/edit-alt-icon';
 import Failed from '../Loading/Failed';
 import Loading from '../Loading/Loading';
 import MessageState from '../MessageState/MessageState';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
-import StarIcon from '@patternfly/react-icons/dist/js/icons/star-icon';
+import StarIcon from '@patternfly/react-icons/dist/esm/icons/star-icon';
 import { TableToolbar } from '@redhat-cloud-services/frontend-components/TableToolbar';
-import { Title } from '@patternfly/react-core/dist/js/components/Title/Title';
+import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import messages from '../../Messages';
 import { useGetTopicsAdminQuery } from '../../Services/Topics';
 import { useIntl } from 'react-intl';

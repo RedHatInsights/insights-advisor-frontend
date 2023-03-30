@@ -8,9 +8,9 @@ import {
 } from '../../AppConstants';
 import React, { useMemo, useState } from 'react';
 
-import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
+import { DownloadButtonWrapper } from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
-import ExportIcon from '@patternfly/react-icons/dist/js/icons/export-icon';
+import ExportIcon from '@patternfly/react-icons/dist/esm/icons/export-icon';
 import { Get } from '../../Utilities/Api';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
@@ -59,9 +59,10 @@ const DownloadExecReport = ({ isDisabled }) => {
     }
   };
 
+  console.log('heeloo');
   return useMemo(() => {
     return (
-      <DownloadButton
+      <DownloadButtonWrapper
         groupName={intl.formatMessage(messages.redHatInsights)}
         label={
           loading

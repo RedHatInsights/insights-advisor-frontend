@@ -1,4 +1,4 @@
-import { Label } from '@patternfly/react-core/dist/js/components/Label/index';
+import { Label } from '@patternfly/react-core/dist/esm/components/Label/index';
 import PropTypes from 'prop-types';
 import React from 'react';
 import messages from '../../Messages';

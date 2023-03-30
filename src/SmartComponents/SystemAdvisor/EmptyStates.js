@@ -1,9 +1,7 @@
 import React from 'react';
-import {
-  ChartSpikeIcon,
-  CheckIcon,
-  TimesCircleIcon,
-} from '@patternfly/react-icons';
+import ChartSpikeIcon from '@patternfly/react-icons/dist/esm/icons/chartSpike-icon';
+import CheckIcon from '@patternfly/react-icons/dist/esm/icons/check-icon';
+import TimesCircleIcon from '@patternfly/react-icons/dist/esm/icons/times-circle-icon';
 import {
   Bullseye,
   Button,
