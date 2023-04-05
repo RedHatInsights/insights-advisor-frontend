@@ -315,7 +315,8 @@ const PathwaysTable = ({ isTabActive }) => {
         ? setSearchText('')
         : setSearchText(paramsObject.text);
       paramsObject.sort =
-        paramsObject.sort === undefined
+        paramsObject.sort === undefined ||
+        !Object.values(sortIndices).includes(paramsObject?.sort[0])
           ? '-impacted_systems_count'
           : paramsObject.sort[0];
       paramsObject.offset === undefined
