@@ -18,7 +18,7 @@ import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 
-import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
+import { InvalidObject } from '@redhat-cloud-services/frontend-components/InvalidObject';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
@@ -107,7 +107,7 @@ const OverviewDetails = () => {
 
   return (
     <React.Fragment>
-      {viewSystemsModalOpen && (
+      {viewSystemsModalOpen && !isError && (
         <ViewHostAcks
           handleModalToggle={(toggleModal) =>
             setViewSystemsModalOpen(toggleModal)
@@ -117,7 +117,7 @@ const OverviewDetails = () => {
           rule={rule}
         />
       )}
-      {disableRuleModalOpen && (
+      {disableRuleModalOpen && !isError && (
         <DisableRule
           handleModalToggle={handleModalToggle}
           isModalOpen={disableRuleModalOpen}
@@ -126,7 +126,7 @@ const OverviewDetails = () => {
           host={host}
         />
       )}
-      {!isFetching && !topicIsFetching && (
+      {!isFetching && !isError && !topicIsFetching && (
         <DetailsRules
           rule={rule}
           topics={topics}
@@ -140,7 +140,7 @@ const OverviewDetails = () => {
       )}
       {isFetching && <Loading />}
       <section className="pf-l-page__main-section pf-c-page__main-section">
-        {!isFetching ? (
+        {!isFetching && !isError ? (
           <React.Fragment>
             {(rule.hosts_acked_count > 0 || rule.rule_status !== 'enabled') && (
               <Card className="adv-c-card-details">
@@ -282,7 +282,7 @@ const OverviewDetails = () => {
             )}
           </React.Fragment>
         ) : isError ? (
-          <ErrorState />
+          <InvalidObject />
         ) : (
           <Loading />
         )}
