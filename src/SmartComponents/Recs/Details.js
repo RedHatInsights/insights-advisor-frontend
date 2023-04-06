@@ -107,41 +107,40 @@ const OverviewDetails = () => {
 
   return (
     <React.Fragment>
-      {viewSystemsModalOpen && !isError && (
-        <ViewHostAcks
-          handleModalToggle={(toggleModal) =>
-            setViewSystemsModalOpen(toggleModal)
-          }
-          isModalOpen={viewSystemsModalOpen}
-          afterFn={() => refetch()}
-          rule={rule}
-        />
-      )}
-      {disableRuleModalOpen && !isError && (
-        <DisableRule
-          handleModalToggle={handleModalToggle}
-          isModalOpen={disableRuleModalOpen}
-          rule={rule}
-          afterFn={afterDisableFn}
-          host={host}
-        />
-      )}
-      {!isFetching && !isError && !topicIsFetching && (
-        <DetailsRules
-          rule={rule}
-          topics={topics}
-          permsDisableRec={permsDisableRec}
-          setActionsDropdownOpen={setActionsDropdownOpen}
-          actionsDropdownOpen={actionsDropdownOpen}
-          addNotification={addNotification}
-          handleModalToggle={handleModalToggle}
-          refetch={refetch}
-        />
-      )}
-      {isFetching && <Loading />}
-      <section className="pf-l-page__main-section pf-c-page__main-section">
-        {!isFetching && !isError ? (
-          <React.Fragment>
+      {!isFetching && !isError ? (
+        <React.Fragment>
+          {viewSystemsModalOpen && (
+            <ViewHostAcks
+              handleModalToggle={(toggleModal) =>
+                setViewSystemsModalOpen(toggleModal)
+              }
+              isModalOpen={viewSystemsModalOpen}
+              afterFn={() => refetch()}
+              rule={rule}
+            />
+          )}
+          {disableRuleModalOpen && (
+            <DisableRule
+              handleModalToggle={handleModalToggle}
+              isModalOpen={disableRuleModalOpen}
+              rule={rule}
+              afterFn={afterDisableFn}
+              host={host}
+            />
+          )}
+          {!isFetching && !topicIsFetching && (
+            <DetailsRules
+              rule={rule}
+              topics={topics}
+              permsDisableRec={permsDisableRec}
+              setActionsDropdownOpen={setActionsDropdownOpen}
+              actionsDropdownOpen={actionsDropdownOpen}
+              addNotification={addNotification}
+              handleModalToggle={handleModalToggle}
+              refetch={refetch}
+            />
+          )}
+          <section className="pf-l-page__main-section pf-c-page__main-section">
             {(rule.hosts_acked_count > 0 || rule.rule_status !== 'enabled') && (
               <Card className="adv-c-card-details">
                 <CardHeader>
@@ -280,13 +279,13 @@ const OverviewDetails = () => {
                 }
               />
             )}
-          </React.Fragment>
-        ) : isError ? (
-          <InvalidObject />
-        ) : (
-          <Loading />
-        )}
-      </section>
+          </section>
+        </React.Fragment>
+      ) : isError ? (
+        <InvalidObject />
+      ) : (
+        <Loading />
+      )}
     </React.Fragment>
   );
 };
