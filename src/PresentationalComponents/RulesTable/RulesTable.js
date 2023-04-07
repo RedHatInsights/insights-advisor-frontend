@@ -378,7 +378,7 @@ const RulesTable = ({ isTabActive }) => {
             cells: [
               {
                 title: (
-                  <section className="pf-l-page__main-section pf-c-page__main-section">
+                  <section className="pf-c-page__main-section pf-m-light">
                     <Stack hasGutter>
                       {value.hosts_acked_count ? (
                         <StackItem>
@@ -732,7 +732,7 @@ const RulesTable = ({ isTabActive }) => {
           isStickyHeader
         >
           <TableHeader />
-          <TableBody />
+          <TableBody className="pf-m-width-100" />
         </Table>
       )}
       <Pagination

@@ -151,7 +151,7 @@ const PathwayDetails = () => {
             </p>
             <p className="pf-u-mb-lg">{pathway.description}</p>
           </PageHeader>
-          <section className="pf-u-pb-0">
+          <section className="pf-u-p-lg">
             <Grid hasGutter>
               <GridItem sm={12} md={6}>
                 <TotalRiskCard {...pathway} />
@@ -164,7 +164,7 @@ const PathwayDetails = () => {
         </React.Fragment>
       )}
       {isFetching && <Loading />}
-      <section>
+      <section className="pf-u-px-lg pf-u-pb-lg">
         <Tabs
           className="adv__background--global-100"
           activeKey={activeTab}
