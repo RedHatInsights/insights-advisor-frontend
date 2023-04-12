@@ -1,6 +1,5 @@
-import { Bullseye, Spinner } from '@patternfly/react-core';
-import React, { Suspense, lazy } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import React, { lazy } from 'react';
+import { Route, Routes } from 'react-router-dom';
 
 const RecsList = lazy(() =>
   import(/* webpackChunkName: "RecsList" */ './SmartComponents/Recs/List')
@@ -34,84 +33,60 @@ const TopicAdmin = lazy(() =>
     /* webpackChunkName: "TopicAdmin" */ './PresentationalComponents/TopicsAdminTable/TopicsAdminTable'
   )
 );
-const AdminProtectedRoute = lazy(() =>
-  import(
-    /* webpackChunkName: "TopicAdmin" */ './PresentationalComponents/TopicsAdminTable/TopicsAdminTable'
-  )
-);
 
-const paths = [
-  //Recommendations nav -> recommendations tab is active
-  { title: 'Recommendations', path: '/recommendations', component: RecsList },
-  //Recommendations nav -> pathways tab is active
-  {
-    title: 'Recommendations Pathways',
-    path: '/recommendations/pathways',
-    component: RecsList,
-  },
-  //Pathway details =>  recommendations tab is active
-  {
-    title: 'Pathway details',
-    path: '/recommendations/pathways/:id',
-    component: DetailsPathways,
-  },
-  //Pathway details =>  systems tab is active
-  {
-    title: 'Pathway details',
-    path: '/recommendations/pathways/systems/:id',
-    component: DetailsPathways,
-  },
-  {
-    title: 'Recommendation details',
-    path: '/recommendations/:id',
-    component: RecsDetails,
-  },
-  {
-    title: 'Inventory details',
-    path: '/recommendations/:id/:inventoryId/',
-    component: InventoryDetails,
-  },
-  {
-    title: 'Inventory details',
-    path: '/recommendations/pathways/:id/:inventoryId/',
-    component: InventoryDetails,
-  },
-  { title: 'Systems', path: '/systems', component: SystemsList },
-  {
-    title: 'System detail',
-    path: '/systems/:inventoryId/',
-    component: InventoryDetails,
-  },
-  { title: 'Topics', path: '/topics', component: TopicsList },
-  { title: 'Topic details', path: '/topics/:id', component: TopicDetails },
-];
-
-export const Routes = () => (
-  <Suspense
-    fallback={
-      <Bullseye>
-        <Spinner size="xl" />
-      </Bullseye>
-    }
-  >
-    <Switch>
-      {paths.map((path) => (
-        <Route
-          key={path.title}
-          path={path.path}
-          exact
-          component={path.component}
-          rootClass={path.rootClass}
-        />
-      ))}
-      <AdminProtectedRoute
-        exact
-        path="/topics/admin/manage"
-        component={() => <TopicAdmin />}
-      />
-      <Redirect path="/recommendations" to={`${paths[1].path}`} push />
-      {/* Finally, catch all unmatched routes */}
-      <Redirect path="*" to={`${paths[1].path}`} push />
-    </Switch>
-  </Suspense>
+export const AdvisorRoutes = () => (
+  <Routes>
+    <Route
+      key={'Recommendations'}
+      path="/recommendations"
+      element={<RecsList />}
+    ></Route>
+    <Route
+      key={'Recommendations Pathways'}
+      path="/recommendations/pathways"
+      element={<RecsList />}
+    ></Route>
+    <Route
+      key={'Pathway details'}
+      path="/recommendations/pathways/:id"
+      element={<DetailsPathways />}
+    ></Route>
+    <Route
+      key={'Pathway details'}
+      path="/recommendations/pathways/systems/:id"
+      element={<DetailsPathways />}
+    ></Route>
+    <Route
+      key={'Recommendation details'}
+      path="/recommendations/:id"
+      element={<RecsDetails />}
+    ></Route>
+    <Route
+      key={'Inventory details'}
+      path="/recommendations/:id/:inventoryId/"
+      element={<InventoryDetails />}
+    ></Route>
+    <Route
+      key={'Inventory details'}
+      path="/recommendations/pathways/:id/:inventoryId/"
+      element={<InventoryDetails />}
+    ></Route>
+    <Route key={'Systems'} path="/systems" element={<SystemsList />}></Route>
+    <Route
+      key={'System detail'}
+      path="/systems/:inventoryId/"
+      element={<InventoryDetails />}
+    ></Route>
+    <Route key={'Topics'} path="/topics" element={<TopicsList />}></Route>
+    <Route
+      key={'Topic details'}
+      path="/topics/:id"
+      element={<TopicDetails />}
+    ></Route>
+    <Route
+      key={'TopicAdmin'}
+      path="/topics/admin/manage"
+      element={<TopicAdmin />}
+    ></Route>
+  </Routes>
 );
