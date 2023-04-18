@@ -40,7 +40,7 @@ const List = () => {
   );
   const changeTab = (tab) => {
     setActiveTab(tab);
-    navigate(tab === 1 ? '/recommendations/pathways' : '/recommendations');
+    navigate(tab === 1 ? '../recommendations/pathways' : '../recommendations');
   };
 
   return (

@@ -1,5 +1,5 @@
 import React, { lazy } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 
 const RecsList = lazy(() =>
   import(/* webpackChunkName: "RecsList" */ './SmartComponents/Recs/List')
@@ -87,6 +87,12 @@ export const AdvisorRoutes = () => (
       key={'TopicAdmin'}
       path="/topics/admin/manage"
       element={<TopicAdmin />}
+    ></Route>
+    {/* this redirect will be replaced with the redirect to the overview page when it's ready */}
+    <Route
+      key={'Advisor'}
+      path="/"
+      element={<Navigate replace to="../recommendations" />}
     ></Route>
   </Routes>
 );
