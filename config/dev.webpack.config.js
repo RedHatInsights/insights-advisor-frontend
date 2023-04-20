@@ -9,16 +9,16 @@ const chromeEnv = process.env.CHROME_ENV
   : 'stage-stable';
 const insightsProxy = {
   https: false,
-  ...(process.env.BETA && { deployment: 'beta/apps' }),
+  ...(process.env.PREVIEW && { deployment: 'preview/apps' }),
 };
 const LOCAL_INVENTORY_FRONTEND = !!process.env.INVENTORY_FRONTEND_PORT;
 const INVENTORY_FRONTEND_HOST = 'stage.foo.redhat.com';
 const INVENTORY_FRONTEND_PORT = '8003';
 
 const webpackProxy = {
-  deployment: process.env.BETA ? 'beta/apps' : 'apps',
-  appUrl: process.env.BETA
-    ? ['/preview/insights/advisor', '/beta/insights/advisor']
+  deployment: process.env.PREVIEW ? 'preview/apps' : 'apps',
+  appUrl: process.env.PREVIEW
+    ? ['/preview/insights/advisor']
     : ['/insights/advisor'],
   env: process.env.CHROME_ENV
     ? process.env.CHROME_ENV
