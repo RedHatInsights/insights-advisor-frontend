@@ -32,7 +32,7 @@ const webpackProxy = {
       '/apps/inventory': {
         host: `http://${INVENTORY_FRONTEND_HOST}:${INVENTORY_FRONTEND_PORT}`,
       },
-      '/beta/apps/inventory': {
+      '/preview/apps/inventory': {
         host: `http://${INVENTORY_FRONTEND_HOST}:${INVENTORY_FRONTEND_PORT}`,
       },
     }),
