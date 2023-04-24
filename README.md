@@ -11,7 +11,7 @@
 ## Running locally
 1. Install dependencies with `npm install`
 2. Run development server with `npm run start:proxy:beta`
-3. Local version of the app will be available at https://stage.foo.redhat.com:1337/beta/insights/advisor/
+3. Local version of the app will be available at https://stage.foo.redhat.com:1337/preview/insights/advisor/
 
 In case you want to use the stable environment instead of beta you can run the app with `npm run start:proxy` and access it from https://stage.foo.redhat.com:1337/insights/advisor/. Usually there is no difference between these two environments unless there is a large feature in progress which is hidden behind `isBeta` flag.
 
@@ -25,7 +25,7 @@ Any push to the following branches will trigger a build in [insights-advisor-fro
 
 | Push to branch in this repo  | Updated branch in build repo  | Environment       | Available at
 | :--------------------------- | :---------------------------- | :---------------- | :-----------
-| master                       | stage-beta                    | stage beta        | https://console.stage.redhat.com/beta
+| master                       | stage-beta                    | stage beta        | https://console.stage.redhat.com/preview
 | master-stable                | stage-stable                  | stage stable      | https://console.stage.redhat.com
 | prod-beta                    | prod-beta                     | production beta   | https://console.redhat.com/beta
 | prod-stable                  | prod-stable                   | production stable | https://console.redhat.com
