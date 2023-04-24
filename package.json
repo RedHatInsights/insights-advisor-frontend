@@ -72,7 +72,7 @@
     "@redhat-cloud-services/frontend-components-advisor-components": "^1.0.6",
     "@redhat-cloud-services/frontend-components-charts": "3.2.1",
     "@redhat-cloud-services/frontend-components-notifications": "^3.2.5",
-    "@redhat-cloud-services/frontend-components-pdf-generator": "2.6.7",
+    "@redhat-cloud-services/frontend-components-pdf-generator": "^2.6.7",
     "@redhat-cloud-services/frontend-components-remediations": "3.2.7",
     "@redhat-cloud-services/frontend-components-translations": "3.2.3",
     "@redhat-cloud-services/frontend-components-utilities": "^3.3.2",
