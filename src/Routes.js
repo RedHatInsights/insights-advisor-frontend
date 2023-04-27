@@ -1,5 +1,6 @@
 import { Bullseye, Spinner } from '@patternfly/react-core';
-import React, { Suspense, lazy } from 'react';
+import axios from 'axios';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
 const RecsList = lazy(() =>
@@ -85,33 +86,53 @@ const paths = [
   { title: 'Topics', path: '/topics', component: TopicsList },
   { title: 'Topic details', path: '/topics/:id', component: TopicDetails },
 ];
+const INVENTORY_TOTAL_FETCH_URL = '/api/inventory/v1/hosts';
 
-export const Routes = () => (
-  <Suspense
-    fallback={
-      <Bullseye>
-        <Spinner size="xl" />
-      </Bullseye>
+export const Routes = () => {
+  const [hasSystems, setHasSystems] = useState(true);
+  useEffect(() => {
+    try {
+      axios
+        .get(`${INVENTORY_TOTAL_FETCH_URL}?page=1&per_page=1`)
+        .then(({ data }) => {
+          setHasSystems(data.total > 0);
+        });
+    } catch (e) {
+      console.log(e);
     }
-  >
-    <Switch>
-      {paths.map((path) => (
-        <Route
-          key={path.title}
-          path={path.path}
-          exact
-          component={path.component}
-          rootClass={path.rootClass}
-        />
-      ))}
-      <AdminProtectedRoute
-        exact
-        path="/topics/admin/manage"
-        component={() => <TopicAdmin />}
-      />
-      <Redirect path="/recommendations" to={`${paths[1].path}`} push />
-      {/* Finally, catch all unmatched routes */}
-      <Redirect path="*" to={`${paths[1].path}`} push />
-    </Switch>
-  </Suspense>
-);
+  }, [hasSystems]);
+
+  return (
+    <Suspense
+      fallback={
+        <Bullseye>
+          <Spinner size="xl" />
+        </Bullseye>
+      }
+    >
+      {!hasSystems ? (
+        <div>ZERO STATE</div>
+      ) : (
+        <Switch>
+          {paths.map((path) => (
+            <Route
+              key={path.title}
+              path={path.path}
+              exact
+              component={path.component}
+              rootClass={path.rootClass}
+            />
+          ))}
+          <AdminProtectedRoute
+            exact
+            path="/topics/admin/manage"
+            component={() => <TopicAdmin />}
+          />
+          <Redirect path="/recommendations" to={`${paths[1].path}`} push />
+          {/* Finally, catch all unmatched routes */}
+          <Redirect path="*" to={`${paths[1].path}`} push />
+        </Switch>
+      )}
+    </Suspense>
+  );
+};
