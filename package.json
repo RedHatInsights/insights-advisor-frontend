@@ -52,9 +52,6 @@
     "roots": [
       "<rootDir>/src/"
     ],
-    "setupFiles": [
-      "<rootDir>/config/setupTests.js"
-    ],
     "testPathIgnorePatterns": [
       "<rootDir>/.+fixtures.+"
     ]
