@@ -143,9 +143,8 @@ export const Routes = () => {
             path="/topics/admin/manage"
             component={() => <TopicAdmin />}
           />
-          <Redirect path="/recommendations" to={`${paths[1].path}`} push />
           {/* Finally, catch all unmatched routes */}
-          <Redirect path="*" to={`${paths[1].path}`} push />
+          <Redirect path="*" to="/recommendations" />
         </Switch>
       )}
     </Suspense>
