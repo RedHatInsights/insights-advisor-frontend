@@ -18,7 +18,7 @@ const INVENTORY_FRONTEND_PORT = '8003';
 const webpackProxy = {
   deployment: process.env.BETA ? 'beta/apps' : 'apps',
   appUrl: process.env.BETA
-    ? ['/preview/insights/advisor', '/beta/insights/advisor']
+    ? ['/beta/insights/advisor, /preview/insights/advisor']
     : ['/insights/advisor'],
   env: process.env.CHROME_ENV
     ? process.env.CHROME_ENV
@@ -32,7 +32,7 @@ const webpackProxy = {
       '/apps/inventory': {
         host: `http://${INVENTORY_FRONTEND_HOST}:${INVENTORY_FRONTEND_PORT}`,
       },
-      '/preview/apps/inventory': {
+      '/beta/apps/inventory': {
         host: `http://${INVENTORY_FRONTEND_HOST}:${INVENTORY_FRONTEND_PORT}`,
       },
     }),
