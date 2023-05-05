@@ -8,7 +8,7 @@ install:
 jobs:
   include:
     - stage: Lint
-      script: npm run build && npm run lint
+      script: npm run lint
     - stage: Test
       script: npm run test && npm run test:ct
       after_success: npm run coverage
