@@ -32,6 +32,7 @@ import NoSystemsTable from './Components/NoSystemsTable';
 import { useLoadModule } from '@scalprum/react-core';
 import { systemsTableColumns } from './SystemsTableAssets';
 import { createOptions } from '../helper';
+import useFeatureFlag from '../../Services/useFeatureFlag';
 
 const SystemsTable = () => {
   const intl = useIntl();
@@ -42,6 +43,7 @@ const SystemsTable = () => {
     scope: 'inventory',
     module: './OsFilterHelpers',
   });
+  const groupsEnabled = useFeatureFlag('hbi.ui.inventory-groups');
 
   const { search } = useLocation();
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
@@ -177,7 +179,7 @@ const SystemsTable = () => {
     urlBuilder(refreshedFilters, selectedTags);
   };
 
-  const columns = systemsTableColumns(intl);
+  const columns = systemsTableColumns(intl, groupsEnabled);
   const createColumns = (defaultColumns) => {
     const mappedColumns = columns.map((column) => {
       const correspondingColumn = defaultColumns.find(

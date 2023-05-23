@@ -5,7 +5,7 @@ import { sortable, wrappable } from '@patternfly/react-table';
 import messages from '../../Messages';
 import RuleLabels from '../Labels/RuleLabels';
 
-export const systemsTableColumns = (intl) => [
+export const systemsTableColumns = (intl, groupsEnabled = false) => [
   {
     title: intl.formatMessage(messages.name),
     key: 'display_name',
@@ -20,6 +20,15 @@ export const systemsTableColumns = (intl) => [
       </React.Fragment>
     ),
   },
+  ...(groupsEnabled
+    ? [
+        {
+          key: 'groups',
+          title: intl.formatMessage(messages.group),
+          transforms: [sortable, wrappable],
+        },
+      ]
+    : []),
   {
     key: 'tags',
   },

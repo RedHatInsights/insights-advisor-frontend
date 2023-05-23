@@ -691,6 +691,11 @@ export default defineMessages({
       'Used in the system table title column, number of recommendations per system',
     defaultMessage: 'Recommendations',
   },
+  group: {
+    id: 'group',
+    description: 'Used in the system table title column, the group column',
+    defaultMessage: 'Group',
+  },
   lastSeen: {
     id: 'lastSeen',
     description:
