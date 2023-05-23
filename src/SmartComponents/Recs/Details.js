@@ -18,7 +18,7 @@ import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 
-import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
+import { InvalidObject } from '@redhat-cloud-services/frontend-components/InvalidObject';
 import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
@@ -107,41 +107,40 @@ const OverviewDetails = () => {
 
   return (
     <React.Fragment>
-      {viewSystemsModalOpen && (
-        <ViewHostAcks
-          handleModalToggle={(toggleModal) =>
-            setViewSystemsModalOpen(toggleModal)
-          }
-          isModalOpen={viewSystemsModalOpen}
-          afterFn={() => refetch()}
-          rule={rule}
-        />
-      )}
-      {disableRuleModalOpen && (
-        <DisableRule
-          handleModalToggle={handleModalToggle}
-          isModalOpen={disableRuleModalOpen}
-          rule={rule}
-          afterFn={afterDisableFn}
-          host={host}
-        />
-      )}
-      {!isFetching && !topicIsFetching && (
-        <DetailsRules
-          rule={rule}
-          topics={topics}
-          permsDisableRec={permsDisableRec}
-          setActionsDropdownOpen={setActionsDropdownOpen}
-          actionsDropdownOpen={actionsDropdownOpen}
-          addNotification={addNotification}
-          handleModalToggle={handleModalToggle}
-          refetch={refetch}
-        />
-      )}
-      {isFetching && <Loading />}
-      <section className="pf-l-page__main-section pf-c-page__main-section">
-        {!isFetching ? (
-          <React.Fragment>
+      {!isFetching && !isError ? (
+        <React.Fragment>
+          {viewSystemsModalOpen && (
+            <ViewHostAcks
+              handleModalToggle={(toggleModal) =>
+                setViewSystemsModalOpen(toggleModal)
+              }
+              isModalOpen={viewSystemsModalOpen}
+              afterFn={() => refetch()}
+              rule={rule}
+            />
+          )}
+          {disableRuleModalOpen && (
+            <DisableRule
+              handleModalToggle={handleModalToggle}
+              isModalOpen={disableRuleModalOpen}
+              rule={rule}
+              afterFn={afterDisableFn}
+              host={host}
+            />
+          )}
+          {!isFetching && !topicIsFetching && (
+            <DetailsRules
+              rule={rule}
+              topics={topics}
+              permsDisableRec={permsDisableRec}
+              setActionsDropdownOpen={setActionsDropdownOpen}
+              actionsDropdownOpen={actionsDropdownOpen}
+              addNotification={addNotification}
+              handleModalToggle={handleModalToggle}
+              refetch={refetch}
+            />
+          )}
+          <section className="pf-l-page__main-section pf-c-page__main-section">
             {(rule.hosts_acked_count > 0 || rule.rule_status !== 'enabled') && (
               <Card className="adv-c-card-details">
                 <CardHeader>
@@ -280,13 +279,13 @@ const OverviewDetails = () => {
                 }
               />
             )}
-          </React.Fragment>
-        ) : isError ? (
-          <ErrorState />
-        ) : (
-          <Loading />
-        )}
-      </section>
+          </section>
+        </React.Fragment>
+      ) : isError ? (
+        <InvalidObject />
+      ) : (
+        <Loading />
+      )}
     </React.Fragment>
   );
 };

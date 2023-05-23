@@ -1,21 +1,22 @@
 language: node_js
-sudo: required
 notifications:
   email: false
-  slack:
-    secure: MrGDjorC57YKmefQMfx+CJOUpLwqpQP6+NFGibdZi2u65nvjgpB7CGShJUeJ617jSEJJEAeiw1Ps8iHuYdPuaQMjPn+bxJCNlp1OJxtnfgroFj3hMyWeqx5cnhGE9MvRB9TGp4RWuCdFcM+MPym9BSmzWybHlUqKGxACxEWZ/5m72febXXkhtWCpS2KcsljRlf8lLKwK9n16N+xZJDnKVi+ssoPZ7PNgLPR3kmGX0vxMlNCX2/N48H6Dxqwjly7BUvAoAgzms9wOHT/BGuOz2tVsoNH36EgY/JYqHzsMHXSHWTtlRt5bSGcu7cET5T3FpLFi2N+uSPbTMQdvxR/Nj6/uW85bVXA/0wapoCOvcu0gXvfiTBGRIoBGKV+OSA2Ovw+jcZ+t8ZGK6GYffA4I3PdsVLLDrCPj4c8SLSBFo0pccHE65AtBtcpHDhzs8VjvQE+Weh1LbgLkVIFTYEd9u4gokmMMZC6YSaLDs8QGKRf0Zsg4mKmDjw/n/otNsUPh2SpRTznugMVc3LqpZkGbwde+5Pf9fDJJ1NnVXgSDLi6HHu/wFgg0OMC5YmMaBryof4Cg0lO5lmcIFU5C7UEUwn2oJ5FYIiX1TTaRZqwnGZVdeFevXbCscjarND1JzCnDCjZTBBbsPjY5LtMeRte47f/JLnq8BR95nj6MlNCrIg0=
 node_js:
-- '16'
+  - "16"
 install:
-- npm ci
+  - npm ci
 jobs:
   include:
     - stage: Lint
       script: npm run lint
+    - stage: Test
+      script: npm run test && npm run test:ct
+      after_success: npm run coverage
     - stage: Deploy
-      script: npm run travis:verify && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
+      if: (fork = false) AND (branch IN (master, master-stable, prod-beta, prod-stable))
+      script: npm run travis:build && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
 env:
   global:
-  - REPO="git@github.com:RedHatInsights/insights-advisor-frontend-build"
-  - REPO_DIR="insights-advisor-frontend-build"
-  - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+    - REPO="git@github.com:RedHatInsights/insights-advisor-frontend-build"
+    - REPO_DIR="insights-advisor-frontend-build"
+    - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
