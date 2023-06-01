@@ -200,19 +200,12 @@ export const removeFilterParam = (
   setFilters(filter);
 };
 
-export const toggleRulesDisabled = (rule_status, setFilters, filters) => {
-  setFilters({
-    ...filters,
-    rule_status,
-    offset: 0,
-    ...(rule_status !== 'enabled' && { impacting: ['false'] }),
-  });
-};
 export const filterConfigItems = (
   filters,
   setFilters,
   searchText,
   setSearchText,
+  toggleRulesDisabled,
   intl
 ) => {
   const addFilterParam = (param, values) => {

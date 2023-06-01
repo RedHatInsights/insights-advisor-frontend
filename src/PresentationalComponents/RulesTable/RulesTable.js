@@ -47,7 +47,6 @@ import {
   filterConfigItems,
   hideReports,
   removeFilterParam,
-  toggleRulesDisabled,
   urlFilterBuilder,
 } from './helpers';
 
@@ -157,6 +156,14 @@ const RulesTable = ({ isTabActive }) => {
     const collapseRows = [...rows];
     collapseRows[rowId] = { ...collapseRows[rowId], isOpen };
     setRows(collapseRows);
+  };
+  const toggleRulesDisabled = (rule_status) => {
+    setFilters({
+      ...filters,
+      rule_status,
+      offset: 0,
+      ...(rule_status !== 'enabled' && { impacting: ['false'] }),
+    });
   };
 
   const actionResolver = (rowData, { rowIndex }) => {
@@ -365,6 +372,7 @@ const RulesTable = ({ isTabActive }) => {
             setFilters,
             searchText,
             setSearchText,
+            toggleRulesDisabled,
             intl
           ),
         }}
