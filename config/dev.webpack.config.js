@@ -11,9 +11,6 @@ const insightsProxy = {
   https: false,
   ...(process.env.BETA && { deployment: 'beta/apps' }),
 };
-const LOCAL_INVENTORY_FRONTEND = !!process.env.INVENTORY_FRONTEND_PORT;
-const INVENTORY_FRONTEND_HOST = 'stage.foo.redhat.com';
-const INVENTORY_FRONTEND_PORT = '8003';
 
 const webpackProxy = {
   deployment: process.env.BETA ? 'beta/apps' : 'apps',
@@ -28,13 +25,18 @@ const webpackProxy = {
   useProxy: true,
   proxyVerbose: true,
   routes: {
-    ...(LOCAL_INVENTORY_FRONTEND && {
-      '/apps/inventory': {
-        host: `http://${INVENTORY_FRONTEND_HOST}:${INVENTORY_FRONTEND_PORT}`,
-      },
-      '/beta/apps/inventory': {
-        host: `http://${INVENTORY_FRONTEND_HOST}:${INVENTORY_FRONTEND_PORT}`,
-      },
+    ...(process.env.LOCAL_API && {
+      ...(process.env.LOCAL_API.split(',') || []).reduce((acc, curr) => {
+        const [appName, appConfig] = (curr || '').split(':');
+        const [appPort = 8003, protocol = 'http'] = appConfig.split('~');
+        return {
+          ...acc,
+          [`/apps/${appName}`]: { host: `${protocol}://localhost:${appPort}` },
+          [`/preview/apps/${appName}`]: {
+            host: `${protocol}://localhost:${appPort}`,
+          },
+        };
+      }, {}),
     }),
   },
   customProxy: [
