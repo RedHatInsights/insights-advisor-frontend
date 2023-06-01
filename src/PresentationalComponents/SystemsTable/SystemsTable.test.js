@@ -14,8 +14,8 @@ describe('createColumns', () => {
 
     const mappedColumns = createColumns(defaultColumns, columns);
 
-    expect(mappedColumns).to.have.length(1); // Expecting 1 mapped column
-    expect(mappedColumns[0]).to.deep.equal(columns[1]); // Expecting the first column to match the original column
+    expect(mappedColumns).toHaveLength(1); // Expecting 1 mapped column
+    expect(mappedColumns[0]).toEqual(columns[1]); // Expecting the first column to match the original column
   });
 
   it('keeps all columns if "groups" column is present in defaultColumns', () => {
@@ -33,9 +33,9 @@ describe('createColumns', () => {
 
     const mappedColumns = createColumns(defaultColumns, columns);
 
-    expect(mappedColumns).to.have.length(3); // Expecting 3 mapped columns
-    expect(mappedColumns[0]).to.deep.equal(columns[0]); // Expecting the first column to match the original column
-    expect(mappedColumns[1]).to.deep.equal(columns[1]); // Expecting the second column to match the original column
-    expect(mappedColumns[2]).to.deep.equal(defaultColumns[2]); // Expecting the third column to match the third column from defaultColumns
+    expect(mappedColumns).toHaveLength(3); // Expecting 3 mapped columns
+    expect(mappedColumns[0]).toEqual(columns[0]); // Expecting the first column to match the original column
+    expect(mappedColumns[1]).toEqual(columns[1]); // Expecting the second column to match the original column
+    expect(mappedColumns[2]).toEqual(defaultColumns[2]); // Expecting the third column to match the third column from defaultColumns
   });
 });
