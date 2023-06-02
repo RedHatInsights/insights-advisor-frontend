@@ -32,6 +32,7 @@ import NoSystemsTable from './Components/NoSystemsTable';
 import { useLoadModule } from '@scalprum/react-core';
 import { systemsTableColumns } from './SystemsTableAssets';
 import { createOptions } from '../helper';
+import { createColumns } from './createColumns';
 
 const SystemsTable = () => {
   const intl = useIntl();
@@ -178,16 +179,6 @@ const SystemsTable = () => {
   };
 
   const columns = systemsTableColumns(intl);
-  const createColumns = (defaultColumns) => {
-    const mappedColumns = columns.map((column) => {
-      const correspondingColumn = defaultColumns.find(
-        (defaultColumn) => defaultColumn.key === column.key
-      );
-      return { ...column, ...correspondingColumn };
-    });
-
-    return mappedColumns;
-  };
 
   useEffect(() => {
     let combinedFilters;
@@ -243,7 +234,7 @@ const SystemsTable = () => {
           SID,
           selectedTags,
         }}
-        columns={(defaultColumns) => createColumns(defaultColumns)}
+        columns={(defaultColumns) => createColumns(defaultColumns, columns)}
         onLoad={({
           mergeWithEntities,
           INVENTORY_ACTION_TYPES,
