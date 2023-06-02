@@ -8,7 +8,7 @@ describe('createColumns', () => {
     ];
 
     const columns = [
-      { key: 'groups', label: 'Groups' },
+      { key: 'groups', label: 'Groups', requiresDefault: true },
       { key: 'tags', label: 'Tags' },
     ];
 
@@ -20,13 +20,13 @@ describe('createColumns', () => {
 
   it('keeps all columns if "groups" column is present in defaultColumns', () => {
     const defaultColumns = [
-      { key: 'groups', label: 'Groups' },
+      { key: 'groups', label: 'Groups', requiresDefault: true },
       { key: 'tags', label: 'Tags' },
       { key: 'other', label: 'Other' },
     ];
 
     const columns = [
-      { key: 'groups', label: 'Groups' },
+      { key: 'groups', label: 'Groups', requiresDefault: true },
       { key: 'tags', label: 'Tags' },
       { key: 'other', label: 'Other' },
     ];
