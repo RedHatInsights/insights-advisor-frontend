@@ -22,6 +22,7 @@ export const systemsTableColumns = (intl) => [
   },
   {
     key: 'groups',
+    requiresDefault: true,
   },
   {
     key: 'tags',
