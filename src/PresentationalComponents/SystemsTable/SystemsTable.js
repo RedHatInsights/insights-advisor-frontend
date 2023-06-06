@@ -217,7 +217,12 @@ const SystemsTable = () => {
   return (
     !filterBuilding && (
       <InventoryTable
-        hideFilters={{ all: true, name: false, tags: false }}
+        hideFilters={{
+          all: true,
+          name: false,
+          tags: false,
+          hostGroupFilter: false,
+        }}
         initialLoading
         autoRefresh
         showTags
