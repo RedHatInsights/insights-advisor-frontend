@@ -3,7 +3,6 @@ coverage:
     patch:
       default:
         # basic
-        target: auto
         threshold: 0%
         base: auto
         # advanced
