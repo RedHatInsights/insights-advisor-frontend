@@ -62,7 +62,7 @@
     "@patternfly/react-charts": "^6.94.18",
     "@patternfly/react-core": "^4.276.6",
     "@patternfly/react-icons": "^4.93.6",
-    "@patternfly/react-table": "^4.112.39",
+    "@patternfly/react-table": "^4.113.0",
     "@patternfly/react-tokens": "^4.94.6",
     "@react-pdf/renderer": "2.0.19",
     "@redhat-cloud-services/frontend-components": "^3.9.35",
