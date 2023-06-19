@@ -11,32 +11,24 @@ const insightsProxy = {
   https: false,
   ...(process.env.BETA && { deployment: 'beta/apps' }),
 };
+const LOCAL_INVENTORY_FRONTEND = !!process.env.INVENTORY_FRONTEND_PORT;
+const INVENTORY_FRONTEND_HOST = 'stage.foo.redhat.com';
+const INVENTORY_FRONTEND_PORT = '8003';
 
 const webpackProxy = {
   deployment: process.env.BETA ? 'beta/apps' : 'apps',
-  appUrl: process.env.BETA
-    ? ['/beta/insights/advisor, /preview/insights/advisor']
-    : ['/insights/advisor'],
-  env: process.env.CHROME_ENV
-    ? process.env.CHROME_ENV
-    : process.env.BETA
-    ? 'stage-beta'
-    : 'stage-stable', // pick chrome env ['stage-beta', 'stage-stable', 'prod-beta', 'prod-stable']
+  appUrl: process.env.BETA ? ['/beta/insights/advisor'] : ['/insights/advisor'],
+  env: process.env.CHROME_ENV ? process.env.CHROME_ENV : 'stage-stable', // pick chrome env ['stage-beta', 'stage-stable', 'prod-beta', 'prod-stable']
   useProxy: true,
   proxyVerbose: true,
   routes: {
-    ...(process.env.LOCAL_API && {
-      ...(process.env.LOCAL_API.split(',') || []).reduce((acc, curr) => {
-        const [appName, appConfig] = (curr || '').split(':');
-        const [appPort = 8003, protocol = 'http'] = appConfig.split('~');
-        return {
-          ...acc,
-          [`/apps/${appName}`]: { host: `${protocol}://localhost:${appPort}` },
-          [`/preview/apps/${appName}`]: {
-            host: `${protocol}://localhost:${appPort}`,
-          },
-        };
-      }, {}),
+    ...(LOCAL_INVENTORY_FRONTEND && {
+      '/apps/inventory': {
+        host: `http://${INVENTORY_FRONTEND_HOST}:${INVENTORY_FRONTEND_PORT}`,
+      },
+      '/beta/apps/inventory': {
+        host: `http://${INVENTORY_FRONTEND_HOST}:${INVENTORY_FRONTEND_PORT}`,
+      },
     }),
   },
   customProxy: [
@@ -71,6 +63,11 @@ plugins.push(
   require('@redhat-cloud-services/frontend-components-config/federated-modules')(
     {
       root: resolve(__dirname, '../'),
+      shared: [
+        {
+          'react-router-dom': { singleton: true, requiredVersion: '*' },
+        },
+      ],
       exposes: {
         './RootApp': resolve(__dirname, '../src/AppEntry'),
         './SystemDetail': resolve(__dirname, '../src/Modules/SystemDetail'),

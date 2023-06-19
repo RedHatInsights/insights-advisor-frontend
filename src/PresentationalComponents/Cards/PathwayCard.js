@@ -52,7 +52,7 @@ export const PathwayCard = ({
         {RebootRequired(reboot_required)}
       </CardBody>
       <CardFooter className="footer pf-u-font-size-sm">
-        <Link to={`/recommendations/pathways/${slug}`}>
+        <Link to={`../recommendations/pathways/${slug}`}>
           {`${intl.formatMessage(messages.viewPathway)} `}
           <ArrowRightIcon />
         </Link>
