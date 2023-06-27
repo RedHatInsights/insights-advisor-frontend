@@ -1,10 +1,24 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { Bullseye, Spinner } from '@patternfly/react-core';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import ErrorState from '@redhat-cloud-services/frontend-components/ErrorState';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
-export const ZeroState = ({ children, check }) => {
+export const ZeroState = ({ children }) => {
+  const [hasSystems, setHasSystems] = useState(true);
+  useEffect(() => {
+    try {
+      axios
+        .get(`/api/inventory/v1/hosts?page=1&per_page=1`)
+        .then(({ data }) => {
+          setHasSystems(data.total > 0);
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  }, [hasSystems]);
+
   return (
     <Suspense
       fallback={
@@ -13,7 +27,7 @@ export const ZeroState = ({ children, check }) => {
         </Bullseye>
       }
     >
-      {!check ? (
+      {!hasSystems ? (
         <Suspense
           fallback={
             <Bullseye>
