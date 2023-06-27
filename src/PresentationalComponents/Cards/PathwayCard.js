@@ -38,7 +38,7 @@ export const PathwayCard = ({
         <Text className="pf-u-pb-sm pf-u-font-weight-bold">{name}</Text>
         <CategoryLabel key={name} labelList={categories} />{' '}
         <Link
-          to={`/recommendations/pathways/systems/${slug}`}
+          to={`../recommendations/pathways/systems/${slug}`}
           className="pf-u-font-size-sm"
         >
           {intl.formatMessage(messages.topicCardSystemsaffected, {

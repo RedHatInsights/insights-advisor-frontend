@@ -298,7 +298,7 @@ const Inventory = ({
                 return (
                   <Link
                     className="pf-u-font-size-lg"
-                    to={`/recommendations/${rule.rule_id}/${id}?activeRule=true`}
+                    to={`../recommendations/${rule.rule_id}/${id}?activeRule=true`}
                   >
                     {name}
                   </Link>

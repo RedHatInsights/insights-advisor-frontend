@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 import { sortable, wrappable } from '@patternfly/react-table';
 
 import messages from '../../Messages';
@@ -13,9 +13,9 @@ export const systemsTableColumns = (intl) => [
     props: { isStatic: true },
     renderFunc: (_data, _id, system) => (
       <React.Fragment>
-        <Link key={_id} to={`/systems/${system.system_uuid}`}>
+        <InsightsLink key={_id} to={`/systems/${system.system_uuid}`}>
           {`${system.display_name} `}
-        </Link>
+        </InsightsLink>
         {system.incident_hits > 0 && <RuleLabels rule={{ tags: 'incident' }} />}
       </React.Fragment>
     ),

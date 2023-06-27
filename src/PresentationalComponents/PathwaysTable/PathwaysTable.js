@@ -158,7 +158,7 @@ const PathwaysTable = ({ isTabActive }) => {
                   <span key={key}>
                     <Link
                       key={key}
-                      to={`/recommendations/pathways/${pathway.slug}`}
+                      to={`../recommendations/pathways/${pathway.slug}`}
                     >
                       {' '}
                       {pathway.name}{' '}
