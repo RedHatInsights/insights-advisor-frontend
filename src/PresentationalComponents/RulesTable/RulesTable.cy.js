@@ -30,6 +30,7 @@ import {
   TOOLBAR_FILTER,
   DROPDOWN,
   TEXT_INPUT,
+  ROW,
 } from '@redhat-cloud-services/frontend-components-utilities';
 
 //I'm looking at the https://docs.cypress.io/guides/component-testing/custom-mount-react#React-Router
@@ -61,6 +62,11 @@ const mountComponent = () => {
     </MemoryRouter>
   );
 };
+
+const expandContent = (rowNumber /* starting 1 */) => {
+  cy.get(ROW).eq(rowNumber).find('#expand-button0').should('exist').click();
+};
+
 const TOTAL_RISK = { Low: 1, Moderate: 2, Important: 3, Critical: 4 };
 const RISK_OF_CHANGE = { 'Very Low': 1, Low: 2, Moderate: 3, High: 4 };
 const IMPACT = { Low: 1, Medium: 2, High: 3, Critical: 4 };
@@ -201,6 +207,12 @@ const DEFAULT_FILTERS = {
 };
 const TABLE_HEADERS = _.map(rulesTableColumns, (it) => it.title);
 const ROOT = 'table[aria-label=rule-table]';
+
+describe('test data', () => {
+  it('the first recommendation has systems impacted', () => {
+    expect(fixtures.data[0].impacted_systems_count).be.gt(0);
+  });
+});
 
 describe('renders correctly', () => {
   beforeEach(() => {
@@ -356,7 +368,7 @@ describe('filtering', () => {
     });
   });
 });
-describe('Sorting', () => {
+describe('sorting', () => {
   beforeEach(() => {
     cy.intercept('*', {
       statusCode: 201,
@@ -433,9 +445,47 @@ urlParamsList.forEach((urlParams, index) => {
       );
     });
 
-    it('Sorts properly even if url doesnt match params for table', () => {
+    it('sorts properly even if url doesnt match params for table', () => {
       const column = 'Total risk';
       tableIsSortedBy(column);
     });
+  });
+});
+
+describe('content', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+    mountComponent();
+  });
+
+  it('has correct links', () => {
+    expandContent(1);
+
+    cy.get('.ins-c-rule-details')
+      .eq(0)
+      .find('a')
+      .contains('Knowledgebase article')
+      .should(
+        'have.attr',
+        'href',
+        'https://access.redhat.com/node/' + fixtures.data[0].node_id
+      );
+
+    cy.get('.ins-c-rule-details')
+      .eq(0)
+      .find('a')
+      .contains(
+        `View ${fixtures.data[0].impacted_systems_count} affected systems`
+      )
+      .should(
+        'have.attr',
+        'href',
+        '/recommendations/' + fixtures.data[0].rule_id
+      );
   });
 });
