@@ -9,10 +9,10 @@ import {
 import { Text } from '@patternfly/react-core';
 import ArrowRightIcon from '@patternfly/react-icons/dist/esm/icons/arrow-right-icon';
 import CategoryLabel from '../Labels/CategoryLabel';
-import { Link } from 'react-router-dom';
 import React from 'react';
 import { RebootRequired } from '../Common/Common';
 import RuleLabels from '../Labels/RuleLabels';
+import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
@@ -37,14 +37,14 @@ export const PathwayCard = ({
       <CardBody className="body">
         <Text className="pf-u-pb-sm pf-u-font-weight-bold">{name}</Text>
         <CategoryLabel key={name} labelList={categories} />{' '}
-        <Link
+        <InsightsLink
           to={`../recommendations/pathways/systems/${slug}`}
           className="pf-u-font-size-sm"
         >
           {intl.formatMessage(messages.topicCardSystemsaffected, {
             systems: impacted_systems_count,
           })}
-        </Link>
+        </InsightsLink>
       </CardBody>
       <CardBody className="body pf-u-font-size-sm">{description}</CardBody>
       <CardBody className="body pf-u-font-size-sm">
@@ -52,10 +52,10 @@ export const PathwayCard = ({
         {RebootRequired(reboot_required)}
       </CardBody>
       <CardFooter className="footer pf-u-font-size-sm">
-        <Link to={`../recommendations/pathways/${slug}`}>
+        <InsightsLink to={`../recommendations/pathways/${slug}`}>
           {`${intl.formatMessage(messages.viewPathway)} `}
           <ArrowRightIcon />
-        </Link>
+        </InsightsLink>
       </CardFooter>
     </Card>
   );

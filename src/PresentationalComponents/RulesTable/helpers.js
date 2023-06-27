@@ -370,7 +370,7 @@ export const buildRows = (
         {
           title: (
             <span key={key}>
-              <Link key={key} to={`/recommendations/${value.rule_id}`}>
+              <Link key={key} to={`../recommendations/${value.rule_id}`}>
                 {' '}
                 {value.description}{' '}
               </Link>

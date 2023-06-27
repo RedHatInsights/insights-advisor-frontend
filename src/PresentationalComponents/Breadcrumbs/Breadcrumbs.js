@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 
 import { Breadcrumb } from '@patternfly/react-core/dist/esm/components/Breadcrumb/Breadcrumb';
 import { BreadcrumbItem } from '@patternfly/react-core/dist/esm/components/Breadcrumb/BreadcrumbItem';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import messages from '../../Messages';
 import { useGetRecQuery } from '../../Services/Recs';
 import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
+import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 
 const Breadcrumbs = ({ current }) => {
   const intl = useIntl();
@@ -60,7 +60,7 @@ const Breadcrumbs = ({ current }) => {
         <Breadcrumb ouiaId="detail">
           {items.map((oneLink, key) => (
             <BreadcrumbItem key={key}>
-              <Link to={oneLink.navigate}>{oneLink.title}</Link>
+              <InsightsLink to={oneLink.navigate}>{oneLink.title}</InsightsLink>
             </BreadcrumbItem>
           ))}
           <BreadcrumbItem isActive>{current}</BreadcrumbItem>

@@ -53,7 +53,7 @@ export const AdvisorRoutes = () => {
     <Routes>
       <Route
         key={'Recommendations'}
-        path="/recommendations"
+        path="recommendations"
         element={
           <ZeroState check={hasSystems}>
             <RecsList />
@@ -62,7 +62,7 @@ export const AdvisorRoutes = () => {
       ></Route>
       <Route
         key={'Recommendations Pathways'}
-        path="/recommendations/pathways"
+        path="recommendations/pathways"
         element={
           <ZeroState check={hasSystems}>
             <RecsList />
@@ -71,7 +71,7 @@ export const AdvisorRoutes = () => {
       ></Route>
       <Route
         key={'Pathway details'}
-        path="/recommendations/pathways/:id"
+        path="recommendations/pathways/:id"
         element={
           <ZeroState check={hasSystems}>
             <DetailsPathways />
@@ -80,7 +80,7 @@ export const AdvisorRoutes = () => {
       ></Route>
       <Route
         key={'Pathway details'}
-        path="/recommendations/pathways/systems/:id"
+        path="recommendations/pathways/systems/:id"
         element={
           <ZeroState check={hasSystems}>
             <DetailsPathways />
@@ -89,7 +89,7 @@ export const AdvisorRoutes = () => {
       ></Route>
       <Route
         key={'Recommendation details'}
-        path="/recommendations/:id"
+        path="recommendations/:id"
         element={
           <ZeroState check={hasSystems}>
             <RecsDetails />
@@ -98,7 +98,7 @@ export const AdvisorRoutes = () => {
       ></Route>
       <Route
         key={'Inventory details'}
-        path="/recommendations/:id/:inventoryId/"
+        path="recommendations/:id/:inventoryId/"
         element={
           <ZeroState check={hasSystems}>
             <InventoryDetails />
@@ -107,7 +107,7 @@ export const AdvisorRoutes = () => {
       ></Route>
       <Route
         key={'Inventory details'}
-        path="/recommendations/pathways/:id/:inventoryId/"
+        path="recommendations/pathways/:id/:inventoryId/"
         element={
           <ZeroState check={hasSystems}>
             <InventoryDetails />
@@ -116,7 +116,7 @@ export const AdvisorRoutes = () => {
       ></Route>
       <Route
         key={'Systems'}
-        path="/systems"
+        path="systems"
         element={
           <ZeroState check={hasSystems}>
             <SystemsList />
@@ -125,7 +125,7 @@ export const AdvisorRoutes = () => {
       ></Route>
       <Route
         key={'System detail'}
-        path="/systems/:inventoryId/"
+        path="systems/:inventoryId/"
         element={
           <ZeroState check={hasSystems}>
             <InventoryDetails />
@@ -134,7 +134,7 @@ export const AdvisorRoutes = () => {
       ></Route>
       <Route
         key={'Topics'}
-        path="/topics"
+        path="topics"
         element={
           <ZeroState check={hasSystems}>
             <TopicsList />
@@ -143,7 +143,7 @@ export const AdvisorRoutes = () => {
       ></Route>
       <Route
         key={'Topic details'}
-        path="/topics/:id"
+        path="topics/:id"
         element={
           <ZeroState check={hasSystems}>
             <TopicDetails />
@@ -152,7 +152,7 @@ export const AdvisorRoutes = () => {
       ></Route>
       <Route
         key={'TopicAdmin'}
-        path="/topics/admin/manage"
+        path="topics/admin/manage"
         element={
           <ZeroState check={hasSystems}>
             <TopicAdmin />
@@ -162,8 +162,8 @@ export const AdvisorRoutes = () => {
       {/* this redirect will be replaced with the redirect to the overview page when it's ready */}
       <Route
         key={'Advisor'}
-        path="/"
-        element={<Navigate replace to="../recommendations" />}
+        path="*"
+        element={<Navigate replace to="recommendations" />}
       ></Route>
     </Routes>
   );
