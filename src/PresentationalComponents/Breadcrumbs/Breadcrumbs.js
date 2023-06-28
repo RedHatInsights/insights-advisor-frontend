@@ -6,8 +6,7 @@ import PropTypes from 'prop-types';
 import messages from '../../Messages';
 import { useGetRecQuery } from '../../Services/Recs';
 import { useIntl } from 'react-intl';
-import { useLocation } from 'react-router-dom';
-import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
+import { Link, useLocation } from 'react-router-dom';
 
 const Breadcrumbs = ({ current }) => {
   const intl = useIntl();
@@ -60,7 +59,7 @@ const Breadcrumbs = ({ current }) => {
         <Breadcrumb ouiaId="detail">
           {items.map((oneLink, key) => (
             <BreadcrumbItem key={key}>
-              <InsightsLink to={oneLink.navigate}>{oneLink.title}</InsightsLink>
+              <Link to={oneLink.navigate}>{oneLink.title}</Link>
             </BreadcrumbItem>
           ))}
           <BreadcrumbItem isActive>{current}</BreadcrumbItem>

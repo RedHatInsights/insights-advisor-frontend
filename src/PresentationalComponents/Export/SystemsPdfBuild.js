@@ -6,7 +6,7 @@ import {
   Table,
 } from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
 import { StyleSheet, Text } from '@react-pdf/renderer';
-
+import { Link } from 'react-router-dom';
 import { BASE_URI } from '../../AppConstants';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -18,7 +18,6 @@ import global_FontWeight_bold from '@patternfly/react-tokens/dist/esm/global_Fon
 import global_link_Color from '@patternfly/react-tokens/dist/esm/global_link_Color';
 import global_spacer_md from '@patternfly/react-tokens/dist/esm/global_spacer_md';
 import messages from '../../Messages';
-import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 
 const styles = StyleSheet.create({
   bold: { fontWeight: global_FontWeight_bold.value },
@@ -84,12 +83,12 @@ export const TablePage = ({ page, systems, intl }) => {
         .join(':')} UTC`;
       return [
         <Text key={system.system_uuid} style={styles.nameColumn}>
-          <InsightsLink
+          <Link
             style={styles.link}
             src={`${BASE_URI}/insights/advisor/systems/${system.system_uuid}/`}
           >
             {system.display_name}
-          </InsightsLink>
+          </Link>
         </Text>,
         ...hitColumns.map((item) =>
           rowBuilder({ style: { width: '10px' }, value: system[item] })
