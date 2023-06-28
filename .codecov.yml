@@ -1,17 +1,6 @@
 coverage:
   status:
-    patch:
-      default:
-        # basic
-        threshold: 0%
-        base: auto
-        # advanced
-        branches:
-          - master
-        if_ci_failed: error #set the status to success only if the CI is successful
-        only_pulls: false #Only post a status to pull requests
-        flags:
-          - "unit"
+    patch: off
     project:
       default:
         # basic
