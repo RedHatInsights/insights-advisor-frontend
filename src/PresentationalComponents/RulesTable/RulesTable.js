@@ -396,6 +396,7 @@ const RulesTable = ({ isTabActive }) => {
           rows={rows}
           areActionsDisabled={() => !permsDisableRec}
           isStickyHeader
+          expandId="expand-button"
         >
           <TableHeader />
           <TableBody className="pf-m-width-100" />
