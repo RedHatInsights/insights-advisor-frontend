@@ -6,7 +6,7 @@ import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import { pruneFilters, urlBuilder } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { getEntities, allCurrentSystemIds } from './helpers';
-import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
+import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { Get } from '../../Utilities/Api';
@@ -296,12 +296,12 @@ const Inventory = ({
           ? {
               renderFunc: (name, id) => {
                 return (
-                  <InsightsLink
+                  <Link
                     className="pf-u-font-size-lg"
-                    to={`../recommendations/${rule.rule_id}/${id}?activeRule=true`}
+                    to={`recommendations/${rule.rule_id}/${id}?activeRule=true`}
                   >
                     {name}
-                  </InsightsLink>
+                  </Link>
                 );
               },
             }

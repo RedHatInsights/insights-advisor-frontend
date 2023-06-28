@@ -12,7 +12,7 @@ import CategoryLabel from '../Labels/CategoryLabel';
 import React from 'react';
 import { RebootRequired } from '../Common/Common';
 import RuleLabels from '../Labels/RuleLabels';
-import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
+import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
@@ -37,14 +37,11 @@ export const PathwayCard = ({
       <CardBody className="body">
         <Text className="pf-u-pb-sm pf-u-font-weight-bold">{name}</Text>
         <CategoryLabel key={name} labelList={categories} />{' '}
-        <InsightsLink
-          to={`../recommendations/pathways/systems/${slug}`}
-          className="pf-u-font-size-sm"
-        >
+        <Link to={`pathways/systems/${slug}`} className="pf-u-font-size-sm">
           {intl.formatMessage(messages.topicCardSystemsaffected, {
             systems: impacted_systems_count,
           })}
-        </InsightsLink>
+        </Link>
       </CardBody>
       <CardBody className="body pf-u-font-size-sm">{description}</CardBody>
       <CardBody className="body pf-u-font-size-sm">
@@ -52,10 +49,10 @@ export const PathwayCard = ({
         {RebootRequired(reboot_required)}
       </CardBody>
       <CardFooter className="footer pf-u-font-size-sm">
-        <InsightsLink to={`../recommendations/pathways/${slug}`}>
+        <Link to={`pathways/${slug}`}>
           {`${intl.formatMessage(messages.viewPathway)} `}
           <ArrowRightIcon />
-        </InsightsLink>
+        </Link>
       </CardFooter>
     </Card>
   );

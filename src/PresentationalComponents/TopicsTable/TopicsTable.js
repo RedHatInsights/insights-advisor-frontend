@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-table';
 
 import { Label } from '@patternfly/react-core/dist/esm/components/Label/Label';
-import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
+import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
@@ -53,10 +53,10 @@ const TopicsTable = ({ props }) => {
                 {
                   title: (
                     <span key={key}>
-                      <InsightsLink key={key} to={`../topics/${value.slug}`}>
+                      <Link key={key} to={`${value.slug}`}>
                         {' '}
                         {value.name}{' '}
-                      </InsightsLink>
+                      </Link>
                     </span>
                   ),
                   props: { colSpan: 2 },
