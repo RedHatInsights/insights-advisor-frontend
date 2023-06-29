@@ -5,8 +5,7 @@ import {
   Section,
   Table,
 } from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
-import { StyleSheet, Text } from '@react-pdf/renderer';
-import { Link } from 'react-router-dom';
+import { Link, StyleSheet, Text } from '@react-pdf/renderer';
 import { BASE_URI } from '../../AppConstants';
 import PropTypes from 'prop-types';
 import React from 'react';

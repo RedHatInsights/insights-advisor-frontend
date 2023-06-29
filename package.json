@@ -72,7 +72,7 @@
     "@redhat-cloud-services/frontend-components-pdf-generator": "^2.6.19",
     "@redhat-cloud-services/frontend-components-remediations": "3.2.7",
     "@redhat-cloud-services/frontend-components-translations": "3.2.6",
-    "@redhat-cloud-services/frontend-components-utilities": "^3.5.0",
+    "@redhat-cloud-services/frontend-components-utilities": "^3.7.1",
     "@reduxjs/toolkit": "1.6.1",
     "@scalprum/react-core": "^0.1.9",
     "@testing-library/react-hooks": "^8.0.0",

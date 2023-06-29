@@ -53,7 +53,7 @@ const TopicsTable = ({ props }) => {
                 {
                   title: (
                     <span key={key}>
-                      <Link key={key} to={`${value.slug}`}>
+                      <Link key={key} to={`/topics/${value.slug}`}>
                         {' '}
                         {value.name}{' '}
                       </Link>

@@ -37,7 +37,10 @@ export const PathwayCard = ({
       <CardBody className="body">
         <Text className="pf-u-pb-sm pf-u-font-weight-bold">{name}</Text>
         <CategoryLabel key={name} labelList={categories} />{' '}
-        <Link to={`pathways/systems/${slug}`} className="pf-u-font-size-sm">
+        <Link
+          to={`/recommendations/pathways/systems/${slug}`}
+          className="pf-u-font-size-sm"
+        >
           {intl.formatMessage(messages.topicCardSystemsaffected, {
             systems: impacted_systems_count,
           })}
@@ -49,7 +52,7 @@ export const PathwayCard = ({
         {RebootRequired(reboot_required)}
       </CardBody>
       <CardFooter className="footer pf-u-font-size-sm">
-        <Link to={`pathways/${slug}`}>
+        <Link to={`/recommendations/pathways/${slug}`}>
           {`${intl.formatMessage(messages.viewPathway)} `}
           <ArrowRightIcon />
         </Link>

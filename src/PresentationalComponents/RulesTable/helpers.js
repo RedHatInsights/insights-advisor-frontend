@@ -7,7 +7,7 @@ import { addNotification as addNotificationAction } from '@redhat-cloud-services
 import * as AppConstants from '../../AppConstants';
 import messages from '../../Messages';
 import { FILTER_CATEGORIES as FC } from '../../AppConstants';
-import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
+import { Link } from 'react-router-dom';
 import {
   Stack,
   StackItem,

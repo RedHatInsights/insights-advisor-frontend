@@ -7,7 +7,6 @@ import { pruneFilters, urlBuilder } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { getEntities, allCurrentSystemIds } from './helpers';
 import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
-
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { Get } from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
@@ -298,7 +297,7 @@ const Inventory = ({
                 return (
                   <Link
                     className="pf-u-font-size-lg"
-                    to={`${id}?activeRule=true`}
+                    to={`/recommendations/${rule.rule_id}/${id}?activeRule=true`}
                   >
                     {name}
                   </Link>

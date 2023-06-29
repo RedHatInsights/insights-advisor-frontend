@@ -3,7 +3,9 @@ import {
   FILTER_CATEGORIES as FC,
   PATHWAYS_FILTER_CATEGORIES as PFC,
 } from '../../AppConstants';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
+
 import {
   Pagination,
   PaginationVariant,
@@ -158,7 +160,7 @@ const PathwaysTable = ({ isTabActive }) => {
                   <span key={key}>
                     <Link
                       key={key}
-                      to={`../recommendations/pathways/${pathway.slug}`}
+                      to={`/recommendations/pathways/${pathway.slug}`}
                     >
                       {' '}
                       {pathway.name}{' '}

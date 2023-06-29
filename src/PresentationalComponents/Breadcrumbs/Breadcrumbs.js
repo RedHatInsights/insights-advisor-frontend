@@ -6,7 +6,8 @@ import PropTypes from 'prop-types';
 import messages from '../../Messages';
 import { useGetRecQuery } from '../../Services/Recs';
 import { useIntl } from 'react-intl';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 
 const Breadcrumbs = ({ current }) => {
   const intl = useIntl();
