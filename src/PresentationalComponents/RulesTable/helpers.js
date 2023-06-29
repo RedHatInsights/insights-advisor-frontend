@@ -7,7 +7,7 @@ import { addNotification as addNotificationAction } from '@redhat-cloud-services
 import * as AppConstants from '../../AppConstants';
 import messages from '../../Messages';
 import { FILTER_CATEGORIES as FC } from '../../AppConstants';
-import { Link } from 'react-router-dom';
+import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 import {
   Stack,
   StackItem,
@@ -370,7 +370,7 @@ export const buildRows = (
         {
           title: (
             <span key={key}>
-              <Link key={key} to={`../recommendations/${value.rule_id}`}>
+              <Link key={key} to={`${value.rule_id}`}>
                 {' '}
                 {value.description}{' '}
               </Link>

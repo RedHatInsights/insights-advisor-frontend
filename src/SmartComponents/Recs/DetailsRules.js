@@ -8,7 +8,7 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 import CaretDownIcon from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { Dropdown } from '@patternfly/react-core/dist/esm/components/Dropdown/Dropdown';

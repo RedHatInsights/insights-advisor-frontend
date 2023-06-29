@@ -287,7 +287,7 @@ const Inventory = ({
         ({ key }) => key === 'system_profile'
       );
       let tags = defaultColumns.filter(({ key }) => key === 'tags');
-
+      //Link to the Systems in the Recommendation details table and Pathway details table
       displayName = {
         ...displayName[0],
         transforms: [sortable, wrappable],
@@ -298,7 +298,7 @@ const Inventory = ({
                 return (
                   <Link
                     className="pf-u-font-size-lg"
-                    to={`recommendations/${rule.rule_id}/${id}?activeRule=true`}
+                    to={`${id}?activeRule=true`}
                   >
                     {name}
                   </Link>
