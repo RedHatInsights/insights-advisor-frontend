@@ -29,7 +29,7 @@ const TopicDetails = lazy(() =>
     /* webpackChunkName: "TopicDetails" */ './SmartComponents/Topics/Details'
   )
 );
-const TopicAdmin = lazy(() =>
+const AdminProtectedRoute = lazy(() =>
   import(
     /* webpackChunkName: "TopicAdmin" */ './PresentationalComponents/TopicsAdminTable/TopicsAdminTable'
   )
@@ -86,16 +86,16 @@ export const AdvisorRoutes = () => {
           path="topics/:id"
           element={<TopicDetails />}
         ></Route>
-        <Route
-          key={'TopicAdmin'}
-          path="topics/admin/manage"
-          element={<TopicAdmin />}
-        ></Route>
         {/* this redirect will be replaced with the redirect to the overview page when it's ready */}
         <Route
           key={'Advisor'}
           path="*"
           element={<Navigate replace to="recommendations" />}
+        ></Route>
+        <Route
+          key={'TopicAdmin'}
+          path="/topics/admin/manage"
+          element={<AdminProtectedRoute />}
         ></Route>
       </Routes>
     </ZeroState>
