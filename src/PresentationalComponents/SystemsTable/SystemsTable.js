@@ -7,18 +7,12 @@ import {
 } from '../../AppConstants';
 import React, { useEffect, useState } from 'react';
 import { TableVariant } from '@patternfly/react-table';
-import {
-  filterFetchBuilder,
-  paramParser,
-  pruneFilters,
-  urlBuilder,
-} from '../Common/Tables';
+import { paramParser, pruneFilters, urlBuilder } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 
 import { Get } from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import Loading from '../Loading/Loading';
-import SystemsPdf from '../Export/SystemsPdf';
 import downloadReport from '../Common/DownloadHelper';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
 import messages from '../../Messages';
@@ -321,11 +315,6 @@ const SystemsTable = () => {
               SID,
               dispatch
             ),
-          extraItems: [
-            <li key="download-pd" role="menuitem">
-              <SystemsPdf filters={{ ...filterFetchBuilder(filters) }} />
-            </li>,
-          ],
           isDisabled: !permsExport,
           tooltipText: permsExport
             ? intl.formatMessage(messages.exportData)
