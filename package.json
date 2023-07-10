@@ -70,7 +70,7 @@
     "@redhat-cloud-services/frontend-components-charts": "3.2.5",
     "@redhat-cloud-services/frontend-components-notifications": "^3.2.5",
     "@redhat-cloud-services/frontend-components-pdf-generator": "^2.6.19",
-    "@redhat-cloud-services/frontend-components-remediations": "3.2.7",
+    "@redhat-cloud-services/frontend-components-remediations": "3.2.10",
     "@redhat-cloud-services/frontend-components-translations": "3.2.6",
     "@redhat-cloud-services/frontend-components-utilities": "^3.7.3",
     "@reduxjs/toolkit": "1.6.1",
