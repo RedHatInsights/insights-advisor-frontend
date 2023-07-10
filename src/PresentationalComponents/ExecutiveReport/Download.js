@@ -6,10 +6,12 @@ import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { Button } from '@patternfly/react-core';
 import usePDFExport from '@redhat-cloud-services/frontend-components-utilities/useExportPDF/useExportPDF';
+import { useDispatch } from 'react-redux';
 
 const DownloadExecReport = ({ isDisabled }) => {
   const intl = useIntl();
-  const downloadReport = usePDFExport('advisor');
+  const dispatch = useDispatch();
+  const downloadReport = usePDFExport('advisor', dispatch);
   const fileName = `Advisor-Executive-Report--${new Date()
     .toUTCString()
     .replace(/ /g, '-')}.pdf`;
