@@ -283,6 +283,7 @@ const SystemsTable = () => {
 
           handleRefresh(options);
           const results = await defaultGetEntities(
+            // additional request to fetch hosts' operating system values
             fetchedSystems.data.map((system) => system.system_uuid),
             {
               per_page,
