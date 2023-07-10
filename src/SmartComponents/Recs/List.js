@@ -2,7 +2,7 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
-import React, { Suspense, lazy, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import {
   Tab,
   TabTitleText,
@@ -20,6 +20,7 @@ import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import PathwaysPanel from '../../PresentationalComponents/PathwaysPanel/PathwaysPanel';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 const PathwaysTable = lazy(() =>
   import(
@@ -32,9 +33,16 @@ const List = () => {
   const { pathname } = useLocation();
   const history = useHistory();
   const permsExport = usePermissions('advisor', PERMS.export);
-  document.title = intl.formatMessage(messages.documentTitle, {
-    subnav: messages.recommendations.defaultMessage,
-  });
+  const chrome = useChrome();
+
+  useEffect(() => {
+    chrome.updateDocumentTitle(
+      intl.formatMessage(messages.documentTitle, {
+        subnav: messages.recommendations.defaultMessage,
+      })
+    );
+  }, [chrome, intl]);
+
   const [activeTab, setActiveTab] = useState(
     pathname === '/recommendations/pathways' ? 1 : 0
   );
