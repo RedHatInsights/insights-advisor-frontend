@@ -2,17 +2,22 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
-import React from 'react';
+import React, { useEffect } from 'react';
 import SystemsTable from '../../PresentationalComponents/SystemsTable/SystemsTable';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 const List = () => {
   const intl = useIntl();
-
-  document.title = intl.formatMessage(messages.documentTitle, {
-    subnav: messages.systems.defaultMessage,
-  });
+  const chrome = useChrome();
+  useEffect(() => {
+    chrome.updateDocumentTitle(
+      intl.formatMessage(messages.documentTitle, {
+        subnav: messages.systems.defaultMessage,
+      })
+    );
+  }, [chrome, intl]);
 
   return (
     <React.Fragment>

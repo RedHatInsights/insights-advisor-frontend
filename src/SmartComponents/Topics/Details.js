@@ -25,6 +25,7 @@ import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 const Details = () => {
   const intl = useIntl();
@@ -62,14 +63,16 @@ const Details = () => {
     return () => dispatch(updateRecFilters(initiaRecFilters));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const chrome = useChrome();
 
   useEffect(() => {
     if (topic && topic.name) {
       const subnav = `${topic.name} - ${messages.topics.defaultMessage}`;
-      document.title = intl.formatMessage(messages.documentTitle, { subnav });
+      chrome.updateDocumentTitle(
+        intl.formatMessage(messages.documentTitle, { subnav })
+      );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [topic]);
+  }, [chrome, intl, topic]);
 
   return (
     <React.Fragment>

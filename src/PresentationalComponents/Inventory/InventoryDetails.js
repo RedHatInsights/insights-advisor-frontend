@@ -18,19 +18,23 @@ import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import SystemAdvisor from '../../SmartComponents/SystemAdvisor';
 import { useParams } from 'react-router-dom';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 const InventoryDetails = ({ entity }) => {
   const intl = useIntl();
   const store = useStore();
   const { inventoryId } = useParams();
+  const chrome = useChrome();
   useEffect(() => {
     if (entity && (entity.display_name || entity.id)) {
       const subnav = `${entity.display_name || entity.id} - ${
         messages.systems.defaultMessage
       }`;
-      document.title = intl.formatMessage(messages.documentTitle, { subnav });
+      chrome.updateDocumentTitle(
+        intl.formatMessage(messages.documentTitle, { subnav })
+      );
     }
-  }, [entity, intl]);
+  }, [entity, intl, chrome]);
 
   return (
     <DetailWrapper
