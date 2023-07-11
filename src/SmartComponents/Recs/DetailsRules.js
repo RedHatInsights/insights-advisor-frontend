@@ -42,7 +42,7 @@ export const DetailsRules = ({
   refetch,
 }) => {
   const intl = useIntl();
-
+  const featuredTopic = topics?.filter((topic) => topic.featured === true);
   return (
     <React.Fragment>
       <PageHeader className="adv-c-page__header">
@@ -57,7 +57,9 @@ export const DetailsRules = ({
           )}
           product={AdvisorProduct.rhel}
           rule={rule}
-          topics={topics}
+          Topics={
+            <Link to={`topics/${featuredTopic.tag}`}>{featuredTopic.name}</Link>
+          }
           resolutionRisk={ruleResolutionRisk(rule)}
           resolutionRiskDesc={RISK_OF_CHANGE_DESC[ruleResolutionRisk(rule)]}
           isDetailsPage
@@ -95,7 +97,7 @@ export const DetailsRules = ({
           knowledgebaseUrl={
             rule.node_id ? `https://access.redhat.com/node/${rule.node_id}` : ''
           }
-          linkComponent={Link}
+          ViewAffectedLink={Link}
         >
           <Flex>
             <FlexItem align={{ default: 'alignRight' }}>

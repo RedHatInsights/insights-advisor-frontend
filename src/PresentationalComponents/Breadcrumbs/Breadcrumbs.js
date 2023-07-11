@@ -26,8 +26,8 @@ const Breadcrumbs = ({ current }) => {
       let crumbs = [];
       // add base
       crumbs.push({
-        title: `${intl.formatMessage(messages.insightsHeader)} ${location[1]}`,
-        navigate: `/${location[1]}`,
+        title: `${intl.formatMessage(messages.insightsHeader)} ${location[3]}`,
+        navigate: `/${location[3]}`,
       });
 
       // if applicable, add :id breadcrumb
