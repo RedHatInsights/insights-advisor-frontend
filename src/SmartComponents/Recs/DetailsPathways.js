@@ -31,6 +31,7 @@ import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
 import { useLocation } from 'react-router-dom';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 const RulesTable = lazy(() =>
   import(
@@ -66,6 +67,16 @@ const PathwayDetails = () => {
   const [activeTab, setActiveTab] = useState(
     pathname.includes('/recommendations/pathways/systems/') ? 1 : 0
   );
+  const chrome = useChrome();
+  useEffect(() => {
+    pathway &&
+      !isFetching &&
+      chrome.updateDocumentTitle(
+        intl.formatMessage(messages.documentTitle, {
+          subnav: `${pathway.name} - ${messages.pathways.defaultMessage}`,
+        })
+      );
+  }, [chrome, intl, pathway, pathname, isFetching]);
 
   const waitForElm = (selector) => {
     return new Promise((resolve) => {

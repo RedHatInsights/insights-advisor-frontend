@@ -34,6 +34,8 @@ import { useGetRecQuery } from '../../Services/Recs';
 import { useGetTopicsQuery } from '../../Services/Topics';
 import { enableRule, bulkHostActions } from './helpers';
 import { DetailsRules } from './DetailsRules';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+
 const OverviewDetails = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -44,6 +46,7 @@ const OverviewDetails = () => {
   const ruleId = useParams().id;
   const addNotification = (data) => dispatch(notification(data));
   const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
+  const chrome = useChrome();
 
   const {
     data: rule = {},
@@ -99,11 +102,11 @@ const OverviewDetails = () => {
 
     if (rule?.description) {
       const subnav = `${rule.description} - ${messages.recommendations.defaultMessage}`;
-      document.title = intl.formatMessage(messages.documentTitle, { subnav });
+      chrome.updateDocumentTitle(
+        intl.formatMessage(messages.documentTitle, { subnav })
+      );
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [chrome, intl, rule.description, ruleId]);
 
   return (
     <React.Fragment>
