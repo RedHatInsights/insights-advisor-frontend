@@ -59,11 +59,17 @@ export const DetailsRules = ({
           product={AdvisorProduct.rhel}
           rule={rule}
           Topics={
-            <>
-              <strong>{intl.formatMessage(messages.topicRelatedToRule)}</strong>
-              <br />
-              {topicLinks(rule, topics, Link)}
-            </>
+            topics &&
+            rule.tags &&
+            topicLinks(rule, topics, Link).length > 0 && (
+              <>
+                <strong>
+                  {intl.formatMessage(messages.topicRelatedToRule)}
+                </strong>
+                <br />
+                {topicLinks(rule, topics, Link)}
+              </>
+            )
           }
           resolutionRisk={ruleResolutionRisk(rule)}
           resolutionRiskDesc={RISK_OF_CHANGE_DESC[ruleResolutionRisk(rule)]}
