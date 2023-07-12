@@ -26,6 +26,7 @@ import {
   RuleDetails,
   RuleDetailsMessagesKeys,
   AdvisorProduct,
+  topicLinks,
 } from '@redhat-cloud-services/frontend-components-advisor-components';
 import messages from '../../Messages';
 import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
@@ -42,7 +43,7 @@ export const DetailsRules = ({
   refetch,
 }) => {
   const intl = useIntl();
-  const featuredTopic = topics?.filter((topic) => topic.featured === true);
+
   return (
     <React.Fragment>
       <PageHeader className="adv-c-page__header">
@@ -58,7 +59,11 @@ export const DetailsRules = ({
           product={AdvisorProduct.rhel}
           rule={rule}
           Topics={
-            <Link to={`topics/${featuredTopic.tag}`}>{featuredTopic.name}</Link>
+            <>
+              <strong>{intl.formatMessage(messages.topicRelatedToRule)}</strong>
+              <br />
+              {topicLinks(rule, topics, Link)}
+            </>
           }
           resolutionRisk={ruleResolutionRisk(rule)}
           resolutionRiskDesc={RISK_OF_CHANGE_DESC[ruleResolutionRisk(rule)]}
