@@ -74,6 +74,11 @@ export const AdvisorRoutes = () => {
           path="recommendations/pathways/:id/:inventoryId/"
           element={<InventoryDetails />}
         ></Route>
+        <Route
+          key={'Inventory details'}
+          path="recommendations/pathways/systems/:id/:inventoryId/"
+          element={<InventoryDetails />}
+        ></Route>
         <Route key={'Systems'} path="systems" element={<SystemsList />}></Route>
         <Route
           key={'System detail'}
