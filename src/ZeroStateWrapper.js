@@ -4,8 +4,14 @@ import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncCompo
 import ErrorState from '@redhat-cloud-services/frontend-components/ErrorState';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
+import { useDispatch } from 'react-redux';
+import { useIntl } from 'react-intl';
+import messages from './Messages';
 
-export const ZeroState = ({ children }) => {
+export const ZeroStateWrapper = ({ children }) => {
+  const intl = useIntl();
+  const dispatch = useDispatch();
   const [hasSystems, setHasSystems] = useState(true);
   useEffect(() => {
     try {
@@ -15,7 +21,14 @@ export const ZeroState = ({ children }) => {
           setHasSystems(data.total > 0);
         });
     } catch (e) {
-      console.log(e);
+      dispatch(
+        addNotification({
+          variant: 'danger',
+          dismissable: true,
+          title: intl.formatMessage(messages.error),
+          description: `${e}`,
+        })
+      );
     }
   }, [hasSystems]);
 
@@ -51,7 +64,7 @@ export const ZeroState = ({ children }) => {
   );
 };
 
-ZeroState.propTypes = {
+ZeroStateWrapper.propTypes = {
   children: PropTypes.element,
   check: PropTypes.boolean,
 };

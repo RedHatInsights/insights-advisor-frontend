@@ -1,6 +1,6 @@
 import React, { lazy } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import { ZeroState } from './ZeroState';
+import { ZeroStateWrapper } from './ZeroStateWrapper';
 
 const RecsList = lazy(() =>
   import(/* webpackChunkName: "RecsList" */ './SmartComponents/Recs/List')
@@ -37,7 +37,7 @@ const AdminProtectedRoute = lazy(() =>
 
 export const AdvisorRoutes = () => {
   return (
-    <ZeroState>
+    <ZeroStateWrapper>
       <Routes>
         <Route
           key={'Recommendations'}
@@ -103,6 +103,6 @@ export const AdvisorRoutes = () => {
           element={<AdminProtectedRoute />}
         ></Route>
       </Routes>
-    </ZeroState>
+    </ZeroStateWrapper>
   );
 };

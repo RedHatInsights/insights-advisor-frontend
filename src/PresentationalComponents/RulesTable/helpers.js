@@ -497,9 +497,9 @@ export const buildRows = (
                     <Link to={`/recommendations/${value.rule_id}`}>
                       {value.impacted_systems_count === 0
                         ? ''
-                        : value.impacted_systems_count === 1
-                        ? `View the affected system`
-                        : `View ${value.impacted_systems_count} affected systems`}
+                        : intl.formatMessage(messages.viewAffectedSystems, {
+                            systemsCount: value.impacted_systems_count,
+                          })}
                     </Link>
                   }
                   knowledgebaseUrl={
