@@ -20,7 +20,8 @@ const downloadHelper = async (
   selectedTags,
   workloads,
   SID,
-  dispatch
+  dispatch,
+  display_name
 ) => {
   try {
     let options = selectedTags?.length && { tags: selectedTags };
@@ -33,7 +34,11 @@ const downloadHelper = async (
           format === 'json' ? 'json' : 'csv'
         }`,
         {},
-        { ...filters, ...options }
+        {
+          ...filters,
+          ...options,
+          ...(display_name && { display_name: display_name }),
+        }
       )
         .then((result) => {
           dispatch(addNotification(exportNotifications.success));
