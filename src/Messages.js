@@ -924,7 +924,7 @@ export default defineMessages({
     description:
       'Link text to view all hosts that are affected by a recommendation',
     defaultMessage:
-      'View {systems, plural, one {the affected system} other {# affected systems}}',
+      'View {systemsCount, plural, one {the affected system} other {# affected systems}}',
   },
   ruleHelpful: {
     id: 'ruleHelpful',

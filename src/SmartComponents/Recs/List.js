@@ -8,7 +8,8 @@ import {
   TabTitleText,
   Tabs,
 } from '@patternfly/react-core/dist/esm/components/Tabs/index';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import useInsightsNavigate from '@redhat-cloud-services/frontend-components-utilities/useInsightsNavigate';
 
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import Loading from '../../PresentationalComponents/Loading/Loading';
@@ -31,7 +32,7 @@ const PathwaysTable = lazy(() =>
 const List = () => {
   const intl = useIntl();
   const { pathname } = useLocation();
-  const history = useHistory();
+  const { navigate } = useInsightsNavigate();
   const permsExport = usePermissions('advisor', PERMS.export);
   const chrome = useChrome();
 
@@ -48,7 +49,7 @@ const List = () => {
   );
   const changeTab = (tab) => {
     setActiveTab(tab);
-    history.push(tab === 1 ? '/recommendations/pathways' : '/recommendations');
+    navigate(tab === 1 ? '/recommendations/pathways' : '/recommendations');
   };
 
   return (

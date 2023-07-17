@@ -9,10 +9,10 @@ import {
 import { Text } from '@patternfly/react-core';
 import ArrowRightIcon from '@patternfly/react-icons/dist/esm/icons/arrow-right-icon';
 import CategoryLabel from '../Labels/CategoryLabel';
-import { Link } from 'react-router-dom';
 import React from 'react';
 import { RebootRequired } from '../Common/Common';
 import RuleLabels from '../Labels/RuleLabels';
+import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';

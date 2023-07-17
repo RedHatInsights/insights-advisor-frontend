@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-table';
 
 import { Label } from '@patternfly/react-core/dist/esm/components/Label/Label';
-import { Link } from 'react-router-dom';
+import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';

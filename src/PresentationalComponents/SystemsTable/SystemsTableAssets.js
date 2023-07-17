@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 import { sortable, wrappable } from '@patternfly/react-table';
 
 import messages from '../../Messages';

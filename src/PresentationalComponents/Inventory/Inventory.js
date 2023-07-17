@@ -6,8 +6,7 @@ import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import { pruneFilters, urlBuilder } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { getEntities, allCurrentSystemIds } from './helpers';
-import { Link } from 'react-router-dom';
-
+import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { Get } from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
@@ -287,7 +286,7 @@ const Inventory = ({
         ({ key }) => key === 'system_profile'
       );
       let tags = defaultColumns.filter(({ key }) => key === 'tags');
-
+      //Link to the Systems in the Recommendation details table and Pathway details table
       displayName = {
         ...displayName[0],
         transforms: [sortable, wrappable],
