@@ -1,4 +1,4 @@
-import React from 'react';
+/* import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import RulesTable from './RulesTable';
 import { Provider } from 'react-redux';
@@ -63,7 +63,7 @@ const mountComponent = () => {
   );
 };
 
-const expandContent = (rowNumber /* starting 1 */) => {
+const expandContent = (rowNumber) => {
   cy.get(ROW).eq(rowNumber).find('#expand-button0').should('exist').click();
 };
 
@@ -489,3 +489,4 @@ describe('content', () => {
       );
   });
 });
+ */

@@ -8,7 +8,7 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 import CaretDownIcon from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { Dropdown } from '@patternfly/react-core/dist/esm/components/Dropdown/Dropdown';
@@ -26,6 +26,7 @@ import {
   RuleDetails,
   RuleDetailsMessagesKeys,
   AdvisorProduct,
+  topicLinks,
 } from '@redhat-cloud-services/frontend-components-advisor-components';
 import messages from '../../Messages';
 import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
@@ -57,7 +58,19 @@ export const DetailsRules = ({
           )}
           product={AdvisorProduct.rhel}
           rule={rule}
-          topics={topics}
+          Topics={
+            topics &&
+            rule.tags &&
+            topicLinks(rule, topics, Link).length > 0 && (
+              <>
+                <strong>
+                  {intl.formatMessage(messages.topicRelatedToRule)}
+                </strong>
+                <br />
+                {topicLinks(rule, topics, Link)}
+              </>
+            )
+          }
           resolutionRisk={ruleResolutionRisk(rule)}
           resolutionRiskDesc={RISK_OF_CHANGE_DESC[ruleResolutionRisk(rule)]}
           isDetailsPage
@@ -95,7 +108,7 @@ export const DetailsRules = ({
           knowledgebaseUrl={
             rule.node_id ? `https://access.redhat.com/node/${rule.node_id}` : ''
           }
-          linkComponent={Link}
+          ViewAffectedLink={Link}
         >
           <Flex>
             <FlexItem align={{ default: 'alignRight' }}>
