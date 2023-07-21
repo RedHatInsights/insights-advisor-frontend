@@ -28,7 +28,9 @@ import {
   useBuildRows,
   useProcessRemediation,
 } from './SystemAdvisorAssets';
-
+import downloadReport from '../../PresentationalComponents/Common/DownloadHelper';
+import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
+import * as AppConstants from '../../AppConstants';
 const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   const intl = useIntl();
   const systemAdvisorRef = useRef({
@@ -49,6 +51,14 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   const [searchValue, setSearchValue] = useState('');
   const [isSelected, setIsSelected] = useState(false);
   const [isAllExpanded, setIsAllExpanded] = useState(false);
+
+  const selectedTags = useSelector(({ filters }) => filters.selectedTags);
+  const workloads = useSelector(({ filters }) => filters.workloads);
+  const SID = useSelector(({ filters }) => filters.SID);
+  const permsExport = usePermissions(
+    'advisor',
+    AppConstants.PERMS.export
+  ).hasAccess;
 
   const getSelectedItems = (rows) => rows.filter((row) => row.selected);
   const selectedAnsibleRules = getSelectedItems(rows).filter(
@@ -378,7 +388,8 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
     };
     dataFetch();
   }, []);
-
+  // eslint-disable-next-line react/prop-types
+  let display_name = entity?.display_name;
   return inventoryReportFetchStatus === 'fulfilled' &&
     entity?.insights_id === null ? (
     <NotConnected
@@ -407,6 +418,26 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
             </Fragment>
           }
           activeFiltersConfig={activeFiltersConfig}
+          exportConfig={{
+            label: intl.formatMessage(messages.exportCsv),
+            // eslint-disable-next-line no-dupe-keys
+            label: intl.formatMessage(messages.exportJson),
+            onSelect: (_e, fileType) =>
+              downloadReport(
+                'hits',
+                fileType,
+                filters,
+                selectedTags,
+                workloads,
+                SID,
+                dispatch,
+                display_name
+              ),
+            isDisabled: !permsExport,
+            tooltipText: permsExport
+              ? intl.formatMessage(messages.exportData)
+              : intl.formatMessage(messages.permsAction),
+          }}
         />
       )}
       {inventoryReportFetchStatus === 'pending' && (
