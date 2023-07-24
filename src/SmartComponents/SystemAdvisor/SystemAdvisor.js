@@ -52,9 +52,9 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isAllExpanded, setIsAllExpanded] = useState(false);
 
-  const selectedTags = useSelector(({ filters }) => filters.selectedTags);
-  const workloads = useSelector(({ filters }) => filters.workloads);
-  const SID = useSelector(({ filters }) => filters.SID);
+  const selectedTags = useSelector(({ filters }) => filters?.selectedTags);
+  const workloads = useSelector(({ filters }) => filters?.workloads);
+  const SID = useSelector(({ filters }) => filters?.SID);
   const permsExport = usePermissions(
     'advisor',
     AppConstants.PERMS.export
