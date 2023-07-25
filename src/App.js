@@ -32,15 +32,6 @@ const App = () => {
         });
       });
     }
-
-    const unregister = chrome.on('APP_NAVIGATION', (event) => {
-      if (event.domEvent) {
-        chrome.appNavClick(`/${event.navId}`);
-      }
-    });
-
-    return () => unregister();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
