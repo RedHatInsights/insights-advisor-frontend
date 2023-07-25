@@ -426,7 +426,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
               downloadReport(
                 'hits',
                 fileType,
-                filters,
+                { ...filters, text: searchValue },
                 selectedTags,
                 workloads,
                 SID,
