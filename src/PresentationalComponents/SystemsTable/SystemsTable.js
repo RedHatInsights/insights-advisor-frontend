@@ -223,12 +223,7 @@ const SystemsTable = () => {
   return (
     !filterBuilding && (
       <InventoryTable
-        hideFilters={{
-          all: true,
-          name: false,
-          tags: false,
-          hostGroupFilter: false,
-        }}
+        hideFilters={{ all: true, name: false, tags: false }}
         initialLoading
         autoRefresh
         showTags
@@ -289,7 +284,6 @@ const SystemsTable = () => {
 
           handleRefresh(options);
           const results = await defaultGetEntities(
-            // additional request to fetch hosts' operating system values
             fetchedSystems.data.map((system) => system.system_uuid),
             {
               per_page,
