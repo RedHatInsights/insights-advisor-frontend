@@ -5,7 +5,7 @@ import {
   SYSTEM_FILTER_CATEGORIES as SFC,
   SYSTEMS_FETCH_URL,
 } from '../../AppConstants';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { TableVariant } from '@patternfly/react-table';
 import {
   filterFetchBuilder,
@@ -219,6 +219,10 @@ const SystemsTable = () => {
     urlBuilder(combinedFilters, selectedTags);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTags]);
+  const pdfFilters = useMemo(() => {
+    const { tags: _tags, ...filtersWithoutTags } = filterFetchBuilder(filters);
+    return filtersWithoutTags;
+  }, [filters]);
 
   return (
     !filterBuilding && (
@@ -323,7 +327,7 @@ const SystemsTable = () => {
             ),
           extraItems: [
             <li key="download-pd" role="menuitem">
-              <SystemsPdf filters={{ ...filterFetchBuilder(filters) }} />
+              <SystemsPdf filters={pdfFilters} />
             </li>,
           ],
           isDisabled: !permsExport,
