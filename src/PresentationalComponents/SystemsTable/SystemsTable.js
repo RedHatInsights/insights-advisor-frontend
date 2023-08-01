@@ -5,14 +5,20 @@ import {
   SYSTEM_FILTER_CATEGORIES as SFC,
   SYSTEMS_FETCH_URL,
 } from '../../AppConstants';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { TableVariant } from '@patternfly/react-table';
-import { paramParser, pruneFilters, urlBuilder } from '../Common/Tables';
+import {
+  filterFetchBuilder,
+  paramParser,
+  pruneFilters,
+  urlBuilder,
+} from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 
 import { Get } from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import Loading from '../Loading/Loading';
+import SystemsPdf from '../Export/SystemsPdf';
 import downloadReport from '../Common/DownloadHelper';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
 import messages from '../../Messages';
@@ -213,16 +219,15 @@ const SystemsTable = () => {
     urlBuilder(combinedFilters, selectedTags);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTags]);
+  const pdfFilters = useMemo(() => {
+    const { tags: _tags, ...filtersWithoutTags } = filterFetchBuilder(filters);
+    return filtersWithoutTags;
+  }, [filters]);
 
   return (
     !filterBuilding && (
       <InventoryTable
-        hideFilters={{
-          all: true,
-          name: false,
-          tags: false,
-          hostGroupFilter: false,
-        }}
+        hideFilters={{ all: true, name: false, tags: false }}
         initialLoading
         autoRefresh
         showTags
@@ -283,7 +288,6 @@ const SystemsTable = () => {
 
           handleRefresh(options);
           const results = await defaultGetEntities(
-            // additional request to fetch hosts' operating system values
             fetchedSystems.data.map((system) => system.system_uuid),
             {
               per_page,
@@ -321,6 +325,11 @@ const SystemsTable = () => {
               SID,
               dispatch
             ),
+          extraItems: [
+            <li key="download-pd" role="menuitem">
+              <SystemsPdf filters={pdfFilters} />
+            </li>,
+          ],
           isDisabled: !permsExport,
           tooltipText: permsExport
             ? intl.formatMessage(messages.exportData)
