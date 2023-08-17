@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const filtersInitialState = {
+export const filtersInitialState = {
   recState: {
     impacting: ['true'],
     rule_status: 'enabled',

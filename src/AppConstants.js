@@ -37,6 +37,23 @@ export const SEVERITY_MAP = {
   'medium-risk': 2,
   'low-risk': 1,
 };
+
+// Recommendations OverviewDashbarCards titles
+export const PATHWAYS = 'Pathways';
+export const INCIDENTS = 'Incidents';
+export const IMPORTANT_RECOMMENDATIONS = 'Important Recommendations';
+export const CRITICAL_RECOMMENDATIONS = 'Critical Recommendations';
+
+// Recommendations OverviewDashbarCards labels
+export const INCIDENT_TAG = 'incident';
+// Recommendations OverviewDashbarCards level of risk, are used with SEVERITY_MAP
+export const IMPORTANT_TAG = 'high-risk';
+export const CRITICAL_TAG = 'critical-risk';
+
+// Recommendation Page Tabs
+export const RECOMMENDATIONS_TAB = 0;
+export const PATHWAYS_TAB = 1;
+
 export const RISK_OF_CHANGE_DESC = {
   1: intlHelper(
     intl.formatMessage(messages.riskOfChangeTextOne, {
