@@ -1,14 +1,13 @@
 import {
   EmptyState,
   EmptyStateVariant,
-} from '@patternfly/react-core/dist/esm/components/EmptyState/EmptyState';
-
-import CubesIcon from '@patternfly/react-icons/dist/esm/icons/cubes-icon';
-import { EmptyStateBody } from '@patternfly/react-core/dist/esm/components/EmptyState/EmptyStateBody';
-import { EmptyStateIcon } from '@patternfly/react-core/dist/esm/components/EmptyState/EmptyStateIcon';
+  EmptyStateBody,
+  EmptyStateIcon,
+  Title,
+} from '@patternfly/react-core';
+import { CubesIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 
 const MessageState = ({
   className,

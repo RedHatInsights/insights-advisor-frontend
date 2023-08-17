@@ -1181,8 +1181,8 @@ export default defineMessages({
     description: 'No Pathways available',
     defaultMessage: 'No pathways available',
   },
-  pathwaysPanelsError: {
-    id: 'pathwaysPanelError',
+  overviewDashbarError: {
+    id: 'overviewDashbarError',
     description:
       'There was a problem processing the request. Please try again.',
     defaultMessage:

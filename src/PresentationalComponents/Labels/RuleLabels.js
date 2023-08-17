@@ -1,4 +1,4 @@
-import './_RuleLabels.scss';
+import "./_RuleLabels.scss";
 
 import { Tooltip, TooltipPosition, Label } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
@@ -11,21 +11,21 @@ const RuleLabels = ({ rule, isCompact, noMargin }) => {
 
   return (
     <React.Fragment>
-      {rule?.tags?.search('incident') !== -1 && (
+      {rule?.tags?.search("incident") !== -1 && (
         <Tooltip
           content={intl.formatMessage(messages.incidentTooltip)}
           position={TooltipPosition.right}
         >
           <Label
             color="red"
-            className={noMargin ? null : 'adv-c-label-incident'}
+            className={noMargin ? null : "adv-c-label-incident"}
             isCompact={isCompact}
           >
             {intl.formatMessage(messages.incident)}
           </Label>
         </Tooltip>
       )}
-      {rule?.rule_status === 'disabled' && (
+      {rule?.rule_status === "disabled" && (
         <Tooltip
           content={intl.formatMessage(messages.ruleIsDisabledTooltip)}
           position={TooltipPosition.right}
@@ -35,7 +35,7 @@ const RuleLabels = ({ rule, isCompact, noMargin }) => {
           </Label>
         </Tooltip>
       )}
-      {rule?.rule_status === 'rhdisabled' && (
+      {rule?.rule_status === "rhdisabled" && (
         <Tooltip
           content={intl.formatMessage(messages.ruleIsDisabledTooltip)}
           position={TooltipPosition.right}
