@@ -36,7 +36,7 @@ export const createOptions = (
       rhel_version: advisorFilters.rhel_version?.join(','),
     }),
     ...(filters?.hostGroupFilter?.length && {
-      group_name: filters.hostGroupFilter,
+      groups: filters.hostGroupFilter.join(','),
     }),
     ...(filters.tagFilters?.length && buildTagFilter(filters.tagFilters)),
     ...(workloads ? workloadQueryBuilder(workloads, SID) : {}),

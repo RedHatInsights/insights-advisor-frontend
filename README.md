@@ -40,6 +40,8 @@ Travis is used to test the build for this code.
 - `npm run test` will run tests.
 - `npm run lint` will run all linters.
 
+Before opening a pull request, you can run `npm run verify:local` to make sure your changes pass automated tests (Jest and Cypress) and linter (both JS and CSS linters).
+
 ## Deploying
 Any push to the following branches will trigger a build in [insights-advisor-frontend-build repository](https://github.com/RedHatInsights/insights-advisor-frontend-build) which will deploy to corresponding environment. Travis is used to deploy the application.
 

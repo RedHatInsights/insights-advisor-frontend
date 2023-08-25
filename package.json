@@ -23,7 +23,8 @@
     "start:proxy": "NODE_ENV=development PROXY=true webpack serve --config config/dev.webpack.config.js",
     "start:proxy:beta": "BETA=true NODE_ENV=development PROXY=true webpack serve --config config/dev.webpack.config.js",
     "test": "npm run test:jest",
-    "test:jest": "jest --verbose --passWithNoTests --env=jsdom",
+    "test:local": "TZ=UTC jest --verbose --collectCoverage=false --passWithNoTests --env=jsdom",
+    "test:jest": "TZ=UTC jest --verbose --passWithNoTests --env=jsdom",
     "test:ct": "BABEL_ENV=component cypress run --component",
     "test:openct": "cypress open --component",
     "translations": "npm-run-all translations:*",
@@ -33,6 +34,7 @@
     "travis:build": "NODE_ENV=production webpack --config config/prod.webpack.config.js",
     "travis:verify": "npm-run-all travis:build lint",
     "verify": "npm-run-all build lint test",
+    "verify:local": "npm-run-all build lint test:local test:ct",
     "coverage:clean": "rm -rf .nyc_output coverage reports",
     "coverage": "bash coverage.sh && npm run coverage:clean"
   },
