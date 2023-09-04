@@ -37,7 +37,7 @@ const PathwaysTable = lazy(() =>
 const List = () => {
   const intl = useIntl();
   const { pathname } = useLocation();
-  const { navigate } = useInsightsNavigate();
+  const navigate = useInsightsNavigate();
   const permsExport = usePermissions('advisor', PERMS.export);
   const chrome = useChrome();
 

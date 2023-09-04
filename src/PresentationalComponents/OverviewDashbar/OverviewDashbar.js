@@ -1,17 +1,16 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useIntl } from 'react-intl';
-import propTypes from 'prop-types';
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useIntl } from "react-intl";
+import propTypes from "prop-types";
 
-import { Grid, GridItem } from '@patternfly/react-core';
-
-import { OverviewDashbarCard } from '../Cards/OverviewDashbarCard';
-import { updateRecFilters, filtersInitialState } from '../../Services/Filters';
-import { useGetPathwaysQuery } from '../../Services/Pathways';
-import { workloadQueryBuilder } from '../Common/Tables';
-import MessageState from '../MessageState/MessageState';
-import Loading from '../Loading/Loading';
-import messages from '../../Messages';
+import { Grid, GridItem } from "@patternfly/react-core";
+import { OverviewDashbarCard } from "../Cards/OverviewDashbarCard/OverviewDashbarCard";
+import { updateRecFilters, filtersInitialState } from "../../Services/Filters";
+import { useGetPathwaysQuery } from "../../Services/Pathways";
+import { workloadQueryBuilder } from "../Common/Tables";
+import MessageState from "../MessageState/MessageState";
+import Loading from "../Loading/Loading";
+import messages from "../../Messages";
 import {
   PATHWAYS,
   INCIDENTS,
@@ -22,15 +21,8 @@ import {
   SEVERITY_MAP,
   RECOMMENDATIONS_TAB,
   PATHWAYS_TAB,
-} from '../../AppConstants';
+} from "../../AppConstants";
 
-const getWrongTitleErrorMessage = (nameOfComponent) => {
-  return `Error! ${nameOfComponent} was provided with an invalid title. Valid titles are: ${
-    nameOfComponent === 'applyFiltersByTitle' ? '' : `'${PATHWAYS}', `
-  }'${INCIDENTS}', '${IMPORTANT_RECOMMENDATIONS}', '${CRITICAL_RECOMMENDATIONS}'`;
-};
-
-/*****************************************/
 const OverviewDashbar = ({ changeTab }) => {
   const { offset } = useSelector(({ filters: { pathState } }) => pathState);
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
@@ -41,11 +33,11 @@ const OverviewDashbar = ({ changeTab }) => {
   const { formatMessage } = useIntl();
 
   const options = {
-    ...(selectedTags?.length > 0 ? { tags: selectedTags.join(',') } : {}),
+    ...(selectedTags?.length > 0 ? { tags: selectedTags.join(",") } : {}),
     ...(workloads ? workloadQueryBuilder(workloads, SID) : {}),
   };
   const { data, isLoading, isFetching, isError } = useGetPathwaysQuery({
-    sort: '-recommendation_level',
+    sort: "-recommendation_level",
     offset,
     limit: 3,
     ...options,
@@ -62,28 +54,33 @@ const OverviewDashbar = ({ changeTab }) => {
   // this function is used to apply filters to the recommendations table based on the title of the card that was clicked
   // also, it changes the tab to the recommendations tab (only if the title matches one of the recommendations titles: critical, important, or incidents)
   const applyFiltersByTitle = (title) => {
-    let needToChangeTab = true;
     switch (title) {
       case INCIDENTS:
         applyFilters({ incident: true });
+        changeTab(RECOMMENDATIONS_TAB);
         break;
       case CRITICAL_RECOMMENDATIONS:
         applyFilters({ total_risk: SEVERITY_MAP[CRITICAL_TAG] });
+        changeTab(RECOMMENDATIONS_TAB);
         break;
       case IMPORTANT_RECOMMENDATIONS:
         applyFilters({ total_risk: SEVERITY_MAP[IMPORTANT_TAG] });
+        changeTab(RECOMMENDATIONS_TAB);
         break;
       default:
-        needToChangeTab = false;
-        console.log(getWrongTitleErrorMessage('applyFiltersByTitle'));
+        console.log(`Error! applyFiltersByTitle was provided with an invalid title. Valid titles are:
+          '${PATHWAYS}', '${INCIDENTS}', '${IMPORTANT_RECOMMENDATIONS}' and '${CRITICAL_RECOMMENDATIONS}'`);
         break;
-    }
-    if (needToChangeTab) {
-      changeTab(RECOMMENDATIONS_TAB);
     }
   };
 
+  console.log("***********************************************");
+  console.log("OverviewDashbar - isLoading", isLoading);
+  console.log("OverviewDashbar - isFetching", isFetching);
+  console.log("OverviewDashbar - isError", isError);
+
   return !isLoading && !isFetching && !isError ? (
+    // return (
     <Grid hasGutter id="overview-dashbar">
       <GridItem span={3}>
         <OverviewDashbarCard
@@ -92,8 +89,6 @@ const OverviewDashbar = ({ changeTab }) => {
           onClickFilterByTitle={() => {
             changeTab(PATHWAYS_TAB);
           }}
-          formatMessage={formatMessage}
-          getWrongTitleErrorMessage={getWrongTitleErrorMessage}
         />
       </GridItem>
       <GridItem span={3}>
@@ -101,8 +96,6 @@ const OverviewDashbar = ({ changeTab }) => {
           title={INCIDENTS}
           count={data.data?.length} // BLOCKED: Waiting for implementation of the API endpoint to return the "overview" including the correct count (opened an issue for this)
           onClickFilterByTitle={applyFiltersByTitle}
-          formatMessage={formatMessage}
-          getWrongTitleErrorMessage={getWrongTitleErrorMessage}
         />
       </GridItem>
       <GridItem span={3}>
@@ -110,8 +103,6 @@ const OverviewDashbar = ({ changeTab }) => {
           title={CRITICAL_RECOMMENDATIONS}
           count={data.data?.length} // BLOCKED: Waiting for implementation of the API endpoint to return the "overview" including the correct count (opened an issue for this)
           onClickFilterByTitle={applyFiltersByTitle}
-          formatMessage={formatMessage}
-          getWrongTitleErrorMessage={getWrongTitleErrorMessage}
         />
       </GridItem>
       <GridItem span={3}>
@@ -119,8 +110,6 @@ const OverviewDashbar = ({ changeTab }) => {
           title={IMPORTANT_RECOMMENDATIONS}
           count={data.data?.length} // BLOCKED: Waiting for implementation of the API endpoint to return the "overview" including the correct count (opened an issue for this)
           onClickFilterByTitle={applyFiltersByTitle}
-          formatMessage={formatMessage}
-          getWrongTitleErrorMessage={getWrongTitleErrorMessage}
         />
       </GridItem>
     </Grid>
@@ -128,9 +117,9 @@ const OverviewDashbar = ({ changeTab }) => {
     <Loading />
   ) : (
     <MessageState
-      icon={'none'}
+      icon={"none"}
       title={formatMessage(messages.noPathwaysAvailable)}
-      text={formatMessage(messages.pathwaysPanelsError)}
+      text={formatMessage(messages.overviewDashbarError)}
     />
   );
 };

@@ -1,22 +1,22 @@
-import './_Common.scss';
+import "./_Common.scss";
 
 import {
   Text,
   TextContent,
   TextVariants,
-} from '@patternfly/react-core/dist/esm/components/Text/index';
-import {
   Tooltip,
   TooltipPosition,
-} from '@patternfly/react-core/dist/esm/components/Tooltip/';
-import { createIntl, createIntlCache } from 'react-intl';
+} from "@patternfly/react-core";
+import { createIntl, createIntlCache } from "react-intl";
 
-import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
-import PowerOffIcon from '@patternfly/react-icons/dist/esm/icons/power-off-icon';
-import React from 'react';
-import { global_secondary_color_100 } from '@patternfly/react-tokens/dist/js/global_secondary_color_100';
-import messages from '../../Messages';
-import { strong } from '../../Utilities/intlHelper';
+import {
+  OutlinedQuestionCircleIcon,
+  PowerOffIcon,
+} from "@patternfly/react-icons";
+import React from "react";
+import { global_secondary_color_100 } from "@patternfly/react-tokens";
+import messages from "../../Messages";
+import { strong } from "../../Utilities/intlHelper";
 
 const cache = createIntlCache();
 const locale = navigator.language.slice(0, 2);
@@ -32,8 +32,8 @@ const RebootRequired = (reboot_required) => (
     <PowerOffIcon
       className={
         reboot_required
-          ? 'adv-c-icon-reboot-required'
-          : 'adv-c-icon-no-reboot-required'
+          ? "adv-c-icon-reboot-required"
+          : "adv-c-icon-no-reboot-required"
       }
     />
     <TextContent className="adv-c-text-system-reboot-message pf-u-font-size-sm">
@@ -55,7 +55,11 @@ const QuestionTooltip = (text) => (
     position={TooltipPosition.right}
     content={<div>{text}</div>}
   >
-    <span aria-label="Action">
+    <span
+      aria-label="Action"
+      data-cy="question-tooltip"
+      data-testid={`question-tooltip-${text}`}
+    >
       <OutlinedQuestionCircleIcon color={global_secondary_color_100.value} />
     </span>
   </Tooltip>

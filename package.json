@@ -110,6 +110,8 @@
     "@formatjs/cli": "4.2.33",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "1.2.1",
     "@redhat-cloud-services/frontend-components-config": "^5.0.2",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^12.1.5",
     "axios": "0.21.4",
     "babel-eslint": "10.1.0",
     "babel-jest": "27.1.1",
