@@ -31,6 +31,7 @@ import {
 import downloadReport from '../../PresentationalComponents/Common/DownloadHelper';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import * as AppConstants from '../../AppConstants';
+import { useParams } from 'react-router-dom';
 const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   const intl = useIntl();
   const systemAdvisorRef = useRef({
@@ -39,7 +40,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   const dispatch = useDispatch();
   const addNotification = (data) => dispatch(addNotificationAction(data));
 
-  const routerData = useSelector(({ routerData }) => routerData);
+  const { id: ruleIdParam } = useParams();
 
   const [inventoryReportFetchStatus, setInventoryReportFetchStatus] =
     useState('pending');
@@ -111,12 +112,9 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
 
   const activeRuleFirst = (activeReports) => {
     const reports = [...activeReports];
-    const activeRuleIndex =
-      routerData && typeof routerData.params !== 'undefined'
-        ? activeReports.findIndex(
-            (report) => report.rule.rule_id === routerData.params.id
-          )
-        : -1;
+    const activeRuleIndex = ruleIdParam
+      ? activeReports.findIndex((report) => report.rule.rule_id === ruleIdParam)
+      : -1;
     const activeReport = reports.splice(activeRuleIndex, 1);
 
     return activeRuleIndex !== -1
