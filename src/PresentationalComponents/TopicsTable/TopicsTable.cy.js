@@ -1,5 +1,5 @@
-/* import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import React from 'react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
 import { getStore } from '../../Store';
@@ -25,14 +25,22 @@ const mountComponent = () => {
     <MemoryRouter>
       <IntlProvider>
         <Provider store={store}>
-          <TopicsTable
-            props={{
-              data: fixtures,
-              isLoading: false,
-              isFetching: false,
-              isError: false,
-            }}
-          />
+          <Routes>
+            <Route
+              key={'Topics'}
+              path="*"
+              element={
+                <TopicsTable
+                  props={{
+                    data: fixtures,
+                    isLoading: false,
+                    isFetching: false,
+                    isError: false,
+                  }}
+                />
+              }
+            />
+          </Routes>
         </Provider>
       </IntlProvider>
     </MemoryRouter>
@@ -140,4 +148,3 @@ describe('sorting', () => {
     }
   );
 });
- */

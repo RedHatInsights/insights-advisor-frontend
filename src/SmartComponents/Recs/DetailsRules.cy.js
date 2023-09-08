@@ -1,5 +1,5 @@
-/* import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import React from 'react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
 import { getStore } from '../../Store';
@@ -20,16 +20,24 @@ const mountComponent = () => {
     <MemoryRouter>
       <IntlProvider locale={navigator.language.slice(0, 2)}>
         <Provider store={store}>
-          <DetailsRules
-            rule={rulesfixtures}
-            topics={topicsfixtures}
-            permsDisableRec={disableRec}
-            setActionsDropdownOpen={null}
-            actionsDropdownOpen={dropdownOpen}
-            addNotification={null}
-            handleModalToggle={null}
-            refetch={null}
-          />
+          <Routes>
+            <Route
+              key={'Recommendation details'}
+              path="*"
+              element={
+                <DetailsRules
+                  rule={rulesfixtures}
+                  topics={topicsfixtures}
+                  permsDisableRec={disableRec}
+                  setActionsDropdownOpen={null}
+                  actionsDropdownOpen={dropdownOpen}
+                  addNotification={null}
+                  handleModalToggle={null}
+                  refetch={null}
+                />
+              }
+            />
+          </Routes>
         </Provider>
       </IntlProvider>
     </MemoryRouter>
@@ -89,4 +97,3 @@ describe('defaults', () => {
       });
   });
 });
- */
