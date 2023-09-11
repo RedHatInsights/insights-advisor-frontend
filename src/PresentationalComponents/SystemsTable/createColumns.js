@@ -8,8 +8,8 @@ export const createColumns = (defaultColumns, columns) =>
       return column.requiresDefault && correspondingColumn === undefined
         ? undefined
         : {
-            ...column,
             ...correspondingColumn,
+            ...column,
           };
     })
     .filter(Boolean);

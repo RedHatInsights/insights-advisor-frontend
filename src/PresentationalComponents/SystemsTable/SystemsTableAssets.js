@@ -7,13 +7,11 @@ import RuleLabels from '../Labels/RuleLabels';
 
 export const systemsTableColumns = (intl) => [
   {
-    title: intl.formatMessage(messages.name),
     key: 'display_name',
     transforms: [sortable, wrappable],
-    props: { isStatic: true },
-    renderFunc: (_data, _id, system) => (
+    renderFunc: (data, id, system) => (
       <React.Fragment>
-        <Link key={_id} to={`/systems/${system.system_uuid}`}>
+        <Link key={id} to={`/systems/${system.system_uuid}`}>
           {`${system.display_name} `}
         </Link>
         {system.incident_hits > 0 && <RuleLabels rule={{ tags: 'incident' }} />}
@@ -59,6 +57,5 @@ export const systemsTableColumns = (intl) => [
   {
     key: 'updated',
     transforms: [sortable, wrappable],
-    props: { width: 20 },
   },
 ];
