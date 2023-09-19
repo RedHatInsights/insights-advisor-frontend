@@ -3,6 +3,10 @@ notifications:
   email: false
 node_js:
   - "16"
+addons:
+apt:
+  packages:
+    - libgconf-2-4
 install:
   - npm ci
 jobs:
