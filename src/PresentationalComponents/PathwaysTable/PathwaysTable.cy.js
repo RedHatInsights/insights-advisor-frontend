@@ -43,11 +43,7 @@ const mountComponent = () => {
     </MemoryRouter>
   );
 };
-before(() => {
-  cy.mockWindowChrome({
-    userPermissions: ['*:*:*'],
-  });
-});
+
 describe('Pathways table tests', () => {
   beforeEach(() => {
     cy.intercept('*', {

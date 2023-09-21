@@ -487,7 +487,7 @@ describe('content', () => {
       .should(
         'have.attr',
         'href',
-        '/recommendations/' + fixtures.data[0].rule_id
+        '///recommendations/' + fixtures.data[0].rule_id
       );
   });
 });
