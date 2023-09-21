@@ -1,5 +1,5 @@
-/* import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import React from 'react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import RulesTable from './RulesTable';
 import { Provider } from 'react-redux';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
@@ -56,7 +56,9 @@ const mountComponent = () => {
     <MemoryRouter>
       <IntlProvider locale={navigator.language.slice(0, 2)} messages={messages}>
         <Provider store={store}>
-          <RulesTable />
+          <Routes>
+            <Route key={'Recommendations'} path="*" element={<RulesTable />} />
+          </Routes>
         </Provider>
       </IntlProvider>
     </MemoryRouter>
@@ -485,8 +487,7 @@ describe('content', () => {
       .should(
         'have.attr',
         'href',
-        '/recommendations/' + fixtures.data[0].rule_id
+        '///recommendations/' + fixtures.data[0].rule_id
       );
   });
 });
- */

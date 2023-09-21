@@ -5,4 +5,7 @@ export default () => ({
   appObjectId: () => {},
   on: () => {},
   isProd: () => false,
+  getApp: () => {},
+  buildInsightsPath: () => {},
+  getBundle: () => {},
 });

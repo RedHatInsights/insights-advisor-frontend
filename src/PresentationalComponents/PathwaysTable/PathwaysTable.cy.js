@@ -1,5 +1,5 @@
-/* import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import React from 'react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
 import { getStore } from '../../Store';
@@ -31,12 +31,19 @@ const mountComponent = () => {
     <MemoryRouter>
       <IntlProvider locale={navigator.language.slice(0, 2)}>
         <Provider store={store}>
-          <PathwaysTable isTabActive={activeTab} />
+          <Routes>
+            <Route
+              key={'Recommendations Pathways'}
+              path="*"
+              element={<PathwaysTable isTabActive={activeTab} />}
+            />
+          </Routes>
         </Provider>
       </IntlProvider>
     </MemoryRouter>
   );
 };
+
 describe('Pathways table tests', () => {
   beforeEach(() => {
     cy.intercept('*', {
@@ -120,4 +127,3 @@ describe('Pathways table tests', () => {
     });
   });
 });
- */
