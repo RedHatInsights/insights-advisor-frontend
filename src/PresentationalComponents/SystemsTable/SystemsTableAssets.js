@@ -21,6 +21,7 @@ export const systemsTableColumns = (intl) => [
   {
     key: 'groups',
     requiresDefault: true,
+    transforms: [sortable, wrappable],
   },
   {
     key: 'tags',

@@ -273,6 +273,7 @@ const SystemsTable = () => {
           const sort = `${orderDirection === 'ASC' ? '' : '-'}${
             (orderBy === 'updated' && 'last_seen') ||
             (orderBy === 'operating_system' && 'rhel_version') ||
+            (orderBy === 'groups' && 'group_name') ||
             orderBy
           }`;
 
