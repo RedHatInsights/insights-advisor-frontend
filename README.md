@@ -70,3 +70,6 @@ This project uses [Patternfly React](https://github.com/patternfly/patternfly-re
 
 ## Insights Components
 This app imports components from [Insights Front-end Components library](https://github.com/RedHatInsights/frontend-components). ESI tags are used to import [Insights Chrome](https://github.com/RedHatInsights/insights-chrome) which takes care of the header, sidebar, and footer.
+
+## Release process change in stage env
+We are using the new release process in stage environment that uses containers for deplyoment. Containerized Frontends are the new way to to build, package, and deploy the applicaitons. 
