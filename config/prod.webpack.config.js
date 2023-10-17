@@ -7,6 +7,7 @@ const { config: webpackConfig, plugins } = config({
   rootFolder: resolve(__dirname, '../'),
   sassPrefix: '.advisor, .inventory',
   debug: true,
+  ...(process.env.BETA === 'true' && { deployment: 'beta/apps' }),
 });
 
 plugins.push(
