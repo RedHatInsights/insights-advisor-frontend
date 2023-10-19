@@ -16,3 +16,6 @@ updates:
     ignore:
       - dependency-name: "react-router-dom"
         versions: ["6.x"]
+      - dependency-name: "@redhat-cloud-services/frontend-components-notifications"
+        versions: 
+          - 3.2.11
