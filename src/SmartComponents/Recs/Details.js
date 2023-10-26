@@ -3,10 +3,10 @@ import './Details.scss';
 import { PERMS, UI_BASE } from '../../AppConstants';
 import messages from '../../Messages';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import propTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
-
 import {
   Card,
   CardBody,
@@ -17,17 +17,13 @@ import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-ico
 import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
-
 import { InvalidObject } from '@redhat-cloud-services/frontend-components/InvalidObject';
-import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
-
 import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
-
 import { cveToRuleid } from '../../cveToRuleid.js';
 import { useGetRecAcksQuery } from '../../Services/Acks';
 import { useGetRecQuery } from '../../Services/Recs';
@@ -35,19 +31,14 @@ import { useGetTopicsQuery } from '../../Services/Topics';
 import { enableRule, bulkHostActions } from './helpers';
 import { DetailsRules } from './DetailsRules';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 
-const OverviewDetails = () => {
+const OverviewDetails = ({ isImmutableTabOpen }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-
-  const selectedTags = useSelector(({ filters }) => filters.selectedTags);
-  const workloads = useSelector(({ filters }) => filters.workloads);
-  const SID = useSelector(({ filters }) => filters.SID);
   const ruleId = useParams().id;
   const addNotification = (data) => dispatch(notification(data));
-  const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
   const chrome = useChrome();
-
   const {
     data: rule = {},
     isFetching,
@@ -80,13 +71,6 @@ const OverviewDetails = () => {
     refetch();
     recAckRefetch();
   };
-
-  const actionResolver = () => [
-    {
-      title: 'Disable recommendation for system',
-      onClick: (event, rowIndex, item) => handleModalToggle(true, item),
-    },
-  ];
 
   useEffect(() => {
     const isCVE =
@@ -245,20 +229,12 @@ const OverviewDetails = () => {
                 <Title className="pf-u-mb-lg" headingLevel="h3" size="2xl">
                   {intl.formatMessage(messages.affectedSystems)}
                 </Title>
-                <Inventory
-                  tableProps={{
-                    canSelectAll: false,
-                    actionResolver,
-                    isStickyHeader: true,
-                  }}
+                <HybridInventory
+                  ruleId={ruleId}
                   rule={rule}
                   afterDisableFn={afterDisableFn}
-                  selectedTags={selectedTags}
-                  workloads={workloads}
-                  SID={SID}
-                  permsExport={permsExport}
-                  exportTable="systems"
-                  showTags={true}
+                  handleModalToggle={handleModalToggle}
+                  isImmutableTabOpen={isImmutableTabOpen}
                 />
               </React.Fragment>
             )}
@@ -293,4 +269,7 @@ const OverviewDetails = () => {
   );
 };
 
+OverviewDetails.propTypes = {
+  isImmutableTabOpen: propTypes.bool,
+};
 export default OverviewDetails;

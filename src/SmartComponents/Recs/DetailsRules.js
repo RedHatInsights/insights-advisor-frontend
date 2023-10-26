@@ -21,7 +21,6 @@ import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs'
 import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import CategoryLabel from '../../PresentationalComponents/Labels/CategoryLabel';
 import { useIntl } from 'react-intl';
-
 import {
   RuleDetails,
   RuleDetailsMessagesKeys,

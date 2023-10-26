@@ -65,6 +65,11 @@ export const AdvisorRoutes = () => {
           element={<RecsDetails />}
         ></Route>
         <Route
+          key={'Recommendation details'}
+          path="recommendations/:id/manage-edge-inventory"
+          element={<RecsDetails isImmutableTabOpen />}
+        ></Route>
+        <Route
           key={'Inventory details'}
           path="recommendations/:id/:inventoryId/"
           element={<InventoryDetails />}
