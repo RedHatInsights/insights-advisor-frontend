@@ -1184,22 +1184,17 @@ export default defineMessages({
     description: 'View pathway',
     defaultMessage: 'View pathway',
   },
-  noPathways: {
-    id: 'noPathways',
-    description: 'No pathways',
-    defaultMessage: 'No pathways',
-  },
-  noPathwaysAvailable: {
-    id: 'noPathwaysAvailable',
-    description: 'No Pathways available',
-    defaultMessage: 'No pathways available',
+  noOverviewAvailable: {
+    id: 'noOverviewAvailable',
+    description: 'No Overview Available',
+    defaultMessage: 'No Overview Available',
   },
   overviewDashbarError: {
     id: 'overviewDashbarError',
     description:
-      'There was a problem processing the request. Please try again.',
+      'An unexpected error has occurred while trying to fetch the overview information. Please try again.',
     defaultMessage:
-      'There was a problem processing the request. Please try again.',
+      'An unexpected error has occurred while trying to fetch the overview information. Please try again.',
   },
   reboot: {
     id: 'reboot',

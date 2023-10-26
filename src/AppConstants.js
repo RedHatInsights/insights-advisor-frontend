@@ -23,6 +23,7 @@ export const DEBOUNCE_DELAY = 600;
 export const RULES_FETCH_URL = `${BASE_URL}/rule/`;
 export const STATS_SYSTEMS_FETCH_URL = `${BASE_URL}/stats/systems/`;
 export const STATS_REPORTS_FETCH_URL = `${BASE_URL}/stats/reports/`;
+export const STATS_OVERVIEW_FETCH_URL = `${BASE_URL}/stats/overview/`;
 export const SYSTEMS_FETCH_URL = `${BASE_URL}/system/`;
 export const SYSTEM_TYPES = { rhel: 105, ocp: 325 };
 export const RULE_CATEGORIES = {
