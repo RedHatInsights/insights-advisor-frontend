@@ -1,13 +1,13 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useEffect } from 'react';
+
+import { useDispatch } from "react-redux";
 import { useIntl } from "react-intl";
 import propTypes from "prop-types";
 
 import { Grid, GridItem } from "@patternfly/react-core";
 import { OverviewDashbarCard } from "../Cards/OverviewDashbarCard/OverviewDashbarCard";
 import { updateRecFilters, filtersInitialState } from "../../Services/Filters";
-import { useGetPathwaysQuery } from "../../Services/Pathways";
-import { workloadQueryBuilder } from "../Common/Tables";
+import { Get } from '../../Utilities/Api';
 import MessageState from "../MessageState/MessageState";
 import Loading from "../Loading/Loading";
 import messages from "../../Messages";
@@ -21,27 +21,48 @@ import {
   SEVERITY_MAP,
   RECOMMENDATIONS_TAB,
   PATHWAYS_TAB,
+  STATS_OVERVIEW_FETCH_URL,
 } from "../../AppConstants";
 
 const OverviewDashbar = ({ changeTab }) => {
-  const { offset } = useSelector(({ filters: { pathState } }) => pathState);
-  const selectedTags = useSelector(({ filters }) => filters.selectedTags);
-  const workloads = useSelector(({ filters }) => filters.workloads);
-  const SID = useSelector(({ filters }) => filters.SID);
+
+  const [numOfPathways, setNumOfPathways] = useState(0);
+  const [numOfIncidents, setNumOfIncidents] = useState(0);
+  const [numOfCriticalRecommendations, setNumOfCriticalRecommendations] = useState(0);
+  const [numOfImportantRecommendations, setNumOfImportantRecommendations] = useState(0);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(true);
 
   const dispatch = useDispatch();
   const { formatMessage } = useIntl();
 
-  const options = {
-    ...(selectedTags?.length > 0 ? { tags: selectedTags.join(",") } : {}),
-    ...(workloads ? workloadQueryBuilder(workloads, SID) : {}),
-  };
-  const { data, isLoading, isFetching, isError } = useGetPathwaysQuery({
-    sort: "-recommendation_level",
-    offset,
-    limit: 3,
-    ...options,
-  });
+  const dataFetch = async () => {
+    setIsLoading(true);
+    setIsError(false);
+
+    try {
+      const response = await Promise.resolve(
+        await Get(STATS_OVERVIEW_FETCH_URL),
+      );
+      return response.data;
+    } catch (e) {
+      setIsError(true);
+      console.log(e, messages.overviewDashbarError);
+      return { pathways: -1, incidents: -1, critical: -1, important: -1 };
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(async () => {
+    const { pathways, incidents, critical, important } = await dataFetch();
+
+    setNumOfPathways(pathways);
+    setNumOfIncidents(incidents);
+    setNumOfCriticalRecommendations(critical);
+    setNumOfImportantRecommendations(important);
+  }, []);
 
   // the initial filters state in recommendations table
   const { recState: defaultFilters } = filtersInitialState;
@@ -74,18 +95,12 @@ const OverviewDashbar = ({ changeTab }) => {
     }
   };
 
-  console.log("***********************************************");
-  console.log("OverviewDashbar - isLoading", isLoading);
-  console.log("OverviewDashbar - isFetching", isFetching);
-  console.log("OverviewDashbar - isError", isError);
-
-  return !isLoading && !isFetching && !isError ? (
-    // return (
+  return !isLoading && !isError ? (
     <Grid hasGutter id="overview-dashbar">
       <GridItem span={3}>
         <OverviewDashbarCard
           title={PATHWAYS}
-          count={data.data?.length}
+          count={numOfPathways}
           onClickFilterByTitle={() => {
             changeTab(PATHWAYS_TAB);
           }}
@@ -94,21 +109,21 @@ const OverviewDashbar = ({ changeTab }) => {
       <GridItem span={3}>
         <OverviewDashbarCard
           title={INCIDENTS}
-          count={data.data?.length} // BLOCKED: Waiting for implementation of the API endpoint to return the "overview" including the correct count (opened an issue for this)
+          count={numOfIncidents}
           onClickFilterByTitle={applyFiltersByTitle}
         />
       </GridItem>
       <GridItem span={3}>
         <OverviewDashbarCard
           title={CRITICAL_RECOMMENDATIONS}
-          count={data.data?.length} // BLOCKED: Waiting for implementation of the API endpoint to return the "overview" including the correct count (opened an issue for this)
+          count={numOfCriticalRecommendations}
           onClickFilterByTitle={applyFiltersByTitle}
         />
       </GridItem>
       <GridItem span={3}>
         <OverviewDashbarCard
           title={IMPORTANT_RECOMMENDATIONS}
-          count={data.data?.length} // BLOCKED: Waiting for implementation of the API endpoint to return the "overview" including the correct count (opened an issue for this)
+          count={numOfImportantRecommendations}
           onClickFilterByTitle={applyFiltersByTitle}
         />
       </GridItem>
@@ -118,7 +133,7 @@ const OverviewDashbar = ({ changeTab }) => {
   ) : (
     <MessageState
       icon={"none"}
-      title={formatMessage(messages.noPathwaysAvailable)}
+      title={formatMessage(messages.noOverviewAvailable)}
       text={formatMessage(messages.overviewDashbarError)}
     />
   );
