@@ -14,26 +14,25 @@
 
 In case you want to use the stable environment instead of beta you can run the app with `npm run start:proxy` and access it from https://stage.foo.redhat.com:1337/insights/advisor/. Usually there is no difference between these two environments unless there is a large feature in progress which is hidden behind `isBeta` flag.
 
-### Running with another c.r.c. application
+## Testing federated modules with another application
 
-Sometimes you need to test Advisor locally together with other applications and their federated modules. For example, Advisor imports InventoryTable module from the Inventory application at run time. In order to deploy more applications locally, do these steps:
+If you want to test Advisor with another application deployed locally, you can utilise `LOCAL_APPS` environment variable and deploy the needed application on separate ports. To learn more about the variable, see https://github.com/RedHatInsights/frontend-components/tree/master/packages/config#running-multiple-local-frontend-applications.
 
-1. Run all required applications except Advisor with 
+### Example
+
+We'll take for example [insights-inventory-frontend](https://github.com/RedHatInsights/insights-inventory-frontend).
+
+Open new terminal, navigate to Inventory repository, and run it on a separate port without proxy:
+
 ```
-npm run start:proxy -- --port={PORT_NUMBER}
-``` 
-
-As a `PORT_NUMBER` assign the number of free port in your system.
-
-2. Run the Advisor application with the list of additional applications (the ones you ran in the previous step):
-```
-LOCAL_API=inventory:8003~https npm run start:proxy
+npm run start -- --port=8003
 ```
 
-If you want to run Inventory and, for instance, Vulnerability, then just add a new entry to LOCAL_API:
+In a separate terminal, run Advisor with proxy enabled and list Inventory:
+
 ```
-LOCAL_API=advisor:8003~https,vulnerability:8004~https npm run start:proxy
-``` 
+LOCAL_APPS=inventory:8003~http npm run start:proxy
+```
 
 ## Testing
 Travis is used to test the build for this code.
