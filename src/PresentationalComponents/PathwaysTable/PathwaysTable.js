@@ -21,6 +21,7 @@ import {
   info,
   sortable,
 } from '@patternfly/react-table';
+import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolbar';
 import {
   filterFetchBuilder,
   paramParser,
@@ -400,20 +401,22 @@ const PathwaysTable = ({ isTabActive }) => {
           <TableBody />
         </Table>
       )}
-      <Pagination
-        ouiaId="page"
-        itemCount={pathways?.meta?.count || 0}
-        page={filters.offset / filters.limit + 1}
-        perPage={Number(filters.limit)}
-        onSetPage={(_e, page) => {
-          onSetPage(page);
-        }}
-        onPerPageSelect={(_e, perPage) => {
-          setFilters({ ...filters, limit: perPage, offset: 0 });
-        }}
-        widgetId={`pagination-options-menu-bottom`}
-        variant={PaginationVariant.bottom}
-      />
+      <TableToolbar isFooter>
+        <Pagination
+          ouiaId="page"
+          itemCount={pathways?.meta?.count || 0}
+          page={filters.offset / filters.limit + 1}
+          perPage={Number(filters.limit)}
+          onSetPage={(_e, page) => {
+            onSetPage(page);
+          }}
+          onPerPageSelect={(_e, perPage) => {
+            setFilters({ ...filters, limit: perPage, offset: 0 });
+          }}
+          widgetId={`pagination-options-menu-bottom`}
+          variant={PaginationVariant.bottom}
+        />
+      </TableToolbar>
     </React.Fragment>
   );
 };
