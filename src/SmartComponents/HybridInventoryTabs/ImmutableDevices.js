@@ -1,7 +1,200 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
+import { sortable, wrappable } from '@patternfly/react-table';
+import {
+  pruneFilters,
+  urlBuilder,
+} from '../../PresentationalComponents/Common/Tables';
+import { useSelector, useStore } from 'react-redux';
+import { getEntities } from './helpers';
+import PropTypes from 'prop-types';
+import {} from '../../AppConstants';
+import messages from '../../Messages';
+import { systemReducer } from '../../Store/AppReducer';
+import { updateReducers } from '../../Store';
+import { useIntl } from 'react-intl';
+import { useLoadModule } from '@scalprum/react-core';
+import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
+import { useFeatureFlag } from '../../Utilities/Hooks';
+const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
+  const store = useStore();
+  const intl = useIntl();
+  const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
+  const [filters, setFilters] = useState({
+    limit: 20,
+    offset: 0,
+    sort: '-last_seen',
+    name: '',
+    ...(isEdgeParityEnabled
+      ? { 'filter[system_profile][host_type]': 'edge' }
+      : {}),
+  });
 
-const ImmutableDevices = () => {
-  return <div></div>;
+  const [{ toGroupSelectionValue, buildOSFilterConfig } = {}] = useLoadModule({
+    appName: 'inventory',
+    scope: 'inventory',
+    module: './OsFilterHelpers',
+  });
+  const operatingSystems = useSelector(
+    ({ entities }) => entities?.operatingSystems || []
+  );
+
+  const handleRefresh = (options) => {
+    const { name, display_name } = options;
+    const refreshedFilters = {
+      ...options,
+      ...(name && {
+        name,
+      }),
+      ...(display_name && {
+        display_name,
+      }),
+    };
+    !pathway && urlBuilder(refreshedFilters, selectedTags);
+  };
+
+  const fetchSystems = getEntities(handleRefresh, pathway, rule);
+
+  const removeFilterParam = (param) => {
+    const filter = { ...filters, offset: 0 };
+    delete filter[param];
+    setFilters(filter);
+  };
+  const addFilterParam = (param, values) => {
+    const passValue =
+      param === SFC.rhel_version.urlParam
+        ? Object.values(values || {}).flatMap((majorOsVersion) =>
+            Object.keys(majorOsVersion)
+          )
+        : values;
+
+    passValue.length > 0
+      ? setFilters({ ...filters, offset: 0, ...{ [param]: passValue } })
+      : removeFilterParam(param);
+  };
+  const filterConfigItems = [
+    ...(buildOSFilterConfig
+      ? [
+          buildOSFilterConfig(
+            {
+              label: SFC.rhel_version.title.toLowerCase(),
+              type: SFC.rhel_version.type,
+              id: SFC.rhel_version.urlParam,
+              value: toGroupSelectionValue(filters.rhel_version || []),
+              onChange: (_e, value) =>
+                addFilterParam(SFC.rhel_version.urlParam, value),
+            },
+            operatingSystems
+          ),
+        ]
+      : []),
+  ];
+
+  const buildFilterChips = () => {
+    const localFilters = { ...filters };
+    delete localFilters.sort;
+    delete localFilters.offset;
+    delete localFilters.limit;
+
+    return pruneFilters(localFilters, SFC);
+  };
+
+  const activeFiltersConfig = {
+    deleteTitle: intl.formatMessage(messages.resetFilters),
+    filters: buildFilterChips(),
+    onDelete: (_e, itemsToRemove, isAll) => {
+      if (isAll) {
+        setFilters({
+          sort: filters.sort,
+          limit: filters.limit,
+          offset: filters.offset,
+        });
+      } else {
+        itemsToRemove.map((item) => {
+          const newFilter = {
+            [item.urlParam]: Array.isArray(filters[item.urlParam])
+              ? filters[item.urlParam].filter(
+                  (value) => String(value) !== String(item.chips[0].value)
+                )
+              : '',
+          };
+          newFilter[item.urlParam].length > 0
+            ? setFilters({ ...filters, ...newFilter })
+            : removeFilterParam(item.urlParam);
+        });
+      }
+    },
+  };
+
+  const mergeAppColumns = (defaultColumns) => {
+    const lastSeenColumn = defaultColumns.find(({ key }) => key === 'updated');
+    const impacted_date = {
+      key: 'impacted_date',
+      title: 'First Impacted',
+      sortKey: 'impacted_date',
+      transforms: [sortable, wrappable],
+      props: { width: 15 },
+      renderFunc: lastSeenColumn.renderFunc,
+    };
+
+    //disable sorting on OS. API does not handle this
+    const osColumn = defaultColumns.find(({ key }) => key === 'system_profile');
+    osColumn.props = { isStatic: true };
+
+    return [...defaultColumns, impacted_date];
+  };
+
+  return (
+    <AsynComponent
+      appName="inventory"
+      module="./ImmutableDevices"
+      fallback={<div />}
+      store={store}
+      onLoad={({
+        mergeWithEntities,
+        INVENTORY_ACTION_TYPES,
+        mergeWithDetail,
+      }) => {
+        store.replaceReducer(
+          updateReducers({
+            ...mergeWithEntities(systemReducer([], INVENTORY_ACTION_TYPES), {
+              page: Number(filters.offset / filters.limit + 1 || 1),
+              perPage: Number(filters.limit || 20),
+            }),
+            ...mergeWithDetail(),
+          })
+        );
+      }}
+      key="inventory"
+      customFilters={{
+        advisorFilters: filters,
+      }}
+      getEntities={fetchSystems}
+      showActions={false}
+      hideFilters={{
+        all: true,
+        name: false,
+      }}
+      noSystemsTable={<div />}
+      mergeAppColumns={mergeAppColumns}
+      filterConfig={{
+        items: filterConfigItems,
+      }}
+      activeFiltersConfig={activeFiltersConfig}
+    />
+  );
 };
 
+ImmutableDevices.propTypes = {
+  tableProps: PropTypes.any,
+  rule: PropTypes.object,
+  afterDisableFn: PropTypes.func,
+  pathway: PropTypes.object,
+  selectedTags: PropTypes.any,
+  workloads: PropTypes.any,
+  SID: PropTypes.any,
+  permsExport: PropTypes.bool,
+  exportTable: PropTypes.string,
+  showTags: PropTypes.bool,
+};
 export default ImmutableDevices;

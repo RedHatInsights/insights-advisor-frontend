@@ -9,7 +9,9 @@ const ImmutableDevices = lazy(() =>
 );
 
 const ConventionalSystems = lazy(() =>
-  import(/* webpackChunkName: "ConventionalSystems" */ './ConventionalSystems')
+  import(
+    /* webpackChunkName: "ConventionalSystems" */ './ConventionalSystems/RecommendationSystems'
+  )
 );
 
 const HybridInventory = (props) => {
@@ -33,8 +35,7 @@ const HybridInventory = (props) => {
         </Suspense>
       }
       tabPathname={`/insights/advisor/recommendations/${props.ruleId}`}
-      //TODO: uncomment when ImmutableDevices tab is ready RHIF-307
-      //isImmutableTabOpen={props.isImmutableTabOpen}
+      isImmutableTabOpen={props.isImmutableTabOpen}
       fallback={<div />}
       columns
       isEdgeParityEnabled={isEdgeParityEnabled}
