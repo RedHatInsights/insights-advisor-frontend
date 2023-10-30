@@ -16,16 +16,16 @@ export const DashbarCardTitle = ({ title }) => {
     case PATHWAYS:
       return (
         <TitleWithTooltip
-          title={messages.pathways}
-          tooltipMessage={messages.recommendedPathways}
+          title={messages.pathways.defaultMessage}
+          tooltipMessage={messages.recommendedPathways.defaultMessage}
         />
       );
 
     case INCIDENTS:
       return (
         <TitleWithTooltip
-          title={messages.incidents}
-          tooltipMessage={messages.incidentTooltip}
+          title={messages.incidents.defaultMessage}
+          tooltipMessage={messages.incidentTooltip.defaultMessage}
         />
       );
 

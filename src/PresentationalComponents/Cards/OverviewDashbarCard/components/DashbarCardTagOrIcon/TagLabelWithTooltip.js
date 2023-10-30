@@ -18,7 +18,7 @@ export const TagLabelWithTooltip = ({ typeOfTag }) => {
       content={formatMessage(messages.rulesDetailsTotalRiskBody, {
         risk:
           TOTAL_RISK_LABEL_LOWER[typeOfTag] ||
-          formatMessage(messages.undefined),
+          messages.undefined.defaultMessage,
         strong: (str) => strong(str),
       })}
     >

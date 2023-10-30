@@ -121,7 +121,6 @@
   "overviewchart.nohits": "Your connected systems have no categorized recommendations.",
   "pathways": "Pathways",
   "pathwaysName": "Name",
-  "pathwaysPanelError": "There was a problem processing the request. Please try again.",
   "performance": "Performance",
   "permsAction": "You do not have the required advisor permissions to perform this action",
   "permsBody": "To view the content of this page, you must be granted permissions to use Advisor from your Organization Administrator.",
