@@ -35,7 +35,6 @@ const OverviewDashbar = ({ changeTab }) => {
   const [isError, setIsError] = useState(true);
 
   const dispatch = useDispatch();
-  const { formatMessage } = useIntl();
 
   const dataFetch = async () => {
     setIsLoading(true);
@@ -133,8 +132,8 @@ const OverviewDashbar = ({ changeTab }) => {
   ) : (
     <MessageState
       icon={"none"}
-      title={formatMessage(messages.noOverviewAvailable)}
-      text={formatMessage(messages.overviewDashbarError)}
+      title={messages.noOverviewAvailable.defaultMessage}
+      text={messages.overviewDashbarError.defaultMessage}
     />
   );
 };

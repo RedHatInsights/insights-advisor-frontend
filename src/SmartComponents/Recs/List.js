@@ -65,12 +65,12 @@ const List = () => {
     <React.Fragment>
       <PageHeader className="adv-c-page-recommendations__header">
         <PageHeaderTitle
-          title={`${intl.formatMessage(messages.recommendations)}`}
+          title={`${messages.recommendations.defaultMessage}`}
         />
         {!permsExport.isLoading && (
           <Tooltip
             trigger={!permsExport.hasAccess ? 'mouseenter' : ''}
-            content={intl.formatMessage(messages.permsAction)}
+            content={messages.permsAction.defaultMessage}
           >
             <DownloadExecReport isDisabled={!permsExport.hasAccess} />
           </Tooltip>
@@ -91,7 +91,7 @@ const List = () => {
                 eventKey={RECOMMENDATIONS_TAB}
                 title={
                   <TabTitleText>
-                    {intl.formatMessage(messages.recommendations)}
+                    {messages.recommendations.defaultMessage}
                   </TabTitleText>
                 }
               >
@@ -101,9 +101,9 @@ const List = () => {
                 eventKey={PATHWAYS_TAB}
                 title={
                   <TabTitleText>
-                    {intl.formatMessage(messages.pathways)}{' '}
+                    {messages.pathways.defaultMessage}{' '}
                     {QuestionTooltip(
-                      intl.formatMessage(messages.recommendedPathways)
+                      messages.recommendedPathways.defaultMessage
                     )}
                   </TabTitleText>
                 }

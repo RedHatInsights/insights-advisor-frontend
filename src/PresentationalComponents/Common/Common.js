@@ -1,4 +1,4 @@
-import "./_Common.scss";
+import './_Common.scss';
 
 import {
   Text,
@@ -6,17 +6,17 @@ import {
   TextVariants,
   Tooltip,
   TooltipPosition,
-} from "@patternfly/react-core";
-import { createIntl, createIntlCache } from "react-intl";
+} from '@patternfly/react-core';
+import { createIntl, createIntlCache } from 'react-intl';
 
 import {
   OutlinedQuestionCircleIcon,
   PowerOffIcon,
-} from "@patternfly/react-icons";
-import React from "react";
-import { global_secondary_color_100 } from "@patternfly/react-tokens";
-import messages from "../../Messages";
-import { strong } from "../../Utilities/intlHelper";
+} from '@patternfly/react-icons';
+import React from 'react';
+import { global_secondary_color_100 } from '@patternfly/react-tokens';
+import messages from '../../Messages';
+import { strong } from '../../Utilities/intlHelper';
 
 const cache = createIntlCache();
 const locale = navigator.language.slice(0, 2);
@@ -32,8 +32,8 @@ const RebootRequired = (reboot_required) => (
     <PowerOffIcon
       className={
         reboot_required
-          ? "adv-c-icon-reboot-required"
-          : "adv-c-icon-no-reboot-required"
+          ? 'adv-c-icon-reboot-required'
+          : 'adv-c-icon-no-reboot-required'
       }
     />
     <TextContent className="adv-c-text-system-reboot-message pf-u-font-size-sm">
