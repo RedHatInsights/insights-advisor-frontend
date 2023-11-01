@@ -5,7 +5,6 @@ import {
   LIKELIHOOD_LABEL,
   LIKELIHOOD_LABEL_LOWER,
   RISK_OF_CHANGE_LABEL,
-  TOTAL_RISK_LABEL_LOWER,
 } from '../AppConstants';
 import messages from '../Messages';
 import { ruleResolutionRisk } from '../PresentationalComponents/Common/Tables';
@@ -28,12 +27,6 @@ export const mapContentToValues = (intl, rule) => ({
   impactLevel: { level: IMPACT_LABEL[rule.impact?.impact] },
   impactDescription: {
     level: IMPACT_LABEL_LOWER[rule.impact?.impact],
-  },
-  rulesDetailsTotalRiskBody: {
-    risk:
-      TOTAL_RISK_LABEL_LOWER[rule.total_risk] ||
-      intl.formatMessage(messages.undefined),
-    strong,
   },
   likelihoodLevel: {
     level: LIKELIHOOD_LABEL[rule.likelihood],

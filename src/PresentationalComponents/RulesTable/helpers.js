@@ -30,11 +30,7 @@ import {
 import RuleLabels from '../Labels/RuleLabels';
 import CategoryLabel from '../Labels/CategoryLabel';
 
-import {
-  formatMessages,
-  mapContentToValues,
-  strong,
-} from '../../Utilities/intlHelper';
+import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
 import { ruleResolutionRisk } from '../Common/Tables';
 
 export const emptyRows = (filters, toggleRulesDisabled) => [
@@ -398,15 +394,17 @@ export const buildRows = (
               <Tooltip
                 key={key}
                 position={TooltipPosition.bottom}
-                content={intl.formatMessage(
-                  messages.rulesDetailsTotalRiskBody,
-                  {
-                    risk:
-                      AppConstants.TOTAL_RISK_LABEL_LOWER[value.total_risk] ||
-                      intl.formatMessage(messages.undefined),
-                    strong: (str) => strong(str),
-                  }
-                )}
+                content={
+                  <>
+                    The total risk of this remediation is
+                    <strong>
+                      {' '}
+                      {AppConstants.TOTAL_RISK_LABEL_LOWER[value.total_risk]}
+                    </strong>
+                    , based on the combination of likelihood and impact to
+                    remediate.
+                  </>
+                }
               >
                 <InsightsLabel value={value.total_risk} isCompact />
               </Tooltip>
