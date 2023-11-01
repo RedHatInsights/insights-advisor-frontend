@@ -368,12 +368,6 @@ export default defineMessages({
     description: 'Risk of Change',
     defaultMessage: 'Risk of change',
   },
-  rulesDetailsTotalRiskBody: {
-    id: 'rulesDetailsTotalRiskBody',
-    description: 'Text explaining the total risk value of this recommendation',
-    defaultMessage: `The total risk of this remediation is <strong>{risk}</strong>,
-                        based on the combination of likelihood and impact to remediate.`,
-  },
   undefined: {
     id: 'undefined',
     description: 'Undefined',
