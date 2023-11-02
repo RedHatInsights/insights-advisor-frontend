@@ -32,8 +32,8 @@ export const createOptions = (
       pathway && {
         display_name: filters?.hostnameOrId,
       }),
-    ...(advisorFilters.rhel_version && {
-      rhel_version: advisorFilters.rhel_version?.join(','),
+    ...(filters.osFilter?.length > 0 && {
+      rhel_version: filters.osFilter.map(({ value }) => value).join(','),
     }),
     ...(filters?.hostGroupFilter?.length && {
       groups: filters.hostGroupFilter.join(','),
