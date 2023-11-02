@@ -20,7 +20,6 @@ import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
-import { Spinner } from '@scalprum/react-core';
 
 const Inventory = ({
   tableProps,
@@ -436,7 +435,6 @@ const Inventory = ({
           ],
         }}
         {...toolbarProps}
-        fallback={Spinner}
         onLoad={({
           mergeWithEntities,
           INVENTORY_ACTION_TYPES,
