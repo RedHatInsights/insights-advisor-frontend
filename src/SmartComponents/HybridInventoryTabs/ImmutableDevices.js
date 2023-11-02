@@ -16,9 +16,12 @@ import { useIntl } from 'react-intl';
 import { useLoadModule } from '@scalprum/react-core';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import { useFeatureFlag } from '../../Utilities/Hooks';
+import { useNavigate } from 'react-router-dom';
+
 const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
   const store = useStore();
   const intl = useIntl();
+  const navigate = useNavigate();
   const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
   const [filters, setFilters] = useState({
     limit: 20,
@@ -144,6 +147,10 @@ const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
     return [...defaultColumns, impacted_date];
   };
 
+  const onSystemNameClick = (_key, systemId) => {
+    navigate(`/insights/inventory/${systemId}?appName=advisor`);
+  };
+
   return (
     <AsynComponent
       appName="inventory"
@@ -181,6 +188,7 @@ const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
         items: filterConfigItems,
       }}
       activeFiltersConfig={activeFiltersConfig}
+      onRowClick={onSystemNameClick}
     />
   );
 };
