@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect, createContext } from 'react';
 import { Bullseye, Spinner } from '@patternfly/react-core';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import ErrorState from '@redhat-cloud-services/frontend-components/ErrorState';
@@ -8,17 +8,35 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
 import messages from './Messages';
+import { useFeatureFlag } from './Utilities/Hooks';
+
+export const AccountStatContext = createContext({
+  hasConventionalSystems: true,
+  hasEdgeDevices: false,
+});
 
 export const ZeroStateWrapper = ({ children }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const [hasSystems, setHasSystems] = useState(true);
+  const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
+  const [hasConventionalSystems, setHasConventionalSystems] = useState(true);
+  const [hasEdgeDevices, setHasEdgeDevices] = useState(true);
+
   useEffect(() => {
     try {
       axios
-        .get(`/api/inventory/v1/hosts?page=1&per_page=1`)
+        .get(
+          `/api/inventory/v1/hosts?page=1&per_page=1&filter[system_profile][host_type]=nil`
+        )
         .then(({ data }) => {
-          setHasSystems(data.total > 0);
+          setHasConventionalSystems(data.total > 0);
+        });
+      axios
+        .get(
+          `/api/inventory/v1/hosts?page=1&per_page=1&filter[system_profile][host_type]=edge`
+        )
+        .then(({ data }) => {
+          setHasEdgeDevices(data.total > 0);
         });
     } catch (e) {
       dispatch(
@@ -30,7 +48,11 @@ export const ZeroStateWrapper = ({ children }) => {
         })
       );
     }
-  }, [hasSystems]);
+  }, []);
+
+  const hasSystems = isEdgeParityEnabled
+    ? hasEdgeDevices || hasConventionalSystems
+    : hasConventionalSystems;
 
   return (
     <Suspense
@@ -58,7 +80,11 @@ export const ZeroStateWrapper = ({ children }) => {
           />
         </Suspense>
       ) : (
-        <>{children}</>
+        <AccountStatContext.Provider
+          value={{ hasConventionalSystems, hasEdgeDevices }}
+        >
+          {children}
+        </AccountStatContext.Provider>
       )}
     </Suspense>
   );

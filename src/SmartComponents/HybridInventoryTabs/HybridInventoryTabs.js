@@ -1,7 +1,8 @@
-import React, { Suspense, Fragment, lazy } from 'react';
+import React, { Suspense, Fragment, lazy, useContext } from 'react';
 import propTypes from 'prop-types';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import { useFeatureFlag } from '../../Utilities/Hooks';
+import { AccountStatContext } from '../../ZeroStateWrapper';
 
 const ImmutableDevices = lazy(() =>
   import(/* webpackChunkName: "ImmutableDevices" */ './ImmutableDevices')
@@ -13,6 +14,8 @@ const ConventionalSystems = lazy(() =>
 
 const HybridInventory = (props) => {
   const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
+  const { hasEdgeDevices, hasConventionalSystems } =
+    useContext(AccountStatContext);
 
   return (
     <AsynComponent
@@ -35,6 +38,8 @@ const HybridInventory = (props) => {
       fallback={<div />}
       columns
       isEdgeParityEnabled={isEdgeParityEnabled}
+      accountHasEdgeImages={hasEdgeDevices}
+      hasConventionalSystems={hasConventionalSystems}
     />
   );
 };
