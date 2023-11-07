@@ -80,7 +80,11 @@ export const ZeroStateWrapper = ({ children }) => {
           />
         </Suspense>
       ) : (
-        <>{children}</>
+        <AccountStatContext.Provider
+          value={{ hasConventionalSystems, hasEdgeDevices }}
+        >
+          {children}
+        </AccountStatContext.Provider>
       )}
     </Suspense>
   );
