@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext } from 'react';
 import PropTypes from 'prop-types';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
@@ -9,6 +9,8 @@ export const ComponentWithContext = ({
   Component,
   componentProps,
   renderOptions = {},
+  Context = createContext({}),
+  contextValue = {},
 }) => {
   const mockStore = configureStore();
 
@@ -16,15 +18,17 @@ export const ComponentWithContext = ({
     <IntlProvider locale="en">
       <Provider store={renderOptions?.store || mockStore()}>
         <MemoryRouter initialEntries={renderOptions?.initialEntries || ['/']}>
-          {renderOptions?.componentPath ? (
-            <Routes>
-              <Route>
-                <Component {...componentProps} />
-              </Route>
-            </Routes>
-          ) : (
-            <Component {...componentProps} />
-          )}
+          <Context.Provider value={contextValue}>
+            {renderOptions?.componentPath ? (
+              <Routes>
+                <Route>
+                  <Component {...componentProps} />
+                </Route>
+              </Routes>
+            ) : (
+              <Component {...componentProps} />
+            )}
+          </Context.Provider>
         </MemoryRouter>
       </Provider>
     </IntlProvider>
@@ -35,4 +39,6 @@ ComponentWithContext.propTypes = {
   Component: PropTypes.element,
   componentProps: PropTypes.object,
   renderOptions: PropTypes.object,
+  Context: PropTypes.object,
+  contextValue: PropTypes.object,
 };
