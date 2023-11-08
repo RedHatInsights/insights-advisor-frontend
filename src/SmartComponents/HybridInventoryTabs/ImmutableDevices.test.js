@@ -1,6 +1,5 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { screen } from '@testing-library/react';
 import { renderWithContext } from '../../Utilities/TestingUtilities';
 import ImmutableDevices from './ImmutableDevices';
 
