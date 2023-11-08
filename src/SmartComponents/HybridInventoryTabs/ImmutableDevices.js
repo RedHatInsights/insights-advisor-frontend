@@ -5,7 +5,7 @@ import {
   pruneFilters,
   urlBuilder,
 } from '../../PresentationalComponents/Common/Tables';
-import { useSelector, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 import { getEntities } from './helpers';
 import PropTypes from 'prop-types';
 import {} from '../../AppConstants';
@@ -13,7 +13,6 @@ import messages from '../../Messages';
 import { systemReducer } from '../../Store/AppReducer';
 import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
-import { useLoadModule } from '@scalprum/react-core';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import { useFeatureFlag } from '../../Utilities/Hooks';
 import { useNavigate } from 'react-router-dom';
@@ -32,15 +31,6 @@ const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
       ? { 'filter[system_profile][host_type]': 'edge' }
       : {}),
   });
-
-  const [{ toGroupSelectionValue, buildOSFilterConfig } = {}] = useLoadModule({
-    appName: 'inventory',
-    scope: 'inventory',
-    module: './OsFilterHelpers',
-  });
-  const operatingSystems = useSelector(
-    ({ entities }) => entities?.operatingSystems || []
-  );
 
   const handleRefresh = (options) => {
     const { name, display_name } = options;
@@ -63,35 +53,6 @@ const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
     delete filter[param];
     setFilters(filter);
   };
-  const addFilterParam = (param, values) => {
-    const passValue =
-      param === SFC.rhel_version.urlParam
-        ? Object.values(values || {}).flatMap((majorOsVersion) =>
-            Object.keys(majorOsVersion)
-          )
-        : values;
-
-    passValue.length > 0
-      ? setFilters({ ...filters, offset: 0, ...{ [param]: passValue } })
-      : removeFilterParam(param);
-  };
-  const filterConfigItems = [
-    ...(buildOSFilterConfig
-      ? [
-          buildOSFilterConfig(
-            {
-              label: SFC.rhel_version.title.toLowerCase(),
-              type: SFC.rhel_version.type,
-              id: SFC.rhel_version.urlParam,
-              value: toGroupSelectionValue(filters.rhel_version || []),
-              onChange: (_e, value) =>
-                addFilterParam(SFC.rhel_version.urlParam, value),
-            },
-            operatingSystems
-          ),
-        ]
-      : []),
-  ];
 
   const buildFilterChips = () => {
     const localFilters = { ...filters };
@@ -181,12 +142,10 @@ const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
       hideFilters={{
         all: true,
         name: false,
+        operatingSystem: false,
       }}
       noSystemsTable={<div />}
       mergeAppColumns={mergeAppColumns}
-      filterConfig={{
-        items: filterConfigItems,
-      }}
       activeFiltersConfig={activeFiltersConfig}
       onRowClick={onSystemNameClick}
     />
