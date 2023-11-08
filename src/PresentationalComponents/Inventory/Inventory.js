@@ -20,7 +20,6 @@ import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
-import { useLoadModule, Spinner } from '@scalprum/react-core';
 
 const Inventory = ({
   tableProps,
@@ -59,14 +58,6 @@ const Inventory = ({
     useState(true);
   //This value comes in from the backend as 0, or 1. To be consistent it is set to -1
   const [rulesPlaybookCount, setRulesPlaybookCount] = useState(-1);
-  const [{ toGroupSelectionValue, buildOSFilterConfig } = {}] = useLoadModule({
-    appName: 'inventory',
-    scope: 'inventory',
-    module: './OsFilterHelpers',
-  });
-  const operatingSystems = useSelector(
-    ({ entities }) => entities?.operatingSystems || []
-  );
 
   const handleRefresh = (options) => {
     /* Rec table doesn't use the same sorting params as sys table, switching between the two results in the rec table blowing up cuz its trying to
@@ -349,35 +340,6 @@ const Inventory = ({
     delete filter[param];
     setFilters(filter);
   };
-  const addFilterParam = (param, values) => {
-    const passValue =
-      param === SFC.rhel_version.urlParam
-        ? Object.values(values || {}).flatMap((majorOsVersion) =>
-            Object.keys(majorOsVersion)
-          )
-        : values;
-
-    passValue.length > 0
-      ? setFilters({ ...filters, offset: 0, ...{ [param]: passValue } })
-      : removeFilterParam(param);
-  };
-  const filterConfigItems = [
-    ...(buildOSFilterConfig
-      ? [
-          buildOSFilterConfig(
-            {
-              label: SFC.rhel_version.title.toLowerCase(),
-              type: SFC.rhel_version.type,
-              id: SFC.rhel_version.urlParam,
-              value: toGroupSelectionValue(filters.rhel_version || []),
-              onChange: (_e, value) =>
-                addFilterParam(SFC.rhel_version.urlParam, value),
-            },
-            operatingSystems
-          ),
-        ]
-      : []),
-  ];
 
   const buildFilterChips = () => {
     const localFilters = { ...filters };
@@ -431,8 +393,12 @@ const Inventory = ({
         hasCheckbox
         initialLoading
         autoRefresh
-        hideFilters={{ all: true, name: false, tags: !showTags }}
-        filterConfig={{ items: filterConfigItems }}
+        hideFilters={{
+          all: true,
+          name: false,
+          tags: !showTags,
+          operatingSystem: false,
+        }}
         activeFiltersConfig={activeFiltersConfig}
         columns={(defaultColumns) => createColumns(defaultColumns)}
         tableProps={{
@@ -469,7 +435,6 @@ const Inventory = ({
           ],
         }}
         {...toolbarProps}
-        fallback={Spinner}
         onLoad={({
           mergeWithEntities,
           INVENTORY_ACTION_TYPES,

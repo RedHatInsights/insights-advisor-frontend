@@ -29,7 +29,6 @@ import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import NoSystemsTable from './Components/NoSystemsTable';
-import { useLoadModule } from '@scalprum/react-core';
 import { systemsTableColumns } from './SystemsTableAssets';
 import { createOptions } from '../helper';
 import { createColumns } from './createColumns';
@@ -38,20 +37,11 @@ const SystemsTable = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const store = useStore();
-  const [{ toGroupSelectionValue, buildOSFilterConfig } = {}] = useLoadModule({
-    appName: 'inventory',
-    scope: 'inventory',
-    module: './OsFilterHelpers',
-  });
-
   const { search } = useLocation();
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const SID = useSelector(({ filters }) => filters.SID);
   const filters = useSelector(({ filters }) => filters.sysState);
-  const operatingSystems = useSelector(
-    ({ entities }) => entities?.operatingSystems || []
-  );
   const setFilters = (filters) => dispatch(updateSysFilters(filters));
   const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
   const [filterBuilding, setFilterBuilding] = useState(true);
@@ -108,21 +98,6 @@ const SystemsTable = () => {
         items: SFC.incident.values,
       },
     },
-    ...(buildOSFilterConfig
-      ? [
-          buildOSFilterConfig(
-            {
-              label: SFC.rhel_version.title.toLowerCase(),
-              type: SFC.rhel_version.type,
-              id: SFC.rhel_version.urlParam,
-              value: toGroupSelectionValue(filters.rhel_version || []),
-              onChange: (_e, value) =>
-                addFilterParam(SFC.rhel_version.urlParam, value),
-            },
-            operatingSystems
-          ),
-        ]
-      : []),
   ];
 
   const buildFilterChips = () => {
@@ -232,6 +207,7 @@ const SystemsTable = () => {
           name: false,
           tags: false,
           hostGroupFilter: false,
+          operatingSystem: false,
         }}
         initialLoading
         autoRefresh
