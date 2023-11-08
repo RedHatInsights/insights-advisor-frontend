@@ -1269,4 +1269,9 @@ export default defineMessages({
     description: 'First impacted',
     defaultMessage: 'First impacted',
   },
+  edgeWarning: {
+    id: 'edgeWarning',
+    description: 'Warning text for edge devices',
+    defaultMessage: 'Immutable systems are not shown in this list.',
+  },
 });
