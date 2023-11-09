@@ -1,0 +1,15 @@
+{
+  "data": {
+    "data": [
+      {
+        "system_uuid": "edge.id-1",
+        "recommendationName": "test-recommendation-1"
+      },
+      {
+        "system_uuid": "edge.id-2",
+        "recommendationName": "test-recommendation-2"
+      }
+    ],
+    "meta": { "count": 2 }
+  }
+}

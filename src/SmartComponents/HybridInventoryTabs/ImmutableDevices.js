@@ -6,7 +6,7 @@ import {
   urlBuilder,
 } from '../../PresentationalComponents/Common/Tables';
 import { useStore } from 'react-redux';
-import { getEntities } from './helpers';
+import { useGetEntities } from './helpers';
 import PropTypes from 'prop-types';
 import {} from '../../AppConstants';
 import messages from '../../Messages';
@@ -46,7 +46,7 @@ const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
     !pathway && urlBuilder(refreshedFilters, selectedTags);
   };
 
-  const fetchSystems = getEntities(handleRefresh, pathway, rule);
+  const fetchSystems = useGetEntities(handleRefresh, pathway, rule);
 
   const removeFilterParam = (param) => {
     const filter = { ...filters, offset: 0 };

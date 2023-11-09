@@ -4,7 +4,7 @@ import { mergeArraysByDiffKeys } from '../../PresentationalComponents/Common/Tab
 import { Post } from '../../Utilities/Api';
 import { EDGE_DEVICE_BASE_URL } from '../../AppConstants';
 
-export const getEntities =
+export const useGetEntities =
   (handleRefresh, pathway, rule) =>
   async (_items, config, showTags, defaultGetEntities) => {
     const {
