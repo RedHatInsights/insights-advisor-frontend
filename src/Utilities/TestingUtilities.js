@@ -1,18 +1,18 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import PropTypes from 'prop-types';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
 
-const mockStore = configureStore();
-
-export const renderWithContext = (
+export const ComponentWithContext = ({
   Component,
   componentProps,
-  renderOptions = {}
-) => {
-  const { container, unmount, rerender } = render(
+  renderOptions = {},
+}) => {
+  const mockStore = configureStore();
+
+  return (
     <IntlProvider locale="en">
       <Provider store={renderOptions?.store || mockStore()}>
         <MemoryRouter initialEntries={renderOptions?.initialEntries || ['/']}>
@@ -29,6 +29,10 @@ export const renderWithContext = (
       </Provider>
     </IntlProvider>
   );
+};
 
-  return { container, unmount, rerender };
+ComponentWithContext.propTypes = {
+  Component: PropTypes.element,
+  componentProps: PropTypes.object,
+  renderOptions: PropTypes.object,
 };

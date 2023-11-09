@@ -1,0 +1,10 @@
+{
+    "data": {
+      "data": {
+        "devices": [
+          { "DeviceUUID": "edge.id-1", "deviceName": "test-device-1" },
+          { "DeviceUUID": "edge.id-2", "deviceName": "test-device-2" }
+        ]
+      }
+    }
+}

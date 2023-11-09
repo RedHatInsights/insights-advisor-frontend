@@ -1,3 +1,5 @@
+import React from 'react';
+
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   __esModule: true,
   default: () => ({
@@ -27,6 +29,15 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
     getApp: jest.fn(),
     getBundle: jest.fn(),
   }),
+}));
+
+jest.mock('@redhat-cloud-services/frontend-components/AsyncComponent', () => ({
+  __esModule: true,
+  default: (props) => (
+    <div {...props} aria-label="immutableDevices-module-mock">
+      AsyncComponent
+    </div>
+  ),
 }));
 
 global.insights = {

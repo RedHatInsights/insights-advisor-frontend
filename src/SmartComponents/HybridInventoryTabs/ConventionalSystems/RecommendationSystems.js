@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
-import Inventory from '../../PresentationalComponents/Inventory/Inventory';
+import Inventory from '../../../PresentationalComponents/Inventory/Inventory';
 import { useSelector } from 'react-redux';
-import { PERMS } from '../../AppConstants';
+import { PERMS } from '../../../AppConstants';
 
 const ConventionalSystems = ({ rule, afterDisableFn, handleModalToggle }) => {
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
