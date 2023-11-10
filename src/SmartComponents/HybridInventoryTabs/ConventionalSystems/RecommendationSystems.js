@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import Inventory from '../../../PresentationalComponents/Inventory/Inventory';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { PERMS } from '../../../AppConstants';
 
 const ConventionalSystems = ({ rule, afterDisableFn, handleModalToggle }) => {
@@ -10,6 +10,16 @@ const ConventionalSystems = ({ rule, afterDisableFn, handleModalToggle }) => {
   const workloads = useSelector(({ filters }) => filters.workloads);
   const SID = useSelector(({ filters }) => filters.SID);
   const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    return () => {
+      dispatch({
+        type: 'CLEAR_INVENTORY_STORE',
+        payload: [],
+      });
+    };
+  }, [dispatch]);
 
   const actionResolver = () => [
     {
