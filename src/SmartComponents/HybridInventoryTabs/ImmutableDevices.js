@@ -27,9 +27,6 @@ const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
     offset: 0,
     sort: '-last_seen',
     name: '',
-    ...(isEdgeParityEnabled
-      ? { 'filter[system_profile][host_type]': 'edge' }
-      : {}),
   });
 
   const handleRefresh = (options) => {
@@ -135,7 +132,12 @@ const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
       }}
       key="inventory"
       customFilters={{
-        advisorFilters: filters,
+        advisorFilters: {
+          ...filters,
+          ...(isEdgeParityEnabled
+            ? { 'filter[system_profile][host_type]': 'edge' }
+            : {}),
+        },
       }}
       getEntities={fetchSystems}
       showActions={false}
