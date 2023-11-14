@@ -261,6 +261,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                   edgeSystemsCount={edgeSystemsCount}
                   conventionalSystemsCount={conventionalSystemsCount}
                   areCountsLoading={areCountsLoading}
+                  tabPathname={`/insights/advisor/recommendations/${ruleId}`}
                 />
               </React.Fragment>
             )}
