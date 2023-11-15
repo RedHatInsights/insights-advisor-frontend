@@ -143,6 +143,7 @@ const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
         all: true,
         name: false,
         operatingSystem: false,
+        tags: false,
       }}
       noSystemsTable={<div />}
       mergeAppColumns={mergeAppColumns}
