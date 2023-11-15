@@ -145,7 +145,6 @@ const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
         operatingSystem: false,
         tags: false,
       }}
-      noSystemsTable={<div />}
       mergeAppColumns={mergeAppColumns}
       activeFiltersConfig={activeFiltersConfig}
       onRowClick={onSystemNameClick}
