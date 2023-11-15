@@ -1,7 +1,7 @@
 import { SYSTEM_TYPES, BASE_URL } from '../../AppConstants';
 import { DeleteApi, Get, Post } from '../../Utilities/Api';
 import messages from '../../Messages';
-
+import axios from 'axios';
 export const ruleResolutionRisk = (rule) => {
   const resolution = rule?.resolution_set?.find(
     (resolution) =>
@@ -70,5 +70,29 @@ export const bulkHostActions = async ({
       title: intl.formatMessage(messages.error),
       description: `${error}`,
     });
+  }
+};
+
+export const edgeSystemsCheck = async (ruleId, setSystemsCount) => {
+  let count = 0;
+  try {
+    await axios
+      .get(
+        `/api/insights/v1/rule/${ruleId}/systems_detail/?filter[system_profile][host_type][nil]=true`
+      )
+      .then(({ data }) => {
+        count = count += data.meta.count;
+      });
+    await axios
+      .get(
+        `/api/insights/v1/rule/${ruleId}/systems_detail/?filter[system_profile][host_type][edge]=true`
+      )
+      .then(({ data }) => {
+        count = count += data.meta.count;
+      });
+
+    setSystemsCount(count);
+  } catch (error) {
+    console.error(error);
   }
 };
