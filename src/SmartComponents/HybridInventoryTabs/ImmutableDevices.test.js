@@ -98,6 +98,7 @@ describe('ImmutableDevices', () => {
           all: true,
           name: false,
           operatingSystem: false,
+          tags: false,
         },
       }),
       {}
