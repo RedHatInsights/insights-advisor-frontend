@@ -73,7 +73,12 @@ export const bulkHostActions = async ({
   }
 };
 
-export const edgeSystemsCheck = async (ruleId, setSystemsCount) => {
+export const edgeSystemsCheck = async (
+  ruleId,
+  setSystemsCount,
+  setEdgeSystemsCount,
+  setConventionalSystemsCount
+) => {
   let count = 0;
   try {
     await axios
@@ -82,6 +87,7 @@ export const edgeSystemsCheck = async (ruleId, setSystemsCount) => {
       )
       .then(({ data }) => {
         count = count += data.meta.count;
+        setConventionalSystemsCount(data.meta.count);
       });
     await axios
       .get(
@@ -89,6 +95,7 @@ export const edgeSystemsCheck = async (ruleId, setSystemsCount) => {
       )
       .then(({ data }) => {
         count = count += data.meta.count;
+        setEdgeSystemsCount(data.meta.count);
       });
 
     setSystemsCount(count);

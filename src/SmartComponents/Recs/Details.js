@@ -33,6 +33,7 @@ import { DetailsRules } from './DetailsRules';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 import { AccountStatContext } from '../../ZeroStateWrapper.js';
+import { useFeatureFlag } from '../../Utilities/Hooks.js';
 
 const OverviewDetails = ({ isImmutableTabOpen }) => {
   const intl = useIntl();
@@ -62,7 +63,10 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
   const [host, setHost] = useState(undefined);
   const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
   const [systemsCount, setSystemsCount] = useState(0);
+  const [edgeSystemsCount, setEdgeSystemsCount] = useState(0);
+  const [conventionalSystemsCount, setConventionalSystemsCount] = useState(0);
   const { hasEdgeDevices } = useContext(AccountStatContext);
+  const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
 
   const handleModalToggle = (disableRuleModalOpen, host = undefined) => {
     setDisableRuleModalOpen(disableRuleModalOpen);
@@ -96,8 +100,14 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
   }, [chrome, intl, rule.description, ruleId]);
 
   useEffect(() => {
-    edgeSystemsCheck(ruleId, setSystemsCount);
-  }, []);
+    isEdgeParityEnabled &&
+      edgeSystemsCheck(
+        ruleId,
+        setSystemsCount,
+        setEdgeSystemsCount,
+        setConventionalSystemsCount
+      );
+  }, [isEdgeParityEnabled, ruleId]);
 
   return (
     <React.Fragment>
@@ -234,7 +244,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
             {rule.rule_status === 'enabled' && (
               <React.Fragment>
                 <Title className="pf-u-mb-lg" headingLevel="h3" size="2xl">
-                  {hasEdgeDevices
+                  {hasEdgeDevices && isEdgeParityEnabled
                     ? `${systemsCount} Total Systems`
                     : 'Affected Systems'}
                 </Title>
@@ -245,6 +255,8 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                   handleModalToggle={handleModalToggle}
                   isImmutableTabOpen={isImmutableTabOpen}
                   isRecommendationDetail
+                  edgeSystemsCount={edgeSystemsCount}
+                  conventionalSystemsCount={conventionalSystemsCount}
                 />
               </React.Fragment>
             )}
