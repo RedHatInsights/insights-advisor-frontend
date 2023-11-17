@@ -14,14 +14,12 @@ import { systemReducer } from '../../Store/AppReducer';
 import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
-import { useFeatureFlag } from '../../Utilities/Hooks';
 import { useNavigate } from 'react-router-dom';
 
 const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
   const store = useStore();
   const intl = useIntl();
   const navigate = useNavigate();
-  const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
   const [filters, setFilters] = useState({
     limit: 20,
     offset: 0,
@@ -134,9 +132,8 @@ const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
       customFilters={{
         advisorFilters: {
           ...filters,
-          ...(isEdgeParityEnabled
-            ? { 'filter[system_profile][host_type]': 'edge' }
-            : {}),
+          //Immutable devices table should always be filtered by host_type=edge
+          'filter[system_profile][host_type]': 'edge',
         },
       }}
       getEntities={fetchSystems}
