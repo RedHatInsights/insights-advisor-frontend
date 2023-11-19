@@ -3,6 +3,7 @@ import propTypes from 'prop-types';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import { useFeatureFlag } from '../../Utilities/Hooks';
 import { AccountStatContext } from '../../ZeroStateWrapper';
+import { Bullseye, Spinner } from '@patternfly/react-core';
 
 const ImmutableDevices = lazy(() =>
   import(/* webpackChunkName: "ImmutableDevices" */ './ImmutableDevices')
@@ -14,33 +15,45 @@ const ConventionalSystems = lazy(() =>
   )
 );
 
-const HybridInventory = (props) => {
+const HybridInventory = ({
+  ruleId,
+  isImmutableTabOpen,
+  conventionalSystemsCount,
+  edgeSystemsCount,
+  areCountsLoading,
+  ...tabProps
+}) => {
   const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
-  const { hasEdgeDevices, hasConventionalSystems } =
-    useContext(AccountStatContext);
+  const { hasEdgeDevices } = useContext(AccountStatContext);
 
-  return (
+  return areCountsLoading ? (
+    <Bullseye>
+      <Spinner size="lg" />
+    </Bullseye>
+  ) : (
     <AsynComponent
       key="hybridInventory"
       appName="inventory"
       module="./HybridInventoryTabs"
       ConventionalSystemsTab={
         <Suspense fallback={Fragment}>
-          <ConventionalSystems {...props} />
+          <ConventionalSystems {...tabProps} />
         </Suspense>
       }
       ImmutableDevicesTab={
         <Suspense fallback={Fragment}>
-          <ImmutableDevices {...props} />
+          <ImmutableDevices {...tabProps} />
         </Suspense>
       }
-      tabPathname={`/insights/advisor/recommendations/${props.ruleId}`}
-      isImmutableTabOpen={props.isImmutableTabOpen}
+      tabPathname={`/insights/advisor/recommendations/${ruleId}`}
+      isImmutableTabOpen={isImmutableTabOpen}
       fallback={<div />}
       columns
       isEdgeParityEnabled={isEdgeParityEnabled}
       accountHasEdgeImages={hasEdgeDevices}
-      hasConventionalSystems={hasConventionalSystems}
+      hasConventionalSystems={
+        conventionalSystemsCount > 0 || edgeSystemsCount <= 0
+      }
     />
   );
 };
@@ -48,6 +61,9 @@ const HybridInventory = (props) => {
 HybridInventory.propTypes = {
   isImmutableTabOpen: propTypes.bool,
   ruleId: propTypes.string,
+  conventionalSystemsCount: propTypes.number,
+  edgeSystemsCount: propTypes.number,
+  areCountsLoading: propTypes.bool,
 };
 
 export default HybridInventory;
