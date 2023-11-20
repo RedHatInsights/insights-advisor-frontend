@@ -3,6 +3,7 @@ import { paginatedRequestHelper } from '../../PresentationalComponents/Inventory
 import { mergeArraysByDiffKeys } from '../../PresentationalComponents/Common/Tables';
 import { Post } from '../../Utilities/Api';
 import { EDGE_DEVICE_BASE_URL } from '../../AppConstants';
+import { useCallback } from 'react';
 
 export const useGetEntities =
   (handleRefresh, pathway, rule) =>
@@ -75,3 +76,14 @@ export const useGetEntities =
       total: advisorData.meta.count,
     });
   };
+
+export const useActionResolver = (handleModalToggle) =>
+  useCallback(
+    () => [
+      {
+        title: 'Disable recommendation for system',
+        onClick: (event, rowIndex, item) => handleModalToggle(true, item),
+      },
+    ],
+    []
+  );
