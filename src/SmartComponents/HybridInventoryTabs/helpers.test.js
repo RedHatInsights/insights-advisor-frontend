@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { act } from '@testing-library/react';
-import { useGetEntities } from './helpers';
+import { useGetEntities, useActionResolver } from './helpers';
 import { Get, Post } from '../../Utilities/Api';
 import inventoryData from './fixtures/inventoryData.json';
 import advisorPathwayData from './fixtures/advisorPathwayData.json';
@@ -119,5 +119,28 @@ describe('getEntities', () => {
     });
 
     testApiCallArguments();
+  });
+});
+
+const handleModalToggle = jest.fn();
+describe('useActionResolver', () => {
+  test('Should return actionsResolver', async () => {
+    const { result } = renderHook(() => useActionResolver(handleModalToggle));
+
+    expect(result.current()).toEqual([
+      {
+        onClick: expect.any(Function),
+        title: 'Disable recommendation for system',
+      },
+    ]);
+  });
+
+  test('Should call callback function on action click', async () => {
+    const { result } = renderHook(() => useActionResolver(handleModalToggle));
+
+    const recDisableAction = result.current()[0];
+    recDisableAction.onClick('event', 'rowIndex', 'test-device-id');
+
+    expect(handleModalToggle).toHaveBeenCalledWith(true, 'test-device-id');
   });
 });

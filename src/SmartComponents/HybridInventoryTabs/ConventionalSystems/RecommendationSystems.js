@@ -4,6 +4,7 @@ import { usePermissions } from '@redhat-cloud-services/frontend-components-utili
 import Inventory from '../../../PresentationalComponents/Inventory/Inventory';
 import { useSelector } from 'react-redux';
 import { PERMS } from '../../../AppConstants';
+import { useActionResolver } from '../helpers';
 
 const ConventionalSystems = ({ rule, afterDisableFn, handleModalToggle }) => {
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
@@ -11,12 +12,7 @@ const ConventionalSystems = ({ rule, afterDisableFn, handleModalToggle }) => {
   const SID = useSelector(({ filters }) => filters.SID);
   const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
 
-  const actionResolver = () => [
-    {
-      title: 'Disable recommendation for system',
-      onClick: (event, rowIndex, item) => handleModalToggle(true, item),
-    },
-  ];
+  const actionResolver = useActionResolver(handleModalToggle);
 
   return (
     <Inventory

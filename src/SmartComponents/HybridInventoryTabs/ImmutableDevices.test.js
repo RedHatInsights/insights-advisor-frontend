@@ -5,7 +5,7 @@ import { ComponentWithContext } from '../../Utilities/TestingUtilities';
 import ImmutableDevices from './ImmutableDevices';
 import { render } from '@testing-library/react';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
-import { useGetEntities } from './helpers';
+import { useGetEntities, useActionResolver } from './helpers';
 
 jest.mock('@redhat-cloud-services/frontend-components/AsyncComponent', () => ({
   __esModule: true,
@@ -25,6 +25,7 @@ jest.mock('@unleash/proxy-client-react', () => ({
 jest.mock('./helpers', () => ({
   ...jest.requireActual('./helpers'),
   useGetEntities: jest.fn(() => {}),
+  useActionResolver: jest.fn(() => () => {}),
 }));
 
 const renderAndWait = async (componentProps = {}, renderOptions = {}) => {
@@ -111,6 +112,41 @@ describe('ImmutableDevices', () => {
       expect.any(Function),
       'test-pathway',
       'test-rule'
+    );
+  });
+
+  test('should not provide actionsResolver when pathway detail ', async () => {
+    const handleModalToggle = jest.fn();
+    await renderAndWait({
+      pathway: 'test-pathway',
+      rule: 'test-rule',
+      isRecommendationDetail: false,
+      handleModalToggle,
+    });
+
+    expect(AsynComponent).toHaveBeenCalledWith(
+      expect.not.objectContaining({
+        tableActions: expect.any(Function),
+      }),
+      {}
+    );
+  });
+
+  test('should provide actionsResolver with handleModalToggle prop when recommendation detail', async () => {
+    const handleModalToggle = jest.fn();
+    await renderAndWait({
+      pathway: 'test-pathway',
+      rule: 'test-rule',
+      isRecommendationDetail: true,
+      handleModalToggle,
+    });
+
+    expect(useActionResolver).toHaveBeenCalledWith(handleModalToggle);
+    expect(AsynComponent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tableActions: expect.any(Function),
+      }),
+      {}
     );
   });
 });

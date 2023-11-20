@@ -235,6 +235,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                   afterDisableFn={afterDisableFn}
                   handleModalToggle={handleModalToggle}
                   isImmutableTabOpen={isImmutableTabOpen}
+                  isRecommendationDetail
                 />
               </React.Fragment>
             )}

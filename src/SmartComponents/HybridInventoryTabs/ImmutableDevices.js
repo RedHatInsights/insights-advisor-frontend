@@ -6,7 +6,7 @@ import {
   urlBuilder,
 } from '../../PresentationalComponents/Common/Tables';
 import { useStore } from 'react-redux';
-import { useGetEntities } from './helpers';
+import { useGetEntities, useActionResolver } from './helpers';
 import PropTypes from 'prop-types';
 import {} from '../../AppConstants';
 import messages from '../../Messages';
@@ -16,7 +16,13 @@ import { useIntl } from 'react-intl';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import { useNavigate } from 'react-router-dom';
 
-const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
+const ImmutableDevices = ({
+  rule,
+  pathway,
+  selectedTags,
+  handleModalToggle,
+  isRecommendationDetail,
+}) => {
   const store = useStore();
   const intl = useIntl();
   const navigate = useNavigate();
@@ -107,6 +113,8 @@ const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
     navigate(`/insights/inventory/${systemId}?appName=advisor`);
   };
 
+  const actionResolver = useActionResolver(handleModalToggle);
+
   return (
     <AsynComponent
       appName="inventory"
@@ -147,6 +155,7 @@ const ImmutableDevices = ({ rule, pathway, selectedTags }) => {
       mergeAppColumns={mergeAppColumns}
       activeFiltersConfig={activeFiltersConfig}
       onRowClick={onSystemNameClick}
+      {...(isRecommendationDetail ? { tableActions: actionResolver } : {})}
     />
   );
 };
@@ -162,5 +171,7 @@ ImmutableDevices.propTypes = {
   permsExport: PropTypes.bool,
   exportTable: PropTypes.string,
   showTags: PropTypes.bool,
+  handleModalToggle: PropTypes.func,
+  isRecommendationDetail: PropTypes.bool,
 };
 export default ImmutableDevices;
