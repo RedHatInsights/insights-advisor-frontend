@@ -2,7 +2,7 @@ import './Details.scss';
 
 import { PERMS, UI_BASE } from '../../AppConstants';
 import messages from '../../Messages';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import propTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
@@ -28,10 +28,12 @@ import { cveToRuleid } from '../../cveToRuleid.js';
 import { useGetRecAcksQuery } from '../../Services/Acks';
 import { useGetRecQuery } from '../../Services/Recs';
 import { useGetTopicsQuery } from '../../Services/Topics';
-import { enableRule, bulkHostActions } from './helpers';
+import { enableRule, bulkHostActions, edgeSystemsCheck } from './helpers';
 import { DetailsRules } from './DetailsRules';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
+import { AccountStatContext } from '../../ZeroStateWrapper.js';
+import { useFeatureFlag } from '../../Utilities/Hooks.js';
 
 const OverviewDetails = ({ isImmutableTabOpen }) => {
   const intl = useIntl();
@@ -60,6 +62,11 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [host, setHost] = useState(undefined);
   const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
+  const [systemsCount, setSystemsCount] = useState(0);
+  const [edgeSystemsCount, setEdgeSystemsCount] = useState(0);
+  const [conventionalSystemsCount, setConventionalSystemsCount] = useState(0);
+  const { hasEdgeDevices } = useContext(AccountStatContext);
+  const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
 
   const handleModalToggle = (disableRuleModalOpen, host = undefined) => {
     setDisableRuleModalOpen(disableRuleModalOpen);
@@ -91,6 +98,16 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
       );
     }
   }, [chrome, intl, rule.description, ruleId]);
+
+  useEffect(() => {
+    isEdgeParityEnabled &&
+      edgeSystemsCheck(
+        ruleId,
+        setSystemsCount,
+        setEdgeSystemsCount,
+        setConventionalSystemsCount
+      );
+  }, [isEdgeParityEnabled, ruleId]);
 
   return (
     <React.Fragment>
@@ -227,7 +244,9 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
             {rule.rule_status === 'enabled' && (
               <React.Fragment>
                 <Title className="pf-u-mb-lg" headingLevel="h3" size="2xl">
-                  {intl.formatMessage(messages.affectedSystems)}
+                  {hasEdgeDevices && isEdgeParityEnabled
+                    ? `${systemsCount} Total Systems`
+                    : 'Affected Systems'}
                 </Title>
                 <HybridInventory
                   ruleId={ruleId}
@@ -236,6 +255,8 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                   handleModalToggle={handleModalToggle}
                   isImmutableTabOpen={isImmutableTabOpen}
                   isRecommendationDetail
+                  edgeSystemsCount={edgeSystemsCount}
+                  conventionalSystemsCount={conventionalSystemsCount}
                 />
               </React.Fragment>
             )}
