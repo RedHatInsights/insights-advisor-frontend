@@ -106,6 +106,9 @@ const ImmutableDevices = ({
     const osColumn = defaultColumns.find(({ key }) => key === 'system_profile');
     osColumn.props = { isStatic: true };
 
+    //disable sorting on GROUPS. API does not handle this
+    const groupsColumn = defaultColumns.find(({ key }) => key === 'groups');
+    groupsColumn.props = { isStatic: true };
     return [...defaultColumns, impacted_date];
   };
 
