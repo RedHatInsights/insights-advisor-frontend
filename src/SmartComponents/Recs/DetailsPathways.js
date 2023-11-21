@@ -216,7 +216,7 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
                   workloads={workloads}
                   SID={SID}
                   isImmutableTabOpen={isImmutableTabOpen}
-                  tabPathname={`/insights/advisor/recommendations/pathways/systems/${pathwayName}`}
+                  tabPathname={`/insights/advisor/recommendations/pathways/${pathwayName}`}
                 />
               </Suspense>
             )}

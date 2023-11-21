@@ -61,7 +61,7 @@ export const AdvisorRoutes = () => {
         ></Route>
         <Route
           key={'Pathway details'}
-          path="recommendations/pathways/systems/:id/manage-edge-inventory"
+          path="recommendations/pathways/:id/manage-edge-inventory"
           element={<DetailsPathways isImmutableTabOpen />}
         ></Route>
         <Route
