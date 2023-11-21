@@ -91,7 +91,7 @@ export const edgeSystemsCheck = async (
       });
     await axios
       .get(
-        `/api/insights/v1/rule/${ruleId}/systems_detail/?filter[system_profile][host_type][edge]=true`
+        `/api/insights/v1/rule/${ruleId}/systems_detail/?filter[system_profile][host_type]=edge`
       )
       .then(({ data }) => {
         count = count += data.meta.count;
