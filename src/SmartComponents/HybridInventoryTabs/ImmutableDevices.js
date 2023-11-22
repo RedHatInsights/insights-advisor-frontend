@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
-import { sortable, wrappable } from '@patternfly/react-table';
 import {
   pruneFilters,
   urlBuilder,
 } from '../../PresentationalComponents/Common/Tables';
 import { useStore } from 'react-redux';
-import { useGetEntities, useActionResolver } from './helpers';
+import {
+  useGetEntities,
+  useActionResolver,
+  useOnLoad,
+  mergeAppColumns,
+} from './helpers';
 import PropTypes from 'prop-types';
-import {} from '../../AppConstants';
 import messages from '../../Messages';
-import { systemReducer } from '../../Store/AppReducer';
-import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import { useNavigate } from 'react-router-dom';
@@ -91,32 +92,12 @@ const ImmutableDevices = ({
     },
   };
 
-  const mergeAppColumns = (defaultColumns) => {
-    const lastSeenColumn = defaultColumns.find(({ key }) => key === 'updated');
-    const impacted_date = {
-      key: 'impacted_date',
-      title: 'First Impacted',
-      sortKey: 'impacted_date',
-      transforms: [sortable, wrappable],
-      props: { width: 15 },
-      renderFunc: lastSeenColumn.renderFunc,
-    };
-
-    //disable sorting on OS. API does not handle this
-    const osColumn = defaultColumns.find(({ key }) => key === 'system_profile');
-    osColumn.props = { isStatic: true };
-
-    //disable sorting on GROUPS. API does not handle this
-    const groupsColumn = defaultColumns.find(({ key }) => key === 'groups');
-    groupsColumn.props = { isStatic: true };
-    return [...defaultColumns, impacted_date];
-  };
-
   const onSystemNameClick = (_key, systemId) => {
     navigate(`/insights/inventory/${systemId}?appName=advisor`);
   };
 
   const actionResolver = useActionResolver(handleModalToggle);
+  const onLoad = useOnLoad(filters);
 
   return (
     <AsynComponent
@@ -124,21 +105,7 @@ const ImmutableDevices = ({
       module="./ImmutableDevices"
       fallback={<div />}
       store={store}
-      onLoad={({
-        mergeWithEntities,
-        INVENTORY_ACTION_TYPES,
-        mergeWithDetail,
-      }) => {
-        store.replaceReducer(
-          updateReducers({
-            ...mergeWithEntities(systemReducer([], INVENTORY_ACTION_TYPES), {
-              page: Number(filters.offset / filters.limit + 1 || 1),
-              perPage: Number(filters.limit || 20),
-            }),
-            ...mergeWithDetail(),
-          })
-        );
-      }}
+      onLoad={onLoad}
       key="inventory"
       customFilters={{
         advisorFilters: {

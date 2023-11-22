@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { act } from '@testing-library/react';
-import { useGetEntities, useActionResolver } from './helpers';
+import { useGetEntities, useActionResolver, mergeAppColumns } from './helpers';
 import { Get, Post } from '../../Utilities/Api';
 import inventoryData from './fixtures/inventoryData.json';
 import advisorPathwayData from './fixtures/advisorPathwayData.json';
@@ -142,5 +142,36 @@ describe('useActionResolver', () => {
     recDisableAction.onClick('event', 'rowIndex', 'test-device-id');
 
     expect(handleModalToggle).toHaveBeenCalledWith(true, 'test-device-id');
+  });
+});
+
+const defaultColumns = [
+  { key: 'updated', renderFunc: jest.fn() },
+  { key: 'system_profile', props: { width: 15 } },
+  { key: 'groups', props: { width: 15 } },
+];
+
+describe('mergeAppColumns', () => {
+  test('Should use last seen column render function for impacted column', () => {
+    const result = mergeAppColumns(defaultColumns);
+
+    const impacted_date = result.find(
+      (column) => column.key === 'impacted_date'
+    );
+    expect(impacted_date.renderFunc).toEqual(defaultColumns[0].renderFunc);
+  });
+  test('Should extend OS column props to disable sorting', () => {
+    const result = mergeAppColumns(defaultColumns);
+
+    const system_profile = result.find(
+      (column) => column.key === 'system_profile'
+    );
+    expect(system_profile.props).toEqual({ width: 15, isStatic: true });
+  });
+  test('Should extend groups column props to disable sorting', () => {
+    const result = mergeAppColumns(defaultColumns);
+
+    const groups = result.find((column) => column.key === 'groups');
+    expect(groups.props).toEqual({ width: 15, isStatic: true });
   });
 });
