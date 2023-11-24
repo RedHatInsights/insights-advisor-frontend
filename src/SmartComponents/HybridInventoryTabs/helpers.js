@@ -60,6 +60,7 @@ export const useGetEntities =
         {},
         { devices_uuid: systemIDs }
       );
+
       fullData = devicesData?.data?.devices?.map((device) => {
         const system = inventoryData.results.find(
           (system) => device.DeviceUUID === system.id
@@ -67,6 +68,12 @@ export const useGetEntities =
         return {
           ...system,
           ...device,
+          groups: devicesData?.data?.enforce_edge_groups
+            ? device.DeviceGroups?.map((group) => ({
+                id: group.ID,
+                name: group.Name,
+              })) || []
+            : system.groups,
         };
       });
     }

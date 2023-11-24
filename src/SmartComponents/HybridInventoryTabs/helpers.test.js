@@ -66,25 +66,65 @@ describe('getEntities', () => {
 
     expect(fetchedResult).toEqual({
       results: [
-        {
+        expect.objectContaining({
           id: 'edge.id-1',
           DeviceUUID: 'edge.id-1',
           deviceName: 'test-device-1',
           system_uuid: 'edge.id-1',
           recommendationName: 'test-recommendation-1',
-        },
-        {
+        }),
+        expect.objectContaining({
           id: 'edge.id-2',
           DeviceUUID: 'edge.id-2',
           deviceName: 'test-device-2',
           system_uuid: 'edge.id-2',
           recommendationName: 'test-recommendation-2',
-        },
+        }),
       ],
       total: 2,
     });
 
     testApiCallArguments();
+  });
+
+  test('uses group info from inventory API when enforce_edge_groups set to false', async () => {
+    const { result } = renderHook(() =>
+      useGetEntities(handleRefreshMock, undefined, { rule_id: 'test-rule' })
+    );
+
+    let fetchedResult;
+    await act(async () => {
+      fetchedResult = await result.current(...fetchArguments);
+    });
+
+    expect(fetchedResult.results[0].groups).toEqual([
+      { id: 'inventory-group.id-1', name: 'inventory-group-1' },
+    ]);
+    expect(fetchedResult.results[1].groups).toEqual([
+      { id: 'inventory-group.id-2', name: 'inventory-group-2' },
+    ]);
+  });
+
+  test('enforces group info from edge API when enforce_edge_groups set to true', async () => {
+    Post.mockReturnValue({
+      data: { data: { ...edgeData.data.data, enforce_edge_groups: true } },
+    });
+
+    const { result } = renderHook(() =>
+      useGetEntities(handleRefreshMock, undefined, { rule_id: 'test-rule' })
+    );
+
+    let fetchedResult;
+    await act(async () => {
+      fetchedResult = await result.current(...fetchArguments);
+    });
+
+    expect(fetchedResult.results[0].groups).toEqual([
+      { id: 'edge.group.id-1', name: 'edge.group-1' },
+    ]);
+    expect(fetchedResult.results[1].groups).toEqual([
+      { id: 'edge.group.id-2', name: 'edge.group-2' },
+    ]);
   });
 
   test('Should fetch hybrid data for pathways', async () => {
@@ -100,20 +140,20 @@ describe('getEntities', () => {
 
     expect(fetchedResult).toEqual({
       results: [
-        {
+        expect.objectContaining({
           DeviceUUID: 'edge.id-1',
           deviceName: 'test-device-1',
           id: 'edge.id-1',
           pathwayName: 'test-pathway-1',
           system_uuid: 'edge.id-1',
-        },
-        {
+        }),
+        expect.objectContaining({
           DeviceUUID: 'edge.id-2',
           deviceName: 'test-device-2',
           id: 'edge.id-2',
           pathwayName: 'test-pathway-2',
           system_uuid: 'edge.id-2',
-        },
+        }),
       ],
       total: 2,
     });

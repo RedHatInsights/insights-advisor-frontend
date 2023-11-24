@@ -1,3 +1,12 @@
 {
-    "results": [{ "id": "edge.id-1" }, { "id": "edge.id-2" }]
+    "results": [
+        { 
+            "id": "edge.id-1", 
+            "groups": [{ "id": "inventory-group.id-1", "name": "inventory-group-1" }] 
+        }, 
+        { 
+            "id": "edge.id-2", 
+            "groups": [{ "id": "inventory-group.id-2", "name": "inventory-group-2" }]
+        }
+    ]
 }
