@@ -278,6 +278,8 @@ const Inventory = ({
         ({ key }) => key === 'system_profile'
       );
       let tags = defaultColumns.filter(({ key }) => key === 'tags');
+      let groups = defaultColumns.filter(({ key }) => key === 'groups');
+
       //Link to the Systems in the Recommendation details table and Pathway details table
       displayName = {
         ...displayName[0],
@@ -302,20 +304,30 @@ const Inventory = ({
       lastSeenColumn = {
         ...lastSeenColumn[0],
         transforms: [sortable, wrappable],
-        props: { width: 20 },
       };
 
       systemProfile = {
         ...systemProfile[0],
-        transforms: [wrappable],
-        props: { isStatic: true },
+        transforms: [sortable, wrappable],
       };
 
       tags = {
         ...tags[0],
       };
 
-      let columnList = [displayName, tags, systemProfile, lastSeenColumn];
+      groups = {
+        ...groups[0],
+        transforms: [wrappable],
+        props: { ...groups[0].props, isStatic: true }, // remove this line after group sorting is enabled in the API
+      };
+
+      let columnList = [
+        displayName,
+        groups,
+        tags,
+        systemProfile,
+        lastSeenColumn,
+      ];
 
       // Add column for impacted_date which is relevant for the rec system details table, but not pathways system table
       if (!pathway) {

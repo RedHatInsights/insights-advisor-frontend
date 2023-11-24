@@ -1,4 +1,4 @@
-import { sortTopics, createOptions } from './helper';
+import { sortTopics, createOptions, createSortParam } from './helper';
 import fixtures from '../../cypress/fixtures/topics.json';
 
 describe('sortTopics test', () => {
@@ -151,5 +151,38 @@ describe('createOptions', () => {
         systemsPage
       ).tags
     ).toEqual(['tagFilter1/tagKey1=tag1', 'tagFilter1/tagKey2=tag2']);
+  });
+});
+
+describe('createSortParam test', () => {
+  const field = ['updated', 'operating_system', 'groups'];
+  const direction = ['asc', 'desc'];
+
+  it('creates correct updated sort param in asc and desc', () => {
+    const updatedAsc = createSortParam(field[0], direction[0]);
+    expect(updatedAsc).toBe('last_seen');
+    const updatedDesc = createSortParam(field[0], direction[1]);
+    expect(updatedDesc).toBe('-last_seen');
+  });
+
+  it('creates correct operating_system sort param in asc and desc in uppercase', () => {
+    const OSAsc = createSortParam(field[1], direction[0].toUpperCase());
+    expect(OSAsc).toBe('rhel_version');
+    const OSDesc = createSortParam(field[1], direction[1].toUpperCase());
+    expect(OSDesc).toBe('-rhel_version');
+  });
+
+  it('creates correct groups sort param with missing / unknown sort direction', () => {
+    const groupsAsc = createSortParam(field[2]);
+    expect(groupsAsc).toBe('group_name');
+    const groupsDesc = createSortParam(field[2], 'foobar');
+    expect(groupsDesc).toBe('-group_name');
+  });
+
+  it('creates other sort params verbatim', () => {
+    const sortAsc = createSortParam('misc', 'AsC');
+    expect(sortAsc).toBe('misc');
+    const sortDesc = createSortParam('misc', 'misc');
+    expect(sortDesc).toBe('-misc');
   });
 });

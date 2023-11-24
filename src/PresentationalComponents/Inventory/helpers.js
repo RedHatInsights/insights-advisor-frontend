@@ -1,7 +1,7 @@
 import { Get } from '../../Utilities/Api';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
 import { RULES_FETCH_URL, SYSTEMS_FETCH_URL } from '../../AppConstants';
-import { createOptions } from '../helper';
+import { createOptions, createSortParam } from '../helper';
 
 /*This functions purpose is to grab the currently set filters, and return all associated systems for it.*/
 export const paginatedRequestHelper = async ({
@@ -69,13 +69,7 @@ export const getEntities =
       selectedTags,
     } = config;
 
-    //operating_system is currently not supported, but will be down the line.
-    const sort =
-      orderBy === 'operating_system'
-        ? 'rhel_version'
-        : `${orderDirection === 'ASC' ? '' : '-'}${
-            orderBy === 'updated' ? 'last_seen' : orderBy
-          }`;
+    const sort = createSortParam(orderBy, orderDirection);
 
     let options = createOptions(
       advisorFilters,

@@ -54,3 +54,12 @@ export const sortTopics = (data, index, direction) => {
     : (sortingName = 'impacted_systems_count');
   return orderBy(data, [(result) => result[sortingName]], direction);
 };
+
+export const createSortParam = (sortField, sortDirection = 'ASC') => {
+  return `${sortDirection.toUpperCase() === 'ASC' ? '' : '-'}${
+    (sortField === 'updated' && 'last_seen') ||
+    (sortField === 'operating_system' && 'rhel_version') ||
+    (sortField === 'groups' && 'group_name') ||
+    sortField
+  }`;
+};
