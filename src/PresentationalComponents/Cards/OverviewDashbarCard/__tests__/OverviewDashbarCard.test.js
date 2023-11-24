@@ -1,51 +1,119 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import "@testing-library/jest-dom";
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
 
-import { IntlProvider } from "@redhat-cloud-services/frontend-components-translations/index";
-import messages from "../../../../../locales/translations.json";
+import { OverviewDashbarCard } from '../OverviewDashbarCard';
+import {
+  PATHWAYS,
+  INCIDENTS,
+  CRITICAL_RECOMMENDATIONS,
+  IMPORTANT_RECOMMENDATIONS,
+} from '../../../../AppConstants';
 
-import { OverviewDashbarCard } from "../OverviewDashbarCard";
-import { PATHWAYS } from "../../../../AppConstants";
+// this component returns the appropriate Card component based on the title it receives
+describe('OverviewDashbarCard', () => {
+  const user = userEvent.setup();
 
-describe("OverviewDashbarCard", () => {
-  it("Should render", async () => {
-    const onClickFilterByTitle = jest.fn();
-    render(
-      <IntlProvider locale={navigator.language.slice(0, 2)} messages={messages}>
-        <OverviewDashbarCard
-          title={PATHWAYS}
-          count={1}
-          onClickFilterByTitle={onClickFilterByTitle}
-        />
-      </IntlProvider>
-    );
-
-    // ensure that the correct text is displayed
-    await expect(screen.getByText(PATHWAYS)).toBeInTheDocument();
-    expect(screen.getByText(/1/)).toBeInTheDocument();
-
-    // ensure filtering is called by clicking the count
-    const filterByTitleBtn = screen.getByTestId(PATHWAYS);
-
-    fireEvent.click(filterByTitleBtn);
-    expect(onClickFilterByTitle).toHaveBeenCalledWith(PATHWAYS);
-  });
-
-  /*********************************************************************/
-  it("Should not render", () => {
+  it('Should render Pathways Card', async () => {
     const onClickFilterByTitle = jest.fn();
     render(
       <OverviewDashbarCard
-        title={"Wrong Card Title"}
+        title={PATHWAYS}
+        count={1}
+        onClickFilterByTitle={onClickFilterByTitle}
+      />
+    );
+    await waitFor(() => screen.getByText(PATHWAYS));
+
+    // ensure that the correct text is displayed
+    screen.getByText(PATHWAYS);
+    screen.getByText(/1/);
+
+    // ensure filtering is called by clicking the count
+    const filterByTitleBtn = screen.getByTestId(PATHWAYS);
+    await user.click(filterByTitleBtn);
+    expect(onClickFilterByTitle).toHaveBeenCalledWith(PATHWAYS);
+  });
+
+  it('Should render Incidents Card', async () => {
+    const onClickFilterByTitle = jest.fn();
+    render(
+      <OverviewDashbarCard
+        title={INCIDENTS}
         count={2}
+        onClickFilterByTitle={onClickFilterByTitle}
+      />
+    );
+    await waitFor(() => screen.getByText(INCIDENTS));
+
+    // ensure that the correct text is displayed
+    screen.getByText(INCIDENTS);
+    screen.getByText(/2/);
+
+    // ensure filtering is called by clicking the count
+    const filterByTitleBtn = screen.getByTestId(INCIDENTS);
+    await user.click(filterByTitleBtn);
+    expect(onClickFilterByTitle).toHaveBeenCalledWith(INCIDENTS);
+  });
+
+  it('Should render Critical Recommendations Card', async () => {
+    const onClickFilterByTitle = jest.fn();
+    render(
+      <OverviewDashbarCard
+        title={CRITICAL_RECOMMENDATIONS}
+        count={3}
+        onClickFilterByTitle={onClickFilterByTitle}
+      />
+    );
+    await waitFor(() => screen.getByText(CRITICAL_RECOMMENDATIONS));
+
+    // ensure that the correct text is displayed
+    screen.getByText(CRITICAL_RECOMMENDATIONS);
+    screen.getByText(/3/);
+
+    // ensure filtering is called by clicking the count
+    const filterByTitleBtn = screen.getByTestId(CRITICAL_RECOMMENDATIONS);
+    await user.click(filterByTitleBtn);
+    expect(onClickFilterByTitle).toHaveBeenCalledWith(CRITICAL_RECOMMENDATIONS);
+  });
+
+  it('Should render Important Recommendations Card', async () => {
+    const onClickFilterByTitle = jest.fn();
+    render(
+      <OverviewDashbarCard
+        title={IMPORTANT_RECOMMENDATIONS}
+        count={4}
+        onClickFilterByTitle={onClickFilterByTitle}
+      />
+    );
+    await waitFor(() => screen.getByText(IMPORTANT_RECOMMENDATIONS));
+
+    // ensure that the correct text is displayed
+    screen.getByText(IMPORTANT_RECOMMENDATIONS);
+    screen.getByText(/4/);
+
+    // ensure filtering is called by clicking the count
+    const filterByTitleBtn = screen.getByTestId(IMPORTANT_RECOMMENDATIONS);
+    await user.click(filterByTitleBtn);
+    expect(onClickFilterByTitle).toHaveBeenCalledWith(
+      IMPORTANT_RECOMMENDATIONS
+    );
+  });
+
+  it('Should not render', () => {
+    const onClickFilterByTitle = jest.fn();
+    render(
+      <OverviewDashbarCard
+        title={'Wrong Card Title'}
+        count={5}
         onClickFilterByTitle={onClickFilterByTitle}
       />
     );
 
     // ensure that nothing is displayed
     expect(screen.queryByText(/Wrong Card Title/)).toBe(null);
-    expect(screen.queryByText(/2/)).toBe(null);
+    expect(screen.queryByText(/5/)).toBe(null);
     expect(screen.queryByTestId(/Wrong Card Title/)).toBe(null);
 
     // ensure filtering is not called

@@ -1,96 +1,135 @@
-import React from "react";
-import { Provider } from "react-redux";
-import { render, screen, fireEvent } from "@testing-library/react";
-import "@testing-library/jest-dom";
+import React from 'react';
+import { Provider } from 'react-redux';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
 
-import { IntlProvider } from "@redhat-cloud-services/frontend-components-translations/index";
-import messages from "../../../../locales/translations.json";
-import OverviewDashbar from "../OverviewDashbar";
-import { RECOMMENDATIONS_TAB, PATHWAYS_TAB } from "../../../AppConstants";
-import { getStore } from "../../../Store";
+import OverviewDashbar from '../OverviewDashbar';
+import {
+  initMocks,
+  mockStore,
+} from '../../../Utilities/unitTestingUtilities.js';
+import { Get } from '../../../Utilities/Api';
+import {
+  RECOMMENDATIONS_TAB,
+  PATHWAYS_TAB,
+  STATS_OVERVIEW_FETCH_URL,
+} from '../../../AppConstants';
 
-/************************ */
+initMocks();
 
-// test('renders users when API call succeeds', async () => {
-//   const fakePathways = [
-//     { id: 1, name: 'Joe' },
-//     { id: 2, name: 'Tony' },
-//   ]
-//   fetchMock.mockResolvedValue({ status: 200, json: jest.fn(() => fakeUsers) })
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: jest.fn(),
+}));
+const mockState = {};
+let store = mockStore(mockState);
 
-//   render(<App />)
+jest.mock('../../../Utilities/Api', () => ({
+  ...jest.requireActual('../../../Utilities/Api'),
+  Get: jest.fn(),
+}));
 
-//   expect(screen.getByRole('heading')).toHaveTextContent('List of Users')
+describe('OverviewDashbar', () => {
+  const user = userEvent.setup();
 
-//   expect(await screen.findByText('Joe')).toBeInTheDocument()
-//   expect(await screen.findByText('Tony')).toBeInTheDocument()
-
-//   expect(screen.queryByText('No users found')).not.toBeInTheDocument()
-// })
-
-// /************************ */
-
-// test('renders error when API call fails', async () => {
-//   fetchMock.mockReject(() => Promise.reject('API error'))
-
-//   render(<App />)
-
-//   expect(await screen.findByText('Something went wrong!')).toBeInTheDocument()
-//   expect(await screen.findByText('No users found')).toBeInTheDocument()
-// })
-
-/*************************/
-/*************************/
-// todo: fix this test
-// There is no actual API response, so the test fails
-// We need to mock the API response
-// This should be done after the API endpoint, for fetching the overview information, is implemented
-
-// This is the status of the test:
-
-// OverviewDashbar - isLoading: true
-// OverviewDashbar - isFetching: true
-// OverviewDashbar - isError: false
-
-describe("OverviewDashbar", () => {
-  it("Should render", async () => {
+  it('Should render and flow (functionality check)', async () => {
     const changeTab = jest.fn();
+    Get.mockResolvedValue({
+      data: {
+        pathways: 1,
+        incidents: 2,
+        critical: 3,
+        important: 4,
+      },
+    });
+
     render(
-      <IntlProvider locale={navigator.language.slice(0, 2)} messages={messages}>
-        <Provider store={getStore()}>
-          <OverviewDashbar changeTab={changeTab} />
-        </Provider>
-      </IntlProvider>
+      <Provider store={store}>
+        <OverviewDashbar changeTab={changeTab} />
+      </Provider>
     );
+
+    await waitFor(() => screen.getByText(/Pathways/));
 
     // ensure that the correct text is displayed
-    const pathways = screen.getByText(/Pathways/);
+    screen.getByText(/Incidents/);
+    screen.getByText(/Important Recommendations/);
+    screen.getByText(/Critical Recommendations/);
 
-    expect(pathways).toBeInTheDocument();
-    expect(screen.getByText(/Incidents/)).toBeInTheDocument();
-    expect(screen.getByText(/Important Recommendations/)).toBeInTheDocument();
-    expect(screen.getByText(/Critical Recommendations/)).toBeInTheDocument();
+    await waitFor(() => screen.getByText(/1/));
 
-    // get the buttons
+    // ensure the correct API endpoint is being contacted
+    expect(Get).toHaveBeenCalledWith(STATS_OVERVIEW_FETCH_URL);
+
+    // get the counts, which act as filtering buttons
     const pathwaysBtn = screen.getByTestId(/Pathways/);
     const incidentsBtn = screen.getByTestId(/Incidents/);
-    const importantRecommendationsBtn = screen.getByTestId(
-      /Important Recommendations/
-    );
     const criticalRecommendationsBtn = screen.getByTestId(
       /Critical Recommendations/
     );
+    const importantRecommendationsBtn = screen.getByTestId(
+      /Important Recommendations/
+    );
 
-    fireEvent.click(pathwaysBtn);
+    // ensure the count buttons contain the right values
+    expect(pathwaysBtn).toHaveTextContent(1);
+    expect(incidentsBtn).toHaveTextContent(2);
+    expect(criticalRecommendationsBtn).toHaveTextContent(3);
+    expect(importantRecommendationsBtn).toHaveTextContent(4);
+
+    // check the correct filtering is being called
+    await user.click(pathwaysBtn);
     expect(changeTab).toHaveBeenCalledWith(PATHWAYS_TAB);
 
-    fireEvent.click(incidentsBtn);
+    await user.click(incidentsBtn);
     expect(changeTab).toHaveBeenCalledWith(RECOMMENDATIONS_TAB);
 
-    fireEvent.click(importantRecommendationsBtn);
+    await user.click(criticalRecommendationsBtn);
     expect(changeTab).toHaveBeenCalledWith(RECOMMENDATIONS_TAB);
 
-    fireEvent.click(criticalRecommendationsBtn);
+    await user.click(importantRecommendationsBtn);
     expect(changeTab).toHaveBeenCalledWith(RECOMMENDATIONS_TAB);
+  });
+
+  it('renders error when API response does not contain any data', async () => {
+    const changeTab = jest.fn();
+    Get.mockResolvedValue({
+      data: undefined,
+    });
+
+    render(
+      <Provider store={store}>
+        <OverviewDashbar changeTab={changeTab} />
+      </Provider>
+    );
+
+    // ensure an error is presented
+    await waitFor(() => screen.getByText(/No Overview Available/));
+    screen.getByText(
+      /An unexpected error has occurred while trying to fetch the overview information. Please try again./
+    );
+
+    // ensure the correct API endpoint is being contacted
+    expect(Get).toHaveBeenCalledWith(STATS_OVERVIEW_FETCH_URL);
+  });
+
+  it('renders error when API call fails', async () => {
+    const changeTab = jest.fn();
+    Get.mockRejectedValue(new Error('API error'));
+    render(
+      <Provider store={store}>
+        <OverviewDashbar changeTab={changeTab} />
+      </Provider>
+    );
+
+    // ensure an error is presented
+    await waitFor(() => screen.getByText(/No Overview Available/));
+    screen.getByText(
+      /An unexpected error has occurred while trying to fetch the overview information. Please try again./
+    );
+
+    // ensure the correct API endpoint is being contacted
+    expect(Get).toHaveBeenCalledWith(STATS_OVERVIEW_FETCH_URL);
   });
 });

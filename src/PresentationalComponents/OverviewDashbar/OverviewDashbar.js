@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
-import { useDispatch } from "react-redux";
-import { useIntl } from "react-intl";
-import propTypes from "prop-types";
+import { useDispatch } from 'react-redux';
+import propTypes from 'prop-types';
 
-import { Grid, GridItem } from "@patternfly/react-core";
-import { OverviewDashbarCard } from "../Cards/OverviewDashbarCard/OverviewDashbarCard";
-import { updateRecFilters, filtersInitialState } from "../../Services/Filters";
-import { Get } from '../../Utilities/Api';
-import MessageState from "../MessageState/MessageState";
-import Loading from "../Loading/Loading";
-import messages from "../../Messages";
+import { Grid, GridItem } from '@patternfly/react-core';
+import { OverviewDashbarCard } from '../Cards/OverviewDashbarCard/OverviewDashbarCard';
+import { updateRecFilters, filtersInitialState } from '../../Services/Filters';
+import { dataFetch } from '../../Services/Overview';
+import MessageState from '../MessageState/MessageState';
+import Loading from '../Loading/Loading';
+import messages from '../../Messages';
 import {
   PATHWAYS,
   INCIDENTS,
@@ -21,47 +20,21 @@ import {
   SEVERITY_MAP,
   RECOMMENDATIONS_TAB,
   PATHWAYS_TAB,
-  STATS_OVERVIEW_FETCH_URL,
-} from "../../AppConstants";
+} from '../../AppConstants';
 
 const OverviewDashbar = ({ changeTab }) => {
-
-  const [numOfPathways, setNumOfPathways] = useState(0);
-  const [numOfIncidents, setNumOfIncidents] = useState(0);
-  const [numOfCriticalRecommendations, setNumOfCriticalRecommendations] = useState(0);
-  const [numOfImportantRecommendations, setNumOfImportantRecommendations] = useState(0);
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(true);
+  const [data, setData] = useState({ loaded: false, isError: false });
 
   const dispatch = useDispatch();
 
-  const dataFetch = async () => {
-    setIsLoading(true);
-    setIsError(false);
-
-    try {
-      const response = await Promise.resolve(
-        await Get(STATS_OVERVIEW_FETCH_URL),
-      );
-      return response.data;
-    } catch (e) {
-      setIsError(true);
-      console.log(e, messages.overviewDashbarError);
-      return { pathways: -1, incidents: -1, critical: -1, important: -1 };
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(async () => {
-    const { pathways, incidents, critical, important } = await dataFetch();
-
-    setNumOfPathways(pathways);
-    setNumOfIncidents(incidents);
-    setNumOfCriticalRecommendations(critical);
-    setNumOfImportantRecommendations(important);
+  useEffect(() => {
+    (async () => {
+      const responseDataWithInfo = await dataFetch();
+      setData(responseDataWithInfo);
+    })();
   }, []);
+
+  const { pathways, incidents, critical, important, loaded, isError } = data;
 
   // the initial filters state in recommendations table
   const { recState: defaultFilters } = filtersInitialState;
@@ -94,12 +67,12 @@ const OverviewDashbar = ({ changeTab }) => {
     }
   };
 
-  return !isLoading && !isError ? (
+  return loaded && !isError ? (
     <Grid hasGutter id="overview-dashbar">
       <GridItem span={3}>
         <OverviewDashbarCard
           title={PATHWAYS}
-          count={numOfPathways}
+          count={pathways}
           onClickFilterByTitle={() => {
             changeTab(PATHWAYS_TAB);
           }}
@@ -108,21 +81,21 @@ const OverviewDashbar = ({ changeTab }) => {
       <GridItem span={3}>
         <OverviewDashbarCard
           title={INCIDENTS}
-          count={numOfIncidents}
+          count={incidents}
           onClickFilterByTitle={applyFiltersByTitle}
         />
       </GridItem>
       <GridItem span={3}>
         <OverviewDashbarCard
           title={CRITICAL_RECOMMENDATIONS}
-          count={numOfCriticalRecommendations}
+          count={critical}
           onClickFilterByTitle={applyFiltersByTitle}
         />
       </GridItem>
       <GridItem span={3}>
         <OverviewDashbarCard
           title={IMPORTANT_RECOMMENDATIONS}
-          count={numOfImportantRecommendations}
+          count={important}
           onClickFilterByTitle={applyFiltersByTitle}
         />
       </GridItem>
@@ -131,7 +104,7 @@ const OverviewDashbar = ({ changeTab }) => {
     <Loading />
   ) : (
     <MessageState
-      icon={"none"}
+      icon={'none'}
       title={messages.noOverviewAvailable.defaultMessage}
       text={messages.overviewDashbarError.defaultMessage}
     />

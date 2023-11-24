@@ -1196,6 +1196,13 @@ export default defineMessages({
     defaultMessage:
       'An unexpected error has occurred while trying to fetch the overview information. Please try again.',
   },
+  overviewDashbarResponseMissingDataError: {
+    id: 'overviewDashbarResponseMissingDataError',
+    description:
+      'Response from the server did not contain any data while trying to fetch the overview information for the Dashbar',
+    defaultMessage:
+      'Response from the server did not contain any data while trying to fetch the overview information for the Dashbar',
+  },
   reboot: {
     id: 'reboot',
     description: 'Reboot',

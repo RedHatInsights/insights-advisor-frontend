@@ -45,6 +45,13 @@ export const INCIDENTS = 'Incidents';
 export const IMPORTANT_RECOMMENDATIONS = 'Important Recommendations';
 export const CRITICAL_RECOMMENDATIONS = 'Critical Recommendations';
 
+export const OverviewDashbarCardSupportedTitles = {
+  Pathways: true,
+  Incidents: true,
+  'Important Recommendations': true,
+  'Critical Recommendations': true,
+};
+
 // Recommendations OverviewDashbarCards labels
 export const INCIDENT_TAG = 'incident';
 // Recommendations OverviewDashbarCards level of risk, are used with SEVERITY_MAP

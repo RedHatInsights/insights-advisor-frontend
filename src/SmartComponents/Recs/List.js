@@ -64,9 +64,7 @@ const List = () => {
   return (
     <React.Fragment>
       <PageHeader className="adv-c-page-recommendations__header">
-        <PageHeaderTitle
-          title={`${messages.recommendations.defaultMessage}`}
-        />
+        <PageHeaderTitle title={`${messages.recommendations.defaultMessage}`} />
         {!permsExport.isLoading && (
           <Tooltip
             trigger={!permsExport.hasAccess ? 'mouseenter' : ''}
