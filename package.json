@@ -102,6 +102,7 @@
     "react-router-dom": "^6.6.1",
     "redux": "4.1.2",
     "redux-logger": "3.0.6",
+    "redux-mock-store": "^1.5.4",
     "redux-promise-middleware": "6.1.2"
   },
   "devDependencies": {

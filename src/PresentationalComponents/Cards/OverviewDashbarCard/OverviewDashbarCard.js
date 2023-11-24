@@ -1,31 +1,19 @@
-import React from "react";
-import propTypes from "prop-types";
+import React from 'react';
+import propTypes from 'prop-types';
 
-import { Card, CardBody, Flex, FlexItem, Text } from "@patternfly/react-core";
-import { DashbarCardTitle } from "./components/DashbarCardTitle/DashbarCardTitle";
-import { DashbarCardTagOrIcon } from "./components/DashbarCardTagOrIcon/DashbarCardTagOrIcon";
-import {
-  PATHWAYS,
-  INCIDENTS,
-  IMPORTANT_RECOMMENDATIONS,
-  CRITICAL_RECOMMENDATIONS,
-} from "../../../AppConstants";
+import { Card, CardBody, Flex, FlexItem, Text } from '@patternfly/react-core';
+import { DashbarCardTitle } from './components/DashbarCardTitle/DashbarCardTitle';
+import { DashbarCardTagOrIcon } from './components/DashbarCardTagOrIcon/DashbarCardTagOrIcon';
+import { OverviewDashbarCardSupportedTitles } from '../../../AppConstants';
 
-// this component returns the appropriate Card component based on the title it receives
 export const OverviewDashbarCard = ({ title, count, onClickFilterByTitle }) => {
-  const isWrongTitle =
-    title != PATHWAYS &&
-    title != INCIDENTS &&
-    title != IMPORTANT_RECOMMENDATIONS &&
-    title != CRITICAL_RECOMMENDATIONS;
-
-  return (
-    !isWrongTitle && (
+  if (OverviewDashbarCardSupportedTitles[title])
+    return (
       <Card isFullHeight className="dashbar-item">
         <CardBody>
           <DashbarCardTitle title={title} />
 
-          <Flex spaceItems={{ default: "spaceItemsSm" }}>
+          <Flex spaceItems={{ default: 'spaceItemsSm' }}>
             <FlexItem>
               <DashbarCardTagOrIcon title={title} />
             </FlexItem>
@@ -42,8 +30,9 @@ export const OverviewDashbarCard = ({ title, count, onClickFilterByTitle }) => {
           </Flex>
         </CardBody>
       </Card>
-    )
-  );
+    );
+
+  return <></>;
 };
 
 OverviewDashbarCard.propTypes = {

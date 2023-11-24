@@ -13,7 +13,7 @@ export const TagLabelWithTooltip = ({ typeOfTag }) => {
       content={
         <>
           The total risk of this remediation is
-          <strong>{TOTAL_RISK_LABEL_LOWER[typeOfTag]}</strong>, based on the
+          <strong> {TOTAL_RISK_LABEL_LOWER[typeOfTag]}</strong>, based on the
           combination of likelihood and impact to remediate.
         </>
       }

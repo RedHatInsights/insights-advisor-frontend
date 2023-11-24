@@ -1,9 +1,9 @@
-import React from "react";
-import propTypes from "prop-types";
+import React from 'react';
+import propTypes from 'prop-types';
 
-import { RouteIcon } from "@patternfly/react-icons";
-import { TagLabelWithTooltip } from "./TagLabelWithTooltip";
-import RuleLabels from "../../../../Labels/RuleLabels";
+import { RouteIcon } from '@patternfly/react-icons';
+import { TagLabelWithTooltip } from './TagLabelWithTooltip';
+import RuleLabels from '../../../../Labels/RuleLabels';
 import {
   PATHWAYS,
   INCIDENTS,
@@ -13,12 +13,12 @@ import {
   IMPORTANT_TAG,
   CRITICAL_TAG,
   SEVERITY_MAP,
-} from "../../../../../AppConstants";
+} from '../../../../../AppConstants';
 
 export const DashbarCardTagOrIcon = ({ title }) => {
   switch (title) {
     case PATHWAYS:
-      return <RouteIcon size="md" data-cy="route-icon" />;
+      return <RouteIcon size="md" data-testid="route-icon" />;
     case INCIDENTS:
       return (
         <RuleLabels key="incidentTag" rule={{ tags: INCIDENT_TAG }} isCompact />
@@ -29,7 +29,7 @@ export const DashbarCardTagOrIcon = ({ title }) => {
       return <TagLabelWithTooltip typeOfTag={SEVERITY_MAP[IMPORTANT_TAG]} />;
 
     default:
-      return null;
+      return <></>;
   }
 };
 

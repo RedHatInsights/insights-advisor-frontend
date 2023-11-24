@@ -7,7 +7,6 @@ import React from 'react';
 import messages from '../../Messages';
 
 const RuleLabels = ({ rule, isCompact, noMargin }) => {
-
   return (
     <React.Fragment>
       {rule?.tags?.search('incident') !== -1 && (
@@ -34,7 +33,7 @@ const RuleLabels = ({ rule, isCompact, noMargin }) => {
           </Label>
         </Tooltip>
       )}
-      {rule?.rule_status === "rhdisabled" && (
+      {rule?.rule_status === 'rhdisabled' && (
         <Tooltip
           content={messages.ruleIsDisabledTooltip.defaultMessage}
           position={TooltipPosition.right}
