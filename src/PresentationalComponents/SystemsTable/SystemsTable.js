@@ -30,7 +30,7 @@ import { useLocation } from 'react-router-dom';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import NoSystemsTable from './Components/NoSystemsTable';
 import { systemsTableColumns } from './SystemsTableAssets';
-import { createOptions } from '../helper';
+import { createOptions, createSortParam } from '../helper';
 import { createColumns } from './createColumns';
 
 const SystemsTable = () => {
@@ -246,12 +246,7 @@ const SystemsTable = () => {
             workloads,
             SID,
           } = config;
-          const sort = `${orderDirection === 'ASC' ? '' : '-'}${
-            (orderBy === 'updated' && 'last_seen') ||
-            (orderBy === 'operating_system' && 'rhel_version') ||
-            (orderBy === 'groups' && 'group_name') ||
-            orderBy
-          }`;
+          const sort = createSortParam(orderBy, orderDirection);
 
           let options = createOptions(
             advisorFilters,
