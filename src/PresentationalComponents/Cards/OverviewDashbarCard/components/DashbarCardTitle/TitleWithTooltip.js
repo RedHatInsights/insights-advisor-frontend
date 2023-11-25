@@ -8,7 +8,7 @@ import { QuestionTooltip } from '../../../../Common/Common';
 export const TitleWithTooltip = ({ title, tooltipMessage }) => {
   return (
     <Title headingLevel="h6" size="md">
-      {title} {QuestionTooltip(tooltipMessage)}
+      {title} <QuestionTooltip text={tooltipMessage} />
     </Title>
   );
 };

@@ -2,14 +2,12 @@ import React from 'react';
 import {
   render,
   screen,
-  waitFor,
   waitForElementToBeRemoved,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import { DashbarCardTagOrIcon } from '../components/DashbarCardTagOrIcon/DashbarCardTagOrIcon';
-
 import tooltipMessages from '../../../../Messages';
 import {
   PATHWAYS,
@@ -26,7 +24,7 @@ describe('DashbarCardTagOrIcon', () => {
     render(<DashbarCardTagOrIcon title={PATHWAYS} />);
 
     // ensure the 'Route' icon is displayed
-    screen.getByTestId('route-icon');
+    expect(screen.getByTestId('route-icon')).toBeInTheDocument();
   });
 
   it("Should render 'Incidents' label", async () => {
@@ -34,10 +32,13 @@ describe('DashbarCardTagOrIcon', () => {
 
     // ensure the correct text is displayed
     const incidentLabel = screen.getByText(/Incident/);
+    expect(incidentLabel).toBeInTheDocument();
+
     await user.hover(incidentLabel);
-    await waitFor(() =>
+    await screen.findByText(tooltipMessages.incidentTooltip.defaultMessage);
+    expect(
       screen.getByText(tooltipMessages.incidentTooltip.defaultMessage)
-    );
+    ).toBeInTheDocument();
 
     // ensure the tooltip message is hidden
     await user.unhover(incidentLabel);
@@ -46,10 +47,10 @@ describe('DashbarCardTagOrIcon', () => {
     );
     expect(
       screen.queryByText(tooltipMessages.incidentTooltip.defaultMessage)
-    ).toBe(null);
+    ).not.toBeInTheDocument();
 
     // but the label still appears
-    screen.getByText(/Incident/);
+    expect(screen.getByText(/Incident/)).toBeInTheDocument();
   });
 
   it("Should render 'Important Recommendations' label", async () => {
@@ -57,31 +58,36 @@ describe('DashbarCardTagOrIcon', () => {
 
     // ensure the correct text is displayed
     const importantLabel = screen.getByText(/Important/);
+    expect(importantLabel).toBeInTheDocument();
+
     await user.hover(importantLabel);
-    await waitFor(() =>
+    await screen.findByText(/The total risk of this remediation is/);
+    expect(
       screen.getByText(/The total risk of this remediation is/)
-    );
-    screen.getByText(/important/);
-    screen.getByText(
-      /based on the combination of likelihood and impact to remediate./
-    );
+    ).toBeInTheDocument();
+    expect(screen.getByText(/important/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /based on the combination of likelihood and impact to remediate./
+      )
+    ).toBeInTheDocument();
 
     // ensure the tooltip message is hidden
     await user.unhover(importantLabel);
     await waitForElementToBeRemoved(() =>
       screen.queryByText(/The total risk of this remediation is/)
     );
-    expect(screen.queryByText(/The total risk of this remediation is/)).toBe(
-      null
-    );
+    expect(
+      screen.queryByText(/The total risk of this remediation is/)
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByText(
         /based on the combination of likelihood and impact to remediate./
       )
-    ).toBe(null);
+    ).not.toBeInTheDocument();
 
     // but the label still appears
-    screen.getByText(/Important/);
+    expect(screen.getByText(/Important/)).toBeInTheDocument();
   });
 
   it("Should render 'Critical Recommendations' label", async () => {
@@ -89,42 +95,47 @@ describe('DashbarCardTagOrIcon', () => {
 
     // ensure the correct text is displayed
     const criticalLabel = screen.getByText(/Critical/);
+    expect(criticalLabel).toBeInTheDocument();
+
     await user.hover(criticalLabel);
-    await waitFor(() =>
+    await screen.findByText(/The total risk of this remediation is/);
+    expect(
       screen.getByText(/The total risk of this remediation is/)
-    );
-    screen.getByText(/Critical/);
-    screen.getByText(
-      /based on the combination of likelihood and impact to remediate./
-    );
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Critical/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /based on the combination of likelihood and impact to remediate./
+      )
+    ).toBeInTheDocument();
 
     // ensure the tooltip message is hidden
     await user.unhover(criticalLabel);
     await waitForElementToBeRemoved(() =>
       screen.queryByText(/The total risk of this remediation is/)
     );
-    expect(screen.queryByText(/The total risk of this remediation is/)).toBe(
-      null
-    );
+    expect(
+      screen.queryByText(/The total risk of this remediation is/)
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByText(
         /based on the combination of likelihood and impact to remediate./
       )
-    ).toBe(null);
+    ).not.toBeInTheDocument();
 
     // but the label still appears
-    screen.getByText(/Critical/);
+    expect(screen.getByText(/Critical/)).toBeInTheDocument();
   });
 
   it('Should not render', () => {
     render(<DashbarCardTagOrIcon title={'Wrong Card Title'} />);
 
     // ensure the 'Route' icon is not displayed
-    expect(screen.queryByTestId('route-icon')).toBe(null);
+    expect(screen.queryByTestId('route-icon')).not.toBeInTheDocument();
 
     // ensure non of the labels is displayed
-    expect(screen.queryByText(/Incidents/)).toBe(null);
-    expect(screen.queryByText(/Important/)).toBe(null);
-    expect(screen.queryByText(/Critical/)).toBe(null);
+    expect(screen.queryByText(/Incidents/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Important/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Critical/)).not.toBeInTheDocument();
   });
 });

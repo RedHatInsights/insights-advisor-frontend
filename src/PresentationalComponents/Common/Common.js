@@ -14,6 +14,7 @@ import {
   PowerOffIcon,
 } from '@patternfly/react-icons';
 import React from 'react';
+import propTypes from 'prop-types';
 import { global_secondary_color_100 } from '@patternfly/react-tokens';
 import messages from '../../Messages';
 import { strong } from '../../Utilities/intlHelper';
@@ -49,7 +50,7 @@ const RebootRequired = (reboot_required) => (
   </span>
 );
 
-const QuestionTooltip = (text) => (
+const QuestionTooltip = ({ text }) => (
   <Tooltip
     key={text}
     position={TooltipPosition.right}
@@ -60,5 +61,9 @@ const QuestionTooltip = (text) => (
     </span>
   </Tooltip>
 );
+
+QuestionTooltip.propTypes = {
+  text: propTypes.string,
+};
 
 export { RebootRequired, QuestionTooltip };

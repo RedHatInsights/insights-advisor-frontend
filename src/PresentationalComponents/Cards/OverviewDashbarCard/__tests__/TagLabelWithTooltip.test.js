@@ -1,10 +1,9 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import { TagLabelWithTooltip } from '../components/DashbarCardTagOrIcon/TagLabelWithTooltip';
-
 import {
   SEVERITY_MAP,
   CRITICAL_TAG,
@@ -21,16 +20,20 @@ describe('TagLabelWithTooltip', () => {
 
     // ensure the label can be found in the page
     const criticalTitle = screen.getByText(/Critical/);
+    expect(criticalTitle).toBeInTheDocument();
 
     // ensure that the tooltip text is displayed
     await user.hover(criticalTitle);
-    await waitFor(() =>
+    await screen.findByText(/The total risk of this remediation is/);
+    expect(
       screen.getByText(/The total risk of this remediation is/)
-    );
-    screen.getByText(/critical/);
-    screen.getByText(
-      /based on the combination of likelihood and impact to remediate./
-    );
+    ).toBeInTheDocument();
+    expect(screen.getByText(/critical/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /based on the combination of likelihood and impact to remediate./
+      )
+    ).toBeInTheDocument();
   });
 
   it("Should render 'Important' label", async () => {
@@ -38,16 +41,20 @@ describe('TagLabelWithTooltip', () => {
 
     // ensure the label can be found in the page
     const importantTitle = screen.getByText(/Important/);
+    expect(importantTitle).toBeInTheDocument();
 
     // ensure that the tooltip text is displayed
     await user.hover(importantTitle);
-    await waitFor(() =>
+    await screen.findByText(/The total risk of this remediation is/);
+    expect(
       screen.getByText(/The total risk of this remediation is/)
-    );
-    screen.getByText(/important/);
-    screen.getByText(
-      /based on the combination of likelihood and impact to remediate./
-    );
+    ).toBeInTheDocument();
+    expect(screen.getByText(/important/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /based on the combination of likelihood and impact to remediate./
+      )
+    ).toBeInTheDocument();
   });
 
   it("Should not render 'Important' or 'Critical' labels", async () => {
@@ -58,7 +65,7 @@ describe('TagLabelWithTooltip', () => {
     );
 
     // ensure the texts of both labels is NOT displayed
-    expect(screen.queryByText(/Important/)).toBe(null);
-    expect(screen.queryByText(/Critical/)).toBe(null);
+    expect(screen.queryByText(/Important/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Critical/)).not.toBeInTheDocument();
   });
 });

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
@@ -50,14 +50,15 @@ describe('OverviewDashbar', () => {
       </Provider>
     );
 
-    await waitFor(() => screen.getByText(/Pathways/));
+    await screen.findByText(/Pathways/);
 
     // ensure that the correct text is displayed
-    screen.getByText(/Incidents/);
-    screen.getByText(/Important Recommendations/);
-    screen.getByText(/Critical Recommendations/);
+    expect(screen.getByText(/Pathways/)).toBeInTheDocument();
+    expect(screen.getByText(/Incidents/)).toBeInTheDocument();
+    expect(screen.getByText(/Important Recommendations/)).toBeInTheDocument();
+    expect(screen.getByText(/Critical Recommendations/)).toBeInTheDocument();
 
-    await waitFor(() => screen.getByText(/1/));
+    await screen.findByText(/1/);
 
     // ensure the correct API endpoint is being contacted
     expect(Get).toHaveBeenCalledWith(STATS_OVERVIEW_FETCH_URL);
@@ -71,6 +72,11 @@ describe('OverviewDashbar', () => {
     const importantRecommendationsBtn = screen.getByTestId(
       /Important Recommendations/
     );
+
+    expect(pathwaysBtn).toBeInTheDocument();
+    expect(incidentsBtn).toBeInTheDocument();
+    expect(criticalRecommendationsBtn).toBeInTheDocument();
+    expect(importantRecommendationsBtn).toBeInTheDocument();
 
     // ensure the count buttons contain the right values
     expect(pathwaysBtn).toHaveTextContent(1);
@@ -105,10 +111,13 @@ describe('OverviewDashbar', () => {
     );
 
     // ensure an error is presented
-    await waitFor(() => screen.getByText(/No Overview Available/));
-    screen.getByText(
-      /An unexpected error has occurred while trying to fetch the overview information. Please try again./
-    );
+    await screen.findByText(/No Overview Available/);
+    expect(screen.getByText(/No Overview Available/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /An unexpected error has occurred while trying to fetch the overview information. Please try again./
+      )
+    ).toBeInTheDocument();
 
     // ensure the correct API endpoint is being contacted
     expect(Get).toHaveBeenCalledWith(STATS_OVERVIEW_FETCH_URL);
@@ -124,10 +133,13 @@ describe('OverviewDashbar', () => {
     );
 
     // ensure an error is presented
-    await waitFor(() => screen.getByText(/No Overview Available/));
-    screen.getByText(
-      /An unexpected error has occurred while trying to fetch the overview information. Please try again./
-    );
+    await screen.findByText(/No Overview Available/);
+    expect(screen.getByText(/No Overview Available/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /An unexpected error has occurred while trying to fetch the overview information. Please try again./
+      )
+    ).toBeInTheDocument();
 
     // ensure the correct API endpoint is being contacted
     expect(Get).toHaveBeenCalledWith(STATS_OVERVIEW_FETCH_URL);
