@@ -4,10 +4,10 @@ import propTypes from 'prop-types';
 import { Card, CardBody, Flex, FlexItem, Text } from '@patternfly/react-core';
 import { DashbarCardTitle } from './components/DashbarCardTitle/DashbarCardTitle';
 import { DashbarCardTagOrIcon } from './components/DashbarCardTagOrIcon/DashbarCardTagOrIcon';
-import { OverviewDashbarCardSupportedTitles } from '../../../AppConstants';
+import { overviewDashbarCardSupportedTitles } from '../../../AppConstants';
 
 export const OverviewDashbarCard = ({ title, count, onClickFilterByTitle }) => {
-  if (OverviewDashbarCardSupportedTitles[title])
+  if (overviewDashbarCardSupportedTitles[title])
     return (
       <Card isFullHeight className="dashbar-item">
         <CardBody>

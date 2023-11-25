@@ -27,10 +27,24 @@ describe('OverviewDashbarCard', () => {
     await waitFor(() => screen.getByText(PATHWAYS));
 
     // ensure that the correct text is displayed
-    screen.getByText(PATHWAYS);
-    screen.getByText(/1/);
+    expect(screen.getByText(PATHWAYS)).toBeInTheDocument();
+    expect(screen.getByText(/1/)).toBeInTheDocument();
 
-    // ensure filtering is called by clicking the count
+    // ensure that the filtering button is displayed
+    expect(screen.getByTestId(PATHWAYS)).toBeInTheDocument();
+  });
+
+  it('Should filter by Pathways', async () => {
+    const onClickFilterByTitle = jest.fn();
+    render(
+      <OverviewDashbarCard
+        title={PATHWAYS}
+        count={1}
+        onClickFilterByTitle={onClickFilterByTitle}
+      />
+    );
+    await waitFor(() => screen.getByText(PATHWAYS));
+
     const filterByTitleBtn = screen.getByTestId(PATHWAYS);
     await user.click(filterByTitleBtn);
     expect(onClickFilterByTitle).toHaveBeenCalledWith(PATHWAYS);
@@ -48,10 +62,24 @@ describe('OverviewDashbarCard', () => {
     await waitFor(() => screen.getByText(INCIDENTS));
 
     // ensure that the correct text is displayed
-    screen.getByText(INCIDENTS);
-    screen.getByText(/2/);
+    expect(screen.getByText(INCIDENTS)).toBeInTheDocument();
+    expect(screen.getByText(/2/)).toBeInTheDocument();
 
-    // ensure filtering is called by clicking the count
+    // ensure that the filtering button is displayed
+    expect(screen.getByTestId(INCIDENTS)).toBeInTheDocument();
+  });
+
+  it('Should filter by Incidents', async () => {
+    const onClickFilterByTitle = jest.fn();
+    render(
+      <OverviewDashbarCard
+        title={INCIDENTS}
+        count={2}
+        onClickFilterByTitle={onClickFilterByTitle}
+      />
+    );
+    await waitFor(() => screen.getByText(INCIDENTS));
+
     const filterByTitleBtn = screen.getByTestId(INCIDENTS);
     await user.click(filterByTitleBtn);
     expect(onClickFilterByTitle).toHaveBeenCalledWith(INCIDENTS);
@@ -69,10 +97,24 @@ describe('OverviewDashbarCard', () => {
     await waitFor(() => screen.getByText(CRITICAL_RECOMMENDATIONS));
 
     // ensure that the correct text is displayed
-    screen.getByText(CRITICAL_RECOMMENDATIONS);
-    screen.getByText(/3/);
+    expect(screen.getByText(CRITICAL_RECOMMENDATIONS)).toBeInTheDocument();
+    expect(screen.getByText(/3/)).toBeInTheDocument();
 
-    // ensure filtering is called by clicking the count
+    // ensure that the filtering button is displayed
+    expect(screen.getByTestId(CRITICAL_RECOMMENDATIONS)).toBeInTheDocument();
+  });
+
+  it('Should filter by Critical Recommendations', async () => {
+    const onClickFilterByTitle = jest.fn();
+    render(
+      <OverviewDashbarCard
+        title={CRITICAL_RECOMMENDATIONS}
+        count={3}
+        onClickFilterByTitle={onClickFilterByTitle}
+      />
+    );
+    await waitFor(() => screen.getByText(CRITICAL_RECOMMENDATIONS));
+
     const filterByTitleBtn = screen.getByTestId(CRITICAL_RECOMMENDATIONS);
     await user.click(filterByTitleBtn);
     expect(onClickFilterByTitle).toHaveBeenCalledWith(CRITICAL_RECOMMENDATIONS);
@@ -90,10 +132,24 @@ describe('OverviewDashbarCard', () => {
     await waitFor(() => screen.getByText(IMPORTANT_RECOMMENDATIONS));
 
     // ensure that the correct text is displayed
-    screen.getByText(IMPORTANT_RECOMMENDATIONS);
-    screen.getByText(/4/);
+    expect(screen.getByText(IMPORTANT_RECOMMENDATIONS)).toBeInTheDocument();
+    expect(screen.getByText(/4/)).toBeInTheDocument();
 
-    // ensure filtering is called by clicking the count
+    // ensure that the filtering button is displayed
+    expect(screen.getByTestId(IMPORTANT_RECOMMENDATIONS)).toBeInTheDocument();
+  });
+
+  it('Should filter by Important Recommendations', async () => {
+    const onClickFilterByTitle = jest.fn();
+    render(
+      <OverviewDashbarCard
+        title={IMPORTANT_RECOMMENDATIONS}
+        count={4}
+        onClickFilterByTitle={onClickFilterByTitle}
+      />
+    );
+    await waitFor(() => screen.getByText(IMPORTANT_RECOMMENDATIONS));
+
     const filterByTitleBtn = screen.getByTestId(IMPORTANT_RECOMMENDATIONS);
     await user.click(filterByTitleBtn);
     expect(onClickFilterByTitle).toHaveBeenCalledWith(
@@ -111,12 +167,12 @@ describe('OverviewDashbarCard', () => {
       />
     );
 
-    // ensure that nothing is displayed
+    // ensure nothing is displayed
     expect(screen.queryByText(/Wrong Card Title/)).toBe(null);
     expect(screen.queryByText(/5/)).toBe(null);
     expect(screen.queryByTestId(/Wrong Card Title/)).toBe(null);
 
-    // ensure filtering is not called
+    // ensure filtering function is not called
     expect(onClickFilterByTitle).toHaveBeenCalledTimes(0);
   });
 });

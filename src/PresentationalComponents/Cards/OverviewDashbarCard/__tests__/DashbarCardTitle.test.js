@@ -9,7 +9,6 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import { DashbarCardTitle } from '../components/DashbarCardTitle/DashbarCardTitle';
-
 import tooltipMessages from '../../../../Messages';
 import {
   PATHWAYS,
@@ -26,16 +25,20 @@ describe('DashbarCardTitle', () => {
     render(<DashbarCardTitle title={PATHWAYS} />);
 
     // ensure the correct text is displayed
-    screen.getByText(/Pathways/);
+    expect(screen.getByText(/Pathways/)).toBeInTheDocument();
 
     // ensure the tooltip message is displayed
     const icon = screen.getByTestId(
       `question-tooltip-${tooltipMessages.recommendedPathways.defaultMessage}`
     );
+    expect(icon).toBeInTheDocument();
     await user.hover(icon);
     await waitFor(() =>
       screen.getByText(tooltipMessages.recommendedPathways.defaultMessage)
     );
+    expect(
+      screen.getByText(tooltipMessages.recommendedPathways.defaultMessage)
+    ).toBeInTheDocument();
 
     // ensure that the tooltip message is hidden when the mouse leaves the title
     await user.unhover(icon);
@@ -47,21 +50,20 @@ describe('DashbarCardTitle', () => {
     ).toBe(null);
 
     // but the icon still appears
-    screen.getByTestId(
-      `question-tooltip-${tooltipMessages.recommendedPathways.defaultMessage}`
-    );
+    expect(icon).toBeInTheDocument();
   });
 
   it("Should render 'Incidents' title with tooltip", async () => {
     render(<DashbarCardTitle title={INCIDENTS} />);
 
     // ensure the correct text is displayed
-    screen.getByText(/Incidents/);
+    expect(screen.getByText(/Incidents/)).toBeInTheDocument();
 
     // ensure the tooltip message is displayed
     const icon = screen.getByTestId(
       `question-tooltip-${tooltipMessages.incidentTooltip.defaultMessage}`
     );
+    expect(icon).toBeInTheDocument();
     await user.hover(icon);
     await waitFor(() =>
       screen.getByText(tooltipMessages.incidentTooltip.defaultMessage)
@@ -77,23 +79,21 @@ describe('DashbarCardTitle', () => {
     ).toBe(null);
 
     // but the icon still appears
-    screen.getByTestId(
-      `question-tooltip-${tooltipMessages.incidentTooltip.defaultMessage}`
-    );
+    expect(icon).toBeInTheDocument();
   });
 
   it("Should render 'Important Recommendations' title", () => {
     render(<DashbarCardTitle title={IMPORTANT_RECOMMENDATIONS} />);
 
     // ensure the correct text is displayed
-    screen.getByText(/Important Recommendations/);
+    expect(screen.getByText(/Important Recommendations/)).toBeInTheDocument();
   });
 
   it("Should render 'Critical Recommendations' title", () => {
     render(<DashbarCardTitle title={CRITICAL_RECOMMENDATIONS} />);
 
     // ensure the correct text is displayed
-    screen.getByText(/Critical Recommendations/);
+    expect(screen.getByText(/Critical Recommendations/)).toBeInTheDocument();
   });
 
   it('Should not render', () => {

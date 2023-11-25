@@ -45,7 +45,7 @@ export const INCIDENTS = 'Incidents';
 export const IMPORTANT_RECOMMENDATIONS = 'Important Recommendations';
 export const CRITICAL_RECOMMENDATIONS = 'Critical Recommendations';
 
-export const OverviewDashbarCardSupportedTitles = {
+export const overviewDashbarCardSupportedTitles = {
   Pathways: true,
   Incidents: true,
   'Important Recommendations': true,

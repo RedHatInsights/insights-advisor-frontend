@@ -49,7 +49,7 @@ const RebootRequired = (reboot_required) => (
   </span>
 );
 
-const QuestionTooltip = (text) => (
+const QuestionTooltip = ({ text }) => (
   <Tooltip
     key={text}
     position={TooltipPosition.right}

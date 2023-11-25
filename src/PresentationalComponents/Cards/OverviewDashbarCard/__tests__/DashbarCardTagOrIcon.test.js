@@ -9,7 +9,6 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import { DashbarCardTagOrIcon } from '../components/DashbarCardTagOrIcon/DashbarCardTagOrIcon';
-
 import tooltipMessages from '../../../../Messages';
 import {
   PATHWAYS,
@@ -26,7 +25,7 @@ describe('DashbarCardTagOrIcon', () => {
     render(<DashbarCardTagOrIcon title={PATHWAYS} />);
 
     // ensure the 'Route' icon is displayed
-    screen.getByTestId('route-icon');
+    expect(screen.getByTestId('route-icon')).toBeInTheDocument();
   });
 
   it("Should render 'Incidents' label", async () => {
@@ -34,10 +33,15 @@ describe('DashbarCardTagOrIcon', () => {
 
     // ensure the correct text is displayed
     const incidentLabel = screen.getByText(/Incident/);
+    expect(incidentLabel).toBeInTheDocument();
+
     await user.hover(incidentLabel);
     await waitFor(() =>
       screen.getByText(tooltipMessages.incidentTooltip.defaultMessage)
     );
+    expect(
+      screen.getByText(tooltipMessages.incidentTooltip.defaultMessage)
+    ).toBeInTheDocument();
 
     // ensure the tooltip message is hidden
     await user.unhover(incidentLabel);
@@ -49,7 +53,7 @@ describe('DashbarCardTagOrIcon', () => {
     ).toBe(null);
 
     // but the label still appears
-    screen.getByText(/Incident/);
+    expect(screen.getByText(/Incident/)).toBeInTheDocument();
   });
 
   it("Should render 'Important Recommendations' label", async () => {
@@ -57,14 +61,21 @@ describe('DashbarCardTagOrIcon', () => {
 
     // ensure the correct text is displayed
     const importantLabel = screen.getByText(/Important/);
+    expect(importantLabel).toBeInTheDocument();
+
     await user.hover(importantLabel);
     await waitFor(() =>
       screen.getByText(/The total risk of this remediation is/)
     );
-    screen.getByText(/important/);
-    screen.getByText(
-      /based on the combination of likelihood and impact to remediate./
-    );
+    expect(
+      screen.getByText(/The total risk of this remediation is/)
+    ).toBeInTheDocument();
+    expect(screen.getByText(/important/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /based on the combination of likelihood and impact to remediate./
+      )
+    ).toBeInTheDocument();
 
     // ensure the tooltip message is hidden
     await user.unhover(importantLabel);
@@ -81,7 +92,7 @@ describe('DashbarCardTagOrIcon', () => {
     ).toBe(null);
 
     // but the label still appears
-    screen.getByText(/Important/);
+    expect(screen.getByText(/Important/)).toBeInTheDocument();
   });
 
   it("Should render 'Critical Recommendations' label", async () => {
@@ -89,14 +100,21 @@ describe('DashbarCardTagOrIcon', () => {
 
     // ensure the correct text is displayed
     const criticalLabel = screen.getByText(/Critical/);
+    expect(criticalLabel).toBeInTheDocument();
+
     await user.hover(criticalLabel);
     await waitFor(() =>
       screen.getByText(/The total risk of this remediation is/)
     );
-    screen.getByText(/Critical/);
-    screen.getByText(
-      /based on the combination of likelihood and impact to remediate./
-    );
+    expect(
+      screen.getByText(/The total risk of this remediation is/)
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Critical/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /based on the combination of likelihood and impact to remediate./
+      )
+    ).toBeInTheDocument();
 
     // ensure the tooltip message is hidden
     await user.unhover(criticalLabel);
@@ -113,7 +131,7 @@ describe('DashbarCardTagOrIcon', () => {
     ).toBe(null);
 
     // but the label still appears
-    screen.getByText(/Critical/);
+    expect(screen.getByText(/Critical/)).toBeInTheDocument();
   });
 
   it('Should not render', () => {
