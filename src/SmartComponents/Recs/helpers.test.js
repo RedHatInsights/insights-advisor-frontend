@@ -6,6 +6,7 @@ jest.mock('axios');
 const setSystemsCount = jest.fn((items) => items);
 const setEdgeSystemsCount = jest.fn();
 const setConventionalSystemsCount = jest.fn();
+const setCountsLoading = jest.fn();
 describe('edgeSystemsCheck state is getting set', () => {
   test('All state variables get called', async () => {
     const resp = { data: { meta: { count: 1 } } };
@@ -16,11 +17,13 @@ describe('edgeSystemsCheck state is getting set', () => {
       'test',
       setSystemsCount,
       setEdgeSystemsCount,
-      setConventionalSystemsCount
+      setConventionalSystemsCount,
+      setCountsLoading
     );
 
     await expect(setSystemsCount).toHaveBeenCalledWith(2);
     await expect(setEdgeSystemsCount).toHaveBeenCalledWith(1);
     await expect(setConventionalSystemsCount).toHaveBeenCalledWith(1);
+    await expect(setCountsLoading).toHaveBeenCalledWith(false);
   });
 });

@@ -65,6 +65,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
   const [systemsCount, setSystemsCount] = useState(0);
   const [edgeSystemsCount, setEdgeSystemsCount] = useState(0);
   const [conventionalSystemsCount, setConventionalSystemsCount] = useState(0);
+  const [areCountsLoading, setCountsLoading] = useState(true);
   const { hasEdgeDevices } = useContext(AccountStatContext);
   const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
 
@@ -105,7 +106,8 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
         ruleId,
         setSystemsCount,
         setEdgeSystemsCount,
-        setConventionalSystemsCount
+        setConventionalSystemsCount,
+        setCountsLoading
       );
   }, [isEdgeParityEnabled, ruleId]);
 
@@ -257,6 +259,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                   isRecommendationDetail
                   edgeSystemsCount={edgeSystemsCount}
                   conventionalSystemsCount={conventionalSystemsCount}
+                  areCountsLoading={areCountsLoading}
                 />
               </React.Fragment>
             )}

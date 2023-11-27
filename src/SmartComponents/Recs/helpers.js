@@ -77,7 +77,8 @@ export const edgeSystemsCheck = async (
   ruleId,
   setSystemsCount,
   setEdgeSystemsCount,
-  setConventionalSystemsCount
+  setConventionalSystemsCount,
+  setCountsLoading
 ) => {
   let count = 0;
   try {
@@ -99,7 +100,9 @@ export const edgeSystemsCheck = async (
       });
 
     setSystemsCount(count);
+    setCountsLoading(false);
   } catch (error) {
     console.error(error);
+    setCountsLoading(false);
   }
 };
