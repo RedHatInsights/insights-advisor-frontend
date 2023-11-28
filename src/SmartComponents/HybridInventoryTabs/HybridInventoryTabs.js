@@ -22,7 +22,6 @@ const PathwaySystems = lazy(() =>
 );
 
 const HybridInventory = ({
-  ruleId,
   isImmutableTabOpen,
   conventionalSystemsCount,
   edgeSystemsCount,
@@ -71,7 +70,6 @@ const HybridInventory = ({
 
 HybridInventory.propTypes = {
   isImmutableTabOpen: propTypes.bool,
-  ruleId: propTypes.string,
   conventionalSystemsCount: propTypes.number,
   edgeSystemsCount: propTypes.number,
   areCountsLoading: propTypes.bool,
