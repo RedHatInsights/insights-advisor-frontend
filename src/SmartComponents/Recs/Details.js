@@ -101,14 +101,15 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
   }, [chrome, intl, rule.description, ruleId]);
 
   useEffect(() => {
-    isEdgeParityEnabled &&
-      edgeSystemsCheck(
-        ruleId,
-        setSystemsCount,
-        setEdgeSystemsCount,
-        setConventionalSystemsCount,
-        setCountsLoading
-      );
+    isEdgeParityEnabled
+      ? edgeSystemsCheck(
+          ruleId,
+          setSystemsCount,
+          setEdgeSystemsCount,
+          setConventionalSystemsCount,
+          setCountsLoading
+        )
+      : setCountsLoading(false);
   }, [isEdgeParityEnabled, ruleId]);
 
   return (
