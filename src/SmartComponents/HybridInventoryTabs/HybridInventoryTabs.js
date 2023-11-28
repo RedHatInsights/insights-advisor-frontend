@@ -17,7 +17,7 @@ const RecommendationSystems = lazy(() =>
 
 const PathwaySystems = lazy(() =>
   import(
-    /* webpackChunkName: "RecommendationSystems" */ './ConventionalSystems/PathwaySystems'
+    /* webpackChunkName: "PathwaySystems" */ './ConventionalSystems/PathwaySystems'
   )
 );
 
