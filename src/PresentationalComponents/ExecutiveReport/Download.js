@@ -59,7 +59,6 @@ const DownloadExecReport = ({ isDisabled }) => {
     }
   };
 
-  console.log('heeloo');
   return useMemo(() => {
     return (
       <DownloadButtonWrapper
