@@ -496,7 +496,7 @@ export const buildRows = (
                       {value.impacted_systems_count === 0
                         ? ''
                         : intl.formatMessage(messages.viewAffectedSystems, {
-                            systemsCount: value.impacted_systems_count,
+                            systems: value.impacted_systems_count,
                           })}
                     </Link>
                   }

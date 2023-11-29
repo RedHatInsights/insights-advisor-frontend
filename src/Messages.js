@@ -913,13 +913,6 @@ export default defineMessages({
     description: 'Error',
     defaultMessage: 'Error',
   },
-  viewAffectedSystems: {
-    id: 'viewAffectedSystems',
-    description:
-      'Link text to view all hosts that are affected by a recommendation',
-    defaultMessage:
-      'View {systemsCount, plural, one {the affected system} other {# affected systems}}',
-  },
   ruleHelpful: {
     id: 'ruleHelpful',
     description: 'Asking the user if they find a recommendation helpful',
@@ -1273,5 +1266,11 @@ export default defineMessages({
     id: 'edgeWarning',
     description: 'Warning text for edge devices',
     defaultMessage: 'Immutable systems are not shown in this list.',
+  },
+  viewAffectedSystems: {
+    id: 'viewAffectedSystems',
+    description: 'Label text for systems count in rule detail expanded row',
+    defaultMessage:
+      'View {systems, plural, one {the affected system} other {# affected systems}}',
   },
 });
