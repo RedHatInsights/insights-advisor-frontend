@@ -10,7 +10,6 @@ const proxyConfiguration = {
   appUrl: process.env.BETA
     ? ['/beta/insights/advisor', '/preview/insights/advisor']
     : ['/insights/advisor'],
-  deployment: process.env.BETA ? 'beta/apps' : 'apps',
   env: process.env.BETA ? 'stage-beta' : 'stage-stable',
   sassPrefix: '.advisor, .inventory', // TODO: investigate if this parameter can be removed
   proxyVerbose: true,
