@@ -73,33 +73,45 @@ export const bulkHostActions = async ({
   }
 };
 
+const getSystemCheckEndpoints = ({ ruleId, pathway }) => {
+  if (ruleId) {
+    return {
+      conventionalURL: `/api/insights/v1/rule/${ruleId}/systems_detail/?filter[system_profile][host_type][nil]=true&limit=1`,
+      edgeURL: `/api/insights/v1/rule/${ruleId}/systems_detail/?filter[system_profile][host_type]=edge&limit=1`,
+    };
+  }
+
+  return {
+    conventionalURL: `/api/insights/v1/system/?limit=1&filter[system_profile][host_type][nil]=true&pathway=${pathway}`,
+    edgeURL: `/api/insights/v1/system/?limit=1&filter[system_profile][host_type]=edge&pathway=${pathway}`,
+  };
+};
+
 export const edgeSystemsCheck = async (
   ruleId,
   setSystemsCount,
   setEdgeSystemsCount,
   setConventionalSystemsCount,
-  setCountsLoading
+  setCountsLoading,
+  pathway
 ) => {
   let count = 0;
-  try {
-    await axios
-      .get(
-        `/api/insights/v1/rule/${ruleId}/systems_detail/?filter[system_profile][host_type][nil]=true`
-      )
-      .then(({ data }) => {
-        count = count += data.meta.count;
-        setConventionalSystemsCount(data.meta.count);
-      });
-    await axios
-      .get(
-        `/api/insights/v1/rule/${ruleId}/systems_detail/?filter[system_profile][host_type]=edge`
-      )
-      .then(({ data }) => {
-        count = count += data.meta.count;
-        setEdgeSystemsCount(data.meta.count);
-      });
+  const { conventionalURL, edgeURL } = getSystemCheckEndpoints({
+    ruleId,
+    pathway,
+  });
 
-    setSystemsCount(count);
+  try {
+    await axios.get(conventionalURL).then(({ data }) => {
+      count = count += data.meta.count;
+      setConventionalSystemsCount(data.meta.count);
+    });
+    await axios.get(edgeURL).then(({ data }) => {
+      count = count += data.meta.count;
+      setEdgeSystemsCount(data.meta.count);
+    });
+
+    setSystemsCount && setSystemsCount(count);
     setCountsLoading(false);
   } catch (error) {
     console.error(error);

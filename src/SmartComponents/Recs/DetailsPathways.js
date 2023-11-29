@@ -33,6 +33,8 @@ import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tabl
 import { useLocation } from 'react-router-dom';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
+import { useFeatureFlag } from '../../Utilities/Hooks';
+import { edgeSystemsCheck } from './helpers';
 
 const RulesTable = lazy(() =>
   import(
@@ -50,6 +52,11 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
   const SID = useSelector(({ filters }) => filters.SID);
   const recFilters = useSelector(({ filters }) => filters.recState);
   const sysFilters = useSelector(({ filters }) => filters.sysState);
+
+  const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
+  const [edgeSystemsCount, setEdgeSystemsCount] = useState(0);
+  const [conventionalSystemsCount, setConventionalSystemsCount] = useState(0);
+  const [areCountsLoading, setCountsLoading] = useState(true);
 
   let options = {};
   selectedTags?.length &&
@@ -129,6 +136,18 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    isEdgeParityEnabled &&
+      edgeSystemsCheck(
+        undefined,
+        undefined,
+        setEdgeSystemsCount,
+        setConventionalSystemsCount,
+        setCountsLoading,
+        pathwayName
+      );
+  }, [isEdgeParityEnabled, pathwayName]);
 
   return (
     <React.Fragment>
@@ -217,6 +236,9 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
                   SID={SID}
                   isImmutableTabOpen={isImmutableTabOpen}
                   tabPathname={`/insights/advisor/recommendations/pathways/${pathwayName}`}
+                  edgeSystemsCount={edgeSystemsCount}
+                  conventionalSystemsCount={conventionalSystemsCount}
+                  areCountsLoading={areCountsLoading}
                 />
               </Suspense>
             )}
