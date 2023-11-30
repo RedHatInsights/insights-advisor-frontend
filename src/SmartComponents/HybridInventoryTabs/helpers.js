@@ -1,6 +1,5 @@
 import { createOptions } from '../../PresentationalComponents/helper';
 import { paginatedRequestHelper } from '../../PresentationalComponents/Inventory/helpers';
-import { mergeArraysByDiffKeys } from '../../PresentationalComponents/Common/Tables';
 import { Post } from '../../Utilities/Api';
 import { EDGE_DEVICE_BASE_URL } from '../../AppConstants';
 import { useCallback } from 'react';
@@ -8,6 +7,32 @@ import { systemReducer } from '../../Store/AppReducer';
 import { updateReducers } from '../../Store';
 import { useStore } from 'react-redux';
 import { wrappable } from '@patternfly/react-table';
+
+const mergeByInventoryKey = (
+  advisorData = [],
+  inventoryData = [],
+  edgeData = [],
+  enforceEdgeGroups
+) => {
+  return inventoryData.map((inventory) => {
+    const edge = edgeData.find((device) => device.DeviceUUID === inventory.id);
+    const advisor = advisorData.find(
+      (advisor) => advisor.system_uuid === inventory.id
+    );
+
+    return {
+      ...inventory,
+      ...advisor,
+      ...edge,
+      groups: enforceEdgeGroups
+        ? edge.DeviceGroups?.map((group) => ({
+            id: group.ID,
+            name: group.Name,
+          })) || []
+        : inventory.groups,
+    };
+  });
+};
 
 export const useGetEntities =
   (handleRefresh, pathway, rule) =>
@@ -57,7 +82,8 @@ export const useGetEntities =
       showTags
     );
 
-    let fullData = [];
+    let edgeData = [];
+    let enforceEdgeGroups = false;
     if (systemIDs?.length) {
       const { data: devicesData } = await Post(
         `${EDGE_DEVICE_BASE_URL}/devices/devicesview`,
@@ -65,25 +91,19 @@ export const useGetEntities =
         { devices_uuid: systemIDs }
       );
 
-      fullData = devicesData?.data?.devices?.map((device) => {
-        const system = inventoryData.results.find(
-          (system) => device.DeviceUUID === system.id
-        );
-        return {
-          ...system,
-          ...device,
-          groups: devicesData?.data?.enforce_edge_groups
-            ? device.DeviceGroups?.map((group) => ({
-                id: group.ID,
-                name: group.Name,
-              })) || []
-            : system.groups,
-        };
-      });
+      edgeData = devicesData?.data?.devices || [];
+      enforceEdgeGroups = devicesData?.data?.enforce_edge_groups;
     }
 
+    const fullData = mergeByInventoryKey(
+      advisorData.data,
+      inventoryData.results,
+      edgeData,
+      enforceEdgeGroups
+    );
+
     return Promise.resolve({
-      results: mergeArraysByDiffKeys(advisorData.data, fullData),
+      results: fullData,
       total: advisorData.meta.count,
     });
   };

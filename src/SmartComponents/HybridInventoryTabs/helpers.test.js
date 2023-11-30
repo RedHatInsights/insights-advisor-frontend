@@ -209,7 +209,7 @@ const defaultColumns = [
 
 describe('mergeAppColumns', () => {
   test('Should use last seen column render function for impacted column', () => {
-    const result = mergeAppColumns(defaultColumns);
+    const result = mergeAppColumns(defaultColumns, true);
 
     const impacted_date = result.find(
       (column) => column.key === 'impacted_date'
