@@ -60,6 +60,11 @@ export const AdvisorRoutes = () => {
           element={<DetailsPathways />}
         ></Route>
         <Route
+          key={'Pathway details'}
+          path="recommendations/pathways/:id/manage-edge-inventory"
+          element={<DetailsPathways isImmutableTabOpen />}
+        ></Route>
+        <Route
           key={'Recommendation details'}
           path="recommendations/:id"
           element={<RecsDetails />}

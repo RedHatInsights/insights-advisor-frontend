@@ -1,5 +1,6 @@
 import './Details.scss';
 
+import PropTypes from 'prop-types';
 import {
   Grid,
   GridItem,
@@ -22,7 +23,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import CategoryLabel from '../../PresentationalComponents/Labels/CategoryLabel';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
-import Inventory from '../../PresentationalComponents/Inventory/Inventory';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import messages from '../../Messages';
@@ -32,6 +32,9 @@ import { useParams } from 'react-router-dom';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
 import { useLocation } from 'react-router-dom';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
+import { useFeatureFlag } from '../../Utilities/Hooks';
+import { edgeSystemsCheck } from './helpers';
 
 const RulesTable = lazy(() =>
   import(
@@ -39,7 +42,7 @@ const RulesTable = lazy(() =>
   )
 );
 
-const PathwayDetails = () => {
+const PathwayDetails = ({ isImmutableTabOpen }) => {
   const intl = useIntl();
   const pathwayName = useParams().id;
   const dispatch = useDispatch();
@@ -49,6 +52,11 @@ const PathwayDetails = () => {
   const SID = useSelector(({ filters }) => filters.SID);
   const recFilters = useSelector(({ filters }) => filters.recState);
   const sysFilters = useSelector(({ filters }) => filters.sysState);
+
+  const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
+  const [edgeSystemsCount, setEdgeSystemsCount] = useState(0);
+  const [conventionalSystemsCount, setConventionalSystemsCount] = useState(0);
+  const [areCountsLoading, setCountsLoading] = useState(true);
 
   let options = {};
   selectedTags?.length &&
@@ -128,6 +136,18 @@ const PathwayDetails = () => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    isEdgeParityEnabled &&
+      edgeSystemsCheck(
+        undefined,
+        undefined,
+        setEdgeSystemsCount,
+        setConventionalSystemsCount,
+        setCountsLoading,
+        pathwayName
+      );
+  }, [isEdgeParityEnabled, pathwayName]);
 
   return (
     <React.Fragment>
@@ -209,16 +229,16 @@ const PathwayDetails = () => {
               <Loading />
             ) : (
               <Suspense fallback={<Loading />}>
-                <Inventory
-                  tableProps={{
-                    canSelectAll: false,
-                    isStickyHeader: true,
-                  }}
+                <HybridInventory
                   pathway={pathway}
                   selectedTags={selectedTags}
                   workloads={workloads}
                   SID={SID}
-                  showTags={true}
+                  isImmutableTabOpen={isImmutableTabOpen}
+                  tabPathname={`/insights/advisor/recommendations/pathways/${pathwayName}`}
+                  edgeSystemsCount={edgeSystemsCount}
+                  conventionalSystemsCount={conventionalSystemsCount}
+                  areCountsLoading={areCountsLoading}
                 />
               </Suspense>
             )}
@@ -229,4 +249,7 @@ const PathwayDetails = () => {
   );
 };
 
+PathwayDetails.propTypes = {
+  isImmutableTabOpen: PropTypes.bool,
+};
 export default PathwayDetails;

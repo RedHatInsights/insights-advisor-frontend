@@ -9,18 +9,24 @@ const ImmutableDevices = lazy(() =>
   import(/* webpackChunkName: "ImmutableDevices" */ './ImmutableDevices')
 );
 
-const ConventionalSystems = lazy(() =>
+const RecommendationSystems = lazy(() =>
   import(
-    /* webpackChunkName: "ConventionalSystems" */ './ConventionalSystems/RecommendationSystems'
+    /* webpackChunkName: "RecommendationSystems" */ './ConventionalSystems/RecommendationSystems'
+  )
+);
+
+const PathwaySystems = lazy(() =>
+  import(
+    /* webpackChunkName: "PathwaySystems" */ './ConventionalSystems/PathwaySystems'
   )
 );
 
 const HybridInventory = ({
-  ruleId,
   isImmutableTabOpen,
   conventionalSystemsCount,
   edgeSystemsCount,
   areCountsLoading,
+  tabPathname,
   ...tabProps
 }) => {
   const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
@@ -37,7 +43,11 @@ const HybridInventory = ({
       module="./HybridInventoryTabs"
       ConventionalSystemsTab={
         <Suspense fallback={Fragment}>
-          <ConventionalSystems {...tabProps} />
+          {tabProps.isRecommendationDetail ? (
+            <RecommendationSystems {...tabProps} />
+          ) : (
+            <PathwaySystems {...tabProps} />
+          )}
         </Suspense>
       }
       ImmutableDevicesTab={
@@ -45,7 +55,7 @@ const HybridInventory = ({
           <ImmutableDevices {...tabProps} />
         </Suspense>
       }
-      tabPathname={`/insights/advisor/recommendations/${ruleId}`}
+      tabPathname={tabPathname}
       isImmutableTabOpen={isImmutableTabOpen}
       fallback={<div />}
       columns
@@ -60,10 +70,12 @@ const HybridInventory = ({
 
 HybridInventory.propTypes = {
   isImmutableTabOpen: propTypes.bool,
-  ruleId: propTypes.string,
   conventionalSystemsCount: propTypes.number,
   edgeSystemsCount: propTypes.number,
   areCountsLoading: propTypes.bool,
+  tabPathname: propTypes.string,
+  rule: propTypes.object,
+  isRecommendationDetail: propTypes.bool,
 };
 
 export default HybridInventory;

@@ -7,9 +7,27 @@ import { AccountStatContext } from '../../ZeroStateWrapper';
 
 jest.mock('@redhat-cloud-services/frontend-components/AsyncComponent', () => ({
   __esModule: true,
-  default: jest.fn((props) => (
+  default: jest.fn(({ ConventionalSystemsTab, ...props }) => (
     <div {...props} aria-label="hybrid-inventory-mock">
-      AsyncComponent
+      {ConventionalSystemsTab}
+    </div>
+  )),
+}));
+
+jest.mock('./ConventionalSystems/RecommendationSystems', () => ({
+  __esModule: true,
+  default: jest.fn((props) => (
+    <div {...props} aria-label="recommendation-component-mock">
+      Mocked recommendation component
+    </div>
+  )),
+}));
+
+jest.mock('./ConventionalSystems/PathwaySystems', () => ({
+  __esModule: true,
+  default: jest.fn((props) => (
+    <div {...props} aria-label="pathway-component-mock">
+      Mocked pathway component
     </div>
   )),
 }));
@@ -44,7 +62,7 @@ const waitAsyncComponent = async () => {
   });
 };
 
-describe('HybridInventory', () => {
+describe('HybridInventoryTabs', () => {
   it('Should auto switch to edge tab  when there is no conventional systems, but there is edge device', async () => {
     renderComponent(
       { ...hybridSystemsCounts, conventionalSystemsCount: 0 },
@@ -112,7 +130,10 @@ describe('HybridInventory', () => {
   });
 
   it('Should pass correct tabPath prop to fed-module from accountContext', async () => {
-    renderComponent({ ...hybridSystemsCounts, ruleId: 'testRule' });
+    renderComponent({
+      ...hybridSystemsCounts,
+      tabPathname: '/insights/advisor/recommendations/testRule',
+    });
 
     await waitAsyncComponent();
     expect(AsynComponent).toHaveBeenCalledWith(
@@ -121,5 +142,29 @@ describe('HybridInventory', () => {
       }),
       {}
     );
+  });
+
+  it('Should load PathwaySystems when isRecommendationDetail is set to true', async () => {
+    renderComponent({ isRecommendationDetail: true });
+
+    await waitAsyncComponent();
+
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText('recommendation-component-mock')
+      ).toBeInTheDocument();
+    });
+  });
+
+  it('Should load PathwaySystems with tab props when isRecommendationDetail is set to false', async () => {
+    renderComponent({ isRecommendationDetail: false });
+
+    await waitAsyncComponent();
+
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText('pathway-component-mock')
+      ).toBeInTheDocument();
+    });
   });
 });
