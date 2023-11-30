@@ -1,16 +1,32 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { act } from '@testing-library/react';
-import { useGetEntities, useActionResolver, mergeAppColumns } from './helpers';
+import {
+  useGetEntities,
+  useActionResolver,
+  mergeAppColumns,
+  useOnLoad,
+} from './helpers';
 import { Get, Post } from '../../Utilities/Api';
 import inventoryData from './fixtures/inventoryData.json';
 import advisorPathwayData from './fixtures/advisorPathwayData.json';
 import advisorRecommendationData from './fixtures/advisorRecommendationData.json';
 import edgeData from './fixtures/edgeData.json';
+import { updateReducers } from '../../Store';
 
 jest.mock('../../Utilities/Api', () => ({
   ...jest.requireActual('../../Utilities/Api'),
   Get: jest.fn(() => Promise.resolve({})),
   Post: jest.fn(() => Promise.resolve({})),
+}));
+
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useStore: jest.fn(() => ({ replaceReducer: jest.fn() })),
+}));
+
+jest.mock('../../Store', () => ({
+  ...jest.requireActual('../../Store'),
+  updateReducers: jest.fn(() => {}),
 }));
 
 Post.mockReturnValue(edgeData);
@@ -173,5 +189,28 @@ describe('mergeAppColumns', () => {
 
     const groups = result.find((column) => column.key === 'groups');
     expect(groups.props).toEqual({ width: 15, isStatic: true });
+  });
+});
+
+describe('useOnload', () => {
+  test('Should replace reducer on load', () => {
+    const mergeWithEntities = jest.fn(() => ({ mergedEntities: {} }));
+    const mergeWithDetail = jest.fn(() => ({ mergedDetails: {} }));
+    const { result } = renderHook(() => useOnLoad({ offset: 10, limit: 10 }));
+
+    result.current({
+      mergeWithEntities,
+      INVENTORY_ACTION_TYPES: [],
+      mergeWithDetail,
+    });
+
+    expect(updateReducers).toHaveBeenCalledWith({
+      mergedDetails: {},
+      mergedEntities: {},
+    });
+    expect(mergeWithEntities).toHaveBeenCalledWith(expect.any(Function), {
+      page: 2,
+      perPage: 10,
+    });
   });
 });

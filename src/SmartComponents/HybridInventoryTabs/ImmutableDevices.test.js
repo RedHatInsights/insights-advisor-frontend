@@ -5,7 +5,7 @@ import { ComponentWithContext } from '../../Utilities/TestingUtilities';
 import ImmutableDevices from './ImmutableDevices';
 import { render } from '@testing-library/react';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
-import { useGetEntities, useActionResolver } from './helpers';
+import { useGetEntities, useActionResolver, useOnLoad } from './helpers';
 
 jest.mock('@redhat-cloud-services/frontend-components/AsyncComponent', () => ({
   __esModule: true,
@@ -26,6 +26,7 @@ jest.mock('./helpers', () => ({
   ...jest.requireActual('./helpers'),
   useGetEntities: jest.fn(() => {}),
   useActionResolver: jest.fn(() => () => {}),
+  useOnLoad: jest.fn(),
 }));
 
 const renderAndWait = async (componentProps = {}, renderOptions = {}) => {
@@ -148,5 +149,16 @@ describe('ImmutableDevices', () => {
       }),
       {}
     );
+  });
+
+  test('should display name and os filter from the ImmutableDevices federated module', async () => {
+    await renderAndWait();
+
+    expect(useOnLoad).toHaveBeenCalledWith({
+      limit: 20,
+      name: '',
+      offset: 0,
+      sort: '-last_seen',
+    });
   });
 });
