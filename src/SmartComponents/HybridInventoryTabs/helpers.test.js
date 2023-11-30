@@ -1,16 +1,32 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { act } from '@testing-library/react';
-import { useGetEntities, useActionResolver } from './helpers';
+import {
+  useGetEntities,
+  useActionResolver,
+  mergeAppColumns,
+  useOnLoad,
+} from './helpers';
 import { Get, Post } from '../../Utilities/Api';
 import inventoryData from './fixtures/inventoryData.json';
 import advisorPathwayData from './fixtures/advisorPathwayData.json';
 import advisorRecommendationData from './fixtures/advisorRecommendationData.json';
 import edgeData from './fixtures/edgeData.json';
+import { updateReducers } from '../../Store';
 
 jest.mock('../../Utilities/Api', () => ({
   ...jest.requireActual('../../Utilities/Api'),
   Get: jest.fn(() => Promise.resolve({})),
   Post: jest.fn(() => Promise.resolve({})),
+}));
+
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useStore: jest.fn(() => ({ replaceReducer: jest.fn() })),
+}));
+
+jest.mock('../../Store', () => ({
+  ...jest.requireActual('../../Store'),
+  updateReducers: jest.fn(() => {}),
 }));
 
 Post.mockReturnValue(edgeData);
@@ -182,5 +198,59 @@ describe('useActionResolver', () => {
     recDisableAction.onClick('event', 'rowIndex', 'test-device-id');
 
     expect(handleModalToggle).toHaveBeenCalledWith(true, 'test-device-id');
+  });
+});
+
+const defaultColumns = [
+  { key: 'updated', renderFunc: jest.fn() },
+  { key: 'system_profile', props: { width: 15 } },
+  { key: 'groups', props: { width: 15 } },
+];
+
+describe('mergeAppColumns', () => {
+  test('Should use last seen column render function for impacted column', () => {
+    const result = mergeAppColumns(defaultColumns);
+
+    const impacted_date = result.find(
+      (column) => column.key === 'impacted_date'
+    );
+    expect(impacted_date.renderFunc).toEqual(defaultColumns[0].renderFunc);
+  });
+  test('Should extend OS column props to disable sorting', () => {
+    const result = mergeAppColumns(defaultColumns);
+
+    const system_profile = result.find(
+      (column) => column.key === 'system_profile'
+    );
+    expect(system_profile.props).toEqual({ width: 15, isStatic: true });
+  });
+  test('Should extend groups column props to disable sorting', () => {
+    const result = mergeAppColumns(defaultColumns);
+
+    const groups = result.find((column) => column.key === 'groups');
+    expect(groups.props).toEqual({ width: 15, isStatic: true });
+  });
+});
+
+describe('useOnload', () => {
+  test('Should replace reducer on load', () => {
+    const mergeWithEntities = jest.fn(() => ({ mergedEntities: {} }));
+    const mergeWithDetail = jest.fn(() => ({ mergedDetails: {} }));
+    const { result } = renderHook(() => useOnLoad({ offset: 10, limit: 10 }));
+
+    result.current({
+      mergeWithEntities,
+      INVENTORY_ACTION_TYPES: [],
+      mergeWithDetail,
+    });
+
+    expect(updateReducers).toHaveBeenCalledWith({
+      mergedDetails: {},
+      mergedEntities: {},
+    });
+    expect(mergeWithEntities).toHaveBeenCalledWith(expect.any(Function), {
+      page: 2,
+      perPage: 10,
+    });
   });
 });

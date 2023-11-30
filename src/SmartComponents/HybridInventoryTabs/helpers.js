@@ -4,6 +4,10 @@ import { mergeArraysByDiffKeys } from '../../PresentationalComponents/Common/Tab
 import { Post } from '../../Utilities/Api';
 import { EDGE_DEVICE_BASE_URL } from '../../AppConstants';
 import { useCallback } from 'react';
+import { systemReducer } from '../../Store/AppReducer';
+import { updateReducers } from '../../Store';
+import { useStore } from 'react-redux';
+import { sortable, wrappable } from '@patternfly/react-table';
 
 export const useGetEntities =
   (handleRefresh, pathway, rule) =>
@@ -94,3 +98,42 @@ export const useActionResolver = (handleModalToggle) =>
     ],
     []
   );
+
+export const useOnLoad = (filters) => {
+  const store = useStore();
+  return useCallback(
+    ({ mergeWithEntities, INVENTORY_ACTION_TYPES, mergeWithDetail }) => {
+      store.replaceReducer(
+        updateReducers({
+          ...mergeWithEntities(systemReducer([], INVENTORY_ACTION_TYPES), {
+            page: Number(filters.offset / filters.limit + 1 || 1),
+            perPage: Number(filters.limit || 20),
+          }),
+          ...mergeWithDetail(),
+        })
+      );
+    },
+    [filters, store]
+  );
+};
+
+export const mergeAppColumns = (defaultColumns) => {
+  const lastSeenColumn = defaultColumns.find(({ key }) => key === 'updated');
+  const impacted_date = {
+    key: 'impacted_date',
+    title: 'First Impacted',
+    sortKey: 'impacted_date',
+    transforms: [sortable, wrappable],
+    props: { width: 15 },
+    renderFunc: lastSeenColumn.renderFunc,
+  };
+
+  //disable sorting on OS. API does not handle this
+  const osColumn = defaultColumns.find(({ key }) => key === 'system_profile');
+  osColumn.props = { ...osColumn.props, isStatic: true };
+
+  //disable sorting on GROUPS. API does not handle this
+  const groupsColumn = defaultColumns.find(({ key }) => key === 'groups');
+  groupsColumn.props = { ...groupsColumn.props, isStatic: true };
+  return [...defaultColumns, impacted_date];
+};
