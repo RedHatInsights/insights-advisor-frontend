@@ -122,7 +122,9 @@ const ImmutableDevices = ({
         operatingSystem: false,
         tags: false,
       }}
-      mergeAppColumns={mergeAppColumns}
+      mergeAppColumns={(defaultColumns) =>
+        mergeAppColumns(defaultColumns, isRecommendationDetail)
+      }
       activeFiltersConfig={activeFiltersConfig}
       onRowClick={onSystemNameClick}
       {...(isRecommendationDetail ? { tableActions: actionResolver } : {})}

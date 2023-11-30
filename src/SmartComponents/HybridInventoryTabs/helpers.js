@@ -7,7 +7,7 @@ import { useCallback } from 'react';
 import { systemReducer } from '../../Store/AppReducer';
 import { updateReducers } from '../../Store';
 import { useStore } from 'react-redux';
-import { sortable, wrappable } from '@patternfly/react-table';
+import { wrappable } from '@patternfly/react-table';
 
 export const useGetEntities =
   (handleRefresh, pathway, rule) =>
@@ -117,13 +117,13 @@ export const useOnLoad = (filters) => {
   );
 };
 
-export const mergeAppColumns = (defaultColumns) => {
+export const mergeAppColumns = (defaultColumns, isRecommendationDetail) => {
   const lastSeenColumn = defaultColumns.find(({ key }) => key === 'updated');
   const impacted_date = {
     key: 'impacted_date',
     title: 'First Impacted',
     sortKey: 'impacted_date',
-    transforms: [sortable, wrappable],
+    transforms: [wrappable],
     props: { width: 15 },
     renderFunc: lastSeenColumn.renderFunc,
   };
@@ -135,5 +135,9 @@ export const mergeAppColumns = (defaultColumns) => {
   //disable sorting on GROUPS. API does not handle this
   const groupsColumn = defaultColumns.find(({ key }) => key === 'groups');
   groupsColumn.props = { ...groupsColumn.props, isStatic: true };
-  return [...defaultColumns, impacted_date];
+
+  return [
+    ...defaultColumns,
+    ...(isRecommendationDetail ? [impacted_date] : []),
+  ];
 };
