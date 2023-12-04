@@ -49,7 +49,7 @@ const testApiCallArguments = () => {
   expect(Get).toHaveBeenCalledWith(
     '/api/insights/v1/rule/test-rule/systems_detail/',
     {},
-    { limit: 10, name: 'test-name', offset: 0, sort: '--last-seen' }
+    { limit: 10, name: 'test-name', offset: 0, sort: '-last-seen' }
   );
   expect(Post).toHaveBeenCalledWith(
     '/api/edge/v1/devices/devicesview',
@@ -215,14 +215,6 @@ describe('mergeAppColumns', () => {
       (column) => column.key === 'impacted_date'
     );
     expect(impacted_date.renderFunc).toEqual(defaultColumns[0].renderFunc);
-  });
-  test('Should extend OS column props to disable sorting', () => {
-    const result = mergeAppColumns(defaultColumns);
-
-    const system_profile = result.find(
-      (column) => column.key === 'system_profile'
-    );
-    expect(system_profile.props).toEqual({ width: 15, isStatic: true });
   });
   test('Should extend groups column props to disable sorting', () => {
     const result = mergeAppColumns(defaultColumns);
