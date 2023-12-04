@@ -7,6 +7,7 @@ import { systemReducer } from '../../Store/AppReducer';
 import { updateReducers } from '../../Store';
 import { useStore } from 'react-redux';
 import { wrappable } from '@patternfly/react-table';
+import { createSortParam } from '../../PresentationalComponents/helper';
 
 const mergeByInventoryKey = (
   advisorData = [],
@@ -14,10 +15,12 @@ const mergeByInventoryKey = (
   edgeData = [],
   enforceEdgeGroups
 ) => {
-  return inventoryData.map((inventory) => {
-    const edge = edgeData.find((device) => device.DeviceUUID === inventory.id);
-    const advisor = advisorData.find(
-      (advisor) => advisor.system_uuid === inventory.id
+  return advisorData.map((advisor) => {
+    const edge = edgeData.find(
+      (device) => device.DeviceUUID === advisor.system_uuid
+    );
+    const inventory = inventoryData.find(
+      (inventory) => advisor.system_uuid === inventory.id
     );
 
     return {
@@ -48,14 +51,7 @@ export const useGetEntities =
       SID,
       selectedTags,
     } = config;
-    //operating_system is currently not supported, but will be down the line.
-    const sort =
-      orderBy === 'operating_system'
-        ? 'rhel_version'
-        : `${orderDirection === 'ASC' ? '' : '-'}${
-            orderBy === 'updated' ? 'last_seen' : orderBy
-          }`;
-
+    const sort = createSortParam(orderBy, orderDirection);
     let options = createOptions(
       advisorFilters,
       page,
@@ -147,10 +143,6 @@ export const mergeAppColumns = (defaultColumns, isRecommendationDetail) => {
     props: { width: 15 },
     renderFunc: lastSeenColumn.renderFunc,
   };
-
-  //disable sorting on OS. API does not handle this
-  const osColumn = defaultColumns.find(({ key }) => key === 'system_profile');
-  osColumn.props = { ...osColumn.props, isStatic: true };
 
   //disable sorting on GROUPS. API does not handle this
   const groupsColumn = defaultColumns.find(({ key }) => key === 'groups');
