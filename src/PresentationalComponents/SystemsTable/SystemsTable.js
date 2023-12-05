@@ -214,7 +214,11 @@ const SystemsTable = () => {
         showTags
         disableDefaultColumns
         customFilters={{
-          advisorFilters: filters,
+          advisorFilters: {
+            ...filters,
+            //Systems table should always be filtered by host type
+            'filter[system_profile][host_type][nil]': true,
+          },
           workloads,
           SID,
           selectedTags,
