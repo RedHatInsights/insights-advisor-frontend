@@ -391,6 +391,27 @@ const Inventory = ({
     },
   };
 
+  const getActionsConfig = () => {
+    const actions = [
+      <RemediationButton
+        key="remediation-button"
+        fallback={<Spinner size="md" />}
+        isDisabled={isRemediationButtonDisabled}
+        dataProvider={remediationDataProvider}
+        onRemediationCreated={(result) => onRemediationCreated(result)}
+      >
+        {intl.formatMessage(messages.remediate)}
+      </RemediationButton>,
+    ];
+    !pathway &&
+      actions.push({
+        label: intl.formatMessage(messages.disableRuleForSystems),
+        props: { isDisabled: (selectedIds || []).length === 0 },
+        onClick: () => handleModalToggle(true),
+      });
+    return { actions };
+  };
+
   return (
     <React.Fragment>
       {disableRuleModalOpen && (
@@ -428,24 +449,7 @@ const Inventory = ({
         }}
         showTags={showTags}
         getEntities={fetchSystems}
-        actionsConfig={{
-          actions: [
-            <RemediationButton
-              key="remediation-button"
-              fallback={<Spinner size="md" />}
-              isDisabled={isRemediationButtonDisabled}
-              dataProvider={remediationDataProvider}
-              onRemediationCreated={(result) => onRemediationCreated(result)}
-            >
-              {intl.formatMessage(messages.remediate)}
-            </RemediationButton>,
-            {
-              label: intl.formatMessage(messages.disableRuleForSystems),
-              props: { isDisabled: (selectedIds || []).length === 0 },
-              onClick: () => handleModalToggle(true),
-            },
-          ],
-        }}
+        actionsConfig={getActionsConfig()}
         {...toolbarProps}
         onLoad={({
           mergeWithEntities,
