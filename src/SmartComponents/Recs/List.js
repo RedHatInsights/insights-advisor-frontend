@@ -3,11 +3,6 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
 import React, { Suspense, lazy, useEffect, useState } from 'react';
-import {
-  Tab,
-  TabTitleText,
-  Tabs,
-} from '@patternfly/react-core/dist/esm/components/Tabs/index';
 import { useLocation } from 'react-router-dom';
 import useInsightsNavigate from '@redhat-cloud-services/frontend-components-utilities/useInsightsNavigate';
 
@@ -15,13 +10,22 @@ import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/D
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import { PERMS } from '../../AppConstants';
 import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
-import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
-import PathwaysPanel from '../../PresentationalComponents/PathwaysPanel/PathwaysPanel';
+import OverviewDashbar from '../../PresentationalComponents/OverviewDashbar/OverviewDashbar';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+import {
+  Tab,
+  TabTitleText,
+  Tabs,
+  Stack,
+  StackItem,
+  Tooltip,
+} from '@patternfly/react-core';
+
+import { RECOMMENDATIONS_TAB, PATHWAYS_TAB } from '../../AppConstants';
 
 const PathwaysTable = lazy(() =>
   import(
@@ -32,7 +36,7 @@ const PathwaysTable = lazy(() =>
 const List = () => {
   const intl = useIntl();
   const { pathname } = useLocation();
-  const { navigate } = useInsightsNavigate();
+  const navigate = useInsightsNavigate();
   const permsExport = usePermissions('advisor', PERMS.export);
   const chrome = useChrome();
 
@@ -45,65 +49,75 @@ const List = () => {
   }, [chrome, intl]);
 
   const [activeTab, setActiveTab] = useState(
-    pathname === '/recommendations/pathways' ? 1 : 0
+    pathname === '/recommendations/pathways'
+      ? PATHWAYS_TAB
+      : RECOMMENDATIONS_TAB
   );
   const changeTab = (tab) => {
     setActiveTab(tab);
-    navigate(tab === 1 ? '/recommendations/pathways' : '/recommendations');
+    navigate(
+      tab === PATHWAYS_TAB ? '/recommendations/pathways' : '/recommendations'
+    );
   };
 
   return (
     <React.Fragment>
       <PageHeader className="adv-c-page-recommendations__header">
         <PageHeaderTitle
-          title={`${intl.formatMessage(messages.insightsHeader)} ${intl
-            .formatMessage(messages.recommendations)
-            .toLowerCase()}`}
+          title={`${
+            messages.insightsHeader.defaultMessage
+          } ${messages.recommendations.defaultMessage.toLowerCase()}`}
         />
         {!permsExport.isLoading && (
           <Tooltip
             trigger={!permsExport.hasAccess ? 'mouseenter' : ''}
-            content={intl.formatMessage(messages.permsAction)}
+            content={messages.permsAction.defaultMessage}
           >
             <DownloadExecReport isDisabled={!permsExport.hasAccess} />
           </Tooltip>
         )}
       </PageHeader>
       <section className="pf-l-page__main-section pf-c-page__main-section">
-        <PathwaysPanel />
-        <Tabs
-          className="adv__background--global-100"
-          activeKey={activeTab}
-          onSelect={(_e, tab) => changeTab(tab)}
-        >
-          <Tab
-            eventKey={0}
-            title={
-              <TabTitleText>
-                {intl.formatMessage(messages.recommendations)}
-              </TabTitleText>
-            }
-          >
-            <RulesTable isTabActive={activeTab === 0} />
-          </Tab>
-          <Tab
-            eventKey={1}
-            title={
-              <TabTitleText>
-                {intl.formatMessage(messages.pathways)}{' '}
-                {QuestionTooltip(
-                  intl.formatMessage(messages.recommendedPathways)
+        <Stack hasGutter>
+          <StackItem>
+            <OverviewDashbar changeTab={changeTab} />
+          </StackItem>
+          <StackItem>
+            <Tabs
+              className="adv__background--global-100"
+              activeKey={activeTab}
+              onSelect={(_e, tab) => changeTab(tab)}
+            >
+              <Tab
+                eventKey={RECOMMENDATIONS_TAB}
+                title={
+                  <TabTitleText>
+                    {messages.recommendations.defaultMessage}
+                  </TabTitleText>
+                }
+              >
+                <RulesTable isTabActive={activeTab === RECOMMENDATIONS_TAB} />
+              </Tab>
+              <Tab
+                eventKey={PATHWAYS_TAB}
+                title={
+                  <TabTitleText>
+                    {messages.pathways.defaultMessage}{' '}
+                    <QuestionTooltip
+                      text={messages.recommendedPathways.defaultMessage}
+                    />
+                  </TabTitleText>
+                }
+              >
+                {activeTab === PATHWAYS_TAB && (
+                  <Suspense fallback={<Loading />}>
+                    <PathwaysTable isTabActive={activeTab === PATHWAYS_TAB} />
+                  </Suspense>
                 )}
-              </TabTitleText>
-            }
-          >
-            {activeTab === 1 && (
-              <Suspense fallback={<Loading />}>
-                <PathwaysTable isTabActive={activeTab === 1} />
-              </Suspense>
-            )}
-          </Tab>
-        </Tabs>
+              </Tab>
+            </Tabs>
+          </StackItem>
+        </Stack>
       </section>
     </React.Fragment>
   );

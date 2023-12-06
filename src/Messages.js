@@ -1171,22 +1171,24 @@ export default defineMessages({
     description: 'View pathway',
     defaultMessage: 'View pathway',
   },
-  noPathways: {
-    id: 'noPathways',
-    description: 'No pathways',
-    defaultMessage: 'No pathways',
+  noOverviewAvailable: {
+    id: 'noOverviewAvailable',
+    description: 'No Overview Available',
+    defaultMessage: 'No Overview Available',
   },
-  noPathwaysAvailable: {
-    id: 'noPathwaysAvailable',
-    description: 'No Pathways available',
-    defaultMessage: 'No pathways available',
-  },
-  pathwaysPanelsError: {
-    id: 'pathwaysPanelError',
+  overviewDashbarError: {
+    id: 'overviewDashbarError',
     description:
-      'There was a problem processing the request. Please try again.',
+      'An unexpected error has occurred while trying to fetch the overview information. Please try again.',
     defaultMessage:
-      'There was a problem processing the request. Please try again.',
+      'An unexpected error has occurred while trying to fetch the overview information. Please try again.',
+  },
+  overviewDashbarResponseMissingDataError: {
+    id: 'overviewDashbarResponseMissingDataError',
+    description:
+      'Response from the server did not contain any data while trying to fetch the overview information for the Dashbar',
+    defaultMessage:
+      'Response from the server did not contain any data while trying to fetch the overview information for the Dashbar',
   },
   reboot: {
     id: 'reboot',

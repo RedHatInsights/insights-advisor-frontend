@@ -4,17 +4,18 @@ import {
   Text,
   TextContent,
   TextVariants,
-} from '@patternfly/react-core/dist/esm/components/Text/index';
-import {
   Tooltip,
   TooltipPosition,
-} from '@patternfly/react-core/dist/esm/components/Tooltip/';
+} from '@patternfly/react-core';
 import { createIntl, createIntlCache } from 'react-intl';
 
-import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon';
-import PowerOffIcon from '@patternfly/react-icons/dist/esm/icons/power-off-icon';
+import {
+  OutlinedQuestionCircleIcon,
+  PowerOffIcon,
+} from '@patternfly/react-icons';
 import React from 'react';
-import { global_secondary_color_100 } from '@patternfly/react-tokens/dist/js/global_secondary_color_100';
+import propTypes from 'prop-types';
+import { global_secondary_color_100 } from '@patternfly/react-tokens';
 import messages from '../../Messages';
 import { strong } from '../../Utilities/intlHelper';
 
@@ -49,16 +50,20 @@ const RebootRequired = (reboot_required) => (
   </span>
 );
 
-const QuestionTooltip = (text) => (
+const QuestionTooltip = ({ text }) => (
   <Tooltip
     key={text}
     position={TooltipPosition.right}
     content={<div>{text}</div>}
   >
-    <span aria-label="Action">
+    <span aria-label="Action" data-testid={`question-tooltip-${text}`}>
       <OutlinedQuestionCircleIcon color={global_secondary_color_100.value} />
     </span>
   </Tooltip>
 );
+
+QuestionTooltip.propTypes = {
+  text: propTypes.string,
+};
 
 export { RebootRequired, QuestionTooltip };
