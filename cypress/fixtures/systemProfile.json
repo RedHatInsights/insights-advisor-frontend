@@ -1,0 +1,13 @@
+{
+    "meta": {
+        "count": 16
+    },
+    "data":
+    {
+        "results": [{
+            "system_profile": {
+                "host_type": "rpmdnf"
+            }
+        }]   
+    }
+}

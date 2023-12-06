@@ -1,6 +1,10 @@
 import './SystemAdvisor.scss';
-import { BASE_URL, FILTER_CATEGORIES as FC } from '../../AppConstants';
-import { Card, CardBody } from '@patternfly/react-core';
+import {
+  BASE_URL,
+  FILTER_CATEGORIES as FC,
+  INVENTORY_BASE_URL,
+} from '../../AppConstants';
+import { Card, CardBody, Spinner } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import {
@@ -32,6 +36,7 @@ import downloadReport from '../../PresentationalComponents/Common/DownloadHelper
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import * as AppConstants from '../../AppConstants';
 import { useParams } from 'react-router-dom';
+
 const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   const intl = useIntl();
   const systemAdvisorRef = useRef({
@@ -52,7 +57,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   const [searchValue, setSearchValue] = useState('');
   const [isSelected, setIsSelected] = useState(false);
   const [isAllExpanded, setIsAllExpanded] = useState(false);
-
+  const [systemProfile, setSystemsProfile] = useState({});
   const selectedTags = useSelector(({ filters }) => filters?.selectedTags);
   const workloads = useSelector(({ filters }) => filters?.workloads);
   const SID = useSelector(({ filters }) => filters?.SID);
@@ -99,16 +104,20 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
     }
   };
 
-  const actions = [
-    <RemediationButton
-      key="remediation-button"
-      isDisabled={selectedAnsibleRules.length === 0}
-      dataProvider={() => processRemediation(selectedAnsibleRules)}
-      onRemediationCreated={(result) => onRemediationCreated(result)}
-    >
-      {intl.formatMessage(messages.remediate)}
-    </RemediationButton>,
-  ];
+  const actions =
+    systemProfile?.host_type !== 'edge'
+      ? [
+          <RemediationButton
+            key="remediation-button"
+            fallback={<Spinner size="md" />}
+            isDisabled={selectedAnsibleRules.length === 0}
+            dataProvider={() => processRemediation(selectedAnsibleRules)}
+            onRemediationCreated={(result) => onRemediationCreated(result)}
+          >
+            {intl.formatMessage(messages.remediate)}
+          </RemediationButton>,
+        ]
+      : [];
 
   const activeRuleFirst = (activeReports) => {
     const reports = [...activeReports];
@@ -380,6 +389,15 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
         );
         setInventoryReportFetchStatus('fulfilled');
         setActiveReports(activeRuleFirstReportsData);
+
+        const profileData = await Get(
+          `${INVENTORY_BASE_URL}/hosts/${inventoryId}/system_profile`,
+          {
+            credentials: 'include',
+          }
+        );
+
+        setSystemsProfile(profileData?.data?.results[0]?.system_profile || {});
       } catch (error) {
         setInventoryReportFetchStatus('failed');
       }
