@@ -25,11 +25,7 @@ const List = () => {
   return (
     <React.Fragment>
       <PageHeader>
-        <PageHeaderTitle
-          title={`${intl.formatMessage(messages.insightsHeader)} ${intl
-            .formatMessage(messages.systems)
-            .toLowerCase()}`}
-        />
+        <PageHeaderTitle title={`${messages.systems.defaultMessage}`} />
       </PageHeader>
       <section className="pf-l-page__main-section pf-c-page__main-section">
         {edgeParityFFlag ? <EdgeSystemsBanner /> : null}

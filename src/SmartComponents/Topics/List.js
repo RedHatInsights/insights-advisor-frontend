@@ -41,11 +41,7 @@ const List = () => {
   return (
     <React.Fragment>
       <PageHeader>
-        <PageHeaderTitle
-          title={`${intl.formatMessage(messages.insightsHeader)} ${intl
-            .formatMessage(messages.topics)
-            .toLowerCase()}`}
-        />
+        <PageHeaderTitle title={`${messages.topics.defaultMessage}`} />
       </PageHeader>
       <section className="pf-l-page__main-section pf-c-page__main-section">
         <TopicsTable props={{ data, isLoading, isFetching, isError }} />
