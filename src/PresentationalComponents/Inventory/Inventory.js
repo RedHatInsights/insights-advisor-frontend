@@ -20,6 +20,7 @@ import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
+import { Spinner } from '@patternfly/react-core';
 
 const Inventory = ({
   tableProps,
@@ -427,19 +428,17 @@ const Inventory = ({
         }}
         showTags={showTags}
         getEntities={fetchSystems}
-        dedicatedAction={
-          <RemediationButton
-            key="remediation-button"
-            isDisabled={isRemediationButtonDisabled}
-            dataProvider={remediationDataProvider}
-            onRemediationCreated={(result) => onRemediationCreated(result)}
-          >
-            {intl.formatMessage(messages.remediate)}
-          </RemediationButton>
-        }
         actionsConfig={{
           actions: [
-            '',
+            <RemediationButton
+              key="remediation-button"
+              fallback={<Spinner size="md" />}
+              isDisabled={isRemediationButtonDisabled}
+              dataProvider={remediationDataProvider}
+              onRemediationCreated={(result) => onRemediationCreated(result)}
+            >
+              {intl.formatMessage(messages.remediate)}
+            </RemediationButton>,
             {
               label: intl.formatMessage(messages.disableRuleForSystems),
               props: { isDisabled: (selectedIds || []).length === 0 },
