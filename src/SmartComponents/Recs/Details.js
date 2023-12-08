@@ -12,11 +12,11 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-} from '@patternfly/react-core/dist/esm/components/Card';
+  Button,
+  Title,
+} from '@patternfly/react-core';
 import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
-import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
-import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import { InvalidObject } from '@redhat-cloud-services/frontend-components/InvalidObject';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
@@ -34,6 +34,7 @@ import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome'
 import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 import { AccountStatContext } from '../../ZeroStateWrapper.js';
 import { useFeatureFlag } from '../../Utilities/Hooks.js';
+import DetailsTitle from './DetailsTitle.js';
 
 const OverviewDetails = ({ isImmutableTabOpen }) => {
   const intl = useIntl();
@@ -247,9 +248,11 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
             {rule.rule_status === 'enabled' && (
               <React.Fragment>
                 <Title className="pf-u-mb-lg" headingLevel="h3" size="2xl">
-                  {hasEdgeDevices && isEdgeParityEnabled
-                    ? `${systemsCount} Total Systems`
-                    : 'Affected Systems'}
+                  <DetailsTitle
+                    areCountsLoading={areCountsLoading}
+                    hasEdgeDevices={hasEdgeDevices}
+                    systemsCount={systemsCount}
+                  />
                 </Title>
                 <HybridInventory
                   ruleId={ruleId}
