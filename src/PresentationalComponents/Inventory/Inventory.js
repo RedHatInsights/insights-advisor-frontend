@@ -319,7 +319,6 @@ const Inventory = ({
       groups = {
         ...groups[0],
         transforms: [wrappable],
-        props: { ...groups[0].props, isStatic: true }, // remove this line after group sorting is enabled in the API
       };
 
       let columnList = [
