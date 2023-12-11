@@ -14,6 +14,8 @@ import {
 import { dateStringByType } from '@redhat-cloud-services/frontend-components/DateFormat/helper';
 import { checkSorting } from '../../../cypress/utils/table';
 import Wrapper from '../../Utilities/Wrapper';
+import { INVENTORY_BASE_URL } from '../../AppConstants';
+import systemProfile from '../../../cypress/fixtures/systemProfile.json';
 
 const TABLE_HEADERS = [
   'Description',
@@ -46,6 +48,10 @@ describe('system rules table', () => {
         docs: fixturesKcs,
       },
     }).as('kcs');
+    cy.intercept(
+      `${INVENTORY_BASE_URL}/hosts/${SYSTEM_ID}/system_profile`,
+      systemProfile.data
+    ).as('getSystemProfile');
     cy.mount(
       <Wrapper>
         <SystemAdvisor
@@ -137,6 +143,23 @@ describe('system rules table', () => {
           );
         });
       });
+    });
+  });
+
+  describe('Toolbar actions', () => {
+    it('Should show remediation button when host is of type edge', () => {
+      cy.get('.ins-c-primary-toolbar__first-action').contains('Remediation');
+    });
+    it('Should hide remediation button when host is of type edge', () => {
+      systemProfile.data.results[0].system_profile.host_type = 'edge';
+
+      cy.intercept(
+        `${INVENTORY_BASE_URL}/hosts/${SYSTEM_ID}/system_profile`,
+        systemProfile.data
+      ).as('getEdgeSystemProfile');
+
+      cy.wait(['@getEdgeSystemProfile']);
+      cy.get('.ins-c-primary-toolbar__first-action').should('not.exist');
     });
   });
 });
