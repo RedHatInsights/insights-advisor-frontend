@@ -216,12 +216,6 @@ describe('mergeAppColumns', () => {
     );
     expect(impacted_date.renderFunc).toEqual(defaultColumns[0].renderFunc);
   });
-  test('Should extend groups column props to disable sorting', () => {
-    const result = mergeAppColumns(defaultColumns);
-
-    const groups = result.find((column) => column.key === 'groups');
-    expect(groups.props).toEqual({ width: 15, isStatic: true });
-  });
 });
 
 describe('useOnload', () => {

@@ -144,10 +144,6 @@ export const mergeAppColumns = (defaultColumns, isRecommendationDetail) => {
     renderFunc: lastSeenColumn.renderFunc,
   };
 
-  //disable sorting on GROUPS. API does not handle this
-  const groupsColumn = defaultColumns.find(({ key }) => key === 'groups');
-  groupsColumn.props = { ...groupsColumn.props, isStatic: true };
-
   return [
     ...defaultColumns,
     ...(isRecommendationDetail ? [impacted_date] : []),
