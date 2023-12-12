@@ -58,6 +58,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isAllExpanded, setIsAllExpanded] = useState(false);
   const [systemProfile, setSystemsProfile] = useState({});
+  const [isSystemProfileLoading, setSystemsProfileLoading] = useState(true);
   const selectedTags = useSelector(({ filters }) => filters?.selectedTags);
   const workloads = useSelector(({ filters }) => filters?.workloads);
   const SID = useSelector(({ filters }) => filters?.SID);
@@ -105,7 +106,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   };
 
   const actions =
-    systemProfile?.host_type !== 'edge'
+    !isSystemProfileLoading && systemProfile?.host_type !== 'edge'
       ? [
           <RemediationButton
             key="remediation-button"
@@ -398,8 +399,10 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
         );
 
         setSystemsProfile(profileData?.data?.results[0]?.system_profile || {});
+        setSystemsProfileLoading(false);
       } catch (error) {
         setInventoryReportFetchStatus('failed');
+        setSystemsProfileLoading(false);
       }
     };
     dataFetch();
