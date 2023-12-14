@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
-import { sortable, wrappable } from '@patternfly/react-table';
+import { wrappable } from '@patternfly/react-table';
 
 import messages from '../../Messages';
 import RuleLabels from '../Labels/RuleLabels';
@@ -8,7 +8,7 @@ import RuleLabels from '../Labels/RuleLabels';
 export const systemsTableColumns = (intl) => [
   {
     key: 'display_name',
-    transforms: [sortable, wrappable],
+    transforms: [wrappable],
     renderFunc: (data, id, system) => (
       <React.Fragment>
         <Link key={id} to={`/systems/${system.system_uuid}`}>
@@ -21,42 +21,42 @@ export const systemsTableColumns = (intl) => [
   {
     key: 'groups',
     requiresDefault: true,
-    transforms: [sortable, wrappable],
+    transforms: [wrappable],
   },
   {
     key: 'tags',
   },
   {
     key: 'system_profile',
-    transforms: [sortable, wrappable],
+    transforms: [wrappable],
   },
   {
     title: intl.formatMessage(messages.numberRuleHits),
-    transforms: [sortable, wrappable],
+    transforms: [wrappable],
     key: 'hits',
   },
   {
     title: intl.formatMessage(messages.critical),
-    transforms: [sortable, wrappable],
+    transforms: [wrappable],
     key: 'critical_hits',
   },
   {
     title: intl.formatMessage(messages.important),
-    transforms: [sortable, wrappable],
+    transforms: [wrappable],
     key: 'important_hits',
   },
   {
     title: intl.formatMessage(messages.moderate),
-    transforms: [sortable, wrappable],
+    transforms: [wrappable],
     key: 'moderate_hits',
   },
   {
     title: intl.formatMessage(messages.low),
-    transforms: [sortable, wrappable],
+    transforms: [wrappable],
     key: 'low_hits',
   },
   {
     key: 'updated',
-    transforms: [sortable, wrappable],
+    transforms: [wrappable],
   },
 ];
