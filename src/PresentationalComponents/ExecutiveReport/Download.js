@@ -15,6 +15,7 @@ import { Get } from '../../Utilities/Api';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { BuildExecReport } from './BuildExecReport';
 
 const DownloadExecReport = ({ isDisabled }) => {
   const intl = useIntl();
@@ -23,30 +24,29 @@ const DownloadExecReport = ({ isDisabled }) => {
 
   const dataFetch = async () => {
     setLoading(true);
-    const { BuildExecReport } = await import(
-      /* webpackChunkName: 'BuildExecReport' */ './BuildExecReport'
-    );
     dispatch(addNotification(exportNotifications.pending));
 
     try {
-      const [statsSystems, statsReports, topActiveRec] = await Promise.all([
-        (await Get(STATS_SYSTEMS_FETCH_URL)).data,
-        (await Get(STATS_REPORTS_FETCH_URL)).data,
-        (
-          await Get(
+      const [statsSystems, statsReports, topActiveRec] = (
+        await Promise.all([
+          Get(STATS_SYSTEMS_FETCH_URL),
+          Get(STATS_REPORTS_FETCH_URL),
+          Get(
             RULES_FETCH_URL,
             {},
             { limit: 3, sort: '-total_risk,-impacted_count', impacting: true }
-          )
-        ).data,
-      ]);
+          ),
+        ])
+      ).map(({ data }) => data);
 
-      const report = BuildExecReport({
-        statsReports,
-        statsSystems,
-        topActiveRec,
-        intl,
-      });
+      const report = (
+        <BuildExecReport
+          statsReports={statsReports}
+          statsSystems={statsSystems}
+          topActiveRec={topActiveRec}
+          intl={intl}
+        />
+      );
       setLoading(false);
       dispatch(addNotification(exportNotifications.success));
 
@@ -83,7 +83,7 @@ const DownloadExecReport = ({ isDisabled }) => {
           .replace(/ /g, '-')}.pdf`}
       />
     );
-  }, [loading]);
+  }, [intl, isDisabled, loading]);
 };
 
 export default DownloadExecReport;
