@@ -1,14 +1,14 @@
+/* eslint-disable rulesdir/disallow-fec-relative-imports */
 import './_Download.scss';
-
+import PropTypes from 'prop-types';
 import {
   RULES_FETCH_URL,
   STATS_REPORTS_FETCH_URL,
   STATS_SYSTEMS_FETCH_URL,
   exportNotifications,
 } from '../../AppConstants';
-import React, { useMemo, useState } from 'react';
-
-import { DownloadButtonWrapper } from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
+import React, { useState } from 'react';
+import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-generator';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
 import ExportIcon from '@patternfly/react-icons/dist/esm/icons/export-icon';
 import { Get } from '../../Utilities/Api';
@@ -47,7 +47,9 @@ const DownloadExecReport = ({ isDisabled }) => {
           intl={intl}
         />
       );
+
       setLoading(false);
+
       dispatch(addNotification(exportNotifications.success));
 
       return [report];
@@ -59,31 +61,34 @@ const DownloadExecReport = ({ isDisabled }) => {
     }
   };
 
-  return useMemo(() => {
-    return (
-      <DownloadButtonWrapper
-        groupName={intl.formatMessage(messages.redHatInsights)}
-        label={
-          loading
-            ? intl.formatMessage(messages.loading)
-            : intl.formatMessage(messages.downloadExecutiveLabel)
-        }
-        asyncFunction={dataFetch}
-        buttonProps={{
-          variant: 'link',
-          icon: <ExportIcon className="iconOverride" />,
-          component: 'a',
-          className: 'downloadButtonOverride',
-          isAriaDisabled: isDisabled,
-          ...(loading ? { isDisabled: true } : null),
-        }}
-        type={intl.formatMessage(messages.insightsHeader)}
-        fileName={`Advisor-Executive-Report--${new Date()
-          .toUTCString()
-          .replace(/ /g, '-')}.pdf`}
-      />
-    );
-  }, [intl, isDisabled, loading]);
+  return (
+    <DownloadButton
+      fallback={<div />}
+      groupName={intl.formatMessage(messages.redHatInsights)}
+      label={
+        loading
+          ? intl.formatMessage(messages.loading)
+          : intl.formatMessage(messages.downloadExecutiveLabel)
+      }
+      asyncFunction={dataFetch}
+      buttonProps={{
+        variant: 'link',
+        icon: <ExportIcon className="iconOverride" />,
+        component: 'a',
+        className: 'downloadButtonOverride',
+        isAriaDisabled: isDisabled,
+        ...(loading ? { isDisabled: true } : null),
+      }}
+      type={intl.formatMessage(messages.insightsHeader)}
+      fileName={`Advisor-Executive-Report--${new Date()
+        .toUTCString()
+        .replace(/ /g, '-')}.pdf`}
+    />
+  );
+};
+
+DownloadExecReport.propTypes = {
+  isDisabled: PropTypes.bool,
 };
 
 export default DownloadExecReport;
