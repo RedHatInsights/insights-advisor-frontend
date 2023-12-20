@@ -5,12 +5,10 @@ import { BreadcrumbItem } from '@patternfly/react-core/dist/esm/components/Bread
 import PropTypes from 'prop-types';
 import messages from '../../Messages';
 import { useGetRecQuery } from '../../Services/Recs';
-import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
 import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 
 const Breadcrumbs = ({ current }) => {
-  const intl = useIntl();
   const location = useLocation().pathname?.split('/');
   const [items, setItems] = useState([]);
   const skip =
@@ -24,11 +22,16 @@ const Breadcrumbs = ({ current }) => {
   useEffect(() => {
     const buildBreadcrumbs = () => {
       let crumbs = [];
+
       // add base
-      crumbs.push({
-        title: `${intl.formatMessage(messages.insightsHeader)} ${location[3]}`,
-        navigate: `/${location[3]}`,
-      });
+      if (location[3]) {
+        const baseNameWithCapitalLetter =
+          location[3].slice(0, 1).toUpperCase() + location[3].slice(1);
+        crumbs.push({
+          title: `${baseNameWithCapitalLetter}`,
+          navigate: `/${location[3]}`,
+        });
+      }
 
       // if applicable, add :id breadcrumb
       if (!skip) {
@@ -41,7 +44,7 @@ const Breadcrumbs = ({ current }) => {
       if (location[2] === 'pathways') {
         crumbs = [
           {
-            title: 'Advisor pathways',
+            title: 'Pathways',
             navigate: '/recommendations/pathways',
           },
         ];
@@ -66,7 +69,7 @@ const Breadcrumbs = ({ current }) => {
           <BreadcrumbItem isActive>{current}</BreadcrumbItem>
         </Breadcrumb>
       ) : (
-        intl.formatMessage(messages.loading)
+        messages.loading.defaultMessage
       )}
     </React.Fragment>
   );
