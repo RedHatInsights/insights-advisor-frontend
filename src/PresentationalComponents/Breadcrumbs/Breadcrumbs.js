@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Breadcrumb } from '@patternfly/react-core/dist/esm/components/Breadcrumb/Breadcrumb';
-import { BreadcrumbItem } from '@patternfly/react-core/dist/esm/components/Breadcrumb/BreadcrumbItem';
+import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 import messages from '../../Messages';
 import { useGetRecQuery } from '../../Services/Recs';
@@ -41,7 +40,7 @@ const Breadcrumbs = ({ current }) => {
         });
       }
 
-      if (location[2] === 'pathways') {
+      if (location[4] === 'pathways') {
         crumbs = [
           {
             title: 'Pathways',

@@ -49,7 +49,7 @@ const List = () => {
   }, [chrome, intl]);
 
   const [activeTab, setActiveTab] = useState(
-    pathname === '/recommendations/pathways'
+    pathname === '/insights/advisor/recommendations/pathways'
       ? PATHWAYS_TAB
       : RECOMMENDATIONS_TAB
   );
