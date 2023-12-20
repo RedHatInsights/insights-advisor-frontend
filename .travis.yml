@@ -12,11 +12,6 @@ jobs:
     - stage: Test
       script: npm run test && npm run test:ct
       after_success: npm run coverage
-    - stage: Deploy
-      if: (fork = false) AND (branch IN (master, master-stable, prod-beta, prod-stable))
-      script: npm run travis:build && curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
 env:
   global:
-    - REPO="git@github.com:RedHatInsights/insights-advisor-frontend-build"
-    - REPO_DIR="insights-advisor-frontend-build"
     - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
