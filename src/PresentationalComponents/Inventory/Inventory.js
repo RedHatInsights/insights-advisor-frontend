@@ -432,6 +432,7 @@ const Inventory = ({
           name: false,
           tags: !showTags,
           operatingSystem: false,
+          hostGroupFilter: false,
         }}
         activeFiltersConfig={activeFiltersConfig}
         columns={(defaultColumns) => createColumns(defaultColumns)}
