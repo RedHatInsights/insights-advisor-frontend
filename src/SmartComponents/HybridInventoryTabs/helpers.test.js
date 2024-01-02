@@ -12,6 +12,7 @@ import advisorPathwayData from './fixtures/advisorPathwayData.json';
 import advisorRecommendationData from './fixtures/advisorRecommendationData.json';
 import edgeData from './fixtures/edgeData.json';
 import { updateReducers } from '../../Store';
+import { useFeatureFlag } from '../../Utilities/Hooks';
 
 jest.mock('../../Utilities/Api', () => ({
   ...jest.requireActual('../../Utilities/Api'),
@@ -27,6 +28,11 @@ jest.mock('react-redux', () => ({
 jest.mock('../../Store', () => ({
   ...jest.requireActual('../../Store'),
   updateReducers: jest.fn(() => {}),
+}));
+
+jest.mock('../../Utilities/Hooks', () => ({
+  ...jest.requireActual('../../Utilities/Hooks'),
+  useFeatureFlag: jest.fn(() => false),
 }));
 
 Post.mockReturnValue(edgeData);
@@ -103,7 +109,8 @@ describe('getEntities', () => {
     testApiCallArguments();
   });
 
-  test('uses group info from inventory API when enforce_edge_groups set to false', async () => {
+  test('uses group info from inventory API when enforce_edge_groups set to false and isInventoryGroupsEnabled flag is true', async () => {
+    useFeatureFlag.mockReturnValue(true);
     const { result } = renderHook(() =>
       useGetEntities(handleRefreshMock, undefined, { rule_id: 'test-rule' })
     );
@@ -118,6 +125,25 @@ describe('getEntities', () => {
     ]);
     expect(fetchedResult.results[1].groups).toEqual([
       { id: 'inventory-group.id-2', name: 'inventory-group-2' },
+    ]);
+  });
+
+  test('uses group info from edge API when enforce_edge_groups set to false and isInventoryGroupsEnabled flag is false', async () => {
+    useFeatureFlag.mockReturnValue(false);
+    const { result } = renderHook(() =>
+      useGetEntities(handleRefreshMock, undefined, { rule_id: 'test-rule' })
+    );
+
+    let fetchedResult;
+    await act(async () => {
+      fetchedResult = await result.current(...fetchArguments);
+    });
+
+    expect(fetchedResult.results[0].groups).toEqual([
+      { id: 'edge.group.id-1', name: 'edge.group-1' },
+    ]);
+    expect(fetchedResult.results[1].groups).toEqual([
+      { id: 'edge.group.id-2', name: 'edge.group-2' },
     ]);
   });
 

@@ -8,6 +8,7 @@ import { updateReducers } from '../../Store';
 import { useStore } from 'react-redux';
 import { wrappable } from '@patternfly/react-table';
 import { createSortParam } from '../../PresentationalComponents/helper';
+import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const mergeByInventoryKey = (
   advisorData = [],
@@ -37,9 +38,12 @@ const mergeByInventoryKey = (
   });
 };
 
-export const useGetEntities =
-  (handleRefresh, pathway, rule) =>
-  async (_items, config, showTags, defaultGetEntities) => {
+export const useGetEntities = (handleRefresh, pathway, rule) => {
+  const isInventoryGroupsEnabled = useFeatureFlag(
+    'edgeParity.inventory-groups-enabled'
+  );
+
+  return async (_items, config, showTags, defaultGetEntities) => {
     const {
       per_page,
       page,
@@ -51,6 +55,7 @@ export const useGetEntities =
       SID,
       selectedTags,
     } = config;
+
     const sort = createSortParam(orderBy, orderDirection);
     let options = createOptions(
       advisorFilters,
@@ -88,7 +93,8 @@ export const useGetEntities =
       );
 
       edgeData = devicesData?.data?.devices || [];
-      enforceEdgeGroups = devicesData?.data?.enforce_edge_groups;
+      enforceEdgeGroups =
+        devicesData?.data?.enforce_edge_groups || !isInventoryGroupsEnabled;
     }
 
     const fullData = mergeByInventoryKey(
@@ -103,6 +109,7 @@ export const useGetEntities =
       total: advisorData.meta.count,
     });
   };
+};
 
 export const useActionResolver = (handleModalToggle) =>
   useCallback(
