@@ -121,6 +121,7 @@ const ImmutableDevices = ({
         name: false,
         operatingSystem: false,
         tags: false,
+        hostGroupFilter: false,
       }}
       mergeAppColumns={(defaultColumns) =>
         mergeAppColumns(defaultColumns, isRecommendationDetail)
