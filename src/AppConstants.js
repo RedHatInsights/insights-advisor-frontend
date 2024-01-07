@@ -44,8 +44,8 @@ export const SEVERITY_MAP = {
 // Recommendations OverviewDashbarCards titles
 export const PATHWAYS = 'Pathways';
 export const INCIDENTS = 'Incidents';
-export const IMPORTANT_RECOMMENDATIONS = 'Important Recommendations';
-export const CRITICAL_RECOMMENDATIONS = 'Critical Recommendations';
+export const IMPORTANT_RECOMMENDATIONS = 'Important recommendations';
+export const CRITICAL_RECOMMENDATIONS = 'Critical recommendations';
 
 // Recommendations OverviewDashbarCards labels
 export const INCIDENT_TAG = 'incident';

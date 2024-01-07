@@ -55,8 +55,8 @@ describe('OverviewDashbar', () => {
     // ensure that the correct text is displayed
     expect(screen.getByText(/Pathways/)).toBeInTheDocument();
     expect(screen.getByText(/Incidents/)).toBeInTheDocument();
-    expect(screen.getByText(/Important Recommendations/)).toBeInTheDocument();
-    expect(screen.getByText(/Critical Recommendations/)).toBeInTheDocument();
+    expect(screen.getByText(/Important recommendations/)).toBeInTheDocument();
+    expect(screen.getByText(/Critical recommendations/)).toBeInTheDocument();
 
     await screen.findByText(/1/);
 
@@ -67,10 +67,10 @@ describe('OverviewDashbar', () => {
     const pathwaysBtn = screen.getByTestId(/Pathways/);
     const incidentsBtn = screen.getByTestId(/Incidents/);
     const criticalRecommendationsBtn = screen.getByTestId(
-      /Critical Recommendations/
+      /Critical recommendations/
     );
     const importantRecommendationsBtn = screen.getByTestId(
-      /Important Recommendations/
+      /Important recommendations/
     );
 
     expect(pathwaysBtn).toBeInTheDocument();

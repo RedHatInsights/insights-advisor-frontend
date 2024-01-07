@@ -81,14 +81,14 @@ describe('DashbarCardTitle', () => {
     render(<DashbarCardTitle title={IMPORTANT_RECOMMENDATIONS} />);
 
     // ensure the correct text is displayed
-    expect(screen.getByText(/Important Recommendations/)).toBeInTheDocument();
+    expect(screen.getByText(/Important recommendations/)).toBeInTheDocument();
   });
 
   it("Should render 'Critical Recommendations' title", () => {
     render(<DashbarCardTitle title={CRITICAL_RECOMMENDATIONS} />);
 
     // ensure the correct text is displayed
-    expect(screen.getByText(/Critical Recommendations/)).toBeInTheDocument();
+    expect(screen.getByText(/Critical recommendations/)).toBeInTheDocument();
   });
 
   it('Should not render', () => {
@@ -98,10 +98,10 @@ describe('DashbarCardTitle', () => {
     expect(screen.queryByText(/Pathways/)).not.toBeInTheDocument();
     expect(screen.queryByText(/Incidents/)).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/Important Recommendations/)
+      screen.queryByText(/Important recommendations/)
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/Critical Recommendations/)
+      screen.queryByText(/Critical recommendations/)
     ).not.toBeInTheDocument();
   });
 });
