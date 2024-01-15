@@ -18,7 +18,7 @@ export const enableRule = async (
   handleModalToggle
 ) => {
   try {
-    await DeleteApi(`${BASE_URL}/ack/${rule.rule_id}/`);
+    await DeleteApi(`${BASE_URL}/ack/${encodeURI(rule.rule_id)}/`);
     addNotification({
       variant: 'success',
       timeout: true,
@@ -55,7 +55,11 @@ export const bulkHostActions = async ({
       systems: hostAckResponse?.data?.map((item) => item.system_uuid),
     };
 
-    await Post(`${BASE_URL}/rule/${rule.rule_id}/unack_hosts/`, {}, data);
+    await Post(
+      `${BASE_URL}/rule/${encodeURI(rule.rule_id)}/unack_hosts/`,
+      {},
+      data
+    );
     refetch();
     addNotification({
       variant: 'success',
@@ -76,8 +80,12 @@ export const bulkHostActions = async ({
 const getSystemCheckEndpoints = ({ ruleId, pathway }) => {
   if (ruleId) {
     return {
-      conventionalURL: `/api/insights/v1/rule/${ruleId}/systems_detail/?filter[system_profile][host_type][nil]=true&limit=1`,
-      edgeURL: `/api/insights/v1/rule/${ruleId}/systems_detail/?filter[system_profile][host_type]=edge&limit=1`,
+      conventionalURL: `/api/insights/v1/rule/${encodeURI(
+        ruleId
+      )}/systems_detail/?filter[system_profile][host_type][nil]=true&limit=1`,
+      edgeURL: `/api/insights/v1/rule/${encodeURI(
+        ruleId
+      )}/systems_detail/?filter[system_profile][host_type]=edge&limit=1`,
     };
   }
 
