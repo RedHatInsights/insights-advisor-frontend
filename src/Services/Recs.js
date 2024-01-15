@@ -11,10 +11,13 @@ export const Recs = createApi({
       query: (options) => ({ url: `/rule/`, options }),
     }),
     getRec: build.query({
-      query: (options) => ({
-        url: `/rule/${options.ruleId}/`,
-        options,
-      }),
+      query: (options) => {
+        const ruleId = encodeURI(options.ruleId);
+        return {
+          url: `/rule/${ruleId}/`,
+          options: { ...options, ruleId },
+        };
+      },
     }),
     getRecSystems: build.query({
       query: (options, search) => ({

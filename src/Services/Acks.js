@@ -7,7 +7,7 @@ export const Acks = createApi({
   baseQuery: AxiosBaseQuery({ baseUrl: BASE_URL }),
   endpoints: (build) => ({
     getRecAcks: build.query({
-      query: (options) => ({ url: `/ack/${options.ruleId}/` }),
+      query: (options) => ({ url: `/ack/${encodeURI(options.ruleId)}/` }),
     }),
     getHostAcks: build.query({
       query: (options) => ({ url: `/hostack/`, options }),
