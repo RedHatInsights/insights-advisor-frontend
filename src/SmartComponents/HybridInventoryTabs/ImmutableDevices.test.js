@@ -101,6 +101,7 @@ describe('ImmutableDevices', () => {
           name: false,
           operatingSystem: false,
           tags: false,
+          hostGroupFilter: false,
         },
       }),
       {}
