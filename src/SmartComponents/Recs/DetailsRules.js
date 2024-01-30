@@ -13,7 +13,6 @@ import CaretDownIcon from '@patternfly/react-icons/dist/esm/icons/caret-down-ico
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { Dropdown } from '@patternfly/react-core/dist/esm/components/Dropdown/Dropdown';
 import { DropdownItem } from '@patternfly/react-core/dist/esm/components/Dropdown/DropdownItem';
-import { DropdownToggle } from '@patternfly/react-core/dist/esm/components/Dropdown/DropdownToggle';
 import { Flex } from '@patternfly/react-core/dist/esm/layouts/Flex/Flex';
 import { FlexItem } from '@patternfly/react-core/dist/esm/layouts/Flex/FlexItem';
 import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
@@ -30,6 +29,7 @@ import {
 import messages from '../../Messages';
 import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
 import { ruleResolutionRisk, enableRule } from './helpers';
+import { DropdownToggle } from '@patternfly/react-core/dist/esm/deprecated/components/Dropdown';
 
 export const DetailsRules = ({
   rule,

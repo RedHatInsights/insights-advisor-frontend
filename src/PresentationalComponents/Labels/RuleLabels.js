@@ -1,10 +1,9 @@
 import './_RuleLabels.scss';
 
-import { Tooltip, TooltipPosition, Label } from '@patternfly/react-core';
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import messages from '../../Messages';
+import { Label, Tooltip, TooltipPosition } from '@patternfly/react-core';
 
 const RuleLabels = ({ rule, isCompact, noMargin }) => {
   return (
