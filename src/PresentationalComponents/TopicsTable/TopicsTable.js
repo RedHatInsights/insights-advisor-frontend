@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Table,
-  TableBody,
-  TableHeader,
-  sortable,
-  wrappable,
+	sortable,
+	wrappable
 } from '@patternfly/react-table';
+import {
+	Table,
+	TableBody,
+	TableHeader
+} from '@patternfly/react-table/deprecated';
 
 import { Label } from '@patternfly/react-core/dist/esm/components/Label/Label';
 import Link from '@redhat-cloud-services/frontend-components/InsightsLink';

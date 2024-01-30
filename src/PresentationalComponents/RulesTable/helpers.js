@@ -449,7 +449,7 @@ export const buildRows = (
       cells: [
         {
           title: (
-            <section className="pf-c-page__main-section pf-m-light">
+            <section className="pf-v5-c-page__main-section pf-m-light">
               <Stack hasGutter>
                 {value.hosts_acked_count ? (
                   <StackItem>

@@ -80,7 +80,7 @@ const Details = () => {
         {topic?.name && <Breadcrumbs current={topic?.name} ouiaId="details" />}
         {!isFetching && (
           <React.Fragment>
-            <Title headingLevel="h3" size="2xl" className="pf-u-mb-lg">
+            <Title headingLevel="h3" size="2xl" className="pf-v5-u-mb-lg">
               {topic.name}
               {topic.featured && (
                 <Label
@@ -92,7 +92,7 @@ const Details = () => {
                 </Label>
               )}
             </Title>
-            <TextContent className="pf-u-mt-md">
+            <TextContent className="pf-v5-u-mt-md">
               <Text component={TextVariants.p}>
                 <Truncate
                   text={topic.description}
@@ -107,11 +107,11 @@ const Details = () => {
         )}
         {isFetching || (isLoading && <Loading />)}
       </PageHeader>
-      <section className="pf-l-page__main-section pf-c-page__main-section">
+      <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
         <React.Fragment>
           {!isError ? (
             <React.Fragment>
-              <Title headingLevel="h3" size="2xl" className="pf-u-mb-lg">
+              <Title headingLevel="h3" size="2xl" className="pf-v5-u-mb-lg">
                 {intl.formatMessage(messages.recommendations)}
               </Title>
               <RulesTable />

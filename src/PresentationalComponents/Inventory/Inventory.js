@@ -291,7 +291,7 @@ const Inventory = ({
               renderFunc: (name, id) => {
                 return (
                   <Link
-                    className="pf-u-font-size-lg"
+                    className="pf-v5-u-font-size-lg"
                     to={`/recommendations/${rule.rule_id}/${id}?activeRule=true`}
                   >
                     {name}

@@ -9,14 +9,16 @@ import {
 import React, { useEffect, useState } from 'react';
 
 import {
-  Table,
-  TableBody,
-  TableHeader,
   TableVariant,
   cellWidth,
   fitContent,
   sortable,
 } from '@patternfly/react-table';
+import {
+  Table,
+  TableBody,
+  TableHeader,
+} from '@patternfly/react-table/deprecated';
 import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolbar';
 
 import {

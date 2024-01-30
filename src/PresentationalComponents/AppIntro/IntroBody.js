@@ -22,7 +22,7 @@ const IntroCard = ({ title, Icon, appList }) => {
     <Card
       id={`id-${title}`}
       isCompact
-      style={{ 'background-color': 'var(--pf-global--palette--black-200)' }}
+      style={{ 'background-color': 'var(--pf-v5-global--palette--black-200)' }}
     >
       <CardTitle>
         <Flex flex={{ default: 'inlineFlex' }} style={{ flexWrap: 'nowrap' }}>

@@ -160,7 +160,7 @@ const DisableRule = ({
             id="disable-rule-justification"
             aria-describedby="disable-rule-justification"
             value={justification}
-            onChange={(text) => setJustificaton(text)}
+            onChange={(_event, text) => setJustificaton(text)}
             onKeyDown={(e) =>
               e.key === 'Enter' && (e.preventDefault(), disableRule())
             }

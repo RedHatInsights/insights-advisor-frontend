@@ -148,7 +148,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
               refetch={refetch}
             />
           )}
-          <section className="pf-l-page__main-section pf-c-page__main-section">
+          <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
             {(rule.hosts_acked_count > 0 || rule.rule_status !== 'enabled') && (
               <Card className="adv-c-card-details">
                 <CardHeader>
@@ -247,7 +247,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
             )}
             {rule.rule_status === 'enabled' && (
               <React.Fragment>
-                <Title className="pf-u-mb-lg" headingLevel="h3" size="2xl">
+                <Title className="pf-v5-u-mb-lg" headingLevel="h3" size="2xl">
                   <DetailsTitle
                     areCountsLoading={areCountsLoading}
                     hasEdgeDevices={hasEdgeDevices}

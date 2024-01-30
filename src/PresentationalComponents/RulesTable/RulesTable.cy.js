@@ -250,7 +250,7 @@ describe('defaults', () => {
     mountComponent();
   });
   it(`pagination is set to ${DEFAULT_ROW_COUNT}`, () => {
-    cy.get('.pf-c-options-menu__toggle-text')
+    cy.get('.pf-v5-c-options-menu__toggle-text')
       .find('b')
       .eq(0)
       .should('have.text', `1 - ${DEFAULT_ROW_COUNT}`);
@@ -264,7 +264,7 @@ describe('defaults', () => {
   it('applies total risk "Enabled" and systems impacted "1 or more" filters', () => {
     hasChip('Status', 'Enabled');
     hasChip('Systems impacted', '1 or more');
-    cy.get(CHIP_GROUP).find('.pf-c-chip__text').should('have.length', 2);
+    cy.get(CHIP_GROUP).find('.pf-v5-c-chip__text').should('have.length', 2);
     //couldn't check the url paramater because it's not applied to the url on the first render
     //expect(window.location.search).to.contain(`status=enabled and systems impacted`);
   });

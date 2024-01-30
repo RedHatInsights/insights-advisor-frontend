@@ -124,7 +124,7 @@ const AddEditTopic = ({ handleModalToggleCallback, isModalOpen, topic }) => {
             type="text"
             id="topic-form-name"
             name="topic-form-name"
-            onChange={(name) => setNameAndSlug(name)}
+            onChange={(_event, name) => setNameAndSlug(name)}
           />
         </FormGroup>
         <FormGroup
@@ -140,7 +140,7 @@ const AddEditTopic = ({ handleModalToggleCallback, isModalOpen, topic }) => {
             isRequired
             name="topic-form-description"
             id="topic-form-description"
-            onChange={(desc) => setDescription(desc)}
+            onChange={(_event, desc) => setDescription(desc)}
           />
         </FormGroup>
         <FormGroup isInline fieldId="topic-form-labels">
@@ -156,7 +156,7 @@ const AddEditTopic = ({ handleModalToggleCallback, isModalOpen, topic }) => {
               type="text"
               id="topic-form-tag"
               name="topic-form-tag"
-              onChange={(tag) => setTag(tag.replace(/\s/g, '').toLowerCase())}
+              onChange={(_event, tag) => setTag(tag.replace(/\s/g, '').toLowerCase())}
             />
           </FormGroup>
           <FormGroup
@@ -171,7 +171,7 @@ const AddEditTopic = ({ handleModalToggleCallback, isModalOpen, topic }) => {
               type="text"
               id="topic-form-name-2"
               name="topic-form-name-2"
-              onChange={(name) => setNameAndSlug(name)}
+              onChange={(_event, name) => setNameAndSlug(name)}
             />
           </FormGroup>
         </FormGroup>

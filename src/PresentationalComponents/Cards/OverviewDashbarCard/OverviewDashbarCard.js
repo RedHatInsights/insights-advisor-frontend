@@ -15,7 +15,7 @@ export const OverviewDashbarCard = ({ title, count, onClickFilterByTitle }) => (
           <DashbarCardTagOrIcon title={title} />
         </FlexItem>
         <FlexItem>
-          <Text className="pf-u-font-size-lg pf-u-font-weight-bold pf-u-mt-xs">
+          <Text className="pf-v5-u-font-size-lg pf-v5-u-font-weight-bold pf-v5-u-mt-xs">
             <a onClick={() => onClickFilterByTitle(title)} data-testid={title}>
               {count}
             </a>

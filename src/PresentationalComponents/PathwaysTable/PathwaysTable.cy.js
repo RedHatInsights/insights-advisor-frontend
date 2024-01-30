@@ -69,7 +69,7 @@ describe('Pathways table tests', () => {
 
   describe('defaults', () => {
     it(`The amount of rows shown is ${ROWS_SHOWN}`, () => {
-      cy.get('.pf-c-options-menu__toggle-text')
+      cy.get('.pf-v5-c-options-menu__toggle-text')
         .find('b')
         .eq(0)
         .should('have.text', `1 - ${ROWS_SHOWN}`);
