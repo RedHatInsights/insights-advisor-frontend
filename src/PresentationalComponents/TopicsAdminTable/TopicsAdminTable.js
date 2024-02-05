@@ -1,13 +1,11 @@
 import './_TopicsAdminTable.scss';
 
 import React, { useCallback, useEffect, useState } from 'react';
+import { sortable } from '@patternfly/react-table';
 import {
-	sortable
-} from '@patternfly/react-table';
-import {
-	Table,
-	TableBody,
-	TableHeader
+  Table,
+  TableBody,
+  TableHeader,
 } from '@patternfly/react-table/deprecated';
 
 import AddEditTopic from '../Modals/AddEditTopic';

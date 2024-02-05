@@ -5,6 +5,7 @@ import { createIntl, createIntlCache } from 'react-intl';
 import { intlHelper } from '@redhat-cloud-services/frontend-components-translations/';
 import messages from './Messages';
 import { strong } from './Utilities/intlHelper';
+import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 
 const cache = createIntlCache();
 const locale = navigator.language.slice(0, 2);
@@ -149,7 +150,7 @@ export const TOTAL_RISK_LABEL_LOWER = {
 
 export const PATHWAYS_FILTER_CATEGORIES = {
   has_incident: {
-    type: 'checkbox',
+    type: conditionalFilterType.checkbox,
     title: 'incidents',
     urlParam: 'has_incident',
     values: [
@@ -170,7 +171,7 @@ export const PATHWAYS_FILTER_CATEGORIES = {
     ],
   },
   reboot_required: {
-    type: 'checkbox',
+    type: conditionalFilterType.checkbox,
     title: 'reboot required',
     urlParam: 'reboot_required',
     values: [
@@ -196,7 +197,7 @@ export const PATHWAYS_FILTER_CATEGORIES = {
 
 export const FILTER_CATEGORIES = {
   total_risk: {
-    type: 'checkbox',
+    type: conditionalFilterType.checkbox,
     title: 'total risk',
     urlParam: 'total_risk',
     values: [
@@ -207,7 +208,7 @@ export const FILTER_CATEGORIES = {
     ],
   },
   res_risk: {
-    type: 'checkbox',
+    type: conditionalFilterType.checkbox,
     title: 'risk of change',
     urlParam: 'res_risk',
     values: [
@@ -218,7 +219,7 @@ export const FILTER_CATEGORIES = {
     ],
   },
   impact: {
-    type: 'checkbox',
+    type: conditionalFilterType.checkbox,
     title: 'impact',
     urlParam: 'impact',
     values: [
@@ -229,7 +230,7 @@ export const FILTER_CATEGORIES = {
     ],
   },
   likelihood: {
-    type: 'checkbox',
+    type: conditionalFilterType.checkbox,
     title: 'likelihood',
     urlParam: 'likelihood',
     values: [
@@ -240,7 +241,7 @@ export const FILTER_CATEGORIES = {
     ],
   },
   category: {
-    type: 'checkbox',
+    type: conditionalFilterType.checkbox,
     title: 'category',
     urlParam: 'category',
     values: [
@@ -269,7 +270,7 @@ export const FILTER_CATEGORIES = {
     ],
   },
   incident: {
-    type: 'checkbox',
+    type: conditionalFilterType.checkbox,
     title: 'incidents',
     urlParam: 'incident',
     values: [
@@ -290,7 +291,7 @@ export const FILTER_CATEGORIES = {
     ],
   },
   has_playbook: {
-    type: 'checkbox',
+    type: conditionalFilterType.checkbox,
     title: 'remediation',
     urlParam: 'has_playbook',
     values: [
@@ -311,7 +312,7 @@ export const FILTER_CATEGORIES = {
     ],
   },
   reboot: {
-    type: 'checkbox',
+    type: conditionalFilterType.checkbox,
     title: 'reboot required',
     urlParam: 'reboot',
     values: [
@@ -334,7 +335,7 @@ export const FILTER_CATEGORIES = {
     ],
   },
   rule_status: {
-    type: 'radio',
+    type: conditionalFilterType.radio,
     title: 'status',
     urlParam: 'rule_status',
     values: [
@@ -360,7 +361,7 @@ export const FILTER_CATEGORIES = {
     ],
   },
   impacting: {
-    type: 'checkbox',
+    type: conditionalFilterType.checkbox,
     title: 'systems impacted',
     urlParam: 'impacting',
     values: [
@@ -380,7 +381,7 @@ export const FILTER_CATEGORIES = {
 
 export const SYSTEM_FILTER_CATEGORIES = {
   hits: {
-    type: 'checkbox',
+    type: conditionalFilterType.checkbox,
     title: 'Total Risk',
     urlParam: 'hits',
     values: [
@@ -389,7 +390,7 @@ export const SYSTEM_FILTER_CATEGORIES = {
     ],
   },
   incident: {
-    type: 'checkbox',
+    type: conditionalFilterType.checkbox,
     title: 'Incidents',
     urlParam: 'incident',
     values: [
@@ -410,7 +411,7 @@ export const SYSTEM_FILTER_CATEGORIES = {
     ],
   },
   rhel_version: {
-    type: 'checkbox',
+    type: conditionalFilterType.checkbox,
     title: 'Operating system',
     urlParam: 'rhel_version',
   },
