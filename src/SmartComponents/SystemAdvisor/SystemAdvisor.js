@@ -7,14 +7,11 @@ import {
 import { Card, CardBody, Spinner } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
+import { SortByDirection, TableVariant } from '@patternfly/react-table';
 import {
-	SortByDirection,
-	TableVariant
-} from '@patternfly/react-table';
-import {
-	Table,
-	TableBody,
-	TableHeader
+  Table,
+  TableBody,
+  TableHeader,
 } from '@patternfly/react-table/deprecated';
 import { useDispatch, useSelector } from 'react-redux';
 

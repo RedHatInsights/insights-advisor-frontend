@@ -2,74 +2,6 @@
 
 exports[`useBulkSelect returns a bulk select configuration 1`] = `
 {
-  "all": [
-    {
-      "selectNone": [Function],
-      "selectedIds": [],
-      "tableProps": {
-        "canSelectAll": false,
-        "onSelect": undefined,
-      },
-      "toolbarProps": {
-        "bulkSelect": {
-          "checked": false,
-          "isDisabled": true,
-          "items": [
-            {
-              "onClick": [Function],
-              "props": {
-                "isDisabled": true,
-              },
-              "title": "Select none",
-            },
-            {
-              "onClick": [Function],
-              "title": "Select page (0 items)",
-            },
-            {
-              "onClick": [Function],
-              "title": "Unselect all (0 items)",
-            },
-          ],
-          "onSelect": [Function],
-          "toggleProps": null,
-        },
-      },
-    },
-    {
-      "selectNone": [Function],
-      "selectedIds": undefined,
-      "tableProps": {
-        "canSelectAll": false,
-        "onSelect": undefined,
-      },
-      "toolbarProps": {
-        "bulkSelect": {
-          "checked": false,
-          "isDisabled": true,
-          "items": [
-            {
-              "onClick": [Function],
-              "props": {
-                "isDisabled": true,
-              },
-              "title": "Select none",
-            },
-            {
-              "onClick": [Function],
-              "title": "Select page (0 items)",
-            },
-            {
-              "onClick": [Function],
-              "title": "Unselect all (0 items)",
-            },
-          ],
-          "onSelect": [Function],
-          "toggleProps": null,
-        },
-      },
-    },
-  ],
   "current": {
     "selectNone": [Function],
     "selectedIds": undefined,
@@ -103,7 +35,6 @@ exports[`useBulkSelect returns a bulk select configuration 1`] = `
       },
     },
   },
-  "error": undefined,
 }
 `;
 

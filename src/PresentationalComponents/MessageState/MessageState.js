@@ -2,8 +2,10 @@ import {
   EmptyState,
   EmptyStateVariant,
   EmptyStateBody,
-  EmptyStateIcon, EmptyStateHeader, EmptyStateFooter,
-  } from '@patternfly/react-core';
+  EmptyStateIcon,
+  EmptyStateHeader,
+  EmptyStateFooter,
+} from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -23,9 +25,9 @@ const MessageState = ({
       <EmptyStateIcon className={iconClass} style={iconStyle} icon={icon} />
     )}
     <EmptyStateHeader titleText={<>{title}</>} headingLevel="h5" />
-    <EmptyStateBody style={{ marginBottom: '16px' }}>{text}</EmptyStateBody><EmptyStateFooter>
-    {children}
-  </EmptyStateFooter></EmptyState>
+    <EmptyStateBody style={{ marginBottom: '16px' }}>{text}</EmptyStateBody>
+    <EmptyStateFooter>{children}</EmptyStateFooter>
+  </EmptyState>
 );
 
 MessageState.propTypes = {

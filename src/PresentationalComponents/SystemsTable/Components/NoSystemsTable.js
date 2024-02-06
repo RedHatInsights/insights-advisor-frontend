@@ -6,13 +6,17 @@ import {
   Text,
   TextContent,
   TextVariants,
-  Bullseye, EmptyStateHeader,
+  Bullseye,
+  EmptyStateHeader,
 } from '@patternfly/react-core';
 
 const NoSystemsTable = () => (
   <Bullseye>
     <EmptyState variant={EmptyStateVariant.full}>
-      <EmptyStateHeader titleText="No matching systems found" headingLevel="h2" />
+      <EmptyStateHeader
+        titleText="No matching systems found"
+        headingLevel="h2"
+      />
       <EmptyStateBody>
         <TextContent>
           <Text component={TextVariants.p}>

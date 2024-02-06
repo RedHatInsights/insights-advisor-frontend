@@ -156,7 +156,9 @@ const AddEditTopic = ({ handleModalToggleCallback, isModalOpen, topic }) => {
               type="text"
               id="topic-form-tag"
               name="topic-form-tag"
-              onChange={(_event, tag) => setTag(tag.replace(/\s/g, '').toLowerCase())}
+              onChange={(_event, tag) =>
+                setTag(tag.replace(/\s/g, '').toLowerCase())
+              }
             />
           </FormGroup>
           <FormGroup

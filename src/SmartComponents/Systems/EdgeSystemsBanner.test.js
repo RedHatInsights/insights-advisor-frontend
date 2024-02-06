@@ -11,12 +11,12 @@ describe('EdgeSystemsBanner', () => {
       <ComponentWithContext
         Component={EdgeSystemsBanner}
         Context={AccountStatContext}
-        contextValue={{ hasEdgeDevices: true, hasConventionalSystems: true }}
+        contextValue={{ hasEdgeDevices: true }}
       />
     );
 
     expect(
-      screen.getByLabelText('Immutable Systems Warning')
+      screen.getByText('Immutable systems are not shown in this list.')
     ).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
@@ -26,12 +26,12 @@ describe('EdgeSystemsBanner', () => {
       <ComponentWithContext
         Component={EdgeSystemsBanner}
         Context={AccountStatContext}
-        contextValue={{ hasEdgeDevices: false, hasConventionalSystems: true }}
+        contextValue={{ hasEdgeDevices: false }}
       />
     );
 
     expect(
-      screen.queryByLabelText('Immutable Systems Warning')
+      screen.queryByText('Immutable systems are not shown in this list.')
     ).not.toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });

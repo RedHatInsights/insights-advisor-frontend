@@ -90,6 +90,7 @@ describe('defaults', () => {
   });
   it('the request is sent when voted', () => {
     cy.intercept('/api/insights/v1/rating', { statusCode: 200 }).as('rating');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
     cy.ouiaId('thumbsUp')
       .click()
       .then(() => {
