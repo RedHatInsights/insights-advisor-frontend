@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from '@cypress/react@18';
+import { mount } from '@cypress/react18';
 import Loading from './Loading';
 
 describe('Loading', () => {

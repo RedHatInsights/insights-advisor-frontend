@@ -61,7 +61,7 @@ describe('defaults', () => {
     cy.get(ROOT).should('have.length', 1);
   });
   it('title and description are correct', () => {
-    cy.ouiaType('PF4/Title', 'h1')
+    cy.ouiaType('PF5/Title', 'h1')
       .should(($el) => expect($el.text().trim()).to.equal(ruleDescription))
       .and('have.length', 1);
     cy.get('.ins-c-rule-details__description').should(
