@@ -224,7 +224,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.total_risk.title,
-      type: conditionalFilterType.text,
+      type: conditionalFilterType.checkbox,
       id: FC.total_risk.urlParam,
       value: `checkbox-${FC.total_risk.urlParam}`,
       filterValues: {
@@ -237,7 +237,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.res_risk.title,
-      type: conditionalFilterType.text,
+      type: conditionalFilterType.checkbox,
       id: FC.res_risk.urlParam,
       value: `checkbox-${FC.res_risk.urlParam}`,
       filterValues: {
@@ -250,7 +250,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.impact.title,
-      type: conditionalFilterType.text,
+      type: conditionalFilterType.checkbox,
       id: FC.impact.urlParam,
       value: `checkbox-${FC.impact.urlParam}`,
       filterValues: {
@@ -263,7 +263,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.likelihood.title,
-      type: conditionalFilterType.text,
+      type: conditionalFilterType.checkbox,
       id: FC.likelihood.urlParam,
       value: `checkbox-${FC.likelihood.urlParam}`,
       filterValues: {
@@ -276,7 +276,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.category.title,
-      type: conditionalFilterType.text,
+      type: conditionalFilterType.checkbox,
       id: FC.category.urlParam,
       value: `checkbox-${FC.category.urlParam}`,
       filterValues: {
@@ -289,7 +289,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.incident.title,
-      type: conditionalFilterType.text,
+      type: conditionalFilterType.checkbox,
       id: FC.incident.urlParam,
       value: `checkbox-${FC.incident.urlParam}`,
       filterValues: {
@@ -302,7 +302,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.has_playbook.title,
-      type: conditionalFilterType.text,
+      type: conditionalFilterType.checkbox,
       id: FC.has_playbook.urlParam,
       value: `checkbox-${FC.has_playbook.urlParam}`,
       filterValues: {
@@ -315,7 +315,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.reboot.title,
-      type: conditionalFilterType.text,
+      type: conditionalFilterType.checkbox,
       id: FC.reboot.urlParam,
       value: `checkbox-${FC.reboot.urlParam}`,
       filterValues: {
@@ -328,7 +328,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.rule_status.title,
-      type: conditionalFilterType.text,
+      type: conditionalFilterType.radio,
       id: FC.rule_status.urlParam,
       value: `radio-${FC.rule_status.urlParam}`,
       filterValues: {
@@ -340,7 +340,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.impacting.title,
-      type: conditionalFilterType.text,
+      type: conditionalFilterType.checkbox,
       id: FC.impacting.urlParam,
       value: `checkbox-${FC.impacting.urlParam}`,
       filterValues: {

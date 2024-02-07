@@ -75,7 +75,7 @@ const SystemsTable = () => {
   const filterConfigItems = [
     {
       label: SFC.hits.title.toLowerCase(),
-      type: conditionalFilterType.custom,
+      type: conditionalFilterType.checkbox,
       id: SFC.hits.urlParam,
       value: `checkbox-${SFC.hits.urlParam}`,
       filterValues: {
@@ -87,7 +87,7 @@ const SystemsTable = () => {
     },
     {
       label: SFC.incident.title.toLowerCase(),
-      type: conditionalFilterType.custom,
+      type: conditionalFilterType.checkbox,
       id: SFC.incident.urlParam,
       value: `checkbox-${SFC.incident.urlParam}`,
       filterValues: {

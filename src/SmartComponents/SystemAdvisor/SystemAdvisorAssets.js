@@ -64,7 +64,7 @@ export const getFilters = (
   },
   {
     label: FC.total_risk.title,
-    type: conditionalFilterType.custom,
+    type: conditionalFilterType.checkbox,
     id: FC.total_risk.urlParam,
     value: `checkbox-${FC.total_risk.urlParam}`,
     filterValues: {
@@ -76,7 +76,7 @@ export const getFilters = (
   },
   {
     label: FC.category.title,
-    type: conditionalFilterType.custom,
+    type: conditionalFilterType.checkbox,
     id: FC.category.urlParam,
     value: `checkbox-${FC.category.urlParam}`,
     filterValues: {
@@ -88,7 +88,7 @@ export const getFilters = (
   },
   {
     label: FC.has_playbook.title,
-    type: conditionalFilterType.custom,
+    type: conditionalFilterType.checkbox,
     id: FC.has_playbook.urlParam,
     value: `checkbox-${FC.has_playbook.urlParam}`,
     filterValues: {

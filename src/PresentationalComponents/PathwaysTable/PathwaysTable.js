@@ -240,7 +240,7 @@ const PathwaysTable = ({ isTabActive }) => {
     },
     {
       label: FC.category.title,
-      type: conditionalFilterType.text,
+      type: conditionalFilterType.checkbox,
       id: FC.category.urlParam,
       value: `checkbox-${FC.category.urlParam}`,
       filterValues: {
@@ -253,7 +253,7 @@ const PathwaysTable = ({ isTabActive }) => {
     },
     {
       label: PFC.has_incident.title,
-      type: conditionalFilterType.text,
+      type: conditionalFilterType.checkbox,
       id: PFC.has_incident.urlParam,
       value: `checkbox-${PFC.has_incident.urlParam}`,
       filterValues: {
@@ -266,7 +266,7 @@ const PathwaysTable = ({ isTabActive }) => {
     },
     {
       label: PFC.reboot_required.title,
-      type: conditionalFilterType.text,
+      type: conditionalFilterType.checkbox,
       id: PFC.reboot_required.urlParam,
       value: `checkbox-${PFC.reboot_required.urlParam}`,
       filterValues: {
