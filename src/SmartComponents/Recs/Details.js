@@ -53,7 +53,12 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
     data: recAck = {},
     isFetching: recAckIsFetching,
     refetch: recAckRefetch,
-  } = useGetRecAcksQuery({ ruleId });
+  } = useGetRecAcksQuery(
+    { ruleId },
+    {
+      skip: !!ruleId,
+    }
+  );
 
   const { data: topics = [], isFetching: topicIsFetching } =
     useGetTopicsQuery();
