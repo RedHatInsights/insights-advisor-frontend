@@ -1,6 +1,6 @@
 import './_RulesTable.scss';
 import * as AppConstants from '../../AppConstants';
-import { DEBOUNCE_DELAY, FILTER_CATEGORIES as FC } from '../../AppConstants';
+import { DEBOUNCE_DELAY } from '../../AppConstants';
 import { useLocation } from 'react-router-dom';
 import {
   Pagination,
@@ -10,9 +10,6 @@ import React, { useEffect, useState } from 'react';
 
 import {
   TableVariant,
-  cellWidth,
-  fitContent,
-  sortable,
 } from '@patternfly/react-table';
 import {
   Table,
@@ -23,7 +20,6 @@ import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolba
 
 import {
   filterFetchBuilder,
-  pruneFilters,
   urlBuilder,
   workloadQueryBuilder,
 } from '../Common/Tables';
@@ -48,10 +44,12 @@ import {
   buildRows,
   emptyRows,
   filterConfigItems,
-  hideReports,
-  removeFilterParam,
   urlFilterBuilder,
+  getColumns,
+  sortIndices,
+  getActiveFiltersConfig,
 } from './helpers';
+import { useActionsResolver } from './useActionsResolver';
 
 const RulesTable = ({ isTabActive }) => {
   const intl = useIntl();
@@ -65,32 +63,7 @@ const RulesTable = ({ isTabActive }) => {
     'advisor',
     AppConstants.PERMS.disableRec
   ).hasAccess;
-  const [cols] = useState([
-    {
-      title: intl.formatMessage(messages.name),
-      transforms: [sortable, cellWidth(40)],
-    },
-    {
-      title: intl.formatMessage(messages.modified),
-      transforms: [sortable, fitContent],
-    },
-    {
-      title: intl.formatMessage(messages.category),
-      transforms: [sortable, fitContent],
-    },
-    {
-      title: intl.formatMessage(messages.totalRisk),
-      transforms: [sortable, fitContent],
-    },
-    {
-      title: intl.formatMessage(messages.systems),
-      transforms: [sortable, fitContent],
-    },
-    {
-      title: intl.formatMessage(messages.remediation),
-      transforms: [sortable, fitContent],
-    },
-  ]);
+  const cols = getColumns(intl);
 
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
@@ -128,14 +101,6 @@ const RulesTable = ({ isTabActive }) => {
 
   const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
   const results = rules?.meta?.count || 0;
-  const sortIndices = {
-    1: 'description',
-    2: 'publish_date',
-    3: 'category',
-    4: 'total_risk',
-    5: 'impacted_count',
-    6: 'playbook_count',
-  };
 
   useEffect(() => {
     if (!filterBuilding && selectedTags !== null) {
@@ -169,54 +134,12 @@ const RulesTable = ({ isTabActive }) => {
     });
   };
 
-  const actionResolver = (rowData, { rowIndex }) => {
-    const rule = rows[rowIndex].rule ? rows[rowIndex].rule : null;
-    if (rowIndex % 2 !== 0 || !rule) {
-      return null;
-    }
-
-    return rule && rule.rule_status === 'enabled'
-      ? [
-          {
-            title: intl.formatMessage(messages.disableRule),
-            onClick: (_event, rowId) =>
-              hideReports(
-                rowId,
-                rows,
-                setSelectedRule,
-                setDisableRuleOpen,
-                refetch,
-                dispatch,
-                intl
-              ),
-          },
-        ]
-      : [
-          {
-            title: intl.formatMessage(messages.enableRule),
-            onClick: (_event, rowId) =>
-              hideReports(
-                rowId,
-                rows,
-                setSelectedRule,
-                setDisableRuleOpen,
-                refetch,
-                dispatch,
-                intl
-              ),
-          },
-        ];
-  };
-
-  const buildFilterChips = () => {
-    const localFilters = { ...filters };
-    delete localFilters.topic;
-    delete localFilters.sort;
-    delete localFilters.offset;
-    delete localFilters.limit;
-
-    return pruneFilters(localFilters, FC);
-  };
+  const actionResolver = useActionsResolver(
+    rows,
+    setSelectedRule,
+    setDisableRuleOpen,
+    refetch
+  );
 
   // Builds table filters from url params
   useEffect(() => {
@@ -267,42 +190,12 @@ const RulesTable = ({ isTabActive }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchText]);
 
-  const activeFiltersConfig = {
-    deleteTitle: intl.formatMessage(messages.resetFilters),
-    filters: buildFilterChips(),
-    showDeleteButton: true,
-    onDelete: (_event, itemsToRemove, isAll) => {
-      if (isAll) {
-        setSearchText('');
-        setFilters({
-          ...(filters.topic && { topic: filters.topic }),
-          impacting: ['true'],
-          rule_status: 'enabled',
-          limit: filters.limit,
-          offset: filters.offset,
-          pathway: filters.pathway,
-        });
-      } else {
-        itemsToRemove.map((item) => {
-          const newFilter = {
-            [item.urlParam]: Array.isArray(filters[item.urlParam])
-              ? filters[item.urlParam].filter(
-                  (value) => String(value) !== String(item.chips[0].value)
-                )
-              : '',
-          };
-          newFilter[item.urlParam].length > 0
-            ? setFilters({ ...filters, ...newFilter })
-            : removeFilterParam(
-                item.urlParam,
-                filters,
-                setFilters,
-                setSearchText
-              );
-        });
-      }
-    },
-  };
+  const activeFiltersConfig = getActiveFiltersConfig(
+    filters,
+    intl,
+    setSearchText,
+    setFilters
+  );
 
   const onExpandAllClick = (_e, isOpen) => {
     const allRows = [...rows];
