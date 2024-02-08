@@ -6,7 +6,7 @@ import {
   Pagination,
   PaginationVariant,
 } from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import {
   TableVariant,
@@ -39,7 +39,7 @@ import { useGetRecsQuery } from '../../Services/Recs';
 import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import PropTypes from 'prop-types';
-
+import { filtersInitialState } from '../../Services/Filters';
 import {
   buildRows,
   emptyRows,
@@ -50,6 +50,8 @@ import {
   getActiveFiltersConfig,
 } from './helpers';
 import { useActionsResolver } from './useActionsResolver';
+import { AccountStatContext } from '../../ZeroStateWrapper';
+import impactingFilter from '../Filters/impactingFilter';
 
 const RulesTable = ({ isTabActive }) => {
   const intl = useIntl();
@@ -79,6 +81,7 @@ const RulesTable = ({ isTabActive }) => {
   const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
   const [viewSystemsModalRule, setViewSystemsModalRule] = useState({});
   const [isAllExpanded, setIsAllExpanded] = useState(false);
+  const { hasEdgeDevices } = useContext(AccountStatContext);
 
   const setFilters = (filters) => dispatch(updateRecFilters(filters));
 
@@ -141,6 +144,12 @@ const RulesTable = ({ isTabActive }) => {
     refetch
   );
 
+  const impactingFilterDef = impactingFilter(
+    setFilters,
+    filters,
+    hasEdgeDevices
+  );
+
   // Builds table filters from url params
   useEffect(() => {
     if (isTabActive && search && filterBuilding) {
@@ -150,6 +159,17 @@ const RulesTable = ({ isTabActive }) => {
     setFilterBuilding(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    dispatch(
+      updateRecFilters({
+        ...filtersInitialState.recState,
+        ...(hasEdgeDevices
+          ? { update_method: ['ostree', 'dnfyum'], impacting: ['true'] }
+          : { impacting: [true] }),
+      })
+    );
+  }, [hasEdgeDevices, dispatch]);
 
   useEffect(() => {
     const sortIndex = Object.entries(sortIndices)?.find(
@@ -194,7 +214,8 @@ const RulesTable = ({ isTabActive }) => {
     filters,
     intl,
     setSearchText,
-    setFilters
+    setFilters,
+    hasEdgeDevices
   );
 
   const onExpandAllClick = (_e, isOpen) => {
@@ -263,14 +284,17 @@ const RulesTable = ({ isTabActive }) => {
             : intl.formatMessage(messages.permsAction),
         }}
         filterConfig={{
-          items: filterConfigItems(
-            filters,
-            setFilters,
-            searchText,
-            setSearchText,
-            toggleRulesDisabled,
-            intl
-          ),
+          items: [
+            ...filterConfigItems(
+              filters,
+              setFilters,
+              searchText,
+              setSearchText,
+              toggleRulesDisabled,
+              intl
+            ),
+            impactingFilterDef,
+          ],
         }}
         activeFiltersConfig={activeFiltersConfig}
       />

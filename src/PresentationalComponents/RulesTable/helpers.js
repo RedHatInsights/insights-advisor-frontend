@@ -34,6 +34,7 @@ import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { ruleResolutionRisk, pruneFilters } from '../Common/Tables';
 import { cellWidth, fitContent, sortable } from '@patternfly/react-table';
+import { getImpactingFilterChips } from '../Filters/impactingFilter';
 
 export const emptyRows = (filters, toggleRulesDisabled) => [
   {
@@ -340,18 +341,6 @@ export const filterConfigItems = (
         items: FC.rule_status.values,
       },
     },
-    {
-      label: FC.impacting.title,
-      type: conditionalFilterType.checkbox,
-      id: FC.impacting.urlParam,
-      value: `checkbox-${FC.impacting.urlParam}`,
-      filterValues: {
-        key: `${FC.impacting.urlParam}-filter`,
-        onChange: (e, values) => addFilterParam(FC.impacting.urlParam, values),
-        value: filters.impacting,
-        items: FC.impacting.values,
-      },
-    },
   ];
 };
 
@@ -548,14 +537,16 @@ export const getColumns = (intl) => [
   },
 ];
 
-const buildFilterChips = (filters) => {
+const buildFilterChips = (filters, hasEdgeDevice) => {
+  const impactingFilterChips = getImpactingFilterChips(hasEdgeDevice);
+
   const localFilters = { ...filters };
   delete localFilters.topic;
   delete localFilters.sort;
   delete localFilters.offset;
   delete localFilters.limit;
 
-  return pruneFilters(localFilters, FC);
+  return pruneFilters(localFilters, { ...FC, ...impactingFilterChips });
 };
 
 export const sortIndices = {
@@ -571,10 +562,11 @@ export const getActiveFiltersConfig = (
   filters,
   intl,
   setSearchText,
-  setFilters
+  setFilters,
+  hasEdgeDevice
 ) => ({
   deleteTitle: intl.formatMessage(messages.resetFilters),
-  filters: buildFilterChips(filters),
+  filters: buildFilterChips(filters, hasEdgeDevice),
   showDeleteButton: true,
   onDelete: (_event, itemsToRemove, isAll) => {
     if (isAll) {
