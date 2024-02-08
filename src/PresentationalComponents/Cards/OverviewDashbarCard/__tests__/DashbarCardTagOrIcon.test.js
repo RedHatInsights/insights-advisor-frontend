@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  render,
-  screen,
-  waitForElementToBeRemoved,
-} from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
@@ -42,9 +38,6 @@ describe('DashbarCardTagOrIcon', () => {
 
     // ensure the tooltip message is hidden
     await user.unhover(incidentLabel);
-    await waitForElementToBeRemoved(() =>
-      screen.queryByText(tooltipMessages.incidentTooltip.defaultMessage)
-    );
     expect(
       screen.queryByText(tooltipMessages.incidentTooltip.defaultMessage)
     ).not.toBeInTheDocument();
@@ -74,9 +67,7 @@ describe('DashbarCardTagOrIcon', () => {
 
     // ensure the tooltip message is hidden
     await user.unhover(importantLabel);
-    await waitForElementToBeRemoved(() =>
-      screen.queryByText(/The total risk of this remediation is/)
-    );
+
     expect(
       screen.queryByText(/The total risk of this remediation is/)
     ).not.toBeInTheDocument();
@@ -111,9 +102,7 @@ describe('DashbarCardTagOrIcon', () => {
 
     // ensure the tooltip message is hidden
     await user.unhover(criticalLabel);
-    await waitForElementToBeRemoved(() =>
-      screen.queryByText(/The total risk of this remediation is/)
-    );
+
     expect(
       screen.queryByText(/The total risk of this remediation is/)
     ).not.toBeInTheDocument();

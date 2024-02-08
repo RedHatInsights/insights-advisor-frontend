@@ -12,7 +12,7 @@ const dropdownOpen = false;
 import { DetailsRules } from './DetailsRules';
 const ruleDescription = rulesfixtures.description;
 const ROOT =
-  'div[class="pf-l-flex pf-m-column pf-m-row-on-lg pf-m-nowrap ins-c-rule-details"]';
+  'div[class="pf-v5-l-flex pf-m-column pf-m-row-on-lg pf-m-nowrap ins-c-rule-details"]';
 
 const mountComponent = () => {
   const store = getStore();
@@ -61,7 +61,7 @@ describe('defaults', () => {
     cy.get(ROOT).should('have.length', 1);
   });
   it('title and description are correct', () => {
-    cy.ouiaType('PF4/Title', 'h1')
+    cy.ouiaType('PF5/Title', 'h1')
       .should(($el) => expect($el.text().trim()).to.equal(ruleDescription))
       .and('have.length', 1);
     cy.get('.ins-c-rule-details__description').should(
@@ -90,6 +90,7 @@ describe('defaults', () => {
   });
   it('the request is sent when voted', () => {
     cy.intercept('/api/insights/v1/rating', { statusCode: 200 }).as('rating');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
     cy.ouiaId('thumbsUp')
       .click()
       .then(() => {

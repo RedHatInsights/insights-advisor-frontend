@@ -5,22 +5,21 @@ exports[`EdgeSystemsBanner does not render with no edge hosts 1`] = `<DocumentFr
 exports[`EdgeSystemsBanner does render with edge hosts present 1`] = `
 <DocumentFragment>
   <div
-    aria-label="Immutable Systems Warning"
-    class="pf-c-alert pf-m-inline pf-m-info"
+    class="pf-v5-c-alert pf-m-inline pf-m-info"
     data-ouia-component-id="OUIA-Generated-Alert-info-1"
-    data-ouia-component-type="PF4/Alert"
+    data-ouia-component-type="PF5/Alert"
     data-ouia-safe="true"
     style="margin-bottom: 1.5rem;"
   >
     <div
-      class="pf-c-alert__icon"
+      class="pf-v5-c-alert__icon"
     >
       <svg
         aria-hidden="true"
+        class="pf-v5-svg"
         fill="currentColor"
         height="1em"
         role="img"
-        style="vertical-align: -0.125em;"
         viewBox="0 0 512 512"
         width="1em"
       >
@@ -30,10 +29,10 @@ exports[`EdgeSystemsBanner does render with edge hosts present 1`] = `
       </svg>
     </div>
     <h4
-      class="pf-c-alert__title"
+      class="pf-v5-c-alert__title"
     >
       <span
-        class="pf-u-screen-reader"
+        class="pf-v5-screen-reader"
       >
         Info alert:
       </span>

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { sortable, wrappable } from '@patternfly/react-table';
 import {
   Table,
   TableBody,
   TableHeader,
-  sortable,
-  wrappable,
-} from '@patternfly/react-table';
+} from '@patternfly/react-table/deprecated';
 
 import { Label } from '@patternfly/react-core/dist/esm/components/Label/Label';
 import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
@@ -19,6 +18,7 @@ import TimesCircleIcon from '@patternfly/react-icons/dist/esm/icons/times-circle
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { sortTopics } from '../helper';
+import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 
 const TopicsTable = ({ props }) => {
   const intl = useIntl();
@@ -121,6 +121,7 @@ const TopicsTable = ({ props }) => {
   const filterConfigItems = [
     {
       label: intl.formatMessage(messages.name).toLowerCase(),
+      type: conditionalFilterType.text,
       filterValues: {
         key: 'text-filter',
         onChange: (event, value) => {

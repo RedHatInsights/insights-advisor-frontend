@@ -11,9 +11,6 @@ import React from 'react';
 import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 import CaretDownIcon from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
-import { Dropdown } from '@patternfly/react-core/dist/esm/components/Dropdown/Dropdown';
-import { DropdownItem } from '@patternfly/react-core/dist/esm/components/Dropdown/DropdownItem';
-import { DropdownToggle } from '@patternfly/react-core/dist/esm/components/Dropdown/DropdownToggle';
 import { Flex } from '@patternfly/react-core/dist/esm/layouts/Flex/Flex';
 import { FlexItem } from '@patternfly/react-core/dist/esm/layouts/Flex/FlexItem';
 import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
@@ -30,6 +27,11 @@ import {
 import messages from '../../Messages';
 import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
 import { ruleResolutionRisk, enableRule } from './helpers';
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownToggle,
+} from '@patternfly/react-core/dist/esm/deprecated/components/Dropdown';
 
 export const DetailsRules = ({
   rule,
@@ -48,7 +50,7 @@ export const DetailsRules = ({
       <PageHeader className="adv-c-page__header">
         <Breadcrumbs ouiaId="override" current={rule.description || ''} />
       </PageHeader>
-      <section className="pf-l-page__main-section pf-c-page__main-section pf-m-light pf-u-pt-sm">
+      <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section pf-m-light pf-v5-u-pt-sm">
         <RuleDetails
           messages={formatMessages(
             intl,
@@ -83,7 +85,7 @@ export const DetailsRules = ({
                 }
               />
               <p>
-                <span className="pf-u-mr-md">
+                <span className="pf-v5-u-mr-md">
                   {intl.formatMessage(messages.rulesDetailsModifieddate, {
                     date: (
                       <DateFormat
@@ -123,7 +125,7 @@ export const DetailsRules = ({
                   toggle={
                     <DropdownToggle
                       isDisabled={!permsDisableRec}
-                      onToggle={(actionsDropdownOpen) =>
+                      onToggle={(_event, actionsDropdownOpen) =>
                         setActionsDropdownOpen(actionsDropdownOpen)
                       }
                       toggleIndicator={CaretDownIcon}

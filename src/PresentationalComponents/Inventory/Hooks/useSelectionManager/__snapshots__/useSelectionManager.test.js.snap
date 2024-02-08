@@ -2,17 +2,6 @@
 
 exports[`useSelectionManager returns an object with function to manage selections 1`] = `
 {
-  "all": [
-    {
-      "clear": [Function],
-      "deselect": [Function],
-      "reset": [Function],
-      "select": [Function],
-      "selection": [],
-      "set": [Function],
-      "toggle": [Function],
-    },
-  ],
   "current": {
     "clear": [Function],
     "deselect": [Function],
@@ -22,7 +11,6 @@ exports[`useSelectionManager returns an object with function to manage selection
     "set": [Function],
     "toggle": [Function],
   },
-  "error": undefined,
 }
 `;
 

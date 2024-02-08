@@ -1,8 +1,8 @@
 .ansibleCheck {
-    color: var(--pf-global--success-color--100);
+    color: var(--pf-v5-global--success-color--100);
 }
 
-.ins-c-conditional-filter .ins-c-conditional-filter__group .pf-c-dropdown__toggle-text {
+.ins-c-conditional-filter .ins-c-conditional-filter__group .pf-v5-c-dropdown__toggle-text {
     @media screen and (min-width: 884px) {
         min-width: 150px !important;
     }
@@ -12,6 +12,6 @@
     text-align: center;
 }
 
-.pf-c-table tr > :last-child {
-    --pf-c-table--cell--PaddingRight: 0px;
+.pf-v5-c-table tr > :last-child {
+    --pf-v5-c-table--cell--PaddingRight: 0px;
 }

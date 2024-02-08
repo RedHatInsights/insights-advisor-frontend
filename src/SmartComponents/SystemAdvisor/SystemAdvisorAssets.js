@@ -22,6 +22,7 @@ import {
 import { useLocation } from 'react-router-dom';
 
 import messages from '../../Messages';
+import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 
 export const getColumns = (intl) => [
   {
@@ -54,6 +55,7 @@ export const getFilters = (
 ) => [
   {
     label: 'description',
+    type: conditionalFilterType.text,
     filterValues: {
       key: 'text-filter',
       onChange: (_e, value) => onInputChange(value),
@@ -62,7 +64,7 @@ export const getFilters = (
   },
   {
     label: FC.total_risk.title,
-    type: FC.total_risk.type,
+    type: conditionalFilterType.checkbox,
     id: FC.total_risk.urlParam,
     value: `checkbox-${FC.total_risk.urlParam}`,
     filterValues: {
@@ -74,7 +76,7 @@ export const getFilters = (
   },
   {
     label: FC.category.title,
-    type: FC.category.type,
+    type: conditionalFilterType.checkbox,
     id: FC.category.urlParam,
     value: `checkbox-${FC.category.urlParam}`,
     filterValues: {
@@ -86,7 +88,7 @@ export const getFilters = (
   },
   {
     label: FC.has_playbook.title,
-    type: FC.has_playbook.type,
+    type: conditionalFilterType.checkbox,
     id: FC.has_playbook.urlParam,
     value: `checkbox-${FC.has_playbook.urlParam}`,
     filterValues: {

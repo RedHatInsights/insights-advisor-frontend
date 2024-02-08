@@ -47,7 +47,7 @@ export const TotalRiskCard = (props) => {
     <Card
       isFlat
       isPlain
-      className="adv-c-card-pathway adv__background--global-100 pf-u-h-100"
+      className="adv-c-card-pathway adv__background--global-100 pf-v5-u-h-100"
     >
       <CardTitle>{intl.formatMessage(messages.totalRiskPathway)}</CardTitle>
       <CardBody className="body">
@@ -116,7 +116,7 @@ export const TotalRiskCard = (props) => {
               </Chart>
             </div>
           </GridItem>
-          <GridItem span={6} className="pf-u-font-size-sm">
+          <GridItem span={6} className="pf-v5-u-font-size-sm">
             {intl.formatMessage(messages.thisPathway, {
               category: catString(categories),
               systems: impacted_systems_count,

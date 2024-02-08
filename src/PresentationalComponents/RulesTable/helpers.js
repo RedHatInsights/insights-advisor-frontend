@@ -32,6 +32,7 @@ import CategoryLabel from '../Labels/CategoryLabel';
 
 import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
 import { ruleResolutionRisk } from '../Common/Tables';
+import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 
 export const emptyRows = (filters, toggleRulesDisabled) => [
   {
@@ -213,6 +214,7 @@ export const filterConfigItems = (
   return [
     {
       label: intl.formatMessage(messages.name).toLowerCase(),
+      type: conditionalFilterType.text,
       filterValues: {
         key: 'text-filter',
         onChange: (_event, value) => setSearchText(value),
@@ -222,7 +224,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.total_risk.title,
-      type: FC.total_risk.type,
+      type: conditionalFilterType.checkbox,
       id: FC.total_risk.urlParam,
       value: `checkbox-${FC.total_risk.urlParam}`,
       filterValues: {
@@ -235,7 +237,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.res_risk.title,
-      type: FC.res_risk.type,
+      type: conditionalFilterType.checkbox,
       id: FC.res_risk.urlParam,
       value: `checkbox-${FC.res_risk.urlParam}`,
       filterValues: {
@@ -248,7 +250,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.impact.title,
-      type: FC.impact.type,
+      type: conditionalFilterType.checkbox,
       id: FC.impact.urlParam,
       value: `checkbox-${FC.impact.urlParam}`,
       filterValues: {
@@ -261,7 +263,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.likelihood.title,
-      type: FC.likelihood.type,
+      type: conditionalFilterType.checkbox,
       id: FC.likelihood.urlParam,
       value: `checkbox-${FC.likelihood.urlParam}`,
       filterValues: {
@@ -274,7 +276,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.category.title,
-      type: FC.category.type,
+      type: conditionalFilterType.checkbox,
       id: FC.category.urlParam,
       value: `checkbox-${FC.category.urlParam}`,
       filterValues: {
@@ -287,7 +289,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.incident.title,
-      type: FC.incident.type,
+      type: conditionalFilterType.checkbox,
       id: FC.incident.urlParam,
       value: `checkbox-${FC.incident.urlParam}`,
       filterValues: {
@@ -300,7 +302,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.has_playbook.title,
-      type: FC.has_playbook.type,
+      type: conditionalFilterType.checkbox,
       id: FC.has_playbook.urlParam,
       value: `checkbox-${FC.has_playbook.urlParam}`,
       filterValues: {
@@ -313,7 +315,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.reboot.title,
-      type: FC.reboot.type,
+      type: conditionalFilterType.checkbox,
       id: FC.reboot.urlParam,
       value: `checkbox-${FC.reboot.urlParam}`,
       filterValues: {
@@ -326,7 +328,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.rule_status.title,
-      type: FC.rule_status.type,
+      type: conditionalFilterType.radio,
       id: FC.rule_status.urlParam,
       value: `radio-${FC.rule_status.urlParam}`,
       filterValues: {
@@ -338,7 +340,7 @@ export const filterConfigItems = (
     },
     {
       label: FC.impacting.title,
-      type: FC.impacting.type,
+      type: conditionalFilterType.checkbox,
       id: FC.impacting.urlParam,
       value: `checkbox-${FC.impacting.urlParam}`,
       filterValues: {
@@ -449,7 +451,7 @@ export const buildRows = (
       cells: [
         {
           title: (
-            <section className="pf-c-page__main-section pf-m-light">
+            <section className="pf-v5-c-page__main-section pf-m-light">
               <Stack hasGutter>
                 {value.hosts_acked_count ? (
                   <StackItem>

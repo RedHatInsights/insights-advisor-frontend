@@ -12,15 +12,17 @@ import {
 } from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
 import React, { useEffect, useState } from 'react';
 import {
-  Table,
-  TableBody,
-  TableHeader,
   TableVariant,
   cellWidth,
   fitContent,
   info,
   sortable,
 } from '@patternfly/react-table';
+import {
+  Table,
+  TableBody,
+  TableHeader,
+} from '@patternfly/react-table/deprecated';
 import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolbar';
 import {
   filterFetchBuilder,
@@ -45,6 +47,7 @@ import { updatePathFilters } from '../../Services/Filters';
 import { useGetPathwaysQuery } from '../../Services/Pathways';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
+import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 
 const PathwaysTable = ({ isTabActive }) => {
   const intl = useIntl();
@@ -227,6 +230,7 @@ const PathwaysTable = ({ isTabActive }) => {
   const filterConfigItems = [
     {
       label: intl.formatMessage(messages.name).toLowerCase(),
+      type: conditionalFilterType.text,
       filterValues: {
         key: 'text-filter',
         onChange: (_event, value) => setSearchText(value),
@@ -236,7 +240,7 @@ const PathwaysTable = ({ isTabActive }) => {
     },
     {
       label: FC.category.title,
-      type: FC.category.type,
+      type: conditionalFilterType.checkbox,
       id: FC.category.urlParam,
       value: `checkbox-${FC.category.urlParam}`,
       filterValues: {
@@ -249,7 +253,7 @@ const PathwaysTable = ({ isTabActive }) => {
     },
     {
       label: PFC.has_incident.title,
-      type: PFC.has_incident.type,
+      type: conditionalFilterType.checkbox,
       id: PFC.has_incident.urlParam,
       value: `checkbox-${PFC.has_incident.urlParam}`,
       filterValues: {
@@ -262,7 +266,7 @@ const PathwaysTable = ({ isTabActive }) => {
     },
     {
       label: PFC.reboot_required.title,
-      type: PFC.reboot_required.type,
+      type: conditionalFilterType.checkbox,
       id: PFC.reboot_required.urlParam,
       value: `checkbox-${PFC.reboot_required.urlParam}`,
       filterValues: {

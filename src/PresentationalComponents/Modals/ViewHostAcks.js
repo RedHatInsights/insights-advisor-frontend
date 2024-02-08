@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Table, TableBody, TableHeader } from '@patternfly/react-table';
+import {
+  Table,
+  TableBody,
+  TableHeader,
+} from '@patternfly/react-table/deprecated';
 
 import { BASE_URL } from '../../AppConstants';
 import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';

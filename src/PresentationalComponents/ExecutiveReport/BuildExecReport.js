@@ -12,9 +12,9 @@ import {
 import PropTypes from 'prop-types';
 import React from 'react';
 import { TOTAL_RISK_LABEL } from '../../AppConstants';
-import { Text } from '@react-pdf/renderer';
 import messages from '../../Messages';
 import { truncate } from 'lodash';
+import { Text } from '@react-pdf/renderer';
 
 export const BuildExecReport = ({
   statsSystems,

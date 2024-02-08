@@ -11,7 +11,6 @@ const EdgeSystemsBanner = () => {
   return !hasEdgeDevices ? null : (
     <Alert
       variant="info"
-      aria-label="Immutable Systems Warning"
       isInline
       style={{ marginBottom: '1.5rem' }}
       title={intl.formatMessage(messages.edgeWarning)}

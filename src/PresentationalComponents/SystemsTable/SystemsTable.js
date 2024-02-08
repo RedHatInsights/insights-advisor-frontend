@@ -32,6 +32,7 @@ import NoSystemsTable from './Components/NoSystemsTable';
 import { systemsTableColumns } from './SystemsTableAssets';
 import { createOptions, createSortParam } from '../helper';
 import { createColumns } from './createColumns';
+import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 
 const SystemsTable = () => {
   const intl = useIntl();
@@ -74,7 +75,7 @@ const SystemsTable = () => {
   const filterConfigItems = [
     {
       label: SFC.hits.title.toLowerCase(),
-      type: SFC.hits.type,
+      type: conditionalFilterType.checkbox,
       id: SFC.hits.urlParam,
       value: `checkbox-${SFC.hits.urlParam}`,
       filterValues: {
@@ -86,7 +87,7 @@ const SystemsTable = () => {
     },
     {
       label: SFC.incident.title.toLowerCase(),
-      type: SFC.incident.type,
+      type: conditionalFilterType.checkbox,
       id: SFC.incident.urlParam,
       value: `checkbox-${SFC.incident.urlParam}`,
       filterValues: {

@@ -10,12 +10,12 @@ import {
 import React, { useState } from 'react';
 import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-generator';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
-import ExportIcon from '@patternfly/react-icons/dist/esm/icons/export-icon';
 import { Get } from '../../Utilities/Api';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { BuildExecReport } from './BuildExecReport';
+import { ExportIcon } from '@patternfly/react-icons';
 
 const DownloadExecReport = ({ isDisabled }) => {
   const intl = useIntl();

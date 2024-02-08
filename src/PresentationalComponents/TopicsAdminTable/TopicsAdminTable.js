@@ -1,12 +1,12 @@
 import './_TopicsAdminTable.scss';
 
 import React, { useCallback, useEffect, useState } from 'react';
+import { sortable } from '@patternfly/react-table';
 import {
   Table,
   TableBody,
   TableHeader,
-  sortable,
-} from '@patternfly/react-table';
+} from '@patternfly/react-table/deprecated';
 
 import AddEditTopic from '../Modals/AddEditTopic';
 import BanIcon from '@patternfly/react-icons/dist/esm/icons/ban-icon';
@@ -194,7 +194,7 @@ const TopicsAdminTable = () => {
           {intl.formatMessage(messages.topicAdminTitle)}
         </Title>
       </PageHeader>
-      <section className="pf-l-page__main-section pf-c-page__main-section">
+      <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
         <React.Fragment>
           <PrimaryToolbar className="toolbar-padding-override">
             <Button
