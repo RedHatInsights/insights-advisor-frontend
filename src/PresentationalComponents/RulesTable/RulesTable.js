@@ -8,9 +8,7 @@ import {
 } from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
 import React, { useContext, useEffect, useState } from 'react';
 
-import {
-  TableVariant,
-} from '@patternfly/react-table';
+import { TableVariant } from '@patternfly/react-table';
 import {
   Table,
   TableBody,
