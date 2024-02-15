@@ -71,10 +71,8 @@ const mapUpdateMethodFilterToAPISpec = (filters) => {
           ? filters.impacting.concat(',false')
           : 'false';
     }
-  }
-
-  //when user deselects all update_method filters remove the both update_method and impacting filters
-  if (filters?.update_method === '') {
+  } else if (filters?.update_method === '') {
+    //when user deselects all update_method filters remove the both update_method and impacting filters
     delete filters.update_method;
     delete filters.impacting;
   }
