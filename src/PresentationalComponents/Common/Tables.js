@@ -49,9 +49,40 @@ export const buildTagFilter = (tagFilters) => {
   };
 };
 
+const mapUpdateMethodFilterToAPISpec = (filters) => {
+  //If none option is chosen
+  if (filters?.update_method?.includes('none')) {
+    //remove update_method filter from API options and set impacting to false if only none options is chosen
+    if (filters.update_method === 'none') {
+      delete filters.update_method;
+      filters.impacting = 'false';
+
+      //in any other cases, remove 'none' option from the API options as it does have any handler
+      //concatenate or set false to impacting API option
+    } else {
+      const filteredValues = filters.update_method.replace(
+        /,?none||none,?/g,
+        ''
+      );
+
+      filters.update_method = filteredValues;
+      filters.impacting =
+        filters.impacting.toString().length > 1
+          ? filters.impacting.concat(',false')
+          : 'false';
+    }
+  } else if (filters?.update_method === '') {
+    //when user deselects all update_method filters remove the both update_method and impacting filters
+    delete filters.update_method;
+    delete filters.impacting;
+  }
+
+  return filters;
+};
+
 // transforms array of strings -> comma seperated strings, required by advisor api
-export const filterFetchBuilder = (filters) =>
-  Object.assign(
+export const filterFetchBuilder = (filters) => {
+  const joinedFilters = Object.assign(
     {},
     ...Object.entries(filters).map(([filterName, filterValue]) =>
       Array.isArray(filterValue)
@@ -62,6 +93,9 @@ export const filterFetchBuilder = (filters) =>
         : { [filterName]: filterValue }
     )
   );
+
+  return mapUpdateMethodFilterToAPISpec(joinedFilters);
+};
 
 // parses url params for use in table/filter chips
 export const paramParser = () => {

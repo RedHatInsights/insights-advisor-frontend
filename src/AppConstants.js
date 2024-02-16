@@ -360,24 +360,45 @@ export const FILTER_CATEGORIES = {
       },
     ],
   },
-  impacting: {
-    type: conditionalFilterType.checkbox,
-    title: 'systems impacted',
-    urlParam: 'impacting',
-    values: [
-      {
-        label: intlHelper(intl.formatMessage(messages.oneOrMore), intlSettings),
-        text: intlHelper(intl.formatMessage(messages.oneOrMore), intlSettings),
-        value: 'true',
-      },
-      {
-        label: intlHelper(intl.formatMessage(messages.none), intlSettings),
-        text: intlHelper(intl.formatMessage(messages.none), intlSettings),
-        value: 'false',
-      },
-    ],
-  },
 };
+
+export const getImpactingFitlerItems = (hasEdgeDevices) =>
+  hasEdgeDevices
+    ? [
+        {
+          value: 'dnfyum',
+          label: '1 or more Conventional systems (RPM-DNF)',
+          text: '1 or more Conventional systems (RPM-DNF)',
+        },
+        {
+          value: 'ostree',
+          label: '1 or more Immutable (OSTree)',
+          text: '1 or more Immutable (OSTree)',
+        },
+        {
+          value: 'none',
+          label: 'None',
+          text: 'None',
+        },
+      ]
+    : [
+        {
+          label: intlHelper(
+            intl.formatMessage(messages.oneOrMore),
+            intlSettings
+          ),
+          text: intlHelper(
+            intl.formatMessage(messages.oneOrMore),
+            intlSettings
+          ),
+          value: 'true',
+        },
+        {
+          label: intlHelper(intl.formatMessage(messages.none), intlSettings),
+          text: intlHelper(intl.formatMessage(messages.none), intlSettings),
+          value: 'false',
+        },
+      ];
 
 export const SYSTEM_FILTER_CATEGORIES = {
   hits: {

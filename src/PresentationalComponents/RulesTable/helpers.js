@@ -31,8 +31,10 @@ import RuleLabels from '../Labels/RuleLabels';
 import CategoryLabel from '../Labels/CategoryLabel';
 
 import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
-import { ruleResolutionRisk } from '../Common/Tables';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
+import { ruleResolutionRisk, pruneFilters } from '../Common/Tables';
+import { cellWidth, fitContent, sortable } from '@patternfly/react-table';
+import { getImpactingFilterChips } from '../Filters/impactingFilter';
 
 export const emptyRows = (filters, toggleRulesDisabled) => [
   {
@@ -185,6 +187,7 @@ export const hideReports = async (
     });
   }
 };
+
 export const removeFilterParam = (
   param,
   filters,
@@ -336,18 +339,6 @@ export const filterConfigItems = (
         onChange: (_event, value) => toggleRulesDisabled(value),
         value: `${filters.rule_status}`,
         items: FC.rule_status.values,
-      },
-    },
-    {
-      label: FC.impacting.title,
-      type: conditionalFilterType.checkbox,
-      id: FC.impacting.urlParam,
-      value: `checkbox-${FC.impacting.urlParam}`,
-      filterValues: {
-        key: `${FC.impacting.urlParam}-filter`,
-        onChange: (e, values) => addFilterParam(FC.impacting.urlParam, values),
-        value: filters.impacting,
-        items: FC.impacting.values,
       },
     },
   ];
@@ -518,3 +509,94 @@ export const buildRows = (
 
   return rows;
 };
+
+export const getColumns = (intl) => [
+  {
+    title: intl.formatMessage(messages.name),
+    transforms: [sortable, cellWidth(40)],
+  },
+  {
+    title: intl.formatMessage(messages.modified),
+    transforms: [sortable, fitContent],
+  },
+  {
+    title: intl.formatMessage(messages.category),
+    transforms: [sortable, fitContent],
+  },
+  {
+    title: intl.formatMessage(messages.totalRisk),
+    transforms: [sortable, fitContent],
+  },
+  {
+    title: intl.formatMessage(messages.systems),
+    transforms: [sortable, fitContent],
+  },
+  {
+    title: intl.formatMessage(messages.remediation),
+    transforms: [sortable, fitContent],
+  },
+];
+
+const buildFilterChips = (filters, hasEdgeDevice) => {
+  const impactingFilterChips = getImpactingFilterChips(hasEdgeDevice);
+
+  const localFilters = { ...filters };
+  delete localFilters.topic;
+  delete localFilters.sort;
+  delete localFilters.offset;
+  delete localFilters.limit;
+
+  return pruneFilters(localFilters, { ...FC, ...impactingFilterChips });
+};
+
+export const sortIndices = {
+  1: 'description',
+  2: 'publish_date',
+  3: 'category',
+  4: 'total_risk',
+  5: 'impacted_count',
+  6: 'playbook_count',
+};
+
+export const getActiveFiltersConfig = (
+  filters,
+  intl,
+  setSearchText,
+  setFilters,
+  hasEdgeDevice
+) => ({
+  deleteTitle: intl.formatMessage(messages.resetFilters),
+  filters: buildFilterChips(filters, hasEdgeDevice),
+  showDeleteButton: true,
+  onDelete: (_event, itemsToRemove, isAll) => {
+    if (isAll) {
+      setSearchText('');
+      setFilters({
+        ...(filters.topic && { topic: filters.topic }),
+        impacting: ['true'],
+        rule_status: 'enabled',
+        limit: filters.limit,
+        offset: filters.offset,
+        pathway: filters.pathway,
+      });
+    } else {
+      itemsToRemove.map((item) => {
+        const newFilter = {
+          [item.urlParam]: Array.isArray(filters[item.urlParam])
+            ? filters[item.urlParam].filter(
+                (value) => String(value) !== String(item.chips[0].value)
+              )
+            : '',
+        };
+        newFilter[item.urlParam].length > 0
+          ? setFilters({ ...filters, ...newFilter })
+          : removeFilterParam(
+              item.urlParam,
+              filters,
+              setFilters,
+              setSearchText
+            );
+      });
+    }
+  },
+});

@@ -30,6 +30,7 @@ import {
 //NEED TO BE UPDATED
 
 import messages from '../../Messages';
+import { AccountStatContext } from '../../ZeroStateWrapper';
 
 //function and filters config for testing filters
 // function* cumulativeCombinations(arr, current = []) {
@@ -44,17 +45,26 @@ import messages from '../../Messages';
 //     }
 //   }
 // }
-const mountComponent = () => {
+const mountComponent = ({ hasEdgeDevices } = { hasEdgeDevices: false }) => {
   const store = getStore();
   cy.mount(
     <MemoryRouter>
-      <IntlProvider locale={navigator.language.slice(0, 2)} messages={messages}>
-        <Provider store={store}>
-          <Routes>
-            <Route key={'Recommendations'} path="*" element={<RulesTable />} />
-          </Routes>
-        </Provider>
-      </IntlProvider>
+      <AccountStatContext.Provider value={{ hasEdgeDevices }}>
+        <IntlProvider
+          locale={navigator.language.slice(0, 2)}
+          messages={messages}
+        >
+          <Provider store={store}>
+            <Routes>
+              <Route
+                key={'Recommendations'}
+                path="*"
+                element={<RulesTable />}
+              />
+            </Routes>
+          </Provider>
+        </IntlProvider>
+      </AccountStatContext.Provider>
     </MemoryRouter>
   );
 };
@@ -357,7 +367,7 @@ describe('defaults', () => {
 
 //         if (selectorText === filtersConf.impacting.selectorText) {
 //           removeAllChips();
-//           cy.wait(['@call', '@call']);
+//           cy.wait(['@call']);
 //         }
 //         filterApply({ [key]: values[0] });
 //         cy.wait('@call')
@@ -488,3 +498,56 @@ describe('content', () => {
       );
   });
 });
+
+// const UPDATE_METHOD_MAP = {
+//   '1 or more Conventional systems (RPM-DNF)': 'dnfyum',
+// };
+
+// const update_method = {
+//   selectorText: 'Systems impacted',
+//   values: Array.from(cumulativeCombinations(Object.keys(UPDATE_METHOD_MAP))),
+//   type: 'checkbox',
+//   filterFunc: () => {
+//     return 'dnfyum';
+//   },
+//   urlParam: 'update_method',
+//   urlValue: (it) =>
+//     encodeURIComponent(_.map(it, (x) => UPDATE_METHOD_MAP[x]).join(',')),
+// };
+
+// const applyUpdateMethod = (filters) => applyFilters(filters, { update_method });
+
+// describe('sends a request with correct parameters for impacting filter', () => {
+//   beforeEach(() => {
+//     cy.intercept('*', {
+//       statusCode: 201,
+//       body: {
+//         ...fixtures,
+//       },
+//     }).as('impact_call');
+//     mountComponent({ hasEdgeDevices: true });
+//   });
+
+//   it('has dnf, ostree impacting filters and status filter active by default', () => {
+//     hasChip('Status', 'Enabled');
+//     hasChip('Systems impacted', '1 or more Conventional systems (RPM-DNF)');
+//     hasChip('Systems impacted', '1 or more Immutable (OSTree)');
+
+//     cy.get(CHIP_GROUP).find('.pf-c-chip__text').should('have.length', 3);
+//   });
+
+//   it(`with edge devices`, () => {
+//     const { urlParam, values, urlValue } = update_method;
+
+//     // initial call
+//     cy.wait('@impact_call');
+
+//     cy.get('.pf-c-button').contains('Reset filters').click();
+//     cy.wait(['@impact_call', '@impact_call']);
+
+//     applyUpdateMethod({ update_method: values[0] });
+//     cy.wait('@impact_call')
+//       .its('request.url')
+//       .should('include', `${urlParam}=${urlValue(values[0])}`);
+//   });
+// });
