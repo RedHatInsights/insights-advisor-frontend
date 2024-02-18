@@ -8,7 +8,7 @@ export const getImpactingFilterChips = (hasEdgeDevices) => ({
   [getImpactingFilterKey(hasEdgeDevices)]: {
     type: 'radio',
     title: 'Systems impacted',
-    urlParam: 'rule_status',
+    urlParam: getImpactingFilterKey(hasEdgeDevices),
     values: getImpactingFitlerItems(hasEdgeDevices),
   },
 });
