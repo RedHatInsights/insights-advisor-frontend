@@ -586,26 +586,28 @@ export const getActiveFiltersConfig = (
       });
     } else {
       itemsToRemove.map((item) => {
-        const newFilter = {
-          [item.urlParam]: Array.isArray(filters[item.urlParam])
-            ? filters[item.urlParam].filter(
+        const newFilters = Object.assign({}, filters);
+        if (
+          item.urlParam === 'update_method' &&
+          newFilters?.update_method.length === 1 &&
+          Object.prototype.hasOwnProperty.call(newFilters, 'impacting')
+        ) {
+          delete newFilters.impacting;
+        }
+
+        const removedFilter = {
+          [item.urlParam]: Array.isArray(newFilters[item.urlParam])
+            ? newFilters[item.urlParam].filter(
                 (value) => String(value) !== String(item.chips[0].value)
               )
             : '',
         };
 
-        if (
-          item.urlParam === 'update_method' &&
-          filters?.update_method.length === 1
-        ) {
-          removeFilterParam('impacting', filters, setFilters, setSearchText);
-        }
-
-        newFilter[item.urlParam].length > 0
-          ? setFilters({ ...filters, ...newFilter })
+        removedFilter[item.urlParam].length > 0
+          ? setFilters({ ...newFilters, ...removedFilter })
           : removeFilterParam(
               item.urlParam,
-              filters,
+              newFilters,
               setFilters,
               setSearchText
             );
