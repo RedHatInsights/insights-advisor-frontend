@@ -46,6 +46,7 @@ import {
   getColumns,
   sortIndices,
   getActiveFiltersConfig,
+  getDefaultImpactingFilter,
 } from './helpers';
 import { useActionsResolver } from './useActionsResolver';
 import { AccountStatContext } from '../../ZeroStateWrapper';
@@ -162,9 +163,7 @@ const RulesTable = ({ isTabActive }) => {
     dispatch(
       updateRecFilters({
         ...filtersInitialState.recState,
-        ...(hasEdgeDevices
-          ? { update_method: ['ostree', 'dnfyum'], impacting: ['true'] }
-          : { impacting: [true] }),
+        ...getDefaultImpactingFilter(hasEdgeDevices),
       })
     );
   }, [hasEdgeDevices, dispatch]);

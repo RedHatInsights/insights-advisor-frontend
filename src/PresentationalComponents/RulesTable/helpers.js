@@ -558,6 +558,11 @@ export const sortIndices = {
   6: 'playbook_count',
 };
 
+export const getDefaultImpactingFilter = (hasEdgeDevices) =>
+  hasEdgeDevices
+    ? { update_method: ['ostree', 'dnfyum'], impacting: ['true'] }
+    : { impacting: [true] };
+
 export const getActiveFiltersConfig = (
   filters,
   intl,
@@ -573,7 +578,7 @@ export const getActiveFiltersConfig = (
       setSearchText('');
       setFilters({
         ...(filters.topic && { topic: filters.topic }),
-        impacting: ['true'],
+        ...getDefaultImpactingFilter(hasEdgeDevice),
         rule_status: 'enabled',
         limit: filters.limit,
         offset: filters.offset,
@@ -588,6 +593,14 @@ export const getActiveFiltersConfig = (
               )
             : '',
         };
+
+        if (
+          item.urlParam === 'update_method' &&
+          filters?.update_method.length === 1
+        ) {
+          removeFilterParam('impacting', filters, setFilters, setSearchText);
+        }
+
         newFilter[item.urlParam].length > 0
           ? setFilters({ ...filters, ...newFilter })
           : removeFilterParam(
