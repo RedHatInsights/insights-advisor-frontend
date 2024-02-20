@@ -558,6 +558,11 @@ export const sortIndices = {
   6: 'playbook_count',
 };
 
+export const getDefaultImpactingFilter = (hasEdgeDevices) =>
+  hasEdgeDevices
+    ? { update_method: ['ostree', 'dnfyum'], impacting: ['true'] }
+    : { impacting: [true] };
+
 export const getActiveFiltersConfig = (
   filters,
   intl,
@@ -573,7 +578,7 @@ export const getActiveFiltersConfig = (
       setSearchText('');
       setFilters({
         ...(filters.topic && { topic: filters.topic }),
-        impacting: ['true'],
+        ...getDefaultImpactingFilter(hasEdgeDevice),
         rule_status: 'enabled',
         limit: filters.limit,
         offset: filters.offset,
@@ -581,18 +586,28 @@ export const getActiveFiltersConfig = (
       });
     } else {
       itemsToRemove.map((item) => {
-        const newFilter = {
-          [item.urlParam]: Array.isArray(filters[item.urlParam])
-            ? filters[item.urlParam].filter(
+        const newFilters = Object.assign({}, filters);
+        if (
+          item.urlParam === 'update_method' &&
+          newFilters?.update_method.length === 1 &&
+          Object.prototype.hasOwnProperty.call(newFilters, 'impacting')
+        ) {
+          delete newFilters.impacting;
+        }
+
+        const removedFilter = {
+          [item.urlParam]: Array.isArray(newFilters[item.urlParam])
+            ? newFilters[item.urlParam].filter(
                 (value) => String(value) !== String(item.chips[0].value)
               )
             : '',
         };
-        newFilter[item.urlParam].length > 0
-          ? setFilters({ ...filters, ...newFilter })
+
+        removedFilter[item.urlParam].length > 0
+          ? setFilters({ ...newFilters, ...removedFilter })
           : removeFilterParam(
               item.urlParam,
-              filters,
+              newFilters,
               setFilters,
               setSearchText
             );

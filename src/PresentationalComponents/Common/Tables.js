@@ -61,7 +61,7 @@ const mapUpdateMethodFilterToAPISpec = (filters) => {
       //concatenate or set false to impacting API option
     } else {
       const filteredValues = filters.update_method.replace(
-        /,?none||none,?/g,
+        /,none|none,|none/g,
         ''
       );
 
