@@ -1,5 +1,6 @@
 import { generateFilter } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 import { SYSTEM_FILTER_CATEGORIES, SYSTEM_TYPES } from '../../AppConstants';
+import isEqual from 'lodash/isEqual';
 
 // Builds returns url params from table filters, pushes to url if history object is passed
 export const urlBuilder = (filters = {}) => {
@@ -49,9 +50,19 @@ export const buildTagFilter = (tagFilters) => {
   };
 };
 
-const mapUpdateMethodFilterToAPISpec = (filters) => {
-  //If none option is chosen
-  if (filters?.update_method?.includes('none')) {
+export const mapUpdateMethodFilterToAPISpec = (filters) => {
+  if (
+    filters?.update_method === '' ||
+    isEqual(filters?.update_method?.split(',').sort(), [
+      'dnfyum',
+      'none',
+      'ostree',
+    ])
+  ) {
+    //when user deselects all update_method filters remove the both update_method and impacting filters
+    delete filters.update_method;
+    delete filters.impacting;
+  } else if (filters?.update_method?.includes('none')) {
     //remove update_method filter from API options and set impacting to false if only none options is chosen
     if (filters.update_method === 'none') {
       delete filters.update_method;
@@ -66,15 +77,8 @@ const mapUpdateMethodFilterToAPISpec = (filters) => {
       );
 
       filters.update_method = filteredValues;
-      filters.impacting =
-        filters.impacting.toString().length > 1
-          ? filters.impacting.concat(',false')
-          : 'false';
+      delete filters.impacting;
     }
-  } else if (filters?.update_method === '') {
-    //when user deselects all update_method filters remove the both update_method and impacting filters
-    delete filters.update_method;
-    delete filters.impacting;
   }
 
   return filters;
