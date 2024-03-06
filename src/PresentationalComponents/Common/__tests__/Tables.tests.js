@@ -83,4 +83,9 @@ describe('mapUpdateMethodFilterToAPISpec', () => {
       expect(result).toEqual({ someOtherTest: 'some-other-test-value' });
     }
   );
+
+  test('should remove impacting filter when it is equal to emoty string', () => {
+    const result = mapUpdateMethodFilterToAPISpec({ impacting: '' });
+    expect(result).toEqual({});
+  });
 });

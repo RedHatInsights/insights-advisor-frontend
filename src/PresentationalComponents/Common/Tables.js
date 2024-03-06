@@ -81,6 +81,10 @@ export const mapUpdateMethodFilterToAPISpec = (filters) => {
     }
   }
 
+  if (filters?.impacting === '') {
+    delete filters.impacting;
+  }
+
   return filters;
 };
 
