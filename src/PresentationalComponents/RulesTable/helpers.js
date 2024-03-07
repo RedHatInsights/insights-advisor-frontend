@@ -561,7 +561,7 @@ export const sortIndices = {
 export const getDefaultImpactingFilter = (hasEdgeDevices) =>
   hasEdgeDevices
     ? { update_method: ['ostree', 'dnfyum'], impacting: ['true'] }
-    : { impacting: [true] };
+    : { impacting: ['true'] };
 
 export const getActiveFiltersConfig = (
   filters,

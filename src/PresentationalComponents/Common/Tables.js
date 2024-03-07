@@ -1,5 +1,7 @@
 import { generateFilter } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 import { SYSTEM_FILTER_CATEGORIES, SYSTEM_TYPES } from '../../AppConstants';
+import isEqual from 'lodash/isEqual';
+import cloneDeep from 'lodash/cloneDeep';
 
 // Builds returns url params from table filters, pushes to url if history object is passed
 export const urlBuilder = (filters = {}) => {
@@ -49,35 +51,44 @@ export const buildTagFilter = (tagFilters) => {
   };
 };
 
-const mapUpdateMethodFilterToAPISpec = (filters) => {
-  //If none option is chosen
-  if (filters?.update_method?.includes('none')) {
+export const mapUpdateMethodFilterToAPISpec = (filters) => {
+  const clonedFilters = cloneDeep(filters);
+
+  if (
+    clonedFilters?.update_method === '' ||
+    isEqual(clonedFilters?.update_method?.split(',').sort(), [
+      'dnfyum',
+      'none',
+      'ostree',
+    ])
+  ) {
+    //when user deselects all update_method filters remove the both update_method and impacting filters
+    delete clonedFilters.update_method;
+    delete clonedFilters.impacting;
+  } else if (clonedFilters?.update_method?.includes('none')) {
     //remove update_method filter from API options and set impacting to false if only none options is chosen
-    if (filters.update_method === 'none') {
-      delete filters.update_method;
-      filters.impacting = 'false';
+    if (clonedFilters.update_method === 'none') {
+      delete clonedFilters.update_method;
+      clonedFilters.impacting = 'false';
 
       //in any other cases, remove 'none' option from the API options as it does have any handler
       //concatenate or set false to impacting API option
     } else {
-      const filteredValues = filters.update_method.replace(
+      const filteredValues = clonedFilters.update_method.replace(
         /,none|none,|none/g,
         ''
       );
 
-      filters.update_method = filteredValues;
-      filters.impacting =
-        filters.impacting.toString().length > 1
-          ? filters.impacting.concat(',false')
-          : 'false';
+      clonedFilters.update_method = filteredValues;
+      delete clonedFilters.impacting;
     }
-  } else if (filters?.update_method === '') {
-    //when user deselects all update_method filters remove the both update_method and impacting filters
-    delete filters.update_method;
-    delete filters.impacting;
   }
 
-  return filters;
+  if (clonedFilters?.impacting === '') {
+    delete clonedFilters.impacting;
+  }
+
+  return clonedFilters;
 };
 
 // transforms array of strings -> comma seperated strings, required by advisor api
