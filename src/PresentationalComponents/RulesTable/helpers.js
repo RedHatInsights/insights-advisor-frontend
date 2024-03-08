@@ -211,7 +211,7 @@ export const filterConfigItems = (
   const addFilterParam = (param, values) => {
     values.length > 0
       ? setFilters({ ...filters, offset: 0, ...{ [param]: values } })
-      : removeFilterParam(param);
+      : removeFilterParam(param, filters, setFilters, setSearchText);
   };
 
   return [
