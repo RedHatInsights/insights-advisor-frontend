@@ -1,19 +1,15 @@
 /* eslint-disable react/prop-types */
-import './Details.scss';
-
+import React from 'react';
 import { BASE_URL, RISK_OF_CHANGE_DESC } from '../../AppConstants';
 import { Post } from '../../Utilities/Api';
 import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
-import React from 'react';
 import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
-import CaretDownIcon from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
+import { CaretDownIcon } from '@patternfly/react-icons';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
-import { Flex } from '@patternfly/react-core/dist/esm/layouts/Flex/Flex';
-import { FlexItem } from '@patternfly/react-core/dist/esm/layouts/Flex/FlexItem';
-import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
+import { Flex, FlexItem, Tooltip } from '@patternfly/react-core';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import CategoryLabel from '../../PresentationalComponents/Labels/CategoryLabel';
@@ -31,7 +27,9 @@ import {
   Dropdown,
   DropdownItem,
   DropdownToggle,
-} from '@patternfly/react-core/dist/esm/deprecated/components/Dropdown';
+} from '@patternfly/react-core/deprecated';
+
+import './Details.scss';
 
 export const DetailsRules = ({
   rule,

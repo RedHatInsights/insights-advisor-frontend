@@ -1,12 +1,11 @@
 root: true
+parser: '@babel/eslint-parser'
 extends:
   - '@redhat-cloud-services/eslint-config-redhat-cloud-services'
   - 'plugin:react-hooks/recommended'
   - 'plugin:cypress/recommended'
   - "plugin:testing-library/react"
   - "plugin:jest-dom/recommended"
-globals:
-  insights: 'readonly'
-  shallow: readonly
-  render: 'readonly'
-  mount: 'readonly'
+
+rules:
+  rulesdir/forbid-pf-relative-imports: 'off'

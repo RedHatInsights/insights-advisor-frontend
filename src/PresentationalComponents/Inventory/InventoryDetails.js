@@ -2,13 +2,10 @@ import {
   DetailWrapper,
   InventoryDetailHead,
 } from '@redhat-cloud-services/frontend-components/Inventory';
-import {
-  Grid,
-  GridItem,
-} from '@patternfly/react-core/dist/esm/layouts/Grid/index';
+import { Grid, GridItem } from '@patternfly/react-core';
 import React, { useEffect } from 'react';
 import { connect, useStore } from 'react-redux';
-import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
+import { Title } from '@patternfly/react-core';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import PropTypes from 'prop-types';

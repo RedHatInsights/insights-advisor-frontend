@@ -1,31 +1,27 @@
-import './_Details.scss';
-
 import React, { useEffect } from 'react';
+import { useIntl } from 'react-intl';
+import { useParams } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   Text,
   TextVariants,
-} from '@patternfly/react-core/dist/esm/components/Text/Text';
-
+  Title,
+  TextContent,
+  Label,
+} from '@patternfly/react-core';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
-import { Label } from '@patternfly/react-core/dist/esm/components/Label/Label';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
-import StarIcon from '@patternfly/react-icons/dist/esm/icons/star-icon';
-import { TextContent } from '@patternfly/react-core/dist/esm/components/Text/TextContent';
-import TimesCircleIcon from '@patternfly/react-icons/dist/esm/icons/times-circle-icon';
-import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
+import { StarIcon, TimesCircleIcon } from '@patternfly/react-icons';
 import { Truncate } from '@redhat-cloud-services/frontend-components/Truncate';
 import messages from '../../Messages';
 import { updateRecFilters } from '../../Services/Filters';
-import { useDispatch } from 'react-redux';
 import { useGetTopicQuery } from '../../Services/Topics';
-import { useIntl } from 'react-intl';
-import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+import './_Details.scss';
 
 const Details = () => {
   const intl = useIntl();

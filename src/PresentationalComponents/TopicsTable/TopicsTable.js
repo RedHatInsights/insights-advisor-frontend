@@ -6,15 +6,14 @@ import {
   TableHeader,
 } from '@patternfly/react-table/deprecated';
 
-import { Label } from '@patternfly/react-core/dist/esm/components/Label/Label';
+import { Label } from '@patternfly/react-core';
 import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import PropTypes from 'prop-types';
-import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
-import StarIcon from '@patternfly/react-icons/dist/esm/icons/star-icon';
-import TimesCircleIcon from '@patternfly/react-icons/dist/esm/icons/times-circle-icon';
+import { SearchIcon, StarIcon, TimesCircleIcon } from '@patternfly/react-icons';
+
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { sortTopics } from '../helper';
