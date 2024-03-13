@@ -1,11 +1,7 @@
 /* eslint-disable react/prop-types */
 import './Pathways.scss';
 
-import {
-  Card,
-  CardBody,
-  CardTitle,
-} from '@patternfly/react-core/dist/esm/components/Card/index';
+import { Card, CardBody, CardTitle } from '@patternfly/react-core';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
 import { RISK_OF_CHANGE_LABEL } from '../../AppConstants';
 import React from 'react';

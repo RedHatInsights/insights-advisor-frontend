@@ -1,40 +1,35 @@
-import './Details.scss';
-
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { useLocation, useParams } from 'react-router-dom';
+import { useIntl } from 'react-intl';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Grid,
   GridItem,
-} from '@patternfly/react-core/dist/esm/layouts/Grid/index';
+  Tab,
+  TabTitleText,
+  Tabs,
+} from '@patternfly/react-core';
 import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
-import React, { Suspense, lazy, useEffect, useState } from 'react';
+import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { TotalRiskCard } from '../../PresentationalComponents/Cards/TotalRiskCard';
 import { ResolutionCard } from '../../PresentationalComponents/Cards/ResolutionCard';
-import {
-  Tab,
-  TabTitleText,
-  Tabs,
-} from '@patternfly/react-core/dist/esm/components/Tabs/index';
 import { updateRecFilters, updateSysFilters } from '../../Services/Filters';
-import { useDispatch, useSelector } from 'react-redux';
-
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import CategoryLabel from '../../PresentationalComponents/Labels/CategoryLabel';
-import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import messages from '../../Messages';
 import { useGetPathwayQuery } from '../../Services/Pathways';
-import { useIntl } from 'react-intl';
-import { useParams } from 'react-router-dom';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
-import { useLocation } from 'react-router-dom';
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 import { useFeatureFlag } from '../../Utilities/Hooks';
 import { edgeSystemsCheck } from './helpers';
+import './Details.scss';
 
 const RulesTable = lazy(() =>
   import(

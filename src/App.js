@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { batch, useDispatch } from 'react-redux';
 import { updateSID, updateTags, updateWorkloads } from './Services/Filters';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import LockIcon from '@patternfly/react-icons/dist/esm/icons/lock-icon';
+import { LockIcon } from '@patternfly/react-icons';
 import MessageState from './PresentationalComponents/MessageState/MessageState';
 import { PERMS } from './AppConstants';
 import { AdvisorRoutes } from './Routes';

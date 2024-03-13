@@ -1,7 +1,6 @@
-import { Card } from '@patternfly/react-core/dist/esm/components/Card/Card';
-import { CardBody } from '@patternfly/react-core/dist/esm/components/Card/CardBody';
-import { CardHeader } from '@patternfly/react-core/dist/esm/components/Card/CardHeader';
-import FrownOpenIcon from '@patternfly/react-icons/dist/esm/icons/frown-open-icon';
+import { Card, CardBody, CardHeader } from '@patternfly/react-core';
+
+import { FrownOpenIcon } from '@patternfly/react-icons';
 import React from 'react';
 import propTypes from 'prop-types';
 

@@ -4,7 +4,7 @@ import { Get } from '../../Utilities/Api';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { Redirect } from 'react-router-dom';
-import TimesCircleIcon from '@patternfly/react-icons/dist/esm/icons/times-circle-icon';
+import { TimesCircleIcon } from '@patternfly/react-icons';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import messages from '../../Messages';
 import { useDispatch } from 'react-redux';

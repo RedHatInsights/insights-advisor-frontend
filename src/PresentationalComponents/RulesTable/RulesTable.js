@@ -2,10 +2,7 @@ import './_RulesTable.scss';
 import * as AppConstants from '../../AppConstants';
 import { DEBOUNCE_DELAY } from '../../AppConstants';
 import { useLocation } from 'react-router-dom';
-import {
-  Pagination,
-  PaginationVariant,
-} from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
+import { Pagination, PaginationVariant } from '@patternfly/react-core';
 import React, { useContext, useEffect, useState } from 'react';
 
 import { TableVariant } from '@patternfly/react-table';

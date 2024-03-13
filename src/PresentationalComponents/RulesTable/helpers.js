@@ -11,16 +11,13 @@ import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 import {
   Stack,
   StackItem,
-} from '@patternfly/react-core/dist/esm/layouts/Stack/index';
-import { Text } from '@patternfly/react-core';
-import {
   Tooltip,
   TooltipPosition,
-} from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
+  Text,
+  Button,
+} from '@patternfly/react-core';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
-import AnsibeTowerIcon from '@patternfly/react-icons/dist/esm/icons/ansibeTower-icon';
-import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
-import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
+import { AnsibeTowerIcon, BellSlashIcon } from '@patternfly/react-icons';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import {
   RuleDetails,

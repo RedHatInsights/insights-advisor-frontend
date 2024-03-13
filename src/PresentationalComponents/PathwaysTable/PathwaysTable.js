@@ -1,16 +1,9 @@
-import {
-  DEBOUNCE_DELAY,
-  FILTER_CATEGORIES as FC,
-  PATHWAYS_FILTER_CATEGORIES as PFC,
-} from '../../AppConstants';
-import { useLocation } from 'react-router-dom';
-import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
-
-import {
-  Pagination,
-  PaginationVariant,
-} from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { useIntl } from 'react-intl';
+import { useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Pagination, PaginationVariant } from '@patternfly/react-core';
 import {
   TableVariant,
   cellWidth,
@@ -23,7 +16,17 @@ import {
   TableBody,
   TableHeader,
 } from '@patternfly/react-table/deprecated';
+import { SearchIcon } from '@patternfly/react-icons';
+import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolbar';
+import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
+import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
+import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
+import {
+  DEBOUNCE_DELAY,
+  FILTER_CATEGORIES as FC,
+  PATHWAYS_FILTER_CATEGORIES as PFC,
+} from '../../AppConstants';
 import {
   filterFetchBuilder,
   paramParser,
@@ -31,23 +34,17 @@ import {
   urlBuilder,
   workloadQueryBuilder,
 } from '../Common/Tables';
-import { useDispatch, useSelector } from 'react-redux';
 
 import CategoryLabel from '../Labels/CategoryLabel';
 import Loading from '../Loading/Loading';
 import MessageState from '../MessageState/MessageState';
-import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
-import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
+
 import RecommendationLevel from '../Labels/RecommendationLevel';
 import RuleLabels from '../Labels/RuleLabels';
-import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import debounce from '../../Utilities/Debounce';
 import messages from '../../Messages';
 import { updatePathFilters } from '../../Services/Filters';
 import { useGetPathwaysQuery } from '../../Services/Pathways';
-import { useIntl } from 'react-intl';
-import PropTypes from 'prop-types';
-import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 
 const PathwaysTable = ({ isTabActive }) => {
   const intl = useIntl();

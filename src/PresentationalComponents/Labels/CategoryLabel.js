@@ -1,10 +1,12 @@
 /* eslint-disable react/jsx-key */
-import AutomationIcon from '@patternfly/react-icons/dist/esm/icons/automation-icon';
-import CubeIcon from '@patternfly/react-icons/dist/esm/icons/cube-icon';
-import LockIcon from '@patternfly/react-icons/dist/esm/icons/lock-icon';
-import PortIcon from '@patternfly/react-icons/dist/esm/icons/port-icon';
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
+import {
+  AutomationIcon,
+  CubeIcon,
+  LockIcon,
+  PortIcon,
+} from '@patternfly/react-icons';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import LabelIcon from './LabelIcon';
