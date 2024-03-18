@@ -2,7 +2,7 @@ import './SystemAdvisor.scss';
 import React, { useCallback } from 'react';
 import { fitContent, sortable } from '@patternfly/react-table';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
-import AnsibeTowerIcon from '@patternfly/react-icons/dist/esm/icons/ansibeTower-icon';
+import { AnsibleTowerIcon } from '@patternfly/react-icons';
 import InsightsLabel from '@redhat-cloud-services/frontend-components/InsightsLabel';
 import DateFormat from '@redhat-cloud-services/frontend-components/DateFormat';
 import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
@@ -233,7 +233,7 @@ export const useBuildRows = (
                       intl.formatMessage(messages.notAvailable)
                     ) : resolution?.has_playbook ? (
                       <span>
-                        <AnsibeTowerIcon size="sm" />{' '}
+                        <AnsibleTowerIcon size="sm" />{' '}
                         {intl.formatMessage(messages.playbook)}
                       </span>
                     ) : (

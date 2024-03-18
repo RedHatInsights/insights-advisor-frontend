@@ -17,10 +17,6 @@ const mapper = {
   TooltipPosition: 'Tooltip',
 };
 
-const IconMapper = {
-  AnsibeTowerIcon: 'ansibeTower-icon',
-};
-
 const FECMapper = {
   SkeletonSize: 'Skeleton',
   PageHeaderTitle: 'PageHeader',
@@ -73,13 +69,10 @@ const patternflyTransformImports = (env) => [
     },
     '@patternfly/react-icons': {
       transform: (importName) =>
-        `@patternfly/react-icons/dist/${env}/icons/${
-          IconMapper[importName] ||
-          importName
-            .split(/(?=[A-Z])/)
-            .join('-')
-            .toLowerCase()
-        }.js`,
+        `@patternfly/react-icons/dist/${env}/icons/${importName
+          .split(/(?=[A-Z])/)
+          .join('-')
+          .toLowerCase()}.js`,
       preventFullImport: true,
     },
   },
