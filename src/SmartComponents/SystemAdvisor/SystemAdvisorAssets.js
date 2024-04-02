@@ -120,7 +120,8 @@ export const useBuildRows = (
   intl,
   systemAdvisorRef,
   entity,
-  inventoryReportFetchStatus
+  inventoryReportFetchStatus,
+  isProd
 ) => {
   const location = useLocation().pathname?.split('/');
   return useCallback(
@@ -257,6 +258,7 @@ export const useBuildRows = (
                     }}
                     kbaDetail={kbaDetail}
                     kbaLoading={kbaLoading}
+                    isProd={isProd}
                   />
                 ),
               },

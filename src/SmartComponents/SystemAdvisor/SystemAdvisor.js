@@ -35,6 +35,7 @@ import downloadReport from '../../PresentationalComponents/Common/DownloadHelper
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import * as AppConstants from '../../AppConstants';
 import { useParams } from 'react-router-dom';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   const intl = useIntl();
@@ -43,6 +44,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   });
   const dispatch = useDispatch();
   const addNotification = (data) => dispatch(addNotificationAction(data));
+  const { isProd } = useChrome();
 
   const { id: ruleIdParam } = useParams();
 
@@ -141,7 +143,8 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
     intl,
     systemAdvisorRef,
     entity,
-    inventoryReportFetchStatus
+    inventoryReportFetchStatus,
+    isProd
   );
   const onRowSelect = (_e, isSelected, rowId) =>
     setRows(
