@@ -82,7 +82,7 @@
     "@redhat-cloud-services/frontend-components-pdf-generator": "^4.0.5",
     "@redhat-cloud-services/frontend-components-remediations": "3.2.12",
     "@redhat-cloud-services/frontend-components-translations": "3.2.7",
-    "@redhat-cloud-services/frontend-components-utilities": "^4.0.3",
+    "@redhat-cloud-services/frontend-components-utilities": "^4.0.9",
     "@reduxjs/toolkit": "2.1.0",
     "@scalprum/react-core": "^0.1.9",
     "@unleash/proxy-client-react": "^4.1.2",
