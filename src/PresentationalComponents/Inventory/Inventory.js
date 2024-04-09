@@ -20,7 +20,7 @@ import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
-import { Spinner } from '@patternfly/react-core';
+import { Spinner, Tooltip } from '@patternfly/react-core';
 
 const Inventory = ({
   tableProps,
@@ -56,6 +56,8 @@ const Inventory = ({
   const [isLoading, setIsLoading] = useState();
 
   const [hasPathwayDetails, setHasPathwayDetails] = useState(false);
+  const [systems, setSystems] = useState([]);
+  const [remediationTooltip, setRemediationTooltip] = useState('');
   const [isRemediationButtonDisabled, setIsRemediationButtonDisabled] =
     useState(true);
   //This value comes in from the backend as 0, or 1. To be consistent it is set to -1
@@ -88,6 +90,21 @@ const Inventory = ({
     fullFilters,
     rule
   );
+  const fetchSystemsWrapper = (
+    _items,
+    config,
+    showTags,
+    defaultGetEntities
+  ) => {
+    const systemPromise = fetchSystems(
+      _items,
+      config,
+      showTags,
+      defaultGetEntities
+    );
+    systemPromise.then((s) => setSystems(s.results));
+    return systemPromise;
+  };
 
   const grabPageIds = () => {
     return curPageIds || [];
@@ -116,7 +133,7 @@ const Inventory = ({
     });
     checkRemediationButtonStatus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedIds]);
+  }, [selectedIds, systems]);
 
   useEffect(() => {
     if (pathway) {
@@ -166,11 +183,24 @@ const Inventory = ({
   };
 
   const checkRemediationButtonStatus = () => {
+    setRemediationTooltip('');
     let playbookFound = false;
     let ruleKeys = Object.keys(pathwayReportList);
     if (selectedIds?.length <= 0 || selectedIds === undefined) {
-      setIsRemediationButtonDisabled(true);
-    } else if (pathway) {
+      return setIsRemediationButtonDisabled(true);
+    }
+    if (systems) {
+      for (let i = 0; i < selectedIds?.length; i++) {
+        let system = systems.find((s) => s.id === selectedIds[i]);
+        if (system.system_profile?.bootc_status?.booted?.image) {
+          setRemediationTooltip(
+            'Image mode systems cannot be added to a remediation playbook yet! Come back soon.'
+          );
+          return setIsRemediationButtonDisabled(true);
+        }
+      }
+    }
+    if (pathway) {
       for (let i = 0; i < selectedIds?.length; i++) {
         let system = selectedIds[i];
         if (playbookFound) {
@@ -392,15 +422,19 @@ const Inventory = ({
 
   const getActionsConfig = () => {
     const actions = [
-      <RemediationButton
-        key="remediation-button"
-        fallback={<Spinner size="md" />}
-        isDisabled={isRemediationButtonDisabled}
-        dataProvider={remediationDataProvider}
-        onRemediationCreated={(result) => onRemediationCreated(result)}
-      >
-        {intl.formatMessage(messages.remediate)}
-      </RemediationButton>,
+      <Tooltip content={remediationTooltip} key="remediation-tooltip">
+        <span>
+          <RemediationButton
+            key="remediation-button"
+            fallback={<Spinner size="md" />}
+            isDisabled={isRemediationButtonDisabled}
+            dataProvider={remediationDataProvider}
+            onRemediationCreated={(result) => onRemediationCreated(result)}
+          >
+            {intl.formatMessage(messages.remediate)}
+          </RemediationButton>
+        </span>
+      </Tooltip>,
     ];
     !pathway &&
       actions.push({
@@ -448,7 +482,7 @@ const Inventory = ({
           SID,
         }}
         showTags={showTags}
-        getEntities={fetchSystems}
+        getEntities={fetchSystemsWrapper}
         actionsConfig={getActionsConfig()}
         {...toolbarProps}
         onLoad={({

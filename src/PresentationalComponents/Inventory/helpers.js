@@ -91,7 +91,7 @@ export const getEntities =
       {
         per_page,
         hasItems: true,
-        fields: { system_profile: ['operating_system'] },
+        fields: { system_profile: ['operating_system', 'bootc_status'] },
       },
       showTags
     );
