@@ -160,12 +160,15 @@ const RulesTable = ({ isTabActive }) => {
   }, []);
 
   useEffect(() => {
-    dispatch(
-      updateRecFilters({
-        ...filtersInitialState.recState,
-        ...getDefaultImpactingFilter(hasEdgeDevices),
-      })
-    );
+    if (!isLoading) {
+      dispatch(
+        updateRecFilters({
+          ...filtersInitialState.recState,
+          ...getDefaultImpactingFilter(hasEdgeDevices),
+        })
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasEdgeDevices, dispatch]);
 
   useEffect(() => {
