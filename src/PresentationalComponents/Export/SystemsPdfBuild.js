@@ -10,13 +10,15 @@ import { Link, StyleSheet, Text } from '@react-pdf/renderer';
 import { BASE_URI } from '../../AppConstants';
 import PropTypes from 'prop-types';
 import React from 'react';
-import c_table_m_compact_cell_PaddingBottom from '@patternfly/react-tokens/dist/esm/c_table_m_compact_cell_PaddingBottom';
-import c_table_m_compact_cell_PaddingLeft from '@patternfly/react-tokens/dist/esm/c_table_m_compact_cell_PaddingLeft';
-import c_table_m_compact_cell_PaddingTop from '@patternfly/react-tokens/dist/esm/c_table_m_compact_cell_PaddingTop';
-import chart_global_Fill_Color_700 from '@patternfly/react-tokens/dist/esm/chart_global_Fill_Color_700';
-import global_FontWeight_bold from '@patternfly/react-tokens/dist/esm/global_FontWeight_bold';
-import global_link_Color from '@patternfly/react-tokens/dist/esm/global_link_Color';
-import global_spacer_md from '@patternfly/react-tokens/dist/esm/global_spacer_md';
+import {
+  c_table_m_compact_cell_PaddingBottom,
+  c_table_m_compact_cell_PaddingLeft,
+  c_table_m_compact_cell_PaddingTop,
+  chart_global_Fill_Color_700,
+  global_FontWeight_bold,
+  global_link_Color,
+  global_spacer_md,
+} from '@patternfly/react-tokens';
 import messages from '../../Messages';
 
 const styles = StyleSheet.create({

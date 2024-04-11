@@ -34,5 +34,9 @@ sitemap.xml
 cypress/downloads
 cypress/screenshots
 cypress/videos
+
 # Sentry Config File
 .env.sentry-build-plugin
+
+# cache
+.cache/

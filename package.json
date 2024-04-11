@@ -9,8 +9,8 @@
   "license": "Apache-2.0",
   "author": "Red Hat",
   "scripts": {
-    "analyze": "NODE_ENV=production webpack --config config/dev.webpack.config.js --env analyze=true --mode production",
-    "build": "webpack --config config/prod.webpack.config.js",
+    "analyze": "fec build --env analyze=true",
+    "build": "fec build",
     "lint": "npm-run-all lint:*",
     "lint:js": "eslint config src",
     "lint:js:fix": "eslint config src --fix",
@@ -18,10 +18,7 @@
     "nightly": "npm run travis:verify",
     "prod": "NODE_ENV=production webpack serve --config config/dev.webpack.config.js",
     "server:ctr": "node src/server/generateServerKey.js",
-    "start": "NODE_ENV=development webpack serve --config config/dev.webpack.config.js",
-    "start:beta": "NODE_ENV=development BETA=true webpack serve --config config/dev.webpack.config.js",
-    "start:proxy": "PROXY=true npm run start",
-    "start:proxy:beta": "BETA=true npm run start:proxy",
+    "start": "PROXY=true fec dev",
     "test": "npm run test:jest",
     "test:local": "TZ=UTC jest --verbose --collectCoverage=false --passWithNoTests --env=jsdom",
     "test:jest": "TZ=UTC jest --verbose --passWithNoTests --env=jsdom",
@@ -36,7 +33,8 @@
     "verify": "npm-run-all build lint test",
     "verify:local": "npm-run-all build lint test:local test:ct",
     "coverage:clean": "rm -rf .nyc_output coverage reports",
-    "coverage": "bash coverage.sh && npm run coverage:clean"
+    "coverage": "bash coverage.sh && npm run coverage:clean",
+    "postinstall": "ts-patch install"
   },
   "sassIncludes": {
     "patternfly": "node_modules/patternfly/dist/sass"
@@ -121,7 +119,8 @@
     "@cypress/react18": "^2.0.0",
     "@formatjs/cli": "4.2.33",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "1.2.1",
-    "@redhat-cloud-services/frontend-components-config": "^5.1.1",
+    "@redhat-cloud-services/frontend-components-config": "^6.0.11",
+    "@redhat-cloud-services/tsc-transform-imports": "^1.0.9",
     "@scalprum/core": "^0.6.1",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.1.2",
@@ -158,6 +157,7 @@
     "stylelint": "13.13.1",
     "stylelint-config-recommended-scss": "4.3.0",
     "stylelint-scss": "3.20.1",
+    "ts-patch": "^3.1.2",
     "typescript": "5.3.3",
     "webpack": "^5.76.0",
     "webpack-bundle-analyzer": "4.4.2",
