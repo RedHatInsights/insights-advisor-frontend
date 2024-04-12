@@ -19,4 +19,9 @@ module.exports = {
     'lodash',
     '@babel/plugin-proposal-class-properties',
   ],
+  env: {
+    componentTest: {
+      plugins: ['istanbul'],
+    },
+  },
 };
