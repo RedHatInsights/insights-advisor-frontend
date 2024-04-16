@@ -14,8 +14,9 @@ jobs:
       - name: Create a Sentry.io release
         uses: tclindner/sentry-releases-action@v1.0.0
         env:
-          SENTRY_AUTH_TOKEN=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          SENTRY_ORG: red-hat-it
-          SENTRY_PROJECT: advisor-rhel
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         with:
           tagName: ${{ github.ref }}
           environment: master
