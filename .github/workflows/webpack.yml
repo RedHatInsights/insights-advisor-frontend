@@ -1,0 +1,22 @@
+name: sentryConfig
+
+on:
+  release:
+    types: [published, prereleased]
+
+
+jobs:
+  createSentryRelease:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Create a Sentry.io release
+        uses: tclindner/sentry-releases-action@v1.0.0
+        env:
+          SENTRY_AUTH_TOKEN=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          SENTRY_ORG: red-hat-it
+          SENTRY_PROJECT: advisor-rhel
+        with:
+          tagName: ${{ github.ref }}
+          environment: master
+          releaseNamePrefix: Rhel-Advisor
