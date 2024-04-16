@@ -21,3 +21,4 @@ jobs:
           tagName: ${{ github.ref }}
           environment: master
           releaseNamePrefix: Rhel-Advisor
+          sourcemaps: 'dist/sourcemaps'
