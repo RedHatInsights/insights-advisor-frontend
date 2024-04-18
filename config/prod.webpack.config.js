@@ -25,24 +25,27 @@ plugins.push(
         './RootApp': resolve(__dirname, '../src/AppEntry'),
         './SystemDetail': resolve(__dirname, '../src/Modules/SystemDetail'),
       },
-    },
-    ...(process.env.SENTRY_AUTH_TOKEN
-      ? sentryWebpackPlugin({
-          authToken: process.env.SENTRY_AUTH_TOKEN,
-          org: process.env.SENTRY_ORG,
-          project: process.env.SENTRY_PPROJECT,
-        })
-      : {})
+    }
   )
 );
 
-const SourceMapsPlugin = new webpack.SourceMapDevToolPlugin({
-  test: /\.js/i,
-  exclude: /(node_modules|bower_components)/i,
-  filename: `sourcemaps/[name].js.map`,
-});
+if (process.env.SENTRY_AUTH_TOKEN) {
+  plugins.push(
+    sentryWebpackPlugin({
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+    })
+  );
 
-plugins.push(SourceMapsPlugin);
+  const SourceMapsPlugin = new webpack.SourceMapDevToolPlugin({
+    test: /\.js/i,
+    exclude: /(node_modules|bower_components)/i,
+    filename: `sourcemaps/[name].js.map`,
+  });
+
+  plugins.push(SourceMapsPlugin);
+}
 
 module.exports = () => {
   const CopyFilesWebpackPlugin = new (require('copy-webpack-plugin'))({
@@ -54,8 +57,11 @@ module.exports = () => {
       },
     ],
   });
-  'source-map', // Source map generation must be turned on
-    plugins.push(CopyFilesWebpackPlugin);
+  plugins.push(CopyFilesWebpackPlugin);
 
-  return { ...webpackConfig, plugins };
+  return {
+    ...webpackConfig,
+    ...(process.env.SENTRY_AUTH_TOKEN ? { devtool: 'source-map' } : {}), // Source map generation must be turned on
+    plugins,
+  };
 };
