@@ -166,7 +166,6 @@ const RulesTable = ({ isTabActive }) => {
         ...getDefaultImpactingFilter(hasEdgeDevices),
       })
     );
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasEdgeDevices, dispatch]);
 

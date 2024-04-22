@@ -94,9 +94,7 @@ const STATUS = ['All', 'Enabled', 'Disabled'];
 const INCIDENT = { Incident: 'true', 'Non-incident': 'false' };
 const REMEDIATION = { 'Ansible playbook': true, Manual: false };
 const REBOOT = { Required: true, 'Not required': false };
-const UPDATE_METHOD_MAP = {
-  '1 or more Conventional systems (RPM-DNF)': 'dnfyum',
-};
+const IMPACTING = { '1 or more': 'true', None: 'false' };
 
 //Filters configuration
 const filtersConf = {
@@ -193,36 +191,30 @@ const filtersConf = {
     urlParam: 'rule_status',
     urlValue: (it) => it.toLowerCase(),
   },
-  update_method: {
+  impacting: {
     selectorText: 'Systems impacted',
-    values: Array.from(cumulativeCombinations(Object.keys(UPDATE_METHOD_MAP))),
+    values: Array.from(cumulativeCombinations(Object.keys(IMPACTING))),
     type: 'checkbox',
-    filterFunc: () => {
-      return 'dnfyum';
+    filterFunc: (it, value) => {
+      if (!value.includes('1 or more') && it.impacted_systems_count > 0)
+        return false;
+      if (!value.includes('None') && it.impacted_systems_count === 0)
+        return false;
+      return true;
     },
-    urlParam: 'update_method',
+    urlParam: 'impacting',
     urlValue: (it) =>
-      encodeURIComponent(_.map(it, (x) => UPDATE_METHOD_MAP[x]).join(',')),
+      encodeURIComponent(_.map(it, (x) => IMPACTING[x]).join(',')),
   },
 };
 
 const filterApply = (filters) => cypressApplyFilters(filters, filtersConf);
-const filterCombos = [
-  {
-    update_method: [
-      '1 or more Conventional systems (RPM-DNF)',
-      '1 or more Immutable (OSTree)',
-    ],
-  },
-];
+const filterCombos = [{ impacting: ['1 or more'] }];
 
 //the default count is 20, you can pass the other number if you need to
 const DEFAULT_ROW_COUNT = 20;
 const DEFAULT_FILTERS = {
-  update_method: [
-    '1 or more Conventional systems (RPM-DNF)',
-    '1 or more Immutable (OSTree)',
-  ],
+  impacting: ['1 or more'],
   status: 'Enabled',
 };
 const TABLE_HEADERS = _.map(rulesTableColumns, (it) => it.title);
@@ -265,7 +257,7 @@ describe('defaults', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent({ hasEdgeDevices: true });
+    mountComponent();
   });
   it(`pagination is set to ${DEFAULT_ROW_COUNT}`, () => {
     cy.get('.pf-v5-c-menu-toggle__text')
@@ -273,7 +265,6 @@ describe('defaults', () => {
       .eq(0)
       .should('have.text', `1 - ${DEFAULT_ROW_COUNT}`);
   });
-  //couldn't check the url paramater because it's not applied to the url on the first render
   it('sorting using Total risk', () => {
     const column = 'Total risk';
     tableIsSortedBy(column);
@@ -281,11 +272,11 @@ describe('defaults', () => {
 
   it('applies total risk "Enabled" and systems impacted "1 or more" filters', () => {
     hasChip('Status', 'Enabled');
+    hasChip('Systems impacted', '1 or more');
     //initial call
     cy.wait('@call');
-    hasChip('Systems impacted', '1 or more Conventional systems (RPM-DNF)');
-    hasChip('Systems impacted', '1 or more Immutable (OSTree)');
-    cy.get(CHIP_GROUP).find('.pf-v5-c-chip__text').should('have.length', 3);
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
+    cy.get(CHIP_GROUP).find('.pf-v5-c-chip__text').should('have.length', 2);
   });
 
   it('name filter is a default filter', () => {
@@ -308,7 +299,7 @@ describe('pagination', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent({ hasEdgeDevices: true });
+    mountComponent();
   });
   it('shows correct total number of rules', () => {
     checkPaginationTotal(fixtures.meta.count);
@@ -319,7 +310,6 @@ describe('pagination', () => {
   });
 
   it('can change page limit', () => {
-    //FIXME: best way to make the loop
     cy.wrap(PAGINATION_VALUES).each((el) => {
       changePagination(el).then(() => {
         expect(window.location.search).to.contain(`limit=${el}`);
@@ -336,7 +326,7 @@ describe('filtering', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent({ hasEdgeDevices: true });
+    mountComponent();
   });
   it('can clear filters', () => {
     cy.get(CHIP_GROUP)
@@ -355,7 +345,7 @@ describe('filtering', () => {
     //clear filters
     cy.get('button').contains('Reset filters').click();
     //check default filters
-    hasChip('Systems impacted', '1 or more Conventional systems (RPM-DNF)');
+    hasChip('Systems impacted', '1 or more');
     hasChip('Status', 'Enabled');
     cy.get(CHIP_GROUP).should(
       'have.length',
@@ -380,12 +370,12 @@ describe('filtering', () => {
         //initial call
         cy.wait('@call');
 
-        if (selectorText === filtersConf.update_method.selectorText) {
+        if (selectorText === filtersConf.impacting.selectorText) {
           removeAllChips();
+          cy.wait(['@call']);
           cy.wait(['@call']);
         }
         filterApply({ [key]: values[0] });
-        cy.wait('@call');
         cy.wait('@call')
           .its('request.url')
           .should('include', `${urlParam}=${urlValue(values[0])}`);
@@ -401,7 +391,7 @@ describe('sorting', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent({ hasEdgeDevices: true });
+    mountComponent();
   });
   function checkSortingUrl(label, order, dataField) {
     //get appropriate locators
@@ -485,7 +475,7 @@ describe('content', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent({ hasEdgeDevices: true });
+    mountComponent();
   });
 
   it('has correct links', () => {
@@ -512,5 +502,99 @@ describe('content', () => {
         'href',
         '///recommendations/' + fixtures.data[0].rule_id
       );
+  });
+});
+
+const UPDATE_METHOD_MAP = {
+  '1 or more Conventional systems (RPM-DNF)': 'dnfyum',
+  '1 or more Immutable (OSTree)': 'ostree',
+};
+
+const update_method = {
+  selectorText: 'Systems impacted',
+  values: Array.from(cumulativeCombinations(Object.keys(UPDATE_METHOD_MAP))),
+  type: 'checkbox',
+  filterFunc: () => {
+    return 'dnfyum';
+  },
+  urlParam: 'update_method',
+  urlValue: (it) =>
+    encodeURIComponent(_.map(it, (x) => UPDATE_METHOD_MAP[x]).join(',')),
+};
+
+const applyUpdateMethod = (filters) =>
+  cypressApplyFilters(filters, { update_method });
+
+describe('sends a request with correct parameters for impacting filter', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('impact_call');
+    mountComponent({ hasEdgeDevices: true });
+  });
+
+  it('has dnf, ostree impacting filters and status filter active by default', () => {
+    hasChip('Status', 'Enabled');
+    hasChip('Systems impacted', '1 or more Conventional systems (RPM-DNF)');
+    hasChip('Systems impacted', '1 or more Immutable (OSTree)');
+    cy.get(CHIP_GROUP).find('.pf-v5-c-chip__text').should('have.length', 3);
+  });
+
+  it(`with edge devices`, () => {
+    const { values } = update_method;
+
+    //initial call
+    cy.wait('@impact_call');
+    cy.get('button').contains('Reset filters').should('exist');
+
+    applyUpdateMethod({ update_method: values[0] });
+    cy.wait('@impact_call')
+      .its('request.url')
+      .should('include', `update_method=ostree%2Cdnfyum`);
+  });
+});
+
+describe('defaults with edge devices', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+    mountComponent({ hasEdgeDevices: true });
+  });
+  it(`pagination is set to ${DEFAULT_ROW_COUNT}`, () => {
+    cy.get('.pf-v5-c-menu-toggle__text')
+      .find('b')
+      .eq(0)
+      .should('have.text', `1 - ${DEFAULT_ROW_COUNT}`);
+  });
+  it('sorting using Total risk', () => {
+    const column = 'Total risk';
+    tableIsSortedBy(column);
+  });
+  it('applies total risk "Enabled" and systems impacted filters', () => {
+    hasChip('Status', 'Enabled');
+    hasChip('Systems impacted', '1 or more');
+    //initial call
+    cy.wait('@call');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
+    hasChip('Systems impacted', '1 or more');
+    cy.get(CHIP_GROUP).find('.pf-v5-c-chip__text').should('have.length', 3);
+  });
+
+  it('name filter is a default filter', () => {
+    cy.get('button[aria-label="Conditional filter"]')
+      .find('span[class=ins-c-conditional-filter__value-selector]')
+      .should('have.text', 'Name');
+    cy.get(CONDITIONAL_FILTER).should('exist');
+  });
+
+  it('reset filters button is displayed', () => {
+    cy.get('button').contains('Reset filters').should('exist');
   });
 });
