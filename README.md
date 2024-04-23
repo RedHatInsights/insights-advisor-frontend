@@ -42,14 +42,14 @@ Travis is used to test the build for this code.
 Before opening a pull request, you can run `npm run verify:local` to make sure your changes pass automated tests (Jest and Cypress) and linter (both JS and CSS linters).
 
 ## Deploying
-Any push to the following branches will trigger a build in [insights-advisor-frontend-build repository](https://github.com/RedHatInsights/insights-advisor-frontend-build) which will deploy to corresponding environment. Travis is used to deploy the application.
+The app uses containerized builds which are configured in [`app-interface`](https://gitlab.cee.redhat.com/service/app-interface/-/blob/master/data/services/insights/advisor/deploy.yml).
 
 | Push to branch in this repo  | Updated branch in build repo  | Environment       | Available at
 | :--------------------------- | :---------------------------- | :---------------- | :-----------
-| master                       | stage-beta                    | stage beta        | https://console.stage.redhat.com/preview
-| master-stable                | stage-stable                  | stage stable      | https://console.stage.redhat.com
-| prod-beta                    | prod-beta                     | production beta   | https://console.redhat.com/beta
-| prod-stable                  | prod-stable                   | production stable | https://console.redhat.com
+| master                       | stage-beta                    | stage beta        | master branch
+| master-stable                | stage-stable                  | stage stable      | master branch
+| prod-beta                    | prod-beta                     | production beta   | up to the commit configured in `app-interface`
+| prod-stable                  | prod-stable                   | production stable | up to the commit configured in `app-interface`
 
 ## Internationalization
 
@@ -69,6 +69,3 @@ This project uses [Patternfly React](https://github.com/patternfly/patternfly-re
 
 ## Insights Components
 This app imports components from [Insights Front-end Components library](https://github.com/RedHatInsights/frontend-components). ESI tags are used to import [Insights Chrome](https://github.com/RedHatInsights/insights-chrome) which takes care of the header, sidebar, and footer.
-
-## Release process change in stage env
-We are using the new release process in stage environment that uses containers for deplyoment. Containerized Frontends are the new way to to build, package, and deploy the applicaitons. 
