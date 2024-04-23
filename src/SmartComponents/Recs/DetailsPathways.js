@@ -213,7 +213,7 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
               <Loading />
             ) : (
               <Suspense fallback={<Loading />}>
-                <RulesTable />
+                <RulesTable pathway={pathwayName} />
               </Suspense>
             )}
           </Tab>
