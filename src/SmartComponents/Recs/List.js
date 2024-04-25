@@ -41,11 +41,7 @@ const List = () => {
   const chrome = useChrome();
 
   useEffect(() => {
-    chrome.updateDocumentTitle(
-      intl.formatMessage(messages.documentTitle, {
-        subnav: messages.recommendations.defaultMessage,
-      })
-    );
+    chrome.updateDocumentTitle('Recommendations - Advisor | RHEL');
   }, [chrome, intl]);
 
   const [activeTab, setActiveTab] = useState(

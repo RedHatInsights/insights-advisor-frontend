@@ -20,11 +20,7 @@ const List = () => {
   const chrome = useChrome();
 
   useEffect(() => {
-    chrome.updateDocumentTitle(
-      intl.formatMessage(messages.documentTitle, {
-        subnav: messages.topics.defaultMessage,
-      })
-    );
+    chrome.updateDocumentTitle('Topics - Advisor | RHEL');
   }, [chrome, intl]);
 
   let options = selectedTags?.length && { tags: selectedTags };

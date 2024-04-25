@@ -99,9 +99,8 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
     }
 
     if (rule?.description) {
-      const subnav = `${rule.description} - ${messages.recommendations.defaultMessage}`;
       chrome.updateDocumentTitle(
-        intl.formatMessage(messages.documentTitle, { subnav })
+        `${rule.description} - Recommendations - Advisor | RHEL`
       );
     }
   }, [chrome, intl, rule.description, ruleId]);

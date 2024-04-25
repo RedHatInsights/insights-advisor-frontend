@@ -67,10 +67,7 @@ const Details = () => {
 
   useEffect(() => {
     if (topic && topic.name) {
-      const subnav = `${topic.name} - ${messages.topics.defaultMessage}`;
-      chrome.updateDocumentTitle(
-        intl.formatMessage(messages.documentTitle, { subnav })
-      );
+      chrome.updateDocumentTitle(`${topic.name} - Topics - Advisor | RHEL`);
     }
   }, [chrome, intl, topic]);
 
