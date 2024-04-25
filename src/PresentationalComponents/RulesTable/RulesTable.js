@@ -80,7 +80,9 @@ const RulesTable = ({ isTabActive }) => {
   const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
   const [viewSystemsModalRule, setViewSystemsModalRule] = useState({});
   const [isAllExpanded, setIsAllExpanded] = useState(false);
-  const { hasEdgeDevices } = useContext(AccountStatContext);
+  const [edgeReady, setEdgeReady] = useState(false);
+  const [edge] = useState(useContext(AccountStatContext));
+  const { hasEdgeDevices } = edge;
 
   const setFilters = (filters) => dispatch(updateRecFilters(filters));
 
@@ -151,23 +153,22 @@ const RulesTable = ({ isTabActive }) => {
 
   // Builds table filters from url params
   useEffect(() => {
-    if (isTabActive && search && filterBuilding) {
+    if (isTabActive && search && filterBuilding && !hasEdgeDevices) {
       urlFilterBuilder(sortIndices, setSearchText, setFilters, filters);
     }
-
+    if (isTabActive && search && filterBuilding && hasEdgeDevices) {
+      dispatch(
+        updateRecFilters({
+          ...filtersInitialState.recState,
+          ...getDefaultImpactingFilter(hasEdgeDevices),
+        })
+      );
+      urlFilterBuilder(sortIndices, setSearchText, setFilters, filters);
+      setEdgeReady(true);
+    }
     setFilterBuilding(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    dispatch(
-      updateRecFilters({
-        ...filtersInitialState.recState,
-        ...getDefaultImpactingFilter(hasEdgeDevices),
-      })
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasEdgeDevices, dispatch]);
+  }, [edge]);
 
   useEffect(() => {
     const sortIndex = Object.entries(sortIndices)?.find(
@@ -206,7 +207,7 @@ const RulesTable = ({ isTabActive }) => {
       setFilters({ ...filter, ...text, offset: 0 });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchText]);
+  }, [debouncedSearchText, edgeReady]);
 
   const activeFiltersConfig = getActiveFiltersConfig(
     filters,

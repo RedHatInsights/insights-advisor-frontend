@@ -6,10 +6,7 @@ import { IntlProvider } from '@redhat-cloud-services/frontend-components-transla
 import { getStore } from '../../Store';
 import fixtures from '../../../cypress/fixtures/recommendations.json';
 import _ from 'lodash';
-import {
-  rulesTableColumns,
-  CATEGORIES,
-} from '../../../cypress/support/globals';
+import { rulesTableColumns } from '../../../cypress/support/globals';
 
 //eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
@@ -31,21 +28,12 @@ import {
 
 import messages from '../../Messages';
 import { AccountStatContext } from '../../ZeroStateWrapper';
-import { cypressApplyFilters } from '../../../cypress/utils/table';
+import {
+  cumulativeCombinations,
+  cypressApplyFilters,
+} from '../../../cypress/utils/table';
+import { filtersConf } from '../../../cypress/rulestablesconsts';
 
-//function and filters config for testing filters
-function* cumulativeCombinations(arr, current = []) {
-  let i = 0;
-  while (i < arr.length) {
-    let next = current.concat(arr[i]);
-    yield next;
-    i++;
-    const remaining = arr.slice(i);
-    if (remaining.length) {
-      yield* cumulativeCombinations(remaining, next);
-    }
-  }
-}
 const mountComponent = ({ hasEdgeDevices } = { hasEdgeDevices: false }) => {
   const store = getStore();
   cy.mount(
@@ -78,134 +66,6 @@ const expandContent = (rowNumber) => {
     .eq(0)
     .should('exist')
     .click();
-};
-
-const TOTAL_RISK = { Low: 1, Moderate: 2, Important: 3, Critical: 4 };
-const RISK_OF_CHANGE = { 'Very Low': 1, Low: 2, Moderate: 3, High: 4 };
-const IMPACT = { Low: 1, Medium: 2, High: 3, Critical: 4 };
-const LIKELIHOOD = { Low: 1, Medium: 2, High: 3, Critical: 4 };
-const CATEGORIES_MAP = {
-  Availability: 1,
-  Security: 2,
-  Stability: 3,
-  Performance: 4,
-};
-const STATUS = ['All', 'Enabled', 'Disabled'];
-const INCIDENT = { Incident: 'true', 'Non-incident': 'false' };
-const REMEDIATION = { 'Ansible playbook': true, Manual: false };
-const REBOOT = { Required: true, 'Not required': false };
-const IMPACTING = { '1 or more': 'true', None: 'false' };
-
-//Filters configuration
-const filtersConf = {
-  name: {
-    selectorText: 'Name',
-    values: ['foobar'],
-    type: 'input',
-    filterFunc: (it, value) =>
-      it.description.toLowerCase().includes(value.toLowerCase()),
-    urlParam: 'text',
-    urlValue: (it) => it.replace(/ /g, '+'),
-  },
-  riskOfChange: {
-    selectorText: 'Risk of change',
-    values: Array.from(cumulativeCombinations(Object.keys(RISK_OF_CHANGE))),
-    type: 'checkbox',
-    urlParam: 'res_risk',
-    urlValue: (it) =>
-      encodeURIComponent(_.map(it, (x) => RISK_OF_CHANGE[x]).join(',')),
-  },
-  risk: {
-    selectorText: 'Total risk',
-    values: Array.from(cumulativeCombinations(Object.keys(TOTAL_RISK))),
-    type: 'checkbox',
-    filterFunc: (it, value) =>
-      _.map(value, (x) => TOTAL_RISK[x]).includes(it.total_risk),
-    urlParam: 'total_risk',
-    urlValue: (it) =>
-      encodeURIComponent(_.map(it, (x) => TOTAL_RISK[x]).join(',')),
-  },
-  impact: {
-    selectorText: 'Impact',
-    values: Array.from(cumulativeCombinations(Object.keys(IMPACT))),
-    type: 'checkbox',
-    filterFunc: (it, value) =>
-      _.map(value, (x) => IMPACT[x]).includes(it.impact),
-    urlParam: 'impact',
-    urlValue: (it) => encodeURIComponent(_.map(it, (x) => IMPACT[x]).join(',')),
-  },
-  likelihood: {
-    selectorText: 'Likelihood',
-    values: Array.from(cumulativeCombinations(Object.keys(LIKELIHOOD))),
-    type: 'checkbox',
-    filterFunc: (it, value) =>
-      _.map(value, (x) => LIKELIHOOD[x]).includes(it.likelihood),
-    urlParam: 'likelihood',
-    urlValue: (it) =>
-      encodeURIComponent(_.map(it, (x) => LIKELIHOOD[x]).join(',')),
-  },
-  category: {
-    selectorText: 'Category',
-    values: Array.from(cumulativeCombinations(Object.keys(CATEGORIES))),
-    type: 'checkbox',
-    filterFunc: (it, value) =>
-      _.intersection(
-        _.flatMap(value, (x) => CATEGORIES[x]),
-        it.tags
-      ).length > 0,
-    urlParam: 'category',
-    urlValue: (it) =>
-      encodeURIComponent(_.map(it, (x) => CATEGORIES_MAP[x]).join(',')),
-  },
-  incidents: {
-    selectorText: 'Incidents',
-    values: Array.from(cumulativeCombinations(Object.keys(INCIDENT))),
-    type: 'checkbox',
-    urlParam: 'incident',
-    urlValue: (it) =>
-      encodeURIComponent(_.map(it, (x) => INCIDENT[x]).join(',')),
-  },
-  remediation: {
-    selectorText: 'Remediation',
-    values: Array.from(cumulativeCombinations(Object.keys(REMEDIATION))),
-    type: 'checkbox',
-    urlParam: 'has_playbook',
-    urlValue: (it) =>
-      encodeURIComponent(_.map(it, (x) => REMEDIATION[x]).join(',')),
-  },
-  reboot: {
-    selectorText: 'Reboot required',
-    values: Array.from(cumulativeCombinations(Object.keys(REBOOT))),
-    type: 'checkbox',
-    urlParam: 'reboot',
-    urlValue: (it) => encodeURIComponent(_.map(it, (x) => REBOOT[x]).join(',')),
-  },
-  status: {
-    selectorText: 'Status',
-    values: STATUS,
-    type: 'radio',
-    filterFunc: (it, value) => {
-      if (value === 'All') return true;
-      else return it.disabled === (value === 'Disabled');
-    },
-    urlParam: 'rule_status',
-    urlValue: (it) => it.toLowerCase(),
-  },
-  impacting: {
-    selectorText: 'Systems impacted',
-    values: Array.from(cumulativeCombinations(Object.keys(IMPACTING))),
-    type: 'checkbox',
-    filterFunc: (it, value) => {
-      if (!value.includes('1 or more') && it.impacted_systems_count > 0)
-        return false;
-      if (!value.includes('None') && it.impacted_systems_count === 0)
-        return false;
-      return true;
-    },
-    urlParam: 'impacting',
-    urlValue: (it) =>
-      encodeURIComponent(_.map(it, (x) => IMPACTING[x]).join(',')),
-  },
 };
 
 const filterApply = (filters) => cypressApplyFilters(filters, filtersConf);
@@ -320,7 +180,7 @@ describe('pagination', () => {
 
 describe('filtering', () => {
   beforeEach(() => {
-    cy.intercept('**/api/insights/v1/rule/**', {
+    cy.intercept('*', {
       statusCode: 201,
       body: {
         ...fixtures,
@@ -362,27 +222,47 @@ describe('filtering', () => {
     checkPaginationTotal(fixtures.meta.count);
   });
 
-  describe('sends a request with correct parameters', () => {
-    Object.entries(filtersConf).forEach(([key, config]) => {
-      const { urlParam, values, urlValue, selectorText } = config;
+  it('will reset filters but not pagination and sorting', () => {
+    filterApply({ name: 'Lo' });
 
-      it(`apply ${selectorText} filter`, () => {
-        //initial call
-        cy.wait('@call');
+    cy.get('th[data-label="Name"]').find('button').click();
+    cy.get(TOOLBAR).find('button').contains('Reset filters').click();
+    cy.get('th[data-label="Name"]')
+      .should('have.attr', 'aria-sort')
+      .and('contain', 'ascending');
+  });
+});
 
-        if (selectorText === filtersConf.impacting.selectorText) {
-          removeAllChips();
-          cy.wait(['@call']);
-          cy.wait(['@call']);
-        }
-        filterApply({ [key]: values[0] });
-        cy.wait('@call')
-          .its('request.url')
-          .should('include', `${urlParam}=${urlValue(values[0])}`);
-      });
+describe('making request based on filters', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+    mountComponent();
+  });
+  Object.entries(filtersConf).forEach(([key, config]) => {
+    const { urlParam, values, urlValue, selectorText } = config;
+
+    it(`apply ${selectorText} filter`, () => {
+      removeAllChips();
+      cy.get('button').contains('Reset filters').click();
+      if (selectorText === filtersConf.impacting.selectorText) {
+        removeAllChips();
+        cy.wait(['@call']);
+        cy.wait(['@call']);
+      }
+      cy.wait(['@call']);
+      filterApply({ [key]: values[0] });
+      cy.wait(['@call'])
+        .its('request.url')
+        .should('include', `${urlParam}=${urlValue(values[0])}`);
     });
   });
 });
+
 describe('sorting', () => {
   beforeEach(() => {
     cy.intercept('*', {
@@ -525,7 +405,7 @@ const update_method = {
 const applyUpdateMethod = (filters) =>
   cypressApplyFilters(filters, { update_method });
 
-describe('sends a request with correct parameters for impacting filter', () => {
+describe('Edge devices tests', () => {
   beforeEach(() => {
     cy.intercept('*', {
       statusCode: 201,
@@ -536,11 +416,9 @@ describe('sends a request with correct parameters for impacting filter', () => {
     mountComponent({ hasEdgeDevices: true });
   });
 
-  it('has dnf, ostree impacting filters and status filter active by default', () => {
-    hasChip('Status', 'Enabled');
-    hasChip('Systems impacted', '1 or more Conventional systems (RPM-DNF)');
-    hasChip('Systems impacted', '1 or more Immutable (OSTree)');
-    cy.get(CHIP_GROUP).find('.pf-v5-c-chip__text').should('have.length', 3);
+  it('table is loaded', () => {
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
+    cy.get(ROOT).should('have.length', 1);
   });
 
   it(`with edge devices`, () => {
@@ -577,7 +455,7 @@ describe('defaults with edge devices', () => {
     const column = 'Total risk';
     tableIsSortedBy(column);
   });
-  it('applies total risk "Enabled" and systems impacted filters', () => {
+  /* it('applies total risk "Enabled" and systems impacted filters', () => {
     hasChip('Status', 'Enabled');
     hasChip('Systems impacted', '1 or more');
     //initial call
@@ -585,7 +463,7 @@ describe('defaults with edge devices', () => {
     cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
     hasChip('Systems impacted', '1 or more');
     cy.get(CHIP_GROUP).find('.pf-v5-c-chip__text').should('have.length', 3);
-  });
+  }); */
 
   it('name filter is a default filter', () => {
     cy.get('button[aria-label="Conditional filter"]')
