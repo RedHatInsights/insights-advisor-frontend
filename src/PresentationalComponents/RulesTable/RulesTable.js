@@ -51,7 +51,7 @@ import { useActionsResolver } from './useActionsResolver';
 import impactingFilter from '../Filters/impactingFilter';
 import { useGetEdgeDevicesQuery } from '../../Services/SystemVariety';
 
-const RulesTable = ({ isTabActive }) => {
+const RulesTable = ({ isTabActive, pathway }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const permsExport = usePermissions(
@@ -80,14 +80,11 @@ const RulesTable = ({ isTabActive }) => {
   const [isAllExpanded, setIsAllExpanded] = useState(false);
   const setFilters = (filters) => dispatch(updateRecFilters(filters));
 
-  let options = {};
-  selectedTags?.length &&
-    (options = {
-      ...options,
-      ...{ tags: selectedTags.join(',') },
-    });
-  workloads &&
-    (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
+  const options = {
+    ...(selectedTags?.length ? { tags: selectedTags.join(',') } : {}),
+    ...(workloads ? workloadQueryBuilder(workloads, SID) : {}),
+    ...(pathway ? { pathway } : {}),
+  };
 
   const {
     data: rules = [],
@@ -331,6 +328,7 @@ const RulesTable = ({ isTabActive }) => {
 
 RulesTable.propTypes = {
   isTabActive: PropTypes.bool,
+  pathway: PropTypes.string,
 };
 
 export default RulesTable;
