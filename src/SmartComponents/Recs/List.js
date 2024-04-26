@@ -41,7 +41,7 @@ const List = () => {
   const chrome = useChrome();
 
   useEffect(() => {
-    chrome.updateDocumentTitle('Recommendations - Advisor | RHEL');
+    chrome.updateDocumentTitle('Recommendations - Advisor | RHEL', true);
   }, [chrome, intl]);
 
   const [activeTab, setActiveTab] = useState(

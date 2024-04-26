@@ -67,7 +67,10 @@ const Details = () => {
 
   useEffect(() => {
     if (topic && topic.name) {
-      chrome.updateDocumentTitle(`${topic.name} - Topics - Advisor | RHEL`);
+      chrome.updateDocumentTitle(
+        `${topic.name} - Topics - Advisor | RHEL`,
+        true
+      );
     }
   }, [chrome, intl, topic]);
 

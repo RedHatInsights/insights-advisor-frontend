@@ -100,7 +100,8 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
 
     if (rule?.description) {
       chrome.updateDocumentTitle(
-        `${rule.description} - Recommendations - Advisor | RHEL`
+        `${rule.description} - Recommendations - Advisor | RHEL`,
+        true
       );
     }
   }, [chrome, intl, rule.description, ruleId]);

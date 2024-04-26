@@ -28,7 +28,8 @@ const InventoryDetails = ({ entity }) => {
   useEffect(() => {
     if (entity && (entity.display_name || entity.id)) {
       chrome.updateDocumentTitle(
-        `${entity.display_name || entity.id} - Systems - Advisor | RHEL`
+        `${entity.display_name || entity.id} - Systems - Advisor | RHEL`,
+        true
       );
     }
   }, [entity, intl, chrome]);

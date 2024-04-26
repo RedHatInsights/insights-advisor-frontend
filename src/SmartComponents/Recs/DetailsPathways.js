@@ -80,7 +80,8 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
     pathway &&
       !isFetching &&
       chrome.updateDocumentTitle(
-        `${pathway.name} - ${messages.pathways.defaultMessage} - Advisor | RHEL`
+        `${pathway.name} - ${messages.pathways.defaultMessage} - Advisor | RHEL`,
+        true
       );
   }, [chrome, intl, pathway, pathname, isFetching]);
 

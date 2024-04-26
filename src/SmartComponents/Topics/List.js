@@ -20,7 +20,7 @@ const List = () => {
   const chrome = useChrome();
 
   useEffect(() => {
-    chrome.updateDocumentTitle('Topics - Advisor | RHEL');
+    chrome.updateDocumentTitle('Topics - Advisor | RHEL', true);
   }, [chrome, intl]);
 
   let options = selectedTags?.length && { tags: selectedTags };

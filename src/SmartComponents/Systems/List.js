@@ -15,7 +15,7 @@ const List = () => {
   const chrome = useChrome();
   const edgeParityFFlag = useFeatureFlag('advisor.edge_parity');
   useEffect(() => {
-    chrome.updateDocumentTitle('Systems - Advisor | RHEL');
+    chrome.updateDocumentTitle('Systems - Advisor | RHEL', true);
   }, [chrome, intl]);
 
   return (
