@@ -1,12 +1,11 @@
 import './_RulesTable.scss';
 import * as AppConstants from '../../AppConstants';
 import { DEBOUNCE_DELAY } from '../../AppConstants';
-import { useLocation } from 'react-router-dom';
 import {
   Pagination,
   PaginationVariant,
 } from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { TableVariant } from '@patternfly/react-table';
 import {
@@ -49,13 +48,12 @@ import {
   getDefaultImpactingFilter,
 } from './helpers';
 import { useActionsResolver } from './useActionsResolver';
-import { AccountStatContext } from '../../ZeroStateWrapper';
 import impactingFilter from '../Filters/impactingFilter';
+import { useGetEdgeDevicesQuery } from '../../Services/SystemVariety';
 
 const RulesTable = ({ isTabActive }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const { search } = useLocation();
   const permsExport = usePermissions(
     'advisor',
     AppConstants.PERMS.export
@@ -80,10 +78,6 @@ const RulesTable = ({ isTabActive }) => {
   const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
   const [viewSystemsModalRule, setViewSystemsModalRule] = useState({});
   const [isAllExpanded, setIsAllExpanded] = useState(false);
-  const [edgeReady, setEdgeReady] = useState(false);
-  const [edge] = useState(useContext(AccountStatContext));
-  const { hasEdgeDevices } = edge;
-
   const setFilters = (filters) => dispatch(updateRecFilters(filters));
 
   let options = {};
@@ -102,6 +96,8 @@ const RulesTable = ({ isTabActive }) => {
     isError,
     refetch,
   } = useGetRecsQuery({ ...filterFetchBuilder(filters), ...options });
+  const { data: edge, isSuccess: edgeQuerySuccess } = useGetEdgeDevicesQuery();
+  const edgeDevices = edge?.total > 0 ? true : false;
 
   const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
   const results = rules?.meta?.count || 0;
@@ -145,30 +141,22 @@ const RulesTable = ({ isTabActive }) => {
     refetch
   );
 
-  const impactingFilterDef = impactingFilter(
-    setFilters,
-    filters,
-    hasEdgeDevices
-  );
+  const impactingFilterDef = impactingFilter(setFilters, filters, edgeDevices);
 
-  // Builds table filters from url params
+  // Builds table filters from url params depending on the query success
   useEffect(() => {
-    if (isTabActive && search && filterBuilding && !hasEdgeDevices) {
+    if (isTabActive && filterBuilding && !edgeDevices) {
       urlFilterBuilder(sortIndices, setSearchText, setFilters, filters);
     }
-    if (isTabActive && search && filterBuilding && hasEdgeDevices) {
-      dispatch(
-        updateRecFilters({
-          ...filtersInitialState.recState,
-          ...getDefaultImpactingFilter(hasEdgeDevices),
-        })
-      );
-      urlFilterBuilder(sortIndices, setSearchText, setFilters, filters);
-      setEdgeReady(true);
+    if (isTabActive && filterBuilding && edgeDevices) {
+      urlFilterBuilder(sortIndices, setSearchText, setFilters, {
+        ...filtersInitialState.recState,
+        ...getDefaultImpactingFilter(edgeDevices),
+      });
     }
     setFilterBuilding(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [edge]);
+  }, [edgeQuerySuccess]);
 
   useEffect(() => {
     const sortIndex = Object.entries(sortIndices)?.find(
@@ -207,14 +195,14 @@ const RulesTable = ({ isTabActive }) => {
       setFilters({ ...filter, ...text, offset: 0 });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchText, edgeReady]);
+  }, [debouncedSearchText]);
 
   const activeFiltersConfig = getActiveFiltersConfig(
     filters,
     intl,
     setSearchText,
     setFilters,
-    hasEdgeDevices
+    edgeDevices
   );
 
   const onExpandAllClick = (_e, isOpen) => {

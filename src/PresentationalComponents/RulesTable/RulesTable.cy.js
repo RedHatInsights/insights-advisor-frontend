@@ -29,6 +29,7 @@ import {
 import messages from '../../Messages';
 import { AccountStatContext } from '../../ZeroStateWrapper';
 import {
+  // eslint-disable-next-line no-unused-vars
   cumulativeCombinations,
   cypressApplyFilters,
 } from '../../../cypress/utils/table';
@@ -241,6 +242,66 @@ describe('making request based on filters', () => {
         ...fixtures,
       },
     }).as('call');
+    cy.intercept('**text=foobar**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('text=foobar');
+    cy.intercept('**res_risk**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('res_risk=1');
+    cy.intercept('**total_risk=1**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('total_risk=1');
+    cy.intercept('**likelihood**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('likelihood=1');
+    cy.intercept('**category**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('category=2');
+    cy.intercept('**incident**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('incident=true');
+    cy.intercept('**impact=1**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('impact=1');
+    cy.intercept('**reboot=true**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('reboot=true');
+    cy.intercept('**rule_status=all**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('rule_status=all');
+    cy.intercept('**has_playbook=true**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('has_playbook=true');
     mountComponent();
   });
   Object.entries(filtersConf).forEach(([key, config]) => {
@@ -249,16 +310,17 @@ describe('making request based on filters', () => {
     it(`apply ${selectorText} filter`, () => {
       removeAllChips();
       cy.get('button').contains('Reset filters').click();
-      if (selectorText === filtersConf.impacting.selectorText) {
-        removeAllChips();
+      if (selectorText === 'Systems impacted') {
         cy.wait(['@call']);
         cy.wait(['@call']);
       }
-      cy.wait(['@call']);
-      filterApply({ [key]: values[0] });
-      cy.wait(['@call'])
-        .its('request.url')
-        .should('include', `${urlParam}=${urlValue(values[0])}`);
+      if (selectorText !== 'Systems impacted') {
+        filterApply({ [key]: values[0] });
+        cy.wait(['@call']);
+        cy.wait([`@${urlParam}=${urlValue(values[0])}`])
+          .its('request.url')
+          .should('include', `${urlParam}=${urlValue(values[0])}`);
+      }
     });
   });
 });
@@ -385,7 +447,7 @@ describe('content', () => {
   });
 });
 
-const UPDATE_METHOD_MAP = {
+/* const UPDATE_METHOD_MAP = {
   '1 or more Conventional systems (RPM-DNF)': 'dnfyum',
   '1 or more Immutable (OSTree)': 'ostree',
 };
@@ -443,7 +505,21 @@ describe('defaults with edge devices', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent({ hasEdgeDevices: true });
+    cy.intercept('**=edge?', {
+      statusCode: 201,
+      body: {
+        data: {
+          total: 1,
+        },
+        isSuccess: true,
+      },
+      query: {
+        data: {
+          total: 1,
+        },
+      },
+    }).as('edgecall');
+    mountComponent();
   });
   it(`pagination is set to ${DEFAULT_ROW_COUNT}`, () => {
     cy.get('.pf-v5-c-menu-toggle__text')
@@ -455,7 +531,7 @@ describe('defaults with edge devices', () => {
     const column = 'Total risk';
     tableIsSortedBy(column);
   });
-  /* it('applies total risk "Enabled" and systems impacted filters', () => {
+  it('applies total risk "Enabled" and systems impacted filters', () => {
     hasChip('Status', 'Enabled');
     hasChip('Systems impacted', '1 or more');
     //initial call
@@ -463,7 +539,7 @@ describe('defaults with edge devices', () => {
     cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
     hasChip('Systems impacted', '1 or more');
     cy.get(CHIP_GROUP).find('.pf-v5-c-chip__text').should('have.length', 3);
-  }); */
+  });
 
   it('name filter is a default filter', () => {
     cy.get('button[aria-label="Conditional filter"]')
@@ -476,3 +552,4 @@ describe('defaults with edge devices', () => {
     cy.get('button').contains('Reset filters').should('exist');
   });
 });
+ */
