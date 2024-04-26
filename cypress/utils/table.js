@@ -1,6 +1,5 @@
 /* eslint-disable rulesdir/disallow-fec-relative-imports */
 // eslint-disable-next-line prettier/prettier
-import { CHIP, CHIP_GROUP, checkTableHeaders, checkEmptyState, removeAllChips } from '@redhat-cloud-services/frontend-components-utilities';
 import _ from 'lodash';
 
 function checkSorting(
@@ -76,84 +75,6 @@ function cypressApplyFilters(filters, filtersConf) {
   }
 }
 
-function checkFiltering(
-  filters,
-  filtersConf,
-  values,
-  columnName,
-  tableHeaders,
-  emptyStateTitle,
-  validateURL,
-  hasDefaultFilters
-) {
-  if (hasDefaultFilters) {
-    removeAllChips();
-  }
-  cypressApplyFilters(filters, filtersConf);
-
-  if (values.length === 0) {
-    checkEmptyState(emptyStateTitle);
-    checkTableHeaders(tableHeaders);
-  } else {
-    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
-    cy.get(`td[data-label="${columnName}"]`)
-      .should('have.length', values.length)
-      .then(($els) => {
-        return _.map(Cypress.$.makeArray($els), 'innerText');
-      })
-      .should('deep.equal', values);
-  }
-
-  // validate chips and url params
-  cy.get(CHIP_GROUP)
-    .should('have.length', Object.keys(filters).length)
-    .then(() => {
-      if (validateURL) {
-        for (const [k, v] of Object.entries(filtersConf)) {
-          if (k in filters) {
-            const urlValue = v.urlValue(filters[k]);
-            expect(window.location.search).to.contain(
-              `${v.urlParam}=${urlValue}`
-            );
-          } else {
-            expect(window.location.search).to.not.contain(`${v.urlParam}=`);
-          }
-        }
-      }
-    });
-
-  // check chips
-  for (const [k, v] of Object.entries(filters)) {
-    let groupName = filtersConf[k].selectorText;
-    const nExpectedItems = filtersConf[k].type === 'checkbox' ? v.length : 1;
-    cy.get(CHIP_GROUP)
-      .contains(groupName)
-      .parents(CHIP_GROUP)
-      .then((chipGroup) => {
-        cy.wrap(chipGroup)
-          .find(CHIP)
-          .its('length')
-          .should('be.eq', Math.min(3, nExpectedItems)); // limited to show 3
-      });
-  }
-  cy.get('button').contains('Reset filters').should('exist');
-}
-
-function filter(conf, data, filters) {
-  let filteredData = data;
-  for (const [key, value] of Object.entries(filters)) {
-    filteredData = _.filter(filteredData, (it) =>
-      conf[key].filterFunc(it, value)
-    );
-    // if length is already 0, exit
-    if (filteredData.length === 0) {
-      break;
-    }
-  }
-
-  return filteredData;
-}
-
 //function and filters config for testing filters
 function* cumulativeCombinations(arr, current = []) {
   let i = 0;
@@ -168,10 +89,4 @@ function* cumulativeCombinations(arr, current = []) {
   }
 }
 
-export {
-  checkSorting,
-  cypressApplyFilters,
-  checkFiltering,
-  filter,
-  cumulativeCombinations,
-};
+export { checkSorting, cypressApplyFilters, cumulativeCombinations };
