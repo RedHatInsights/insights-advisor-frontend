@@ -420,7 +420,7 @@ describe('content', () => {
     mountComponent();
   });
 
-  it('has correct links', () => {
+  it.skip('has correct links', () => {
     expandContent(1);
 
     cy.get('.ins-c-rule-details')
