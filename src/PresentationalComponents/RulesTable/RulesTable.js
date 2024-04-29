@@ -5,7 +5,7 @@ import {
   Pagination,
   PaginationVariant,
 } from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { TableVariant } from '@patternfly/react-table';
 import {
@@ -49,7 +49,7 @@ import {
 } from './helpers';
 import { useActionsResolver } from './useActionsResolver';
 import impactingFilter from '../Filters/impactingFilter';
-import { useGetEdgeDevicesQuery } from '../../Services/SystemVariety';
+import { AccountStatContext } from '../../ZeroStateWrapper';
 
 const RulesTable = ({ isTabActive, pathway }) => {
   const intl = useIntl();
@@ -79,6 +79,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
   const [viewSystemsModalRule, setViewSystemsModalRule] = useState({});
   const [isAllExpanded, setIsAllExpanded] = useState(false);
   const setFilters = (filters) => dispatch(updateRecFilters(filters));
+  const { hasEdgeDevices, edgeQuerySuccess } = useContext(AccountStatContext);
 
   const options = {
     ...(selectedTags?.length ? { tags: selectedTags.join(',') } : {}),
@@ -93,8 +94,6 @@ const RulesTable = ({ isTabActive, pathway }) => {
     isError,
     refetch,
   } = useGetRecsQuery({ ...filterFetchBuilder(filters), ...options });
-  const { data: edge, isSuccess: edgeQuerySuccess } = useGetEdgeDevicesQuery();
-  const edgeDevices = edge?.total > 0 ? true : false;
 
   const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
   const results = rules?.meta?.count || 0;
@@ -138,17 +137,21 @@ const RulesTable = ({ isTabActive, pathway }) => {
     refetch
   );
 
-  const impactingFilterDef = impactingFilter(setFilters, filters, edgeDevices);
+  const impactingFilterDef = impactingFilter(
+    setFilters,
+    filters,
+    hasEdgeDevices
+  );
 
   // Builds table filters from url params depending on the query success
   useEffect(() => {
-    if (isTabActive && filterBuilding && !edgeDevices) {
+    if (isTabActive && filterBuilding && !hasEdgeDevices) {
       urlFilterBuilder(sortIndices, setSearchText, setFilters, filters);
     }
-    if (isTabActive && filterBuilding && edgeDevices) {
+    if (isTabActive && filterBuilding && hasEdgeDevices) {
       urlFilterBuilder(sortIndices, setSearchText, setFilters, {
         ...filtersInitialState.recState,
-        ...getDefaultImpactingFilter(edgeDevices),
+        ...getDefaultImpactingFilter(hasEdgeDevices),
       });
     }
     setFilterBuilding(false);
@@ -199,7 +202,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
     intl,
     setSearchText,
     setFilters,
-    edgeDevices
+    hasEdgeDevices
   );
 
   const onExpandAllClick = (_e, isOpen) => {
