@@ -36,10 +36,9 @@ export const ZeroStateWrapper = ({ children }) => {
     isError: conventionalError,
     error: conventErrorMessage,
   } = useGetConventionalDevicesQuery();
-  const edgeDevices = edge?.total > 0 ? true : false;
   useEffect(() => {
-    setHasEdgeDevices(edgeDevices);
-    setHasConventionalSystems(conventional);
+    setHasEdgeDevices(edge?.total > 0 ? true : false);
+    setHasConventionalSystems(conventional?.total > 0 ? true : false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [edgeQuerySuccess, conventionalQuerySuccess]);
 
