@@ -9,7 +9,6 @@
   "license": "Apache-2.0",
   "author": "Red Hat",
   "scripts": {
-    "analyze": "fec build --env analyze=true",
     "build": "fec build",
     "lint": "npm-run-all lint:*",
     "lint:js": "eslint config src",
@@ -158,8 +157,6 @@
     "stylelint-scss": "3.20.1",
     "ts-patch": "^3.1.2",
     "typescript": "5.3.3",
-    "webpack": "^5.76.0",
-    "webpack-bundle-analyzer": "4.4.2",
     "webpack-cli": "4.10.0",
     "webpack-dev-server": "^4.4.0"
   },
