@@ -3,12 +3,15 @@ import { Bullseye, Spinner } from '@patternfly/react-core';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import ErrorState from '@redhat-cloud-services/frontend-components/ErrorState';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
 import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
 import messages from './Messages';
 import { useFeatureFlag } from './Utilities/Hooks';
+import {
+  useGetEdgeDevicesQuery,
+  useGetConventionalDevicesQuery,
+} from './Services/SystemVariety';
 
 export const AccountStatContext = createContext({
   hasConventionalSystems: true,
@@ -21,34 +24,39 @@ export const ZeroStateWrapper = ({ children }) => {
   const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
   const [hasConventionalSystems, setHasConventionalSystems] = useState(true);
   const [hasEdgeDevices, setHasEdgeDevices] = useState(true);
+  const {
+    data: edge,
+    isSuccess: edgeQuerySuccess,
+    isError: edgeError,
+    error: edgeErrorMessage,
+  } = useGetEdgeDevicesQuery();
+  const {
+    data: conventional,
+    isSuccess: conventionalQuerySuccess,
+    isError: conventionalError,
+    error: conventErrorMessage,
+  } = useGetConventionalDevicesQuery();
+  useEffect(() => {
+    setHasEdgeDevices(edge?.total > 0);
+    setHasConventionalSystems(conventional?.total > 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [edgeQuerySuccess, conventionalQuerySuccess]);
 
   useEffect(() => {
-    try {
-      axios
-        .get(
-          `/api/inventory/v1/hosts?page=1&per_page=1&filter[system_profile][host_type]=nil`
-        )
-        .then(({ data }) => {
-          setHasConventionalSystems(data.total > 0);
-        });
-      axios
-        .get(
-          `/api/inventory/v1/hosts?page=1&per_page=1&filter[system_profile][host_type]=edge`
-        )
-        .then(({ data }) => {
-          setHasEdgeDevices(data.total > 0);
-        });
-    } catch (e) {
+    if (edgeErrorMessage?.status || conventErrorMessage?.status) {
       dispatch(
         addNotification({
           variant: 'danger',
           dismissable: true,
           title: intl.formatMessage(messages.error),
-          description: `${e}`,
+          description:
+            `${JSON.stringify(edgeErrorMessage?.data)}` ||
+            `${JSON.stringify(conventErrorMessage?.data)}`,
         })
       );
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [edgeError, conventionalError]);
 
   const hasSystems = isEdgeParityEnabled
     ? hasEdgeDevices || hasConventionalSystems
@@ -81,7 +89,7 @@ export const ZeroStateWrapper = ({ children }) => {
         </Suspense>
       ) : (
         <AccountStatContext.Provider
-          value={{ hasConventionalSystems, hasEdgeDevices }}
+          value={{ hasConventionalSystems, hasEdgeDevices, edgeQuerySuccess }}
         >
           {children}
         </AccountStatContext.Provider>

@@ -6,12 +6,9 @@ import { IntlProvider } from '@redhat-cloud-services/frontend-components-transla
 import { getStore } from '../../Store';
 import fixtures from '../../../cypress/fixtures/recommendations.json';
 import _ from 'lodash';
-import {
-  rulesTableColumns,
-  // CATEGORIES,
-} from '../../../cypress/support/globals';
+import { rulesTableColumns } from '../../../cypress/support/globals';
 
-// eslint-disable-next-line rulesdir/disallow-fec-relative-imports
+//eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
   checkTableHeaders,
   TOOLBAR,
@@ -19,32 +16,25 @@ import {
   hasChip,
   CHIP_GROUP,
   SORTING_ORDERS,
-  TOOLBAR_FILTER,
-  TEXT_INPUT,
-  ROW,
+  changePagination,
+  PAGINATION_VALUES,
+  checkPaginationValues,
+  checkPaginationTotal,
+  CHIP,
+  checkRowCounts,
+  removeAllChips,
+  CONDITIONAL_FILTER,
 } from '@redhat-cloud-services/frontend-components-utilities';
-
-//I'm looking at the https://docs.cypress.io/guides/component-testing/custom-mount-react#React-Router
-
-//THIS FILE HAS COMMENTED OUT TEST BECAUSE THE FUNCTIONS/LABELS IMPORTED FROM FEC-UTILS
-//NEED TO BE UPDATED
 
 import messages from '../../Messages';
 import { AccountStatContext } from '../../ZeroStateWrapper';
+import {
+  // eslint-disable-next-line no-unused-vars
+  cumulativeCombinations,
+  cypressApplyFilters,
+} from '../../../cypress/utils/table';
+import { filtersConf } from '../../../cypress/rulestablesconsts';
 
-//function and filters config for testing filters
-// function* cumulativeCombinations(arr, current = []) {
-//   let i = 0;
-//   while (i < arr.length) {
-//     let next = current.concat(arr[i]);
-//     yield next;
-//     i++;
-//     const remaining = arr.slice(i);
-//     if (remaining.length) {
-//       yield* cumulativeCombinations(remaining, next);
-//     }
-//   }
-// }
 const mountComponent = ({ hasEdgeDevices } = { hasEdgeDevices: false }) => {
   const store = getStore();
   cy.mount(
@@ -70,148 +60,24 @@ const mountComponent = ({ hasEdgeDevices } = { hasEdgeDevices: false }) => {
 };
 
 const expandContent = (rowNumber) => {
-  cy.get(ROW).eq(rowNumber).find('#expand-button0').should('exist').click();
+  cy.get('tbody[class="pf-v5-c-table__tbody pf-m-width-100"]')
+    .eq(rowNumber)
+    .find('button')
+    .children()
+    .eq(0)
+    .should('exist')
+    .click();
 };
 
-// const TOTAL_RISK = { Low: 1, Moderate: 2, Important: 3, Critical: 4 };
-// const RISK_OF_CHANGE = { 'Very Low': 1, Low: 2, Moderate: 3, High: 4 };
-// const IMPACT = { Low: 1, Medium: 2, High: 3, Critical: 4 };
-// const LIKELIHOOD = { Low: 1, Medium: 2, High: 3, Critical: 4 };
-// const CATEGORIES_MAP = {
-//   Availability: 1,
-//   Security: 2,
-//   Stability: 3,
-//   Performance: 4,
-// };
-// const STATUS = ['All', 'Enabled', 'Disabled'];
-// const IMPACTING = { '1 or more': 'true', None: 'false' };
-// const INCIDENT = { Incident: 'true', 'Non-incident': 'false' };
-// const REMEDIATION = { 'Ansible playbook': true, Manual: false };
-// const REBOOT = { Required: true, 'Not required': false };
-
-// missing: incidents, remediation, rebootRequired
-
-//Filters configuration
-// const filtersConf = {
-//   name: {
-//     selectorText: 'Name',
-//     values: ['foobar'],
-//     type: 'input',
-//     filterFunc: (it, value) =>
-//       it.description.toLowerCase().includes(value.toLowerCase()),
-//     urlParam: 'text',
-//     urlValue: (it) => it.replace(/ /g, '+'),
-//   },
-//   riskOfChange: {
-//     selectorText: 'Risk of change',
-//     values: Array.from(cumulativeCombinations(Object.keys(RISK_OF_CHANGE))),
-//     type: 'checkbox',
-//     urlParam: 'res_risk',
-//     urlValue: (it) =>
-//       encodeURIComponent(_.map(it, (x) => RISK_OF_CHANGE[x]).join(',')),
-//   },
-//   risk: {
-//     selectorText: 'Total risk',
-//     values: Array.from(cumulativeCombinations(Object.keys(TOTAL_RISK))),
-//     type: 'checkbox',
-//     filterFunc: (it, value) =>
-//       _.map(value, (x) => TOTAL_RISK[x]).includes(it.total_risk),
-//     urlParam: 'total_risk',
-//     urlValue: (it) =>
-//       encodeURIComponent(_.map(it, (x) => TOTAL_RISK[x]).join(',')),
-//   },
-//   impact: {
-//     selectorText: 'Impact',
-//     values: Array.from(cumulativeCombinations(Object.keys(IMPACT))),
-//     type: 'checkbox',
-//     filterFunc: (it, value) =>
-//       _.map(value, (x) => IMPACT[x]).includes(it.impact),
-//     urlParam: 'impact',
-//     urlValue: (it) => encodeURIComponent(_.map(it, (x) => IMPACT[x]).join(',')),
-//   },
-//   likelihood: {
-//     selectorText: 'Likelihood',
-//     values: Array.from(cumulativeCombinations(Object.keys(LIKELIHOOD))),
-//     type: 'checkbox',
-//     filterFunc: (it, value) =>
-//       _.map(value, (x) => LIKELIHOOD[x]).includes(it.likelihood),
-//     urlParam: 'likelihood',
-//     urlValue: (it) =>
-//       encodeURIComponent(_.map(it, (x) => LIKELIHOOD[x]).join(',')),
-//   },
-//   category: {
-//     selectorText: 'Category',
-//     values: Array.from(cumulativeCombinations(Object.keys(CATEGORIES))),
-//     type: 'checkbox',
-//     filterFunc: (it, value) =>
-//       _.intersection(
-//         _.flatMap(value, (x) => CATEGORIES[x]),
-//         it.tags
-//       ).length > 0,
-//     urlParam: 'category',
-//     urlValue: (it) =>
-//       encodeURIComponent(_.map(it, (x) => CATEGORIES_MAP[x]).join(',')),
-//   },
-//   incidents: {
-//     selectorText: 'Incidents',
-//     values: Array.from(cumulativeCombinations(Object.keys(INCIDENT))),
-//     type: 'checkbox',
-//     urlParam: 'incident',
-//     urlValue: (it) =>
-//       encodeURIComponent(_.map(it, (x) => INCIDENT[x]).join(',')),
-//   },
-//   remediation: {
-//     selectorText: 'Remediation',
-//     values: Array.from(cumulativeCombinations(Object.keys(REMEDIATION))),
-//     type: 'checkbox',
-//     urlParam: 'has_playbook',
-//     urlValue: (it) =>
-//       encodeURIComponent(_.map(it, (x) => REMEDIATION[x]).join(',')),
-//   },
-//   reboot: {
-//     selectorText: 'Reboot required',
-//     values: Array.from(cumulativeCombinations(Object.keys(REBOOT))),
-//     type: 'checkbox',
-//     urlParam: 'reboot',
-//     urlValue: (it) => encodeURIComponent(_.map(it, (x) => REBOOT[x]).join(',')),
-//   },
-//   status: {
-//     selectorText: 'Status',
-//     values: STATUS,
-//     type: 'radio',
-//     filterFunc: (it, value) => {
-//       if (value === 'All') return true;
-//       else return it.disabled === (value === 'Disabled');
-//     },
-//     urlParam: 'rule_status',
-//     urlValue: (it) => it.toLowerCase(),
-//   },
-//   impacting: {
-//     selectorText: 'Systems impacted',
-//     values: Array.from(cumulativeCombinations(Object.keys(IMPACTING))),
-//     type: 'checkbox',
-//     filterFunc: (it, value) => {
-//       if (!value.includes('1 or more') && it.impacted_systems_count > 0)
-//         return false;
-//       if (!value.includes('None') && it.impacted_systems_count === 0)
-//         return false;
-//       return true;
-//     },
-//     urlParam: 'impacting',
-//     urlValue: (it) =>
-//       encodeURIComponent(_.map(it, (x) => IMPACTING[x]).join(',')),
-//   },
-// };
-
-// const filterApply = (filters) => applyFilters(filters, filtersConf);
-// const filterCombos = [{ impacting: ['1 or more'] }];
+const filterApply = (filters) => cypressApplyFilters(filters, filtersConf);
+const filterCombos = [{ impacting: ['1 or more'] }];
 
 //the default count is 20, you can pass the other number if you need to
 const DEFAULT_ROW_COUNT = 20;
-// const DEFAULT_FILTERS = {
-//   impacting: ['1 or more'],
-//   status: 'Enabled',
-// };
+const DEFAULT_FILTERS = {
+  impacting: ['1 or more'],
+  status: 'Enabled',
+};
 const TABLE_HEADERS = _.map(rulesTableColumns, (it) => it.title);
 const ROOT = 'table[aria-label=rule-table]';
 
@@ -260,7 +126,6 @@ describe('defaults', () => {
       .eq(0)
       .should('have.text', `1 - ${DEFAULT_ROW_COUNT}`);
   });
-  //couldn't check the url paramater because it's not applied to the url on the first render
   it('sorting using Total risk', () => {
     const column = 'Total risk';
     tableIsSortedBy(column);
@@ -269,16 +134,17 @@ describe('defaults', () => {
   it('applies total risk "Enabled" and systems impacted "1 or more" filters', () => {
     hasChip('Status', 'Enabled');
     hasChip('Systems impacted', '1 or more');
+    //initial call
+    cy.wait('@call');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
     cy.get(CHIP_GROUP).find('.pf-v5-c-chip__text').should('have.length', 2);
-    //couldn't check the url paramater because it's not applied to the url on the first render
-    //expect(window.location.search).to.contain(`status=enabled and systems impacted`);
   });
 
   it('name filter is a default filter', () => {
-    cy.get(TOOLBAR_FILTER)
-      .find('.pf-v5-c-menu-toggle')
+    cy.get('button[aria-label="Conditional filter"]')
+      .find('span[class=ins-c-conditional-filter__value-selector]')
       .should('have.text', 'Name');
-    cy.get(TOOLBAR_FILTER).find(TEXT_INPUT).should('exist');
+    cy.get(CONDITIONAL_FILTER).should('exist');
   });
 
   it('reset filters button is displayed', () => {
@@ -286,97 +152,179 @@ describe('defaults', () => {
   });
 });
 
-// describe('pagination', () => {
-//   beforeEach(() => {
-//     cy.intercept('*', {
-//       statusCode: 201,
-//       body: {
-//         ...fixtures,
-//       },
-//     }).as('call');
-//     mountComponent();
-//   });
-//   it('shows correct total number of rules', () => {
-//     checkPaginationTotal(fixtures.meta.count);
-//   });
+describe('pagination', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+    mountComponent();
+  });
+  it('shows correct total number of rules', () => {
+    checkPaginationTotal(fixtures.meta.count);
+  });
 
-//   it('values are expected ones', () => {
-//     checkPaginationValues(PAGINATION_VALUES);
-//   });
+  it('values are expected ones', () => {
+    checkPaginationValues(PAGINATION_VALUES);
+  });
 
-//   it('can change page limit', () => {
-//     // FIXME: best way to make the loop
-//     cy.wrap(PAGINATION_VALUES).each((el) => {
-//       changePagination(el).then(() => {
-//         expect(window.location.search).to.contain(`limit=${el}`);
-//       });
-//     });
-//   });
-// });
+  it('can change page limit', () => {
+    cy.wrap(PAGINATION_VALUES).each((el) => {
+      changePagination(el).then(() => {
+        expect(window.location.search).to.contain(`limit=${el}`);
+      });
+    });
+  });
+});
 
-// describe('filtering', () => {
-//   beforeEach(() => {
-//     cy.intercept('*', {
-//       statusCode: 201,
-//       body: {
-//         ...fixtures,
-//       },
-//     }).as('call');
-//     mountComponent();
-//   });
-// it('can clear filters', () => {
-//   cy.get(CHIP_GROUP)
-//     .find(CHIP)
-//     .ouiaId('close', 'button')
-//     .each(() => {
-//       cy.get(CHIP_GROUP).find(CHIP).ouiaId('close', 'button').eq(0).click();
-//     });
-//   // apply some filters
-//   filterApply(filterCombos[0]);
-//   cy.get(CHIP_GROUP).should(
-//     'have.length',
-//     Object.keys(filterCombos[0]).length
-//   );
-//   cy.get(CHIP_GROUP).should('exist');
-//   // clear filters
-//   cy.get('button').contains('Reset filters').click();
-//   // check default filters
-//   hasChip('Systems impacted', '1 or more');
-//   hasChip('Status', 'Enabled');
-//   cy.get(CHIP_GROUP).should(
-//     'have.length',
-//     Object.keys(DEFAULT_FILTERS).length
-//   );
-//   cy.get('button').contains('Reset filters').should('exist');
-//   checkRowCounts(DEFAULT_ROW_COUNT);
-// });
+describe('filtering', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+    mountComponent();
+  });
+  it('can clear filters', () => {
+    cy.get(CHIP_GROUP)
+      .find(CHIP)
+      .ouiaId('close', 'button')
+      .each(() => {
+        cy.get(CHIP_GROUP).find(CHIP).ouiaId('close', 'button').eq(0).click();
+      });
+    //apply some filters
+    filterApply(filterCombos[0]);
+    cy.get(CHIP_GROUP).should(
+      'have.length',
+      Object.keys(filterCombos[0]).length
+    );
+    cy.get(CHIP_GROUP).should('exist');
+    //clear filters
+    cy.get('button').contains('Reset filters').click();
+    //check default filters
+    hasChip('Systems impacted', '1 or more');
+    hasChip('Status', 'Enabled');
+    cy.get(CHIP_GROUP).should(
+      'have.length',
+      Object.keys(DEFAULT_FILTERS).length
+    );
+    cy.get('button').contains('Reset filters').should('exist');
+    //it is doubled because the expanded rows are also included
+    checkRowCounts(DEFAULT_ROW_COUNT * 2);
+  });
 
-// it('no filters show all recommendations', () => {
-//   removeAllChips();
-//   checkRowCounts(DEFAULT_ROW_COUNT);
-//   checkPaginationTotal(fixtures.meta.count);
-// });
+  it('no filters show all recommendations', () => {
+    removeAllChips();
+    checkRowCounts(DEFAULT_ROW_COUNT * 2);
+    checkPaginationTotal(fixtures.meta.count);
+  });
 
-//   describe('sends a request with correct parameters', () => {
-//     Object.entries(filtersConf).forEach(([key, config]) => {
-//       const { urlParam, values, urlValue, selectorText } = config;
+  it('will reset filters but not pagination and sorting', () => {
+    filterApply({ name: 'Lo' });
 
-//       it(`apply ${selectorText} filter`, () => {
-//         // initial call
-//         cy.wait('@call');
+    cy.get('th[data-label="Name"]').find('button').click();
+    cy.get(TOOLBAR).find('button').contains('Reset filters').click();
+    cy.get('th[data-label="Name"]')
+      .should('have.attr', 'aria-sort')
+      .and('contain', 'ascending');
+  });
+});
 
-//         if (selectorText === filtersConf.impacting.selectorText) {
-//           removeAllChips();
-//           cy.wait(['@call']);
-//         }
-//         filterApply({ [key]: values[0] });
-//         cy.wait('@call')
-//           .its('request.url')
-//           .should('include', `${urlParam}=${urlValue(values[0])}`);
-//       });
-//     });
-//   });
-// });
+describe('making request based on filters', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+    cy.intercept('**text=foobar**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('text=foobar');
+    cy.intercept('**res_risk**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('res_risk=1');
+    cy.intercept('**total_risk=1**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('total_risk=1');
+    cy.intercept('**likelihood**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('likelihood=1');
+    cy.intercept('**category**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('category=2');
+    cy.intercept('**incident**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('incident=true');
+    cy.intercept('**impact=1**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('impact=1');
+    cy.intercept('**reboot=true**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('reboot=true');
+    cy.intercept('**rule_status=all**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('rule_status=all');
+    cy.intercept('**has_playbook=true**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('has_playbook=true');
+    mountComponent();
+  });
+  Object.entries(filtersConf).forEach(([key, config]) => {
+    const { urlParam, values, urlValue, selectorText } = config;
+
+    it(`apply ${selectorText} filter`, () => {
+      removeAllChips();
+      cy.get('button').contains('Reset filters').click();
+      if (selectorText === 'Systems impacted') {
+        cy.wait(['@call']);
+        cy.wait(['@call']);
+      }
+      if (selectorText !== 'Systems impacted') {
+        filterApply({ [key]: values[0] });
+        cy.wait(['@call']);
+        cy.wait([`@${urlParam}=${urlValue(values[0])}`])
+          .its('request.url')
+          .should('include', `${urlParam}=${urlValue(values[0])}`);
+      }
+    });
+  });
+});
+
 describe('sorting', () => {
   beforeEach(() => {
     cy.intercept('*', {
@@ -388,9 +336,9 @@ describe('sorting', () => {
     mountComponent();
   });
   function checkSortingUrl(label, order, dataField) {
-    // get appropriate locators
+    //get appropriate locators
     const header = `th[data-label="${label}"]`;
-    // sort by column and verify URL
+    //sort by column and verify URL
     if (order === 'ascending') {
       cy.get(header).find('button').click();
       cy.url().should('include', `sort=${dataField}`);
@@ -499,55 +447,109 @@ describe('content', () => {
   });
 });
 
-// const UPDATE_METHOD_MAP = {
-//   '1 or more Conventional systems (RPM-DNF)': 'dnfyum',
-// };
+/* const UPDATE_METHOD_MAP = {
+  '1 or more Conventional systems (RPM-DNF)': 'dnfyum',
+  '1 or more Immutable (OSTree)': 'ostree',
+};
 
-// const update_method = {
-//   selectorText: 'Systems impacted',
-//   values: Array.from(cumulativeCombinations(Object.keys(UPDATE_METHOD_MAP))),
-//   type: 'checkbox',
-//   filterFunc: () => {
-//     return 'dnfyum';
-//   },
-//   urlParam: 'update_method',
-//   urlValue: (it) =>
-//     encodeURIComponent(_.map(it, (x) => UPDATE_METHOD_MAP[x]).join(',')),
-// };
+const update_method = {
+  selectorText: 'Systems impacted',
+  values: Array.from(cumulativeCombinations(Object.keys(UPDATE_METHOD_MAP))),
+  type: 'checkbox',
+  filterFunc: () => {
+    return 'dnfyum';
+  },
+  urlParam: 'update_method',
+  urlValue: (it) =>
+    encodeURIComponent(_.map(it, (x) => UPDATE_METHOD_MAP[x]).join(',')),
+};
 
-// const applyUpdateMethod = (filters) => applyFilters(filters, { update_method });
+const applyUpdateMethod = (filters) =>
+  cypressApplyFilters(filters, { update_method });
 
-// describe('sends a request with correct parameters for impacting filter', () => {
-//   beforeEach(() => {
-//     cy.intercept('*', {
-//       statusCode: 201,
-//       body: {
-//         ...fixtures,
-//       },
-//     }).as('impact_call');
-//     mountComponent({ hasEdgeDevices: true });
-//   });
+describe('Edge devices tests', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('impact_call');
+    mountComponent({ hasEdgeDevices: true });
+  });
 
-//   it('has dnf, ostree impacting filters and status filter active by default', () => {
-//     hasChip('Status', 'Enabled');
-//     hasChip('Systems impacted', '1 or more Conventional systems (RPM-DNF)');
-//     hasChip('Systems impacted', '1 or more Immutable (OSTree)');
+  it('table is loaded', () => {
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
+    cy.get(ROOT).should('have.length', 1);
+  });
 
-//     cy.get(CHIP_GROUP).find('.pf-c-chip__text').should('have.length', 3);
-//   });
+  it(`with edge devices`, () => {
+    const { values } = update_method;
 
-//   it(`with edge devices`, () => {
-//     const { urlParam, values, urlValue } = update_method;
+    //initial call
+    cy.wait('@impact_call');
+    cy.get('button').contains('Reset filters').should('exist');
 
-//     // initial call
-//     cy.wait('@impact_call');
+    applyUpdateMethod({ update_method: values[0] });
+    cy.wait('@impact_call')
+      .its('request.url')
+      .should('include', `update_method=ostree%2Cdnfyum`);
+  });
+});
 
-//     cy.get('.pf-c-button').contains('Reset filters').click();
-//     cy.wait(['@impact_call', '@impact_call']);
+describe('defaults with edge devices', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+    cy.intercept('**=edge?', {
+      statusCode: 201,
+      body: {
+        data: {
+          total: 1,
+        },
+        isSuccess: true,
+      },
+      query: {
+        data: {
+          total: 1,
+        },
+      },
+    }).as('edgecall');
+    mountComponent();
+  });
+  it(`pagination is set to ${DEFAULT_ROW_COUNT}`, () => {
+    cy.get('.pf-v5-c-menu-toggle__text')
+      .find('b')
+      .eq(0)
+      .should('have.text', `1 - ${DEFAULT_ROW_COUNT}`);
+  });
+  it('sorting using Total risk', () => {
+    const column = 'Total risk';
+    tableIsSortedBy(column);
+  });
+  it('applies total risk "Enabled" and systems impacted filters', () => {
+    hasChip('Status', 'Enabled');
+    hasChip('Systems impacted', '1 or more');
+    //initial call
+    cy.wait('@call');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
+    hasChip('Systems impacted', '1 or more');
+    cy.get(CHIP_GROUP).find('.pf-v5-c-chip__text').should('have.length', 3);
+  });
 
-//     applyUpdateMethod({ update_method: values[0] });
-//     cy.wait('@impact_call')
-//       .its('request.url')
-//       .should('include', `${urlParam}=${urlValue(values[0])}`);
-//   });
-// });
+  it('name filter is a default filter', () => {
+    cy.get('button[aria-label="Conditional filter"]')
+      .find('span[class=ins-c-conditional-filter__value-selector]')
+      .should('have.text', 'Name');
+    cy.get(CONDITIONAL_FILTER).should('exist');
+  });
+
+  it('reset filters button is displayed', () => {
+    cy.get('button').contains('Reset filters').should('exist');
+  });
+});
+ */

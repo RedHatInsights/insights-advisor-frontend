@@ -11,6 +11,7 @@ import logger from 'redux-logger';
 import { notificationsMiddleware } from '@redhat-cloud-services/frontend-components-notifications/';
 import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import promiseMiddleware from 'redux-promise-middleware';
+import { SystemVariety } from '../Services/SystemVariety';
 
 const env = 'development';
 const production = env !== 'production';
@@ -20,6 +21,7 @@ const reducer = {
   [Topics.reducerPath]: Topics.reducer,
   [Systems.reducerPath]: Systems.reducer,
   [Acks.reducerPath]: Acks.reducer,
+  [SystemVariety.reducerPath]: SystemVariety.reducer,
   filters,
   notifications: notificationsReducer,
   systemReducer: systemReducer([], {}),
@@ -46,6 +48,7 @@ const middleware = (getDefaultMiddleware) =>
     Systems.middleware,
     Topics.middleware,
     Acks.middleware,
+    SystemVariety.middleware,
     notificationsMiddleware({
       errorTitleKey: ['message'],
       errorDescriptionKey: ['response.data.detail'],

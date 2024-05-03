@@ -4,7 +4,7 @@ import React from 'react';
 const Loading = () => (
   <Card>
     <CardBody>
-      <List />
+      <List data-ouia-component-id="loading-skeleton" />
     </CardBody>
   </Card>
 );

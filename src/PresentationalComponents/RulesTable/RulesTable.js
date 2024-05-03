@@ -1,7 +1,6 @@
 import './_RulesTable.scss';
 import * as AppConstants from '../../AppConstants';
 import { DEBOUNCE_DELAY } from '../../AppConstants';
-import { useLocation } from 'react-router-dom';
 import {
   Pagination,
   PaginationVariant,
@@ -49,13 +48,12 @@ import {
   getDefaultImpactingFilter,
 } from './helpers';
 import { useActionsResolver } from './useActionsResolver';
-import { AccountStatContext } from '../../ZeroStateWrapper';
 import impactingFilter from '../Filters/impactingFilter';
+import { AccountStatContext } from '../../ZeroStateWrapper';
 
 const RulesTable = ({ isTabActive, pathway }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const { search } = useLocation();
   const permsExport = usePermissions(
     'advisor',
     AppConstants.PERMS.export
@@ -80,9 +78,8 @@ const RulesTable = ({ isTabActive, pathway }) => {
   const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
   const [viewSystemsModalRule, setViewSystemsModalRule] = useState({});
   const [isAllExpanded, setIsAllExpanded] = useState(false);
-  const { hasEdgeDevices } = useContext(AccountStatContext);
-
   const setFilters = (filters) => dispatch(updateRecFilters(filters));
+  const { hasEdgeDevices, edgeQuerySuccess } = useContext(AccountStatContext);
 
   const options = {
     ...(selectedTags?.length ? { tags: selectedTags.join(',') } : {}),
@@ -146,24 +143,20 @@ const RulesTable = ({ isTabActive, pathway }) => {
     hasEdgeDevices
   );
 
-  // Builds table filters from url params
+  // Builds table filters from url params depending on the query success
   useEffect(() => {
-    if (isTabActive && search && filterBuilding) {
+    if (isTabActive && filterBuilding && !hasEdgeDevices) {
       urlFilterBuilder(sortIndices, setSearchText, setFilters, filters);
     }
-
-    setFilterBuilding(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    dispatch(
-      updateRecFilters({
+    if (isTabActive && filterBuilding && hasEdgeDevices) {
+      urlFilterBuilder(sortIndices, setSearchText, setFilters, {
         ...filtersInitialState.recState,
         ...getDefaultImpactingFilter(hasEdgeDevices),
-      })
-    );
-  }, [hasEdgeDevices, dispatch]);
+      });
+    }
+    setFilterBuilding(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [edgeQuerySuccess]);
 
   useEffect(() => {
     const sortIndex = Object.entries(sortIndices)?.find(
