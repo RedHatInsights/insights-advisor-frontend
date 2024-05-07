@@ -100,11 +100,10 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
 
     if (rule?.description) {
       chrome.updateDocumentTitle(
-        `${rule.description} - Recommendations - Advisor | RHEL`,
-        true
+        `${rule.description} - Recommendations - Advisor`
       );
     }
-  }, [chrome, intl, rule.description, ruleId]);
+  }, [chrome, rule.description, ruleId]);
 
   useEffect(() => {
     isEdgeParityEnabled

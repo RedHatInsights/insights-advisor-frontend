@@ -28,11 +28,10 @@ const InventoryDetails = ({ entity }) => {
   useEffect(() => {
     if (entity && (entity.display_name || entity.id)) {
       chrome.updateDocumentTitle(
-        `${entity.display_name || entity.id} - Systems - Advisor | RHEL`,
-        true
+        `${entity.display_name || entity.id} - Systems - Advisor`
       );
     }
-  }, [entity, intl, chrome]);
+  }, [entity, chrome]);
 
   return (
     <DetailWrapper

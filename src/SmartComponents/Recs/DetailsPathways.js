@@ -80,10 +80,9 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
     pathway &&
       !isFetching &&
       chrome.updateDocumentTitle(
-        `${pathway.name} - ${messages.pathways.defaultMessage} - Advisor | RHEL`,
-        true
+        `${pathway.name} - ${messages.pathways.defaultMessage} - Advisor`
       );
-  }, [chrome, intl, pathway, pathname, isFetching]);
+  }, [chrome, pathway, pathname, isFetching]);
 
   const waitForElm = (selector) => {
     return new Promise((resolve) => {
