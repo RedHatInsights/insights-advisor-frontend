@@ -1,8 +1,9 @@
 name: sentryConfig
 
 on:
-  release:
-    types: [published, prereleased]
+  push:
+    branches:
+      - 'master'
 
 
 jobs:
@@ -12,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@master
       - name: Create a Sentry.io release
-        uses: tclindner/sentry-releases-action@v1.0.0
+        uses: getsentry/action-release@v1
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
@@ -20,5 +21,5 @@ jobs:
         with:
           tagName: ${{ github.ref }}
           environment: master
-          releaseNamePrefix: Rhel-Advisor
+          releaseNamePrefix: advisor
           sourcemaps: 'dist/sourcemaps'
