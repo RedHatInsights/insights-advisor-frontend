@@ -20,6 +20,7 @@ import {
   InventoryReportFetchFailed,
 } from './EmptyStates';
 import { useLocation } from 'react-router-dom';
+import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 
 import messages from '../../Messages';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
@@ -179,8 +180,15 @@ export const useBuildRows = (
             cells: [
               {
                 title: (
-                  <span>
-                    {rule.description} <RuleLabels rule={rule} />
+                  <span key={key}>
+                    <Link
+                      key={key}
+                      app="advisor"
+                      to={`/recommendations/${rule.rule_id}`}
+                    >
+                      {rule.description}{' '}
+                    </Link>
+                    <RuleLabels rule={rule} isCompact />
                   </span>
                 ),
               },
