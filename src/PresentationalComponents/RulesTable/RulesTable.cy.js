@@ -420,7 +420,7 @@ describe('content', () => {
     mountComponent();
   });
 
-  it.skip('has correct links', () => {
+  it('has correct links', () => {
     expandContent(1);
 
     cy.get('.ins-c-rule-details')
@@ -446,7 +446,6 @@ describe('content', () => {
       );
   });
 });
-
 /* const UPDATE_METHOD_MAP = {
   '1 or more Conventional systems (RPM-DNF)': 'dnfyum',
   '1 or more Immutable (OSTree)': 'ostree',
