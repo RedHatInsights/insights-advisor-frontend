@@ -2,7 +2,6 @@
 const { resolve } = require('path');
 const config = require('@redhat-cloud-services/frontend-components-config');
 const path = require('path');
-const webpack = require('webpack');
 const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 
 const { config: webpackConfig, plugins } = config({
@@ -37,14 +36,6 @@ if (process.env.SENTRY_AUTH_TOKEN) {
       project: process.env.SENTRY_PROJECT,
     })
   );
-
-  const SourceMapsPlugin = new webpack.SourceMapDevToolPlugin({
-    test: /\.js/i,
-    exclude: /(node_modules|bower_components)/i,
-    filename: `sourcemaps/[name].js.map`,
-  });
-
-  plugins.push(SourceMapsPlugin);
 }
 
 module.exports = () => {
