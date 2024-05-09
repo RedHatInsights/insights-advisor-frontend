@@ -446,6 +446,7 @@ describe('content', () => {
       );
   });
 });
+
 /* const UPDATE_METHOD_MAP = {
   '1 or more Conventional systems (RPM-DNF)': 'dnfyum',
   '1 or more Immutable (OSTree)': 'ostree',
