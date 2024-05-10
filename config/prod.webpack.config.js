@@ -2,6 +2,7 @@
 const { resolve } = require('path');
 const config = require('@redhat-cloud-services/frontend-components-config');
 const path = require('path');
+const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 
 const { config: webpackConfig, plugins } = config({
   rootFolder: resolve(__dirname, '../'),
@@ -27,6 +28,16 @@ plugins.push(
   )
 );
 
+if (process.env.SENTRY_AUTH_TOKEN) {
+  plugins.push(
+    sentryWebpackPlugin({
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+    })
+  );
+}
+
 module.exports = () => {
   const CopyFilesWebpackPlugin = new (require('copy-webpack-plugin'))({
     patterns: [
@@ -39,5 +50,9 @@ module.exports = () => {
   });
   plugins.push(CopyFilesWebpackPlugin);
 
-  return { ...webpackConfig, plugins };
+  return {
+    ...webpackConfig,
+    ...(process.env.SENTRY_AUTH_TOKEN ? { devtool: 'source-map' } : {}), // Source map generation must be turned on
+    plugins,
+  };
 };
