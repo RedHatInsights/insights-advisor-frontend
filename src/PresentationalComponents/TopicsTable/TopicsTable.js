@@ -80,8 +80,10 @@ const TopicsTable = ({ props }) => {
                 {
                   title: (
                     <span className="pf-m-center" key={key}>
-                      {' '}
-                      {value.impacted_systems_count}
+                      <Link key={key} to={`/topics/${value.slug}`}>
+                        {' '}
+                        {value.impacted_systems_count}
+                      </Link>
                     </span>
                   ),
                 },
