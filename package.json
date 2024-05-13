@@ -74,6 +74,7 @@
     "@redhat-cloud-services/frontend-components": "^4.2.3",
     "@redhat-cloud-services/frontend-components-advisor-components": "^1.0.19",
     "@redhat-cloud-services/frontend-components-charts": "3.2.6",
+    "@redhat-cloud-services/frontend-components-config": "^6.0.13",
     "@redhat-cloud-services/frontend-components-notifications": "^4.1.0",
     "@redhat-cloud-services/frontend-components-pdf-generator": "^4.0.5",
     "@redhat-cloud-services/frontend-components-remediations": "3.2.12",
@@ -113,11 +114,10 @@
     "@babel/preset-flow": "7.14.5",
     "@babel/preset-react": "7.14.5",
     "@cypress/code-coverage": "^3.12.36",
-    "@cypress/webpack-dev-server": "^3.8.0",
     "@cypress/react18": "^2.0.0",
+    "@cypress/webpack-dev-server": "^3.8.0",
     "@formatjs/cli": "4.2.33",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "1.2.1",
-    "@redhat-cloud-services/frontend-components-config": "^6.0.11",
     "@redhat-cloud-services/tsc-transform-imports": "^1.0.9",
     "@scalprum/core": "^0.6.1",
     "@testing-library/jest-dom": "^6.1.4",
@@ -157,8 +157,7 @@
     "stylelint-scss": "3.20.1",
     "ts-patch": "^3.1.2",
     "typescript": "5.3.3",
-    "webpack-cli": "4.10.0",
-    "webpack-dev-server": "^4.4.0"
+    "webpack-cli": "^5.1.4"
   },
   "insights": {
     "appname": "advisor"
