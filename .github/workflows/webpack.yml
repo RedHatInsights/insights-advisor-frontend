@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@master
+      - run: npm ci
+      - run: npm run build --if-present
       - name: Create a Sentry.io release
         uses: getsentry/action-release@v1
         env:
