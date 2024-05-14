@@ -77,22 +77,9 @@ const Inventory = ({
     };
     !pathway && urlBuilder(refreshedFilters, selectedTags);
   };
-
-  const fetchSystems = getEntities(
-    handleRefresh,
-    pathway,
-    setCurPageIds,
-    setTotal,
-    selectedIds,
-    setFullFilters,
-    fullFilters,
-    rule
-  );
-
   const grabPageIds = () => {
     return curPageIds || [];
   };
-
   const {
     tableProps: bulkSelectTableProps,
     toolbarProps,
@@ -106,6 +93,18 @@ const Inventory = ({
     identitfier: 'system_uuid',
     isLoading,
   });
+
+  const fetchSystems = getEntities(
+    handleRefresh,
+    pathway,
+    setCurPageIds,
+    setTotal,
+    selectedIds,
+    setFullFilters,
+    fullFilters,
+    rule
+  );
+
   // Ensures rows are marked as selected, runs the check on remediation Status
   useEffect(() => {
     dispatch({

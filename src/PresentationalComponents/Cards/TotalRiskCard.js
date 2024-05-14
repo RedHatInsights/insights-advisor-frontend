@@ -19,10 +19,12 @@ import {
 } from '@patternfly/react-core/dist/esm/layouts/Grid/index';
 
 import React from 'react';
-import chart_color_black_100 from '@patternfly/react-tokens/dist/esm/chart_color_black_100';
-import chart_color_gold_400 from '@patternfly/react-tokens/dist/esm/chart_color_gold_400';
-import chart_color_orange_300 from '@patternfly/react-tokens/dist/esm/chart_color_orange_300';
-import chart_color_red_100 from '@patternfly/react-tokens/dist/esm/chart_color_red_100';
+import {
+  chart_color_black_100,
+  chart_color_gold_400,
+  chart_color_orange_300,
+  chart_color_red_100,
+} from '@patternfly/react-tokens';
 import messages from '../../Messages';
 import { strong } from '../../Utilities/intlHelper';
 import { useIntl } from 'react-intl';
