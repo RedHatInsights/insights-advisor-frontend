@@ -11,7 +11,6 @@ import Loading from '../../PresentationalComponents/Loading/Loading';
 import { PERMS } from '../../AppConstants';
 import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
 import messages from '../../Messages';
-import { useIntl } from 'react-intl';
 import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import OverviewDashbar from '../../PresentationalComponents/OverviewDashbar/OverviewDashbar';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
@@ -34,19 +33,14 @@ const PathwaysTable = lazy(() =>
 );
 
 const List = () => {
-  const intl = useIntl();
   const { pathname } = useLocation();
   const navigate = useInsightsNavigate();
   const permsExport = usePermissions('advisor', PERMS.export);
   const chrome = useChrome();
 
   useEffect(() => {
-    chrome.updateDocumentTitle(
-      intl.formatMessage(messages.documentTitle, {
-        subnav: messages.recommendations.defaultMessage,
-      })
-    );
-  }, [chrome, intl]);
+    chrome.updateDocumentTitle('Recommendations - Advisor');
+  }, [chrome]);
 
   const [activeTab, setActiveTab] = useState(
     pathname === '/insights/advisor/recommendations/pathways'

@@ -5,22 +5,16 @@ import {
 import React, { useEffect } from 'react';
 import SystemsTable from '../../PresentationalComponents/SystemsTable/SystemsTable';
 import messages from '../../Messages';
-import { useIntl } from 'react-intl';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import EdgeSystemsBanner from './EdgeSystemsBanner';
 import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const List = () => {
-  const intl = useIntl();
   const chrome = useChrome();
   const edgeParityFFlag = useFeatureFlag('advisor.edge_parity');
   useEffect(() => {
-    chrome.updateDocumentTitle(
-      intl.formatMessage(messages.documentTitle, {
-        subnav: messages.systems.defaultMessage,
-      })
-    );
-  }, [chrome, intl]);
+    chrome.updateDocumentTitle('Systems - Advisor');
+  }, [chrome]);
 
   return (
     <React.Fragment>

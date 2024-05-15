@@ -27,14 +27,11 @@ const InventoryDetails = ({ entity }) => {
   const chrome = useChrome();
   useEffect(() => {
     if (entity && (entity.display_name || entity.id)) {
-      const subnav = `${entity.display_name || entity.id} - ${
-        messages.systems.defaultMessage
-      }`;
       chrome.updateDocumentTitle(
-        intl.formatMessage(messages.documentTitle, { subnav })
+        `${entity.display_name || entity.id} - Systems - Advisor`
       );
     }
-  }, [entity, intl, chrome]);
+  }, [entity, chrome]);
 
   return (
     <DetailWrapper

@@ -99,12 +99,11 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
     }
 
     if (rule?.description) {
-      const subnav = `${rule.description} - ${messages.recommendations.defaultMessage}`;
       chrome.updateDocumentTitle(
-        intl.formatMessage(messages.documentTitle, { subnav })
+        `${rule.description} - Recommendations - Advisor`
       );
     }
-  }, [chrome, intl, rule.description, ruleId]);
+  }, [chrome, rule.description, ruleId]);
 
   useEffect(() => {
     isEdgeParityEnabled
