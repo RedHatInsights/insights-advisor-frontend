@@ -14,7 +14,6 @@ module.exports = {
         project: process.env.SENTRY_PROJECT,
       }),
   ],
-  ...(process.env.port ? { port: parseInt(process.env.port) } : {}),
   moduleFederation: {
     shared: [
       {
