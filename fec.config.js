@@ -25,9 +25,9 @@ module.exports = {
         },
       },
     ],
-  },
-  exposes: {
-    './RootApp': resolve(__dirname, '../src/AppEntry'),
-    './SystemDetail': resolve(__dirname, '../src/Modules/SystemDetail'),
+    exposes: {
+      './RootApp': resolve(__dirname, 'src/AppEntry'),
+      './SystemDetail': resolve(__dirname, 'src/Modules/SystemDetail'),
+    },
   },
 };
