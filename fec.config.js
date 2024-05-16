@@ -6,12 +6,19 @@ module.exports = {
   debug: true,
   useProxy: process.env.PROXY === 'true',
   proxyVerbose: true,
+  devtool: 'source-map',
   plugins: [
     process.env.SENTRY_AUTH_TOKEN &&
       sentryWebpackPlugin({
         authToken: process.env.SENTRY_AUTH_TOKEN,
         org: process.env.SENTRY_ORG,
         project: process.env.SENTRY_PROJECT,
+        _experiments: {
+          moduleMetadata: ({ release }) => ({
+            dsn: process.env.SENTRY_DSN,
+            release,
+          }),
+        },
       }),
   ],
   moduleFederation: {
