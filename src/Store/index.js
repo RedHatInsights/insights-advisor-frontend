@@ -7,14 +7,11 @@ import { Recs } from '../Services/Recs';
 import { Systems } from '../Services/Systems';
 import { Topics } from '../Services/Topics';
 import filters from '../Services/Filters';
-import logger from 'redux-logger';
 import { notificationsMiddleware } from '@redhat-cloud-services/frontend-components-notifications/';
 import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import promiseMiddleware from 'redux-promise-middleware';
 import { SystemVariety } from '../Services/SystemVariety';
 
-const env = 'development';
-const production = env !== 'production';
 const reducer = {
   [Pathways.reducerPath]: Pathways.reducer,
   [Recs.reducerPath]: Recs.reducer,
@@ -52,17 +49,13 @@ const middleware = (getDefaultMiddleware) =>
     notificationsMiddleware({
       errorTitleKey: ['message'],
       errorDescriptionKey: ['response.data.detail'],
-    }),
-    production && logger
+    })
   );
 
-const getStore = () => {
-  return configureStore({
-    reducer,
-    middleware,
-    devTools: production,
-  });
-};
+const store = configureStore({
+  reducer,
+  middleware,
+});
 
 const updateReducers = (newReducers = {}) =>
   combineReducers({
@@ -70,4 +63,4 @@ const updateReducers = (newReducers = {}) =>
     ...newReducers,
   });
 
-export { getStore, updateReducers };
+export { store, updateReducers };
