@@ -7,14 +7,11 @@ import { Recs } from '../Services/Recs';
 import { Systems } from '../Services/Systems';
 import { Topics } from '../Services/Topics';
 import filters from '../Services/Filters';
-import logger from 'redux-logger';
 import { notificationsMiddleware } from '@redhat-cloud-services/frontend-components-notifications/';
 import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import promiseMiddleware from 'redux-promise-middleware';
 import { SystemVariety } from '../Services/SystemVariety';
 
-const env = 'development';
-const production = env !== 'production';
 const reducer = {
   [Pathways.reducerPath]: Pathways.reducer,
   [Recs.reducerPath]: Recs.reducer,
@@ -28,20 +25,8 @@ const reducer = {
   entitiesDetailsReducer: entitiesDetailsReducer({}),
 };
 
-const middleware = (getDefaultMiddleware) =>
-  getDefaultMiddleware({
-    serializableCheck: {
-      ignoredActions: [
-        'LOAD_ENTITIES',
-        'LOAD_ENTITY',
-        'CLEAR_FILTERS',
-        'LOAD_ENTITY_FULFILLED',
-      ],
-    },
-    immutableCheck: {
-      ignoredPaths: ['entities'],
-    },
-  }).concat(
+const getMiddlewares = (appMiddlewares) => {
+  const middlewares = [
     promiseMiddleware,
     Pathways.middleware,
     Recs.middleware,
@@ -53,16 +38,32 @@ const middleware = (getDefaultMiddleware) =>
       errorTitleKey: ['message'],
       errorDescriptionKey: ['response.data.detail'],
     }),
-    production && logger
-  );
+    ...appMiddlewares,
+  ];
 
-const getStore = () => {
-  return configureStore({
-    reducer,
-    middleware,
-    devTools: production,
-  });
+  return (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [
+          'LOAD_ENTITIES',
+          'LOAD_ENTITY',
+          'CLEAR_FILTERS',
+          'LOAD_ENTITY_FULFILLED',
+        ],
+      },
+      immutableCheck: {
+        ignoredPaths: ['entities'],
+      },
+    }).concat(
+      ...middlewares.filter((middleware) => typeof middleware !== 'undefined')
+    );
 };
+
+const initStore = (appMiddlewares = []) =>
+  configureStore({
+    reducer,
+    middleware: getMiddlewares(appMiddlewares),
+  });
 
 const updateReducers = (newReducers = {}) =>
   combineReducers({
@@ -70,4 +71,4 @@ const updateReducers = (newReducers = {}) =>
     ...newReducers,
   });
 
-export { getStore, updateReducers };
+export { initStore, updateReducers };

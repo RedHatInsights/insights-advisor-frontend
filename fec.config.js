@@ -3,9 +3,9 @@ const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 
 module.exports = {
   appUrl: '/insights/advisor',
-  debug: true,
+  debug: false,
   useProxy: process.env.PROXY === 'true',
-  proxyVerbose: true,
+  proxyVerbose: false,
   plugins: [
     process.env.SENTRY_AUTH_TOKEN &&
       sentryWebpackPlugin({
@@ -25,7 +25,10 @@ module.exports = {
       },
     ],
     exposes: {
-      './RootApp': resolve(__dirname, 'src/AppEntry'),
+      './RootApp': resolve(
+        __dirname,
+        `/src/${process.env.NODE_ENV !== 'production' ? 'Dev' : ''}AppEntry`
+      ),
       './SystemDetail': resolve(__dirname, 'src/Modules/SystemDetail'),
     },
   },

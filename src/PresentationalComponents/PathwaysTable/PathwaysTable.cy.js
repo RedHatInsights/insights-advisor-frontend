@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
-import { getStore } from '../../Store';
+import { initStore } from '../../Store';
 import PathwaysTable from './PathwaysTable';
 import fixtures from '../../../cypress/fixtures/pathways.json';
 import { pathwaysTableColumns } from '../../../cypress/support/globals';
@@ -29,11 +29,10 @@ const ROWS_SHOWN = fixtures.data.length;
 
 const mountComponent = () => {
   let activeTab = 1;
-  const store = getStore();
   cy.mount(
     <MemoryRouter>
       <IntlProvider locale={navigator.language.slice(0, 2)}>
-        <Provider store={store}>
+        <Provider store={initStore()}>
           <Routes>
             <Route
               key={'Recommendations Pathways'}

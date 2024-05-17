@@ -1,14 +1,14 @@
-/* eslint-disable no-console */
 import App from './App';
+import PropTypes from 'prop-types';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/index';
 import { NotificationsPortal } from '@redhat-cloud-services/frontend-components-notifications/';
 import { Provider } from 'react-redux';
 import React, { useMemo } from 'react';
-import { getStore } from './Store';
+import { initStore } from './Store';
 import messages from '../locales/translations.json';
 
-const AppEntry = () => {
-  const store = useMemo(() => getStore(), []);
+const AppEntry = ({ logger }) => {
+  const store = useMemo(() => initStore([logger]), [logger]);
 
   return (
     <IntlProvider locale={navigator.language.slice(0, 2)} messages={messages}>
@@ -20,4 +20,7 @@ const AppEntry = () => {
   );
 };
 
+AppEntry.propTypes = {
+  logger: PropTypes.function,
+};
 export default AppEntry;
