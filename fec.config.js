@@ -27,7 +27,7 @@ module.exports = {
     exposes: {
       './RootApp': resolve(
         __dirname,
-        `/src/${process.env.NODE_ENV === 'development' ? 'Dev' : ''}AppEntry`
+        `/src/${process.env.NODE_ENV !== 'production' ? 'Dev' : ''}AppEntry`
       ),
       './SystemDetail': resolve(__dirname, 'src/Modules/SystemDetail'),
     },
