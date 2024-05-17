@@ -25,20 +25,8 @@ const reducer = {
   entitiesDetailsReducer: entitiesDetailsReducer({}),
 };
 
-const middleware = (getDefaultMiddleware) =>
-  getDefaultMiddleware({
-    serializableCheck: {
-      ignoredActions: [
-        'LOAD_ENTITIES',
-        'LOAD_ENTITY',
-        'CLEAR_FILTERS',
-        'LOAD_ENTITY_FULFILLED',
-      ],
-    },
-    immutableCheck: {
-      ignoredPaths: ['entities'],
-    },
-  }).concat(
+const getMiddlewares = (appMiddlewares) => {
+  const middlewares = [
     promiseMiddleware,
     Pathways.middleware,
     Recs.middleware,
@@ -49,13 +37,33 @@ const middleware = (getDefaultMiddleware) =>
     notificationsMiddleware({
       errorTitleKey: ['message'],
       errorDescriptionKey: ['response.data.detail'],
-    })
-  );
+    }),
+    ...appMiddlewares,
+  ];
 
-const store = configureStore({
-  reducer,
-  middleware,
-});
+  return (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [
+          'LOAD_ENTITIES',
+          'LOAD_ENTITY',
+          'CLEAR_FILTERS',
+          'LOAD_ENTITY_FULFILLED',
+        ],
+      },
+      immutableCheck: {
+        ignoredPaths: ['entities'],
+      },
+    }).concat(
+      ...middlewares.filter((middleware) => typeof middleware !== 'undefined')
+    );
+};
+
+const initStore = (appMiddlewares = []) =>
+  configureStore({
+    reducer,
+    middleware: getMiddlewares(appMiddlewares),
+  });
 
 const updateReducers = (newReducers = {}) =>
   combineReducers({
@@ -63,4 +71,4 @@ const updateReducers = (newReducers = {}) =>
     ...newReducers,
   });
 
-export { store, updateReducers };
+export { initStore, updateReducers };

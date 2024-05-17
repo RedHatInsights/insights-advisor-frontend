@@ -3,7 +3,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import RulesTable from './RulesTable';
 import { Provider } from 'react-redux';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
-import { store } from '../../Store';
+import { initStore } from '../../Store';
 import fixtures from '../../../cypress/fixtures/recommendations.json';
 import _ from 'lodash';
 import { rulesTableColumns } from '../../../cypress/support/globals';
@@ -43,7 +43,7 @@ const mountComponent = ({ hasEdgeDevices } = { hasEdgeDevices: false }) => {
           locale={navigator.language.slice(0, 2)}
           messages={messages}
         >
-          <Provider store={store}>
+          <Provider store={initStore()}>
             <Routes>
               <Route
                 key={'Recommendations'}
@@ -393,7 +393,7 @@ urlParamsList.forEach((urlParams, index) => {
             locale={navigator.language.slice(0, 2)}
             messages={messages}
           >
-            <Provider store={store}>
+            <Provider store={initStore()}>
               <RulesTable />
             </Provider>
           </IntlProvider>

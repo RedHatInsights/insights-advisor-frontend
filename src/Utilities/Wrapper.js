@@ -5,11 +5,11 @@ import { IntlProvider } from 'react-intl';
 import { MemoryRouter } from 'react-router-dom';
 
 import messages from '../../locales/translations.json';
-import { store } from '../Store';
+import { initStore } from '../Store';
 
 const Wrapper = ({ children }) => (
   <IntlProvider messages={messages} defaultLocale="en" locale="en">
-    <Provider store={store}>
+    <Provider store={initStore()}>
       <MemoryRouter>{children}</MemoryRouter>
     </Provider>
   </IntlProvider>

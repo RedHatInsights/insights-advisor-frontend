@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
-import { store } from '../../Store';
+import { initStore } from '../../Store';
 import fixtures from '../../../cypress/fixtures/topics.json';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
@@ -23,7 +23,7 @@ const mountComponent = () => {
   cy.mount(
     <MemoryRouter>
       <IntlProvider>
-        <Provider store={store}>
+        <Provider store={initStore()}>
           <Routes>
             <Route
               key={'Topics'}

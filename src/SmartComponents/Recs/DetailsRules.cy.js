@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
-import { store } from '../../Store';
+import { initStore } from '../../Store';
 
 import rulesfixtures from '../../../cypress/fixtures/detailsrules.json';
 import topicsfixtures from '../../../cypress/fixtures/detailsrulestopic.json';
@@ -18,7 +18,7 @@ const mountComponent = () => {
   cy.mount(
     <MemoryRouter>
       <IntlProvider locale={navigator.language.slice(0, 2)}>
-        <Provider store={store}>
+        <Provider store={initStore()}>
           <Routes>
             <Route
               key={'Recommendation details'}
