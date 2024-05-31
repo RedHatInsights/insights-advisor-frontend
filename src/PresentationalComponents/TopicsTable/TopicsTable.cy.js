@@ -58,6 +58,15 @@ describe('renders correctly', () => {
   it('renders table header', () => {
     checkTableHeaders(TABLE_HEADERS);
   });
+
+  it('links to the topic detail page', () => {
+    cy.get('tbody tr:first [data-label=Name] a')
+      .should('have.attr', 'href')
+      .and('include', `/topics/${fixtures[0].slug}`);
+    cy.get('tbody tr:first [data-label="Affected systems"] a')
+      .should('have.attr', 'href')
+      .and('include', `/topics/${fixtures[0].slug}`);
+  });
 });
 
 describe('defaults', () => {
