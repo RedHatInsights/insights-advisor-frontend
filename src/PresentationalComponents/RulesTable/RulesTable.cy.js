@@ -129,6 +129,14 @@ describe('defaults', () => {
     const column = 'Total risk';
     tableIsSortedBy(column);
   });
+  it('links to the recommendations detail page', () => {
+    cy.get('tbody tr:first [data-label=Name] a')
+      .should('have.attr', 'href')
+      .and('include', `/recommendations/${fixtures.data[0].rule_id}`);
+    cy.get('tbody tr:first [data-label=Systems] a')
+      .should('have.attr', 'href')
+      .and('include', `/recommendations/${fixtures.data[0].rule_id}`);
+  });
 
   it('applies total risk "Enabled" and systems impacted "1 or more" filters', () => {
     hasChip('Status', 'Enabled');

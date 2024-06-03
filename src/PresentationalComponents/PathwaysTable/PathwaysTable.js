@@ -186,9 +186,12 @@ const PathwaysTable = ({ isTabActive }) => {
               },
               {
                 title: (
-                  <div
+                  <Link
                     key={key}
-                  >{`${pathway.impacted_systems_count.toLocaleString()}`}</div>
+                    to={`/recommendations/pathways/${pathway.slug}`}
+                  >
+                    {`${pathway.impacted_systems_count.toLocaleString()}`}
+                  </Link>
                 ),
               },
               {

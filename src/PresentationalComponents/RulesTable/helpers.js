@@ -415,9 +415,9 @@ export const buildRows = (
                 <span>{intl.formatMessage(messages.nA)}</span>
               </Tooltip>
             ) : (
-              <div
-                key={key}
-              >{`${value.impacted_systems_count.toLocaleString()}`}</div>
+              <Link key={key} to={`/recommendations/${value.rule_id}`}>
+                {`${value.impacted_systems_count.toLocaleString()}`}
+              </Link>
             ),
         },
         {

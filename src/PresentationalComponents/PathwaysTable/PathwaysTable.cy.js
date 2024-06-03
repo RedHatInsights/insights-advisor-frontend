@@ -67,6 +67,14 @@ describe('Pathways table tests', () => {
     it('renders table header', () => {
       checkTableHeaders(TABLE_HEADERS);
     });
+    it('links to the pathway detail page', () => {
+      cy.get('tbody tr:first [data-label=Name] a')
+        .should('have.attr', 'href')
+        .and('include', `/recommendations/pathways/${fixtures.data[0].slug}`);
+      cy.get('tbody tr:first [data-label=Systems] a')
+        .should('have.attr', 'href')
+        .and('include', `/recommendations/pathways/${fixtures.data[0].slug}`);
+    });
   });
 
   describe('defaults', () => {
