@@ -148,7 +148,7 @@ describe('defaults', () => {
   });
 
   it('name filter is a default filter', () => {
-    cy.get('button[aria-label="Conditional filter"]')
+    cy.get('button[aria-label="Conditional filter toggle"]')
       .find('span[class=ins-c-conditional-filter__value-selector]')
       .should('have.text', 'Name');
     cy.get(CONDITIONAL_FILTER).should('exist');
