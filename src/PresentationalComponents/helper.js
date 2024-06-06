@@ -1,6 +1,26 @@
 import { buildTagFilter, workloadQueryBuilder } from './Common/Tables';
 import { orderBy } from 'lodash';
 
+export const buildOsFilter = (osFilter = {}) => {
+  const osVersions = Object.entries(osFilter)
+    .reduce((acc, [, osGroupValues]) => {
+      return [
+        ...acc,
+        ...Object.entries(osGroupValues)
+          .filter(([, value]) => value === true)
+          .map(([key]) => {
+            const keyParts = key.split('-');
+            const version = keyParts[keyParts.length - 1];
+
+            return version.includes('.') ? version : undefined;
+          }),
+      ];
+    }, [])
+    .filter((v) => !!v);
+
+  return osVersions;
+};
+
 export const createOptions = (
   advisorFilters,
   page,
@@ -13,7 +33,8 @@ export const createOptions = (
   SID,
   systemsPage
 ) => {
-  let options = {
+  const osFilter = filters.osFilter && buildOsFilter(filters.osFilter);
+  const options = {
     ...advisorFilters,
     limit: per_page,
     offset: page * per_page - per_page,
@@ -32,8 +53,8 @@ export const createOptions = (
       pathway && {
         display_name: filters?.hostnameOrId,
       }),
-    ...(filters.osFilter?.length > 0 && {
-      rhel_version: filters.osFilter.map(({ value }) => value).join(','),
+    ...(osFilter?.length && {
+      rhel_version: osFilter.join(','),
     }),
     ...(filters?.hostGroupFilter?.length && {
       groups: filters.hostGroupFilter.join(','),

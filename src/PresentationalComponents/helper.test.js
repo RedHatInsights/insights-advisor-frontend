@@ -89,7 +89,22 @@ describe('createOptions', () => {
   });
 
   it('returns a rhel_version prop in the API options when osFilter is in filters', () => {
-    const osFilter = [{ value: '7.8' }, { value: '7.9' }];
+    const osFilter = {
+      'RHEL-9': {
+        'RHEL-9': true,
+        'RHEL-9-9.0': true,
+        'RHEL-9-9.1': true,
+        'RHEL-9-9.5': true,
+        'RHEL-9-9.3': true,
+        'RHEL-9-9.4': true,
+        'RHEL-9-9.2': true,
+      },
+      'RHEL-8': {
+        'RHEL-8': null,
+        'RHEL-8-8.0': true,
+        'RHEL-8-8.2': true,
+      },
+    };
 
     expect(
       createOptions(
@@ -104,7 +119,7 @@ describe('createOptions', () => {
         SID,
         systemsPage
       ).rhel_version
-    ).toEqual('7.8,7.9');
+    ).toEqual('9.0,9.1,9.5,9.3,9.4,9.2,8.0,8.2');
   });
 
   it('returns a groups prop in the API options when hostGroupFilter is in filters', () => {
