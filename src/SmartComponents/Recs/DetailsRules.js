@@ -78,6 +78,7 @@ export const DetailsRules = ({
           header={
             <React.Fragment>
               <PageHeaderTitle
+                ouiaId="rule-title-text"
                 title={
                   <React.Fragment>
                     {rule.description} <RuleLabels rule={rule} />

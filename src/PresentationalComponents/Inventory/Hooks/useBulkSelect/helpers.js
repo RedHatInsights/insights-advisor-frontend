@@ -2,9 +2,7 @@ import React from 'react';
 import { Spinner } from '@patternfly/react-core';
 
 export const compileTitle = (itemsTotal, isLoading) => {
-  if (itemsTotal === 0 && !isLoading) {
-    return null;
-  } else if (isLoading) {
+  if (isLoading) {
     return (
       <React.Fragment>
         <Spinner size="sm" />
@@ -12,7 +10,7 @@ export const compileTitle = (itemsTotal, isLoading) => {
       </React.Fragment>
     );
   } else {
-    return `${itemsTotal} selected`;
+    return null;
   }
 };
 

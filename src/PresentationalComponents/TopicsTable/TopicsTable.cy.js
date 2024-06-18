@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
-import { getStore } from '../../Store';
+import { initStore } from '../../Store';
 import fixtures from '../../../cypress/fixtures/topics.json';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
@@ -20,11 +20,10 @@ const TABLE_HEADERS = _.map(topicsTableColumns, (it) => it.title);
 const filterCombos = [{ name: ['HTTP'] }];
 
 const mountComponent = () => {
-  const store = getStore();
   cy.mount(
     <MemoryRouter>
       <IntlProvider>
-        <Provider store={store}>
+        <Provider store={initStore()}>
           <Routes>
             <Route
               key={'Topics'}
@@ -58,6 +57,15 @@ describe('renders correctly', () => {
 
   it('renders table header', () => {
     checkTableHeaders(TABLE_HEADERS);
+  });
+
+  it('links to the topic detail page', () => {
+    cy.get('tbody tr:first [data-label=Name] a')
+      .should('have.attr', 'href')
+      .and('include', `/topics/${fixtures[0].slug}`);
+    cy.get('tbody tr:first [data-label="Affected systems"] a')
+      .should('have.attr', 'href')
+      .and('include', `/topics/${fixtures[0].slug}`);
   });
 });
 

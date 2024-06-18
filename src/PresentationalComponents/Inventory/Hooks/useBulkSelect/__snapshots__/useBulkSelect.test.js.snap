@@ -12,6 +12,7 @@ exports[`useBulkSelect returns a bulk select configuration 1`] = `
     "toolbarProps": {
       "bulkSelect": {
         "checked": false,
+        "count": 0,
         "isDisabled": true,
         "items": [
           {
@@ -51,6 +52,7 @@ exports[`useBulkSelect returns a bulk select configuration with the correct opti
   "toolbarProps": {
     "bulkSelect": {
       "checked": null,
+      "count": 1,
       "isDisabled": false,
       "items": [
         {
@@ -70,11 +72,7 @@ exports[`useBulkSelect returns a bulk select configuration with the correct opti
         },
       ],
       "onSelect": [Function],
-      "toggleProps": {
-        "children": [
-          "1 selected",
-        ],
-      },
+      "toggleProps": null,
     },
   },
 }
@@ -93,6 +91,7 @@ exports[`useBulkSelect returns a bulk select configuration with the correct opti
   "toolbarProps": {
     "bulkSelect": {
       "checked": null,
+      "count": 1,
       "isDisabled": false,
       "items": [
         {
@@ -112,11 +111,7 @@ exports[`useBulkSelect returns a bulk select configuration with the correct opti
         },
       ],
       "onSelect": [Function],
-      "toggleProps": {
-        "children": [
-          "1 selected",
-        ],
-      },
+      "toggleProps": null,
     },
   },
 }
@@ -135,6 +130,7 @@ exports[`useBulkSelect returns a bulk select configuration with the correct opti
   "toolbarProps": {
     "bulkSelect": {
       "checked": null,
+      "count": 1,
       "isDisabled": false,
       "items": [
         {
@@ -154,9 +150,51 @@ exports[`useBulkSelect returns a bulk select configuration with the correct opti
         },
       ],
       "onSelect": [Function],
+      "toggleProps": null,
+    },
+  },
+}
+`;
+
+exports[`useBulkSelect returns a spinner on loading 1`] = `
+{
+  "selectNone": [Function],
+  "selectedIds": undefined,
+  "tableProps": {
+    "canSelectAll": false,
+    "onSelect": [Function],
+  },
+  "toolbarProps": {
+    "bulkSelect": {
+      "checked": false,
+      "count": 0,
+      "isDisabled": true,
+      "items": [
+        {
+          "onClick": [Function],
+          "props": {
+            "isDisabled": true,
+          },
+          "title": "Select none",
+        },
+        {
+          "onClick": [Function],
+          "title": "Select page (1 items)",
+        },
+        {
+          "onClick": [Function],
+          "title": "Select all (2 items)",
+        },
+      ],
+      "onSelect": [Function],
       "toggleProps": {
         "children": [
-          "1 selected",
+          <React.Fragment>
+            <Spinner
+              size="sm"
+            />
+                 0 selected
+          </React.Fragment>,
         ],
       },
     },

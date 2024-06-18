@@ -36,7 +36,7 @@ const useBulkSelect = ({
   const allSelected = selectedIdsTotal === total;
   const noneSelected = selectedIdsTotal === 0;
 
-  const isDisabled = total === 0;
+  const isDisabled = total === 0 || isLoading;
   const checked = checkboxState(selectedIdsTotal, total);
   const title = compileTitle(selectedIdsTotal, isLoading);
 
@@ -79,6 +79,7 @@ const useBulkSelect = ({
         toolbarProps: {
           bulkSelect: {
             toggleProps: title ? { children: [title] } : null,
+            count: selectedIds?.length || 0,
             isDisabled,
             items: [
               {

@@ -1,8 +1,9 @@
 language: node_js
 notifications:
   email: false
+dist: focal
 node_js:
-  - "16"
+  - "18"
 install:
   - npm ci
 jobs:

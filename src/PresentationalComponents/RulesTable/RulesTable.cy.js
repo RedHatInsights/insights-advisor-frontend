@@ -3,7 +3,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import RulesTable from './RulesTable';
 import { Provider } from 'react-redux';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
-import { getStore } from '../../Store';
+import { initStore } from '../../Store';
 import fixtures from '../../../cypress/fixtures/recommendations.json';
 import _ from 'lodash';
 import { rulesTableColumns } from '../../../cypress/support/globals';
@@ -36,7 +36,6 @@ import {
 import { filtersConf } from '../../../cypress/rulestablesconsts';
 
 const mountComponent = ({ hasEdgeDevices } = { hasEdgeDevices: false }) => {
-  const store = getStore();
   cy.mount(
     <MemoryRouter>
       <AccountStatContext.Provider value={{ hasEdgeDevices }}>
@@ -44,7 +43,7 @@ const mountComponent = ({ hasEdgeDevices } = { hasEdgeDevices: false }) => {
           locale={navigator.language.slice(0, 2)}
           messages={messages}
         >
-          <Provider store={store}>
+          <Provider store={initStore()}>
             <Routes>
               <Route
                 key={'Recommendations'}
@@ -130,6 +129,14 @@ describe('defaults', () => {
     const column = 'Total risk';
     tableIsSortedBy(column);
   });
+  it('links to the recommendations detail page', () => {
+    cy.get('tbody tr:first [data-label=Name] a')
+      .should('have.attr', 'href')
+      .and('include', `/recommendations/${fixtures.data[0].rule_id}`);
+    cy.get('tbody tr:first [data-label=Systems] a')
+      .should('have.attr', 'href')
+      .and('include', `/recommendations/${fixtures.data[0].rule_id}`);
+  });
 
   it('applies total risk "Enabled" and systems impacted "1 or more" filters', () => {
     hasChip('Status', 'Enabled');
@@ -141,7 +148,7 @@ describe('defaults', () => {
   });
 
   it('name filter is a default filter', () => {
-    cy.get('button[aria-label="Conditional filter"]')
+    cy.get('button[aria-label="Conditional filter toggle"]')
       .find('span[class=ins-c-conditional-filter__value-selector]')
       .should('have.text', 'Name');
     cy.get(CONDITIONAL_FILTER).should('exist');
@@ -394,7 +401,7 @@ urlParamsList.forEach((urlParams, index) => {
             locale={navigator.language.slice(0, 2)}
             messages={messages}
           >
-            <Provider store={getStore()}>
+            <Provider store={initStore()}>
               <RulesTable />
             </Provider>
           </IntlProvider>

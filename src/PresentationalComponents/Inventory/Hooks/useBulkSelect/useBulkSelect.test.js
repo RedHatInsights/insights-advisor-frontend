@@ -7,6 +7,7 @@ describe('useBulkSelect', () => {
     onSelect: () => ({}),
     itemIdsInTable: () => [],
     itemIdsOnPage: () => [],
+    isLoading: false,
   };
 
   it('returns a bulk select configuration', () => {
@@ -53,6 +54,20 @@ describe('useBulkSelect', () => {
         preselected: ['ID'],
         itemIdsInTable: () => ['ID', 'ID2'],
         itemIdsOnPage: () => ['ID'],
+      })
+    );
+
+    expect(result.current).toMatchSnapshot();
+  });
+
+  it('returns a spinner on loading', () => {
+    const { result } = renderHook(() =>
+      useBulkSelect({
+        ...defaultOptions,
+        total: 2,
+        itemIdsInTable: () => ['ID', 'ID2'],
+        itemIdsOnPage: () => ['ID'],
+        isLoading: true,
       })
     );
 

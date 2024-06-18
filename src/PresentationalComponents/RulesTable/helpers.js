@@ -18,7 +18,7 @@ import {
   TooltipPosition,
 } from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
-import AnsibeTowerIcon from '@patternfly/react-icons/dist/esm/icons/ansibeTower-icon';
+import AnsibleTowerIcon from '@patternfly/react-icons/dist/esm/icons/ansible-tower-icon';
 import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
 import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
@@ -415,9 +415,9 @@ export const buildRows = (
                 <span>{intl.formatMessage(messages.nA)}</span>
               </Tooltip>
             ) : (
-              <div
-                key={key}
-              >{`${value.impacted_systems_count.toLocaleString()}`}</div>
+              <Link key={key} to={`/recommendations/${value.rule_id}`}>
+                {`${value.impacted_systems_count.toLocaleString()}`}
+              </Link>
             ),
         },
         {
@@ -425,7 +425,7 @@ export const buildRows = (
             <div className="ins-c-center-text " key={key}>
               {value.playbook_count ? (
                 <span>
-                  <AnsibeTowerIcon size="sm" />{' '}
+                  <AnsibleTowerIcon size="sm" />{' '}
                   {intl.formatMessage(messages.playbook)}
                 </span>
               ) : (
