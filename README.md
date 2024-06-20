@@ -69,3 +69,5 @@ This project uses [Patternfly React](https://github.com/patternfly/patternfly-re
 
 ## Insights Components
 This app imports components from [Insights Front-end Components library](https://github.com/RedHatInsights/frontend-components). ESI tags are used to import [Insights Chrome](https://github.com/RedHatInsights/insights-chrome) which takes care of the header, sidebar, and footer.
+
+
