@@ -5,3 +5,6 @@ export const useFeatureFlag = (flag) => {
   const isFlagEnabled = useFlag(flag);
   return flagsReady ? isFlagEnabled : false;
 };
+
+export const useWorkspaceFeatureFlag = () =>
+  useFeatureFlag('platform.rbac.groups-to-workspaces-rename');

@@ -21,6 +21,7 @@ import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
 import { Spinner } from '@patternfly/react-core';
+import { useWorkspaceFeatureFlag } from '../../Utilities/Hooks';
 
 const Inventory = ({
   tableProps,
@@ -60,6 +61,7 @@ const Inventory = ({
     useState(true);
   //This value comes in from the backend as 0, or 1. To be consistent it is set to -1
   const [rulesPlaybookCount, setRulesPlaybookCount] = useState(-1);
+  let isWorkSpaceEnabled = useWorkspaceFeatureFlag();
 
   const handleRefresh = (options) => {
     /* Rec table doesn't use the same sorting params as sys table, switching between the two results in the rec table blowing up cuz its trying to
@@ -279,7 +281,6 @@ const Inventory = ({
       );
       let tags = defaultColumns.filter(({ key }) => key === 'tags');
       let groups = defaultColumns.filter(({ key }) => key === 'groups');
-
       //Link to the Systems in the Recommendation details table and Pathway details table
       displayName = {
         ...displayName[0],
@@ -316,6 +317,7 @@ const Inventory = ({
 
       groups = {
         ...groups[0],
+        title: isWorkSpaceEnabled ? 'Workspaces' : 'Groups',
         transforms: [wrappable],
       };
 
