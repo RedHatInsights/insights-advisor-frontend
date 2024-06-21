@@ -30,6 +30,7 @@ const DisableRule = ({
   const [singleSystem, setSingleSystem] = useState(
     host !== undefined || hosts.length > 0
   );
+  const justificationMaxLength = 255;
 
   const [setAck] = useSetAckMutation();
 
@@ -160,6 +161,7 @@ const DisableRule = ({
             id="disable-rule-justification"
             aria-describedby="disable-rule-justification"
             value={justification}
+            maxLength={justificationMaxLength}
             onChange={(_event, text) => setJustificaton(text)}
             onKeyDown={(e) =>
               e.key === 'Enter' && (e.preventDefault(), disableRule())
