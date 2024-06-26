@@ -317,7 +317,7 @@ const Inventory = ({
 
       groups = {
         ...groups[0],
-        title: isWorkSpaceEnabled ? 'Workspaces' : 'Groups',
+        title: isWorkSpaceEnabled ? 'Workspace' : 'Group',
         transforms: [wrappable],
       };
 
