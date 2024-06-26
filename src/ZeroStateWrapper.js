@@ -70,7 +70,7 @@ export const ZeroStateWrapper = ({ children }) => {
         </Bullseye>
       }
     >
-      {!hasSystems ? (
+      {!hasSystems && conventionalQuerySuccess ? (
         <Suspense
           fallback={
             <Bullseye>
