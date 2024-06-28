@@ -5,6 +5,7 @@ module.exports = {
   appUrl: '/insights/advisor',
   debug: false,
   useProxy: process.env.PROXY === 'true',
+ devtool: 'source-map',
   proxyVerbose: false,
   plugins: [
     process.env.SENTRY_AUTH_TOKEN &&
@@ -12,6 +13,12 @@ module.exports = {
         authToken: process.env.SENTRY_AUTH_TOKEN,
         org: process.env.SENTRY_ORG,
         project: process.env.SENTRY_PROJECT,
+        _experiments: {
+          moduleMetadata: ({ release }) => ({
+            dsn: process.env.SENTRY_DSN,
+            release,
+          }),
+        },
       }),
   ],
   moduleFederation: {
