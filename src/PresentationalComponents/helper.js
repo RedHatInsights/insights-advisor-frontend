@@ -34,6 +34,9 @@ export const createOptions = (
   systemsPage
 ) => {
   const osFilter = filters.osFilter && buildOsFilter(filters.osFilter);
+  // RHINENG-11227: remove system incident filter if it has multiple elements, which will be both
+  // 'true' and 'false', because it will result in a 400 BadRequest from the API
+  advisorFilters.incident?.length > 1 && delete advisorFilters.incident;
   const options = {
     ...advisorFilters,
     limit: per_page,
