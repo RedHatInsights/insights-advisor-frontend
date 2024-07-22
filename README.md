@@ -9,8 +9,8 @@
 
 ## Running locally
 1. Install dependencies with `npm install`
-2. Run development server with `npm run start:proxy:beta`
-3. Local version of the app will be available at https://stage.foo.redhat.com:1337/preview/insights/advisor/
+2. Run development server with `npm run start:proxy`
+3. Local version of the app will be available at https://stage.foo.redhat.com:1337/insights/advisor/
 
 In case you want to use the stable environment instead of beta you can run the app with `npm run start:proxy` and access it from https://stage.foo.redhat.com:1337/insights/advisor/. Usually there is no difference between these two environments unless there is a large feature in progress which is hidden behind `isBeta` flag.
 
