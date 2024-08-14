@@ -19,7 +19,7 @@ import './commands';
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 import '@patternfly/patternfly/patternfly.scss';
-import { mount } from 'cypress/react';
+import { mount } from 'cypress/react18';
 import '@cypress/code-coverage/support';
 
 Cypress.Commands.add('mount', mount);
