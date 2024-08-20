@@ -1,25 +1,41 @@
 import React from 'react';
 import propTypes from 'prop-types';
 
-import { Card, CardBody, Flex, FlexItem, Text } from '@patternfly/react-core';
-import { DashbarCardTitle } from './components/DashbarCardTitle/DashbarCardTitle';
-import { DashbarCardTagOrIcon } from './components/DashbarCardTagOrIcon/DashbarCardTagOrIcon';
+import {
+  Card,
+  CardBody,
+  Flex,
+  FlexItem,
+  Skeleton,
+  Text,
+} from '@patternfly/react-core';
 
-export const OverviewDashbarCard = ({ title, count, onClickFilterByTitle }) => (
+export const OverviewDashbarCard = ({
+  isLoaded,
+  title,
+  badge,
+  count,
+  onClickFilterByTitle,
+}) => (
   <Card isFullHeight className="dashbar-item">
     <CardBody>
-      <DashbarCardTitle title={title} />
+      {title}
 
       <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+        <FlexItem>{badge}</FlexItem>
         <FlexItem>
-          <DashbarCardTagOrIcon title={title} />
-        </FlexItem>
-        <FlexItem>
-          <Text className="pf-v5-u-font-size-lg pf-v5-u-font-weight-bold pf-v5-u-mt-xs">
-            <a onClick={() => onClickFilterByTitle(title)} data-testid={title}>
-              {count}
-            </a>
-          </Text>
+          {isLoaded ? (
+            <Text className="pf-v5-u-font-size-lg pf-v5-u-font-weight-bold pf-v5-u-mt-xs">
+              <a
+                onClick={() => onClickFilterByTitle(title)}
+                data-testid={title}
+              >
+                {count}
+              </a>
+            </Text>
+          ) : (
+            <Skeleton width="50px" className="pf-v5-u-mt-xs" />
+          )}
         </FlexItem>
       </Flex>
     </CardBody>
@@ -27,7 +43,9 @@ export const OverviewDashbarCard = ({ title, count, onClickFilterByTitle }) => (
 );
 
 OverviewDashbarCard.propTypes = {
-  title: propTypes.string,
+  isLoaded: propTypes.bool,
+  title: propTypes.node,
+  badge: propTypes.node,
   count: propTypes.number,
   onClickFilterByTitle: propTypes.func,
 };

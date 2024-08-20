@@ -3,7 +3,7 @@ import propTypes from 'prop-types';
 
 import { Tooltip } from '@patternfly/react-core';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
-import { TOTAL_RISK_LABEL_LOWER } from '../../../../../AppConstants';
+import { TOTAL_RISK_LABEL_LOWER } from '../../../AppConstants';
 
 export const TagLabelWithTooltip = ({ typeOfTag }) => (
   <Tooltip

@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
-import { TagLabelWithTooltip } from '../components/DashbarCardTagOrIcon/TagLabelWithTooltip';
+import { TagLabelWithTooltip } from '../TagLabelWithTooltip';
 import {
   SEVERITY_MAP,
   CRITICAL_TAG,
