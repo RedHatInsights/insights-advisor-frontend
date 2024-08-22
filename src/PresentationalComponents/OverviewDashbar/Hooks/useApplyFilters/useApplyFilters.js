@@ -22,13 +22,13 @@ function useApplyFilters(changeTab) {
 
   // This function is used to apply filters to the recommendations table
   // It resets the values to be the default values, and then adds the values that are passed to it in Addedfilters
-  const applyFilters = (Addedfilters) => {
-    dispatch(updateRecFilters({ ...defaultFilters, ...Addedfilters }));
+  const applyFilters = (addedFilters) => {
+    dispatch(updateRecFilters({ ...defaultFilters, ...addedFilters }));
   };
 
   // this function is used to apply filters to the recommendations table based on the title of the card that was clicked
   // also, it changes the tab to the recommendations tab (only if the title matches one of the recommendations titles: critical, important, or incidents)
-  const applyFiltersByTitle = (title) => {
+  const onClickFilterByName = (title) => {
     switch (title) {
       case INCIDENTS:
         applyFilters({ incident: true });
@@ -43,13 +43,13 @@ function useApplyFilters(changeTab) {
         changeTab(RECOMMENDATIONS_TAB);
         break;
       default:
-        console.log(`Error! applyFiltersByTitle was provided with an invalid title. Valid titles are:
+        console.log(`Error! applyFiltersByName was provided with an invalid title. Valid titles are:
           '${PATHWAYS}', '${INCIDENTS}', '${IMPORTANT_RECOMMENDATIONS}' and '${CRITICAL_RECOMMENDATIONS}'`);
         break;
     }
   };
 
-  return { applyFiltersByTitle };
+  return { onClickFilterByName };
 }
 
 export default useApplyFilters;

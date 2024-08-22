@@ -24,9 +24,11 @@ describe('OverviewDashbarCard', () => {
   `('Should render Overview cards', async ({ title, count, filterFunc }) => {
     render(
       <OverviewDashbarCard
+        isLoaded
+        name={title}
         title={title}
         count={count}
-        onClickFilterByTitle={filterFunc}
+        onClickFilterByName={filterFunc}
       />
     );
     await screen.findByText(title);
@@ -50,9 +52,11 @@ describe('OverviewDashbarCard', () => {
     async ({ title, count, filterFunc }) => {
       render(
         <OverviewDashbarCard
+          isLoaded
+          name={title}
           title={title}
           count={count}
-          onClickFilterByTitle={filterFunc}
+          onClickFilterByName={filterFunc}
         />
       );
       await screen.findByText(title);

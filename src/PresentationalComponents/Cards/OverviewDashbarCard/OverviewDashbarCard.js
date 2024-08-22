@@ -11,11 +11,12 @@ import {
 } from '@patternfly/react-core';
 
 export const OverviewDashbarCard = ({
+  name,
   isLoaded,
   title,
   badge,
   count,
-  onClickFilterByTitle,
+  onClickFilterByName,
 }) => (
   <Card isFullHeight className="dashbar-item">
     <CardBody>
@@ -26,10 +27,7 @@ export const OverviewDashbarCard = ({
         <FlexItem>
           {isLoaded ? (
             <Text className="pf-v5-u-font-size-lg pf-v5-u-font-weight-bold pf-v5-u-mt-xs">
-              <a
-                onClick={() => onClickFilterByTitle(title)}
-                data-testid={title}
-              >
+              <a onClick={() => onClickFilterByName(name)} data-testid={name}>
                 {count}
               </a>
             </Text>
@@ -43,9 +41,10 @@ export const OverviewDashbarCard = ({
 );
 
 OverviewDashbarCard.propTypes = {
+  name: propTypes.string,
   isLoaded: propTypes.bool,
   title: propTypes.node,
   badge: propTypes.node,
   count: propTypes.number,
-  onClickFilterByTitle: propTypes.func,
+  onClickFilterByName: propTypes.func,
 };

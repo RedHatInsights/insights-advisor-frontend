@@ -15,6 +15,8 @@ import {
   CRITICAL_TAG,
   SEVERITY_MAP,
   IMPORTANT_TAG,
+  PATHWAYS,
+  INCIDENTS,
 } from '../../AppConstants';
 import { QuestionTooltip } from '../Common/Common';
 import { RouteIcon } from '@patternfly/react-icons';
@@ -25,12 +27,13 @@ const OverviewDashbar = ({ changeTab }) => {
   const { data } = useOverviewData();
   const { pathways, incidents, critical, important, loaded, isError } = data;
 
-  const { applyFiltersByTitle } = useApplyFilters(changeTab);
+  const { onClickFilterByName } = useApplyFilters(changeTab);
 
   return !isError ? (
     <Grid hasGutter id="overview-dashbar">
       <GridItem span={12} md={3}>
         <OverviewDashbarCard
+          name={PATHWAYS}
           isLoaded={loaded}
           title={
             <Title headingLevel="h6" size="md">
@@ -42,13 +45,14 @@ const OverviewDashbar = ({ changeTab }) => {
           }
           badge={<RouteIcon size="md" data-testid="route-icon" />}
           count={pathways}
-          onClickFilterByTitle={() => {
+          onClickFilterByName={() => {
             changeTab(PATHWAYS_TAB);
           }}
         />
       </GridItem>
       <GridItem span={12} md={3}>
         <OverviewDashbarCard
+          name={INCIDENTS}
           isLoaded={loaded}
           title={
             <Title headingLevel="h6" size="md">
@@ -65,11 +69,12 @@ const OverviewDashbar = ({ changeTab }) => {
             />
           }
           count={incidents}
-          onClickFilterByTitle={applyFiltersByTitle}
+          onClickFilterByName={onClickFilterByName}
         />
       </GridItem>
       <GridItem span={12} md={3}>
         <OverviewDashbarCard
+          name={CRITICAL_RECOMMENDATIONS}
           isLoaded={loaded}
           title={
             <Title headingLevel="h6" size="md">
@@ -78,11 +83,12 @@ const OverviewDashbar = ({ changeTab }) => {
           }
           badge={<TagLabelWithTooltip typeOfTag={SEVERITY_MAP[CRITICAL_TAG]} />}
           count={critical}
-          onClickFilterByTitle={applyFiltersByTitle}
+          onClickFilterByName={onClickFilterByName}
         />
       </GridItem>
       <GridItem span={12} md={3}>
         <OverviewDashbarCard
+          name={IMPORTANT_RECOMMENDATIONS}
           isLoaded={loaded}
           title={
             <Title headingLevel="h6" size="md">
@@ -93,7 +99,7 @@ const OverviewDashbar = ({ changeTab }) => {
             <TagLabelWithTooltip typeOfTag={SEVERITY_MAP[IMPORTANT_TAG]} />
           }
           count={important}
-          onClickFilterByTitle={applyFiltersByTitle}
+          onClickFilterByName={onClickFilterByName}
         />
       </GridItem>
     </Grid>
