@@ -5,7 +5,7 @@ import React from 'react';
 import messages from '../../Messages';
 import { Label, Tooltip, TooltipPosition } from '@patternfly/react-core';
 
-const RuleLabels = ({ rule, isCompact, noMargin }) => {
+const RuleLabels = ({ rule, isCompact = true, noMargin }) => {
   return (
     <React.Fragment>
       {rule?.tags?.search('incident') !== -1 && (
@@ -50,10 +50,6 @@ RuleLabels.propTypes = {
   rule: PropTypes.object,
   isCompact: PropTypes.bool,
   noMargin: PropTypes.bool,
-};
-
-RuleLabels.defaultProps = {
-  isCompact: true,
 };
 
 export default RuleLabels;

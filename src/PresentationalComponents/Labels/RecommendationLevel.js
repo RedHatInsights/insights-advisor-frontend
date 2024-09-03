@@ -4,7 +4,7 @@ import React from 'react';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 
-export const RecommendationLevel = ({ recLvl, isCompact }) => {
+export const RecommendationLevel = ({ recLvl, isCompact = true }) => {
   const intl = useIntl();
   const label = (text, recLvl, color) => (
     <Label color={color} isCompact>{`${text} - ${recLvl}%`}</Label>
@@ -25,10 +25,8 @@ export const RecommendationLevel = ({ recLvl, isCompact }) => {
 };
 
 RecommendationLevel.propTypes = {
-  props: PropTypes.array,
-};
-RecommendationLevel.defaultProps = {
-  isCompact: true,
+  recLvl: PropTypes.number,
+  isCompact: PropTypes.bool,
 };
 
 export default RecommendationLevel;

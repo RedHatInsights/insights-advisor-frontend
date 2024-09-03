@@ -16,12 +16,12 @@ import { useIntl } from 'react-intl';
 import { useSetAckMutation } from '../../Services/Acks';
 
 const DisableRule = ({
-  handleModalToggle,
-  isModalOpen,
+  handleModalToggle = () => {},
+  isModalOpen = false,
   host,
-  hosts,
-  rule,
-  afterFn,
+  hosts = [],
+  rule = {},
+  afterFn = () => {},
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -180,16 +180,6 @@ DisableRule.propTypes = {
   rule: PropTypes.object,
   afterFn: PropTypes.func,
   hosts: PropTypes.array,
-};
-
-DisableRule.defaultProps = {
-  isModalOpen: false,
-  handleModalToggle: () => undefined,
-  system: undefined,
-  rule: {},
-  afterFn: () => undefined,
-  host: undefined,
-  hosts: [],
 };
 
 export default DisableRule;

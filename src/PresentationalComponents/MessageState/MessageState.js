@@ -13,12 +13,12 @@ import React from 'react';
 const MessageState = ({
   className,
   children,
-  icon,
+  icon = CubesIcon,
   iconClass,
   iconStyle,
   text,
-  title,
-  variant,
+  title = '',
+  variant = EmptyStateVariant.full,
 }) => (
   <EmptyState className={className} variant={variant}>
     {icon !== 'none' && (
@@ -31,6 +31,7 @@ const MessageState = ({
 );
 
 MessageState.propTypes = {
+  className: PropTypes.string,
   children: PropTypes.any,
   icon: PropTypes.any,
   iconClass: PropTypes.any,
@@ -38,13 +39,6 @@ MessageState.propTypes = {
   text: PropTypes.any,
   title: PropTypes.string,
   variant: PropTypes.any,
-  className: PropTypes.string,
-};
-
-MessageState.defaultProps = {
-  icon: CubesIcon,
-  title: '',
-  variant: EmptyStateVariant.full,
 };
 
 export default MessageState;
