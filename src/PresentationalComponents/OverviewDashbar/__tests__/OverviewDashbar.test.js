@@ -41,6 +41,7 @@ describe('OverviewDashbar', () => {
         incidents: 2,
         critical: 3,
         important: 4,
+        loaded: true,
       },
     });
 

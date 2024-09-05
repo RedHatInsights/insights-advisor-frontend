@@ -92,7 +92,7 @@ const List = () => {
                 eventKey={PATHWAYS_TAB}
                 title={
                   <TabTitleText>
-                    {messages.pathways.defaultMessage}{' '}
+                    {messages.pathways.defaultMessage}
                     <QuestionTooltip
                       text={messages.recommendedPathways.defaultMessage}
                     />
