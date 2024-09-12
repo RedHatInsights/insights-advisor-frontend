@@ -49,11 +49,6 @@ const CategoryLabel = ({ labelList }) => {
 
 CategoryLabel.propTypes = {
   labelList: PropTypes.array,
-  isCompact: PropTypes.bool,
-};
-
-CategoryLabel.defaultProps = {
-  isCompact: true,
 };
 
 export default CategoryLabel;

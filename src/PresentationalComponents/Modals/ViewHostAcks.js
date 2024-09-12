@@ -19,7 +19,12 @@ import { useDispatch } from 'react-redux';
 import { useGetHostAcksQuery } from '../../Services/Acks';
 import { useIntl } from 'react-intl';
 
-const ViewHostAcks = ({ handleModalToggle, isModalOpen, rule, afterFn }) => {
+const ViewHostAcks = ({
+  handleModalToggle = () => {},
+  isModalOpen = false,
+  rule = {},
+  afterFn = () => {},
+}) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const addNotification = (data) => dispatch(notification(data));
@@ -129,13 +134,6 @@ ViewHostAcks.propTypes = {
   handleModalToggle: PropTypes.func,
   rule: PropTypes.object,
   afterFn: PropTypes.func,
-};
-
-ViewHostAcks.defaultProps = {
-  isModalOpen: false,
-  handleModalToggle: () => undefined,
-  rule: {},
-  afterFn: () => undefined,
 };
 
 export default ViewHostAcks;
