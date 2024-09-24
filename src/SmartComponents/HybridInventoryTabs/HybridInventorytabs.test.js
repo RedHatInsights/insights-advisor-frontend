@@ -3,7 +3,7 @@ import HybridInventory from './HybridInventoryTabs';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
-import { AccountStatContext } from '../../ZeroStateWrapper';
+import { AccountStatContext } from '../../Routes';
 
 jest.mock('@redhat-cloud-services/frontend-components/AsyncComponent', () => ({
   __esModule: true,

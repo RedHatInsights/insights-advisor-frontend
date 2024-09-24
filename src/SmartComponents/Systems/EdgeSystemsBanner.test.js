@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import EdgeSystemsBanner from './EdgeSystemsBanner';
 import { ComponentWithContext } from '../../Utilities/TestingUtilities';
-import { AccountStatContext } from '../../ZeroStateWrapper';
+import { AccountStatContext } from '../../Routes';
 
 describe('EdgeSystemsBanner', () => {
   it('does render with edge hosts present', () => {

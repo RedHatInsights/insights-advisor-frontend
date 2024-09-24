@@ -32,9 +32,9 @@ import { enableRule, bulkHostActions, edgeSystemsCheck } from './helpers';
 import { DetailsRules } from './DetailsRules';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
-import { AccountStatContext } from '../../ZeroStateWrapper.js';
 import { useFeatureFlag } from '../../Utilities/Hooks.js';
 import DetailsTitle from './DetailsTitle.js';
+import { AccountStatContext } from '../../Routes';
 
 const OverviewDetails = ({ isImmutableTabOpen }) => {
   const intl = useIntl();
