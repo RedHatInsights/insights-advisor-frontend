@@ -21,6 +21,6 @@ const AppEntry = ({ logger }) => {
 };
 
 AppEntry.propTypes = {
-  logger: PropTypes.function,
+  logger: PropTypes.func,
 };
 export default AppEntry;
