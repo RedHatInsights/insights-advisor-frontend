@@ -27,13 +27,13 @@ import {
 } from '@redhat-cloud-services/frontend-components-utilities';
 
 import messages from '../../Messages';
-import { AccountStatContext } from '../../ZeroStateWrapper';
 import {
   // eslint-disable-next-line no-unused-vars
   cumulativeCombinations,
   cypressApplyFilters,
 } from '../../../cypress/utils/table';
 import { filtersConf } from '../../../cypress/rulestablesconsts';
+import { AccountStatContext } from '../../Routes';
 
 const mountComponent = ({ hasEdgeDevices } = { hasEdgeDevices: false }) => {
   cy.mount(

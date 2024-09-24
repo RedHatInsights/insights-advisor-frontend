@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { Alert } from '@patternfly/react-core';
 import messages from '../../Messages';
-import { AccountStatContext } from '../../ZeroStateWrapper';
+import { AccountStatContext } from '../../Routes';
 
 const EdgeSystemsBanner = () => {
   const intl = useIntl();
