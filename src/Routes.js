@@ -5,7 +5,7 @@ import React, {
   useState,
   createContext,
 } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import ErrorState from '@redhat-cloud-services/frontend-components/ErrorState';
 import Messages from './Messages';
 import {
@@ -87,6 +87,10 @@ const routes = {
         /* webpackChunkName: "TopicAdmin" */ './PresentationalComponents/TopicsAdminTable/TopicsAdminTable'
       )
     ),
+  },
+  navigate: {
+    path: '*',
+    component: () => <Navigate replace to="recommendations" />,
   },
 };
 
