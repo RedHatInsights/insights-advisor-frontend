@@ -4,6 +4,7 @@ import { downloadFile } from '@redhat-cloud-services/frontend-components-utiliti
 import { BASE_URL, exportNotifications } from '../../AppConstants';
 import { Get } from '../../Utilities/Api';
 import { workloadQueryBuilder } from '../Common/Tables';
+import { populateExportError } from '../helper';
 
 const fileName = (exportTable) => {
   const defaultParams = {
@@ -44,7 +45,7 @@ const downloadHelper = async (
           dispatch(addNotification(exportNotifications.success));
           return result;
         })
-        .catch(() => dispatch(addNotification(exportNotifications.error)))
+        .catch((error) => dispatch(addNotification(populateExportError(error))))
     ).data;
 
     let formattedData = format === 'json' ? JSON.stringify(data) : data;

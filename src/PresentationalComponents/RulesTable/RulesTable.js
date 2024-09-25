@@ -259,7 +259,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
             downloadReport(
               'hits',
               fileType,
-              filters,
+              filterFetchBuilder(filters),
               selectedTags,
               workloads,
               SID,
