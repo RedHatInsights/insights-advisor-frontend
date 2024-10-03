@@ -211,6 +211,24 @@ spec:
         workspace: git-auth
       - name: netrc
         workspace: netrc
+    - name: parse-build-deploy-script
+      params:
+        - name: path-context
+          value: $(params.path-context)
+      taskRef:
+        resolver: git
+        params:
+          - name: url
+            value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
+          - name: revision
+            value: 2fcdfa9b4858ac941b50ad37317c4f9aaabf91b4
+          - name: pathInRepo
+            value: tasks/parse-build-deploy-script/parse-build-deploy-script.yaml
+      workspaces:
+      - name: source
+        workspace: workspace
+      runAfter:
+      - clone-repository
     - name: create-frontend-dockerfile
       taskRef:
         resolver: git
@@ -218,7 +236,7 @@ spec:
           - name: url
             value: https://github.com/RedHatInsights/konflux-consoledot-frontend-build
           - name: revision
-            value: a6838b71b88dc1e84f11764c9734e4880096585d  # replace with the latest commit from https://github.com/RedHatInsights/konflux-consoledot-frontend-build/commits
+            value: 2fcdfa9b4858ac941b50ad37317c4f9aaabf91b4
           - name: pathInRepo
             value: tasks/create-frontend-dockerfile/create-frontend-dockerfile.yaml
       workspaces:
