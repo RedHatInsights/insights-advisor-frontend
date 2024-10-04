@@ -454,7 +454,7 @@ export const exportNotifications = {
     variant: 'success',
   },
   error: {
-    title: 'Couldn’t download export. Reinitiate this export to try again.',
+    title: 'Couldn’t download export',
     variant: 'danger',
     autoDismiss: false,
   },
