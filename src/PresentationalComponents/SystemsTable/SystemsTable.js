@@ -309,7 +309,13 @@ const SystemsTable = () => {
               dispatch
             ),
           extraItems: [
-            <li key="download-pd" role="menuitem">
+            <li
+              key="download-pdf"
+              className="pf-v5-c-menu__list-item"
+              style={{ justifyContent: 'center', display: 'flex' }}
+              data-ouia-component-type="PF5/DropdownItem"
+              data-ouia-component-id="DownloadPDF"
+            >
               <SystemsPdf filters={pdfFilters} />
             </li>,
           ],
