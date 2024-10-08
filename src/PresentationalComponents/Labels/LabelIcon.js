@@ -10,7 +10,7 @@ const LabelIcon = ({ icon, text }) => (
 
 LabelIcon.propTypes = {
   icon: PropTypes.object,
-  text: PropTypes.bool,
+  text: PropTypes.string,
 };
 
 export default LabelIcon;
