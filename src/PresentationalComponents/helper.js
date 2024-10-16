@@ -1,5 +1,6 @@
 import { buildTagFilter, workloadQueryBuilder } from './Common/Tables';
 import { orderBy } from 'lodash';
+import { exportNotifications } from '../AppConstants';
 
 export const buildOsFilter = (osFilter = {}) => {
   const osVersions = Object.entries(osFilter)
@@ -86,4 +87,11 @@ export const createSortParam = (sortField, sortDirection = 'ASC') => {
     (sortField === 'groups' && 'group_name') ||
     sortField
   }`;
+};
+
+export const populateExportError = (error) => {
+  return {
+    ...exportNotifications.error,
+    title: `${exportNotifications.error.title}: ${error.message}`,
+  };
 };

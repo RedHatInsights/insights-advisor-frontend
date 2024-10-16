@@ -16,6 +16,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { BuildExecReport } from './BuildExecReport';
 import { ExportIcon } from '@patternfly/react-icons';
+import { populateExportError } from '../helper';
 
 const DownloadExecReport = ({ isDisabled }) => {
   const intl = useIntl();
@@ -55,7 +56,7 @@ const DownloadExecReport = ({ isDisabled }) => {
       return [report];
     } catch (e) {
       setLoading(false);
-      dispatch(addNotification(exportNotifications.error));
+      dispatch(addNotification(populateExportError(e)));
 
       return [];
     }
