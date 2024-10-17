@@ -19,6 +19,20 @@ import { useIntl } from 'react-intl';
 import SystemAdvisor from '../../SmartComponents/SystemAdvisor';
 import { useParams } from 'react-router-dom';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+import { Skeleton } from '@patternfly/react-core';
+
+const InventoryHeadFallback = () => {
+  return (
+    <>
+      <Skeleton width="70%" fontSize="xl" />
+      <br />
+      <Skeleton width="40%" fontSize="md" />
+      <br />
+      <Skeleton width="55%" fontSize="md" />
+      <br />
+    </>
+  );
+};
 
 const InventoryDetails = ({ entity }) => {
   const intl = useIntl();
@@ -46,7 +60,7 @@ const InventoryDetails = ({ entity }) => {
     >
       <PageHeader className="pf-m-light ins-inventory-detail">
         {entity && <Breadcrumbs current={entity.display_name || entity.id} />}
-        <InventoryDetailHead hideBack fallback="" />
+        <InventoryDetailHead hideBack fallback={<InventoryHeadFallback />} />
       </PageHeader>
       <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
         <Title className="pf-v5-u-mb-lg" headingLevel="h3" size="2xl">
