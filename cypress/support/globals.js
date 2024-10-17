@@ -13,6 +13,9 @@ const intl = createIntl(
 );
 export const rulesTableColumns = [
   {
+    title: 'Data expansion table header cell',
+  },
+  {
     title: intl.formatMessage(messages.name),
   },
   {
