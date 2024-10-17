@@ -24,7 +24,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import DisableRule from '../Modals/DisableRule';
 import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
-import Loading from '../../PresentationalComponents/Loading/Loading';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import debounce from '../../Utilities/Debounce';
@@ -50,6 +49,7 @@ import {
 import { useActionsResolver } from './useActionsResolver';
 import impactingFilter from '../Filters/impactingFilter';
 import { AccountStatContext } from '../../ZeroStateWrapper';
+import { SkeletonTable } from '@patternfly/react-component-groups';
 
 const RulesTable = ({ isTabActive, pathway }) => {
   const intl = useIntl();
@@ -286,7 +286,11 @@ const RulesTable = ({ isTabActive, pathway }) => {
         activeFiltersConfig={activeFiltersConfig}
       />
       {isFetching ? (
-        <Loading />
+        <SkeletonTable
+          columns={cols.map((c) => c.title)}
+          isExpandable
+          variant="compact"
+        />
       ) : isError ? (
         <Table>
           <ErrorState />

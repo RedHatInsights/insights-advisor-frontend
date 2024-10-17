@@ -366,7 +366,7 @@ describe('sorting', () => {
       'impacted_count',
       'playbook_count',
     ],
-    TABLE_HEADERS
+    TABLE_HEADERS.filter((h) => h !== 'Data expansion table header cell')
   ).forEach(([category, label]) => {
     let sortingParameter = category;
     SORTING_ORDERS.forEach((order) => {

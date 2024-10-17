@@ -8,7 +8,6 @@ import {
 
 import { Label } from '@patternfly/react-core/dist/esm/components/Label/Label';
 import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
-import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import PropTypes from 'prop-types';
@@ -19,6 +18,7 @@ import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { sortTopics } from '../helper';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
+import { SkeletonTable } from '@patternfly/react-component-groups';
 
 const TopicsTable = ({ props }) => {
   const intl = useIntl();
@@ -137,7 +137,13 @@ const TopicsTable = ({ props }) => {
   return (
     <React.Fragment>
       {isLoading || isFetching ? (
-        <Loading />
+        <>
+          <PrimaryToolbar
+            filterConfig={{ items: filterConfigItems }}
+            activeFiltersConfig={activeFiltersConfig}
+          />
+          <SkeletonTable columns={cols.map((c) => c.title)} />
+        </>
       ) : !isFetching && topics.length > 0 ? (
         <React.Fragment>
           <PrimaryToolbar
