@@ -58,7 +58,6 @@ export const getFilters = (
     label: 'description',
     type: conditionalFilterType.text,
     filterValues: {
-      key: 'text-filter',
       onChange: (_e, value) => onInputChange(value),
       value: searchValue,
     },
