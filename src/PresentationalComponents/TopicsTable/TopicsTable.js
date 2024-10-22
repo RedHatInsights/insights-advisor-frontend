@@ -125,7 +125,6 @@ const TopicsTable = ({ props }) => {
       label: intl.formatMessage(messages.name).toLowerCase(),
       type: conditionalFilterType.text,
       filterValues: {
-        key: 'text-filter',
         onChange: (event, value) => {
           setSearchText(value);
           setSort({});
