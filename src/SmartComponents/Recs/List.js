@@ -7,7 +7,6 @@ import { useLocation } from 'react-router-dom';
 import useInsightsNavigate from '@redhat-cloud-services/frontend-components-utilities/useInsightsNavigate';
 
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
-import Loading from '../../PresentationalComponents/Loading/Loading';
 import { PERMS } from '../../AppConstants';
 import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
 import messages from '../../Messages';
@@ -25,6 +24,7 @@ import {
 } from '@patternfly/react-core';
 
 import { RECOMMENDATIONS_TAB, PATHWAYS_TAB } from '../../AppConstants';
+import { SkeletonTable } from '@redhat-cloud-services/frontend-components/SkeletonTable';
 
 const PathwaysTable = lazy(() =>
   import(
@@ -100,7 +100,7 @@ const List = () => {
                 }
               >
                 {activeTab === PATHWAYS_TAB && (
-                  <Suspense fallback={<Loading />}>
+                  <Suspense fallback={<SkeletonTable />}>
                     <PathwaysTable isTabActive={activeTab === PATHWAYS_TAB} />
                   </Suspense>
                 )}
