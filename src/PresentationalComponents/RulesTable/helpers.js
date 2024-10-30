@@ -219,7 +219,6 @@ export const filterConfigItems = (
       label: intl.formatMessage(messages.name).toLowerCase(),
       type: conditionalFilterType.text,
       filterValues: {
-        key: 'text-filter',
         onChange: (_event, value) => setSearchText(value),
         value: searchText,
         placeholder: intl.formatMessage(messages.filterBy),

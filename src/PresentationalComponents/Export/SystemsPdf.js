@@ -71,8 +71,7 @@ const SystemsPdf = ({ filters }) => {
       buttonProps={{
         variant: '',
         component: 'button',
-        className:
-          'pf-v5-c-dropdown__menu-item adv-c-dropdown-systems-pdf__menu-item',
+        className: 'pf-v5-c-menu__item adv-c-dropdown-systems-pdf__menu-item',
         ...(loading ? { isDisabled: true } : null),
       }}
       reportName={`${intl.formatMessage(messages.insightsHeader)}:`}
