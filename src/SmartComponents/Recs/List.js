@@ -7,7 +7,6 @@ import { useLocation } from 'react-router-dom';
 import useInsightsNavigate from '@redhat-cloud-services/frontend-components-utilities/useInsightsNavigate';
 
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
-import Loading from '../../PresentationalComponents/Loading/Loading';
 import { PERMS } from '../../AppConstants';
 import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
 import messages from '../../Messages';
@@ -22,6 +21,8 @@ import {
   Stack,
   StackItem,
   Tooltip,
+  Spinner,
+  Bullseye,
 } from '@patternfly/react-core';
 
 import { RECOMMENDATIONS_TAB, PATHWAYS_TAB } from '../../AppConstants';
@@ -100,7 +101,13 @@ const List = () => {
                 }
               >
                 {activeTab === PATHWAYS_TAB && (
-                  <Suspense fallback={<Loading />}>
+                  <Suspense
+                    fallback={
+                      <Bullseye>
+                        <Spinner size="xl" />
+                      </Bullseye>
+                    }
+                  >
                     <PathwaysTable isTabActive={activeTab === PATHWAYS_TAB} />
                   </Suspense>
                 )}
