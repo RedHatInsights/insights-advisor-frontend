@@ -18,6 +18,7 @@
     "server:ctr": "node src/server/generateServerKey.js",
     "start": "fec dev",
     "start:proxy": "PROXY=true fec dev",
+    "static": "fec static",
     "test": "npm run test:jest",
     "test:local": "TZ=UTC jest --verbose --collectCoverage=false --passWithNoTests --env=jsdom",
     "test:jest": "TZ=UTC jest --verbose --passWithNoTests --env=jsdom",
