@@ -6,13 +6,23 @@ module.exports = {
   debug: false,
   useProxy: process.env.PROXY === 'true',
   proxyVerbose: false,
+  devtool: 'hidden-source-map',
   plugins: [
-    process.env.SENTRY_AUTH_TOKEN &&
-      sentryWebpackPlugin({
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-        org: process.env.SENTRY_ORG,
-        project: process.env.SENTRY_PROJECT,
-      }),
+    ...(process.env.SENTRY_AUTH_TOKEN
+      ? [
+          sentryWebpackPlugin({
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            org: process.env.SENTRY_ORG,
+            project: process.env.SENTRY_PROJECT,
+            _experiments: {
+              moduleMetadata: ({ release }) => ({
+                dsn: process.env.SENTRY_INVENTORY_DSN,
+                release,
+              }),
+            },
+          }),
+        ]
+      : []),
   ],
   moduleFederation: {
     shared: [
