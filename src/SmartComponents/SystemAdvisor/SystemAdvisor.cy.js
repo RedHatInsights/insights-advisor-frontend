@@ -70,11 +70,11 @@ describe('system rules table', () => {
     cy.get(TOOLBAR).should('have.length', 1);
     cy.get(TABLE).should('have.length', 1);
   });
-
+  
   it('renders table headers', () => {
     checkTableHeaders(TABLE_HEADERS);
   });
-
+  
   // it('renders "First impacted" date correctly', () => {
   //   const {
   //     rule: { description },
@@ -85,7 +85,7 @@ describe('system rules table', () => {
   //   applyFilters({ description }, filtersConf);
   //   cy.get('td[data-label="First impacted"]').first().should('contain', date);
   // });
-
+  
   it('request to kcs contains all required ids', () => {
     cy.wait('@kcs')
       .its('request.url')
@@ -94,7 +94,7 @@ describe('system rules table', () => {
         fixtures.map(({ rule }) => rule.node_id).join('%20OR%20')
       );
   });
-
+  
   // it('link to kcs has correct title and url', () => {
   //   const {
   //     rule: { description, node_id },
@@ -107,7 +107,7 @@ describe('system rules table', () => {
   //     .should('include.text', kcsEntry?.publishedTitle)
   //     .should('have.attr', 'href', kcsEntry?.view_uri);
   // });
-
+  
   describe('sorting', () => {
     _.zip(
       [
@@ -145,7 +145,8 @@ describe('system rules table', () => {
       });
     });
   });
-
+  
+  
   describe('Toolbar actions', () => {
     it('Should show remediation button when host is of type edge', () => {
       cy.get('.ins-c-primary-toolbar__first-action').contains('Remediation');
@@ -160,6 +161,75 @@ describe('system rules table', () => {
 
       cy.wait(['@getEdgeSystemProfile']);
       cy.get('.ins-c-primary-toolbar__first-action').should('not.exist');
+    });
+  });
+  
+  describe('BulkSelector', () => {
+    function selectRandomEnabledRows({
+      rows,
+      numberOfRowsToSelect,
+    }) {
+      const enabledRows = Array.from(rows).filter(row => {
+        const checkbox = row.querySelector('input[type="checkbox"]');
+        if(!checkbox.hasAttribute('disabled')){
+          return true;
+        }
+      })
+      const rowCount = enabledRows.length
+
+      const randomIndices = [];
+      while (randomIndices.length < numberOfRowsToSelect) {
+        const randomIndex = Math.floor(Math.random() * rowCount);
+        if (!randomIndices.includes(randomIndex)) {
+          randomIndices.push(randomIndex);
+        }
+      }
+
+      randomIndices.forEach(index => {
+        enabledRows[index].querySelector('input[type="checkbox"]').click();
+      });
+    }
+
+    it(`The Bulk selector shows the correct number of systems selected.`, () => {
+      
+      // check that empty
+      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle').should('have.text', '')
+      
+      // select a couple
+      //  but only ones that can be selected
+      cy.get('.pf-v5-c-table__tbody').then(rows => {selectRandomEnabledRows({rows: rows, numberOfRowsToSelect: 3})});
+      
+      // check that it shows correct number
+      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle').should('have.text', '3 selected')
+
+      // Select None
+      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle > .pf-v5-c-menu-toggle__controls').click();
+      cy.get('[data-ouia-component-id="BulkSelectList-0"] > .pf-v5-c-menu__item > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click()
+
+      // check that none selected
+      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle').should('have.text', '')
+
+      // Select All
+      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle > .pf-v5-c-menu-toggle__controls').click();
+      cy.get('[data-ouia-component-id="BulkSelectList-1"] > .pf-v5-c-menu__item > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click()
+
+      // check that all selected
+      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle').should('have.text', '7 selected')
+
+      // click the BS
+      cy.get('[data-ouia-component-id="BulkSelect"').click();
+
+      // check that none selected
+      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle').should('have.text', '')
+
+      // select some
+      cy.get('.pf-v5-c-table__tbody').then(rows => {selectRandomEnabledRows({rows: rows, numberOfRowsToSelect: 3})});
+
+      // click the BS
+      cy.get('[data-ouia-component-id="BulkSelect"').click();
+
+      // check that all selected
+      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle').should('have.text', '7 selected')
     });
   });
 });
