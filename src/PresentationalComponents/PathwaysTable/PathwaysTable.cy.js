@@ -7,6 +7,14 @@ import PathwaysTable from './PathwaysTable';
 import fixtures from '../../../cypress/fixtures/pathways.json';
 import { pathwaysTableColumns } from '../../../cypress/support/globals';
 import _ from 'lodash';
+import {
+  CONDITIONAL_FILTER_TOGGLE,
+  CHIP_GROUP,
+  hasChip,
+  PT_CONDITIONAL_FILTER_LIST,
+  CONDITIONAL_FILTER,
+  MENU_ITEM,
+} from '@redhat-cloud-services/frontend-components-utilities';
 
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
@@ -135,5 +143,94 @@ describe('Pathways table tests', () => {
         });
       });
     });
+  });
+
+  describe('Conditional Filter', () => {
+    
+    it(`Name filter box correctly updates chips.`, () => {
+      // select Name filter
+      cy.get(CONDITIONAL_FILTER_TOGGLE).click();
+      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Name').click()
+
+      // enter a name
+      // The ConditionalFilter ouiaId is assigned to the wrong element (input)
+      cy.get('[aria-label="text input"]').click();
+      cy.get('[aria-label="text input"]').type('Lorem');
+
+      // check chips updated
+      hasChip('Name', 'Lorem');
+
+      // reset
+      cy.get('button').contains('Reset filters').click();
+
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+    
+    it(`Category filter box correctly updates chips.`, () => {
+      // select Category filter
+      cy.get(CONDITIONAL_FILTER_TOGGLE).click();
+      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Category').click();
+
+      // select two categories
+      // There are multiple elements with the ConditionalFilter ouia id
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+      cy.get(MENU_ITEM).contains('Availability').click();
+      cy.get(MENU_ITEM).contains('Stability').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+
+      // check chips updated
+      hasChip('Category', 'Availability');
+      hasChip('Category', 'Stability');
+      
+      // reset
+      cy.get('button').contains('Reset filters').click();
+
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+    
+    it(`Incidents filter box correctly updates chips.`, () => {
+      // select Incidents filter
+      cy.get(CONDITIONAL_FILTER_TOGGLE).click();
+      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Incidents').click();
+
+      // select an option
+      // There are multiple elements with the ConditionalFilter ouia id
+      cy.get(CONDITIONAL_FILTER).contains('Filter by incidents').click();
+      cy.get(MENU_ITEM).contains('Non-incident').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by incidents').click();
+
+      // check chips updated
+      hasChip('Incidents', 'Non-incident');
+
+      // reset
+      cy.get('button').contains('Reset filters').click();
+
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+
+    it(`Reboot required filter box correctly updates chips.`, () => {
+      // select Reboot filter filter
+      cy.get(CONDITIONAL_FILTER_TOGGLE).click();
+      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Reboot required').click();
+      
+      // select an option
+      // There are multiple elements with the ConditionalFilter ouia id
+      cy.get(CONDITIONAL_FILTER).contains('Filter by reboot required').click();
+      cy.get(MENU_ITEM).contains('Required').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by reboot required').click();
+
+      // check chips updated
+      hasChip('Reboot required', 'Required');
+
+      // reset
+      cy.get('button').contains('Reset filters').click();
+
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+    
   });
 });
