@@ -6,6 +6,8 @@ import { BaseSystemAdvisor as SystemAdvisor } from './SystemAdvisor';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
   checkTableHeaders,
+  PT_BULK_SELECT,
+  PT_BULK_SELECT_LIST,
   SORTING_ORDERS,
   TABLE,
   TOOLBAR,
@@ -14,6 +16,7 @@ import { checkSorting } from '../../../cypress/utils/table';
 import Wrapper from '../../Utilities/Wrapper';
 import { INVENTORY_BASE_URL } from '../../AppConstants';
 import systemProfile from '../../../cypress/fixtures/systemProfile.json';
+import { selectRandomEnabledRows } from '../../../cypress/utils/table';
 
 const TABLE_HEADERS = [
   'Description',
@@ -70,11 +73,11 @@ describe('system rules table', () => {
     cy.get(TOOLBAR).should('have.length', 1);
     cy.get(TABLE).should('have.length', 1);
   });
-
+  
   it('renders table headers', () => {
     checkTableHeaders(TABLE_HEADERS);
   });
-
+  
   // it('renders "First impacted" date correctly', () => {
   //   const {
   //     rule: { description },
@@ -85,7 +88,7 @@ describe('system rules table', () => {
   //   applyFilters({ description }, filtersConf);
   //   cy.get('td[data-label="First impacted"]').first().should('contain', date);
   // });
-
+  
   it('request to kcs contains all required ids', () => {
     cy.wait('@kcs')
       .its('request.url')
@@ -94,7 +97,7 @@ describe('system rules table', () => {
         fixtures.map(({ rule }) => rule.node_id).join('%20OR%20')
       );
   });
-
+  
   // it('link to kcs has correct title and url', () => {
   //   const {
   //     rule: { description, node_id },
@@ -107,7 +110,7 @@ describe('system rules table', () => {
   //     .should('include.text', kcsEntry?.publishedTitle)
   //     .should('have.attr', 'href', kcsEntry?.view_uri);
   // });
-
+  
   describe('sorting', () => {
     _.zip(
       [
@@ -145,7 +148,8 @@ describe('system rules table', () => {
       });
     });
   });
-
+  
+  
   describe('Toolbar actions', () => {
     it('Should show remediation button when host is of type edge', () => {
       cy.get('.ins-c-primary-toolbar__first-action').contains('Remediation');
@@ -160,6 +164,50 @@ describe('system rules table', () => {
 
       cy.wait(['@getEdgeSystemProfile']);
       cy.get('.ins-c-primary-toolbar__first-action').should('not.exist');
+    });
+  });
+  
+  describe('BulkSelector', () => {
+    it(`The Bulk selector shows the correct number of systems selected.`, () => {
+      
+      // check that empty
+      cy.get(PT_BULK_SELECT).should('have.text', '');
+      
+      // select a couple
+      //  but only ones that can be selected
+      cy.get('.pf-v5-c-table__tbody').then(rows => {selectRandomEnabledRows({rows: rows, numberOfRowsToSelect: 3})});
+      
+      // check that it shows correct number
+      cy.get(PT_BULK_SELECT).should('have.text', '3 selected')
+
+      // Select None
+      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle > .pf-v5-c-menu-toggle__controls').click();
+      cy.get(PT_BULK_SELECT_LIST).contains('Select none').click();
+
+      // check that none selected
+      cy.get(PT_BULK_SELECT).should('have.text', '')
+
+      // Select All
+      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle > .pf-v5-c-menu-toggle__controls').click();
+      cy.get(PT_BULK_SELECT_LIST).contains('Select all').click();
+
+      // check that all selected
+      cy.get(PT_BULK_SELECT).should('have.text', '7 selected')
+
+      // click the BS
+      cy.get(PT_BULK_SELECT).click();
+
+      // check that none selected
+      cy.get(PT_BULK_SELECT).should('have.text', '')
+
+      // select some
+      cy.get('.pf-v5-c-table__tbody').then(rows => {selectRandomEnabledRows({rows: rows, numberOfRowsToSelect: 3})});
+
+      // click the BS
+      cy.get(PT_BULK_SELECT).click();
+
+      // check that all selected
+      cy.get(PT_BULK_SELECT).should('have.text', '7 selected')
     });
   });
 });
