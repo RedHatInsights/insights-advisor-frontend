@@ -6,6 +6,8 @@ import { BaseSystemAdvisor as SystemAdvisor } from './SystemAdvisor';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
   checkTableHeaders,
+  PT_BULK_SELECT,
+  PT_BULK_SELECT_LIST,
   SORTING_ORDERS,
   TABLE,
   TOOLBAR,
@@ -14,6 +16,7 @@ import { checkSorting } from '../../../cypress/utils/table';
 import Wrapper from '../../Utilities/Wrapper';
 import { INVENTORY_BASE_URL } from '../../AppConstants';
 import systemProfile from '../../../cypress/fixtures/systemProfile.json';
+import { selectRandomEnabledRows } from '../../../cypress/utils/table';
 
 const TABLE_HEADERS = [
   'Description',
@@ -165,71 +168,46 @@ describe('system rules table', () => {
   });
   
   describe('BulkSelector', () => {
-    function selectRandomEnabledRows({
-      rows,
-      numberOfRowsToSelect,
-    }) {
-      const enabledRows = Array.from(rows).filter(row => {
-        const checkbox = row.querySelector('input[type="checkbox"]');
-        if(!checkbox.hasAttribute('disabled')){
-          return true;
-        }
-      })
-      const rowCount = enabledRows.length
-
-      const randomIndices = [];
-      while (randomIndices.length < numberOfRowsToSelect) {
-        const randomIndex = Math.floor(Math.random() * rowCount);
-        if (!randomIndices.includes(randomIndex)) {
-          randomIndices.push(randomIndex);
-        }
-      }
-
-      randomIndices.forEach(index => {
-        enabledRows[index].querySelector('input[type="checkbox"]').click();
-      });
-    }
-
     it(`The Bulk selector shows the correct number of systems selected.`, () => {
       
       // check that empty
-      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle').should('have.text', '')
+      cy.get(PT_BULK_SELECT).should('have.text', '');
       
       // select a couple
       //  but only ones that can be selected
       cy.get('.pf-v5-c-table__tbody').then(rows => {selectRandomEnabledRows({rows: rows, numberOfRowsToSelect: 3})});
       
       // check that it shows correct number
-      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle').should('have.text', '3 selected')
+      cy.get(PT_BULK_SELECT).should('have.text', '3 selected')
 
       // Select None
       cy.get(':nth-child(2) > .pf-v5-c-menu-toggle > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('[data-ouia-component-id="BulkSelectList-0"] > .pf-v5-c-menu__item > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click()
+      cy.get(PT_BULK_SELECT_LIST).contains('Select none').click();
 
       // check that none selected
-      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle').should('have.text', '')
+      cy.get(PT_BULK_SELECT).should('have.text', '')
 
       // Select All
       cy.get(':nth-child(2) > .pf-v5-c-menu-toggle > .pf-v5-c-menu-toggle__controls').click();
-      cy.get('[data-ouia-component-id="BulkSelectList-1"] > .pf-v5-c-menu__item > .pf-v5-c-menu__item-main > .pf-v5-c-menu__item-text').click()
+      cy.get(PT_BULK_SELECT_LIST).contains('Select all').click();
 
       // check that all selected
-      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle').should('have.text', '7 selected')
+      cy.get(PT_BULK_SELECT).should('have.text', '7 selected')
 
       // click the BS
-      cy.get('[data-ouia-component-id="BulkSelect"').click();
+      cy.get(PT_BULK_SELECT).click();
 
       // check that none selected
-      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle').should('have.text', '')
+      cy.get(PT_BULK_SELECT).should('have.text', '')
 
       // select some
       cy.get('.pf-v5-c-table__tbody').then(rows => {selectRandomEnabledRows({rows: rows, numberOfRowsToSelect: 3})});
 
       // click the BS
-      cy.get('[data-ouia-component-id="BulkSelect"').click();
+      cy.get(PT_BULK_SELECT).click();
 
       // check that all selected
-      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle').should('have.text', '7 selected')
+      cy.get(PT_BULK_SELECT).should('have.text', '7 selected')
     });
   });
 });
