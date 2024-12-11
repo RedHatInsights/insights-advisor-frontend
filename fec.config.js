@@ -22,7 +22,19 @@ module.exports = {
             },
           }),
         ]
-      : []),
+      : [
+          // Justs injects the debug ids
+          sentryWebpackPlugin({
+            org: 'red-hat-it',
+            project: 'advisor-rhel',
+            _experiments: {
+              moduleMetadata: ({ release }) => ({
+                dsn: 'https://f8eb44de949e487e853185c09340f3cf@o490301.ingest.us.sentry.io/4505397435367424',
+                release,
+              }),
+            },
+          }),
+        ]),
   ],
   moduleFederation: {
     shared: [
