@@ -12,11 +12,11 @@ module.exports = {
       ? [
           sentryWebpackPlugin({
             authToken: process.env.SENTRY_AUTH_TOKEN,
-            org: process.env.SENTRY_ORG,
-            project: process.env.SENTRY_PROJECT,
+            org: 'red-hat-it',
+            project: 'advisor-rhel',
             _experiments: {
               moduleMetadata: ({ release }) => ({
-                dsn: process.env.SENTRY_INVENTORY_DSN,
+                dsn: 'https://f8eb44de949e487e853185c09340f3cf@o490301.ingest.us.sentry.io/4505397435367424',
                 release,
               }),
             },
