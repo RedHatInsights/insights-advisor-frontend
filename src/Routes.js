@@ -84,6 +84,11 @@ const routeConfig = [
       import('./PresentationalComponents/TopicsAdminTable/TopicsAdminTable')
     ),
   },
+  {
+    key: 'advisorFallback',
+    paths: ['*'],
+    component: () => <Navigate replace to="recommendations" />,
+  },
 ];
 
 export const AccountStatContext = createContext({
