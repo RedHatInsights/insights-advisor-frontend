@@ -49,7 +49,7 @@ import {
 } from './helpers';
 import { useActionsResolver } from './useActionsResolver';
 import impactingFilter from '../Filters/impactingFilter';
-import { AccountStatContext } from '../../ZeroStateWrapper';
+import { AccountStatContext } from '../../Routes';
 
 const RulesTable = ({ isTabActive, pathway }) => {
   const intl = useIntl();
