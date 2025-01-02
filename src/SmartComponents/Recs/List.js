@@ -22,9 +22,19 @@ import {
   Stack,
   StackItem,
   Tooltip,
+  Popover,
+  TextContent,
+  Flex,
+  Text,
+  TextVariants,
+  Icon,
 } from '@patternfly/react-core';
 
 import { RECOMMENDATIONS_TAB, PATHWAYS_TAB } from '../../AppConstants';
+import {
+  ExternalLinkAltIcon,
+  OutlinedQuestionCircleIcon,
+} from '@patternfly/react-icons';
 
 const PathwaysTable = lazy(() =>
   import(
@@ -57,7 +67,56 @@ const List = () => {
   return (
     <React.Fragment>
       <PageHeader className="adv-c-page-recommendations__header">
-        <PageHeaderTitle title={`${messages.recommendations.defaultMessage}`} />
+        <PageHeaderTitle
+          title={
+            <React.Fragment>
+              {messages.recommendations.defaultMessage}
+              <Popover
+                headerContent="About advisor recommendations"
+                bodyContent={
+                  <TextContent>
+                    <Flex direction={{ default: 'column' }}>
+                      <Text component={TextVariants.p}>
+                        The advisor service assesses and monitors the health of
+                        your Red Hat Enterprise Linux (RHEL) infrastructure, and
+                        provides recommendations to address availability,
+                        stability, performance, and security issues.
+                      </Text>
+                      <Text component={TextVariants.p}>
+                        <a
+                          rel="noreferrer"
+                          target="_blank"
+                          href={
+                            'https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html/' +
+                            'assessing_rhel_configuration_issues_using_the_red_hat_insights_advisor_service'
+                          }
+                        >
+                          Assessing RHEL Configuration Issues Using the Red Hat
+                          Insights Advisor Service
+                          <Icon className="pf-v5-u-ml-xs">
+                            <ExternalLinkAltIcon />
+                          </Icon>
+                        </a>
+                      </Text>
+                    </Flex>
+                  </TextContent>
+                }
+              >
+                <Icon>
+                  <OutlinedQuestionCircleIcon
+                    className="pf-v5-u-ml-sm"
+                    color="var(--pf-v5-global--secondary-color--100)"
+                    style={{
+                      verticalAlign: 0,
+                      fontSize: 16,
+                      cursor: 'pointer',
+                    }}
+                  />
+                </Icon>
+              </Popover>
+            </React.Fragment>
+          }
+        />
         {!permsExport.isLoading && (
           <Tooltip
             trigger={!permsExport.hasAccess ? 'mouseenter' : ''}
