@@ -1,21 +1,35 @@
 name: sentryConfig
 
 on:
-  push:
-    branches:
-      - 'master'
-
+  workflow_dispatch:
+    inputs:
+      commit_hash:
+        description: 'The commit hash (or branch/tag) to build'
+        required: true
+        default: 'master'
 
 jobs:
   createSentryRelease:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@master
-      - name: Build branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.commit_hash }}
+
+      - name: Install dependencies
+        env:
+          SENTRY_RELEASE: advisor-${{ github.event.inputs.commit_hash }}
         run: npm ci
-      - name: Build 
+
+      - name: Build
+        env:
+          SENTRY_RELEASE: advisor-${{ github.event.inputs.commit_hash }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         run: npm run build --if-present
+
       - name: Create a Sentry.io release
         uses: getsentry/action-release@v1
         env:
@@ -23,7 +37,7 @@ jobs:
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         with:
-          tagName: ${{ github.ref }}
-          environment: master
+          tagName: ${{ github.event.inputs.commit_hash }}
           releaseNamePrefix: advisor
+          environment: master
           sourcemaps: 'dist/sourcemaps'
