@@ -23,6 +23,12 @@ import {
 const ROOT = 'table[aria-label="pathways-table"]';
 const TABLE_HEADERS = _.map(pathwaysTableColumns, (it) => it.title);
 const ROWS_SHOWN = fixtures.data.length;
+const CATEGORY_VALUES = [
+  'Availability',
+  'Performance',
+  'Stability',
+  'Security',
+];
 
 //THIS FILE HAS COMMENTED OUT TEST BECAUSE THE FUNCTIONS/LABELS IMPORTED FROM FEC-UTILS
 //NEED TO BE UPDATED
@@ -132,6 +138,24 @@ describe('Pathways table tests', () => {
       SORTING_ORDERS.forEach((order) => {
         it(`${order} by ${label}`, () => {
           checkSortingUrl(label, order, sortingParameter);
+        });
+      });
+    });
+  });
+
+  describe('Multiple categories get abbreviated', () => {
+    it('Multiple categories get abbreviated', () => {
+      // for each row
+      cy.get('tbody [data-ouia-component-type="PF5/TableRow"]').then((rows) => {
+        Array.from(rows).forEach((row) => {
+          cy.wrap(row)
+            .find('td[data-label="Category"] li')
+            .then((elems) => {
+              expect(elems[0].textContent.trim()).to.be.oneOf(CATEGORY_VALUES);
+              if (elems.length > 1) {
+                expect(elems[1].textContent.trim()).to.match(/more$/);
+              }
+            });
         });
       });
     });
