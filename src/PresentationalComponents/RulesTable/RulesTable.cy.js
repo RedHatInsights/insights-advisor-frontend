@@ -467,16 +467,17 @@ describe('Conditional Filter', () => {
     }).as('call');
     mountComponent();
   });
-    
+
   it(`Name filter box correctly updates chips.`, () => {
     // select Name filter
     cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-    cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Name').click()
+    cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Name').click();
 
     // enter a name
     // The ConditionalFilter ouiaId is assigned to the wrong element (input)
     cy.get('[aria-label="text input"]').click();
-    cy.get('[aria-label="text input"]').type('Lorem').type('{enter}');
+    cy.get('[aria-label="text input"]').type('Lorem');
+    cy.get('[aria-label="text input"]').type('{enter}');
 
     // check chips updated
     hasChip('Name', 'Lorem');
@@ -487,7 +488,7 @@ describe('Conditional Filter', () => {
     // check chips empty
     cy.get(CHIP_GROUP).should('have.length', 2);
   });
-  
+
   it(`Total risk filter box correctly updates chips.`, () => {
     // select Category filter
     cy.get(CONDITIONAL_FILTER_TOGGLE).click();
@@ -503,14 +504,14 @@ describe('Conditional Filter', () => {
     // check chips updated
     hasChip('Total risk', 'Critical');
     hasChip('Total risk', 'Moderate');
-    
+
     // reset
     cy.get('button').contains('Reset filters').click();
 
     // check chips empty
     cy.get(CHIP_GROUP).should('have.length', 2);
   });
-  
+
   it(`Risk of change filter box correctly updates chips.`, () => {
     // select Category filter
     cy.get(CONDITIONAL_FILTER_TOGGLE).click();
@@ -526,7 +527,7 @@ describe('Conditional Filter', () => {
     // check chips updated
     hasChip('Risk of change', 'High');
     hasChip('Risk of change', 'Low');
-    
+
     // reset
     cy.get('button').contains('Reset filters').click();
 
@@ -549,7 +550,7 @@ describe('Conditional Filter', () => {
     // check chips updated
     hasChip('Impact', 'Critical');
     hasChip('Impact', 'Medium');
-    
+
     // reset
     cy.get('button').contains('Reset filters').click();
 
@@ -572,7 +573,7 @@ describe('Conditional Filter', () => {
     // check chips updated
     hasChip('Likelihood', 'Critical');
     hasChip('Likelihood', 'Medium');
-    
+
     // reset
     cy.get('button').contains('Reset filters').click();
 
@@ -595,7 +596,7 @@ describe('Conditional Filter', () => {
     // check chips updated
     hasChip('Category', 'Availability');
     hasChip('Category', 'Stability');
-    
+
     // reset
     cy.get('button').contains('Reset filters').click();
 
@@ -649,7 +650,7 @@ describe('Conditional Filter', () => {
     // select Reboot filter filter
     cy.get(CONDITIONAL_FILTER_TOGGLE).click();
     cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Reboot required').click();
-    
+
     // select an option
     // There are multiple elements with the ConditionalFilter ouia id
     cy.get(CONDITIONAL_FILTER).contains('Filter by reboot required').click();
@@ -670,7 +671,7 @@ describe('Conditional Filter', () => {
     // select Reboot filter filter
     cy.get(CONDITIONAL_FILTER_TOGGLE).click();
     cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Status').click();
-    
+
     // select an option
     // There are multiple elements with the ConditionalFilter ouia id
     cy.get(CONDITIONAL_FILTER).contains('Filter by status').click();
@@ -692,7 +693,7 @@ describe('Conditional Filter', () => {
     // select Reboot filter filter
     cy.get(CONDITIONAL_FILTER_TOGGLE).click();
     cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Systems impacted').click();
-    
+
     // select None
     // There are multiple elements with the ConditionalFilter ouia id
     cy.get(CONDITIONAL_FILTER).contains('Filter by systems impacted').click();
@@ -712,7 +713,7 @@ describe('Conditional Filter', () => {
     cy.get(CONDITIONAL_FILTER).contains('Filter by systems impacted').click();
     cy.get(MENU_ITEM).contains('1 or more').click();
     cy.get(CONDITIONAL_FILTER).contains('Filter by systems impacted').click();
-    
+
     // check chips updated
     cy.get(CHIP_GROUP).should('have.length', 1);
 

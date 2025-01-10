@@ -170,46 +170,46 @@ describe('system rules table', () => {
   });
 
   describe('Conditional Filter', () => {
-      
     it(`Description filter box correctly updates chips.`, () => {
       // select Name filter
       cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Description').click()
-  
+      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Description').click();
+
       // enter a name
       // The ConditionalFilter ouiaId is assigned to the wrong element (input)
       cy.get('[aria-label="text input"]').click();
-      cy.get('[aria-label="text input"]').type('Lorem').type('{enter}');
-  
+      cy.get('[aria-label="text input"]').type('Lorem');
+      cy.get('[aria-label="text input"]').type('{enter}');
+
       // check chips updated
       hasChip('Description', 'Lorem');
-  
+
       // reset
       cy.get('button').contains('Reset filters').click();
-  
+
       // check chips empty
       cy.get(CHIP_GROUP).should('have.length', 0);
     });
-    
+
     it(`Total risk filter box correctly updates chips.`, () => {
       // select Category filter
       cy.get(CONDITIONAL_FILTER_TOGGLE).click();
       cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Total risk').click();
-  
+
       // select two categories
       // There are multiple elements with the ConditionalFilter ouia id
       cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
       cy.get(MENU_ITEM).contains('Critical').click();
       cy.get(MENU_ITEM).contains('Moderate').click();
       cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
-  
+
       // check chips updated
       hasChip('Total risk', 'Critical');
       hasChip('Total risk', 'Moderate');
-      
+
       // reset
       cy.get('button').contains('Reset filters').click();
-  
+
       // check chips empty
       cy.get(CHIP_GROUP).should('have.length', 0);
     });
@@ -218,21 +218,21 @@ describe('system rules table', () => {
       // select Category filter
       cy.get(CONDITIONAL_FILTER_TOGGLE).click();
       cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Category').click();
-  
+
       // select two categories
       // There are multiple elements with the ConditionalFilter ouia id
       cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
       cy.get(MENU_ITEM).contains('Availability').click();
       cy.get(MENU_ITEM).contains('Stability').click();
       cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
-  
+
       // check chips updated
       hasChip('Category', 'Availability');
       hasChip('Category', 'Stability');
-      
+
       // reset
       cy.get('button').contains('Reset filters').click();
-  
+
       // check chips empty
       cy.get(CHIP_GROUP).should('have.length', 0);
     });
@@ -241,19 +241,19 @@ describe('system rules table', () => {
       // select Incidents filter
       cy.get(CONDITIONAL_FILTER_TOGGLE).click();
       cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Remediation').click();
-  
+
       // select an option
       // There are multiple elements with the ConditionalFilter ouia id
       cy.get(CONDITIONAL_FILTER).contains('Filter by remediation').click();
       cy.get(MENU_ITEM).contains('Ansible playbook').click();
       cy.get(CONDITIONAL_FILTER).contains('Filter by remediation').click();
-  
+
       // check chips updated
       hasChip('Remediation', 'Ansible playbook');
-  
+
       // reset
       cy.get('button').contains('Reset filters').click();
-  
+
       // check chips empty
       cy.get(CHIP_GROUP).should('have.length', 0);
     });

@@ -7,6 +7,7 @@ import PathwaysTable from './PathwaysTable';
 import fixtures from '../../../cypress/fixtures/pathways.json';
 import { pathwaysTableColumns } from '../../../cypress/support/globals';
 import _ from 'lodash';
+//eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
   CONDITIONAL_FILTER_TOGGLE,
   CHIP_GROUP,
@@ -146,11 +147,10 @@ describe('Pathways table tests', () => {
   });
 
   describe('Conditional Filter', () => {
-    
     it(`Name filter box correctly updates chips.`, () => {
       // select Name filter
       cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Name').click()
+      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Name').click();
 
       // enter a name
       // The ConditionalFilter ouiaId is assigned to the wrong element (input)
@@ -166,7 +166,7 @@ describe('Pathways table tests', () => {
       // check chips empty
       cy.get(CHIP_GROUP).should('have.length', 0);
     });
-    
+
     it(`Category filter box correctly updates chips.`, () => {
       // select Category filter
       cy.get(CONDITIONAL_FILTER_TOGGLE).click();
@@ -182,14 +182,14 @@ describe('Pathways table tests', () => {
       // check chips updated
       hasChip('Category', 'Availability');
       hasChip('Category', 'Stability');
-      
+
       // reset
       cy.get('button').contains('Reset filters').click();
 
       // check chips empty
       cy.get(CHIP_GROUP).should('have.length', 0);
     });
-    
+
     it(`Incidents filter box correctly updates chips.`, () => {
       // select Incidents filter
       cy.get(CONDITIONAL_FILTER_TOGGLE).click();
@@ -215,7 +215,7 @@ describe('Pathways table tests', () => {
       // select Reboot filter filter
       cy.get(CONDITIONAL_FILTER_TOGGLE).click();
       cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Reboot required').click();
-      
+
       // select an option
       // There are multiple elements with the ConditionalFilter ouia id
       cy.get(CONDITIONAL_FILTER).contains('Filter by reboot required').click();
@@ -231,6 +231,5 @@ describe('Pathways table tests', () => {
       // check chips empty
       cy.get(CHIP_GROUP).should('have.length', 0);
     });
-    
   });
 });
