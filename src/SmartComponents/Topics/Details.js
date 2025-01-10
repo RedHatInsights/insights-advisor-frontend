@@ -1,6 +1,6 @@
 import './_Details.scss';
 
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   Text,
   TextVariants,
@@ -25,7 +25,9 @@ import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { getDefaultImpactingFilter } from '../../PresentationalComponents/RulesTable/helpers';
+import { AccountStatContext } from '../../ZeroStateWrapper';
 
 const Details = () => {
   const intl = useIntl();
@@ -39,6 +41,7 @@ const Details = () => {
   let options = selectedTags?.length && { tags: selectedTags };
   workloads &&
     (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
+  const hasEdgeDevices = useContext(AccountStatContext);
 
   const {
     data: topic = {},
@@ -51,9 +54,9 @@ const Details = () => {
     const initiaRecFilters = { ...recFilters };
     dispatch(
       updateRecFilters({
-        impacting: true,
-        rule_status: 'enabled',
         topic: topicId,
+        ...getDefaultImpactingFilter(hasEdgeDevices),
+        rule_status: 'enabled',
         sort: `-total_risk`,
         limit: 10,
         offset: 0,

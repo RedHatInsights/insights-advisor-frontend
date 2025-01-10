@@ -9,13 +9,43 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: "chore(deps):"
-    allow:
-      - dependency-name: "@redhat-cloud-services/frontend*"
-      - dependency-name: "@patternfly/*"
-        dependency-type: direct
-    ignore:
-      - dependency-name: "react-router-dom"
-        versions: ["6.x"]
-      - dependency-name: "@redhat-cloud-services/frontend-components-notifications"
-        versions: 
-          - 3.2.11
+    groups:
+      fec:
+        patterns:
+          - "@redhat-cloud-services/*"
+        exclude-patterns:
+          - "@redhat-cloud-services/*-client"
+      patternfly:
+        patterns:
+          - "@patternfly/*"
+        exclude-patterns:
+          - "@patternfly/react-charts"
+        update-types:
+          - "minor"
+          - "patch"
+      babel:
+        patterns:
+          - "@babel/*"
+          - "babel-*"
+      lint:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "stylelint*"
+      clients:
+        patterns:
+          - "@redhat-cloud-services/*-client"
+      jest:
+        patterns:
+          - "jest*"
+      cypress:
+        patterns:
+          - "*cypress*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+      webpack:
+        patterns:
+          - "webpack"
+          - "webpack-bundle-analyzer"
