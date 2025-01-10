@@ -1,4 +1,4 @@
-name: sentryConfig
+name: sentryWorkflow
 
 on:
   workflow_dispatch:
@@ -55,4 +55,4 @@ jobs:
             --org $SENTRY_ORG \
             --project $SENTRY_PROJECT \
             --release $SENTRY_RELEASE \
-            --dist dist/sourcemaps
+            dist dist/sourcemaps
