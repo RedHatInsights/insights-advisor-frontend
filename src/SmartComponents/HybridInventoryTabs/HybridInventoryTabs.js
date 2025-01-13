@@ -2,8 +2,8 @@ import React, { Suspense, Fragment, lazy, useContext } from 'react';
 import propTypes from 'prop-types';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import { useFeatureFlag } from '../../Utilities/Hooks';
-import { AccountStatContext } from '../../ZeroStateWrapper';
 import { Bullseye, Spinner } from '@patternfly/react-core';
+import { AccountStatContext } from '../../Routes';
 
 const ImmutableDevices = lazy(() =>
   import(/* webpackChunkName: "ImmutableDevices" */ './ImmutableDevices')
