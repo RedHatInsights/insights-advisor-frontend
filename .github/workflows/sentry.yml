@@ -1,0 +1,58 @@
+name: sentryWorkflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_hash:
+        description: 'The commit hash (or branch/tag) to build'
+        required: true
+        default: 'master'
+
+jobs:
+  createSentryRelease:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.commit_hash }}
+
+      - name: Install dependencies
+        env:
+          SENTRY_RELEASE: advisor-${{ github.event.inputs.commit_hash }}
+        run: npm ci
+
+      - name: Build
+        env:
+          SENTRY_RELEASE: advisor-${{ github.event.inputs.commit_hash }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        run: npm run build --if-present
+
+      - name: Create a Sentry.io release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        with:
+          tagName: ${{ github.event.inputs.commit_hash }}
+          releaseNamePrefix: advisor
+          environment: master
+          sourcemaps: 'dist/sourcemaps'
+
+      - name: Upload debug files to Sentry
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        run: |
+          curl -sL https://sentry.io/get-cli/ | bash  # Install Sentry CLI
+          export SENTRY_RELEASE=advisor-${{ github.event.inputs.commit_hash }}
+          sentry-cli upload-dif \
+            --include-sources \
+            --org $SENTRY_ORG \
+            --project $SENTRY_PROJECT \
+            --release $SENTRY_RELEASE \
+            dist dist/sourcemaps
