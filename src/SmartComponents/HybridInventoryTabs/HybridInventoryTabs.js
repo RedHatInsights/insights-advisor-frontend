@@ -1,4 +1,4 @@
-import React, { Suspense, Fragment, lazy, useContext } from 'react';
+import React, { Suspense, lazy, useContext } from 'react';
 import propTypes from 'prop-types';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import { useFeatureFlag } from '../../Utilities/Hooks';
@@ -42,7 +42,13 @@ const HybridInventory = ({
       appName="inventory"
       module="./HybridInventoryTabs"
       ConventionalSystemsTab={
-        <Suspense fallback={Fragment}>
+        <Suspense
+          fallback={
+            <Bullseye>
+              <Spinner size="xl" />
+            </Bullseye>
+          }
+        >
           {tabProps.isRecommendationDetail ? (
             <RecommendationSystems {...tabProps} />
           ) : (
@@ -51,7 +57,13 @@ const HybridInventory = ({
         </Suspense>
       }
       ImmutableDevicesTab={
-        <Suspense fallback={Fragment}>
+        <Suspense
+          fallback={
+            <Bullseye>
+              <Spinner size="xl" />
+            </Bullseye>
+          }
+        >
           <ImmutableDevices {...tabProps} />
         </Suspense>
       }

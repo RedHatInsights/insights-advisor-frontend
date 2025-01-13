@@ -4,7 +4,7 @@ import {
   FILTER_CATEGORIES as FC,
   INVENTORY_BASE_URL,
 } from '../../AppConstants';
-import { Card, CardBody, Spinner } from '@patternfly/react-core';
+import { Spinner } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { SortByDirection, TableVariant } from '@patternfly/react-table';
@@ -16,7 +16,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Get } from '../../Utilities/Api';
-import { List } from 'react-content-loader';
 import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
@@ -36,6 +35,7 @@ import { usePermissions } from '@redhat-cloud-services/frontend-components-utili
 import * as AppConstants from '../../AppConstants';
 import { useParams } from 'react-router-dom';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { SkeletonTable } from '@patternfly/react-component-groups';
 
 const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   const intl = useIntl();
@@ -462,11 +462,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
         />
       )}
       {inventoryReportFetchStatus === 'pending' && (
-        <Card>
-          <CardBody>
-            <List />
-          </CardBody>
-        </Card>
+        <SkeletonTable columns={cols.map((c) => c.title)} variant="compact" />
       )}
       {inventoryReportFetchStatus === 'fulfilled' && (
         <Fragment>
