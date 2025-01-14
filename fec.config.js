@@ -14,12 +14,12 @@ module.exports = {
             authToken: process.env.SENTRY_AUTH_TOKEN,
             org: 'red-hat-it',
             project: 'advisor-rhel',
-            _experiments: {
-              moduleMetadata: ({ release }) => ({
-                dsn: 'https://f8eb44de949e487e853185c09340f3cf@o490301.ingest.us.sentry.io/4505397435367424',
-                release,
-              }),
-            },
+            moduleMetadata: ({ release }) => ({
+              dsn: 'https://f8eb44de949e487e853185c09340f3cf@o490301.ingest.us.sentry.io/4505397435367424',
+              release,
+              org: 'red-hat-it',
+              project: 'advisor-rhel',
+            }),
           }),
         ]
       : [
@@ -27,12 +27,12 @@ module.exports = {
           sentryWebpackPlugin({
             org: 'red-hat-it',
             project: 'advisor-rhel',
-            _experiments: {
-              moduleMetadata: ({ release }) => ({
-                dsn: 'https://f8eb44de949e487e853185c09340f3cf@o490301.ingest.us.sentry.io/4505397435367424',
-                release,
-              }),
-            },
+            moduleMetadata: ({ release }) => ({
+              dsn: 'https://f8eb44de949e487e853185c09340f3cf@o490301.ingest.us.sentry.io/4505397435367424',
+              release,
+              org: 'red-hat-it',
+              project: 'advisor-rhel',
+            }),
           }),
         ]),
   ],
