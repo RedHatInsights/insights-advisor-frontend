@@ -1,4 +1,4 @@
-name: sentryConfig
+name: uploadSourceMaps
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
         default: 'master'
 
 jobs:
-  uploadSourceMaps:
+  createSentryRelease:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -18,10 +18,13 @@ jobs:
           ref: ${{ github.event.inputs.commit_hash }}
 
       - name: Install dependencies
+        env:
+          SENTRY_RELEASE: ${{ github.event.inputs.commit_hash }}
         run: npm ci
 
       - name: Build
         env:
+          SENTRY_RELEASE: ${{ github.event.inputs.commit_hash }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
