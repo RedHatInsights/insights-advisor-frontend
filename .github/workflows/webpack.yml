@@ -29,15 +29,3 @@ jobs:
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         run: npm run build --if-present
-
-      - name: Create a Sentry.io release
-        uses: getsentry/action-release@v1
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-        with:
-          tagName: ${{ github.event.inputs.commit_hash }}
-          releaseNamePrefix: advisor
-          environment: master
-          sourcemaps: 'dist/sourcemaps'
