@@ -17,6 +17,9 @@ jobs:
         with:
           ref: ${{ github.event.inputs.commit_hash }}
 
+      - name: Install dependencies
+        run: npm ci
+
       - name: Build
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
