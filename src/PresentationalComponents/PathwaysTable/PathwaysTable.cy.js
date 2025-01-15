@@ -7,6 +7,7 @@ import PathwaysTable from './PathwaysTable';
 import fixtures from '../../../cypress/fixtures/pathways.json';
 import { pathwaysTableColumns } from '../../../cypress/support/globals';
 import _ from 'lodash';
+import messages from '../../Messages';
 
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
@@ -140,6 +141,18 @@ describe('Pathways table tests', () => {
           checkSortingUrl(label, order, sortingParameter);
         });
       });
+    });
+  });
+
+  describe('Tooltips', () => {
+    it(`Recommendation level tooltip displays the correct content.`, () => {
+      cy.get('.pf-v5-c-table__column-help-action').trigger('mouseenter');
+      cy.contains(messages.reclvldetails.defaultMessage).should('be.visible');
+    });
+
+    it(`Incident tooltip displays the correct content.`, () => {
+      cy.get('.adv-c-label-incident').first().trigger('mouseenter');
+      cy.contains(messages.incidentTooltip.defaultMessage).should('be.visible');
     });
   });
 
