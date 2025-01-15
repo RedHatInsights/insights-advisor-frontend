@@ -7,6 +7,7 @@ import { initStore } from '../../Store';
 import fixtures from '../../../cypress/fixtures/recommendations.json';
 import _ from 'lodash';
 import { rulesTableColumns } from '../../../cypress/support/globals';
+import { selectConditionalFilterOption } from '../../../cypress/utils/table';
 
 //eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
@@ -18,11 +19,9 @@ import {
   CHIP,
   CHIP_GROUP,
   CONDITIONAL_FILTER,
-  CONDITIONAL_FILTER_TOGGLE,
   hasChip,
   MENU_ITEM,
   PAGINATION_VALUES,
-  PT_CONDITIONAL_FILTER_LIST,
   removeAllChips,
   SORTING_ORDERS,
   tableIsSortedBy,
@@ -470,8 +469,7 @@ describe('Conditional Filter', () => {
 
   it(`Name filter box correctly updates chips.`, () => {
     // select Name filter
-    cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-    cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Name').click();
+    selectConditionalFilterOption('Name');
 
     // enter a name
     // The ConditionalFilter ouiaId is assigned to the wrong element (input)
@@ -491,8 +489,7 @@ describe('Conditional Filter', () => {
 
   it(`Total risk filter box correctly updates chips.`, () => {
     // select Category filter
-    cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-    cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Total risk').click();
+    selectConditionalFilterOption('Total risk');
 
     // select two categories
     // There are multiple elements with the ConditionalFilter ouia id
@@ -514,8 +511,7 @@ describe('Conditional Filter', () => {
 
   it(`Risk of change filter box correctly updates chips.`, () => {
     // select Category filter
-    cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-    cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Risk of change').click();
+    selectConditionalFilterOption('Risk of change');
 
     // select two categories
     // There are multiple elements with the ConditionalFilter ouia id
@@ -537,8 +533,7 @@ describe('Conditional Filter', () => {
 
   it(`Impact filter box correctly updates chips.`, () => {
     // select Category filter
-    cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-    cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Impact').click();
+    selectConditionalFilterOption('Impact');
 
     // select two categories
     // There are multiple elements with the ConditionalFilter ouia id
@@ -560,8 +555,7 @@ describe('Conditional Filter', () => {
 
   it(`Likelihood filter box correctly updates chips.`, () => {
     // select Category filter
-    cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-    cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Likelihood').click();
+    selectConditionalFilterOption('Likelihood');
 
     // select two categories
     // There are multiple elements with the ConditionalFilter ouia id
@@ -583,8 +577,7 @@ describe('Conditional Filter', () => {
 
   it(`Category filter box correctly updates chips.`, () => {
     // select Category filter
-    cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-    cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Category').click();
+    selectConditionalFilterOption('Category');
 
     // select two categories
     // There are multiple elements with the ConditionalFilter ouia id
@@ -606,8 +599,7 @@ describe('Conditional Filter', () => {
 
   it(`Incidents filter box correctly updates chips.`, () => {
     // select Incidents filter
-    cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-    cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Incidents').click();
+    selectConditionalFilterOption('Incidents');
 
     // select an option
     // There are multiple elements with the ConditionalFilter ouia id
@@ -627,8 +619,7 @@ describe('Conditional Filter', () => {
 
   it(`Remediation filter box correctly updates chips.`, () => {
     // select Incidents filter
-    cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-    cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Remediation').click();
+    selectConditionalFilterOption('Remediation');
 
     // select an option
     // There are multiple elements with the ConditionalFilter ouia id
@@ -648,8 +639,7 @@ describe('Conditional Filter', () => {
 
   it(`Reboot required filter box correctly updates chips.`, () => {
     // select Reboot filter filter
-    cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-    cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Reboot required').click();
+    selectConditionalFilterOption('Reboot required');
 
     // select an option
     // There are multiple elements with the ConditionalFilter ouia id
@@ -669,8 +659,7 @@ describe('Conditional Filter', () => {
 
   it(`Status filter box correctly updates chips.`, () => {
     // select Reboot filter filter
-    cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-    cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Status').click();
+    selectConditionalFilterOption('Status');
 
     // select an option
     // There are multiple elements with the ConditionalFilter ouia id
@@ -691,8 +680,7 @@ describe('Conditional Filter', () => {
 
   it(`Systems impacted filter box correctly updates chips.`, () => {
     // select Reboot filter filter
-    cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-    cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Systems impacted').click();
+    selectConditionalFilterOption('Systems impacted');
 
     // select None
     // There are multiple elements with the ConditionalFilter ouia id

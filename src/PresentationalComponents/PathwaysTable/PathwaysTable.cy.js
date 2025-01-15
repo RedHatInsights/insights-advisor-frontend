@@ -7,12 +7,11 @@ import PathwaysTable from './PathwaysTable';
 import fixtures from '../../../cypress/fixtures/pathways.json';
 import { pathwaysTableColumns } from '../../../cypress/support/globals';
 import _ from 'lodash';
+import { selectConditionalFilterOption } from '../../../cypress/utils/table';
 //eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
-  CONDITIONAL_FILTER_TOGGLE,
   CHIP_GROUP,
   hasChip,
-  PT_CONDITIONAL_FILTER_LIST,
   CONDITIONAL_FILTER,
   MENU_ITEM,
 } from '@redhat-cloud-services/frontend-components-utilities';
@@ -149,8 +148,7 @@ describe('Pathways table tests', () => {
   describe('Conditional Filter', () => {
     it(`Name filter box correctly updates chips.`, () => {
       // select Name filter
-      cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Name').click();
+      selectConditionalFilterOption('Name');
 
       // enter a name
       // The ConditionalFilter ouiaId is assigned to the wrong element (input)
@@ -169,8 +167,7 @@ describe('Pathways table tests', () => {
 
     it(`Category filter box correctly updates chips.`, () => {
       // select Category filter
-      cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Category').click();
+      selectConditionalFilterOption('Category');
 
       // select two categories
       // There are multiple elements with the ConditionalFilter ouia id
@@ -192,8 +189,7 @@ describe('Pathways table tests', () => {
 
     it(`Incidents filter box correctly updates chips.`, () => {
       // select Incidents filter
-      cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Incidents').click();
+      selectConditionalFilterOption('Incidents');
 
       // select an option
       // There are multiple elements with the ConditionalFilter ouia id
@@ -213,8 +209,7 @@ describe('Pathways table tests', () => {
 
     it(`Reboot required filter box correctly updates chips.`, () => {
       // select Reboot filter filter
-      cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Reboot required').click();
+      selectConditionalFilterOption('Reboot required');
 
       // select an option
       // There are multiple elements with the ConditionalFilter ouia id

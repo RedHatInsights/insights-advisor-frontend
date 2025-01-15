@@ -1,6 +1,10 @@
 /* eslint-disable rulesdir/disallow-fec-relative-imports */
 // eslint-disable-next-line prettier/prettier
 import _ from 'lodash';
+import {
+  CONDITIONAL_FILTER_TOGGLE,
+  PT_CONDITIONAL_FILTER_LIST,
+} from '@redhat-cloud-services/frontend-components-utilities';
 
 function checkSorting(
   data,
@@ -89,4 +93,9 @@ function* cumulativeCombinations(arr, current = []) {
   }
 }
 
-export { checkSorting, cypressApplyFilters, cumulativeCombinations };
+function selectConditionalFilterOption(option) {
+  cy.get(CONDITIONAL_FILTER_TOGGLE).click();
+  cy.get(PT_CONDITIONAL_FILTER_LIST).contains(option).click();
+}
+
+export { checkSorting, cypressApplyFilters, cumulativeCombinations, selectConditionalFilterOption };

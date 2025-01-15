@@ -8,15 +8,16 @@ import {
   checkTableHeaders,
   CHIP_GROUP,
   CONDITIONAL_FILTER,
-  CONDITIONAL_FILTER_TOGGLE,
   hasChip,
   MENU_ITEM,
-  PT_CONDITIONAL_FILTER_LIST,
   SORTING_ORDERS,
   TABLE,
   TOOLBAR,
 } from '@redhat-cloud-services/frontend-components-utilities';
-import { checkSorting } from '../../../cypress/utils/table';
+import {
+  checkSorting,
+  selectConditionalFilterOption,
+} from '../../../cypress/utils/table';
 import Wrapper from '../../Utilities/Wrapper';
 import { INVENTORY_BASE_URL } from '../../AppConstants';
 import systemProfile from '../../../cypress/fixtures/systemProfile.json';
@@ -172,8 +173,7 @@ describe('system rules table', () => {
   describe('Conditional Filter', () => {
     it(`Description filter box correctly updates chips.`, () => {
       // select Name filter
-      cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Description').click();
+      selectConditionalFilterOption('Description');
 
       // enter a name
       // The ConditionalFilter ouiaId is assigned to the wrong element (input)
@@ -193,8 +193,7 @@ describe('system rules table', () => {
 
     it(`Total risk filter box correctly updates chips.`, () => {
       // select Category filter
-      cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Total risk').click();
+      selectConditionalFilterOption('Total risk');
 
       // select two categories
       // There are multiple elements with the ConditionalFilter ouia id
@@ -216,8 +215,7 @@ describe('system rules table', () => {
 
     it(`Category filter box correctly updates chips.`, () => {
       // select Category filter
-      cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Category').click();
+      selectConditionalFilterOption('Category');
 
       // select two categories
       // There are multiple elements with the ConditionalFilter ouia id
@@ -239,8 +237,7 @@ describe('system rules table', () => {
 
     it(`Remediation filter box correctly updates chips.`, () => {
       // select Incidents filter
-      cy.get(CONDITIONAL_FILTER_TOGGLE).click();
-      cy.get(PT_CONDITIONAL_FILTER_LIST).contains('Remediation').click();
+      selectConditionalFilterOption('Remediation');
 
       // select an option
       // There are multiple elements with the ConditionalFilter ouia id
