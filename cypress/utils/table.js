@@ -98,4 +98,29 @@ function selectConditionalFilterOption(option) {
   cy.get(PT_CONDITIONAL_FILTER_LIST).contains(option).click();
 }
 
-export { checkSorting, cypressApplyFilters, cumulativeCombinations, selectConditionalFilterOption };
+function selectRandomEnabledRows({
+  rows,
+  numberOfRowsToSelect,
+}) {
+  const enabledRows = Array.from(rows).filter(row => {
+    const checkbox = row.querySelector('input[type="checkbox"]');
+    if(!checkbox.hasAttribute('disabled')){
+      return true;
+    }
+  })
+  const rowCount = enabledRows.length
+
+  const randomIndices = [];
+  while (randomIndices.length < numberOfRowsToSelect) {
+    const randomIndex = Math.floor(Math.random() * rowCount);
+    if (!randomIndices.includes(randomIndex)) {
+      randomIndices.push(randomIndex);
+    }
+  }
+
+  randomIndices.forEach(index => {
+    enabledRows[index].querySelector('input[type="checkbox"]').click();
+  });
+}
+
+export { checkSorting, cypressApplyFilters, cumulativeCombinations, selectRandomEnabledRows, selectConditionalFilterOption };

@@ -31,6 +31,12 @@ import {
 const ROOT = 'table[aria-label="pathways-table"]';
 const TABLE_HEADERS = _.map(pathwaysTableColumns, (it) => it.title);
 const ROWS_SHOWN = fixtures.data.length;
+const CATEGORY_VALUES = [
+  'Availability',
+  'Performance',
+  'Stability',
+  'Security',
+];
 
 //THIS FILE HAS COMMENTED OUT TEST BECAUSE THE FUNCTIONS/LABELS IMPORTED FROM FEC-UTILS
 //NEED TO BE UPDATED
@@ -97,6 +103,136 @@ describe('Pathways table tests', () => {
       tableIsSortedBy('Recommendation level');
     });
   });
+
+  describe('Sorting', () => {
+    function checkSortingUrl(label, order, dataField) {
+      // get appropriate locators
+      const header = `th[data-label="${label}"]`;
+      // sort by column and verify URL
+      if (order === 'ascending') {
+        cy.get(header).find('button').eq(0).click();
+        cy.url().should('include', `sort=${dataField}`);
+      } else {
+        cy.get(header).find('button').eq(0).click();
+        cy.wait(['@call', '@call']);
+        cy.get(header).find('button').eq(0).click();
+        cy.url().should('include', `sort=-${dataField}`);
+      }
+    }
+  
+    _.zip(
+      ['name', 'impacted_systems_count', 'recommendation_level'],
+      ['Name', 'Systems', 'Recommendation level']
+    ).forEach(([category, label]) => {
+      let sortingParameter = category;
+      SORTING_ORDERS.forEach((order) => {
+        it(`${order} by ${label}`, () => {
+          checkSortingUrl(label, order, sortingParameter);
+        });
+      });
+    });
+  });
+  
+  describe('Conditional Filter', () => {
+    it(`Name filter box correctly updates chips.`, () => {
+      // select Name filter
+      selectConditionalFilterOption('Name');
+  
+      // enter a name
+      // The ConditionalFilter ouiaId is assigned to the wrong element (input)
+      cy.get('[aria-label="text input"]').click();
+      cy.get('[aria-label="text input"]').type('Lorem');
+  
+      // check chips updated
+      hasChip('Name', 'Lorem');
+  
+      // reset
+      cy.get('button').contains('Reset filters').click();
+  
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+  
+    it(`Category filter box correctly updates chips.`, () => {
+      // select Category filter
+      selectConditionalFilterOption('Category');
+  
+      // select two categories
+      // There are multiple elements with the ConditionalFilter ouia id
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+      cy.get(MENU_ITEM).contains('Availability').click();
+      cy.get(MENU_ITEM).contains('Stability').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+  
+      // check chips updated
+      hasChip('Category', 'Availability');
+      hasChip('Category', 'Stability');
+  
+      // reset
+      cy.get('button').contains('Reset filters').click();
+  
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+  
+    it(`Incidents filter box correctly updates chips.`, () => {
+      // select Incidents filter
+      selectConditionalFilterOption('Incidents');
+  
+      // select an option
+      // There are multiple elements with the ConditionalFilter ouia id
+      cy.get(CONDITIONAL_FILTER).contains('Filter by incidents').click();
+      cy.get(MENU_ITEM).contains('Non-incident').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by incidents').click();
+  
+      // check chips updated
+      hasChip('Incidents', 'Non-incident');
+  
+      // reset
+      cy.get('button').contains('Reset filters').click();
+  
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+  
+    it(`Reboot required filter box correctly updates chips.`, () => {
+      // select Reboot filter filter
+      selectConditionalFilterOption('Reboot required');
+  
+      // select an option
+      // There are multiple elements with the ConditionalFilter ouia id
+      cy.get(CONDITIONAL_FILTER).contains('Filter by reboot required').click();
+      cy.get(MENU_ITEM).contains('Required').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by reboot required').click();
+  
+      // check chips updated
+      hasChip('Reboot required', 'Required');
+  
+      // reset
+      cy.get('button').contains('Reset filters').click();
+  
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+  });
+  
+  describe('Multiple categories get abbreviated', () => {
+    it('Multiple categories get abbreviated', () => {
+      // for each row
+      cy.get('tbody [data-ouia-component-type="PF5/TableRow"]').then((rows) => {
+        Array.from(rows).forEach((row) => {
+          cy.wrap(row)
+            .find('td[data-label="Category"] li')
+            .then((elems) => {
+              expect(elems[0].textContent.trim()).to.be.oneOf(CATEGORY_VALUES);
+              if (elems.length > 1) {
+                expect(elems[1].textContent.trim()).to.match(/more$/);
+              }
+            });
+        });
+      });
+    });
+  });
   //The imported data-ouia-component-type="PF5/PaginationOptionsMenu isnt wants on the menu. Need to update FEC-utils
   // describe('pagination', () => {
   //   it('shows correct total number of pathways', () => {
@@ -116,115 +252,4 @@ describe('Pathways table tests', () => {
   //     });
   //   });
   // });
-  describe('Sorting', () => {
-    function checkSortingUrl(label, order, dataField) {
-      // get appropriate locators
-      const header = `th[data-label="${label}"]`;
-      // sort by column and verify URL
-      if (order === 'ascending') {
-        cy.get(header).find('button').eq(0).click();
-        cy.url().should('include', `sort=${dataField}`);
-      } else {
-        cy.get(header).find('button').eq(0).click();
-        cy.wait(['@call', '@call']);
-        cy.get(header).find('button').eq(0).click();
-        cy.url().should('include', `sort=-${dataField}`);
-      }
-    }
-
-    _.zip(
-      ['name', 'impacted_systems_count', 'recommendation_level'],
-      ['Name', 'Systems', 'Recommendation level']
-    ).forEach(([category, label]) => {
-      let sortingParameter = category;
-      SORTING_ORDERS.forEach((order) => {
-        it(`${order} by ${label}`, () => {
-          checkSortingUrl(label, order, sortingParameter);
-        });
-      });
-    });
-  });
-
-  describe('Conditional Filter', () => {
-    it(`Name filter box correctly updates chips.`, () => {
-      // select Name filter
-      selectConditionalFilterOption('Name');
-
-      // enter a name
-      // The ConditionalFilter ouiaId is assigned to the wrong element (input)
-      cy.get('[aria-label="text input"]').click();
-      cy.get('[aria-label="text input"]').type('Lorem');
-
-      // check chips updated
-      hasChip('Name', 'Lorem');
-
-      // reset
-      cy.get('button').contains('Reset filters').click();
-
-      // check chips empty
-      cy.get(CHIP_GROUP).should('have.length', 0);
-    });
-
-    it(`Category filter box correctly updates chips.`, () => {
-      // select Category filter
-      selectConditionalFilterOption('Category');
-
-      // select two categories
-      // There are multiple elements with the ConditionalFilter ouia id
-      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
-      cy.get(MENU_ITEM).contains('Availability').click();
-      cy.get(MENU_ITEM).contains('Stability').click();
-      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
-
-      // check chips updated
-      hasChip('Category', 'Availability');
-      hasChip('Category', 'Stability');
-
-      // reset
-      cy.get('button').contains('Reset filters').click();
-
-      // check chips empty
-      cy.get(CHIP_GROUP).should('have.length', 0);
-    });
-
-    it(`Incidents filter box correctly updates chips.`, () => {
-      // select Incidents filter
-      selectConditionalFilterOption('Incidents');
-
-      // select an option
-      // There are multiple elements with the ConditionalFilter ouia id
-      cy.get(CONDITIONAL_FILTER).contains('Filter by incidents').click();
-      cy.get(MENU_ITEM).contains('Non-incident').click();
-      cy.get(CONDITIONAL_FILTER).contains('Filter by incidents').click();
-
-      // check chips updated
-      hasChip('Incidents', 'Non-incident');
-
-      // reset
-      cy.get('button').contains('Reset filters').click();
-
-      // check chips empty
-      cy.get(CHIP_GROUP).should('have.length', 0);
-    });
-
-    it(`Reboot required filter box correctly updates chips.`, () => {
-      // select Reboot filter filter
-      selectConditionalFilterOption('Reboot required');
-
-      // select an option
-      // There are multiple elements with the ConditionalFilter ouia id
-      cy.get(CONDITIONAL_FILTER).contains('Filter by reboot required').click();
-      cy.get(MENU_ITEM).contains('Required').click();
-      cy.get(CONDITIONAL_FILTER).contains('Filter by reboot required').click();
-
-      // check chips updated
-      hasChip('Reboot required', 'Required');
-
-      // reset
-      cy.get('button').contains('Reset filters').click();
-
-      // check chips empty
-      cy.get(CHIP_GROUP).should('have.length', 0);
-    });
-  });
 });
