@@ -232,6 +232,7 @@ describe('Pathways table tests', () => {
   describe('Multiple categories get abbreviated', () => {
     it('Multiple categories get abbreviated', () => {
       // for each row
+      cy.wait(1);
       cy.get('tbody [data-ouia-component-type="PF5/TableRow"]').then((rows) => {
         Array.from(rows).forEach((row) => {
           cy.wrap(row)
