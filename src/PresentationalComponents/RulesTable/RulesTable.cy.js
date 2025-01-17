@@ -58,6 +58,7 @@ const mountComponent = ({ hasEdgeDevices } = { hasEdgeDevices: false }) => {
   );
 };
 
+/*
 const expandContent = (rowNumber) => {
   cy.get('tbody[class="pf-v5-c-table__tbody pf-m-width-100"]')
     .eq(rowNumber)
@@ -66,6 +67,11 @@ const expandContent = (rowNumber) => {
     .eq(0)
     .should('exist')
     .click();
+};
+*/
+
+const expandAll = () => {
+  cy.get('button[aria-label="Expand all"]').click();
 };
 
 const filterApply = (filters) => cypressApplyFilters(filters, filtersConf);
@@ -428,29 +434,36 @@ describe('content', () => {
   });
 
   it('has correct links', () => {
-    expandContent(1);
+    expandAll();
 
-    cy.get('.ins-c-rule-details')
-      .eq(0)
-      .find('a')
-      .contains('Knowledgebase article')
-      .should(
-        'have.attr',
-        'href',
-        'https://access.redhat.com/node/' + fixtures.data[0].node_id
-      );
+    cy.get('tbody tr[class*="__expandable-row"]').then((rows) => {
+      Array.from(rows).forEach((row, index) => {
+        if (!(fixtures.data[index].node_id === '')) {
+          cy.log(fixtures.data[index].rule_id);
+          cy.wrap(row)
+            .find('a')
+            .contains('Knowledgebase article')
+            .should(
+              'have.attr',
+              'href',
+              'https://access.redhat.com/node/' + fixtures.data[index].node_id
+            );
+        }
 
-    cy.get('.ins-c-rule-details')
-      .eq(0)
-      .find('a')
-      .contains(
-        `View ${fixtures.data[0].impacted_systems_count} affected systems`
-      )
-      .should(
-        'have.attr',
-        'href',
-        '///recommendations/' + fixtures.data[0].rule_id
-      );
+        const viewStr =
+          fixtures.data[index].impacted_systems_count > 1
+            ? `View ${fixtures.data[index].impacted_systems_count} affected systems`
+            : `View the affected system`;
+        cy.wrap(row)
+          .find('a')
+          .contains(viewStr)
+          .should(
+            'have.attr',
+            'href',
+            '///recommendations/' + fixtures.data[index].rule_id
+          );
+      });
+    });
   });
 });
 
