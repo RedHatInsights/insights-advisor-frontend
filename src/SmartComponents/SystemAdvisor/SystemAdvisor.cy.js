@@ -6,13 +6,20 @@ import { BaseSystemAdvisor as SystemAdvisor } from './SystemAdvisor';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
   checkTableHeaders,
+  CHIP_GROUP,
+  CONDITIONAL_FILTER,
+  hasChip,
+  MENU_ITEM,
   PT_BULK_SELECT,
   PT_BULK_SELECT_LIST,
   SORTING_ORDERS,
   TABLE,
   TOOLBAR,
 } from '@redhat-cloud-services/frontend-components-utilities';
-import { checkSorting } from '../../../cypress/utils/table';
+import {
+  checkSorting,
+  selectConditionalFilterOption,
+} from '../../../cypress/utils/table';
 import Wrapper from '../../Utilities/Wrapper';
 import { INVENTORY_BASE_URL } from '../../AppConstants';
 import systemProfile from '../../../cypress/fixtures/systemProfile.json';
@@ -79,39 +86,6 @@ describe('system rules table', () => {
     checkTableHeaders(TABLE_HEADERS);
   });
 
-  // it('renders "First impacted" date correctly', () => {
-  //   const {
-  //     rule: { description },
-  //     impacted_date,
-  //   } = fixtures[0];
-  //   const date = dateStringByType('relative')(new Date(impacted_date));
-
-  //   applyFilters({ description }, filtersConf);
-  //   cy.get('td[data-label="First impacted"]').first().should('contain', date);
-  // });
-
-  it('request to kcs contains all required ids', () => {
-    cy.wait('@kcs')
-      .its('request.url')
-      .should(
-        'include',
-        fixtures.map(({ rule }) => rule.node_id).join('%20OR%20')
-      );
-  });
-
-  // it('link to kcs has correct title and url', () => {
-  //   const {
-  //     rule: { description, node_id },
-  //   } = fixtures[0];
-  //   const kcsEntry = fixturesKcs.find(({ id }) => id === node_id);
-
-  //   applyFilters({ description }, filtersConf);
-  //   cy.ouiaId('ExpandCollapseAll').click();
-  //   cy.get('.ins-c-report-details__kba a')
-  //     .should('include.text', kcsEntry?.publishedTitle)
-  //     .should('have.attr', 'href', kcsEntry?.view_uri);
-  // });
-
   describe('sorting', () => {
     _.zip(
       [
@@ -167,6 +141,92 @@ describe('system rules table', () => {
     });
   });
 
+  describe('Conditional Filter', () => {
+    it(`Description filter box correctly updates chips.`, () => {
+      // select Name filter
+      selectConditionalFilterOption('Description');
+
+      // enter a name
+      // The ConditionalFilter ouiaId is assigned to the wrong element (input)
+      cy.get('[aria-label="text input"]').click();
+      cy.get('[aria-label="text input"]').type('Lorem');
+      cy.get('[aria-label="text input"]').type('{enter}');
+
+      // check chips updated
+      hasChip('Description', 'Lorem');
+
+      // reset
+      cy.get('button').contains('Reset filters').click();
+
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+
+    it(`Total risk filter box correctly updates chips.`, () => {
+      // select Category filter
+      selectConditionalFilterOption('Total risk');
+
+      // select two categories
+      // There are multiple elements with the ConditionalFilter ouia id
+      cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
+      cy.get(MENU_ITEM).contains('Critical').click();
+      cy.get(MENU_ITEM).contains('Moderate').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
+
+      // check chips updated
+      hasChip('Total risk', 'Critical');
+      hasChip('Total risk', 'Moderate');
+
+      // reset
+      cy.get('button').contains('Reset filters').click();
+
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+
+    it(`Category filter box correctly updates chips.`, () => {
+      // select Category filter
+      selectConditionalFilterOption('Category');
+
+      // select two categories
+      // There are multiple elements with the ConditionalFilter ouia id
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+      cy.get(MENU_ITEM).contains('Availability').click();
+      cy.get(MENU_ITEM).contains('Stability').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+
+      // check chips updated
+      hasChip('Category', 'Availability');
+      hasChip('Category', 'Stability');
+
+      // reset
+      cy.get('button').contains('Reset filters').click();
+
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+
+    it(`Remediation filter box correctly updates chips.`, () => {
+      // select Incidents filter
+      selectConditionalFilterOption('Remediation');
+
+      // select an option
+      // There are multiple elements with the ConditionalFilter ouia id
+      cy.get(CONDITIONAL_FILTER).contains('Filter by remediation').click();
+      cy.get(MENU_ITEM).contains('Ansible playbook').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by remediation').click();
+
+      // check chips updated
+      hasChip('Remediation', 'Ansible playbook');
+
+      // reset
+      cy.get('button').contains('Reset filters').click();
+
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+  });
+
   describe('BulkSelector', () => {
     it(`The Bulk selector shows the correct number of systems selected.`, () => {
       // check that empty
@@ -216,6 +276,26 @@ describe('system rules table', () => {
       // check that all selected
       cy.get(PT_BULK_SELECT).should('have.text', '7 selected');
     });
+  });
+
+  // it('renders "First impacted" date correctly', () => {
+  //   const {
+  //     rule: { description },
+  //     impacted_date,
+  //   } = fixtures[0];
+  //   const date = dateStringByType('relative')(new Date(impacted_date));
+
+  //   applyFilters({ description }, filtersConf);
+  //   cy.get('td[data-label="First impacted"]').first().should('contain', date);
+  // });
+
+  it('request to kcs contains all required ids', () => {
+    cy.wait('@kcs')
+      .its('request.url')
+      .should(
+        'include',
+        fixtures.map(({ rule }) => rule.node_id).join('%20OR%20')
+      );
   });
 
   describe(`Tooltips`, () => {
@@ -273,3 +353,15 @@ describe('system rules table', () => {
     });
   });
 });
+// it('link to kcs has correct title and url', () => {
+//   const {
+//     rule: { description, node_id },
+//   } = fixtures[0];
+//   const kcsEntry = fixturesKcs.find(({ id }) => id === node_id);
+
+//   applyFilters({ description }, filtersConf);
+//   cy.ouiaId('ExpandCollapseAll').click();
+//   cy.get('.ins-c-report-details__kba a')
+//     .should('include.text', kcsEntry?.publishedTitle)
+//     .should('have.attr', 'href', kcsEntry?.view_uri);
+// });

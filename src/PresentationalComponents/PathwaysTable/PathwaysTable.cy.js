@@ -7,6 +7,14 @@ import PathwaysTable from './PathwaysTable';
 import fixtures from '../../../cypress/fixtures/pathways.json';
 import { pathwaysTableColumns } from '../../../cypress/support/globals';
 import _ from 'lodash';
+import { selectConditionalFilterOption } from '../../../cypress/utils/table';
+//eslint-disable-next-line rulesdir/disallow-fec-relative-imports
+import {
+  CHIP_GROUP,
+  hasChip,
+  CONDITIONAL_FILTER,
+  MENU_ITEM,
+} from '@redhat-cloud-services/frontend-components-utilities';
 import messages from '../../Messages';
 
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
@@ -96,25 +104,7 @@ describe('Pathways table tests', () => {
       tableIsSortedBy('Recommendation level');
     });
   });
-  //The imported data-ouia-component-type="PF5/PaginationOptionsMenu isnt wants on the menu. Need to update FEC-utils
-  // describe('pagination', () => {
-  //   it('shows correct total number of pathways', () => {
-  //     checkPaginationTotal(fixtures.meta.count);
-  //   });
 
-  //   it('values are expected ones', () => {
-  //     checkPaginationValues(PAGINATION_VALUES);
-  //   });
-
-  //   it('can change page limit', () => {
-  //     // FIXME: best way to make the loop
-  //     cy.wrap(PAGINATION_VALUES).each((el) => {
-  //       changePagination(el).then(() => {
-  //         expect(window.location.search).to.contain(`limit=${el}`);
-  //       });
-  //     });
-  //   });
-  // });
   describe('Sorting', () => {
     function checkSortingUrl(label, order, dataField) {
       // get appropriate locators
@@ -141,6 +131,89 @@ describe('Pathways table tests', () => {
           checkSortingUrl(label, order, sortingParameter);
         });
       });
+    });
+  });
+
+  describe('Conditional Filter', () => {
+    it(`Name filter box correctly updates chips.`, () => {
+      // select Name filter
+      selectConditionalFilterOption('Name');
+
+      // enter a name
+      // The ConditionalFilter ouiaId is assigned to the wrong element (input)
+      cy.get('[aria-label="text input"]').click();
+      cy.get('[aria-label="text input"]').type('Lorem');
+
+      // check chips updated
+      hasChip('Name', 'Lorem');
+
+      // reset
+      cy.get('button').contains('Reset filters').click();
+
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+
+    it(`Category filter box correctly updates chips.`, () => {
+      // select Category filter
+      selectConditionalFilterOption('Category');
+
+      // select two categories
+      // There are multiple elements with the ConditionalFilter ouia id
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+      cy.get(MENU_ITEM).contains('Availability').click();
+      cy.get(MENU_ITEM).contains('Stability').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+
+      // check chips updated
+      hasChip('Category', 'Availability');
+      hasChip('Category', 'Stability');
+
+      // reset
+      cy.get('button').contains('Reset filters').click();
+
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+
+    it(`Incidents filter box correctly updates chips.`, () => {
+      // select Incidents filter
+      selectConditionalFilterOption('Incidents');
+
+      // select an option
+      // There are multiple elements with the ConditionalFilter ouia id
+      cy.get(CONDITIONAL_FILTER).contains('Filter by incidents').click();
+      cy.get(MENU_ITEM).contains('Non-incident').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by incidents').click();
+
+      // check chips updated
+      hasChip('Incidents', 'Non-incident');
+
+      // reset
+      cy.get('button').contains('Reset filters').click();
+
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+
+    it(`Reboot required filter box correctly updates chips.`, () => {
+      // select Reboot filter filter
+      selectConditionalFilterOption('Reboot required');
+
+      // select an option
+      // There are multiple elements with the ConditionalFilter ouia id
+      cy.get(CONDITIONAL_FILTER).contains('Filter by reboot required').click();
+      cy.get(MENU_ITEM).contains('Required').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by reboot required').click();
+
+      // check chips updated
+      hasChip('Reboot required', 'Required');
+
+      // reset
+      cy.get('button').contains('Reset filters').click();
+
+      // check chips empty
+      cy.get(CHIP_GROUP).should('have.length', 0);
     });
   });
 
@@ -173,4 +246,23 @@ describe('Pathways table tests', () => {
       });
     });
   });
+  //The imported data-ouia-component-type="PF5/PaginationOptionsMenu isnt wants on the menu. Need to update FEC-utils
+  // describe('pagination', () => {
+  //   it('shows correct total number of pathways', () => {
+  //     checkPaginationTotal(fixtures.meta.count);
+  //   });
+
+  //   it('values are expected ones', () => {
+  //     checkPaginationValues(PAGINATION_VALUES);
+  //   });
+
+  //   it('can change page limit', () => {
+  //     // FIXME: best way to make the loop
+  //     cy.wrap(PAGINATION_VALUES).each((el) => {
+  //       changePagination(el).then(() => {
+  //         expect(window.location.search).to.contain(`limit=${el}`);
+  //       });
+  //     });
+  //   });
+  // });
 });
