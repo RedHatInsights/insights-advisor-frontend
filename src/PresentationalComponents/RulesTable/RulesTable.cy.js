@@ -79,6 +79,10 @@ const DEFAULT_FILTERS = {
 };
 const TABLE_HEADERS = _.map(rulesTableColumns, (it) => it.title);
 const ROOT = 'table[aria-label=rule-table]';
+const CRITICAL_TOOLTIP_CONTENT =
+  'The total risk of this remediation is critical, based on the combination of likelihood and impact to remediate.';
+const IMPORTANT_TOOLTIP_CONTENT =
+  'The total risk of this remediation is important, based on the combination of likelihood and impact to remediate.';
 
 describe('test data', () => {
   it('the first recommendation has systems impacted', () => {
@@ -451,6 +455,42 @@ describe('content', () => {
         'href',
         '///recommendations/' + fixtures.data[0].rule_id
       );
+  });
+});
+
+describe('Tooltips', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+    mountComponent();
+  });
+
+  it(`Incident tooltip displays the correct content.`, () => {
+    cy.get('.adv-c-label-incident').first().trigger('mouseenter');
+    cy.contains(messages.incidentTooltip.defaultMessage).should('be.visible');
+  });
+
+  it(`Critical tooltip displays the correct content.`, () => {
+    cy.get('td[data-label="Total risk"] .pf-m-red')
+      .first()
+      .trigger('mouseenter');
+    cy.contains(CRITICAL_TOOLTIP_CONTENT).should('be.visible');
+  });
+
+  it(`Important tooltip displays the correct content.`, () => {
+    cy.get('td[data-label="Total risk"] .pf-m-orange')
+      .first()
+      .trigger('mouseenter');
+    cy.contains(IMPORTANT_TOOLTIP_CONTENT).should('be.visible');
+  });
+
+  it(`Export kebab tooltip displays the correct content.`, () => {
+    cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
+    cy.contains(messages.permsAction.defaultMessage).should('be.visible');
   });
 });
 
