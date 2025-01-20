@@ -15,6 +15,7 @@ import {
   CONDITIONAL_FILTER,
   MENU_ITEM,
 } from '@redhat-cloud-services/frontend-components-utilities';
+import messages from '../../Messages';
 
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
@@ -213,6 +214,18 @@ describe('Pathways table tests', () => {
 
       // check chips empty
       cy.get(CHIP_GROUP).should('have.length', 0);
+    });
+  });
+
+  describe('Tooltips', () => {
+    it(`Recommendation level tooltip displays the correct content.`, () => {
+      cy.get('.pf-v5-c-table__column-help-action').trigger('mouseenter');
+      cy.contains(messages.reclvldetails.defaultMessage).should('be.visible');
+    });
+
+    it(`Incident tooltip displays the correct content.`, () => {
+      cy.get('.adv-c-label-incident').first().trigger('mouseenter');
+      cy.contains(messages.incidentTooltip.defaultMessage).should('be.visible');
     });
   });
 

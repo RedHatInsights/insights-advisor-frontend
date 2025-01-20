@@ -81,6 +81,10 @@ const DEFAULT_FILTERS = {
 };
 const TABLE_HEADERS = _.map(rulesTableColumns, (it) => it.title);
 const ROOT = 'table[aria-label=rule-table]';
+const CRITICAL_TOOLTIP_CONTENT =
+  'The total risk of this remediation is critical, based on the combination of likelihood and impact to remediate.';
+const IMPORTANT_TOOLTIP_CONTENT =
+  'The total risk of this remediation is important, based on the combination of likelihood and impact to remediate.';
 
 describe('test data', () => {
   it('the first recommendation has systems impacted', () => {
@@ -98,6 +102,7 @@ describe('renders correctly', () => {
     }).as('call');
     mountComponent();
   });
+
   it('The Rules table renders', () => {
     cy.get(ROOT).should('have.length', 1);
   });
@@ -121,16 +126,19 @@ describe('defaults', () => {
     }).as('call');
     mountComponent();
   });
+
   it(`pagination is set to ${DEFAULT_ROW_COUNT}`, () => {
     cy.get('.pf-v5-c-menu-toggle__text')
       .find('b')
       .eq(0)
       .should('have.text', `1 - ${DEFAULT_ROW_COUNT}`);
   });
+
   it('sorting using Total risk', () => {
     const column = 'Total risk';
     tableIsSortedBy(column);
   });
+
   it('links to the recommendations detail page', () => {
     cy.get('tbody tr:first [data-label=Name] a')
       .should('have.attr', 'href')
@@ -171,6 +179,7 @@ describe('pagination', () => {
     }).as('call');
     mountComponent();
   });
+
   it('shows correct total number of rules', () => {
     checkPaginationTotal(fixtures.meta.count);
   });
@@ -198,6 +207,7 @@ describe('filtering', () => {
     }).as('call');
     mountComponent();
   });
+
   it('can clear filters', () => {
     cy.get(CHIP_GROUP)
       .find(CHIP)
@@ -313,6 +323,7 @@ describe('making request based on filters', () => {
     }).as('has_playbook=true');
     mountComponent();
   });
+
   Object.entries(filtersConf).forEach(([key, config]) => {
     const { urlParam, values, urlValue, selectorText } = config;
 
@@ -344,6 +355,7 @@ describe('sorting', () => {
     }).as('call');
     mountComponent();
   });
+
   function checkSortingUrl(label, order, dataField) {
     //get appropriate locators
     const header = `th[data-label="${label}"]`;
@@ -710,6 +722,42 @@ describe('Conditional Filter', () => {
 
     // check chips are reset
     hasChip('Systems impacted', '1 or more');
+  });
+});
+
+describe('Tooltips', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+    mountComponent();
+  });
+
+  it(`Incident tooltip displays the correct content.`, () => {
+    cy.get('.adv-c-label-incident').first().trigger('mouseenter');
+    cy.contains(messages.incidentTooltip.defaultMessage).should('be.visible');
+  });
+
+  it(`Critical tooltip displays the correct content.`, () => {
+    cy.get('td[data-label="Total risk"] .pf-m-red')
+      .first()
+      .trigger('mouseenter');
+    cy.contains(CRITICAL_TOOLTIP_CONTENT).should('be.visible');
+  });
+
+  it(`Important tooltip displays the correct content.`, () => {
+    cy.get('td[data-label="Total risk"] .pf-m-orange')
+      .first()
+      .trigger('mouseenter');
+    cy.contains(IMPORTANT_TOOLTIP_CONTENT).should('be.visible');
+  });
+
+  it(`Export kebab tooltip displays the correct content.`, () => {
+    cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
+    cy.contains(messages.permsAction.defaultMessage).should('be.visible');
   });
 });
 

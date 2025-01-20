@@ -24,6 +24,7 @@ import Wrapper from '../../Utilities/Wrapper';
 import { INVENTORY_BASE_URL } from '../../AppConstants';
 import systemProfile from '../../../cypress/fixtures/systemProfile.json';
 import { selectRandomEnabledRows } from '../../../cypress/utils/table';
+import messages from '../../Messages';
 
 const TABLE_HEADERS = [
   'Description',
@@ -295,6 +296,61 @@ describe('system rules table', () => {
         'include',
         fixtures.map(({ rule }) => rule.node_id).join('%20OR%20')
       );
+  });
+
+  describe(`Tooltips`, () => {
+    function constructLikelihoodImpactTooltipContent(likelihood, impact) {
+      return (
+        messages.likelihoodDescription.defaultMessage.replace(
+          /{(.*?)}/g,
+          likelihood
+        ) +
+        ' ' +
+        messages.impactDescription.defaultMessage.replace(/{(.*?)}/g, impact)
+      );
+    }
+
+    it(`Export kebab tooltip displays the correct content.`, () => {
+      cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
+      cy.contains(messages.permsAction.defaultMessage).should('be.visible');
+    });
+
+    it(`Critical tooltip displays the correct content.`, () => {
+      cy.get('td[data-label="Total risk"] .pf-m-red')
+        .first()
+        .trigger('mouseenter');
+
+      cy.contains(
+        constructLikelihoodImpactTooltipContent('Low', 'Critical')
+      ).should('be.visible');
+    });
+
+    it(`Important tooltip displays the correct content.`, () => {
+      cy.get('td[data-label="Total risk"] .pf-m-orange')
+        .first()
+        .trigger('mouseenter');
+      cy.contains(
+        constructLikelihoodImpactTooltipContent('Medium', 'Low')
+      ).should('be.visible');
+    });
+
+    it(`Moderate tooltip displays the correct content.`, () => {
+      cy.get('td[data-label="Total risk"] .pf-m-gold')
+        .first()
+        .trigger('mouseenter');
+      cy.contains(
+        constructLikelihoodImpactTooltipContent('Medium', 'Medium')
+      ).should('be.visible');
+    });
+
+    it(`Low tooltip displays the correct content.`, () => {
+      cy.get('td[data-label="Total risk"] .pf-m-blue')
+        .first()
+        .trigger('mouseenter');
+      cy.contains(
+        constructLikelihoodImpactTooltipContent('Medium', 'High')
+      ).should('be.visible');
+    });
   });
 });
 // it('link to kcs has correct title and url', () => {
