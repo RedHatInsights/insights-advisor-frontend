@@ -7,6 +7,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AccountStatContext } from '../../ZeroStateWrapper';
 //eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import { hasChip } from '@redhat-cloud-services/frontend-components-utilities';
+import messages from '../../Messages';
 
 const mountComponent = (hasEdgeDevices) => {
   cy.mount(
@@ -72,5 +73,16 @@ describe('Topic Details is loaded correctly for user without Edge systems', () =
     cy.wait(['@rules_table_initial_call']);
     hasChip('Status', 'Enabled');
     hasChip('Systems impacted', '1 or more');
+  });
+});
+
+describe('Tooltips', () => {
+  beforeEach(() => {
+    mountComponent(true);
+  });
+
+  it(`Export kebab tooltip displays the correct content.`, () => {
+    cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
+    cy.contains(messages.permsAction.defaultMessage).should('be.visible');
   });
 });

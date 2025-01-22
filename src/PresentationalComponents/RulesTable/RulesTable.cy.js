@@ -7,23 +7,25 @@ import { initStore } from '../../Store';
 import fixtures from '../../../cypress/fixtures/recommendations.json';
 import _ from 'lodash';
 import { rulesTableColumns } from '../../../cypress/support/globals';
+import { selectConditionalFilterOption } from '../../../cypress/utils/table';
 
 //eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
-  checkTableHeaders,
-  TOOLBAR,
-  tableIsSortedBy,
-  hasChip,
-  CHIP_GROUP,
-  SORTING_ORDERS,
   changePagination,
-  PAGINATION_VALUES,
-  checkPaginationValues,
   checkPaginationTotal,
-  CHIP,
+  checkPaginationValues,
   checkRowCounts,
-  removeAllChips,
+  checkTableHeaders,
+  CHIP,
+  CHIP_GROUP,
   CONDITIONAL_FILTER,
+  hasChip,
+  MENU_ITEM,
+  PAGINATION_VALUES,
+  removeAllChips,
+  SORTING_ORDERS,
+  tableIsSortedBy,
+  TOOLBAR,
 } from '@redhat-cloud-services/frontend-components-utilities';
 
 import messages from '../../Messages';
@@ -79,6 +81,10 @@ const DEFAULT_FILTERS = {
 };
 const TABLE_HEADERS = _.map(rulesTableColumns, (it) => it.title);
 const ROOT = 'table[aria-label=rule-table]';
+const CRITICAL_TOOLTIP_CONTENT =
+  'The total risk of this remediation is critical, based on the combination of likelihood and impact to remediate.';
+const IMPORTANT_TOOLTIP_CONTENT =
+  'The total risk of this remediation is important, based on the combination of likelihood and impact to remediate.';
 
 describe('test data', () => {
   it('the first recommendation has systems impacted', () => {
@@ -96,6 +102,7 @@ describe('renders correctly', () => {
     }).as('call');
     mountComponent();
   });
+
   it('The Rules table renders', () => {
     cy.get(ROOT).should('have.length', 1);
   });
@@ -119,16 +126,19 @@ describe('defaults', () => {
     }).as('call');
     mountComponent();
   });
+
   it(`pagination is set to ${DEFAULT_ROW_COUNT}`, () => {
     cy.get('.pf-v5-c-menu-toggle__text')
       .find('b')
       .eq(0)
       .should('have.text', `1 - ${DEFAULT_ROW_COUNT}`);
   });
+
   it('sorting using Total risk', () => {
     const column = 'Total risk';
     tableIsSortedBy(column);
   });
+
   it('links to the recommendations detail page', () => {
     cy.get('tbody tr:first [data-label=Name] a')
       .should('have.attr', 'href')
@@ -169,6 +179,7 @@ describe('pagination', () => {
     }).as('call');
     mountComponent();
   });
+
   it('shows correct total number of rules', () => {
     checkPaginationTotal(fixtures.meta.count);
   });
@@ -196,6 +207,7 @@ describe('filtering', () => {
     }).as('call');
     mountComponent();
   });
+
   it('can clear filters', () => {
     cy.get(CHIP_GROUP)
       .find(CHIP)
@@ -311,6 +323,7 @@ describe('making request based on filters', () => {
     }).as('has_playbook=true');
     mountComponent();
   });
+
   Object.entries(filtersConf).forEach(([key, config]) => {
     const { urlParam, values, urlValue, selectorText } = config;
 
@@ -342,6 +355,7 @@ describe('sorting', () => {
     }).as('call');
     mountComponent();
   });
+
   function checkSortingUrl(label, order, dataField) {
     //get appropriate locators
     const header = `th[data-label="${label}"]`;
@@ -451,6 +465,299 @@ describe('content', () => {
         'href',
         '///recommendations/' + fixtures.data[0].rule_id
       );
+  });
+});
+
+describe('Conditional Filter', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+    mountComponent();
+  });
+
+  it(`Name filter box correctly updates chips.`, () => {
+    // select Name filter
+    selectConditionalFilterOption('Name');
+
+    // enter a name
+    // The ConditionalFilter ouiaId is assigned to the wrong element (input)
+    cy.get('[aria-label="text input"]').click();
+    cy.get('[aria-label="text input"]').type('Lorem');
+    cy.get('[aria-label="text input"]').type('{enter}');
+
+    // check chips updated
+    hasChip('Name', 'Lorem');
+
+    // reset
+    cy.get('button').contains('Reset filters').click();
+
+    // check chips empty
+    cy.get(CHIP_GROUP).should('have.length', 2);
+  });
+
+  it(`Total risk filter box correctly updates chips.`, () => {
+    // select Category filter
+    selectConditionalFilterOption('Total risk');
+
+    // select two categories
+    // There are multiple elements with the ConditionalFilter ouia id
+    cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
+    cy.get(MENU_ITEM).contains('Critical').click();
+    cy.get(MENU_ITEM).contains('Moderate').click();
+    cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
+
+    // check chips updated
+    hasChip('Total risk', 'Critical');
+    hasChip('Total risk', 'Moderate');
+
+    // reset
+    cy.get('button').contains('Reset filters').click();
+
+    // check chips empty
+    cy.get(CHIP_GROUP).should('have.length', 2);
+  });
+
+  it(`Risk of change filter box correctly updates chips.`, () => {
+    // select Category filter
+    selectConditionalFilterOption('Risk of change');
+
+    // select two categories
+    // There are multiple elements with the ConditionalFilter ouia id
+    cy.get(CONDITIONAL_FILTER).contains('Filter by risk of change').click();
+    cy.get(MENU_ITEM).contains('High').click();
+    cy.get(MENU_ITEM).contains('Low').click();
+    cy.get(CONDITIONAL_FILTER).contains('Filter by risk of change').click();
+
+    // check chips updated
+    hasChip('Risk of change', 'High');
+    hasChip('Risk of change', 'Low');
+
+    // reset
+    cy.get('button').contains('Reset filters').click();
+
+    // check chips empty
+    cy.get(CHIP_GROUP).should('have.length', 2);
+  });
+
+  it(`Impact filter box correctly updates chips.`, () => {
+    // select Category filter
+    selectConditionalFilterOption('Impact');
+
+    // select two categories
+    // There are multiple elements with the ConditionalFilter ouia id
+    cy.get(CONDITIONAL_FILTER).contains('Filter by impact').click();
+    cy.get(MENU_ITEM).contains('Critical').click();
+    cy.get(MENU_ITEM).contains('Medium').click();
+    cy.get(CONDITIONAL_FILTER).contains('Filter by impact').click();
+
+    // check chips updated
+    hasChip('Impact', 'Critical');
+    hasChip('Impact', 'Medium');
+
+    // reset
+    cy.get('button').contains('Reset filters').click();
+
+    // check chips empty
+    cy.get(CHIP_GROUP).should('have.length', 2);
+  });
+
+  it(`Likelihood filter box correctly updates chips.`, () => {
+    // select Category filter
+    selectConditionalFilterOption('Likelihood');
+
+    // select two categories
+    // There are multiple elements with the ConditionalFilter ouia id
+    cy.get(CONDITIONAL_FILTER).contains('Filter by likelihood').click();
+    cy.get(MENU_ITEM).contains('Critical').click();
+    cy.get(MENU_ITEM).contains('Medium').click();
+    cy.get(CONDITIONAL_FILTER).contains('Filter by likelihood').click();
+
+    // check chips updated
+    hasChip('Likelihood', 'Critical');
+    hasChip('Likelihood', 'Medium');
+
+    // reset
+    cy.get('button').contains('Reset filters').click();
+
+    // check chips empty
+    cy.get(CHIP_GROUP).should('have.length', 2);
+  });
+
+  it(`Category filter box correctly updates chips.`, () => {
+    // select Category filter
+    selectConditionalFilterOption('Category');
+
+    // select two categories
+    // There are multiple elements with the ConditionalFilter ouia id
+    cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+    cy.get(MENU_ITEM).contains('Availability').click();
+    cy.get(MENU_ITEM).contains('Stability').click();
+    cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+
+    // check chips updated
+    hasChip('Category', 'Availability');
+    hasChip('Category', 'Stability');
+
+    // reset
+    cy.get('button').contains('Reset filters').click();
+
+    // check chips empty
+    cy.get(CHIP_GROUP).should('have.length', 2);
+  });
+
+  it(`Incidents filter box correctly updates chips.`, () => {
+    // select Incidents filter
+    selectConditionalFilterOption('Incidents');
+
+    // select an option
+    // There are multiple elements with the ConditionalFilter ouia id
+    cy.get(CONDITIONAL_FILTER).contains('Filter by incidents').click();
+    cy.get(MENU_ITEM).contains('Non-incident').click();
+    cy.get(CONDITIONAL_FILTER).contains('Filter by incidents').click();
+
+    // check chips updated
+    hasChip('Incidents', 'Non-incident');
+
+    // reset
+    cy.get('button').contains('Reset filters').click();
+
+    // check chips empty
+    cy.get(CHIP_GROUP).should('have.length', 2);
+  });
+
+  it(`Remediation filter box correctly updates chips.`, () => {
+    // select Incidents filter
+    selectConditionalFilterOption('Remediation');
+
+    // select an option
+    // There are multiple elements with the ConditionalFilter ouia id
+    cy.get(CONDITIONAL_FILTER).contains('Filter by remediation').click();
+    cy.get(MENU_ITEM).contains('Ansible playbook').click();
+    cy.get(CONDITIONAL_FILTER).contains('Filter by remediation').click();
+
+    // check chips updated
+    hasChip('Remediation', 'Ansible playbook');
+
+    // reset
+    cy.get('button').contains('Reset filters').click();
+
+    // check chips empty
+    cy.get(CHIP_GROUP).should('have.length', 2);
+  });
+
+  it(`Reboot required filter box correctly updates chips.`, () => {
+    // select Reboot filter filter
+    selectConditionalFilterOption('Reboot required');
+
+    // select an option
+    // There are multiple elements with the ConditionalFilter ouia id
+    cy.get(CONDITIONAL_FILTER).contains('Filter by reboot required').click();
+    cy.get(MENU_ITEM).contains('Required').click();
+    cy.get(CONDITIONAL_FILTER).contains('Filter by reboot required').click();
+
+    // check chips updated
+    hasChip('Reboot required', 'Required');
+
+    // reset
+    cy.get('button').contains('Reset filters').click();
+
+    // check chips empty
+    cy.get(CHIP_GROUP).should('have.length', 2);
+  });
+
+  it(`Status filter box correctly updates chips.`, () => {
+    // select Reboot filter filter
+    selectConditionalFilterOption('Status');
+
+    // select an option
+    // There are multiple elements with the ConditionalFilter ouia id
+    cy.get(CONDITIONAL_FILTER).contains('Filter by status').click();
+    cy.get(MENU_ITEM).contains('Disabled').click();
+    cy.get(CONDITIONAL_FILTER).contains('Filter by status').click();
+
+    // check chips updated
+    hasChip('Status', 'Disabled');
+
+    // reset
+    cy.get('button').contains('Reset filters').click();
+
+    // check chips empty
+    cy.get(CHIP_GROUP).should('have.length', 2);
+    hasChip('Status', 'Enabled');
+  });
+
+  it(`Systems impacted filter box correctly updates chips.`, () => {
+    // select Reboot filter filter
+    selectConditionalFilterOption('Systems impacted');
+
+    // select None
+    // There are multiple elements with the ConditionalFilter ouia id
+    cy.get(CONDITIONAL_FILTER).contains('Filter by systems impacted').click();
+    cy.get(MENU_ITEM).contains('None').click();
+    cy.get(CONDITIONAL_FILTER).contains('Filter by systems impacted').click();
+
+    // check chips updated
+    hasChip('Systems impacted', 'None');
+
+    // reset
+    cy.get('button').contains('Reset filters').click();
+
+    // check chips empty
+    cy.get(CHIP_GROUP).should('have.length', 2);
+
+    // unselect 1 or more
+    cy.get(CONDITIONAL_FILTER).contains('Filter by systems impacted').click();
+    cy.get(MENU_ITEM).contains('1 or more').click();
+    cy.get(CONDITIONAL_FILTER).contains('Filter by systems impacted').click();
+
+    // check chips updated
+    cy.get(CHIP_GROUP).should('have.length', 1);
+
+    // reset
+    cy.get('button').contains('Reset filters').click();
+
+    // check chips are reset
+    hasChip('Systems impacted', '1 or more');
+  });
+});
+
+describe('Tooltips', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+    mountComponent();
+  });
+
+  it(`Incident tooltip displays the correct content.`, () => {
+    cy.get('.adv-c-label-incident').first().trigger('mouseenter');
+    cy.contains(messages.incidentTooltip.defaultMessage).should('be.visible');
+  });
+
+  it(`Critical tooltip displays the correct content.`, () => {
+    cy.get('td[data-label="Total risk"] .pf-m-red')
+      .first()
+      .trigger('mouseenter');
+    cy.contains(CRITICAL_TOOLTIP_CONTENT).should('be.visible');
+  });
+
+  it(`Important tooltip displays the correct content.`, () => {
+    cy.get('td[data-label="Total risk"] .pf-m-orange')
+      .first()
+      .trigger('mouseenter');
+    cy.contains(IMPORTANT_TOOLTIP_CONTENT).should('be.visible');
+  });
+
+  it(`Export kebab tooltip displays the correct content.`, () => {
+    cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
+    cy.contains(messages.permsAction.defaultMessage).should('be.visible');
   });
 });
 
