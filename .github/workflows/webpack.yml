@@ -1,12 +1,15 @@
-name: uploadSourceMaps
+name: sentryInit
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
     inputs:
       commit_hash:
         description: 'The commit hash (or branch/tag) to build'
-        required: true
-        default: 'master'
+        required: false
+        default: ''
 
 jobs:
   createSentryRelease:
@@ -15,17 +18,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.commit_hash }}
+          ref: ${{ github.event.inputs.commit_hash || 'refs/heads/master' }}
 
       - name: Install dependencies
         env:
-          SENTRY_RELEASE: ${{ github.event.inputs.commit_hash }}
+          SENTRY_RELEASE: ${{ github.event.inputs.commit_hash || github.sha }}
         run: npm ci
 
       - name: Build
         env:
-          SENTRY_RELEASE: ${{ github.event.inputs.commit_hash }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_RELEASE: ${{ github.event.inputs.commit_hash || github.sha }}
+          SENTRY_AUTH_TOKEN: ${{ github.event.inputs.commit_hash && secrets.SENTRY_AUTH_TOKEN || 'null' }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-        run: npm run build --if-present
+        run: |
+          if [[ -z "${{ secrets.SENTRY_AUTH_TOKEN }}" ]]; then
+            echo "Building without SENTRY_AUTH_TOKEN"
+            npm run build --if-present
+          else
+            echo "Building with SENTRY_AUTH_TOKEN"
+            npm run build --if-present
+          fi
