@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-key */
 import AutomationIcon from '@patternfly/react-icons/dist/esm/icons/automation-icon';
 import CubeIcon from '@patternfly/react-icons/dist/esm/icons/cube-icon';
 import LockIcon from '@patternfly/react-icons/dist/esm/icons/lock-icon';
@@ -23,18 +22,22 @@ const CategoryLabel = ({ labelList }) => {
   const labels = (id) =>
     [
       <LabelIcon
+        key={'availability'}
         icon={<AutomationIcon />}
         text={intl.formatMessage(messages.availability)}
       />,
       <LabelIcon
+        key={'security'}
         icon={<LockIcon />}
         text={intl.formatMessage(messages.security)}
       />,
       <LabelIcon
+        key={'stability'}
         icon={<CubeIcon />}
         text={intl.formatMessage(messages.stability)}
       />,
       <LabelIcon
+        key={'performance'}
         icon={<PortIcon />}
         text={intl.formatMessage(messages.performance)}
       />,
