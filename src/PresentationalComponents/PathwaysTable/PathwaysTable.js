@@ -34,7 +34,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 
 import CategoryLabel from '../Labels/CategoryLabel';
-import Loading from '../Loading/Loading';
 import MessageState from '../MessageState/MessageState';
 import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
@@ -48,6 +47,7 @@ import { useGetPathwaysQuery } from '../../Services/Pathways';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
+import { SkeletonTable } from '@patternfly/react-component-groups';
 
 const PathwaysTable = ({ isTabActive }) => {
   const intl = useIntl();
@@ -388,7 +388,7 @@ const PathwaysTable = ({ isTabActive }) => {
         activeFiltersConfig={activeFiltersConfig}
       />
       {isFetching ? (
-        <Loading />
+        <SkeletonTable columns={cols.map((c) => c.title)} variant="compact" />
       ) : isError ? (
         <Table>
           <ErrorState />
