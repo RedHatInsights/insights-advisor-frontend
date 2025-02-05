@@ -36,6 +36,8 @@ import {
   ExternalLinkAltIcon,
   OutlinedQuestionCircleIcon,
 } from '@patternfly/react-icons';
+import { useFeatureFlag } from '../../Utilities/Hooks';
+import NewDownloadExecReport from '../../PresentationalComponents/ExecutiveReport/NewDownload';
 
 const PathwaysTable = lazy(() =>
   import(
@@ -47,6 +49,7 @@ const List = () => {
   const { pathname } = useLocation();
   const navigate = useInsightsNavigate();
   const permsExport = usePermissions('advisor', PERMS.export);
+  const isPDFGeneratorEnabled = useFeatureFlag('advisor.pdf_generator');
   const chrome = useChrome();
 
   useEffect(() => {
@@ -123,7 +126,11 @@ const List = () => {
             trigger={!permsExport.hasAccess ? 'mouseenter' : ''}
             content={messages.permsAction.defaultMessage}
           >
-            <DownloadExecReport isDisabled={!permsExport.hasAccess} />
+            {isPDFGeneratorEnabled ? (
+              <NewDownloadExecReport isDisabled={!permsExport.hasAccess} />
+            ) : (
+              <DownloadExecReport isDisabled={!permsExport.hasAccess} />
+            )}
           </Tooltip>
         )}
       </PageHeader>
