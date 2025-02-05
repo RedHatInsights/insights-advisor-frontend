@@ -50,4 +50,32 @@ const AxiosBaseQuery =
     }
   };
 
-export { AxiosBaseQuery, Get, Post, Put, DeleteApi };
+const fetchStatusID = async () => {
+  return await fetch('/api/crc-pdf-generator/v2/create', {
+    method: 'POST',
+    headers: {
+      // do not forget the content type header!
+      'Content-Type': 'application/json',
+    },
+
+    body: JSON.stringify({
+      payload: [
+        {
+          manifestLocation: '/apps/landing/fed-mods.json',
+          scope: 'landing',
+          module: './PdfEntry',
+        },
+        {
+          manifestLocation: '/apps/landing/fed-mods.json',
+          scope: 'landing',
+          module: './PdfEntry',
+        },
+      ],
+    }),
+  }).then(async (response) => {
+    const res = await response.json();
+    return res.statusID;
+  });
+};
+
+export { AxiosBaseQuery, Get, Post, Put, DeleteApi, fetchStatusID };
