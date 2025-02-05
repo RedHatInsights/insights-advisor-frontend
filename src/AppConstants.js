@@ -335,7 +335,7 @@ export const FILTER_CATEGORIES = {
     ],
   },
   rule_status: {
-    type: conditionalFilterType.radio,
+    type: conditionalFilterType.singleSelect,
     title: 'status',
     urlParam: 'rule_status',
     values: [
