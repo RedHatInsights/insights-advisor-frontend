@@ -333,7 +333,7 @@ const Inventory = ({
       if (!pathway) {
         const impacted_date = {
           key: 'impacted_date',
-          title: 'First Impacted',
+          title: 'First impacted',
           sortKey: 'impacted_date',
           transforms: [wrappable],
           props: { width: 15 },
