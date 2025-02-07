@@ -43,6 +43,10 @@ module.exports = {
         `/src/${process.env.NODE_ENV !== 'production' ? 'Dev' : ''}AppEntry`
       ),
       './SystemDetail': resolve(__dirname, 'src/Modules/SystemDetail'),
+      './BuildExecReport': resolve(
+        __dirname,
+        '/src/PresentationalComponents/ExecutiveReport/BuildExecReport'
+      ),
     },
   },
 };
