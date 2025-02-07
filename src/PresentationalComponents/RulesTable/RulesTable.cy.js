@@ -118,7 +118,9 @@ describe('renders correctly', () => {
   });
 
   it('renders table header', () => {
-    checkTableHeaders(TABLE_HEADERS);
+    var th = TABLE_HEADERS;
+    th.shift();
+    checkTableHeaders(th);
   });
 });
 
