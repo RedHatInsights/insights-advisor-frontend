@@ -73,6 +73,14 @@ function cypressApplyFilters(filters, filtersConf) {
         .parent()
         .find('input[type=radio]')
         .check();
+    } else if (item.type === 'singleSelect') {
+      cy.get('[class*=pf-v5-c-menu-toggle][aria-label="Options menu"]').click();
+      cy.get('ul[class=pf-v5-c-menu__list]')
+        .find('span')
+        .contains(value)
+        .parent()
+        .parent()
+        .click();
     } else {
       throw `${item.type} not recognized`;
     }
@@ -98,17 +106,14 @@ function selectConditionalFilterOption(option) {
   cy.get(PT_CONDITIONAL_FILTER_LIST).contains(option).click();
 }
 
-function selectRandomEnabledRows({
-  rows,
-  numberOfRowsToSelect,
-}) {
-  const enabledRows = Array.from(rows).filter(row => {
+function selectRandomEnabledRows({ rows, numberOfRowsToSelect }) {
+  const enabledRows = Array.from(rows).filter((row) => {
     const checkbox = row.querySelector('input[type="checkbox"]');
-    if(!checkbox.hasAttribute('disabled')){
+    if (!checkbox.hasAttribute('disabled')) {
       return true;
     }
-  })
-  const rowCount = enabledRows.length
+  });
+  const rowCount = enabledRows.length;
 
   const randomIndices = [];
   while (randomIndices.length < numberOfRowsToSelect) {
@@ -118,9 +123,15 @@ function selectRandomEnabledRows({
     }
   }
 
-  randomIndices.forEach(index => {
+  randomIndices.forEach((index) => {
     enabledRows[index].querySelector('input[type="checkbox"]').click();
   });
 }
 
-export { checkSorting, cypressApplyFilters, cumulativeCombinations, selectRandomEnabledRows, selectConditionalFilterOption };
+export {
+  checkSorting,
+  cypressApplyFilters,
+  cumulativeCombinations,
+  selectRandomEnabledRows,
+  selectConditionalFilterOption,
+};

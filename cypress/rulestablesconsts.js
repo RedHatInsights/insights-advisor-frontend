@@ -109,7 +109,7 @@ const filtersConf = {
   status: {
     selectorText: 'Status',
     values: STATUS,
-    type: 'radio',
+    type: 'singleSelect',
     filterFunc: (it, value) => {
       if (value === 'All') return true;
       else return it.disabled === (value === 'Disabled');

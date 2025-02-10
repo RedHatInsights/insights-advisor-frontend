@@ -10,7 +10,7 @@ import {
   CONDITIONAL_FILTER,
   hasChip,
   MENU_ITEM,
-  PT_BULK_SELECT,
+  // PT_BULK_SELECT,
   PT_BULK_SELECT_LIST,
   SORTING_ORDERS,
   TABLE,
@@ -25,6 +25,8 @@ import { INVENTORY_BASE_URL } from '../../AppConstants';
 import systemProfile from '../../../cypress/fixtures/systemProfile.json';
 import { selectRandomEnabledRows } from '../../../cypress/utils/table';
 import messages from '../../Messages';
+
+const PT_BULK_SELECT = ':nth-child(2) > .pf-v5-c-menu-toggle';
 
 const TABLE_HEADERS = [
   'Description',
@@ -230,7 +232,7 @@ describe('system rules table', () => {
   describe('BulkSelector', () => {
     it(`The Bulk selector shows the correct number of systems selected.`, () => {
       // check that empty
-      cy.get(PT_BULK_SELECT).should('have.text', '');
+      cy.get(':nth-child(2) > .pf-v5-c-menu-toggle').should('have.text', '');
 
       // select a couple
       //  but only ones that can be selected

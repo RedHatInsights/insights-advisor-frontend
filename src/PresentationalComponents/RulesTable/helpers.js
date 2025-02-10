@@ -322,9 +322,9 @@ export const filterConfigItems = (
     },
     {
       label: FC.rule_status.title,
-      type: conditionalFilterType.radio,
+      type: FC.rule_status.type,
       id: FC.rule_status.urlParam,
-      value: `radio-${FC.rule_status.urlParam}`,
+      value: `single_select-${FC.rule_status.urlParam}`,
       filterValues: {
         onChange: (_event, value) => toggleRulesDisabled(value),
         value: `${filters.rule_status}`,
