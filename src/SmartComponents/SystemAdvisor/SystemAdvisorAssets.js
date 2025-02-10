@@ -68,7 +68,6 @@ export const getFilters = (
     id: FC.total_risk.urlParam,
     value: `checkbox-${FC.total_risk.urlParam}`,
     filterValues: {
-      key: `${FC.total_risk.urlParam}-filter`,
       onChange: (_e, values) => onFilterChange(FC.total_risk.urlParam, values),
       value: filters.total_risk,
       items: FC.total_risk.values,
@@ -80,7 +79,6 @@ export const getFilters = (
     id: FC.category.urlParam,
     value: `checkbox-${FC.category.urlParam}`,
     filterValues: {
-      key: `${FC.category.urlParam}-filter`,
       onChange: (_e, values) => onFilterChange(FC.category.urlParam, values),
       value: filters.category,
       items: FC.category.values,
@@ -92,7 +90,6 @@ export const getFilters = (
     id: FC.has_playbook.urlParam,
     value: `checkbox-${FC.has_playbook.urlParam}`,
     filterValues: {
-      key: `${FC.has_playbook.urlParam}-filter`,
       onChange: (_e, values) =>
         onFilterChange(FC.has_playbook.urlParam, values),
       value: filters.has_playbook,

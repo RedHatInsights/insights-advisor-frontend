@@ -230,7 +230,6 @@ export const filterConfigItems = (
       id: FC.total_risk.urlParam,
       value: `checkbox-${FC.total_risk.urlParam}`,
       filterValues: {
-        key: `${FC.total_risk.urlParam}-filter`,
         onChange: (_event, values) =>
           addFilterParam(FC.total_risk.urlParam, values),
         value: filters.total_risk,
@@ -243,7 +242,6 @@ export const filterConfigItems = (
       id: FC.res_risk.urlParam,
       value: `checkbox-${FC.res_risk.urlParam}`,
       filterValues: {
-        key: `${FC.res_risk.urlParam}-filter`,
         onChange: (_event, values) =>
           addFilterParam(FC.res_risk.urlParam, values),
         value: filters.res_risk,
@@ -256,7 +254,6 @@ export const filterConfigItems = (
       id: FC.impact.urlParam,
       value: `checkbox-${FC.impact.urlParam}`,
       filterValues: {
-        key: `${FC.impact.urlParam}-filter`,
         onChange: (_event, values) =>
           addFilterParam(FC.impact.urlParam, values),
         value: filters.impact,
@@ -269,7 +266,6 @@ export const filterConfigItems = (
       id: FC.likelihood.urlParam,
       value: `checkbox-${FC.likelihood.urlParam}`,
       filterValues: {
-        key: `${FC.likelihood.urlParam}-filter`,
         onChange: (_event, values) =>
           addFilterParam(FC.likelihood.urlParam, values),
         value: filters.likelihood,
@@ -282,7 +278,6 @@ export const filterConfigItems = (
       id: FC.category.urlParam,
       value: `checkbox-${FC.category.urlParam}`,
       filterValues: {
-        key: `${FC.category.urlParam}-filter`,
         onChange: (_event, values) =>
           addFilterParam(FC.category.urlParam, values),
         value: filters.category,
@@ -295,7 +290,6 @@ export const filterConfigItems = (
       id: FC.incident.urlParam,
       value: `checkbox-${FC.incident.urlParam}`,
       filterValues: {
-        key: `${FC.incident.urlParam}-filter`,
         onChange: (_event, values) =>
           addFilterParam(FC.incident.urlParam, values),
         value: filters.incident,
@@ -308,7 +302,6 @@ export const filterConfigItems = (
       id: FC.has_playbook.urlParam,
       value: `checkbox-${FC.has_playbook.urlParam}`,
       filterValues: {
-        key: `${FC.has_playbook.urlParam}-filter`,
         onChange: (_event, values) =>
           addFilterParam(FC.has_playbook.urlParam, values),
         value: filters.has_playbook,
@@ -321,7 +314,6 @@ export const filterConfigItems = (
       id: FC.reboot.urlParam,
       value: `checkbox-${FC.reboot.urlParam}`,
       filterValues: {
-        key: `${FC.reboot.urlParam}-filter`,
         onChange: (_event, values) =>
           addFilterParam(FC.reboot.urlParam, values),
         value: filters.reboot,
@@ -334,7 +326,6 @@ export const filterConfigItems = (
       id: FC.rule_status.urlParam,
       value: `radio-${FC.rule_status.urlParam}`,
       filterValues: {
-        key: `${FC.rule_status.urlParam}-filter`,
         onChange: (_event, value) => toggleRulesDisabled(value),
         value: `${filters.rule_status}`,
         items: FC.rule_status.values,
