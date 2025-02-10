@@ -18,22 +18,6 @@ objects:
         paths:
           - /apps/advisor
       image: ${IMAGE}:${IMAGE_TAG}
-      navItems:
-        - title: "Advisor"
-          expandable: true
-          routes:
-            - appId: "advisor"
-              title: "Recommendations"
-              href: "/insights/advisor/recommendations"
-              product: "Red Hat Insights"
-            - appId: "advisor"
-              title: "Systems"
-              href: "/insights/advisor/systems"
-              product: "Red Hat Insights"
-            - appId: "advisor"
-              title: "Topics"
-              href: "/insights/advisor/topics"
-              product: "Red Hat Insights"
       module:
         manifestLocation: "/apps/advisor/fed-mods.json"
         modules:
