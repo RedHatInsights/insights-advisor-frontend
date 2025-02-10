@@ -246,7 +246,6 @@ const PathwaysTable = ({ isTabActive }) => {
       id: FC.category.urlParam,
       value: `checkbox-${FC.category.urlParam}`,
       filterValues: {
-        key: `${FC.category.urlParam}-filter`,
         onChange: (_event, values) =>
           addFilterParam(FC.category.urlParam, values),
         value: filters.category,
@@ -259,7 +258,6 @@ const PathwaysTable = ({ isTabActive }) => {
       id: PFC.has_incident.urlParam,
       value: `checkbox-${PFC.has_incident.urlParam}`,
       filterValues: {
-        key: `${PFC.has_incident.urlParam}-filter`,
         onChange: (_event, values) =>
           addFilterParam(PFC.has_incident.urlParam, values),
         value: filters.has_incident,
@@ -272,7 +270,6 @@ const PathwaysTable = ({ isTabActive }) => {
       id: PFC.reboot_required.urlParam,
       value: `checkbox-${PFC.reboot_required.urlParam}`,
       filterValues: {
-        key: `${PFC.reboot_required.urlParam}-filter`,
         onChange: (_event, values) =>
           addFilterParam(PFC.reboot_required.urlParam, values),
         value: filters.reboot_required,
