@@ -203,6 +203,13 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
     count: selectedItemsLength,
     checked: checkedStatus(),
     onSelect: () => onBulkSelect(!isSelected),
+    toggleProps: {
+      /** TODO: stop passing this ouiaId once PrimaryToolbar and BulkSelect
+       * pass this ID via ouiaId instead of data-ouia-component-id to the
+       * MenuToggle PF component.
+       */
+      ouiaId: 'BulkSelect',
+    },
   };
 
   const buildFilterChips = (filters) => {
