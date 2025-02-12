@@ -115,7 +115,6 @@
     "@babel/preset-react": "^7.26.3",
     "@cypress/code-coverage": "^3.12.39",
     "@cypress/react18": "^2.0.0",
-    "@cypress/webpack-dev-server": "^3.9.0",
     "@formatjs/cli": "^6.2.12",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^2.0.4",
     "@redhat-cloud-services/tsc-transform-imports": "^1.0.11",
@@ -149,8 +148,7 @@
     "stylelint-config-recommended-scss": "^14.0.0",
     "stylelint-scss": "^6.3.0",
     "ts-patch": "^3.1.2",
-    "typescript": "^5.4.5",
-    "webpack-cli": "^5.1.4"
+    "typescript": "^5.4.5"
   },
   "insights": {
     "appname": "advisor"
