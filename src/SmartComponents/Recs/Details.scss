@@ -1,4 +1,4 @@
-@import '~@redhat-cloud-services/frontend-components-utilities/styles/all';
+@use '~@redhat-cloud-services/frontend-components-utilities/styles/all';
 
 .adv-c-page__header {
   padding-bottom: .1px;
@@ -22,6 +22,6 @@
 
 @media only screen and (max-width: 768px) {
   .adv-c-dropdown-details-actions {
-    @include rem('top', -55px);
+    @include all.rem('top', -55px);
   }
 }
