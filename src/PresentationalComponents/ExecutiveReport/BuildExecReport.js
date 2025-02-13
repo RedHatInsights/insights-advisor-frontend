@@ -15,13 +15,43 @@ import { TOTAL_RISK_LABEL } from '../../AppConstants';
 import messages from '../../Messages';
 import { truncate } from 'lodash';
 import { Text } from '@react-pdf/renderer';
+import {
+  STATS_SYSTEMS_FETCH_URL,
+  STATS_REPORTS_FETCH_URL,
+  RULES_FETCH_URL,
+} from '../../AppConstants';
 
-export const BuildExecReport = ({
+export const fetchData = async (createAsyncRequest, options) => {
+  const statsReports = createAsyncRequest('advisor-backend', {
+    method: 'GET',
+    url: STATS_SYSTEMS_FETCH_URL,
+  });
+  const statsSystems = createAsyncRequest('advisor-backend', {
+    method: 'GET',
+    url: STATS_REPORTS_FETCH_URL,
+  });
+
+  const topActiveRec = createAsyncRequest('advisor-backend', {
+    method: 'GET',
+    url: RULES_FETCH_URL,
+    params: {
+      limit: options.limit,
+      sort: options.sort,
+      impacting: options.impacting,
+    },
+  });
+
+  const data = await Promise.all([statsReports, statsSystems, topActiveRec]);
+  return data;
+};
+
+const BuildExecReport = ({
   statsSystems,
   statsReports,
   topActiveRec,
   intl,
 }) => {
+  console.log('here test');
   const calcPercent = (value, total) =>
     Math.round(Number((value / total) * 100));
   const severityPie = [
@@ -170,3 +200,5 @@ BuildExecReport.propTypes = {
   topActiveRec: PropTypes.object,
   intl: PropTypes.any,
 };
+
+export default BuildExecReport;
