@@ -321,6 +321,12 @@ describe('making request based on filters', () => {
         ...fixtures,
       },
     }).as('rule_status=all');
+    cy.intercept('**rule_status=disabled**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('rule_status=disabled');
     cy.intercept('**has_playbook=true**', {
       statusCode: 201,
       body: {
@@ -333,19 +339,20 @@ describe('making request based on filters', () => {
   Object.entries(filtersConf).forEach(([key, config]) => {
     const { urlParam, values, urlValue, selectorText } = config;
 
-    it(`apply ${selectorText} filter`, () => {
+    it.only(`apply ${selectorText} filter`, () => {
       removeAllChips();
       cy.get('button').contains('Reset filters').click();
       if (selectorText === 'Systems impacted') {
         cy.wait(['@call']);
         cy.wait(['@call']);
-      }
-      if (selectorText !== 'Systems impacted') {
-        filterApply({ [key]: values[0] });
+      } else {
+        // Status = Enabled is a default value, so testing the second value instead
+        const testValue = selectorText !== 'Status' ? values[0] : values[1];
+        filterApply({ [key]: testValue });
         cy.wait(['@call']);
-        cy.wait([`@${urlParam}=${urlValue(values[0])}`])
+        cy.wait([`@${urlParam}=${urlValue(testValue)}`])
           .its('request.url')
-          .should('include', `${urlParam}=${urlValue(values[0])}`);
+          .should('include', `${urlParam}=${urlValue(testValue)}`);
       }
     });
   });

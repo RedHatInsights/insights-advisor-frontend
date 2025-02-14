@@ -39,7 +39,7 @@ const HybridInventory = ({
   ) : (
     <AsynComponent
       key="hybridInventory"
-      appName="inventory"
+      scope="inventory"
       module="./HybridInventoryTabs"
       ConventionalSystemsTab={
         <Suspense

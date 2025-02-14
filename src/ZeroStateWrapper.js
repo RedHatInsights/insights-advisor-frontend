@@ -80,7 +80,6 @@ export const ZeroStateWrapper = ({ children }) => {
         >
           <AsynComponent
             appId={'advisor_zero_state'}
-            appName="dashboard"
             module="./AppZeroState"
             scope="dashboard"
             ErrorComponent={<ErrorState />}

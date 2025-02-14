@@ -101,7 +101,7 @@ const ImmutableDevices = ({
 
   return (
     <AsynComponent
-      appName="inventory"
+      scope="inventory"
       module="./ImmutableDevices"
       fallback={<div />}
       store={store}

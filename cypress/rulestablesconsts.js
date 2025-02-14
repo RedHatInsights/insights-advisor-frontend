@@ -12,7 +12,7 @@ const CATEGORIES_MAP = {
   Stability: 3,
   Performance: 4,
 };
-const STATUS = ['All', 'Enabled', 'Disabled'];
+const STATUS = ['Enabled', 'Disabled', 'Red Hat Disabled'];
 const INCIDENT = { Incident: 'true', 'Non-incident': 'false' };
 const REMEDIATION = { 'Ansible playbook': true, Manual: false };
 const REBOOT = { Required: true, 'Not required': false };
@@ -109,10 +109,9 @@ const filtersConf = {
   status: {
     selectorText: 'Status',
     values: STATUS,
-    type: 'radio',
+    type: 'singleSelect',
     filterFunc: (it, value) => {
-      if (value === 'All') return true;
-      else return it.disabled === (value === 'Disabled');
+      return it.disabled === (value === 'Disabled');
     },
     urlParam: 'rule_status',
     urlValue: (it) => it.toLowerCase(),
