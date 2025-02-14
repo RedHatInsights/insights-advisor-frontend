@@ -72,7 +72,7 @@ describe('ImmutableDevices', () => {
 
     expect(AsynComponent).toHaveBeenCalledWith(
       expect.objectContaining({
-        appName: 'inventory',
+        scope: 'inventory',
         module: './ImmutableDevices',
       }),
       {}
@@ -84,7 +84,7 @@ describe('ImmutableDevices', () => {
 
     expect(AsynComponent).toHaveBeenCalledWith(
       expect.objectContaining({
-        appName: 'inventory',
+        scope: 'inventory',
         module: './ImmutableDevices',
       }),
       {}
