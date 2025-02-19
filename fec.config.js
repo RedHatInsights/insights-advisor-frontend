@@ -47,6 +47,10 @@ module.exports = {
         __dirname,
         '/src/PresentationalComponents/ExecutiveReport/BuildExecReport'
       ),
+      './NewBuildExecReport': resolve(
+        __dirname,
+        '/src/PresentationalComponents/ExecutiveReport/NewBuildExecReport'
+      ),
     },
   },
   _unstableSpdy: true,
