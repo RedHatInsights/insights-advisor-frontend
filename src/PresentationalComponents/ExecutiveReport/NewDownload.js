@@ -31,7 +31,7 @@ const NewDownloadExecReport = ({ isDisabled }) => {
         payload: {
           manifestLocation: '/apps/advisor/fed-mods.json',
           scope: 'advisor',
-          module: './BuildExecReport',
+          module: './NewBuildExecReport',
           fetchDataParams: {
             limit: 3,
             sort: '-total_risk, -impacted_count',
