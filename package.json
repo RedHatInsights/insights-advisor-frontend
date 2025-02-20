@@ -15,31 +15,30 @@
     "lint:js:fix": "eslint config src --fix",
     "lint:sass": "stylelint 'src/**/*.scss' --config .stylelintrc.json",
     "nightly": "npm run travis:verify",
+    "postinstall": "ts-patch install",
     "server:ctr": "node src/server/generateServerKey.js",
     "start": "fec dev",
     "start:proxy": "PROXY=true fec dev",
     "static": "fec static",
-    "test": "npm run test:jest",
-    "test:local": "TZ=UTC jest --verbose --collectCoverage=false --passWithNoTests --env=jsdom",
+    "test": "jest --passWithNoTests",
+    "test:coverage": "./coverage.sh",
     "test:jest": "TZ=UTC jest --verbose --passWithNoTests --env=jsdom",
+    "test:local": "TZ=UTC jest --verbose --collectCoverage=false --passWithNoTests --env=jsdom",
     "test:ct": "BABEL_ENV=component cypress run --component",
     "test:openct": "cypress open --component",
     "translations": "npm-run-all translations:*",
     "translations:extract": "npx formatjs extract ./src/*.js --out-file ./build/messages/src/Messages.json",
     "translations:compile": "npx formatjs compile ./build/messages/src/Messages.json --out-file ./locales/translations.json",
-    "travis:verify": "npm-run-all build lint test",
+    "travis:verify": "npm run test:coverage",
     "verify": "npm-run-all build lint test",
-    "verify:local": "npm-run-all build lint test:local test:ct",
-    "coverage:clean": "rm -rf .nyc_output coverage reports",
-    "coverage": "bash coverage.sh && npm run coverage:clean",
-    "postinstall": "ts-patch install"
+    "verify:local": "npm-run-all build lint test:local test:ct"
   },
   "sassIncludes": {
     "patternfly": "node_modules/patternfly/dist/sass"
   },
   "jest": {
     "testEnvironment": "jsdom",
-    "coverageDirectory": "./jest-coverage",
+    "coverageDirectory": "coverage-jest",
     "collectCoverage": true,
     "collectCoverageFrom": [
       "!src/**/stories/*",
@@ -118,6 +117,7 @@
     "axios": "^1.7.4",
     "babel-eslint": "10.1.0",
     "babel-jest": "^29.7.0",
+    "babel-loader": "^9.2.1",
     "babel-plugin-istanbul": "^7.0.0",
     "babel-plugin-lodash": "3.3.4",
     "cypress": "^13.10.0",
@@ -146,9 +146,9 @@
     "appname": "advisor"
   },
   "nyc": {
-    "report-dir": "cypress-coverage",
+    "report-dir": "coverage-cypress",
     "include": [
-      "src/**/*"
+      "src/**/*.{js,jsx}"
     ],
     "exclude": [
       "src/**/*.spec.ct.js",
