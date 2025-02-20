@@ -19,11 +19,8 @@ yarn-debug.log*
 yarn-error.log*
 
 .DS_Store
-*coverage
 .nyc_output
-codecov*
 .git/
-jest-coverage/*
 
 mockData/
 
@@ -34,6 +31,10 @@ sitemap.xml
 cypress/downloads
 cypress/screenshots
 cypress/videos
+
+codecov
+coverage/*
+coverage-*
 
 # Sentry Config File
 .env.sentry-build-plugin
