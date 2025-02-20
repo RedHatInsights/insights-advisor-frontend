@@ -24,7 +24,7 @@
     "test:coverage": "./coverage.sh",
     "test:jest": "TZ=UTC jest --verbose --passWithNoTests --env=jsdom",
     "test:local": "TZ=UTC jest --verbose --collectCoverage=false --passWithNoTests --env=jsdom",
-    "test:ct": "BABEL_ENV=component cypress run --component",
+    "test:ct": "BABEL_ENV=componentTest cypress run --component",
     "test:openct": "cypress open --component",
     "translations": "npm-run-all translations:*",
     "translations:extract": "npx formatjs extract ./src/*.js --out-file ./build/messages/src/Messages.json",
