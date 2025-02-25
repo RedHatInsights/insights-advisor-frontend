@@ -32,7 +32,7 @@ cypress/downloads
 cypress/screenshots
 cypress/videos
 
-codecov
+coverage
 coverage/*
 coverage-*
 
