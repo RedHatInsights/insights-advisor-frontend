@@ -13,7 +13,6 @@ import { exportNotifications } from '../../AppConstants';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 const NewDownloadExecReport = ({ isDisabled }) => {
-  console.log('new test');
   const intl = useIntl();
   const dispatch = useDispatch();
   const { requestPdf } = useChrome();
@@ -34,7 +33,7 @@ const NewDownloadExecReport = ({ isDisabled }) => {
           module: './NewBuildExecReport',
           fetchDataParams: {
             limit: 3,
-            sort: '-total_risk, -impacted_count',
+            sort: '-total_risk,-impacted_count',
             impacting: true,
           },
         },

@@ -51,7 +51,6 @@ const BuildExecReport = ({
   topActiveRec,
   intl,
 }) => {
-  console.log('here test');
   const calcPercent = (value, total) =>
     Math.round(Number((value / total) * 100));
   const severityPie = [
