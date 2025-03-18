@@ -396,7 +396,7 @@ const Inventory = ({
         dataProvider={remediationDataProvider}
         onRemediationCreated={(result) => onRemediationCreated(result)}
       >
-        {intl.formatMessage(messages.remediate)}
+        {intl.formatMessage(messages.remediateButtonText)}
       </RemediationButton>,
     ];
     !pathway &&
