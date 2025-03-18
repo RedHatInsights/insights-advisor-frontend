@@ -116,7 +116,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
             dataProvider={() => processRemediation(selectedAnsibleRules)}
             onRemediationCreated={(result) => onRemediationCreated(result)}
           >
-            {intl.formatMessage(messages.remediate)}
+            {intl.formatMessage(messages.remediateButtonText)}
           </RemediationButton>,
         ]
       : [];

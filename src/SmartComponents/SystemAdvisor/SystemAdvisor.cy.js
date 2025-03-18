@@ -31,7 +31,7 @@ const TABLE_HEADERS = [
   'Modified',
   'First impacted',
   'Total risk',
-  'Remediation',
+  'Remediation type',
 ];
 const ROOT = 'table[id=system-advisor-report-table]';
 const SYSTEM_ID = '123';

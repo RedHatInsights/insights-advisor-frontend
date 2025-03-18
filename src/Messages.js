@@ -57,7 +57,7 @@ export default defineMessages({
   remediation: {
     id: 'remediation',
     description: 'Remediation table column title',
-    defaultMessage: 'Remediation',
+    defaultMessage: 'Remediation type',
   },
   playbook: {
     id: 'playbook',
@@ -642,10 +642,10 @@ export default defineMessages({
     description: 'Topics list, no topics body',
     defaultMessage: 'To continue, edit your filter settings and search again.',
   },
-  remediate: {
+  remediateButtonText: {
     id: 'remediate',
     description: 'Remediate',
-    defaultMessage: 'Remediate',
+    defaultMessage: 'Plan remediation',
   },
   selectAll: {
     id: 'selectAll',
