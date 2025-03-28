@@ -41,6 +41,41 @@ export const SEVERITY_MAP = {
   'medium-risk': 2,
   'low-risk': 1,
 };
+export const SEVERITY = 'Severity';
+export const TOTAL_RISK_CONSTANTS = {
+  LOW: 'Low',
+  MODERATE: 'Moderate',
+  IMPORTANT: 'Important',
+  CRITICAL: 'Critical',
+};
+export const CATEGORY_CONSTANTS = {
+  AVAILABILITY: 'Availability',
+  PERFORMANCE: 'Performance',
+  STABILITY: 'Stability',
+  SECURITY: 'Security',
+};
+export const POUND_OF_RECS = '# of recommendations';
+export const REC_NUM_AND_PERCENTAGE = (count, total) =>
+  `${count} (${total}% of total)`;
+export const CATEGORY = 'Category';
+export const CATEGORY_HEADER =
+  'Recently identified recommendations by category';
+export const TOP_THREE_RULES_HEADER =
+  'Top 3 recommendations in your infrastructure';
+export const INSIGHTS_HEADER = 'Advisor';
+export const EXEC_REPORT_HEADER = (systems, risks) =>
+  `This report is an executive summary of recommendations that may impact your Red Hat Enterprise Linux servers. Red Hat Advisor service is analyzing ${systems} and has identified ${risks} that impact 1 or more of these systems.`;
+export const EXEC_REPORT_HEADER_SYSTEMS = (systemsCount) => {
+  const sys = systemsCount <= 1 ? 'system' : 'systems';
+  return `${systemsCount} RHEL ${sys}`;
+};
+export const EXEC_REPORT_HEADER_RISKS = (risksCount) => {
+  const risk = risksCount <= 1 ? 'Risk' : 'Risks';
+  return `${risksCount} ${risk}`;
+};
+export const SEVERITY_HEADER = 'Identified recommendations by severity';
+export const SYSTEMS_EXPOSED = 'Systems exposed';
+export const TOTAL_RISK = 'Total risk';
 
 // Recommendations OverviewDashbarCards titles
 export const PATHWAYS = 'Pathways';

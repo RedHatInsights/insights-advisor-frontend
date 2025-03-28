@@ -2,6 +2,7 @@
 import './_Download.scss';
 import PropTypes from 'prop-types';
 import {
+  INSIGHTS_HEADER,
   RULES_FETCH_URL,
   STATS_REPORTS_FETCH_URL,
   STATS_SYSTEMS_FETCH_URL,
@@ -80,7 +81,7 @@ const DownloadExecReport = ({ isDisabled }) => {
         isAriaDisabled: isDisabled,
         ...(loading ? { isDisabled: true } : null),
       }}
-      type={intl.formatMessage(messages.insightsHeader)}
+      type={INSIGHTS_HEADER}
       fileName={`Advisor-Executive-Report--${new Date()
         .toUTCString()
         .replace(/ /g, '-')}.pdf`}
