@@ -22,9 +22,9 @@
     "static": "fec static",
     "test": "jest --passWithNoTests",
     "test:coverage": "./coverage.sh",
+    "test:ct": "BABEL_ENV=componentTest cypress run --component",
     "test:jest": "TZ=UTC jest --verbose --passWithNoTests --env=jsdom",
     "test:local": "TZ=UTC jest --verbose --collectCoverage=false --passWithNoTests --env=jsdom",
-    "test:ct": "BABEL_ENV=componentTest cypress run --component",
     "test:openct": "cypress open --component",
     "translations": "npm-run-all translations:*",
     "translations:extract": "npx formatjs extract ./src/*.js --out-file ./build/messages/src/Messages.json",
@@ -43,7 +43,9 @@
     "collectCoverageFrom": [
       "!src/**/stories/*",
       "src/**/*.{js,jsx}",
-      "!**/node_modules/**"
+      "!src/**/*.fixtures.js",
+      "!**/node_modules/**",
+      "!src/**/*.cy.js"
     ],
     "moduleNameMapper": {
       "\\.(css|scss)$": "identity-obj-proxy"
@@ -153,7 +155,12 @@
     "exclude": [
       "src/**/*.spec.ct.js",
       "src/**/*.test.js",
-      "src/**/*.cy.js"
+      "src/**/*.cy.js",
+      "cypress/**/*.js",
+      "config/**/*.js",
+      "src/{App,entry,entry-dev}.js",
+      "**/__fixtures__/**",
+      "**/__factories__/**"
     ]
   },
   "overrides": {
