@@ -156,11 +156,7 @@
       "src/**/*.spec.ct.js",
       "src/**/*.test.js",
       "src/**/*.cy.js",
-      "cypress/**/*.js",
-      "config/**/*.js",
-      "src/{App,entry,entry-dev}.js",
-      "**/__fixtures__/**",
-      "**/__factories__/**"
+      "src/{App,entry,entry-dev}.js"
     ]
   },
   "overrides": {
