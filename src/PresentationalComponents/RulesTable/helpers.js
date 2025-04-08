@@ -396,14 +396,8 @@ export const buildRows = (
         },
         {
           title:
-            value.rule_status === 'rhdisabled' ? (
-              <Tooltip
-                content={intl.formatMessage(messages.byEnabling, {
-                  systems: value.impacted_systems_count,
-                })}
-              >
-                <span>{intl.formatMessage(messages.nA)}</span>
-              </Tooltip>
+            value.rule_status !== 'enabled' ? (
+              <span>{value.impacted_systems_count}</span>
             ) : (
               <Link key={key} to={`/recommendations/${value.rule_id}`}>
                 {`${value.impacted_systems_count.toLocaleString()}`}
