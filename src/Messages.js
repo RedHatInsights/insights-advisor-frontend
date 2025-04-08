@@ -35,7 +35,7 @@ export default defineMessages({
   totalRisk: {
     id: 'totalRisk',
     description:
-      'Recommendation table column title, recommendationdetails label',
+      'Recommendation table column title, recommendation details label',
     defaultMessage: 'Total risk',
   },
   systems: {
@@ -71,7 +71,7 @@ export default defineMessages({
   },
   notAvailable: {
     id: 'notAvailable',
-    description: 'Not availabl table cell text',
+    description: 'Not available table cell text',
     defaultMessage: 'N/A',
   },
   rulesTableHideReportsErrorEnabled: {
@@ -89,7 +89,7 @@ export default defineMessages({
   disableRuleForSystems: {
     id: 'disableRuleForSystems',
     description:
-      'Recommendationdetail system table, action text for disabling reporting of a recommendationfor a system',
+      'Recommendation detail system table, action text for disabling reporting of a recommendation for a system',
     defaultMessage: 'Disable recommendation for selected systems',
   },
   disableRuleBody: {
@@ -100,12 +100,12 @@ export default defineMessages({
   disableRuleSingleSystem: {
     id: 'disableRuleSingleSystem',
     description:
-      'Explaining the action of disabling a recommendationfor a single system',
+      'Explaining the action of disabling a recommendation for a single system',
     defaultMessage: 'Disable only for this system',
   },
   ruleIsDisabled: {
     id: 'ruleIsDisabled',
-    description: 'Exclaiming that the recommendationis disabled',
+    description: 'Exclaiming that the recommendation is disabled',
     defaultMessage: 'Recommendation is disabled',
   },
   recSuccessfullyDisabled: {
@@ -132,38 +132,38 @@ export default defineMessages({
   },
   ruleIsDisabledBodyWithJustification: {
     id: 'ruleIsDisabledBodyWithJustification',
-    description: 'Explaining that the recommendationis disabled',
+    description: 'Explaining that the recommendation is disabled',
     defaultMessage:
       'This recommendation has been disabled because {reason} and has no results.',
   },
   ruleIsDisabledJustification: {
     id: 'ruleIsDisabledJustification',
     description:
-      'Explaining that the recommendationis disabled with following justification',
+      'Explaining that the recommendation is disabled with following justification',
     defaultMessage:
       'This recommendation has been disabled for all systems for the following reason: ',
   },
   ruleIsDisabledForSystems: {
     id: 'ruleIsDisabledForSystems',
-    description: 'Exclaiming that the recommendationis disabled for systems',
+    description: 'Exclaiming that the recommendation is disabled for systems',
     defaultMessage: 'Recommendation is disabled for some systems',
   },
   ruleIsDisabledForAllSystems: {
     id: 'ruleIsDisabledForAllSystems',
     description:
-      'Exclaiming that the recommendationis disabled for all systems',
+      'Exclaiming that the recommendation is disabled for all systems',
     defaultMessage: 'Recommendation is disabled for all systems',
   },
   ruleIsDisabledForSystemsBody: {
     id: 'ruleIsDisabledForSystemsBody',
     description:
-      'Exclaiming that the recommendationis disabled for systems (system count)',
+      'Exclaiming that the recommendation is disabled for systems (system count)',
     defaultMessage:
       'Recommendation is disabled for {systems, plural, one {# system} other {# systems}}',
   },
   enableRuleForSystems: {
     id: 'enableRuleForSystems',
-    description: 'Enable this recommendationfor all systems',
+    description: 'Enable this recommendation for all systems',
     defaultMessage: 'Enable this recommendation for all systems',
   },
   viewSystems: {
@@ -247,7 +247,7 @@ export default defineMessages({
   },
   nA: {
     id: 'nA',
-    description: 'Abreviated as N/A, text equivelent, not applicable',
+    description: 'Abbreviated as N/A, text equivalent, Not Applicable',
     defaultMessage: 'N/A',
   },
   rulesTableFilterInputText: {
