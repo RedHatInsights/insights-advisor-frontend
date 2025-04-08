@@ -53,12 +53,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
     data: recAck = {},
     isFetching: recAckIsFetching,
     refetch: recAckRefetch,
-  } = useGetRecAcksQuery(
-    { ruleId },
-    {
-      skip: !!ruleId,
-    }
-  );
+  } = useGetRecAcksQuery({ ruleId });
 
   const { data: topics = [], isFetching: topicIsFetching } =
     useGetTopicsQuery();
@@ -199,7 +194,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                         </i>
                         {recAck.updated_at && (
                           <span>
-                            &nbsp;
+                            &nbsp;on&nbsp;
                             <DateFormat
                               date={new Date(recAck.updated_at)}
                               type="onlyDate"

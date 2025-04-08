@@ -469,13 +469,15 @@ export const buildRows = (
                   isDetailsPage={false}
                   showViewAffected
                   ViewAffectedLink={
-                    <Link to={`/recommendations/${value.rule_id}`}>
-                      {value.impacted_systems_count === 0
-                        ? ''
-                        : intl.formatMessage(messages.viewAffectedSystems, {
-                            systems: value.impacted_systems_count,
-                          })}
-                    </Link>
+                    value.rule_status === 'enabled' && (
+                      <Link to={`/recommendations/${value.rule_id}`}>
+                        {value.impacted_systems_count === 0
+                          ? ''
+                          : intl.formatMessage(messages.viewAffectedSystems, {
+                              systems: value.impacted_systems_count,
+                            })}
+                      </Link>
+                    )
                   }
                   knowledgebaseUrl={
                     value.node_id
