@@ -188,7 +188,8 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                         {intl.formatMessage(
                           messages.ruleIsDisabledJustification
                         )}
-                        <i>
+                        &nbsp;
+                        <i className="wrap-justification-note">
                           {recAck.justification ||
                             intl.formatMessage(messages.none)}
                         </i>
