@@ -155,9 +155,7 @@
     ],
     "exclude": [
       "src/**/*.spec.ct.js",
-      "src/**/*.test.js",
-      "src/**/*.cy.js",
-      "src/{entry,entry-dev}.js"
+      "src/**/*.test.js"
     ]
   },
   "overrides": {
