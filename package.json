@@ -41,10 +41,11 @@
     "coverageDirectory": "coverage-jest",
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "!src/**/stories/*",
       "src/**/*.{js,jsx}",
+      "!src/**/stories/*",
       "!src/**/*.fixtures.js",
       "!**/node_modules/**",
+      "!src/{entry,entry-dev}.js",
       "!src/**/*.cy.js"
     ],
     "moduleNameMapper": {
@@ -156,7 +157,7 @@
       "src/**/*.spec.ct.js",
       "src/**/*.test.js",
       "src/**/*.cy.js",
-      "src/{App,entry,entry-dev}.js"
+      "src/{entry,entry-dev}.js"
     ]
   },
   "overrides": {
