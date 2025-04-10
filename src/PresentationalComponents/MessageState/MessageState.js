@@ -25,7 +25,14 @@ const MessageState = ({
       <EmptyStateIcon className={iconClass} style={iconStyle} icon={icon} />
     )}
     <EmptyStateHeader titleText={<>{title}</>} headingLevel="h5" />
-    <EmptyStateBody style={{ marginBottom: '16px' }}>{text}</EmptyStateBody>
+    <EmptyStateBody
+      style={{
+        marginBottom: '16px',
+        overflowWrap: 'anywhere',
+      }}
+    >
+      {text}
+    </EmptyStateBody>
     <EmptyStateFooter>{children}</EmptyStateFooter>
   </EmptyState>
 );
