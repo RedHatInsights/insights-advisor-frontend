@@ -44,11 +44,11 @@ const NewSystemsPdf = ({ filters }) => {
         },
       });
 
-      setLoading(false);
       dispatch(addNotification(exportNotifications.success));
     } catch (e) {
-      setLoading(false);
       dispatch(addNotification(exportNotifications.error));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,7 +56,7 @@ const NewSystemsPdf = ({ filters }) => {
     <Button
       onClick={dataFetch}
       variant="button"
-      isDisabled={loading ? true : false}
+      isDisabled={loading}
       className="pf-v5-c-menu__item adv-c-dropdown-systems-pdf__menu-item"
     >
       Export to PDF
