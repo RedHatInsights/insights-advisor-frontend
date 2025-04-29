@@ -81,7 +81,6 @@ export const NAME = 'Name';
 export const RECOMMENDATIONS = 'Recommendations';
 export const LAST_SEEN = 'Last seen';
 export const SYSTEMS = 'Systems';
-//export const SYSCOUNT = (systems) => `This report identified ${systems}.`;
 export const SYSCOUNT = 'This report identified ';
 export const DUE_TO =
   ' - Due to browser limitations, showing the first 1000 systems';
