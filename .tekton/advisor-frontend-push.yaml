@@ -25,7 +25,7 @@ spec:
   - name: output-image
     value: quay.io/redhat-user-workloads/insights-management-tenant/insights-advisor/advisor-frontend:{{revision}}
   - name: dockerfile
-    value: Dockerfile
+    value: build-tools/Dockerfile
   - name: path-context
     value: .
   pipelineSpec:
