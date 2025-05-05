@@ -1,0 +1,19 @@
+name: Test runner
+on:
+  push:
+    branches: ['master']
+  pull_request:
+    branches: ['master']
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: foo
+        env:
+          MY_CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          echo "Token length (MY_CODECOV_TOKEN): ${#MY_CODECOV_TOKEN}"
+          echo "Token value (MY_CODECOV_TOKEN): $MY_CODECOV_TOKEN"
