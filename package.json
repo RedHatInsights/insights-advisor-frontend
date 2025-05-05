@@ -14,7 +14,7 @@
     "lint:js": "eslint config src",
     "lint:js:fix": "eslint config src --fix",
     "lint:sass": "stylelint 'src/**/*.scss' --config .stylelintrc.json",
-    "nightly": "npm run travis:verify",
+    "nightly": "npm run ci:verify",
     "postinstall": "ts-patch install",
     "server:ctr": "node src/server/generateServerKey.js",
     "start": "fec dev",
@@ -29,7 +29,7 @@
     "translations": "npm-run-all translations:*",
     "translations:extract": "npx formatjs extract ./src/*.js --out-file ./build/messages/src/Messages.json",
     "translations:compile": "npx formatjs compile ./build/messages/src/Messages.json --out-file ./locales/translations.json",
-    "travis:verify": "npm run test:coverage",
+    "ci:verify": "npm run test:coverage",
     "verify": "npm-run-all build lint test",
     "verify:local": "npm-run-all build lint test:local test:ct"
   },
