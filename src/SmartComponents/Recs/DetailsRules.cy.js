@@ -96,4 +96,9 @@ describe('defaults', () => {
         cy.wait('@rating');
       });
   });
+  it('knowledgebase article has right link', () => {
+    cy.contains('a', 'Knowledgebase article')
+      .should('have.attr', 'href')
+      .and('eq', 'https://access.redhat.com/node/3570921');
+  });
 });
