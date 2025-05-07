@@ -339,7 +339,7 @@ describe('making request based on filters', () => {
   Object.entries(filtersConf).forEach(([key, config]) => {
     const { urlParam, values, urlValue, selectorText } = config;
 
-    it.only(`apply ${selectorText} filter`, () => {
+    it(`apply ${selectorText} filter`, () => {
       removeAllChips();
       cy.get('button').contains('Reset filters').click();
       if (selectorText === 'Systems impacted') {
