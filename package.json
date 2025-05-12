@@ -76,7 +76,7 @@
     "@react-pdf/renderer": "^3.4.4",
     "@redhat-cloud-services/frontend-components": "^5.2.7",
     "@redhat-cloud-services/frontend-components-advisor-components": "^2.0.16",
-    "@redhat-cloud-services/frontend-components-config": "^6.4.5",
+    "@redhat-cloud-services/frontend-components-config": "^6.5.2",
     "@redhat-cloud-services/frontend-components-notifications": "^4.1.17",
     "@redhat-cloud-services/frontend-components-pdf-generator": "^4.0.7",
     "@redhat-cloud-services/frontend-components-remediations": "3.2.28",
