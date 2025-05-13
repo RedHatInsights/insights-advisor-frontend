@@ -524,8 +524,13 @@ export default defineMessages({
   },
   rulesDetailsModifieddate: {
     id: 'rulesdetails.modifieddate',
-    description: 'Recommendationsdetails, modified date',
-    defaultMessage: 'Modified date: {date}',
+    description: 'Recommendations details, last updated on date',
+    defaultMessage: 'Recommendation last modified on: {date}',
+  },
+  pathwaysDetailsModifieddate: {
+    id: 'pathwaysdetails.modifieddate',
+    description: 'Pathways details, last updated on date',
+    defaultMessage: 'Pathway last modified on: {date}',
   },
   affectedSystems: {
     id: 'affectedSystems',
