@@ -166,7 +166,7 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
               }
             />
             <p className="pf-v5-u-mb-lg">
-              {intl.formatMessage(messages.rulesDetailsModifieddate, {
+              {intl.formatMessage(messages.pathwaysDetailsModifieddate, {
                 date: (
                   <DateFormat
                     date={new Date(pathway.publish_date)}
