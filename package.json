@@ -158,7 +158,8 @@
       "src/**/*.spec.ct.js",
       "src/**/*.test.js",
       "src/**/*.cy.js",
-      "src/**/SystemsTable.js"
+      "src/**/SystemsTable.js",
+      "src/**/*helper*.js"
     ]
   },
   "overrides": {
