@@ -7,11 +7,9 @@ import SystemsTable from '../../PresentationalComponents/SystemsTable/SystemsTab
 import messages from '../../Messages';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import EdgeSystemsBanner from './EdgeSystemsBanner';
-import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const List = () => {
   const chrome = useChrome();
-  const edgeParityFFlag = useFeatureFlag('advisor.edge_parity');
   useEffect(() => {
     chrome.updateDocumentTitle('Systems - Advisor');
   }, [chrome]);
@@ -22,7 +20,7 @@ const List = () => {
         <PageHeaderTitle title={`${messages.systems.defaultMessage}`} />
       </PageHeader>
       <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
-        {edgeParityFFlag ? <EdgeSystemsBanner /> : null}
+        <EdgeSystemsBanner />
         <SystemsTable />
       </section>
     </React.Fragment>

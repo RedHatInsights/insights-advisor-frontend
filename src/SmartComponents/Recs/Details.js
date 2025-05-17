@@ -33,7 +33,6 @@ import { DetailsRules } from './DetailsRules';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 import { AccountStatContext } from '../../ZeroStateWrapper.js';
-import { useFeatureFlag } from '../../Utilities/Hooks.js';
 import DetailsTitle from './DetailsTitle.js';
 
 const OverviewDetails = ({ isImmutableTabOpen }) => {
@@ -68,7 +67,6 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
   const [conventionalSystemsCount, setConventionalSystemsCount] = useState(0);
   const [areCountsLoading, setCountsLoading] = useState(true);
   const { hasEdgeDevices } = useContext(AccountStatContext);
-  const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
 
   const handleModalToggle = (disableRuleModalOpen, host = undefined) => {
     setDisableRuleModalOpen(disableRuleModalOpen);
@@ -101,16 +99,14 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
   }, [chrome, rule.description, ruleId]);
 
   useEffect(() => {
-    isEdgeParityEnabled
-      ? edgeSystemsCheck(
-          ruleId,
-          setSystemsCount,
-          setEdgeSystemsCount,
-          setConventionalSystemsCount,
-          setCountsLoading
-        )
-      : setCountsLoading(false);
-  }, [isEdgeParityEnabled, ruleId]);
+    edgeSystemsCheck(
+      ruleId,
+      setSystemsCount,
+      setEdgeSystemsCount,
+      setConventionalSystemsCount,
+      setCountsLoading
+    );
+  }, [ruleId]);
 
   return (
     <React.Fragment>

@@ -1,7 +1,6 @@
 import React, { Suspense, lazy, useContext } from 'react';
 import propTypes from 'prop-types';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
-import { useFeatureFlag } from '../../Utilities/Hooks';
 import { AccountStatContext } from '../../ZeroStateWrapper';
 import { Bullseye, Spinner } from '@patternfly/react-core';
 
@@ -29,7 +28,6 @@ const HybridInventory = ({
   tabPathname,
   ...tabProps
 }) => {
-  const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
   const { hasEdgeDevices } = useContext(AccountStatContext);
 
   return areCountsLoading ? (
@@ -71,7 +69,6 @@ const HybridInventory = ({
       isImmutableTabOpen={isImmutableTabOpen}
       fallback={<div />}
       columns
-      isEdgeParityEnabled={isEdgeParityEnabled}
       accountHasEdgeImages={hasEdgeDevices}
       hasConventionalSystems={
         conventionalSystemsCount > 0 || edgeSystemsCount <= 0
