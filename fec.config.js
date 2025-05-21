@@ -51,6 +51,10 @@ module.exports = {
         __dirname,
         '/src/PresentationalComponents/ExecutiveReport/NewBuildExecReport'
       ),
+      './NewSystemsPdfBuild': resolve(
+        __dirname,
+        '/src/PresentationalComponents/Export/NewSystemsPdfBuild'
+      ),
     },
   },
   _unstableSpdy: true,
