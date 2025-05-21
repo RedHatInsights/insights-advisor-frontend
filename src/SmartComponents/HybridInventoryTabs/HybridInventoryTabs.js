@@ -67,6 +67,7 @@ const HybridInventory = ({
       }
       tabPathname={tabPathname}
       isImmutableTabOpen={isImmutableTabOpen}
+      isEdgeParityEnabled
       fallback={<div />}
       columns
       accountHasEdgeImages={hasEdgeDevices}
