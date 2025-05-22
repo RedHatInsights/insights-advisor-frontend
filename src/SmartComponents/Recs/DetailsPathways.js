@@ -33,7 +33,6 @@ import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tabl
 import { useLocation } from 'react-router-dom';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
-import { useFeatureFlag } from '../../Utilities/Hooks';
 import { edgeSystemsCheck } from './helpers';
 
 const RulesTable = lazy(() =>
@@ -53,7 +52,6 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
   const recFilters = useSelector(({ filters }) => filters.recState);
   const sysFilters = useSelector(({ filters }) => filters.sysState);
 
-  const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
   const [edgeSystemsCount, setEdgeSystemsCount] = useState(0);
   const [conventionalSystemsCount, setConventionalSystemsCount] = useState(0);
   const [areCountsLoading, setCountsLoading] = useState(true);
@@ -136,16 +134,15 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
   }, []);
 
   useEffect(() => {
-    isEdgeParityEnabled &&
-      edgeSystemsCheck(
-        undefined,
-        undefined,
-        setEdgeSystemsCount,
-        setConventionalSystemsCount,
-        setCountsLoading,
-        pathwayName
-      );
-  }, [isEdgeParityEnabled, pathwayName]);
+    edgeSystemsCheck(
+      undefined,
+      undefined,
+      setEdgeSystemsCount,
+      setConventionalSystemsCount,
+      setCountsLoading,
+      pathwayName
+    );
+  }, [pathwayName]);
 
   return (
     <React.Fragment>
@@ -166,7 +163,7 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
               }
             />
             <p className="pf-v5-u-mb-lg">
-              {intl.formatMessage(messages.rulesDetailsModifieddate, {
+              {intl.formatMessage(messages.pathwaysDetailsModifieddate, {
                 date: (
                   <DateFormat
                     date={new Date(pathway.publish_date)}

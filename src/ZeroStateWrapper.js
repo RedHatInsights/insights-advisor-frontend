@@ -7,7 +7,6 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
 import messages from './Messages';
-import { useFeatureFlag } from './Utilities/Hooks';
 import {
   useGetEdgeDevicesQuery,
   useGetConventionalDevicesQuery,
@@ -21,7 +20,6 @@ export const AccountStatContext = createContext({
 export const ZeroStateWrapper = ({ children }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const isEdgeParityEnabled = useFeatureFlag('advisor.edge_parity');
   const [hasConventionalSystems, setHasConventionalSystems] = useState(true);
   const [hasEdgeDevices, setHasEdgeDevices] = useState(true);
   const {
@@ -58,9 +56,7 @@ export const ZeroStateWrapper = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [edgeError, conventionalError]);
 
-  const hasSystems = isEdgeParityEnabled
-    ? hasEdgeDevices || hasConventionalSystems
-    : hasConventionalSystems;
+  const hasSystems = hasEdgeDevices || hasConventionalSystems;
 
   return (
     <Suspense
