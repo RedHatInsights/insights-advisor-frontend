@@ -2,7 +2,10 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { screen, render } from '@testing-library/react';
 import { ZeroStateWrapper } from './ZeroStateWrapper';
-import { useGetConventionalDevicesQuery } from './Services/SystemVariety';
+import {
+  useGetConventionalDevicesQuery,
+  useGetEdgeDevicesQuery,
+} from './Services/SystemVariety';
 import { ComponentWithContext } from './Utilities/TestingUtilities';
 
 jest.mock('./Utilities/Hooks', () => ({
@@ -58,6 +61,13 @@ describe('ZeroStateWrapper', () => {
 
   it('Should render ZeroState with no systems', () => {
     useGetConventionalDevicesQuery.mockReturnValue(noConvSystems);
+    useGetEdgeDevicesQuery.mockReturnValue({
+      data: {
+        total: 0,
+      },
+      isSuccess: true,
+      isError: false,
+    });
     render(
       <ComponentWithContext
         Component={ZeroStateWrapper}
