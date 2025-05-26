@@ -2,15 +2,13 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
-import React, { Suspense, lazy, useEffect, useState } from 'react';
+import React, { Suspense, lazy, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import useInsightsNavigate from '@redhat-cloud-services/frontend-components-utilities/useInsightsNavigate';
 
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
-import { PERMS } from '../../AppConstants';
 import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
 import messages from '../../Messages';
-import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import OverviewDashbar from '../../PresentationalComponents/OverviewDashbar/OverviewDashbar';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
@@ -38,6 +36,7 @@ import {
 } from '@patternfly/react-icons';
 import { useFeatureFlag } from '../../Utilities/Hooks';
 import NewDownloadExecReport from '../../PresentationalComponents/ExecutiveReport/NewDownload';
+import { EnvironmentContext } from '../../App';
 
 const PathwaysTable = lazy(() =>
   import(
@@ -48,9 +47,9 @@ const PathwaysTable = lazy(() =>
 const List = () => {
   const { pathname } = useLocation();
   const navigate = useInsightsNavigate();
-  const permsExport = usePermissions('advisor', PERMS.export);
   const isPDFGeneratorEnabled = useFeatureFlag('advisor.pdf_generator');
   const chrome = useChrome();
+  const envContext = useContext(EnvironmentContext);
 
   useEffect(() => {
     chrome.updateDocumentTitle('Recommendations - Advisor');
@@ -121,15 +120,15 @@ const List = () => {
             </React.Fragment>
           }
         />
-        {!permsExport.isLoading && (
+        {!envContext.isLoading && (
           <Tooltip
-            trigger={!permsExport.hasAccess ? 'mouseenter' : ''}
+            trigger={!envContext.isExportEnabled ? 'mouseenter' : ''}
             content={messages.permsAction.defaultMessage}
           >
             {isPDFGeneratorEnabled ? (
-              <NewDownloadExecReport isDisabled={!permsExport.hasAccess} />
+              <NewDownloadExecReport isDisabled={!envContext.isExportEnabled} />
             ) : (
-              <DownloadExecReport isDisabled={!permsExport.hasAccess} />
+              <DownloadExecReport isDisabled={!envContext.isExportEnabled} />
             )}
           </Tooltip>
         )}
