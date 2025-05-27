@@ -156,7 +156,9 @@
     "exclude": [
       "src/**/*.spec.ct.js",
       "src/**/*.test.js",
-      "src/**/*.cy.js"
+      "src/**/*.cy.js",
+      "src/**/SystemsTable.js",
+      "src/**/Inventory.js"
     ]
   },
   "overrides": {

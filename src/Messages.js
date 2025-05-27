@@ -1275,4 +1275,14 @@ export default defineMessages({
     defaultMessage:
       'View {systems, plural, one {the affected system} other {# affected systems}}',
   },
+  noSystemsFoundHeader: {
+    id: 'noSystemsFoundHeader',
+    description: 'Top message displayed in an empty Systems table.',
+    defaultMessage: 'No matching systems found',
+  },
+  noSystemsFoundBody: {
+    id: 'noSystemsFoundBody',
+    description: 'Bottom message displayed in an empty Systems table.',
+    defaultMessage: 'To continue, edit your filter settings and search again.',
+  },
 });
