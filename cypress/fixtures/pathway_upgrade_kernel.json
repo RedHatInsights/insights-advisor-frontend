@@ -1,0 +1,39 @@
+{
+    "slug": "upgrade-kernel",
+    "name": "Upgrade kernel",
+    "description": "Upgrade your kernel to avoid problems with boot failures, kernel panic situations, or system performance degradations.",
+    "component": "kernel",
+    "resolution_risk": {
+        "name": "Upgrade Kernel",
+        "risk": 3
+    },
+    "publish_date": "2022-08-04T10:25:57.294000Z",
+    "has_playbook": true,
+    "impacted_systems_count": 257,
+    "reboot_required": true,
+    "has_incident": false,
+    "categories": [
+        {
+            "id": 1,
+            "name": "Availability"
+        },
+        {
+            "id": 2,
+            "name": "Security"
+        },
+        {
+            "id": 3,
+            "name": "Stability"
+        },
+        {
+            "id": 4,
+            "name": "Performance"
+        }
+    ],
+    "recommendation_level": 94.0,
+    "incident_count": 0,
+    "critical_risk_count": 173,
+    "high_risk_count": 257,
+    "medium_risk_count": 0,
+    "low_risk_count": 0
+}
