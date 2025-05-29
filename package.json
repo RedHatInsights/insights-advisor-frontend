@@ -158,7 +158,13 @@
       "src/**/*.test.js",
       "src/**/*.cy.js",
       "src/**/SystemsTable.js",
-      "src/**/Inventory.js"
+      "src/**/Inventory.js",
+      "src/**/App.js",
+      "src/**/AppEntry.js",
+      "src/**/DevAppEntry.js",
+      "src/**/Routes.js",
+      "src/**/bootstrap.js",
+      "src/**/cveToRuleid.js"
     ]
   },
   "overrides": {
