@@ -33,23 +33,19 @@ const mountComponent = (lvl) => {
 
 describe('rendering tests', () => {
   describe('defaults', () => {
-    it('Low recommendation lvl displays correctly', () => {
-      // 20
-      mountComponent(20);
-      cy.get('div[class*="pathwayRight"]').contains('Low - 20%');
-      cy.get('div[class*="pathwayRight"]').find('span[class*="pf-m-blue"]');
-    });
-    it('Medium recommendation lvl displays correctly', () => {
-      // 50
-      mountComponent(50);
-      cy.get('div[class*="pathwayRight"]').contains('Medium - 50%');
-      cy.get('div[class*="pathwayRight"]').find('span[class*="pf-m-orange"]');
-    });
-    it('High recommendation lvl displays correctly', () => {
-      // 80
-      mountComponent(80);
-      cy.get('div[class*="pathwayRight"]').contains('High - 80%');
-      cy.get('div[class*="pathwayRight"]').find('span[class*="pf-m-red"]');
+    const cases = [
+      { level: 20, label: 'Low', colorClass: 'pf-m-blue' },
+      { level: 50, label: 'Medium', colorClass: 'pf-m-orange' },
+      { level: 80, label: 'High', colorClass: 'pf-m-red' },
+    ];
+    cases.forEach(({ level, label, colorClass }) => {
+      it(`${label} recommendation lvl displays correctly`, () => {
+        mountComponent(level);
+        cy.get('div[class*="pathwayRight"]').contains(`${label} - ${level}%`);
+        cy.get('div[class*="pathwayRight"]').find(
+          `span[class*="${colorClass}"]`
+        );
+      });
     });
   });
 });
