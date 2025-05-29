@@ -1,16 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import Inventory from '../../../PresentationalComponents/Inventory/Inventory';
 import { useSelector } from 'react-redux';
-import { PERMS } from '../../../AppConstants';
 import { useActionResolver } from '../helpers';
+import { EnvironmentContext } from '../../../App';
 
 const ConventionalSystems = ({ rule, afterDisableFn, handleModalToggle }) => {
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const SID = useSelector(({ filters }) => filters.SID);
-  const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
+  const envContext = useContext(EnvironmentContext);
 
   const actionResolver = useActionResolver(handleModalToggle);
 
@@ -26,7 +25,7 @@ const ConventionalSystems = ({ rule, afterDisableFn, handleModalToggle }) => {
       selectedTags={selectedTags}
       workloads={workloads}
       SID={SID}
-      permsExport={permsExport}
+      permsExport={envContext.isExportEnabled}
       exportTable="systems"
       showTags={true}
     />

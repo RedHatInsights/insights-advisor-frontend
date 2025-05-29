@@ -1,6 +1,6 @@
 import './Details.scss';
 
-import { PERMS, UI_BASE } from '../../AppConstants';
+import { UI_BASE } from '../../AppConstants';
 import messages from '../../Messages';
 import React, { useContext, useEffect, useState } from 'react';
 import propTypes from 'prop-types';
@@ -23,7 +23,6 @@ import MessageState from '../../PresentationalComponents/MessageState/MessageSta
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
-import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import { cveToRuleid } from '../../cveToRuleid.js';
 import { useGetRecAcksQuery } from '../../Services/Acks';
 import { useGetRecQuery } from '../../Services/Recs';
@@ -34,6 +33,7 @@ import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome'
 import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 import { AccountStatContext } from '../../ZeroStateWrapper.js';
 import DetailsTitle from './DetailsTitle.js';
+import { EnvironmentContext } from '../../App';
 
 const OverviewDetails = ({ isImmutableTabOpen }) => {
   const intl = useIntl();
@@ -57,7 +57,6 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
   const { data: topics = [], isFetching: topicIsFetching } =
     useGetTopicsQuery();
 
-  const permsDisableRec = usePermissions('advisor', PERMS.disableRec).hasAccess;
   const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [host, setHost] = useState(undefined);
@@ -67,6 +66,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
   const [conventionalSystemsCount, setConventionalSystemsCount] = useState(0);
   const [areCountsLoading, setCountsLoading] = useState(true);
   const { hasEdgeDevices } = useContext(AccountStatContext);
+  const envContext = useContext(EnvironmentContext);
 
   const handleModalToggle = (disableRuleModalOpen, host = undefined) => {
     setDisableRuleModalOpen(disableRuleModalOpen);
@@ -135,7 +135,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
             <DetailsRules
               rule={rule}
               topics={topics}
-              permsDisableRec={permsDisableRec}
+              permsDisableRec={envContext.isDisableRecEnabled}
               setActionsDropdownOpen={setActionsDropdownOpen}
               actionsDropdownOpen={actionsDropdownOpen}
               addNotification={addNotification}

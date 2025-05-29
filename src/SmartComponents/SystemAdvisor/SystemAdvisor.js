@@ -6,7 +6,13 @@ import {
 } from '../../AppConstants';
 import { Spinner } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, {
+  Fragment,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { SortByDirection, TableVariant } from '@patternfly/react-table';
 import {
   Table,
@@ -31,11 +37,10 @@ import {
   useProcessRemediation,
 } from './SystemAdvisorAssets';
 import downloadReport from '../../PresentationalComponents/Common/DownloadHelper';
-import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
-import * as AppConstants from '../../AppConstants';
 import { useParams } from 'react-router-dom';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { SkeletonTable } from '@patternfly/react-component-groups';
+import { EnvironmentContext } from '../../App';
 
 const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   const intl = useIntl();
@@ -63,10 +68,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   const selectedTags = useSelector(({ filters }) => filters?.selectedTags);
   const workloads = useSelector(({ filters }) => filters?.workloads);
   const SID = useSelector(({ filters }) => filters?.SID);
-  const permsExport = usePermissions(
-    'advisor',
-    AppConstants.PERMS.export
-  ).hasAccess;
+  const envContext = useContext(EnvironmentContext);
 
   const getSelectedItems = (rows) => rows.filter((row) => row.selected);
   const selectedAnsibleRules = getSelectedItems(rows).filter(
@@ -461,8 +463,8 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
                 dispatch,
                 display_name
               ),
-            isDisabled: !permsExport,
-            tooltipText: permsExport
+            isDisabled: !envContext.isExportEnabled,
+            tooltipText: envContext.isExportEnabled
               ? intl.formatMessage(messages.exportData)
               : intl.formatMessage(messages.permsAction),
           }}
