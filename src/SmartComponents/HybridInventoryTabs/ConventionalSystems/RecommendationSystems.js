@@ -11,6 +11,7 @@ const ConventionalSystems = ({ rule, afterDisableFn, handleModalToggle }) => {
   const workloads = useSelector(({ filters }) => filters.workloads);
   const SID = useSelector(({ filters }) => filters.SID);
   const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
+  const permsDisableRec = usePermissions('advisor', PERMS.disableRec).hasAccess;
 
   const actionResolver = useActionResolver(handleModalToggle);
 
@@ -18,7 +19,7 @@ const ConventionalSystems = ({ rule, afterDisableFn, handleModalToggle }) => {
     <Inventory
       tableProps={{
         canSelectAll: false,
-        actionResolver,
+        ...(permsDisableRec && { actionResolver }),
         isStickyHeader: true,
       }}
       rule={rule}
