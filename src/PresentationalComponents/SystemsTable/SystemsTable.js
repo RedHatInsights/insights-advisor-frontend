@@ -1,11 +1,10 @@
 import './SystemsTable.scss';
 
 import {
-  PERMS,
   SYSTEM_FILTER_CATEGORIES as SFC,
   SYSTEMS_FETCH_URL,
 } from '../../AppConstants';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { TableVariant } from '@patternfly/react-table';
 import {
   filterFetchBuilder,
@@ -28,12 +27,12 @@ import { updateReducers } from '../../Store';
 import { updateSysFilters } from '../../Services/Filters';
 import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
-import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import NoSystemsTable from './Components/NoSystemsTable';
 import { systemsTableColumns } from './SystemsTableAssets';
 import { createOptions, createSortParam } from '../helper';
 import { createColumns } from './createColumns';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
+import { EnvironmentContext } from '../../App';
 import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const SystemsTable = () => {
@@ -46,7 +45,7 @@ const SystemsTable = () => {
   const SID = useSelector(({ filters }) => filters.SID);
   const filters = useSelector(({ filters }) => filters.sysState);
   const setFilters = (filters) => dispatch(updateSysFilters(filters));
-  const permsExport = usePermissions('advisor', PERMS.export).hasAccess;
+  const envContext = useContext(EnvironmentContext);
   const [filterBuilding, setFilterBuilding] = useState(true);
   const isPDFGeneratorEnabled = useFeatureFlag('advisor.pdf_generator');
 
@@ -324,8 +323,8 @@ const SystemsTable = () => {
               )}
             </li>,
           ],
-          isDisabled: !permsExport,
-          tooltipText: permsExport
+          isDisabled: !envContext.isExportEnabled,
+          tooltipText: envContext.isExportEnabled
             ? intl.formatMessage(messages.exportData)
             : intl.formatMessage(messages.permsAction),
         }}

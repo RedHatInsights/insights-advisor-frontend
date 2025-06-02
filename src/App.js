@@ -1,22 +1,23 @@
 import './App.scss';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext, createContext } from 'react';
 import { batch, useDispatch } from 'react-redux';
 import { updateSID, updateTags, updateWorkloads } from './Services/Filters';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import LockIcon from '@patternfly/react-icons/dist/esm/icons/lock-icon';
 import MessageState from './PresentationalComponents/MessageState/MessageState';
-import { PERMS } from './AppConstants';
 import { AdvisorRoutes } from './Routes';
 import messages from './Messages';
 import { useIntl } from 'react-intl';
-import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
+import { useHccEnvironmentContext } from './Utilities/Hooks';
+import { LockIcon } from '@patternfly/react-icons';
+
+export const EnvironmentContext = createContext({});
 
 const App = () => {
   const intl = useIntl();
-  const permsViewRecs = usePermissions('advisor', PERMS.viewRecs);
   const dispatch = useDispatch();
   const chrome = useChrome();
+  const envContext = useContext(EnvironmentContext);
 
   useEffect(() => {
     chrome.identifyApp('advisor');
@@ -35,8 +36,8 @@ const App = () => {
   }, []);
 
   return (
-    !permsViewRecs?.isLoading &&
-    (permsViewRecs?.hasAccess ? (
+    !envContext?.isLoading &&
+    (envContext?.isAllowedToViewRec ? (
       <AdvisorRoutes />
     ) : (
       <MessageState
@@ -49,4 +50,14 @@ const App = () => {
   );
 };
 
-export default App;
+const AppWithHccContext = () => {
+  const envContext = useHccEnvironmentContext();
+
+  return (
+    <EnvironmentContext.Provider value={envContext}>
+      <App />
+    </EnvironmentContext.Provider>
+  );
+};
+
+export default AppWithHccContext;

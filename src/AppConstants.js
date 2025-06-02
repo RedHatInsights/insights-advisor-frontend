@@ -480,12 +480,6 @@ export const SYSTEM_FILTER_CATEGORIES = {
   },
 };
 
-export const PERMS = {
-  export: ['advisor:*:*', 'advisor:exports:read'],
-  disableRec: ['advisor:*:*', 'advisor:disable-recommendations:write'],
-  viewRecs: ['advisor:*:*', 'advisor:recommendation-results:read'],
-};
-
 export const exportNotifications = {
   pending: {
     title: `Preparing export. Once complete, your download will start automatically.`,
@@ -500,4 +494,10 @@ export const exportNotifications = {
     variant: 'danger',
     autoDismiss: false,
   },
+};
+
+export const PERMISSIONS = {
+  export: 'advisor:exports:read',
+  disableRec: 'advisor:disable-recommendations:write',
+  viewRecs: 'advisor:recommendation-results:read',
 };

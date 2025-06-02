@@ -1,5 +1,4 @@
 import './_RulesTable.scss';
-import * as AppConstants from '../../AppConstants';
 import { DEBOUNCE_DELAY } from '../../AppConstants';
 import {
   Pagination,
@@ -33,7 +32,6 @@ import messages from '../../Messages';
 import { updateRecFilters } from '../../Services/Filters';
 import { useGetRecsQuery } from '../../Services/Recs';
 import { useIntl } from 'react-intl';
-import { usePermissions } from '@redhat-cloud-services/frontend-components-utilities/RBACHook';
 import PropTypes from 'prop-types';
 import { filtersInitialState } from '../../Services/Filters';
 import {
@@ -50,18 +48,12 @@ import { useActionsResolver } from './useActionsResolver';
 import impactingFilter from '../Filters/impactingFilter';
 import { AccountStatContext } from '../../ZeroStateWrapper';
 import { SkeletonTable } from '@patternfly/react-component-groups';
+import { EnvironmentContext } from '../../App';
 
 const RulesTable = ({ isTabActive, pathway }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const permsExport = usePermissions(
-    'advisor',
-    AppConstants.PERMS.export
-  ).hasAccess;
-  const permsDisableRec = usePermissions(
-    'advisor',
-    AppConstants.PERMS.disableRec
-  ).hasAccess;
+  const envContext = useContext(EnvironmentContext);
   const cols = getColumns(intl);
 
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
@@ -264,8 +256,8 @@ const RulesTable = ({ isTabActive, pathway }) => {
               SID,
               dispatch
             ),
-          isDisabled: !permsExport,
-          tooltipText: permsExport
+          isDisabled: !envContext.isExportEnabled,
+          tooltipText: envContext.isExportEnabled
             ? intl.formatMessage(messages.exportData)
             : intl.formatMessage(messages.permsAction),
         }}
@@ -304,7 +296,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
           onSort={onSort}
           cells={cols}
           rows={rows}
-          areActionsDisabled={() => !permsDisableRec}
+          areActionsDisabled={() => !envContext.isDisableRecEnabled}
           isStickyHeader
           expandId="expand-button"
         >
