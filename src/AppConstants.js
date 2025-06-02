@@ -77,6 +77,17 @@ export const SEVERITY_HEADER = 'Identified recommendations by severity';
 export const SYSTEMS_EXPOSED = 'Systems exposed';
 export const TOTAL_RISK = 'Total risk';
 
+export const NAME = 'Name';
+export const RECOMMENDATIONS = 'Recommendations';
+export const LAST_SEEN = 'Last seen';
+export const SYSTEMS = 'Systems';
+export const SYSCOUNT = 'This report identified ';
+export const DUE_TO =
+  ' - Due to browser limitations, showing the first 1000 systems';
+export const FILTERS_APPLIED = 'Filters applied:';
+export const TAGS_APPLIED = 'Tags applied:';
+export const NO_TAGS = 'No tags';
+
 // Recommendations OverviewDashbarCards titles
 export const PATHWAYS = 'Pathways';
 export const INCIDENTS = 'Incidents';
