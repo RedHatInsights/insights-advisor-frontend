@@ -21,6 +21,5 @@ RUN universal_build.sh
 FROM scratch
 
 COPY LICENSE /licenses/
-RUN mkdir -p /srv
 COPY --from=builder /opt/app-root/src/dist /srv/dist
 COPY package.json /srv/package.json
