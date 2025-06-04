@@ -6,7 +6,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core/dist/esm/layouts/Grid/index';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { connect, useStore } from 'react-redux';
 import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
@@ -18,8 +18,8 @@ import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import SystemAdvisor from '../../SmartComponents/SystemAdvisor';
 import { useParams } from 'react-router-dom';
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { Skeleton } from '@patternfly/react-core';
+import { EnvironmentContext } from '../../App';
 
 const InventoryHeadFallback = () => {
   return (
@@ -38,14 +38,14 @@ const InventoryDetails = ({ entity }) => {
   const intl = useIntl();
   const store = useStore();
   const { inventoryId } = useParams();
-  const chrome = useChrome();
+  const envContext = useContext(EnvironmentContext);
   useEffect(() => {
     if (entity && (entity.display_name || entity.id)) {
-      chrome.updateDocumentTitle(
+      envContext.updateDocumentTitle(
         `${entity.display_name || entity.id} - Systems - Advisor`
       );
     }
-  }, [entity, chrome]);
+  }, [envContext, entity]);
 
   return (
     <DetailWrapper
