@@ -38,7 +38,6 @@ import {
 } from './SystemAdvisorAssets';
 import downloadReport from '../../PresentationalComponents/Common/DownloadHelper';
 import { useParams } from 'react-router-dom';
-import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { SkeletonTable } from '@patternfly/react-component-groups';
 import { EnvironmentContext } from '../../App';
 
@@ -49,8 +48,6 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   });
   const dispatch = useDispatch();
   const addNotification = (data) => dispatch(addNotificationAction(data));
-  const { isProd } = useChrome();
-
   const { id: ruleIdParam } = useParams();
 
   const [inventoryReportFetchStatus, setInventoryReportFetchStatus] =
@@ -146,7 +143,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
     systemAdvisorRef,
     entity,
     inventoryReportFetchStatus,
-    isProd
+    envContext.isProd
   );
   const onRowSelect = (_e, isSelected, rowId) =>
     setRows(

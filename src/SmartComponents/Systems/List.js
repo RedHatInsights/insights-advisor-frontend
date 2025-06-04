@@ -2,17 +2,17 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import SystemsTable from '../../PresentationalComponents/SystemsTable/SystemsTable';
 import messages from '../../Messages';
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import EdgeSystemsBanner from './EdgeSystemsBanner';
+import { EnvironmentContext } from '../../App';
 
 const List = () => {
-  const chrome = useChrome();
+  const envContext = useContext(EnvironmentContext);
   useEffect(() => {
-    chrome.updateDocumentTitle('Systems - Advisor');
-  }, [chrome]);
+    envContext.updateDocumentTitle('Systems - Advisor');
+  }, [envContext]);
 
   return (
     <React.Fragment>

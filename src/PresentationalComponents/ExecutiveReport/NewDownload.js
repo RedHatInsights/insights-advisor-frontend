@@ -1,6 +1,6 @@
 /* eslint-disable rulesdir/disallow-fec-relative-imports */
 import './_Download.scss';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
@@ -10,12 +10,12 @@ import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { Button } from '@patternfly/react-core';
 import { exportNotifications } from '../../AppConstants';
-import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { EnvironmentContext } from '../../App';
 
 const NewDownloadExecReport = ({ isDisabled }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const { requestPdf } = useChrome();
+  const envContext = useContext(EnvironmentContext);
   const [loading, setLoading] = useState(false);
 
   const dataFetch = async () => {
@@ -23,7 +23,7 @@ const NewDownloadExecReport = ({ isDisabled }) => {
     dispatch(addNotification(exportNotifications.pending));
 
     try {
-      await requestPdf({
+      await envContext.requestPdf({
         filename: `Advisor-Executive-Report--${new Date()
           .toUTCString()
           .replace(/ /g, '-')}.pdf`,
