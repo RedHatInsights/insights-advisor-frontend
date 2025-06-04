@@ -8,19 +8,26 @@ import { AccountStatContext } from '../../ZeroStateWrapper';
 //eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import { hasChip } from '@redhat-cloud-services/frontend-components-utilities';
 import messages from '../../Messages';
+import { EnvironmentContext } from '../../App';
 
 const mountComponent = (hasEdgeDevices) => {
+  const mockEnvContext = {
+    updateDocumentTitle: cy.stub(), // mock function to prevent error
+  };
+
   cy.mount(
     <MemoryRouter initialEntries={['/topics/123']}>
-      <AccountStatContext.Provider value={{ hasEdgeDevices }}>
-        <IntlProvider locale={navigator.language.slice(0, 2)}>
-          <Provider store={initStore()}>
-            <Routes>
-              <Route path="topics/:id" element={<Details />}></Route>
-            </Routes>
-          </Provider>
-        </IntlProvider>
-      </AccountStatContext.Provider>
+      <EnvironmentContext.Provider value={mockEnvContext}>
+        <AccountStatContext.Provider value={{ hasEdgeDevices }}>
+          <IntlProvider locale={navigator.language.slice(0, 2)}>
+            <Provider store={initStore()}>
+              <Routes>
+                <Route path="topics/:id" element={<Details />} />
+              </Routes>
+            </Provider>
+          </IntlProvider>
+        </AccountStatContext.Provider>
+      </EnvironmentContext.Provider>
     </MemoryRouter>
   );
 };
