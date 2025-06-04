@@ -9,7 +9,7 @@ export const useFeatureFlag = (flag) => {
   return flagsReady ? isFlagEnabled : false;
 };
 
-const matchPermissions = (permissionA, permissionB) => {
+export const matchPermissions = (permissionA, permissionB) => {
   const segmentsA = permissionA.split(':');
   const segmentsB = permissionB.split(':');
 
