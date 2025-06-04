@@ -11,7 +11,6 @@ import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
 import messages from '../../Messages';
 import OverviewDashbar from '../../PresentationalComponents/OverviewDashbar/OverviewDashbar';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import {
   Tab,
   TabTitleText,
@@ -48,12 +47,11 @@ const List = () => {
   const { pathname } = useLocation();
   const navigate = useInsightsNavigate();
   const isPDFGeneratorEnabled = useFeatureFlag('advisor.pdf_generator');
-  const chrome = useChrome();
   const envContext = useContext(EnvironmentContext);
 
   useEffect(() => {
-    chrome.updateDocumentTitle('Recommendations - Advisor');
-  }, [chrome]);
+    envContext.updateDocumentTitle('Recommendations - Advisor');
+  }, [envContext]);
 
   const [activeTab, setActiveTab] = useState(
     pathname === '/insights/advisor/recommendations/pathways'

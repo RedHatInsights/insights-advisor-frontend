@@ -25,14 +25,14 @@ import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
-import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { getDefaultImpactingFilter } from '../../PresentationalComponents/RulesTable/helpers';
 import { AccountStatContext } from '../../ZeroStateWrapper';
+import { EnvironmentContext } from '../../App';
 
 const Details = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
-
+  const envContext = useContext(EnvironmentContext);
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const SID = useSelector(({ filters }) => filters.SID);
@@ -66,13 +66,12 @@ const Details = () => {
     return () => dispatch(updateRecFilters(initiaRecFilters));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const chrome = useChrome();
 
   useEffect(() => {
     if (topic && topic.name) {
-      chrome.updateDocumentTitle(`${topic.name} - Topics - Advisor`);
+      envContext.updateDocumentTitle(`${topic.name} - Topics - Advisor`);
     }
-  }, [chrome, topic]);
+  }, [envContext, topic]);
 
   return (
     <React.Fragment>

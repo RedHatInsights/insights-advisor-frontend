@@ -3,23 +3,23 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
 
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import TopicsTable from '../../PresentationalComponents/TopicsTable/TopicsTable';
 import messages from '../../Messages';
 import { useGetTopicsQuery } from '../../Services/Topics';
 import { useSelector } from 'react-redux';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+import { EnvironmentContext } from '../../App';
 
 const List = () => {
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const SID = useSelector(({ filters }) => filters.SID);
-  const chrome = useChrome();
+  const envContext = useContext(EnvironmentContext);
 
   useEffect(() => {
-    chrome.updateDocumentTitle('Topics - Advisor');
-  }, [chrome]);
+    envContext.updateDocumentTitle('Topics - Advisor');
+  }, [envContext]);
 
   let options = selectedTags?.length && { tags: selectedTags };
   workloads &&

@@ -29,7 +29,6 @@ import { useGetRecQuery } from '../../Services/Recs';
 import { useGetTopicsQuery } from '../../Services/Topics';
 import { enableRule, bulkHostActions, edgeSystemsCheck } from './helpers';
 import { DetailsRules } from './DetailsRules';
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 import { AccountStatContext } from '../../ZeroStateWrapper.js';
 import DetailsTitle from './DetailsTitle.js';
@@ -40,7 +39,6 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
   const dispatch = useDispatch();
   const ruleId = useParams().id;
   const addNotification = (data) => dispatch(notification(data));
-  const chrome = useChrome();
   const {
     data: rule = {},
     isFetching,
@@ -92,11 +90,11 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
     }
 
     if (rule?.description) {
-      chrome.updateDocumentTitle(
+      envContext.updateDocumentTitle(
         `${rule.description} - Recommendations - Advisor`
       );
     }
-  }, [chrome, rule.description, ruleId]);
+  }, [envContext, rule.description, ruleId]);
 
   useEffect(() => {
     edgeSystemsCheck(
