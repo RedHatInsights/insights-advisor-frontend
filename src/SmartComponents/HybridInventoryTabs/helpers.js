@@ -104,12 +104,13 @@ export const useGetEntities =
     });
   };
 
-export const useActionResolver = (handleModalToggle) =>
+export const useActionResolver = (handleModalToggle, isDisabled) =>
   useCallback(
     () => [
       {
         title: 'Disable recommendation for system',
         onClick: (event, rowIndex, item) => handleModalToggle(true, item),
+        isDisabled,
       },
     ],
     []
