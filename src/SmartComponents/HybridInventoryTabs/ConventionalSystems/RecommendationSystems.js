@@ -10,8 +10,10 @@ const ConventionalSystems = ({ rule, afterDisableFn, handleModalToggle }) => {
   const workloads = useSelector(({ filters }) => filters.workloads);
   const SID = useSelector(({ filters }) => filters.SID);
   const envContext = useContext(EnvironmentContext);
-
-  const actionResolver = useActionResolver(handleModalToggle);
+  const actionResolver = useActionResolver(
+    handleModalToggle,
+    !envContext.isDisableRecEnabled
+  );
 
   return (
     <Inventory

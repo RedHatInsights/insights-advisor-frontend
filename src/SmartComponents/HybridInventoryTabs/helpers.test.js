@@ -181,18 +181,23 @@ describe('getEntities', () => {
 const handleModalToggle = jest.fn();
 describe('useActionResolver', () => {
   test('Should return actionsResolver', async () => {
-    const { result } = renderHook(() => useActionResolver(handleModalToggle));
+    const { result } = renderHook(() =>
+      useActionResolver(handleModalToggle, false)
+    );
 
     expect(result.current()).toEqual([
       {
         onClick: expect.any(Function),
         title: 'Disable recommendation for system',
+        isDisabled: false,
       },
     ]);
   });
 
   test('Should call callback function on action click', async () => {
-    const { result } = renderHook(() => useActionResolver(handleModalToggle));
+    const { result } = renderHook(() =>
+      useActionResolver(handleModalToggle, false)
+    );
 
     const recDisableAction = result.current()[0];
     recDisableAction.onClick('event', 'rowIndex', 'test-device-id');
