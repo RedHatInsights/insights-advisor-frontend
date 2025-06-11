@@ -40,3 +40,9 @@ Cypress.Commands.add(
     return subject ? cy.wrap(subject).find(attr) : cy.get(attr);
   }
 );
+
+Cypress.Commands.add('clickOnRowKebab', (name) => {
+  cy.contains('tbody [data-ouia-component-type="PF5/TableRow"]', name)
+    .find('.pf-v5-c-menu-toggle')
+    .click();
+});

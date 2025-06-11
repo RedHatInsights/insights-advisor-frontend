@@ -6,8 +6,14 @@ import { IntlProvider } from '@redhat-cloud-services/frontend-components-transla
 import { initStore } from '../../Store';
 import fixtures from '../../../cypress/fixtures/recommendations.json';
 import _ from 'lodash';
-import { rulesTableColumns } from '../../../cypress/support/globals';
-import { selectConditionalFilterOption } from '../../../cypress/utils/table';
+import {
+  DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT,
+  rulesTableColumns,
+} from '../../../cypress/support/globals';
+import {
+  itExportsDataToFile,
+  selectConditionalFilterOption,
+} from '../../../cypress/utils/table';
 
 //eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
@@ -36,27 +42,33 @@ import {
   cypressApplyFilters,
 } from '../../../cypress/utils/table';
 import { filtersConf } from '../../../cypress/rulestablesconsts';
+import { EnvironmentContext } from '../../App';
 
-const mountComponent = ({ hasEdgeDevices } = { hasEdgeDevices: false }) => {
+const mountComponent = (
+  { hasEdgeDevices } = { hasEdgeDevices: false },
+  envContext
+) => {
   cy.mount(
-    <MemoryRouter>
-      <AccountStatContext.Provider value={{ hasEdgeDevices }}>
-        <IntlProvider
-          locale={navigator.language.slice(0, 2)}
-          messages={messages}
-        >
-          <Provider store={initStore()}>
-            <Routes>
-              <Route
-                key={'Recommendations'}
-                path="*"
-                element={<RulesTable />}
-              />
-            </Routes>
-          </Provider>
-        </IntlProvider>
-      </AccountStatContext.Provider>
-    </MemoryRouter>
+    <EnvironmentContext.Provider value={envContext}>
+      <MemoryRouter>
+        <AccountStatContext.Provider value={{ hasEdgeDevices }}>
+          <IntlProvider
+            locale={navigator.language.slice(0, 2)}
+            messages={messages}
+          >
+            <Provider store={initStore()}>
+              <Routes>
+                <Route
+                  key={'Recommendations'}
+                  path="*"
+                  element={<RulesTable />}
+                />
+              </Routes>
+            </Provider>
+          </IntlProvider>
+        </AccountStatContext.Provider>
+      </MemoryRouter>
+    </EnvironmentContext.Provider>
   );
 };
 
@@ -106,7 +118,7 @@ describe('renders correctly', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent();
+    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
   });
 
   it('The Rules table renders', () => {
@@ -130,7 +142,7 @@ describe('defaults', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent();
+    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
   });
 
   it(`pagination is set to ${DEFAULT_ROW_COUNT}`, () => {
@@ -183,7 +195,7 @@ describe('pagination', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent();
+    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
   });
 
   it('shows correct total number of rules', () => {
@@ -211,7 +223,7 @@ describe('filtering', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent();
+    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
   });
 
   it('can clear filters', () => {
@@ -333,7 +345,7 @@ describe('making request based on filters', () => {
         ...fixtures,
       },
     }).as('has_playbook=true');
-    mountComponent();
+    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
   });
 
   Object.entries(filtersConf).forEach(([key, config]) => {
@@ -366,7 +378,7 @@ describe('sorting', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent();
+    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
   });
 
   function checkSortingUrl(label, order, dataField) {
@@ -451,7 +463,7 @@ describe('content', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent();
+    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
   });
 
   it('has correct links', () => {
@@ -496,7 +508,7 @@ describe('Conditional Filter', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent();
+    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
   });
 
   it(`Name filter box correctly updates chips.`, () => {
@@ -753,7 +765,7 @@ describe('Tooltips', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent();
+    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
   });
 
   it(`Incident tooltip displays the correct content.`, () => {
@@ -774,10 +786,77 @@ describe('Tooltips', () => {
       .trigger('mouseenter');
     cy.contains(IMPORTANT_TOOLTIP_CONTENT).should('be.visible');
   });
+});
 
-  it(`Export kebab tooltip displays the correct content.`, () => {
+describe('Export', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+  });
+  it(`kebab tooltip displays disabled message`, () => {
+    mountComponent(false, {
+      isLoading: false,
+      isExportEnabled: false,
+      isDisableRecEnabled: true,
+      isAllowedToViewRec: true,
+      updateDocumentTitle: () => {},
+      getUser: () => '',
+      on: () => {},
+      hideGlobalFilter: () => {},
+      mapGlobalFilter: () => {},
+      globalFilterScope: () => {},
+      requestPdf: () => {},
+      isProd: () => {},
+    });
     cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
     cy.contains(messages.permsAction.defaultMessage).should('be.visible');
+  });
+
+  it(`works and downloads report is enabled`, () => {
+    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
+    itExportsDataToFile(fixtures.data, 'Insights-Advisor_hits--');
+  });
+});
+
+describe('Disable recommendation', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+  });
+  it(`kebab tooltip displays disabled message`, () => {
+    mountComponent(false, {
+      isLoading: false,
+      isExportEnabled: true,
+      isDisableRecEnabled: false,
+      isAllowedToViewRec: true,
+      updateDocumentTitle: () => {},
+      getUser: () => '',
+      on: () => {},
+      hideGlobalFilter: () => {},
+      mapGlobalFilter: () => {},
+      globalFilterScope: () => {},
+      requestPdf: () => {},
+      isProd: () => {},
+    });
+    cy.get(
+      'button[class="pf-v5-c-menu-toggle pf-m-plain pf-m-disabled"]'
+    ).should('exist');
+  });
+
+  it(`works and downloads report is enabled`, () => {
+    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
+    cy.clickOnRowKebab(
+      'Reboot fails when there is no "kernelopts" option in the grubenv'
+    );
+    cy.contains('Disable recommendation').should('be.visible');
   });
 });
 
@@ -885,5 +964,4 @@ describe('defaults with edge devices', () => {
   it('reset filters button is displayed', () => {
     cy.get('button').contains('Reset filters').should('exist');
   });
-});
- */
+}); */
