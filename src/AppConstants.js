@@ -513,7 +513,6 @@ export const IOP_ENVIRONMENT_CONTEXT = {
   hideGlobalFilter: () => {},
   mapGlobalFilter: () => {},
   globalFilterScope: () => {},
-  requestPdf: () => {},
+  requestPdf: () => Promise.resolve(),
   isProd: false,
-  identifyApp: () => {},
 };

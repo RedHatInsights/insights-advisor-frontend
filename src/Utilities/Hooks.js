@@ -79,6 +79,5 @@ export const useHccEnvironmentContext = () => {
     globalFilterScope: chrome.globalFilterScope,
     requestPdf: chrome.requestPdf,
     isProd: chrome.isProd,
-    identifyApp: chrome.identifyApp,
   };
 };

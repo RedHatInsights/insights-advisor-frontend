@@ -18,7 +18,6 @@ const App = () => {
   const envContext = useContext(EnvironmentContext);
 
   useEffect(() => {
-    envContext.identifyApp('advisor');
     envContext?.globalFilterScope?.('insights');
     if (envContext?.globalFilterScope) {
       envContext.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
