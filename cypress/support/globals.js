@@ -69,3 +69,18 @@ export const topicsTableColumns = [
     title: intl.formatMessage(messages.affectedSystems),
   },
 ];
+
+export const DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT = {
+  isLoading: false,
+  isExportEnabled: true,
+  isDisableRecEnabled: true,
+  isAllowedToViewRec: true,
+  updateDocumentTitle: () => {},
+  getUser: () => '',
+  on: () => {},
+  hideGlobalFilter: () => {},
+  mapGlobalFilter: () => {},
+  globalFilterScope: () => {},
+  requestPdf: () => {},
+  isProd: () => {},
+};

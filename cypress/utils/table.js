@@ -128,10 +128,50 @@ function selectRandomEnabledRows({ rows, numberOfRowsToSelect }) {
   });
 }
 
+const itExportsDataToFile = (jsonData, filenamePrefix) => {
+  it('exports data to JSON and CSV files', () => {
+    cy.clock(Date.now());
+
+    // the toggle of the export dropdown has aria-label of "Export"
+    // the actual dropdown has ouiaId of "Export"
+
+    cy.get('[aria-label=Export]').click();
+
+    cy.get('[data-ouia-component-id=Export] .pf-v5-c-menu__item').should(
+      'have.length',
+      3
+    );
+
+    cy.get('[data-ouia-component-id=Export] .pf-v5-c-menu__item')
+      .contains('Export to JSON')
+      .click();
+
+    cy.get('[aria-label=Export]').click();
+
+    cy.get('[data-ouia-component-id=Export] .pf-v5-c-menu__item')
+      .contains('Export to CSV')
+      .click();
+
+    const formattedDate =
+      new Date().toISOString().replace(/[T:]/g, '-').split('.')[0] + '-utc';
+
+    cy.readFile(`cypress/downloads/${filenamePrefix + formattedDate}.json`)
+      .should('exist')
+      .should('deep.equal', jsonData);
+
+    // CSV data is not mocked so it's filled with JSON in the test, we just test
+    // its existence, not its contents
+    cy.readFile(
+      `cypress/downloads/${filenamePrefix + formattedDate}.csv`
+    ).should('exist');
+  });
+};
+
 export {
   checkSorting,
   cypressApplyFilters,
   cumulativeCombinations,
   selectRandomEnabledRows,
   selectConditionalFilterOption,
+  itExportsDataToFile,
 };
