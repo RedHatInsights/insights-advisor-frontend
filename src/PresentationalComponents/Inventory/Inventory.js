@@ -1,7 +1,7 @@
 import './_Inventory.scss';
 
 import { BASE_URL, RULES_FETCH_URL } from '../../AppConstants';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import { pruneFilters, urlBuilder } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
@@ -21,6 +21,7 @@ import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
 import { Spinner } from '@patternfly/react-core';
+import { EnvironmentContext } from '../../App';
 
 const Inventory = ({
   tableProps,
@@ -47,6 +48,7 @@ const Inventory = ({
   const [fullFilters, setFullFilters] = useState();
   const [total, setTotal] = useState(0);
   const entities = useSelector(({ entities }) => entities || {});
+  const envContext = useContext(EnvironmentContext);
 
   const addNotification = (data) => dispatch(notification(data));
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
@@ -402,7 +404,10 @@ const Inventory = ({
     !pathway &&
       actions.push({
         label: intl.formatMessage(messages.disableRuleForSystems),
-        props: { isDisabled: (selectedIds || []).length === 0 },
+        props: {
+          isDisabled:
+            (selectedIds || []).length === 0 || !envContext.isDisableRecEnabled,
+        },
         onClick: () => handleModalToggle(true),
       });
     return { actions };
