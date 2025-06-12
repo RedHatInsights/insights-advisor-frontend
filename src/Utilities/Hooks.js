@@ -9,7 +9,7 @@ export const useFeatureFlag = (flag) => {
   return flagsReady ? isFlagEnabled : false;
 };
 
-const matchPermissions = (permissionA, permissionB) => {
+export const matchPermissions = (permissionA, permissionB) => {
   const segmentsA = permissionA.split(':');
   const segmentsB = permissionB.split(':');
 
@@ -76,5 +76,8 @@ export const useHccEnvironmentContext = () => {
     on: chrome.on,
     hideGlobalFilter: chrome.hideGlobalFilter,
     mapGlobalFilter: chrome.mapGlobalFilter,
+    globalFilterScope: chrome.globalFilterScope,
+    requestPdf: chrome.requestPdf,
+    isProd: chrome.isProd,
   };
 };

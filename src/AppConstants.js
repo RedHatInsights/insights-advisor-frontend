@@ -501,3 +501,18 @@ export const PERMISSIONS = {
   disableRec: 'advisor:disable-recommendations:write',
   viewRecs: 'advisor:recommendation-results:read',
 };
+
+export const IOP_ENVIRONMENT_CONTEXT = {
+  isLoading: false,
+  isExportEnabled: false,
+  isDisableRecEnabled: false,
+  isAllowedToViewRec: true,
+  updateDocumentTitle: (name) => (document.title = name),
+  getUser: () => '',
+  on: () => {},
+  hideGlobalFilter: () => {},
+  mapGlobalFilter: () => {},
+  globalFilterScope: () => {},
+  requestPdf: () => Promise.resolve(),
+  isProd: false,
+};

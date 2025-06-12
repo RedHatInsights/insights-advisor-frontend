@@ -3,7 +3,6 @@ import './App.scss';
 import React, { useEffect, useContext, createContext } from 'react';
 import { batch, useDispatch } from 'react-redux';
 import { updateSID, updateTags, updateWorkloads } from './Services/Filters';
-import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import MessageState from './PresentationalComponents/MessageState/MessageState';
 import { AdvisorRoutes } from './Routes';
 import messages from './Messages';
@@ -16,16 +15,14 @@ export const EnvironmentContext = createContext({});
 const App = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const chrome = useChrome();
   const envContext = useContext(EnvironmentContext);
 
   useEffect(() => {
-    chrome.identifyApp('advisor');
-    chrome?.globalFilterScope?.('insights');
-    if (chrome?.globalFilterScope) {
-      chrome.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
+    envContext?.globalFilterScope?.('insights');
+    if (envContext?.globalFilterScope) {
+      envContext.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
         const [workloads, SID, selectedTags] =
-          chrome?.mapGlobalFilter?.(data, false, true) || [];
+          envContext?.mapGlobalFilter?.(data, false, true) || [];
         batch(() => {
           dispatch(updateWorkloads(workloads));
           dispatch(updateTags(selectedTags));

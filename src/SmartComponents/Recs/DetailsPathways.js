@@ -9,7 +9,7 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
-import React, { Suspense, lazy, useEffect, useState } from 'react';
+import React, { Suspense, lazy, useContext, useEffect, useState } from 'react';
 import { TotalRiskCard } from '../../PresentationalComponents/Cards/TotalRiskCard';
 import { ResolutionCard } from '../../PresentationalComponents/Cards/ResolutionCard';
 import {
@@ -31,9 +31,9 @@ import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
 import { useLocation } from 'react-router-dom';
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 import { edgeSystemsCheck } from './helpers';
+import { EnvironmentContext } from '../../App';
 
 const RulesTable = lazy(() =>
   import(
@@ -45,7 +45,7 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
   const intl = useIntl();
   const pathwayName = useParams().id;
   const dispatch = useDispatch();
-
+  const envContext = useContext(EnvironmentContext);
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const SID = useSelector(({ filters }) => filters.SID);
@@ -73,14 +73,13 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
   const [activeTab, setActiveTab] = useState(
     pathname.includes('/recommendations/pathways/systems/') ? 1 : 0
   );
-  const chrome = useChrome();
   useEffect(() => {
     pathway &&
       !isFetching &&
-      chrome.updateDocumentTitle(
+      envContext.updateDocumentTitle(
         `${pathway.name} - ${messages.pathways.defaultMessage} - Advisor`
       );
-  }, [chrome, pathway, pathname, isFetching]);
+  }, [envContext, pathway, pathname, isFetching]);
 
   const waitForElm = (selector) => {
     return new Promise((resolve) => {

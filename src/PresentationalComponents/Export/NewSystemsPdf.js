@@ -1,14 +1,14 @@
 import './_Export.scss';
 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { workloadQueryBuilder } from '../Common/Tables';
 import { exportNotifications } from '../../AppConstants';
-import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useDispatch } from 'react-redux';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
+import { EnvironmentContext } from '../../App';
 
 const NewSystemsPdf = ({ filters }) => {
   const dispatch = useDispatch();
@@ -18,7 +18,7 @@ const NewSystemsPdf = ({ filters }) => {
   );
   const workloads = useSelector(({ AdvisorStore }) => AdvisorStore?.workloads);
   const SID = useSelector(({ AdvisorStore }) => AdvisorStore?.SID);
-  const { requestPdf } = useChrome();
+  const envContext = useContext(EnvironmentContext);
 
   const dataFetch = async () => {
     setLoading(true);
@@ -28,7 +28,7 @@ const NewSystemsPdf = ({ filters }) => {
     workloads &&
       (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
     try {
-      await requestPdf({
+      await envContext.requestPdf({
         filename: `Advisor_systems--${new Date()
           .toUTCString()
           .replace(/ /g, '-')}.pdf`,

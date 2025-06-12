@@ -10,7 +10,6 @@ export const initMocks = () => {
     chrome: {
       appNavClick: () => {},
       init: jest.fn(),
-      identifyApp: () => {},
       navigation: () => {},
       on: () => {
         return () => {};
