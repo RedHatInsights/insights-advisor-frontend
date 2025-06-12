@@ -35,11 +35,11 @@ const renderAndWait = async (componentProps = {}, renderOptions = {}) => {
       Component={ImmutableDevices}
       componentProps={componentProps}
       renderOptions={renderOptions}
-    />
+    />,
   );
   await waitFor(() => {
     expect(
-      screen.getByLabelText('immutableDevices-module-mock')
+      screen.getByLabelText('immutableDevices-module-mock'),
     ).toBeInTheDocument();
   });
 };
@@ -63,7 +63,7 @@ describe('ImmutableDevices', () => {
           },
         },
       }),
-      {}
+      {},
     );
   });
 
@@ -75,7 +75,7 @@ describe('ImmutableDevices', () => {
         scope: 'inventory',
         module: './ImmutableDevices',
       }),
-      {}
+      {},
     );
   });
 
@@ -87,7 +87,7 @@ describe('ImmutableDevices', () => {
         scope: 'inventory',
         module: './ImmutableDevices',
       }),
-      {}
+      {},
     );
   });
 
@@ -104,7 +104,7 @@ describe('ImmutableDevices', () => {
           hostGroupFilter: false,
         },
       }),
-      {}
+      {},
     );
   });
 
@@ -113,7 +113,7 @@ describe('ImmutableDevices', () => {
     expect(useGetEntities).toHaveBeenCalledWith(
       expect.any(Function),
       'test-pathway',
-      'test-rule'
+      'test-rule',
     );
   });
 
@@ -130,7 +130,7 @@ describe('ImmutableDevices', () => {
       expect.not.objectContaining({
         tableActions: expect.any(Function),
       }),
-      {}
+      {},
     );
   });
 
@@ -148,7 +148,7 @@ describe('ImmutableDevices', () => {
       expect.objectContaining({
         tableActions: expect.any(Function),
       }),
-      {}
+      {},
     );
   });
 

@@ -40,7 +40,7 @@ const select = (state = {}, action) => {
 const deselect = (state = {}, action) => {
   const group = selectionGroup(action);
   const items = (state[group] || []).filter(
-    (selectedItem) => !action.item.includes(selectedItem)
+    (selectedItem) => !action.item.includes(selectedItem),
   );
   return cleanEmpty({
     ...state,
@@ -57,7 +57,7 @@ const toggle = (state, action) => {
 
 const reset = (state, action) =>
   init(Object.prototype.hasOwnProperty.call(!state, 'default'))(
-    action?.preselected
+    action?.preselected,
   );
 const clear = (state) =>
   init(Object.prototype.hasOwnProperty.call(!state, 'default'))();
@@ -70,4 +70,4 @@ export default (state, action) =>
     toggle,
     reset,
     clear,
-  }[action.type](state, action));
+  })[action.type](state, action);

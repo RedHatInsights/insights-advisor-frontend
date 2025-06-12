@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 import { StyleSheet } from '@react-pdf/renderer';
 
 import {

@@ -3,7 +3,7 @@ import React from 'react';
 import fixtures from '../../../cypress/fixtures/systemRecommendations.json';
 import fixturesKcs from '../../../cypress/fixtures/kcs.json';
 import { BaseSystemAdvisor as SystemAdvisor } from './SystemAdvisor';
-// eslint-disable-next-line rulesdir/disallow-fec-relative-imports
+
 import {
   checkTableHeaders,
   CHIP_GROUP,
@@ -46,7 +46,6 @@ const SYSTEM_INSIGHTS_ID = '456';
 //THIS FILE HAS COMMENTED OUT TEST BECAUSE THE FUNCTIONS/LABELS IMPORTED FROM FEC-UTILS
 //NEED TO BE UPDATED
 
-/*eslint-disable camelcase*/
 describe('system rules table', () => {
   beforeEach(() => {
     cy.intercept('/api/insights/v1/account_setting/', {
@@ -61,7 +60,7 @@ describe('system rules table', () => {
     }).as('kcs');
     cy.intercept(
       `${INVENTORY_BASE_URL}/hosts/${SYSTEM_ID}/system_profile`,
-      systemProfile.data
+      systemProfile.data,
     ).as('getSystemProfile');
     cy.mount(
       <Wrapper>
@@ -72,7 +71,7 @@ describe('system rules table', () => {
           }}
           inventoryId={SYSTEM_ID}
         />
-      </Wrapper>
+      </Wrapper>,
     );
   });
 
@@ -95,7 +94,7 @@ describe('system rules table', () => {
         'rule.total_risk',
         'resolution.has_playbook',
       ],
-      TABLE_HEADERS
+      TABLE_HEADERS,
     ).forEach(([category, label]) => {
       let sortingParameter = category;
       // modify sortingParameters for certain values
@@ -117,7 +116,7 @@ describe('system rules table', () => {
             label,
             order,
             'Description',
-            'rule.description'
+            'rule.description',
           );
         });
       });
@@ -133,7 +132,7 @@ describe('system rules table', () => {
 
       cy.intercept(
         `${INVENTORY_BASE_URL}/hosts/${SYSTEM_ID}/system_profile`,
-        systemProfile.data
+        systemProfile.data,
       ).as('getEdgeSystemProfile');
 
       cy.wait(['@getEdgeSystemProfile']);
@@ -243,7 +242,7 @@ describe('system rules table', () => {
 
       // Select None
       cy.get(
-        ':nth-child(2) > .pf-v5-c-menu-toggle > .pf-v5-c-menu-toggle__controls'
+        ':nth-child(2) > .pf-v5-c-menu-toggle > .pf-v5-c-menu-toggle__controls',
       ).click();
       cy.get(PT_BULK_SELECT_LIST).contains('Select none').click();
 
@@ -252,7 +251,7 @@ describe('system rules table', () => {
 
       // Select All
       cy.get(
-        ':nth-child(2) > .pf-v5-c-menu-toggle > .pf-v5-c-menu-toggle__controls'
+        ':nth-child(2) > .pf-v5-c-menu-toggle > .pf-v5-c-menu-toggle__controls',
       ).click();
       cy.get(PT_BULK_SELECT_LIST).contains('Select all').click();
 
@@ -294,7 +293,7 @@ describe('system rules table', () => {
       .its('request.url')
       .should(
         'include',
-        fixtures.map(({ rule }) => rule.node_id).join('%20OR%20')
+        fixtures.map(({ rule }) => rule.node_id).join('%20OR%20'),
       );
   });
 
@@ -303,7 +302,7 @@ describe('system rules table', () => {
       return (
         messages.likelihoodDescription.defaultMessage.replace(
           /{(.*?)}/g,
-          likelihood
+          likelihood,
         ) +
         ' ' +
         messages.impactDescription.defaultMessage.replace(/{(.*?)}/g, impact)
@@ -321,7 +320,7 @@ describe('system rules table', () => {
         .trigger('mouseenter');
 
       cy.contains(
-        constructLikelihoodImpactTooltipContent('Low', 'Critical')
+        constructLikelihoodImpactTooltipContent('Low', 'Critical'),
       ).should('be.visible');
     });
 
@@ -330,7 +329,7 @@ describe('system rules table', () => {
         .first()
         .trigger('mouseenter');
       cy.contains(
-        constructLikelihoodImpactTooltipContent('Medium', 'Low')
+        constructLikelihoodImpactTooltipContent('Medium', 'Low'),
       ).should('be.visible');
     });
 
@@ -339,7 +338,7 @@ describe('system rules table', () => {
         .first()
         .trigger('mouseenter');
       cy.contains(
-        constructLikelihoodImpactTooltipContent('Medium', 'Medium')
+        constructLikelihoodImpactTooltipContent('Medium', 'Medium'),
       ).should('be.visible');
     });
 
@@ -348,7 +347,7 @@ describe('system rules table', () => {
         .first()
         .trigger('mouseenter');
       cy.contains(
-        constructLikelihoodImpactTooltipContent('Medium', 'High')
+        constructLikelihoodImpactTooltipContent('Medium', 'High'),
       ).should('be.visible');
     });
   });

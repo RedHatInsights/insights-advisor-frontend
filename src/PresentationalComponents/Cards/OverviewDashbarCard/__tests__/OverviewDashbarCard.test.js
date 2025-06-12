@@ -29,7 +29,7 @@ describe('OverviewDashbarCard', () => {
         title={title}
         count={count}
         onClickFilterByName={filterFunc}
-      />
+      />,
     );
     await screen.findByText(title);
 
@@ -57,13 +57,13 @@ describe('OverviewDashbarCard', () => {
           title={title}
           count={count}
           onClickFilterByName={filterFunc}
-        />
+        />,
       );
       await screen.findByText(title);
 
       const filterByTitleBtn = screen.getByTestId(title);
       await user.click(filterByTitleBtn);
       expect(filterFunc).toHaveBeenCalledWith(title);
-    }
+    },
   );
 });

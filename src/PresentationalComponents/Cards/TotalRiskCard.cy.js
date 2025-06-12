@@ -24,7 +24,7 @@ const mountComponent = () => {
           </section>
         </Provider>
       </IntlProvider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 };
 
@@ -33,7 +33,7 @@ describe('rendering tests', () => {
     it('Total risk card displays', () => {
       mountComponent();
       cy.get('div[class*=body]').contains(
-        'This pathway is expected to improve Availability, Security, Stability, Performance on 257 systems and resolve 0 incidents.'
+        'This pathway is expected to improve Availability, Security, Stability, Performance on 257 systems and resolve 0 incidents.',
       );
       cy.get('g[role="presentation"').contains('Critical');
       cy.get('g[role="presentation"').contains('Important');

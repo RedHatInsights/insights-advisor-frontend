@@ -25,7 +25,7 @@ export const paginatedRequestHelper = async ({
     filters,
     selectedTags,
     workloads,
-    SID
+    SID,
   );
 
   return pathway
@@ -33,14 +33,14 @@ export const paginatedRequestHelper = async ({
         await Get(
           `${SYSTEMS_FETCH_URL}`,
           {},
-          { ...options, pathway: pathway.slug }
+          { ...options, pathway: pathway.slug },
         )
       )?.data
     : (
         await Get(
           `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/systems_detail/`,
           {},
-          options
+          options,
         )
       )?.data;
 };
@@ -54,7 +54,7 @@ export const getEntities =
     selectedIds,
     setFullFilters,
     fullFilters,
-    rule
+    rule,
   ) =>
   async (_items, config, showTags, defaultGetEntities) => {
     const {
@@ -80,7 +80,7 @@ export const getEntities =
       filters,
       selectedTags,
       workloads,
-      SID
+      SID,
     );
     handleRefresh(options);
     const allDetails = { ...config, pathway, handleRefresh, rule, sort };
@@ -93,7 +93,7 @@ export const getEntities =
         hasItems: true,
         fields: { system_profile: ['operating_system'] },
       },
-      showTags
+      showTags,
     );
     setCurPageIds(fetchedSystems.data.map((system) => system.system_uuid));
     setTotal(fetchedSystems.meta.count);
@@ -104,7 +104,7 @@ export const getEntities =
             ...item,
             selected: selectedIds?.includes(item.id),
           };
-        }
+        },
       ),
       total: fetchedSystems.meta.count,
     });
@@ -115,8 +115,13 @@ const fetchBatched = (fetchFunction, total, filter, batchSize = 100, rule) => {
   const pages = Math.ceil(total / batchSize) || 1;
   return Promise.all(
     [...new Array(pages)].map((_, pageIdx) =>
-      fetchFunction({ ...filter, page: pageIdx + 1, per_page: batchSize, rule })
-    )
+      fetchFunction({
+        ...filter,
+        page: pageIdx + 1,
+        per_page: batchSize,
+        rule,
+      }),
+    ),
   );
 };
 /*Grabs all systemIds and maniupaltes the data into one large array of systems*/

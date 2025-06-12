@@ -35,10 +35,11 @@ import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 import { edgeSystemsCheck } from './helpers';
 import { EnvironmentContext } from '../../App';
 
-const RulesTable = lazy(() =>
-  import(
-    /* webpackChunkName: 'RulesTable' */ '../../PresentationalComponents/RulesTable/RulesTable'
-  )
+const RulesTable = lazy(
+  () =>
+    import(
+      /* webpackChunkName: 'RulesTable' */ '../../PresentationalComponents/RulesTable/RulesTable'
+    ),
 );
 
 const PathwayDetails = ({ isImmutableTabOpen }) => {
@@ -71,13 +72,13 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
   const { pathname } = useLocation();
 
   const [activeTab, setActiveTab] = useState(
-    pathname.includes('/recommendations/pathways/systems/') ? 1 : 0
+    pathname.includes('/recommendations/pathways/systems/') ? 1 : 0,
   );
   useEffect(() => {
     pathway &&
       !isFetching &&
       envContext.updateDocumentTitle(
-        `${pathway.name} - ${messages.pathways.defaultMessage} - Advisor`
+        `${pathway.name} - ${messages.pathways.defaultMessage} - Advisor`,
       );
   }, [envContext, pathway, pathname, isFetching]);
 
@@ -117,12 +118,12 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
         ...defaultFilters,
         sort: 'category',
         impacting: true,
-      })
+      }),
     );
     dispatch(
       updateSysFilters({
         ...defaultFilters,
-      })
+      }),
     );
     scrollDown();
     return () => {
@@ -139,7 +140,7 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
       setEdgeSystemsCount,
       setConventionalSystemsCount,
       setCountsLoading,
-      pathwayName
+      pathwayName,
     );
   }, [pathwayName]);
 

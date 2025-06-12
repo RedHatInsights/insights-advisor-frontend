@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
 import { initStore } from '../../Store';
 import fixtures from '../../../cypress/fixtures/topics.json';
-// eslint-disable-next-line rulesdir/disallow-fec-relative-imports
+
 import {
   checkTableHeaders,
   tableIsSortedBy,
@@ -42,7 +42,7 @@ const mountComponent = () => {
           </Routes>
         </Provider>
       </IntlProvider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 };
 
@@ -97,7 +97,7 @@ describe('filtering', () => {
     cy.get('div.ins-c-primary-toolbar__filter').find('input').type('HTTP');
     cy.get(CHIP_GROUP).should(
       'have.length',
-      Object.keys(filterCombos[0]).length
+      Object.keys(filterCombos[0]).length,
     );
   });
 });
@@ -124,9 +124,9 @@ describe('sorting', () => {
       _.orderBy(
         data,
         [sortingField],
-        [order === 'descending' ? 'desc' : 'asc']
+        [order === 'descending' ? 'desc' : 'asc'],
       ),
-      dataField
+      dataField,
     );
 
     cy.get(`td[data-label="${columnField}"]`)
@@ -154,6 +154,6 @@ describe('sorting', () => {
           });
         });
       });
-    }
+    },
   );
 });

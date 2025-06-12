@@ -101,7 +101,7 @@ const useBulkSelect = ({
                 ? [
                     {
                       title: `${selectOrUnselect(
-                        allSelected
+                        allSelected,
                       )} all (${total} items)`,
                       onClick: selectAll,
                     },

@@ -37,10 +37,11 @@ import { useFeatureFlag } from '../../Utilities/Hooks';
 import NewDownloadExecReport from '../../PresentationalComponents/ExecutiveReport/NewDownload';
 import { EnvironmentContext } from '../../App';
 
-const PathwaysTable = lazy(() =>
-  import(
-    /* webpackChunkName: 'PathwaysTable' */ '../../PresentationalComponents/PathwaysTable/PathwaysTable'
-  )
+const PathwaysTable = lazy(
+  () =>
+    import(
+      /* webpackChunkName: 'PathwaysTable' */ '../../PresentationalComponents/PathwaysTable/PathwaysTable'
+    ),
 );
 
 const List = () => {
@@ -56,12 +57,12 @@ const List = () => {
   const [activeTab, setActiveTab] = useState(
     pathname === '/insights/advisor/recommendations/pathways'
       ? PATHWAYS_TAB
-      : RECOMMENDATIONS_TAB
+      : RECOMMENDATIONS_TAB,
   );
   const changeTab = (tab) => {
     setActiveTab(tab);
     navigate(
-      tab === PATHWAYS_TAB ? '/recommendations/pathways' : '/recommendations'
+      tab === PATHWAYS_TAB ? '/recommendations/pathways' : '/recommendations',
     );
   };
 

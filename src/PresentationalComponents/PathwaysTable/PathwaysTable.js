@@ -200,7 +200,7 @@ const PathwaysTable = ({ isTabActive }) => {
                     {intl.formatMessage(
                       pathway.reboot_required
                         ? messages.required
-                        : messages.notRequired
+                        : messages.notRequired,
                     )}
                   </span>
                 ),
@@ -293,7 +293,7 @@ const PathwaysTable = ({ isTabActive }) => {
           const newFilter = {
             [item.urlParam]: Array.isArray(filters[item.urlParam])
               ? filters[item.urlParam].filter(
-                  (value) => String(value) !== String(item.chips[0].value)
+                  (value) => String(value) !== String(item.chips[0].value),
                 )
               : '',
           };
@@ -347,8 +347,8 @@ const PathwaysTable = ({ isTabActive }) => {
       let sortInput = filters.sort;
       const sortIndex = Number(
         Object.entries(sortIndices).find(
-          (item) => item[1] === sortInput || `-${item[1]}` === sortInput
-        )[0]
+          (item) => item[1] === sortInput || `-${item[1]}` === sortInput,
+        )[0],
       );
       const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
       setSortBy({ index: sortIndex, direction: sortDirection });

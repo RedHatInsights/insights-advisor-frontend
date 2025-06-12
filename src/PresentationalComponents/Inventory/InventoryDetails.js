@@ -42,7 +42,7 @@ const InventoryDetails = ({ entity }) => {
   useEffect(() => {
     if (entity && (entity.display_name || entity.id)) {
       envContext.updateDocumentTitle(
-        `${entity.display_name || entity.id} - Systems - Advisor`
+        `${entity.display_name || entity.id} - Systems - Advisor`,
       );
     }
   }, [envContext, entity]);
@@ -53,7 +53,7 @@ const InventoryDetails = ({ entity }) => {
         store.replaceReducer(
           updateReducers({
             ...mergeWithDetail(entitiesDetailsReducer(INVENTORY_ACTION_TYPES)),
-          })
+          }),
         );
       }}
       inventoryId={inventoryId}

@@ -13,14 +13,14 @@ const mergeByInventoryKey = (
   advisorData = [],
   inventoryData = [],
   edgeData = [],
-  enforceEdgeGroups
+  enforceEdgeGroups,
 ) => {
   return advisorData.map((advisor) => {
     const edge = edgeData.find(
-      (device) => device.DeviceUUID === advisor.system_uuid
+      (device) => device.DeviceUUID === advisor.system_uuid,
     );
     const inventory = inventoryData.find(
-      (inventory) => advisor.system_uuid === inventory.id
+      (inventory) => advisor.system_uuid === inventory.id,
     );
 
     return {
@@ -61,7 +61,7 @@ export const useGetEntities =
       filters,
       selectedTags,
       workloads,
-      SID
+      SID,
     );
     handleRefresh(options);
     const allDetails = { ...config, pathway, rule, sort };
@@ -75,7 +75,7 @@ export const useGetEntities =
         hasItems: true,
         fields: { system_profile: ['operating_system'] },
       },
-      showTags
+      showTags,
     );
 
     let edgeData = [];
@@ -84,7 +84,7 @@ export const useGetEntities =
       const { data: devicesData } = await Post(
         `${EDGE_DEVICE_BASE_URL}/devices/devicesview`,
         {},
-        { devices_uuid: systemIDs }
+        { devices_uuid: systemIDs },
       );
 
       edgeData = devicesData?.data?.devices || [];
@@ -95,7 +95,7 @@ export const useGetEntities =
       advisorData.data,
       inventoryData.results,
       edgeData,
-      enforceEdgeGroups
+      enforceEdgeGroups,
     );
 
     return Promise.resolve({
@@ -113,7 +113,7 @@ export const useActionResolver = (handleModalToggle, isDisabled) =>
         isDisabled,
       },
     ],
-    []
+    [],
   );
 
 export const useOnLoad = (filters) => {
@@ -127,10 +127,10 @@ export const useOnLoad = (filters) => {
             perPage: Number(filters.limit || 20),
           }),
           ...mergeWithDetail(),
-        })
+        }),
       );
     },
-    [filters, store]
+    [filters, store],
   );
 };
 

@@ -63,7 +63,7 @@ describe('mapUpdateMethodFilterToAPISpec', () => {
         update_method: updateMethodValue,
       });
       expect(resultWithOstree).toEqual({ update_method: expected });
-    }
+    },
   );
 
   test.each([
@@ -81,7 +81,7 @@ describe('mapUpdateMethodFilterToAPISpec', () => {
         someOtherTest: 'some-other-test-value',
       });
       expect(result).toEqual({ someOtherTest: 'some-other-test-value' });
-    }
+    },
   );
 
   test('should remove impacting filter when it is equal to empty string', () => {

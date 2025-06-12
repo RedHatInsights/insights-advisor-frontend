@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { initStore } from '../../Store';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AccountStatContext } from '../../ZeroStateWrapper';
-//eslint-disable-next-line rulesdir/disallow-fec-relative-imports
+
 import { hasChip } from '@redhat-cloud-services/frontend-components-utilities';
 import messages from '../../Messages';
 import { EnvironmentContext } from '../../App';
@@ -27,7 +27,7 @@ const mountComponent = (hasEdgeDevices, envContext) => {
           </IntlProvider>
         </AccountStatContext.Provider>
       </MemoryRouter>
-    </EnvironmentContext.Provider>
+    </EnvironmentContext.Provider>,
   );
 };
 
@@ -47,13 +47,13 @@ beforeEach(() => {
     '/api/insights/v1/rule/?&impacting=true&rule_status=enabled&sort=-total_risk&limit=20&offset=0',
     {
       data: [],
-    }
+    },
   ).as('rules_table_call');
   cy.intercept(
     '/api/insights/v1/rule/?&topic=123&update_method=ostree%2Cdnfyum&impacting=true&rule_status=enabled&sort=-total_risk&limit=10&offset=0',
     {
       data: [],
-    }
+    },
   ).as('rules_table_initial_call');
 });
 

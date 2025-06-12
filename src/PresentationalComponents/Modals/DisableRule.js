@@ -28,7 +28,7 @@ const DisableRule = ({
   const notification = (data) => dispatch(addNotification(data));
   const [justification, setJustificaton] = useState('');
   const [singleSystem, setSingleSystem] = useState(
-    host !== undefined || hosts.length > 0
+    host !== undefined || hosts.length > 0,
   );
   const justificationMaxLength = 255;
 

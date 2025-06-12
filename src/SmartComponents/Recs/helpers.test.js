@@ -22,7 +22,7 @@ describe('edgeSystemsCheck state is getting set', () => {
       setSystemsCount,
       setEdgeSystemsCount,
       setConventionalSystemsCount,
-      setCountsLoading
+      setCountsLoading,
     );
 
     await expect(setSystemsCount).toHaveBeenCalledWith(2);
@@ -41,14 +41,14 @@ describe('edgeSystemsCheck state is getting set', () => {
       setSystemsCount,
       setEdgeSystemsCount,
       setConventionalSystemsCount,
-      setCountsLoading
+      setCountsLoading,
     );
 
     expect(axios.get).toHaveBeenCalledWith(
-      '/api/insights/v1/rule/test/systems_detail/?filter[system_profile][host_type][nil]=true&limit=1'
+      '/api/insights/v1/rule/test/systems_detail/?filter[system_profile][host_type][nil]=true&limit=1',
     );
     expect(axios.get).toHaveBeenCalledWith(
-      '/api/insights/v1/rule/test/systems_detail/?filter[system_profile][host_type]=edge&limit=1'
+      '/api/insights/v1/rule/test/systems_detail/?filter[system_profile][host_type]=edge&limit=1',
     );
   });
 
@@ -63,14 +63,14 @@ describe('edgeSystemsCheck state is getting set', () => {
       setEdgeSystemsCount,
       setConventionalSystemsCount,
       setCountsLoading,
-      'pathway'
+      'pathway',
     );
 
     expect(axios.get).toHaveBeenCalledWith(
-      '/api/insights/v1/system/?limit=1&filter[system_profile][host_type][nil]=true&pathway=pathway'
+      '/api/insights/v1/system/?limit=1&filter[system_profile][host_type][nil]=true&pathway=pathway',
     );
     expect(axios.get).toHaveBeenCalledWith(
-      '/api/insights/v1/system/?limit=1&filter[system_profile][host_type]=edge&pathway=pathway'
+      '/api/insights/v1/system/?limit=1&filter[system_profile][host_type]=edge&pathway=pathway',
     );
   });
 });

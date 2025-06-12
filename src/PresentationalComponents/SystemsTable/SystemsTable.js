@@ -65,7 +65,7 @@ const SystemsTable = () => {
     const passValue =
       param === SFC.rhel_version.urlParam
         ? Object.values(values || {}).flatMap((majorOsVersion) =>
-            Object.keys(majorOsVersion)
+            Object.keys(majorOsVersion),
           )
         : values;
 
@@ -130,7 +130,7 @@ const SystemsTable = () => {
           const newFilter = {
             [item.urlParam]: Array.isArray(filters[item.urlParam])
               ? filters[item.urlParam].filter(
-                  (value) => String(value) !== String(item.chips[0].value)
+                  (value) => String(value) !== String(item.chips[0].value),
                 )
               : '',
           };
@@ -237,7 +237,7 @@ const SystemsTable = () => {
                 perPage: Number(filters.limit || 20),
               }),
               ...mergeWithDetail(),
-            })
+            }),
           );
         }}
         getEntities={async (_items, config, showTags, defaultGetEntities) => {
@@ -263,7 +263,7 @@ const SystemsTable = () => {
             selectedTags,
             workloads,
             SID,
-            true
+            true,
           );
           const fetchedSystems = (await Get(SYSTEMS_FETCH_URL, {}, options))
             ?.data;
@@ -277,13 +277,13 @@ const SystemsTable = () => {
               hasItems: true,
               fields: { system_profile: ['operating_system'] },
             },
-            showTags
+            showTags,
           );
 
           return Promise.resolve({
             results: mergeArraysByDiffKeys(
               fetchedSystems.data,
-              results.results
+              results.results,
             ),
             total: fetchedSystems.meta.count,
           });
@@ -306,7 +306,7 @@ const SystemsTable = () => {
               selectedTags,
               workloads,
               SID,
-              dispatch
+              dispatch,
             ),
           extraItems: [
             <li

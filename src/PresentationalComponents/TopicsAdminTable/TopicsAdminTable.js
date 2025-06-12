@@ -78,10 +78,10 @@ const TopicsAdminTable = () => {
               return a[attr] > b[attr] ? -1 : 1;
             }
           }
-        })
+        }),
       );
     },
-    [setSortBy, setTopicsArray, topicsArray]
+    [setSortBy, setTopicsArray, topicsArray],
   );
 
   const hideTopics = (topic) => {

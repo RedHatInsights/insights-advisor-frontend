@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 import {
   Column,
   Section,
@@ -93,7 +91,7 @@ export const TablePage = ({ page, systems, intl }) => {
           </Link>
         </Text>,
         ...hitColumns.map((item) =>
-          rowBuilder({ style: { width: '10px' }, value: system[item] })
+          rowBuilder({ style: { width: '10px' }, value: system[item] }),
         ),
         <Text
           key={system.last_seen}
@@ -127,7 +125,7 @@ export const leadPage = ({ systemsTotal, systems, filters, tags, intl }) => {
   return (
     <React.Fragment
       key={`${intl.formatMessage(
-        messages.insightsHeader
+        messages.insightsHeader,
       )}: ${intl.formatMessage(messages.systems)}`}
     >
       <Text key="sys-count" style={styles.text}>

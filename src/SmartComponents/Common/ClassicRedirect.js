@@ -48,7 +48,7 @@ const ClassicRedirect = () => {
             dismissable: true,
             title: intl.formatMessage(messages.error),
             description: `${error}`,
-          })
+          }),
         );
         setFetchStatus('rejected');
       }

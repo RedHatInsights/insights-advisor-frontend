@@ -48,7 +48,7 @@ describe('OverviewDashbar', () => {
     render(
       <Provider store={store}>
         <OverviewDashbar changeTab={changeTab} />
-      </Provider>
+      </Provider>,
     );
 
     await screen.findByText(/Pathways/);
@@ -68,10 +68,10 @@ describe('OverviewDashbar', () => {
     const pathwaysBtn = screen.getByTestId(/Pathways/);
     const incidentsBtn = screen.getByTestId(/Incidents/);
     const criticalRecommendationsBtn = screen.getByTestId(
-      /Critical recommendations/
+      /Critical recommendations/,
     );
     const importantRecommendationsBtn = screen.getByTestId(
-      /Important recommendations/
+      /Important recommendations/,
     );
 
     expect(pathwaysBtn).toBeInTheDocument();
@@ -108,7 +108,7 @@ describe('OverviewDashbar', () => {
     render(
       <Provider store={store}>
         <OverviewDashbar changeTab={changeTab} />
-      </Provider>
+      </Provider>,
     );
 
     // ensure an error is presented
@@ -116,8 +116,8 @@ describe('OverviewDashbar', () => {
     expect(screen.getByText(/No Overview Available/)).toBeInTheDocument();
     expect(
       screen.getByText(
-        /An unexpected error has occurred while trying to fetch the overview information. Please try again./
-      )
+        /An unexpected error has occurred while trying to fetch the overview information. Please try again./,
+      ),
     ).toBeInTheDocument();
 
     // ensure the correct API endpoint is being contacted
@@ -130,7 +130,7 @@ describe('OverviewDashbar', () => {
     render(
       <Provider store={store}>
         <OverviewDashbar changeTab={changeTab} />
-      </Provider>
+      </Provider>,
     );
 
     // ensure an error is presented
@@ -138,8 +138,8 @@ describe('OverviewDashbar', () => {
     expect(screen.getByText(/No Overview Available/)).toBeInTheDocument();
     expect(
       screen.getByText(
-        /An unexpected error has occurred while trying to fetch the overview information. Please try again./
-      )
+        /An unexpected error has occurred while trying to fetch the overview information. Please try again./,
+      ),
     ).toBeInTheDocument();
 
     // ensure the correct API endpoint is being contacted

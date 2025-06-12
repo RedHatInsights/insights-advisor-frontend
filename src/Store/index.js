@@ -55,7 +55,7 @@ const getMiddlewares = (appMiddlewares) => {
         ignoredPaths: ['entities'],
       },
     }).concat(
-      ...middlewares.filter((middleware) => typeof middleware !== 'undefined')
+      ...middlewares.filter((middleware) => typeof middleware !== 'undefined'),
     );
 };
 

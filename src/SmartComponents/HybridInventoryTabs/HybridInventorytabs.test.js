@@ -52,7 +52,7 @@ const renderComponent = (props, accountContextValues = accountContextValue) => {
   render(
     <AccountStatContext.Provider value={accountContextValues}>
       <HybridInventory {...props} />
-    </AccountStatContext.Provider>
+    </AccountStatContext.Provider>,
   );
 };
 
@@ -66,7 +66,7 @@ describe('HybridInventoryTabs', () => {
   it('Should auto switch to edge tab  when there is no conventional systems, but there is edge device', async () => {
     renderComponent(
       { ...hybridSystemsCounts, conventionalSystemsCount: 0 },
-      accountContextValue
+      accountContextValue,
     );
 
     await waitAsyncComponent();
@@ -74,7 +74,7 @@ describe('HybridInventoryTabs', () => {
       expect.objectContaining({
         hasConventionalSystems: false,
       }),
-      {}
+      {},
     );
   });
   it('Should not auto switch to edge tab automatically when there is no conventional systems and no edge device', async () => {
@@ -84,7 +84,7 @@ describe('HybridInventoryTabs', () => {
         conventionalSystemsCount: 0,
         edgeSystemsCount: 0,
       },
-      accountContextValue
+      accountContextValue,
     );
 
     await waitAsyncComponent();
@@ -92,7 +92,7 @@ describe('HybridInventoryTabs', () => {
       expect.objectContaining({
         hasConventionalSystems: true,
       }),
-      {}
+      {},
     );
   });
   it('Should not auto switch to edge tab automatically when there are both conventional systems and edge device', async () => {
@@ -103,7 +103,7 @@ describe('HybridInventoryTabs', () => {
       expect.objectContaining({
         hasConventionalSystems: true,
       }),
-      {}
+      {},
     );
   });
   it('Should pass isImmutableTabOpen prop to fed-module', async () => {
@@ -114,7 +114,7 @@ describe('HybridInventoryTabs', () => {
       expect.objectContaining({
         isImmutableTabOpen: true,
       }),
-      {}
+      {},
     );
   });
   it('Should pass accountHasEdgeImages prop to fed-module from accountContext', async () => {
@@ -125,7 +125,7 @@ describe('HybridInventoryTabs', () => {
       expect.objectContaining({
         accountHasEdgeImages: true,
       }),
-      {}
+      {},
     );
   });
 
@@ -140,7 +140,7 @@ describe('HybridInventoryTabs', () => {
       expect.objectContaining({
         tabPathname: '/insights/advisor/recommendations/testRule',
       }),
-      {}
+      {},
     );
   });
 
@@ -151,7 +151,7 @@ describe('HybridInventoryTabs', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByLabelText('recommendation-component-mock')
+        screen.getByLabelText('recommendation-component-mock'),
       ).toBeInTheDocument();
     });
   });
@@ -163,7 +163,7 @@ describe('HybridInventoryTabs', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByLabelText('pathway-component-mock')
+        screen.getByLabelText('pathway-component-mock'),
       ).toBeInTheDocument();
     });
   });

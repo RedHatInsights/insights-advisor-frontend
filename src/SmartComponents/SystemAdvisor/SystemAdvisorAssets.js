@@ -51,7 +51,7 @@ export const getFilters = (
   filters,
   searchValue,
   onInputChange,
-  onFilterChange
+  onFilterChange,
 ) => [
   {
     label: 'description',
@@ -101,7 +101,7 @@ export const useProcessRemediation = (inventoryId) =>
   useCallback(
     (selectedAnsibleRules) => {
       const playbookRows = selectedAnsibleRules.filter(
-        (r) => r.resolution?.has_playbook
+        (r) => r.resolution?.has_playbook,
       );
       const issues = playbookRows.map((r) => ({
         id: `advisor:${r.rule.rule_id}`,
@@ -109,7 +109,7 @@ export const useProcessRemediation = (inventoryId) =>
       }));
       return issues.length ? { issues, systems: [inventoryId] } : false;
     },
-    [inventoryId]
+    [inventoryId],
   );
 
 export const useBuildRows = (
@@ -117,7 +117,7 @@ export const useBuildRows = (
   systemAdvisorRef,
   entity,
   inventoryReportFetchStatus,
-  isProd
+  isProd,
 ) => {
   const location = useLocation().pathname?.split('/');
   return useCallback(
@@ -128,7 +128,7 @@ export const useBuildRows = (
       rows,
       searchValue = '',
       kbaLoading = false,
-      isFirstLoad = false
+      isFirstLoad = false,
     ) => {
       const url = window.location.href;
       let newActiveReportsList = activeReports;
@@ -140,16 +140,16 @@ export const useBuildRows = (
           x.rule.rule_id === activeRule
             ? -1
             : y.rule.rule_id === activeRule
-            ? 1
-            : 0
+              ? 1
+              : 0,
         );
       } else if (isFirstLoad) {
         newActiveReportsList.sort((x, y) =>
           x.rule.total_risk > y.rule.total_risk
             ? -1
             : y.rule.total_risk > x.rule.total_risk
-            ? 1
-            : 0
+              ? 1
+              : 0,
         );
       }
 
@@ -280,7 +280,7 @@ export const useBuildRows = (
                 category: RULE_CATEGORIES[rule.category.name.toLowerCase()],
               };
               return filterValues.find(
-                (value) => String(value) === String(rowValue[key])
+                (value) => String(value) === String(rowValue[key]),
               );
             })
             .every((x) => x);
@@ -291,7 +291,7 @@ export const useBuildRows = (
       });
       //must recalculate parent for expandable table content whenever the array size changes
       builtRows.forEach((row, index) =>
-        row.parent ? (row.parent = index - 1) : null
+        row.parent ? (row.parent = index - 1) : null,
       );
 
       systemAdvisorRef.current.rowCount = activeReports.length;
@@ -331,6 +331,6 @@ export const useBuildRows = (
 
       return builtRows;
     },
-    [entity, inventoryReportFetchStatus]
+    [entity, inventoryReportFetchStatus],
   );
 };

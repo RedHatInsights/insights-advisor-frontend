@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-
 import { createIntl, createIntlCache } from 'react-intl';
 
 import { intlHelper } from '@redhat-cloud-services/frontend-components-translations/';
@@ -13,7 +11,7 @@ const intl = createIntl(
   {
     locale,
   },
-  cache
+  cache,
 );
 const intlSettings = { locale };
 
@@ -109,25 +107,25 @@ export const RISK_OF_CHANGE_DESC = {
     intl.formatMessage(messages.riskOfChangeTextOne, {
       strong: (str) => strong(str),
     }),
-    intlSettings
+    intlSettings,
   ),
   2: intlHelper(
     intl.formatMessage(messages.riskOfChangeTextTwo, {
       strong: (str) => strong(str),
     }),
-    intlSettings
+    intlSettings,
   ),
   3: intlHelper(
     intl.formatMessage(messages.riskOfChangeTextThree, {
       strong: (str) => strong(str),
     }),
-    intlSettings
+    intlSettings,
   ),
   4: intlHelper(
     intl.formatMessage(messages.riskOfChangeTextFour, {
       strong: (str) => strong(str),
     }),
-    intlSettings
+    intlSettings,
   ),
 };
 export const IMPACT_LABEL = {
@@ -140,12 +138,12 @@ export const IMPACT_LABEL_LOWER = {
   1: intlHelper(intl.formatMessage(messages.low).toLowerCase(), intlSettings),
   2: intlHelper(
     intl.formatMessage(messages.medium).toLowerCase(),
-    intlSettings
+    intlSettings,
   ),
   3: intlHelper(intl.formatMessage(messages.high).toLowerCase(), intlSettings),
   4: intlHelper(
     intl.formatMessage(messages.critical).toLowerCase(),
-    intlSettings
+    intlSettings,
   ),
 };
 export const LIKELIHOOD_LABEL = {
@@ -158,12 +156,12 @@ export const LIKELIHOOD_LABEL_LOWER = {
   1: intlHelper(intl.formatMessage(messages.low).toLowerCase(), intlSettings),
   2: intlHelper(
     intl.formatMessage(messages.medium).toLowerCase(),
-    intlSettings
+    intlSettings,
   ),
   3: intlHelper(intl.formatMessage(messages.high).toLowerCase(), intlSettings),
   4: intlHelper(
     intl.formatMessage(messages.critical).toLowerCase(),
-    intlSettings
+    intlSettings,
   ),
 };
 export const RISK_OF_CHANGE_LABEL = {
@@ -182,15 +180,15 @@ export const TOTAL_RISK_LABEL_LOWER = {
   1: intlHelper(intl.formatMessage(messages.low).toLowerCase(), intlSettings),
   2: intlHelper(
     intl.formatMessage(messages.moderate).toLowerCase(),
-    intlSettings
+    intlSettings,
   ),
   3: intlHelper(
     intl.formatMessage(messages.important).toLowerCase(),
-    intlSettings
+    intlSettings,
   ),
   4: intlHelper(
     intl.formatMessage(messages.critical).toLowerCase(),
-    intlSettings
+    intlSettings,
   ),
 };
 
@@ -203,14 +201,14 @@ export const PATHWAYS_FILTER_CATEGORIES = {
       {
         label: intlHelper(
           intl.formatMessage(messages.incidentRules),
-          intlSettings
+          intlSettings,
         ),
         value: 'true',
       },
       {
         label: intlHelper(
           intl.formatMessage(messages.nonIncidentRules),
-          intlSettings
+          intlSettings,
         ),
         value: 'false',
       },
@@ -229,11 +227,11 @@ export const PATHWAYS_FILTER_CATEGORIES = {
       {
         label: intlHelper(
           intl.formatMessage(messages.notRequired),
-          intlSettings
+          intlSettings,
         ),
         text: intlHelper(
           intl.formatMessage(messages.notRequired),
-          intlSettings
+          intlSettings,
         ),
         value: 'false',
       },
@@ -294,14 +292,14 @@ export const FILTER_CATEGORIES = {
       {
         label: intlHelper(
           intl.formatMessage(messages.availability),
-          intlSettings
+          intlSettings,
         ),
         value: `${RULE_CATEGORIES.availability}`,
       },
       {
         label: intlHelper(
           intl.formatMessage(messages.performance),
-          intlSettings
+          intlSettings,
         ),
         value: `${RULE_CATEGORIES.performance}`,
       },
@@ -323,14 +321,14 @@ export const FILTER_CATEGORIES = {
       {
         label: intlHelper(
           intl.formatMessage(messages.incidentRules),
-          intlSettings
+          intlSettings,
         ),
         value: 'true',
       },
       {
         label: intlHelper(
           intl.formatMessage(messages.nonIncidentRules),
-          intlSettings
+          intlSettings,
         ),
         value: 'false',
       },
@@ -344,14 +342,14 @@ export const FILTER_CATEGORIES = {
       {
         label: intlHelper(
           intl.formatMessage(messages.ansibleSupportYes),
-          intlSettings
+          intlSettings,
         ),
         value: 'true',
       },
       {
         label: intlHelper(
           intl.formatMessage(messages.ansibleSupportNo),
-          intlSettings
+          intlSettings,
         ),
         value: 'false',
       },
@@ -370,11 +368,11 @@ export const FILTER_CATEGORIES = {
       {
         label: intlHelper(
           intl.formatMessage(messages.notRequired),
-          intlSettings
+          intlSettings,
         ),
         text: intlHelper(
           intl.formatMessage(messages.notRequired),
-          intlSettings
+          intlSettings,
         ),
         value: 'false',
       },
@@ -396,7 +394,7 @@ export const FILTER_CATEGORIES = {
       {
         label: intlHelper(
           intl.formatMessage(messages.redhatDisabled),
-          intlSettings
+          intlSettings,
         ),
         value: 'rhdisabled',
       },
@@ -427,11 +425,11 @@ export const getImpactingFitlerItems = (hasEdgeDevices) =>
         {
           label: intlHelper(
             intl.formatMessage(messages.oneOrMore),
-            intlSettings
+            intlSettings,
           ),
           text: intlHelper(
             intl.formatMessage(messages.oneOrMore),
-            intlSettings
+            intlSettings,
           ),
           value: 'true',
         },
@@ -460,14 +458,14 @@ export const SYSTEM_FILTER_CATEGORIES = {
       {
         label: intlHelper(
           intl.formatMessage(messages.incidentSystems),
-          intlSettings
+          intlSettings,
         ),
         value: 'true',
       },
       {
         label: intlHelper(
           intl.formatMessage(messages.nonIncidentSystems),
-          intlSettings
+          intlSettings,
         ),
         value: 'false',
       },

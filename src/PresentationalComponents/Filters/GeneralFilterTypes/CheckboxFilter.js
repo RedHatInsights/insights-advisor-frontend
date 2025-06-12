@@ -5,7 +5,7 @@ const checkboxFilter = (
   currentFilter = {},
   filterKey,
   filterItems,
-  filterLabel
+  filterLabel,
 ) => {
   let { [filterKey]: currentValue } = currentFilter;
 

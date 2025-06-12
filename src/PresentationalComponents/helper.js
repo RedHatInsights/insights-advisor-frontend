@@ -32,7 +32,7 @@ export const createOptions = (
   selectedTags,
   workloads,
   SID,
-  systemsPage
+  systemsPage,
 ) => {
   const osFilter = filters.osFilter && buildOsFilter(filters.osFilter);
   // RHINENG-11227: remove system incident filter if it has multiple elements, which will be both
@@ -75,8 +75,8 @@ export const sortTopics = (data, index, direction) => {
   index === 0
     ? (sortingName = 'name')
     : index === 2
-    ? (sortingName = 'featured')
-    : (sortingName = 'impacted_systems_count');
+      ? (sortingName = 'featured')
+      : (sortingName = 'impacted_systems_count');
   return orderBy(data, [(result) => result[sortingName]], direction);
 };
 

@@ -125,13 +125,13 @@ const RulesTable = ({ isTabActive, pathway }) => {
     rows,
     setSelectedRule,
     setDisableRuleOpen,
-    refetch
+    refetch,
   );
 
   const impactingFilterDef = impactingFilter(
     setFilters,
     filters,
-    hasEdgeDevices
+    hasEdgeDevices,
   );
 
   // Builds table filters from url params depending on the query success
@@ -151,13 +151,12 @@ const RulesTable = ({ isTabActive, pathway }) => {
 
   useEffect(() => {
     const sortIndex = Object.entries(sortIndices)?.find(
-      (item) => item[1] === filters.sort || `-${item[1]}` === filters.sort
+      (item) => item[1] === filters.sort || `-${item[1]}` === filters.sort,
     );
     if (filters.sort !== undefined && sortIndex) {
       const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
       setSortBy({ index: Number(sortIndex[0]), direction: sortDirection });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.sort]);
 
   useEffect(() => {
@@ -170,7 +169,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
           isAllExpanded,
           setViewSystemsModalRule,
           setViewSystemsModalOpen,
-          intl
+          intl,
         );
         setRows(rows);
       }
@@ -193,7 +192,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
     intl,
     setSearchText,
     setFilters,
-    hasEdgeDevices
+    hasEdgeDevices,
   );
 
   const onExpandAllClick = (_e, isOpen) => {
@@ -244,7 +243,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
         }}
         exportConfig={{
           label: intl.formatMessage(messages.exportCsv),
-          // eslint-disable-next-line no-dupe-keys
+
           label: intl.formatMessage(messages.exportJson),
           onSelect: (_e, fileType) =>
             downloadReport(
@@ -254,7 +253,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
               selectedTags,
               workloads,
               SID,
-              dispatch
+              dispatch,
             ),
           isDisabled: !envContext.isExportEnabled,
           tooltipText: envContext.isExportEnabled
@@ -269,7 +268,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
               searchText,
               setSearchText,
               toggleRulesDisabled,
-              intl
+              intl,
             ),
             impactingFilterDef,
           ],

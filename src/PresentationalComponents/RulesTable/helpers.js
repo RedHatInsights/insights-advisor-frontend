@@ -99,7 +99,7 @@ export const urlFilterBuilder = (
   sortIndices,
   setSearchText,
   setFilters,
-  filters
+  filters,
 ) => {
   let sortingValues = Object.values(sortIndices);
   const paramsObject = paramParser();
@@ -146,7 +146,7 @@ export const hideReports = async (
   setDisableRuleOpen,
   refetch,
   dispatch,
-  intl
+  intl,
 ) => {
   const rule = rows[rowId].rule;
   const addNotification = (data) => dispatch(addNotificationAction(data));
@@ -191,7 +191,7 @@ export const removeFilterParam = (
   param,
   filters,
   setFilters,
-  setSearchText
+  setSearchText,
 ) => {
   const filter = { ...filters, offset: 0 };
   param === 'text' && setSearchText('');
@@ -205,7 +205,7 @@ export const filterConfigItems = (
   searchText,
   setSearchText,
   toggleRulesDisabled,
-  intl
+  intl,
 ) => {
   const addFilterParam = (param, values) => {
     values.length > 0
@@ -338,7 +338,7 @@ export const buildRows = (
   isAllExpanded,
   setViewSystemsModalRule,
   setViewSystemsModalOpen,
-  intl
+  intl,
 ) => {
   const rows = rules.data.flatMap((value, key) => [
     {
@@ -432,7 +432,7 @@ export const buildRows = (
                       ? intl.formatMessage(messages.ruleIsDisabledForAllSystems)
                       : intl.formatMessage(
                           messages.ruleIsDisabledForSystemsBody,
-                          { systems: value.hosts_acked_count }
+                          { systems: value.hosts_acked_count },
                         )}
                     &nbsp;{' '}
                     <Button
@@ -454,7 +454,7 @@ export const buildRows = (
                   messages={formatMessages(
                     intl,
                     RuleDetailsMessagesKeys,
-                    mapContentToValues(intl, value)
+                    mapContentToValues(intl, value),
                   )}
                   product={AdvisorProduct.rhel}
                   rule={value}
@@ -550,7 +550,7 @@ export const getActiveFiltersConfig = (
   intl,
   setSearchText,
   setFilters,
-  hasEdgeDevice
+  hasEdgeDevice,
 ) => ({
   deleteTitle: intl.formatMessage(messages.resetFilters),
   filters: buildFilterChips(filters, hasEdgeDevice),
@@ -580,7 +580,7 @@ export const getActiveFiltersConfig = (
         const removedFilter = {
           [item.urlParam]: Array.isArray(newFilters[item.urlParam])
             ? newFilters[item.urlParam].filter(
-                (value) => String(value) !== String(item.chips[0].value)
+                (value) => String(value) !== String(item.chips[0].value),
               )
             : '',
         };
@@ -591,7 +591,7 @@ export const getActiveFiltersConfig = (
               item.urlParam,
               newFilters,
               setFilters,
-              setSearchText
+              setSearchText,
             );
       });
     }

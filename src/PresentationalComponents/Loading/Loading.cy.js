@@ -7,7 +7,6 @@ describe('Loading', () => {
   });
 
   it('Loading component exist', () => {
-    // eslint-disable-next-line no-undef
     cy.get('div');
   });
 });

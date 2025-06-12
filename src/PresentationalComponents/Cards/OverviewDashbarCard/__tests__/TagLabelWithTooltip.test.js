@@ -26,13 +26,13 @@ describe('TagLabelWithTooltip', () => {
     await user.hover(criticalTitle);
     await screen.findByText(/The total risk of this remediation is/);
     expect(
-      screen.getByText(/The total risk of this remediation is/)
+      screen.getByText(/The total risk of this remediation is/),
     ).toBeInTheDocument();
     expect(screen.getByText(/critical/)).toBeInTheDocument();
     expect(
       screen.getByText(
-        /based on the combination of likelihood and impact to remediate./
-      )
+        /based on the combination of likelihood and impact to remediate./,
+      ),
     ).toBeInTheDocument();
   });
 
@@ -47,13 +47,13 @@ describe('TagLabelWithTooltip', () => {
     await user.hover(importantTitle);
     await screen.findByText(/The total risk of this remediation is/);
     expect(
-      screen.getByText(/The total risk of this remediation is/)
+      screen.getByText(/The total risk of this remediation is/),
     ).toBeInTheDocument();
     expect(screen.getByText(/important/)).toBeInTheDocument();
     expect(
       screen.getByText(
-        /based on the combination of likelihood and impact to remediate./
-      )
+        /based on the combination of likelihood and impact to remediate./,
+      ),
     ).toBeInTheDocument();
   });
 
@@ -61,7 +61,7 @@ describe('TagLabelWithTooltip', () => {
     await render(
       <TagLabelWithTooltip
         typeOfTag={SEVERITY_MAP['non-existing-severity-tag']}
-      />
+      />,
     );
 
     // ensure the texts of both labels is NOT displayed

@@ -33,7 +33,7 @@ describe('DetailsTitle', () => {
         areCountsLoading={false}
         hasEdgeDevices={true}
         systemsCount={10}
-      />
+      />,
     );
     expect(screen.getByText('10 Total Systems')).toBeVisible();
   });

@@ -17,7 +17,7 @@ export const RecommendationLevel = ({ recLvl, isCompact = true }) => {
       intl.formatMessage(messages.medium),
       recLvl,
       'orange',
-      isCompact
+      isCompact,
     );
   } else {
     return label(intl.formatMessage(messages.low), recLvl, 'blue', isCompact);

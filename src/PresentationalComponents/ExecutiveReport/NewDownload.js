@@ -1,4 +1,3 @@
-/* eslint-disable rulesdir/disallow-fec-relative-imports */
 import './_Download.scss';
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';

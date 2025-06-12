@@ -60,8 +60,8 @@ describe('createOptions', () => {
         selectedTags,
         workloads,
         SID,
-        systemsPage
-      )
+        systemsPage,
+      ),
     ).toEqual({
       sort: '',
       offset: 0,
@@ -83,8 +83,8 @@ describe('createOptions', () => {
         selectedTags,
         workloads,
         SID,
-        systemsPage
-      ).name
+        systemsPage,
+      ).name,
     ).toEqual(hostnameOrId);
   });
 
@@ -117,8 +117,8 @@ describe('createOptions', () => {
         selectedTags,
         workloads,
         SID,
-        systemsPage
-      ).rhel_version
+        systemsPage,
+      ).rhel_version,
     ).toEqual('9.0,9.1,9.5,9.3,9.4,9.2,8.0,8.2');
   });
 
@@ -136,8 +136,8 @@ describe('createOptions', () => {
         selectedTags,
         workloads,
         SID,
-        systemsPage
-      ).groups
+        systemsPage,
+      ).groups,
     ).toEqual('group1,group2');
   });
 
@@ -163,8 +163,8 @@ describe('createOptions', () => {
         selectedTags,
         workloads,
         SID,
-        systemsPage
-      ).tags
+        systemsPage,
+      ).tags,
     ).toEqual(['tagFilter1/tagKey1=tag1', 'tagFilter1/tagKey2=tag2']);
   });
 });

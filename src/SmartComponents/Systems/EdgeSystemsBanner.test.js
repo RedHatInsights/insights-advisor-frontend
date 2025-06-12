@@ -12,11 +12,11 @@ describe('EdgeSystemsBanner', () => {
         Component={EdgeSystemsBanner}
         Context={AccountStatContext}
         contextValue={{ hasEdgeDevices: true }}
-      />
+      />,
     );
 
     expect(
-      screen.getByText('Immutable systems are not shown in this list.')
+      screen.getByText('Immutable systems are not shown in this list.'),
     ).toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
@@ -27,11 +27,11 @@ describe('EdgeSystemsBanner', () => {
         Component={EdgeSystemsBanner}
         Context={AccountStatContext}
         contextValue={{ hasEdgeDevices: false }}
-      />
+      />,
     );
 
     expect(
-      screen.queryByText('Immutable systems are not shown in this list.')
+      screen.queryByText('Immutable systems are not shown in this list.'),
     ).not.toBeInTheDocument();
     expect(asFragment()).toMatchSnapshot();
   });
