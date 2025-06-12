@@ -9,26 +9,25 @@ import { AccountStatContext } from '../../ZeroStateWrapper';
 import { hasChip } from '@redhat-cloud-services/frontend-components-utilities';
 import messages from '../../Messages';
 import { EnvironmentContext } from '../../App';
+import { DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT } from '../../../cypress/support/globals';
+import fixtures from '../../../cypress/fixtures/recommendations.json';
+import { itExportsDataToFile } from '../../../cypress/utils/table';
 
-const mountComponent = (hasEdgeDevices) => {
-  const mockEnvContext = {
-    updateDocumentTitle: cy.stub(), // mock function to prevent error
-  };
-
+const mountComponent = (hasEdgeDevices, envContext) => {
   cy.mount(
-    <MemoryRouter initialEntries={['/topics/123']}>
-      <EnvironmentContext.Provider value={mockEnvContext}>
+    <EnvironmentContext.Provider value={envContext}>
+      <MemoryRouter initialEntries={['/topics/123']}>
         <AccountStatContext.Provider value={{ hasEdgeDevices }}>
           <IntlProvider locale={navigator.language.slice(0, 2)}>
             <Provider store={initStore()}>
               <Routes>
-                <Route path="topics/:id" element={<Details />} />
+                <Route path="topics/:id" element={<Details />}></Route>
               </Routes>
             </Provider>
           </IntlProvider>
         </AccountStatContext.Provider>
-      </EnvironmentContext.Provider>
-    </MemoryRouter>
+      </MemoryRouter>
+    </EnvironmentContext.Provider>
   );
 };
 
@@ -60,7 +59,7 @@ beforeEach(() => {
 
 describe('Topic Details is loaded correctly for user with Edge systems', () => {
   beforeEach(() => {
-    mountComponent(true);
+    mountComponent(true, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
   });
 
   it('Correct deffault filters for Recommendation table', () => {
@@ -73,7 +72,7 @@ describe('Topic Details is loaded correctly for user with Edge systems', () => {
 
 describe('Topic Details is loaded correctly for user without Edge systems', () => {
   beforeEach(() => {
-    mountComponent(false);
+    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
   });
 
   it('Correct deffault filters for Recommendation table', () => {
@@ -83,13 +82,28 @@ describe('Topic Details is loaded correctly for user without Edge systems', () =
   });
 });
 
-describe('Tooltips', () => {
-  beforeEach(() => {
-    mountComponent(true);
-  });
-
-  it(`Export kebab tooltip displays the correct content.`, () => {
+describe('Export', () => {
+  it(`Export kebab tooltip displays the correct content if disabled.`, () => {
+    mountComponent(true, {
+      isLoading: false,
+      isExportEnabled: false,
+      isDisableRecEnabled: true,
+      isAllowedToViewRec: true,
+      updateDocumentTitle: () => {},
+      getUser: () => '',
+      on: () => {},
+      hideGlobalFilter: () => {},
+      mapGlobalFilter: () => {},
+      globalFilterScope: () => {},
+      requestPdf: () => {},
+      isProd: () => {},
+    });
     cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
     cy.contains(messages.permsAction.defaultMessage).should('be.visible');
+  });
+
+  it(`works and downloads report is enabled`, () => {
+    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
+    itExportsDataToFile(fixtures.data, 'Insights-Advisor_hits--');
   });
 });
