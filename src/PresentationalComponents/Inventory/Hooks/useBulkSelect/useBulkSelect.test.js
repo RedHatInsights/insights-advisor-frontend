@@ -26,7 +26,7 @@ describe('useBulkSelect', () => {
           return ['ID', 'ID1'];
         },
         itemIdsOnPage: () => ['ID', 'ID1'],
-      })
+      }),
     );
 
     expect(result.current).toMatchSnapshot();
@@ -40,7 +40,7 @@ describe('useBulkSelect', () => {
         preselected: ['ID'],
         itemIdsInTable: () => ['ID', 'ID2'],
         itemIdsOnPage: () => ['ID', 'ID2'],
-      })
+      }),
     );
 
     expect(result.current).toMatchSnapshot();
@@ -54,7 +54,7 @@ describe('useBulkSelect', () => {
         preselected: ['ID'],
         itemIdsInTable: () => ['ID', 'ID2'],
         itemIdsOnPage: () => ['ID'],
-      })
+      }),
     );
 
     expect(result.current).toMatchSnapshot();
@@ -68,7 +68,7 @@ describe('useBulkSelect', () => {
         itemIdsInTable: () => ['ID', 'ID2'],
         itemIdsOnPage: () => ['ID'],
         isLoading: true,
-      })
+      }),
     );
 
     expect(result.current).toMatchSnapshot();

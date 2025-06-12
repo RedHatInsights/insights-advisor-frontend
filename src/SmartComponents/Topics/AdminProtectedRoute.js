@@ -4,7 +4,7 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import PropTypes from 'prop-types';
 
 const reducer = (state, { type, payload }) =>
-  ({ setLoaded: { ...state, loaded: true, isInternal: payload } }[type]);
+  ({ setLoaded: { ...state, loaded: true, isInternal: payload } })[type];
 
 const AdminProtectedRoute = ({ component: Component, ...props }) => {
   const [state, dispatch] = useReducer(reducer, {
@@ -14,11 +14,12 @@ const AdminProtectedRoute = ({ component: Component, ...props }) => {
   const chrome = useChrome();
 
   useEffect(() => {
-    chrome.auth
-      .getUser()
-      .then((data) =>
-        dispatch({ type: 'setLoaded', payload: data.identity.user.is_internal })
-      );
+    chrome.auth.getUser().then((data) =>
+      dispatch({
+        type: 'setLoaded',
+        payload: data.identity.user.is_internal,
+      }),
+    );
   }, []);
 
   return (

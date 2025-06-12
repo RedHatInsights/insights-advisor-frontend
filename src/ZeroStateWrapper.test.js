@@ -53,7 +53,7 @@ describe('ZeroStateWrapper', () => {
       <ComponentWithContext
         Component={ZeroStateWrapper}
         componentProps={{ children: <div>Rendered</div> }}
-      />
+      />,
     );
 
     expect(screen.getByText('Rendered'));
@@ -72,7 +72,7 @@ describe('ZeroStateWrapper', () => {
       <ComponentWithContext
         Component={ZeroStateWrapper}
         componentProps={{ children: <div>Rendered</div> }}
-      />
+      />,
     );
 
     expect(screen.getByText('AsyncComponent'));
@@ -84,7 +84,7 @@ describe('ZeroStateWrapper', () => {
       <ComponentWithContext
         Component={ZeroStateWrapper}
         componentProps={{ children: <div>Rendered</div> }}
-      />
+      />,
     );
 
     expect(screen.getByText('Rendered'));

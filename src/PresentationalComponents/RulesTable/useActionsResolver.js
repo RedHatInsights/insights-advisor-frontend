@@ -8,7 +8,7 @@ export const useActionsResolver = (
   rows,
   setSelectedRule,
   setDisableRuleOpen,
-  refetch
+  refetch,
 ) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ export const useActionsResolver = (
                   setDisableRuleOpen,
                   refetch,
                   dispatch,
-                  intl
+                  intl,
                 ),
             },
           ]
@@ -47,12 +47,12 @@ export const useActionsResolver = (
                   setDisableRuleOpen,
                   refetch,
                   dispatch,
-                  intl
+                  intl,
                 ),
             },
           ];
     },
-    [rows, setSelectedRule, setDisableRuleOpen, refetch, dispatch, intl]
+    [rows, setSelectedRule, setDisableRuleOpen, refetch, dispatch, intl],
   );
 
   return actionResolver;

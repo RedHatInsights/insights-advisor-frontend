@@ -138,7 +138,7 @@ const NewBuildExecReport = ({ asyncData }) => {
     ([key, value]) => [
       key,
       REC_NUM_AND_PERCENTAGE(value, calcPercent(value, statsReports.total)),
-    ]
+    ],
   );
 
   const rulesDesc = (rule) => (
@@ -163,7 +163,7 @@ const NewBuildExecReport = ({ asyncData }) => {
       <Text style={{ fontSize: '12px' }}>
         {EXEC_REPORT_HEADER(
           EXEC_REPORT_HEADER_SYSTEMS(statsSystems.total),
-          EXEC_REPORT_HEADER_RISKS(statsReports.total)
+          EXEC_REPORT_HEADER_RISKS(statsReports.total),
         )}
       </Text>
       <br />

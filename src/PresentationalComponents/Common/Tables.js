@@ -11,7 +11,7 @@ export const urlBuilder = (filters = {}) => {
       (key) =>
         `${key}=${
           Array.isArray(filters[key]) ? filters[key].join() : filters[key]
-        }`
+        }`,
     )
     .join('&')}`;
 
@@ -27,7 +27,7 @@ export const urlBuilder = (filters = {}) => {
   window.history.replaceState(
     null,
     null,
-    `${url.origin}${url.pathname}?${params.toString()}${window.location.hash}`
+    `${url.origin}${url.pathname}?${params.toString()}${window.location.hash}`,
   );
   return `?${queryString}`;
 };
@@ -39,9 +39,9 @@ export const buildTagFilter = (tagFilters) => {
           tagFilter.values.map(
             (tag) =>
               `${encodeURIComponent(tagFilter.key)}/${encodeURIComponent(
-                tag.tagKey
-              )}=${encodeURIComponent(tag.value)}`
-          )
+                tag.tagKey,
+              )}=${encodeURIComponent(tag.value)}`,
+          ),
         ),
       }
     : {};
@@ -76,7 +76,7 @@ export const mapUpdateMethodFilterToAPISpec = (filters) => {
     } else {
       const filteredValues = clonedFilters.update_method.replace(
         /,none|none,|none/g,
-        ''
+        '',
       );
 
       clonedFilters.update_method = filteredValues;
@@ -101,8 +101,8 @@ export const filterFetchBuilder = (filters) => {
           filterValue.length > 1
           ? null
           : { [filterName]: filterValue.join() }
-        : { [filterName]: filterValue }
-    )
+        : { [filterName]: filterValue },
+    ),
   );
 
   return mapUpdateMethodFilterToAPISpec(joinedFilters);
@@ -119,7 +119,7 @@ export const paramParser = () => {
           ? JSON.parse(value)
           : value.split(','),
     }),
-    {}
+    {},
   );
 };
 
@@ -144,7 +144,7 @@ export const pruneFilters = (localFilters, filterCategories) => {
                   };
                 } else {
                   const selectedCategoryValue = category.values.find(
-                    (values) => values.value === String(value)
+                    (values) => values.value === String(value),
                   );
                   return selectedCategoryValue
                     ? {
@@ -159,7 +159,7 @@ export const pruneFilters = (localFilters, filterCategories) => {
             : [
                 {
                   name: category.values.find(
-                    (values) => values.value === String(item[1])
+                    (values) => values.value === String(item[1]),
                   ).label,
                   value: item[1],
                 },
@@ -208,14 +208,14 @@ export const workloadQueryBuilder = (workloads, SID) =>
       },
     },
     undefined,
-    { arrayEnhancer: 'contains' }
+    { arrayEnhancer: 'contains' },
   );
 
 // merges two array objects by different key names
 export const mergeArraysByDiffKeys = (advSystems, invSystems) =>
   advSystems.map((advSys) => ({
     ...invSystems.find(
-      (invSys) => invSys['id'] === advSys['system_uuid'] && invSys
+      (invSys) => invSys['id'] === advSys['system_uuid'] && invSys,
     ),
     ...advSys,
   }));
@@ -223,7 +223,7 @@ export const mergeArraysByDiffKeys = (advSystems, invSystems) =>
 export const ruleResolutionRisk = (rule) => {
   const resolution = rule.resolution_set.find(
     (resolution) =>
-      resolution.system_type === SYSTEM_TYPES.rhel || SYSTEM_TYPES.ocp
+      resolution.system_type === SYSTEM_TYPES.rhel || SYSTEM_TYPES.ocp,
   );
   return resolution ? resolution.resolution_risk.risk : undefined;
 };

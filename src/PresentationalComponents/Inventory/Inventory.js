@@ -104,7 +104,7 @@ const Inventory = ({
     selectedIds,
     setFullFilters,
     fullFilters,
-    rule
+    rule,
   );
 
   // Ensures rows are marked as selected, runs the check on remediation Status
@@ -134,7 +134,7 @@ const Inventory = ({
         await Get(
           `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
           {},
-          { name: filters.name }
+          { name: filters.name },
         )
       )?.data.playbook_count;
       setRulesPlaybookCount(associatedRuleDetails);
@@ -148,7 +148,7 @@ const Inventory = ({
           await Get(
             `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
             {},
-            {}
+            {},
           )
         )?.data.data;
 
@@ -156,7 +156,7 @@ const Inventory = ({
           await Get(
             `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
             {},
-            {}
+            {},
           )
         )?.data.rules;
         setHasPathwayDetails(true);
@@ -183,7 +183,7 @@ const Inventory = ({
             let assosciatedRule = pathwayReportList[rule];
             //find that associated rule in the pathwayRules endpoint, check for playbook
             let item = pathwayRulesList.find(
-              (report) => (report.rule_id = assosciatedRule)
+              (report) => (report.rule_id = assosciatedRule),
             );
             if (item.resolution_set[0].has_playbook) {
               playbookFound = true;
@@ -205,7 +205,7 @@ const Inventory = ({
         await Get(
           `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
           {},
-          {}
+          {},
         )
       )?.data.data;
 
@@ -213,7 +213,7 @@ const Inventory = ({
         await Get(
           `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
           {},
-          {}
+          {},
         )
       )?.data.rules;
 
@@ -271,13 +271,13 @@ const Inventory = ({
   const createColumns = useCallback(
     (defaultColumns) => {
       let lastSeenColumn = defaultColumns.filter(
-        ({ key }) => key === 'updated'
+        ({ key }) => key === 'updated',
       );
       let displayName = defaultColumns.filter(
-        ({ key }) => key === 'display_name'
+        ({ key }) => key === 'display_name',
       );
       let systemProfile = defaultColumns.filter(
-        ({ key }) => key === 'system_profile'
+        ({ key }) => key === 'system_profile',
       );
       let tags = defaultColumns.filter(({ key }) => key === 'tags');
       let groups = defaultColumns.filter(({ key }) => key === 'groups');
@@ -344,7 +344,7 @@ const Inventory = ({
 
       return columnList;
     },
-    [pathway, rule]
+    [pathway, rule],
   );
 
   const removeFilterParam = (param) => {
@@ -377,7 +377,7 @@ const Inventory = ({
           const newFilter = {
             [item.urlParam]: Array.isArray(filters[item.urlParam])
               ? filters[item.urlParam].filter(
-                  (value) => String(value) !== String(item.chips[0].value)
+                  (value) => String(value) !== String(item.chips[0].value),
                 )
               : '',
           };
@@ -465,13 +465,13 @@ const Inventory = ({
                 perPage: Number(filters.limit || 20),
               }),
               ...mergeWithDetail(),
-            })
+            }),
           );
         }}
         exportConfig={
           permsExport && {
             label: intl.formatMessage(messages.exportCsv),
-            // eslint-disable-next-line no-dupe-keys
+
             label: intl.formatMessage(messages.exportJson),
             onSelect: (_e, fileType) =>
               downloadReport(
@@ -481,7 +481,7 @@ const Inventory = ({
                 selectedTags,
                 workloads,
                 SID,
-                dispatch
+                dispatch,
               ),
             isDisabled: !permsExport || entities?.rows?.length === 0,
             tooltipText: permsExport

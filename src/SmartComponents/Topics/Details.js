@@ -60,7 +60,7 @@ const Details = () => {
         sort: `-total_risk`,
         limit: 10,
         offset: 0,
-      })
+      }),
     );
 
     return () => dispatch(updateRecFilters(initiaRecFilters));

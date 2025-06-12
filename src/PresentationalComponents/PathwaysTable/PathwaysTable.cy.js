@@ -8,7 +8,7 @@ import fixtures from '../../../cypress/fixtures/pathways.json';
 import { pathwaysTableColumns } from '../../../cypress/support/globals';
 import _ from 'lodash';
 import { selectConditionalFilterOption } from '../../../cypress/utils/table';
-//eslint-disable-next-line rulesdir/disallow-fec-relative-imports
+
 import {
   CHIP_GROUP,
   hasChip,
@@ -17,7 +17,6 @@ import {
 } from '@redhat-cloud-services/frontend-components-utilities';
 import messages from '../../Messages';
 
-// eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
   TOOLBAR,
   checkTableHeaders,
@@ -57,7 +56,7 @@ const mountComponent = () => {
           </Routes>
         </Provider>
       </IntlProvider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 };
 
@@ -123,7 +122,7 @@ describe('Pathways table tests', () => {
 
     _.zip(
       ['name', 'impacted_systems_count', 'recommendation_level'],
-      ['Name', 'Systems', 'Recommendation level']
+      ['Name', 'Systems', 'Recommendation level'],
     ).forEach(([category, label]) => {
       let sortingParameter = category;
       SORTING_ORDERS.forEach((order) => {

@@ -89,7 +89,7 @@ export const TablePage = ({ systems, styles }) => {
           {...hitColumns.map((item) =>
             rowBuilder({
               value: system[item],
-            })
+            }),
           )}
           <Td
             key={system.last_seen}
@@ -105,7 +105,7 @@ export const TablePage = ({ systems, styles }) => {
     <Table variant="compact">
       <Thead>
         {header.map((colHeader) =>
-          headerBuilder({ value: colHeader.value, style: colHeader.style })
+          headerBuilder({ value: colHeader.value, style: colHeader.style }),
         )}
       </Thead>
       <Tbody>{rows.map((row) => row)}</Tbody>

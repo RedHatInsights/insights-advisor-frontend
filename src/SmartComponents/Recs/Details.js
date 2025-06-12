@@ -91,7 +91,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
 
     if (rule?.description) {
       envContext.updateDocumentTitle(
-        `${rule.description} - Recommendations - Advisor`
+        `${rule.description} - Recommendations - Advisor`,
       );
     }
   }, [envContext, rule.description, ruleId]);
@@ -102,7 +102,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
       setSystemsCount,
       setEdgeSystemsCount,
       setConventionalSystemsCount,
-      setCountsLoading
+      setCountsLoading,
     );
   }, [ruleId]);
 
@@ -152,7 +152,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                       rule.hosts_acked_count > 0 &&
                         rule.rule_status === 'enabled'
                         ? messages.ruleIsDisabledForSystems
-                        : messages.ruleIsDisabled
+                        : messages.ruleIsDisabled,
                     )}
                   </Title>
                 </CardHeader>
@@ -164,7 +164,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                         messages.ruleIsDisabledForSystemsBody,
                         {
                           systems: rule.hosts_acked_count,
-                        }
+                        },
                       )}
                       &nbsp;
                       <Button
@@ -180,7 +180,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                     !recAckIsFetching && (
                       <React.Fragment>
                         {intl.formatMessage(
-                          messages.ruleIsDisabledJustification
+                          messages.ruleIsDisabledJustification,
                         )}
                         &nbsp;
                         <i className="wrap-justification-note">
@@ -228,7 +228,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                           refetch,
                           intl,
                           addNotification,
-                          handleModalToggle
+                          handleModalToggle,
                         )
                       }
                       ouiaId="rule"
@@ -259,7 +259,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                   conventionalSystemsCount={conventionalSystemsCount}
                   areCountsLoading={areCountsLoading}
                   tabPathname={`/insights/advisor/recommendations/${encodeURI(
-                    ruleId
+                    ruleId,
                   )}`}
                 />
               </React.Fragment>
@@ -278,7 +278,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                         messages.ruleIsDisabledBodyWithJustification,
                         {
                           reason: recAck.justification,
-                        }
+                        },
                       )
                     : intl.formatMessage(messages.ruleIsDisabledBody)
                 }

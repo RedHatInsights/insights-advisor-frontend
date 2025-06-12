@@ -21,7 +21,7 @@ const impactingFilter = (apply, currentFilter = {}, hasEdgeDevices) => {
     currentFilter,
     getImpactingFilterKey(hasEdgeDevices),
     impactingOptions,
-    'systems impacted'
+    'systems impacted',
   );
 };
 

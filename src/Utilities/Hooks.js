@@ -21,7 +21,7 @@ export const matchPermissions = (permissionA, permissionB) => {
     (segmentA, index) =>
       segmentA === segmentsB[index] ||
       segmentA === '*' ||
-      segmentsB[index] === '*'
+      segmentsB[index] === '*',
   );
 };
 
@@ -50,8 +50,8 @@ export const useRbac = (requestedPerms) => {
   return [
     requestedPerms.map((requestedPermission) =>
       allPerms?.some((item) =>
-        matchPermissions(item.permission, requestedPermission)
-      )
+        matchPermissions(item.permission, requestedPermission),
+      ),
     ),
     false,
   ];

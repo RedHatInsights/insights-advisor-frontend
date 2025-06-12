@@ -12,7 +12,7 @@ describe('useSelectionManager', () => {
 
     it('returns an object with function to manage selections wihtout groups', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
       expect(result.current.selection).toEqual(defaultArguments[0]);
       expect(result.current).toMatchSnapshot();
@@ -20,7 +20,7 @@ describe('useSelectionManager', () => {
 
     it('adds an item from the selection when calling select', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
 
       act(() => {
@@ -32,7 +32,7 @@ describe('useSelectionManager', () => {
 
     it('removes an item from the selection when calling deselect', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
 
       act(() => {
@@ -44,7 +44,7 @@ describe('useSelectionManager', () => {
 
     it('sets items for a selection when calling set', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
 
       act(() => {
@@ -63,14 +63,14 @@ describe('useSelectionManager', () => {
 
     it('returns an object with function to manage selections with groups', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
       expect(result.current).toMatchSnapshot();
     });
 
     it('adds an item from the selection when calling select', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
 
       act(() => {
@@ -82,7 +82,7 @@ describe('useSelectionManager', () => {
 
     it('removes an item from the selection when calling deselect', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
       act(() => {
         result.current.deselect([2], 'group1');
@@ -93,7 +93,7 @@ describe('useSelectionManager', () => {
 
     it('sets items for a selection when calling set', () => {
       const { result } = renderHook(() =>
-        useSelectionManager(...defaultArguments)
+        useSelectionManager(...defaultArguments),
       );
 
       act(() => {

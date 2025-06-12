@@ -5,7 +5,7 @@ import axios from 'axios';
 export const ruleResolutionRisk = (rule) => {
   const resolution = rule?.resolution_set?.find(
     (resolution) =>
-      resolution.system_type === SYSTEM_TYPES.rhel || SYSTEM_TYPES.ocp
+      resolution.system_type === SYSTEM_TYPES.rhel || SYSTEM_TYPES.ocp,
   );
   return resolution ? resolution.resolution_risk.risk : undefined;
 };
@@ -15,7 +15,7 @@ export const enableRule = async (
   refetch,
   intl,
   addNotification,
-  handleModalToggle
+  handleModalToggle,
 ) => {
   try {
     await DeleteApi(`${BASE_URL}/ack/${encodeURI(rule.rule_id)}/`);
@@ -48,7 +48,7 @@ export const bulkHostActions = async ({
       await Get(
         `${BASE_URL}/hostack/`,
         {},
-        { rule_id: rule.rule_id, limit: rule.hosts_acked_count }
+        { rule_id: rule.rule_id, limit: rule.hosts_acked_count },
       )
     ).data;
     const data = {
@@ -58,7 +58,7 @@ export const bulkHostActions = async ({
     await Post(
       `${BASE_URL}/rule/${encodeURI(rule.rule_id)}/unack_hosts/`,
       {},
-      data
+      data,
     );
     refetch();
     addNotification({
@@ -81,10 +81,10 @@ const getSystemCheckEndpoints = ({ ruleId, pathway }) => {
   if (ruleId) {
     return {
       conventionalURL: `/api/insights/v1/rule/${encodeURI(
-        ruleId
+        ruleId,
       )}/systems_detail/?filter[system_profile][host_type][nil]=true&limit=1`,
       edgeURL: `/api/insights/v1/rule/${encodeURI(
-        ruleId
+        ruleId,
       )}/systems_detail/?filter[system_profile][host_type]=edge&limit=1`,
     };
   }
@@ -101,7 +101,7 @@ export const edgeSystemsCheck = async (
   setEdgeSystemsCount,
   setConventionalSystemsCount,
   setCountsLoading,
-  pathway
+  pathway,
 ) => {
   let count = 0;
   const { conventionalURL, edgeURL } = getSystemCheckEndpoints({

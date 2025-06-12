@@ -17,7 +17,7 @@ export const formatMessages = (intl, messageIds, values) =>
     messageIds.map((id) => [
       id,
       messages[id] ? intl.formatMessage(messages[id], values[id]) : '',
-    ])
+    ]),
   );
 
 export const mapContentToValues = (intl, rule) => ({

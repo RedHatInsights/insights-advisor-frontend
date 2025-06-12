@@ -25,7 +25,7 @@ const intl = createIntl(
   {
     locale,
   },
-  cache
+  cache,
 );
 
 const RebootRequired = (reboot_required) => (

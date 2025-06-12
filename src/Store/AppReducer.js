@@ -14,7 +14,7 @@ export function entitiesDetailsReducer(ActionTypes) {
     {
       [`${ActionTypes.LOAD_ENTITY}_FULFILLED`]: enableApplications,
     },
-    {}
+    {},
   );
 }
 

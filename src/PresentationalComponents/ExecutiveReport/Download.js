@@ -1,4 +1,3 @@
-/* eslint-disable rulesdir/disallow-fec-relative-imports */
 import './_Download.scss';
 import PropTypes from 'prop-types';
 import {
@@ -36,7 +35,7 @@ const DownloadExecReport = ({ isDisabled }) => {
           Get(
             RULES_FETCH_URL,
             {},
-            { limit: 3, sort: '-total_risk,-impacted_count', impacting: true }
+            { limit: 3, sort: '-total_risk,-impacted_count', impacting: true },
           ),
         ])
       ).map(({ data }) => data);

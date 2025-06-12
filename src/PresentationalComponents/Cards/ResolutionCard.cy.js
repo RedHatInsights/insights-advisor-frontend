@@ -27,7 +27,7 @@ const mountComponent = (lvl) => {
           </section>
         </Provider>
       </IntlProvider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 };
 
@@ -43,7 +43,7 @@ describe('rendering tests', () => {
         mountComponent(level);
         cy.get('div[class*="pathwayRight"]').contains(`${label} - ${level}%`);
         cy.get('div[class*="pathwayRight"]').find(
-          `span[class*="${colorClass}"]`
+          `span[class*="${colorClass}"]`,
         );
       });
     });
