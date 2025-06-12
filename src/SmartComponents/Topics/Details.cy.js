@@ -101,7 +101,6 @@ describe('Export', () => {
     cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
     cy.contains(messages.permsAction.defaultMessage).should('be.visible');
   });
-
   it(`works and downloads report is enabled`, () => {
     mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
     itExportsDataToFile(fixtures.data, 'Insights-Advisor_hits--');
