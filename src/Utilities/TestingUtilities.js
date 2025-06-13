@@ -29,12 +29,11 @@ export const ComponentWithContext = ({
   contextValue = {},
 }) => {
   const mockStore = configureStore();
-  const envContext = useContext(EnvironmentContext);
-
   const mergedEnvContext = {
-    ...DEFAULT_TEST_ENVIRONMENT_CONTEXT,
-    ...envContext,
-  };
+  ...DEFAULT_TEST_ENVIRONMENT_CONTEXT,
+  ...contextValue,
+};
+
   return (
     <EnvironmentContext.Provider value={mergedEnvContext}>
       <IntlProvider locale="en">
@@ -59,7 +58,7 @@ export const ComponentWithContext = ({
 };
 
 ComponentWithContext.propTypes = {
-  Component: PropTypes.element,
+  Component: PropTypes.elementType,
   componentProps: PropTypes.object,
   renderOptions: PropTypes.object,
   Context: PropTypes.object,
