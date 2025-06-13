@@ -61,7 +61,10 @@ const mountComponent = (
   // Using .as() allows you to reference these stubs later using @aliasName.
   const updateDocumentTitleStub = cy.stub().as('updateDocumentTitleStub');
   // Mock a user object that getUser would typically return
-  const getUserStub = cy.stub().returns({ identity: { user: { username: 'testuser' } } }).as('getUserStub');
+  const getUserStub = cy
+    .stub()
+    .returns({ identity: { user: { username: 'testuser' } } })
+    .as('getUserStub');
   const onStub = cy.stub().as('onStub');
   const hideGlobalFilterStub = cy.stub().as('hideGlobalFilterStub');
   const mapGlobalFilterStub = cy.stub().as('mapGlobalFilterStub');

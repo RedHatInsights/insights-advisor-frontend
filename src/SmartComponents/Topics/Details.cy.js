@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { initStore } from '../../Store';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AccountStatContext } from '../../ZeroStateWrapper';
-import { hasChip } from '@redhat-cloud-services/frontend-components-utilities';
+import { hasChip } from '@redhat-cloud-services/frontend-components-utilities/hasChip';
 import messages from '../../Messages';
 import { EnvironmentContext } from '../../App';
 import fixtures from '../../../cypress/fixtures/recommendations.json';
@@ -20,7 +20,10 @@ import { itExportsDataToFile } from '../../../cypress/utils/table';
  */
 const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
   const updateDocumentTitleStub = cy.stub().as('updateDocumentTitleStub');
-  const getUserStub = cy.stub().returns({ identity: { user: { username: 'testuser' } } }).as('getUserStub');
+  const getUserStub = cy
+    .stub()
+    .returns({ identity: { user: { username: 'testuser' } } })
+    .as('getUserStub');
   const onStub = cy.stub().as('onStub');
   const hideGlobalFilterStub = cy.stub().as('hideGlobalFilterStub');
   const mapGlobalFilterStub = cy.stub().as('mapGlobalFilterStub');

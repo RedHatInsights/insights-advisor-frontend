@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext } from 'react';
 import PropTypes from 'prop-types';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
@@ -30,9 +30,9 @@ export const ComponentWithContext = ({
 }) => {
   const mockStore = configureStore();
   const mergedEnvContext = {
-  ...DEFAULT_TEST_ENVIRONMENT_CONTEXT,
-  ...contextValue,
-};
+    ...DEFAULT_TEST_ENVIRONMENT_CONTEXT,
+    ...contextValue,
+  };
 
   return (
     <EnvironmentContext.Provider value={mergedEnvContext}>
