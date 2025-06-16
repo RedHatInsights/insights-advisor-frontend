@@ -81,6 +81,6 @@ export const DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT = {
   hideGlobalFilter: () => {},
   mapGlobalFilter: () => {},
   globalFilterScope: () => {},
-  requestPdf: () => {},
+  requestPdf: () => Promise.resolve(),
   isProd: () => {},
 };
