@@ -1,3 +1,4 @@
+/* eslint-disable rulesdir/disallow-fec-relative-imports */
 import React from 'react';
 import Details from './Details';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
@@ -5,12 +6,11 @@ import { Provider } from 'react-redux';
 import { initStore } from '../../Store';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AccountStatContext } from '../../ZeroStateWrapper';
-import { hasChip } from '@redhat-cloud-services/frontend-components-utilities/hasChip';
 import messages from '../../Messages';
 import { EnvironmentContext } from '../../App';
 import fixtures from '../../../cypress/fixtures/recommendations.json';
 import { itExportsDataToFile } from '../../../cypress/utils/table';
-
+import { hasChip } from '@redhat-cloud-services/frontend-components-utilities';
 /**
  * Mounts the Details component with a configurable environment context.
  *
