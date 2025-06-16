@@ -14,7 +14,7 @@ const mountComponent = () => {
           <NoSystemsTable />
         </Provider>
       </IntlProvider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 };
 
@@ -26,10 +26,10 @@ describe('No systems table test', () => {
   describe('defaults', () => {
     it('The empty message wording is correct', () => {
       cy.get('div[class*="bullseye"]').contains(
-        messages.noSystemsFoundHeader.defaultMessage
+        messages.noSystemsFoundHeader.defaultMessage,
       );
       cy.get('div[class*="bullseye"]').contains(
-        messages.noSystemsFoundBody.defaultMessage
+        messages.noSystemsFoundBody.defaultMessage,
       );
     });
   });

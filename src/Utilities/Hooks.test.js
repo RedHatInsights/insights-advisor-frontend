@@ -28,7 +28,7 @@ describe('useRbac', () => {
         PERMISSIONS.export,
         PERMISSIONS.disableRec,
         PERMISSIONS.viewRecs,
-      ])
+      ]),
     );
 
     await waitFor(() => {
@@ -48,7 +48,7 @@ describe('useRbac', () => {
         PERMISSIONS.export,
         PERMISSIONS.disableRec,
         PERMISSIONS.viewRecs,
-      ])
+      ]),
     );
 
     expect(result.current[1]).toBe(true);

@@ -69,11 +69,11 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
 
   const getSelectedItems = (rows) => rows.filter((row) => row.selected);
   const selectedAnsibleRules = getSelectedItems(rows).filter(
-    (r) => r.resolution?.has_playbook
+    (r) => r.resolution?.has_playbook,
   );
   const selectedItemsLength = getSelectedItems(rows).length;
   const selectableItemsLength = rows.filter(
-    (r) => r.resolution?.has_playbook
+    (r) => r.resolution?.has_playbook,
   ).length;
 
   const cols = getColumns(intl);
@@ -143,7 +143,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
     systemAdvisorRef,
     entity,
     inventoryReportFetchStatus,
-    envContext.isProd
+    envContext.isProd,
   );
   const onRowSelect = (_e, isSelected, rowId) =>
     setRows(
@@ -152,10 +152,10 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
         kbaDetailsData,
         filters,
         rows.map((row, index) =>
-          index === rowId ? { ...row, selected: isSelected } : row
+          index === rowId ? { ...row, selected: isSelected } : row,
         ),
-        searchValue
-      )
+        searchValue,
+      ),
     );
 
   const onBulkSelect = (isSelected) => {
@@ -169,10 +169,10 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
           // We need to use mod 2 here to ignore children with no has_playbook param
           index % 2 === 0 && row.resolution.has_playbook
             ? { ...row, selected: isSelected }
-            : row
+            : row,
         ),
-        searchValue
-      )
+        searchValue,
+      ),
     );
   };
   const checkedStatus = () => {
@@ -219,7 +219,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
             const category = FC[item[0]];
             const chips = item[1].map((value) => ({
               name: category.values.find(
-                (values) => values.value === String(value)
+                (values) => values.value === String(value),
               ).label,
               value,
             }));
@@ -252,8 +252,8 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
           onFilterChange(
             item.urlParam,
             filters[item.urlParam].filter(
-              (value) => String(value) !== String(item.chips[0].value)
-            )
+              (value) => String(value) !== String(item.chips[0].value),
+            ),
           );
         }
       });
@@ -272,10 +272,10 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
       const kbaDetailsFetch = (
         await Get(
           `https://access.redhat.com/hydra/rest/search/kcs?q=id:(${kbaIds.join(
-            ` OR `
+            ` OR `,
           )})&fq=documentKind:(Solution%20or%20Article)&fl=view_uri,id,publishedTitle&redhat_client=$ADVISOR`,
           {},
-          { credentials: 'include' }
+          { credentials: 'include' },
         )
       ).data.response.docs;
 
@@ -288,8 +288,8 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
           rows,
           searchValue,
           false,
-          true
-        )
+          true,
+        ),
       );
     } catch (error) {
       console.error(error, 'KBA fetch failed.');
@@ -331,8 +331,8 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
         kbaDetailsData,
         filters,
         rows,
-        searchValue
-      )
+        searchValue,
+      ),
     );
   };
 
@@ -348,7 +348,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
         ? { ...filters, ...{ [param]: values } }
         : removeFilterParam(param);
     setRows(
-      buildRows(activeReports, kbaDetailsData, newFilters, rows, searchValue)
+      buildRows(activeReports, kbaDetailsData, newFilters, rows, searchValue),
     );
     setFilters(newFilters);
   };
@@ -359,7 +359,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
       kbaDetailsData,
       filters,
       rows,
-      value
+      value,
     );
     setSearchValue(value);
     setRows(builtRows);
@@ -370,7 +370,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
     filters,
     searchValue,
     onInputChange,
-    onFilterChange
+    onFilterChange,
   );
 
   useEffect(() => {
@@ -380,7 +380,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
           `${BASE_URL}/system/${inventoryId}/reports/`,
           {
             credentials: 'include',
-          }
+          },
         );
 
         const activeRuleFirstReportsData = activeRuleFirst(reportsFetch.data);
@@ -393,8 +393,8 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
             filters,
             rows,
             searchValue,
-            true
-          )
+            true,
+          ),
         );
         setInventoryReportFetchStatus('fulfilled');
         setActiveReports(activeRuleFirstReportsData);
@@ -403,12 +403,13 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
           `${INVENTORY_BASE_URL}/hosts/${inventoryId}/system_profile`,
           {
             credentials: 'include',
-          }
+          },
         );
 
         setSystemsProfile(profileData?.data?.results[0]?.system_profile || {});
         setSystemsProfileLoading(false);
       } catch (error) {
+        void error;
         setInventoryReportFetchStatus('failed');
         setSystemsProfileLoading(false);
       }
@@ -447,7 +448,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
           activeFiltersConfig={activeFiltersConfig}
           exportConfig={{
             label: intl.formatMessage(messages.exportCsv),
-            // eslint-disable-next-line no-dupe-keys
+
             label: intl.formatMessage(messages.exportJson),
             onSelect: (_e, fileType) =>
               downloadReport(
@@ -458,7 +459,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
                 workloads,
                 SID,
                 dispatch,
-                display_name
+                display_name,
               ),
             isDisabled: !envContext.isExportEnabled,
             tooltipText: envContext.isExportEnabled

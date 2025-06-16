@@ -12,7 +12,7 @@ const useSelectionManager = (preselected, options = {}) => {
   const [selection, dispatch] = useReducer(
     reducer,
     preselected,
-    initReducer(withGroups)
+    initReducer(withGroups),
   );
 
   const set = (items, group) => dispatch({ type: 'set', group, items });

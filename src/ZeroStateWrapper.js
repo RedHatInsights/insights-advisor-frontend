@@ -50,7 +50,7 @@ export const ZeroStateWrapper = ({ children }) => {
           description:
             `${JSON.stringify(edgeErrorMessage?.data)}` ||
             `${JSON.stringify(conventErrorMessage?.data)}`,
-        })
+        }),
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -37,7 +37,7 @@ const AxiosBaseQuery =
           ? await Get(
               `${baseUrl}${url}?${search ? `${search}` : ``}`,
               headers,
-              options
+              options,
             )
           : Post(`${baseUrl}${url}`, headers, options);
 

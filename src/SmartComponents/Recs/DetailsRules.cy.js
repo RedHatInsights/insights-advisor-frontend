@@ -39,7 +39,7 @@ const mountComponent = () => {
           </Routes>
         </Provider>
       </IntlProvider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 };
 
@@ -65,26 +65,26 @@ describe('defaults', () => {
       .and('have.length', 1);
     cy.get('.ins-c-rule-details__description').should(
       'have.text',
-      rulesfixtures.generic.trim()
+      rulesfixtures.generic.trim(),
     );
   });
   it('rule voting is rendered', () => {
     cy.get('.ins-c-rule-details__vote').should(
       'contain',
-      'Is this recommendation helpful?'
+      'Is this recommendation helpful?',
     );
   });
   it('shows correct total risk and risk of change labels', () => {
     cy.get('.ins-c-rule-details__total-risk').should('contain', 'Critical');
     cy.get('.ins-c-rule-details__risk-of-ch-label').should(
       'have.text',
-      'Moderate'
+      'Moderate',
     );
   });
   it('tells that reboot is required', () => {
     cy.get('.ins-c-rule-details__reboot').should(
       'have.text',
-      'System reboot is required.'
+      'System reboot is required.',
     );
   });
   it('the request is sent when voted', () => {

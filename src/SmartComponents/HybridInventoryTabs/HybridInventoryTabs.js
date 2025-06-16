@@ -4,20 +4,22 @@ import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncCompo
 import { AccountStatContext } from '../../ZeroStateWrapper';
 import { Bullseye, Spinner } from '@patternfly/react-core';
 
-const ImmutableDevices = lazy(() =>
-  import(/* webpackChunkName: "ImmutableDevices" */ './ImmutableDevices')
+const ImmutableDevices = lazy(
+  () => import(/* webpackChunkName: "ImmutableDevices" */ './ImmutableDevices'),
 );
 
-const RecommendationSystems = lazy(() =>
-  import(
-    /* webpackChunkName: "RecommendationSystems" */ './ConventionalSystems/RecommendationSystems'
-  )
+const RecommendationSystems = lazy(
+  () =>
+    import(
+      /* webpackChunkName: "RecommendationSystems" */ './ConventionalSystems/RecommendationSystems'
+    ),
 );
 
-const PathwaySystems = lazy(() =>
-  import(
-    /* webpackChunkName: "PathwaySystems" */ './ConventionalSystems/PathwaySystems'
-  )
+const PathwaySystems = lazy(
+  () =>
+    import(
+      /* webpackChunkName: "PathwaySystems" */ './ConventionalSystems/PathwaySystems'
+    ),
 );
 
 const HybridInventory = ({

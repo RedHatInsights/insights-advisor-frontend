@@ -50,7 +50,7 @@ const AddEditTopic = ({ handleModalToggleCallback, isModalOpen, topic }) => {
         dismissable: true,
         title: intl.formatMessage(messages.error),
         description: Object.entries(error.response.data).map(
-          ([key, value]) => `${key.toUpperCase()}:${value} `
+          ([key, value]) => `${key.toUpperCase()}:${value} `,
         ),
       });
     } finally {
@@ -131,7 +131,7 @@ const AddEditTopic = ({ handleModalToggleCallback, isModalOpen, topic }) => {
           label={intl.formatMessage(messages.topicAddEditDescription)}
           fieldId="topic-form-description"
           helperText={intl.formatMessage(
-            messages.topicAddEditDescriptionHelperText
+            messages.topicAddEditDescriptionHelperText,
           )}
           className="text-area-override"
         >

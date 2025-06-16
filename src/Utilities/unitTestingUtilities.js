@@ -22,7 +22,7 @@ export const initMocks = () => {
               identity: {
                 user: {},
               },
-            })
+            }),
           ),
       },
       getUserPermissions: () => Promise.resolve([]),
@@ -75,7 +75,6 @@ export const mockStore = (initialState, mutatedState) => {
     next(action);
   };
 
-  // eslint-disable-next-line no-undef
   const configuredMockStore = configureStore([customMiddleWare]);
 
   return configuredMockStore(initialState);

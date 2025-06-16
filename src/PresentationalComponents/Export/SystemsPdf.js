@@ -16,7 +16,7 @@ const SystemsPdf = ({ filters }) => {
   const intl = useIntl();
   const [loading, setLoading] = useState(false);
   const selectedTags = useSelector(
-    ({ AdvisorStore }) => AdvisorStore?.selectedTags
+    ({ AdvisorStore }) => AdvisorStore?.selectedTags,
   );
   const workloads = useSelector(({ AdvisorStore }) => AdvisorStore?.workloads);
   const SID = useSelector(({ AdvisorStore }) => AdvisorStore?.SID);

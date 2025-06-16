@@ -2,37 +2,48 @@ import React, { lazy } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import { ZeroStateWrapper } from './ZeroStateWrapper';
 
-const RecsList = lazy(() =>
-  import(/* webpackChunkName: "RecsList" */ './SmartComponents/Recs/List')
+const RecsList = lazy(
+  () =>
+    import(/* webpackChunkName: "RecsList" */ './SmartComponents/Recs/List'),
 );
-const RecsDetails = lazy(() =>
-  import(/* webpackChunkName: "RecsDetails" */ './SmartComponents/Recs/Details')
+const RecsDetails = lazy(
+  () =>
+    import(
+      /* webpackChunkName: "RecsDetails" */ './SmartComponents/Recs/Details'
+    ),
 );
-const DetailsPathways = lazy(() =>
-  import(
-    /* webpackChunkName: "Details-Pathways" */ './SmartComponents/Recs/DetailsPathways'
-  )
+const DetailsPathways = lazy(
+  () =>
+    import(
+      /* webpackChunkName: "Details-Pathways" */ './SmartComponents/Recs/DetailsPathways'
+    ),
 );
-const InventoryDetails = lazy(() =>
-  import(
-    /* InventoryDetails: "Details" */ './PresentationalComponents/Inventory/InventoryDetails'
-  )
+const InventoryDetails = lazy(
+  () =>
+    import(
+      /* InventoryDetails: "Details" */ './PresentationalComponents/Inventory/InventoryDetails'
+    ),
 );
-const SystemsList = lazy(() =>
-  import(/* webpackChunkName: "List" */ './SmartComponents/Systems/List')
+const SystemsList = lazy(
+  () => import(/* webpackChunkName: "List" */ './SmartComponents/Systems/List'),
 );
-const TopicsList = lazy(() =>
-  import(/* webpackChunkName: "TopicsList" */ './SmartComponents/Topics/List')
+const TopicsList = lazy(
+  () =>
+    import(
+      /* webpackChunkName: "TopicsList" */ './SmartComponents/Topics/List'
+    ),
 );
-const TopicDetails = lazy(() =>
-  import(
-    /* webpackChunkName: "TopicDetails" */ './SmartComponents/Topics/Details'
-  )
+const TopicDetails = lazy(
+  () =>
+    import(
+      /* webpackChunkName: "TopicDetails" */ './SmartComponents/Topics/Details'
+    ),
 );
-const AdminProtectedRoute = lazy(() =>
-  import(
-    /* webpackChunkName: "TopicAdmin" */ './PresentationalComponents/TopicsAdminTable/TopicsAdminTable'
-  )
+const AdminProtectedRoute = lazy(
+  () =>
+    import(
+      /* webpackChunkName: "TopicAdmin" */ './PresentationalComponents/TopicsAdminTable/TopicsAdminTable'
+    ),
 );
 
 export const AdvisorRoutes = () => {

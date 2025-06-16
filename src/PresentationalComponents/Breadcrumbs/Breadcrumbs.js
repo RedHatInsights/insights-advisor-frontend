@@ -15,7 +15,7 @@ const Breadcrumbs = ({ current }) => {
     location[2] === 'pathways';
   const { data, isFetching } = useGetRecQuery(
     { ruleId: location[2] },
-    { skip }
+    { skip },
   );
 
   useEffect(() => {

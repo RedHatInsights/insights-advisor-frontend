@@ -1,4 +1,3 @@
-/* eslint-disable rulesdir/disallow-fec-relative-imports */
 import React from 'react';
 import Details from './Details';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
@@ -61,7 +60,7 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
           </IntlProvider>
         </AccountStatContext.Provider>
       </MemoryRouter>
-    </EnvironmentContext.Provider>
+    </EnvironmentContext.Provider>,
   );
 };
 
@@ -80,13 +79,13 @@ beforeEach(() => {
     '/api/insights/v1/rule/?&impacting=true&rule_status=enabled&sort=-total_risk&limit=20&offset=0',
     {
       data: [],
-    }
+    },
   ).as('rules_table_call');
   cy.intercept(
     '/api/insights/v1/rule/?&topic=123&update_method=ostree%2Cdnfyum&impacting=true&rule_status=enabled&sort=-total_risk&limit=10&offset=0',
     {
       data: [],
-    }
+    },
   ).as('rules_table_initial_call');
 });
 

@@ -55,7 +55,7 @@ export const DetailsRules = ({
           messages={formatMessages(
             intl,
             RuleDetailsMessagesKeys,
-            mapContentToValues(intl, rule)
+            mapContentToValues(intl, rule),
           )}
           product={AdvisorProduct.rhel}
           rule={rule}
@@ -104,7 +104,7 @@ export const DetailsRules = ({
             await Post(
               `${BASE_URL}/rating/`,
               {},
-              { rule: ruleId, rating: calculatedRating }
+              { rule: ruleId, rating: calculatedRating },
             );
           }}
           knowledgebaseUrl={
@@ -158,7 +158,7 @@ export const DetailsRules = ({
                                 refetch,
                                 intl,
                                 addNotification,
-                                handleModalToggle
+                                handleModalToggle,
                               );
                             }}
                           >

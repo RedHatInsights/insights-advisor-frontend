@@ -49,12 +49,12 @@ const testApiCallArguments = () => {
   expect(Get).toHaveBeenCalledWith(
     '/api/insights/v1/rule/test-rule/systems_detail/',
     {},
-    { limit: 10, name: 'test-name', offset: 0, sort: '-last-seen' }
+    { limit: 10, name: 'test-name', offset: 0, sort: '-last-seen' },
   );
   expect(Post).toHaveBeenCalledWith(
     '/api/edge/v1/devices/devicesview',
     {},
-    { devices_uuid: ['edge.id-1', 'edge.id-2'] }
+    { devices_uuid: ['edge.id-1', 'edge.id-2'] },
   );
   expect(defaultGetEntities).toHaveBeenCalledWith(
     ['edge.id-1', 'edge.id-2'],
@@ -63,7 +63,7 @@ const testApiCallArguments = () => {
       hasItems: true,
       per_page: 10,
     },
-    true
+    true,
   );
 };
 
@@ -72,7 +72,7 @@ describe('getEntities', () => {
     Get.mockReturnValue(Promise.resolve(advisorRecommendationData));
 
     const { result } = renderHook(() =>
-      useGetEntities(handleRefreshMock, undefined, { rule_id: 'test-rule' })
+      useGetEntities(handleRefreshMock, undefined, { rule_id: 'test-rule' }),
     );
 
     let fetchedResult;
@@ -105,7 +105,7 @@ describe('getEntities', () => {
 
   test('uses group info from inventory API when enforce_edge_groups set to false', async () => {
     const { result } = renderHook(() =>
-      useGetEntities(handleRefreshMock, undefined, { rule_id: 'test-rule' })
+      useGetEntities(handleRefreshMock, undefined, { rule_id: 'test-rule' }),
     );
 
     let fetchedResult;
@@ -127,7 +127,7 @@ describe('getEntities', () => {
     });
 
     const { result } = renderHook(() =>
-      useGetEntities(handleRefreshMock, undefined, { rule_id: 'test-rule' })
+      useGetEntities(handleRefreshMock, undefined, { rule_id: 'test-rule' }),
     );
 
     let fetchedResult;
@@ -146,7 +146,7 @@ describe('getEntities', () => {
   test('Should fetch hybrid data for pathways', async () => {
     Get.mockReturnValue(Promise.resolve(advisorPathwayData));
     const { result } = renderHook(() =>
-      useGetEntities(handleRefreshMock, 'test-pathway')
+      useGetEntities(handleRefreshMock, 'test-pathway'),
     );
 
     let fetchedResult;
@@ -182,7 +182,7 @@ const handleModalToggle = jest.fn();
 describe('useActionResolver', () => {
   test('Should return actionsResolver', async () => {
     const { result } = renderHook(() =>
-      useActionResolver(handleModalToggle, false)
+      useActionResolver(handleModalToggle, false),
     );
 
     expect(result.current()).toEqual([
@@ -196,7 +196,7 @@ describe('useActionResolver', () => {
 
   test('Should call callback function on action click', async () => {
     const { result } = renderHook(() =>
-      useActionResolver(handleModalToggle, false)
+      useActionResolver(handleModalToggle, false),
     );
 
     const recDisableAction = result.current()[0];
@@ -217,7 +217,7 @@ describe('mergeAppColumns', () => {
     const result = mergeAppColumns(defaultColumns, true);
 
     const impacted_date = result.find(
-      (column) => column.key === 'impacted_date'
+      (column) => column.key === 'impacted_date',
     );
     expect(impacted_date.renderFunc).toEqual(defaultColumns[0].renderFunc);
   });

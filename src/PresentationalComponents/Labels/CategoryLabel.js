@@ -14,10 +14,10 @@ const CategoryLabel = ({ labelList }) => {
   const intl = useIntl();
   const sortedFrequency = (arr) =>
     Object.entries(
-      arr.reduce((acc, curr) => ((acc[curr] = (acc[curr] || 0) + 1), acc), {})
+      arr.reduce((acc, curr) => ((acc[curr] = (acc[curr] || 0) + 1), acc), {}),
     ).sort((a, b) => b[1] - a[1]);
   const sortedFrequencyList = sortedFrequency(
-    labelList.map((label) => label.id)
+    labelList.map((label) => label.id),
   );
 
   const labels = (id) =>

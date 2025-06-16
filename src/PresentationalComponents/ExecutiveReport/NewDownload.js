@@ -1,4 +1,3 @@
-/* eslint-disable rulesdir/disallow-fec-relative-imports */
 import './_Download.scss';
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -41,7 +40,8 @@ const NewDownloadExecReport = ({ isDisabled }) => {
 
       setLoading(false);
       dispatch(addNotification(exportNotifications.success));
-    } catch (e) {
+    } catch (error) {
+      void error;
       setLoading(false);
       dispatch(addNotification(exportNotifications.error));
     }

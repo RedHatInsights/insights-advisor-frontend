@@ -35,7 +35,7 @@ describe('createColumns', () => {
 
     expect(mappedColumns).toHaveLength(3); // expecting 3 mapped columns
     expect(mappedColumns.map(({ key }) => key)).toEqual(
-      columns.map(({ key }) => key)
+      columns.map(({ key }) => key),
     );
   });
 
@@ -55,7 +55,7 @@ describe('createColumns', () => {
 
     expect(mappedColumns).toHaveLength(2); // expecting 2 mapped columns
     expect(mappedColumns.map(({ key }) => key)).toEqual(
-      columns.map(({ key }) => key).slice(1, 3)
+      columns.map(({ key }) => key).slice(1, 3),
     );
   });
 });

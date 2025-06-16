@@ -12,7 +12,7 @@ const ConventionalSystems = ({ rule, afterDisableFn, handleModalToggle }) => {
   const envContext = useContext(EnvironmentContext);
   const actionResolver = useActionResolver(
     handleModalToggle,
-    !envContext.isDisableRecEnabled
+    !envContext.isDisableRecEnabled,
   );
 
   return (

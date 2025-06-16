@@ -176,7 +176,7 @@ const TopicsTable = ({ props }) => {
                               .toLowerCase(),
                           })}
                           text={intl.formatMessage(
-                            messages.topicsListNoHitsBody
+                            messages.topicsListNoHitsBody,
                           )}
                         />
                       ),
