@@ -15,6 +15,7 @@ import {
   selectConditionalFilterOption,
 } from '../../../cypress/utils/table';
 
+//eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
   changePagination,
   checkPaginationTotal,
@@ -43,10 +44,54 @@ import {
 import { filtersConf } from '../../../cypress/rulestablesconsts';
 import { EnvironmentContext } from '../../App';
 
+/**
+ * Mounts the RulesTable component with a configurable environment context.
+ * Stubs for chrome functions are automatically created and can be asserted on.
+ *
+ * @param {object} props - Properties for the component, including hasEdgeDevices.
+ * @param {boolean} [props.hasEdgeDevices=false] - Whether the user has Edge devices.
+ * @param {object} envContextOverrides - Optional overrides for the default EnvironmentContext values.
+ * Use this to mock specific behaviors or permissions.
+ */
 const mountComponent = (
-  { hasEdgeDevices } = { hasEdgeDevices: false },
-  envContext,
+  { hasEdgeDevices = false } = {},
+  envContextOverrides = {}
 ) => {
+  // Create stubs for functions that are expected to be called by the component.
+  // Using .as() allows you to reference these stubs later using @aliasName.
+  const updateDocumentTitleStub = cy.stub().as('updateDocumentTitleStub');
+  // Mock a user object that getUser would typically return
+  const getUserStub = cy
+    .stub()
+    .returns({ identity: { user: { username: 'testuser' } } })
+    .as('getUserStub');
+  const onStub = cy.stub().as('onStub');
+  const hideGlobalFilterStub = cy.stub().as('hideGlobalFilterStub');
+  const mapGlobalFilterStub = cy.stub().as('mapGlobalFilterStub');
+  const globalFilterScopeStub = cy.stub().as('globalFilterScopeStub');
+  const requestPdfStub = cy.stub().as('requestPdfStub');
+  // Default to non-production environment for testing
+  const isProdStub = cy.stub().returns(false).as('isProdStub');
+
+  // Define a default environment context with all stubs and typical test values
+  const defaultEnvContext = {
+    isLoading: false,
+    isExportEnabled: true, // Default to enabled unless overridden
+    isDisableRecEnabled: true,
+    isAllowedToViewRec: true,
+    updateDocumentTitle: updateDocumentTitleStub,
+    getUser: getUserStub,
+    on: onStub,
+    hideGlobalFilter: hideGlobalFilterStub,
+    mapGlobalFilter: mapGlobalFilterStub,
+    globalFilterScope: globalFilterScopeStub,
+    requestPdf: requestPdfStub,
+    isProd: isProdStub,
+  };
+
+  // Merge default context with any provided overrides
+  const envContext = { ...defaultEnvContext, ...envContextOverrides };
+
   cy.mount(
     <EnvironmentContext.Provider value={envContext}>
       <MemoryRouter>
@@ -67,7 +112,7 @@ const mountComponent = (
           </IntlProvider>
         </AccountStatContext.Provider>
       </MemoryRouter>
-    </EnvironmentContext.Provider>,
+    </EnvironmentContext.Provider>
   );
 };
 
@@ -236,7 +281,7 @@ describe('filtering', () => {
     filterApply(filterCombos[0]);
     cy.get(CHIP_GROUP).should(
       'have.length',
-      Object.keys(filterCombos[0]).length,
+      Object.keys(filterCombos[0]).length
     );
     cy.get(CHIP_GROUP).should('exist');
     //clear filters
@@ -246,7 +291,7 @@ describe('filtering', () => {
     hasChip('Status', 'Enabled');
     cy.get(CHIP_GROUP).should(
       'have.length',
-      Object.keys(DEFAULT_FILTERS).length,
+      Object.keys(DEFAULT_FILTERS).length
     );
     cy.get('button').contains('Reset filters').should('exist');
     //it is doubled because the expanded rows are also included
@@ -404,7 +449,7 @@ describe('sorting', () => {
       'impacted_count',
       'playbook_count',
     ],
-    TABLE_HEADERS.filter((h) => h !== 'Data expansion table header cell'),
+    TABLE_HEADERS.filter((h) => h !== 'Data expansion table header cell')
   ).forEach(([category, label]) => {
     let sortingParameter = category;
     SORTING_ORDERS.forEach((order) => {
@@ -443,7 +488,7 @@ urlParamsList.forEach((urlParams, index) => {
               <RulesTable />
             </Provider>
           </IntlProvider>
-        </MemoryRouter>,
+        </MemoryRouter>
       );
     });
 
@@ -478,7 +523,7 @@ describe('content', () => {
             .should(
               'have.attr',
               'href',
-              'https://access.redhat.com/node/' + fixtures.data[index].node_id,
+              'https://access.redhat.com/node/' + fixtures.data[index].node_id
             );
         }
 
@@ -492,7 +537,7 @@ describe('content', () => {
           .should(
             'have.attr',
             'href',
-            '///recommendations/' + fixtures.data[index].rule_id,
+            '///recommendations/' + fixtures.data[index].rule_id
           );
       });
     });
@@ -797,31 +842,25 @@ describe('Export', () => {
     }).as('call');
   });
   it(`kebab tooltip displays disabled message`, () => {
-    mountComponent(false, {
-      isLoading: false,
-      isExportEnabled: false,
-      isDisableRecEnabled: true,
-      isAllowedToViewRec: true,
-      updateDocumentTitle: () => {},
-      getUser: () => '',
-      on: () => {},
-      hideGlobalFilter: () => {},
-      mapGlobalFilter: () => {},
-      globalFilterScope: () => {},
-      requestPdf: () => {},
-      isProd: () => {},
-    });
+    mountComponent(
+      {},
+      {
+        isExportEnabled: false,
+      }
+    );
     cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
     cy.contains(messages.permsAction.defaultMessage).should('be.visible');
   });
 
   it(`works and downloads report is enabled`, () => {
-    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
+    mountComponent();
     itExportsDataToFile(fixtures.data, 'Insights-Advisor_hits--');
+    // Ensure requestPdf is NOT called, as itExportsDataToFile likely simulates a direct download
+    cy.get('@requestPdfStub').should('not.have.been.called');
   });
 });
 
-describe('Disable recommendation', () => {
+describe('Disable kebab recommendation', () => {
   beforeEach(() => {
     cy.intercept('*', {
       statusCode: 201,
@@ -830,30 +869,27 @@ describe('Disable recommendation', () => {
       },
     }).as('call');
   });
-  it(`kebab tooltip displays disabled message`, () => {
-    mountComponent(false, {
-      isLoading: false,
-      isExportEnabled: true,
-      isDisableRecEnabled: false,
-      isAllowedToViewRec: true,
-      updateDocumentTitle: () => {},
-      getUser: () => '',
-      on: () => {},
-      hideGlobalFilter: () => {},
-      mapGlobalFilter: () => {},
-      globalFilterScope: () => {},
-      requestPdf: () => {},
-      isProd: () => {},
-    });
+  it(`tooltip displays disabled message`, () => {
+    mountComponent(
+      {},
+      {
+        isDisableRecEnabled: false,
+      }
+    );
     cy.get(
-      'button[class="pf-v5-c-menu-toggle pf-m-plain pf-m-disabled"]',
+      'button[class="pf-v5-c-menu-toggle pf-m-plain pf-m-disabled"]'
     ).should('exist');
   });
 
-  it(`works and downloads report is enabled`, () => {
-    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
+  it(`is enabled`, () => {
+    mountComponent(
+      {},
+      {
+        isDisableRecEnabled: true,
+      }
+    );
     cy.clickOnRowKebab(
-      'Reboot fails when there is no "kernelopts" option in the grubenv',
+      'Reboot fails when there is no "kernelopts" option in the grubenv'
     );
     cy.contains('Disable recommendation').should('be.visible');
   });
