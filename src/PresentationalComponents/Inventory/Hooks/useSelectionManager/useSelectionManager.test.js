@@ -24,6 +24,7 @@ describe('useSelectionManager', () => {
       );
 
       act(() => {
+        // eslint-disable-next-line testing-library/no-node-access
         result.current.select(42);
       });
 
@@ -74,6 +75,7 @@ describe('useSelectionManager', () => {
       );
 
       act(() => {
+        // eslint-disable-next-line testing-library/no-node-access
         result.current.select(42, 'group2');
       });
 

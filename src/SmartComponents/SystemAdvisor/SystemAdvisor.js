@@ -409,6 +409,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
         setSystemsProfile(profileData?.data?.results[0]?.system_profile || {});
         setSystemsProfileLoading(false);
       } catch (error) {
+        void error;
         setInventoryReportFetchStatus('failed');
         setSystemsProfileLoading(false);
       }

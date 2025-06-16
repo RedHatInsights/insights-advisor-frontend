@@ -45,7 +45,8 @@ const NewSystemsPdf = ({ filters }) => {
       });
 
       dispatch(addNotification(exportNotifications.success));
-    } catch (e) {
+    } catch (error) {
+      void error;
       dispatch(addNotification(exportNotifications.error));
     } finally {
       setLoading(false);

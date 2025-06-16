@@ -40,7 +40,8 @@ const NewDownloadExecReport = ({ isDisabled }) => {
 
       setLoading(false);
       dispatch(addNotification(exportNotifications.success));
-    } catch (e) {
+    } catch (error) {
+      void error;
       setLoading(false);
       dispatch(addNotification(exportNotifications.error));
     }
