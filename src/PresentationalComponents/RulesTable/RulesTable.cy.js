@@ -15,7 +15,6 @@ import {
   selectConditionalFilterOption,
 } from '../../../cypress/utils/table';
 
-//eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
   changePagination,
   checkPaginationTotal,
@@ -55,7 +54,7 @@ import { EnvironmentContext } from '../../App';
  */
 const mountComponent = (
   { hasEdgeDevices = false } = {},
-  envContextOverrides = {}
+  envContextOverrides = {},
 ) => {
   // Create stubs for functions that are expected to be called by the component.
   // Using .as() allows you to reference these stubs later using @aliasName.
@@ -112,7 +111,7 @@ const mountComponent = (
           </IntlProvider>
         </AccountStatContext.Provider>
       </MemoryRouter>
-    </EnvironmentContext.Provider>
+    </EnvironmentContext.Provider>,
   );
 };
 
@@ -281,7 +280,7 @@ describe('filtering', () => {
     filterApply(filterCombos[0]);
     cy.get(CHIP_GROUP).should(
       'have.length',
-      Object.keys(filterCombos[0]).length
+      Object.keys(filterCombos[0]).length,
     );
     cy.get(CHIP_GROUP).should('exist');
     //clear filters
@@ -291,7 +290,7 @@ describe('filtering', () => {
     hasChip('Status', 'Enabled');
     cy.get(CHIP_GROUP).should(
       'have.length',
-      Object.keys(DEFAULT_FILTERS).length
+      Object.keys(DEFAULT_FILTERS).length,
     );
     cy.get('button').contains('Reset filters').should('exist');
     //it is doubled because the expanded rows are also included
@@ -449,7 +448,7 @@ describe('sorting', () => {
       'impacted_count',
       'playbook_count',
     ],
-    TABLE_HEADERS.filter((h) => h !== 'Data expansion table header cell')
+    TABLE_HEADERS.filter((h) => h !== 'Data expansion table header cell'),
   ).forEach(([category, label]) => {
     let sortingParameter = category;
     SORTING_ORDERS.forEach((order) => {
@@ -488,7 +487,7 @@ urlParamsList.forEach((urlParams, index) => {
               <RulesTable />
             </Provider>
           </IntlProvider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
     });
 
@@ -523,7 +522,7 @@ describe('content', () => {
             .should(
               'have.attr',
               'href',
-              'https://access.redhat.com/node/' + fixtures.data[index].node_id
+              'https://access.redhat.com/node/' + fixtures.data[index].node_id,
             );
         }
 
@@ -537,7 +536,7 @@ describe('content', () => {
           .should(
             'have.attr',
             'href',
-            '///recommendations/' + fixtures.data[index].rule_id
+            '///recommendations/' + fixtures.data[index].rule_id,
           );
       });
     });
@@ -846,7 +845,7 @@ describe('Export', () => {
       {},
       {
         isExportEnabled: false,
-      }
+      },
     );
     cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
     cy.contains(messages.permsAction.defaultMessage).should('be.visible');
@@ -874,10 +873,10 @@ describe('Disable kebab recommendation', () => {
       {},
       {
         isDisableRecEnabled: false,
-      }
+      },
     );
     cy.get(
-      'button[class="pf-v5-c-menu-toggle pf-m-plain pf-m-disabled"]'
+      'button[class="pf-v5-c-menu-toggle pf-m-plain pf-m-disabled"]',
     ).should('exist');
   });
 
@@ -886,10 +885,10 @@ describe('Disable kebab recommendation', () => {
       {},
       {
         isDisableRecEnabled: true,
-      }
+      },
     );
     cy.clickOnRowKebab(
-      'Reboot fails when there is no "kernelopts" option in the grubenv'
+      'Reboot fails when there is no "kernelopts" option in the grubenv',
     );
     cy.contains('Disable recommendation').should('be.visible');
   });
