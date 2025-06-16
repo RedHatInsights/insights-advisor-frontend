@@ -3,7 +3,7 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/RedhatInsights/insights-advisor-frontend/test.yml?branch=master)](https://github.com/github/RedHatInsights/insights-advisor-frontend//actions/workflows/test.yml) [![codecov](https://codecov.io/github/RedHatInsights/insights-advisor-frontend/branch/master/graph/badge.svg?token=g9fj8a4SW9)](https://codecov.io/github/RedHatInsights/insights-advisor-frontend)
 
 ## First time setup
-1. Make sure you have [Node.js](https://nodejs.org/en/) version >= 18 installed
+1. Make sure you have [Node.js](https://nodejs.org/en/) version >= 18 installed.
 2. Run [script to patch your `/etc/hosts`](https://github.com/RedHatInsights/insights-proxy/blob/master/scripts/patch-etc-hosts.sh)
 3. Make sure you are using [Red Hat proxy](http://hdn.corp.redhat.com/proxy.pac)
 
