@@ -15,6 +15,7 @@ import {
   PATHWAYS_TAB,
   STATS_OVERVIEW_FETCH_URL,
 } from '../../../AppConstants';
+import { EnvironmentContext } from '../../../App';
 
 initMocks();
 
@@ -46,9 +47,11 @@ describe('OverviewDashbar', () => {
     });
 
     render(
-      <Provider store={store}>
-        <OverviewDashbar changeTab={changeTab} />
-      </Provider>,
+      <EnvironmentContext.Provider value={{ displayRecPathways: true }}>
+        <Provider store={store}>
+          <OverviewDashbar changeTab={changeTab} />
+        </Provider>
+      </EnvironmentContext.Provider>,
     );
 
     await screen.findByText(/Pathways/);
@@ -97,6 +100,21 @@ describe('OverviewDashbar', () => {
 
     await user.click(importantRecommendationsBtn);
     expect(changeTab).toHaveBeenCalledWith(RECOMMENDATIONS_TAB);
+  });
+
+  it('Should not display pathways card if displayRecPathways is false', async () => {
+    const changeTab = jest.fn();
+    render(
+      <EnvironmentContext.Provider value={{ displayRecPathways: false }}>
+        <Provider store={store}>
+          <OverviewDashbar changeTab={changeTab} />
+        </Provider>
+      </EnvironmentContext.Provider>,
+    );
+
+    await screen.findByText(/Incidents/);
+    expect(screen.getByText(/Incidents/)).toBeInTheDocument();
+    expect(screen.queryByText(/Pathways/)).not.toBeInTheDocument();
   });
 
   it('renders error when API response does not contain any data', async () => {

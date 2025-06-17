@@ -35,6 +35,8 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
     isExportEnabled: true,
     isDisableRecEnabled: true,
     isAllowedToViewRec: true,
+    displayRecPathways: true,
+    displayExecReportLink: true,
     updateDocumentTitle: updateDocumentTitleStub,
     getUser: getUserStub,
     on: onStub,
