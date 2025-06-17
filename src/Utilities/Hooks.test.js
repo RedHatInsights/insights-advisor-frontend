@@ -90,6 +90,8 @@ describe('useHccEnvironmentContext', () => {
       isExportEnabled: false,
       isDisableRecEnabled: false,
       isAllowedToViewRec: false,
+      displayExecReportLink: true,
+      displayRecPathways: true,
       updateDocumentTitle: mockChrome.updateDocumentTitle,
       getUser: mockChrome.auth.getUser,
       on: mockChrome.on,

@@ -119,7 +119,7 @@ const List = () => {
             </React.Fragment>
           }
         />
-        {!envContext.isLoading && (
+        {!envContext.isLoading && envContext.displayExecReportLink && (
           <Tooltip
             trigger={!envContext.isExportEnabled ? 'mouseenter' : ''}
             content={messages.permsAction.defaultMessage}
@@ -138,45 +138,49 @@ const List = () => {
             <OverviewDashbar changeTab={changeTab} />
           </StackItem>
           <StackItem>
-            <Tabs
-              className="adv__background--global-100"
-              activeKey={activeTab}
-              onSelect={(_e, tab) => changeTab(tab)}
-            >
-              <Tab
-                eventKey={RECOMMENDATIONS_TAB}
-                title={
-                  <TabTitleText>
-                    {messages.recommendations.defaultMessage}
-                  </TabTitleText>
-                }
+            {envContext.displayRecPathways ? (
+              <Tabs
+                className="adv__background--global-100"
+                activeKey={activeTab}
+                onSelect={(_e, tab) => changeTab(tab)}
               >
-                <RulesTable isTabActive={activeTab === RECOMMENDATIONS_TAB} />
-              </Tab>
-              <Tab
-                eventKey={PATHWAYS_TAB}
-                title={
-                  <TabTitleText>
-                    {messages.pathways.defaultMessage}
-                    <QuestionTooltip
-                      text={messages.recommendedPathways.defaultMessage}
-                    />
-                  </TabTitleText>
-                }
-              >
-                {activeTab === PATHWAYS_TAB && (
-                  <Suspense
-                    fallback={
-                      <Bullseye>
-                        <Spinner size="xl" />
-                      </Bullseye>
-                    }
-                  >
-                    <PathwaysTable isTabActive={activeTab === PATHWAYS_TAB} />
-                  </Suspense>
-                )}
-              </Tab>
-            </Tabs>
+                <Tab
+                  eventKey={RECOMMENDATIONS_TAB}
+                  title={
+                    <TabTitleText>
+                      {messages.recommendations.defaultMessage}
+                    </TabTitleText>
+                  }
+                >
+                  <RulesTable isTabActive={activeTab === RECOMMENDATIONS_TAB} />
+                </Tab>
+                <Tab
+                  eventKey={PATHWAYS_TAB}
+                  title={
+                    <TabTitleText>
+                      {messages.pathways.defaultMessage}
+                      <QuestionTooltip
+                        text={messages.recommendedPathways.defaultMessage}
+                      />
+                    </TabTitleText>
+                  }
+                >
+                  {activeTab === PATHWAYS_TAB && (
+                    <Suspense
+                      fallback={
+                        <Bullseye>
+                          <Spinner size="xl" />
+                        </Bullseye>
+                      }
+                    >
+                      <PathwaysTable isTabActive={activeTab === PATHWAYS_TAB} />
+                    </Suspense>
+                  )}
+                </Tab>
+              </Tabs>
+            ) : (
+              <RulesTable />
+            )}
           </StackItem>
         </Stack>
       </section>
