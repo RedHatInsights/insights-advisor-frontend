@@ -11,20 +11,20 @@ module.exports = {
     // Put the Sentry Webpack plugin after all other plugins
     ...(process.env.ENABLE_SENTRY
       ? [
-          sentryWebpackPlugin({
-            ...(process.env.SENTRY_AUTH_TOKEN && {
-              authToken: process.env.SENTRY_AUTH_TOKEN,
-            }),
+        sentryWebpackPlugin({
+          ...(process.env.SENTRY_AUTH_TOKEN && {
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+          }),
+          org: 'red-hat-it',
+          project: 'advisor-rhel',
+          moduleMetadata: ({ release }) => ({
+            dsn: `https://f8eb44de949e487e853185c09340f3cf@o490301.ingest.us.sentry.io/4505397435367424`,
             org: 'red-hat-it',
             project: 'advisor-rhel',
-            moduleMetadata: ({ release }) => ({
-              dsn: `https://f8eb44de949e487e853185c09340f3cf@o490301.ingest.us.sentry.io/4505397435367424`,
-              org: 'red-hat-it',
-              project: 'advisor-rhel',
-              release,
-            }),
+            release,
           }),
-        ]
+        }),
+      ]
       : []),
   ],
   moduleFederation: {
@@ -55,6 +55,7 @@ module.exports = {
         __dirname,
         '/src/PresentationalComponents/Export/NewSystemsPdfBuild'
       ),
+      './SatelliteDemoComponent': resolve(__dirname, './src/Temporary/SatelliteDemoComponent.js')
     },
   },
   _unstableSpdy: true,
