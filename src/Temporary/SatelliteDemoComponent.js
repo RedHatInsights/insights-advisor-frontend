@@ -18,7 +18,7 @@ export const SatelliteDemoComponent = () => (
         headingLevel="h5"
       />
       <EmptyStateBody>
-        Demo component for Vulnerability for IoP integration.
+        Demo component for RHEL Advisor for IoP integration.
       </EmptyStateBody>
     </EmptyState>
   </Bullseye>
