@@ -55,6 +55,7 @@ const NewDownloadExecReport = ({ isDisabled }) => {
       isDisabled={isDisabled || loading ? true : false}
       icon={<ExportIcon className="iconOverride" />}
       className="downloadButtonOverride"
+      aria-label="Download Exec Report"
     >
       {intl.formatMessage(messages.downloadExecutiveLabel)}
     </Button>
