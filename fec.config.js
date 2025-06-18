@@ -11,22 +11,23 @@ module.exports = {
     // Put the Sentry Webpack plugin after all other plugins
     ...(process.env.ENABLE_SENTRY
       ? [
-        sentryWebpackPlugin({
-          ...(process.env.SENTRY_AUTH_TOKEN && {
-            authToken: process.env.SENTRY_AUTH_TOKEN,
-          }),
-          org: 'red-hat-it',
-          project: 'advisor-rhel',
-          moduleMetadata: ({ release }) => ({
-            dsn: `https://f8eb44de949e487e853185c09340f3cf@o490301.ingest.us.sentry.io/4505397435367424`,
+          sentryWebpackPlugin({
+            ...(process.env.SENTRY_AUTH_TOKEN && {
+              authToken: process.env.SENTRY_AUTH_TOKEN,
+            }),
             org: 'red-hat-it',
             project: 'advisor-rhel',
-            release,
+            moduleMetadata: ({ release }) => ({
+              dsn: `https://f8eb44de949e487e853185c09340f3cf@o490301.ingest.us.sentry.io/4505397435367424`,
+              org: 'red-hat-it',
+              project: 'advisor-rhel',
+              release,
+            }),
           }),
-        }),
-      ]
+        ]
       : []),
   ],
+  publicPath: 'auto',
   moduleFederation: {
     shared: [
       {
@@ -40,22 +41,25 @@ module.exports = {
     exposes: {
       './RootApp': resolve(
         __dirname,
-        `/src/${process.env.NODE_ENV !== 'production' ? 'Dev' : ''}AppEntry`
+        `/src/${process.env.NODE_ENV !== 'production' ? 'Dev' : ''}AppEntry`,
       ),
       './SystemDetail': resolve(__dirname, 'src/Modules/SystemDetail'),
       './BuildExecReport': resolve(
         __dirname,
-        '/src/PresentationalComponents/ExecutiveReport/BuildExecReport'
+        '/src/PresentationalComponents/ExecutiveReport/BuildExecReport',
       ),
       './NewBuildExecReport': resolve(
         __dirname,
-        '/src/PresentationalComponents/ExecutiveReport/NewBuildExecReport'
+        '/src/PresentationalComponents/ExecutiveReport/NewBuildExecReport',
       ),
       './NewSystemsPdfBuild': resolve(
         __dirname,
-        '/src/PresentationalComponents/Export/NewSystemsPdfBuild'
+        '/src/PresentationalComponents/Export/NewSystemsPdfBuild',
       ),
-      './SatelliteDemoComponent': resolve(__dirname, './src/Temporary/SatelliteDemoComponent.js')
+      './SatelliteDemoComponent': resolve(
+        __dirname,
+        './src/Temporary/SatelliteDemoComponent.js',
+      ),
     },
   },
   _unstableSpdy: true,
