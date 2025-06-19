@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import propTypes from 'prop-types';
 
 import useApplyFilters from './Hooks/useApplyFilters/useApplyFilters';
@@ -22,35 +22,40 @@ import { QuestionTooltip } from '../Common/Common';
 import { RouteIcon } from '@patternfly/react-icons';
 import RuleLabels from '../Labels/RuleLabels';
 import { TagLabelWithTooltip } from '../Cards/OverviewDashbarCard/TagLabelWithTooltip';
+import { EnvironmentContext } from '../../App';
 
 const OverviewDashbar = ({ changeTab }) => {
   const { data } = useOverviewData();
   const { pathways, incidents, critical, important, loaded, isError } = data;
+  const envContext = useContext(EnvironmentContext);
+  const mdSpan = envContext.displayRecPathways ? 3 : 4;
 
   const { onClickFilterByName } = useApplyFilters(changeTab);
 
   return !isError ? (
     <Grid hasGutter id="overview-dashbar">
-      <GridItem span={12} md={3}>
-        <OverviewDashbarCard
-          name={PATHWAYS}
-          isLoaded={loaded}
-          title={
-            <Title headingLevel="h6" size="md">
-              {messages.pathways.defaultMessage}
-              <QuestionTooltip
-                text={messages.recommendedPathways.defaultMessage}
-              />
-            </Title>
-          }
-          badge={<RouteIcon size="md" data-testid="route-icon" />}
-          count={pathways}
-          onClickFilterByName={() => {
-            changeTab(PATHWAYS_TAB);
-          }}
-        />
-      </GridItem>
-      <GridItem span={12} md={3}>
+      {envContext.displayRecPathways && (
+        <GridItem span={12} md={mdSpan}>
+          <OverviewDashbarCard
+            name={PATHWAYS}
+            isLoaded={loaded}
+            title={
+              <Title headingLevel="h6" size="md">
+                {messages.pathways.defaultMessage}
+                <QuestionTooltip
+                  text={messages.recommendedPathways.defaultMessage}
+                />
+              </Title>
+            }
+            badge={<RouteIcon size="md" data-testid="route-icon" />}
+            count={pathways}
+            onClickFilterByName={() => {
+              changeTab(PATHWAYS_TAB);
+            }}
+          />
+        </GridItem>
+      )}
+      <GridItem span={12} md={mdSpan}>
         <OverviewDashbarCard
           name={INCIDENTS}
           isLoaded={loaded}
@@ -72,7 +77,7 @@ const OverviewDashbar = ({ changeTab }) => {
           onClickFilterByName={onClickFilterByName}
         />
       </GridItem>
-      <GridItem span={12} md={3}>
+      <GridItem span={12} md={mdSpan}>
         <OverviewDashbarCard
           name={CRITICAL_RECOMMENDATIONS}
           isLoaded={loaded}
@@ -86,7 +91,7 @@ const OverviewDashbar = ({ changeTab }) => {
           onClickFilterByName={onClickFilterByName}
         />
       </GridItem>
-      <GridItem span={12} md={3}>
+      <GridItem span={12} md={mdSpan}>
         <OverviewDashbarCard
           name={IMPORTANT_RECOMMENDATIONS}
           isLoaded={loaded}
