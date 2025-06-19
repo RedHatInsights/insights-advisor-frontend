@@ -27,7 +27,9 @@ module.exports = {
         ]
       : []),
   ],
-  publicPath: 'auto',
+  output: {
+    publicPath: 'auto',
+  },
   moduleFederation: {
     shared: [
       {
