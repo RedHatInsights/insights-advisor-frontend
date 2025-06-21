@@ -7,7 +7,7 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
-import React from 'react';
+import React, { useContext } from 'react';
 import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 import CaretDownIcon from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
@@ -32,6 +32,7 @@ import {
   DropdownItem,
   DropdownToggle,
 } from '@patternfly/react-core/dist/esm/deprecated/components/Dropdown';
+import { EnvironmentContext } from '../../App';
 
 export const DetailsRules = ({
   rule,
@@ -44,6 +45,15 @@ export const DetailsRules = ({
   refetch,
 }) => {
   const intl = useIntl();
+  const envContext = useContext(EnvironmentContext);
+
+  const onVoteClick = async (ruleId, calculatedRating) => {
+    await Post(
+      `${BASE_URL}/rating/`,
+      {},
+      { rule: ruleId, rating: calculatedRating },
+    );
+  };
 
   return (
     <React.Fragment>
@@ -100,13 +110,7 @@ export const DetailsRules = ({
               </p>
             </React.Fragment>
           }
-          onVoteClick={async (ruleId, calculatedRating) => {
-            await Post(
-              `${BASE_URL}/rating/`,
-              {},
-              { rule: ruleId, rating: calculatedRating },
-            );
-          }}
+          onVoteClick={envContext.displayRuleRatings ? onVoteClick : undefined}
           knowledgebaseUrl={
             rule.node_id ? `https://access.redhat.com/node/${rule.node_id}` : ''
           }

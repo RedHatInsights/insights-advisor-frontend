@@ -23,6 +23,7 @@
     "test": "jest --passWithNoTests",
     "test:coverage": "curl -sSL 'https://raw.githubusercontent.com/RedHatInsights/insights-interact-tools/refs/heads/main/scripts/coverage.sh' | bash",
     "test:ct": "BABEL_ENV=componentTest cypress run --browser chrome --component",
+    "test:ctspec": "BABEL_ENV=componentTest cypress run --browser chrome --component --spec",
     "test:jest": "TZ=UTC jest --verbose --passWithNoTests --env=jsdom",
     "test:local": "TZ=UTC jest --verbose --collectCoverage=false --passWithNoTests --env=jsdom",
     "test:openct": "cypress open --component",
