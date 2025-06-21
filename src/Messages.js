@@ -651,6 +651,11 @@ export default defineMessages({
     description: 'Remediate',
     defaultMessage: 'Plan remediation',
   },
+  downloadPlaybookButtonText: {
+    id: 'downloadPlaybook',
+    description: 'Download playbook',
+    defaultMessage: 'Download playbook',
+  },
   selectAll: {
     id: 'selectAll',
     description: 'Action, Bulk select all items in a table with number',
