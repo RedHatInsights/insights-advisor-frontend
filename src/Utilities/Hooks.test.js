@@ -90,6 +90,7 @@ describe('useHccEnvironmentContext', () => {
       isExportEnabled: false,
       isDisableRecEnabled: false,
       isAllowedToViewRec: false,
+      displayGroupsTagsColumns: true,
       displayExecReportLink: true,
       displayRecPathways: true,
       updateDocumentTitle: mockChrome.updateDocumentTitle,

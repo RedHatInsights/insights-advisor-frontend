@@ -71,6 +71,7 @@ export const useHccEnvironmentContext = () => {
     isExportEnabled: canExport,
     isDisableRecEnabled: canDisableRec,
     isAllowedToViewRec: canViewRecs,
+    displayGroupsTagsColumns: true, // false in HCC context
     displayRecPathways: true, // false in IOP context
     displayExecReportLink: true, // false in IOP context
     updateDocumentTitle: chrome.updateDocumentTitle,
