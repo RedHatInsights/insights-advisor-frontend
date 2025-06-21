@@ -73,6 +73,7 @@ export const useHccEnvironmentContext = () => {
     isAllowedToViewRec: canViewRecs,
     displayRecPathways: true, // false in IOP context
     displayExecReportLink: true, // false in IOP context
+    displayPlaybookDownloadButton: false, // true in IOP context
     updateDocumentTitle: chrome.updateDocumentTitle,
     getUser: chrome.auth.getUser,
     on: chrome.on,
