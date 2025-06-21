@@ -75,6 +75,7 @@ export const useHccEnvironmentContext = () => {
     displayRuleRatings: true,
     displayRecPathways: true,
     displayExecReportLink: true,
+    displayDownloadPlaybookButton: false,
     updateDocumentTitle: chrome.updateDocumentTitle,
     getUser: chrome.auth.getUser,
     on: chrome.on,

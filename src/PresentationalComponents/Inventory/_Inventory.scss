@@ -1,3 +1,7 @@
 .ins-c-background__default {
     color: var(--pf-v5-global--BackgroundColor--100);
 }
+
+.pf-v5-l-flex {
+    --pf-v5-l-flex--spacer--column--base: var(--pf-v5-global--spacer--sm);
+}

@@ -12,6 +12,7 @@ import { Get } from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
+import DownloadPlaybookButton from '../../Utilities/DownloadPlaybookButton';
 import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import messages from '../../Messages';
 import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
@@ -20,7 +21,7 @@ import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
-import { Spinner } from '@patternfly/react-core';
+import { Flex, Spinner } from '@patternfly/react-core';
 import { EnvironmentContext } from '../../App';
 
 const Inventory = ({
@@ -379,15 +380,24 @@ const Inventory = ({
 
   const getActionsConfig = () => {
     const actions = [
-      <RemediationButton
-        key="remediation-button"
-        fallback={<Spinner size="md" />}
-        isDisabled={isRemediationButtonDisabled}
-        dataProvider={remediationDataProvider}
-        onRemediationCreated={(result) => onRemediationCreated(result)}
-      >
-        {intl.formatMessage(messages.remediateButtonText)}
-      </RemediationButton>,
+      <Flex key="inventory-actions">
+        {envContext.displayDownloadPlaybookButton && (
+          <DownloadPlaybookButton
+            isDisabled={isRemediationButtonDisabled}
+            rules={[rule]}
+            systems={selectedIds}
+          />
+        )}
+        <RemediationButton
+          key="remediation-button"
+          fallback={<Spinner size="md" />}
+          isDisabled={isRemediationButtonDisabled}
+          dataProvider={remediationDataProvider}
+          onRemediationCreated={(result) => onRemediationCreated(result)}
+        >
+          {intl.formatMessage(messages.remediateButtonText)}
+        </RemediationButton>
+      </Flex>,
     ];
     !pathway &&
       actions.push({
