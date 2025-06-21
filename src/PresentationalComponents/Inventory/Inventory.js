@@ -320,13 +320,9 @@ const Inventory = ({
         transforms: [wrappable],
       };
 
-      let columnList = [
-        displayName,
-        groups,
-        tags,
-        systemProfile,
-        lastSeenColumn,
-      ];
+      let columnList = [displayName, systemProfile, lastSeenColumn];
+      envContext.displayGroupsTagsColumns &&
+        columnList.splice(1, 0, groups, tags);
 
       // Add column for impacted_date which is relevant for the rec system details table, but not pathways system table
       if (!pathway) {
@@ -344,7 +340,7 @@ const Inventory = ({
 
       return columnList;
     },
-    [pathway, rule],
+    [envContext.displayGroupsTagsColumns, pathway, rule],
   );
 
   const removeFilterParam = (param) => {
@@ -432,9 +428,9 @@ const Inventory = ({
         hideFilters={{
           all: true,
           name: false,
-          tags: !showTags,
+          tags: !showTags || !envContext.displayGroupsTagsColumns,
           operatingSystem: false,
-          hostGroupFilter: false,
+          hostGroupFilter: !envContext.displayGroupsTagsColumns,
         }}
         activeFiltersConfig={activeFiltersConfig}
         columns={(defaultColumns) => createColumns(defaultColumns)}

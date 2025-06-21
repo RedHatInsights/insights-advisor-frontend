@@ -505,6 +505,7 @@ export const IOP_ENVIRONMENT_CONTEXT = {
   isExportEnabled: false,
   isDisableRecEnabled: false,
   isAllowedToViewRec: true,
+  displayGroupsTagsColumns: false, // true in HCC context
   displayRecPathways: false, // true in HCC context
   displayExecReportLink: false, // true in HCC context
   updateDocumentTitle: (name) => (document.title = name),
