@@ -13,33 +13,36 @@ import { DetailsRules } from './DetailsRules';
 const ruleDescription = rulesfixtures.description;
 const ROOT =
   'div[class="pf-v5-l-flex pf-m-column pf-m-row-on-lg pf-m-nowrap ins-c-rule-details"]';
+import { EnvironmentContext } from '../../App';
 
-const mountComponent = () => {
+const mountComponent = (envContext = {}) => {
   cy.mount(
-    <MemoryRouter>
-      <IntlProvider locale={navigator.language.slice(0, 2)}>
-        <Provider store={initStore()}>
-          <Routes>
-            <Route
-              key={'Recommendation details'}
-              path="*"
-              element={
-                <DetailsRules
-                  rule={rulesfixtures}
-                  topics={topicsfixtures}
-                  permsDisableRec={disableRec}
-                  setActionsDropdownOpen={null}
-                  actionsDropdownOpen={dropdownOpen}
-                  addNotification={null}
-                  handleModalToggle={null}
-                  refetch={null}
-                />
-              }
-            />
-          </Routes>
-        </Provider>
-      </IntlProvider>
-    </MemoryRouter>,
+    <EnvironmentContext.Provider value={envContext}>
+      <MemoryRouter>
+        <IntlProvider locale={navigator.language.slice(0, 2)}>
+          <Provider store={initStore()}>
+            <Routes>
+              <Route
+                key={'Recommendation details'}
+                path="*"
+                element={
+                  <DetailsRules
+                    rule={rulesfixtures}
+                    topics={topicsfixtures}
+                    permsDisableRec={disableRec}
+                    setActionsDropdownOpen={null}
+                    actionsDropdownOpen={dropdownOpen}
+                    addNotification={null}
+                    handleModalToggle={null}
+                    refetch={null}
+                  />
+                }
+              />
+            </Routes>
+          </Provider>
+        </IntlProvider>
+      </MemoryRouter>
+    </EnvironmentContext.Provider>,
   );
 };
 
@@ -54,7 +57,7 @@ describe('test mock data', () => {
 
 describe('defaults', () => {
   beforeEach(() => {
-    mountComponent();
+    mountComponent({ displayRuleRatings: true });
   });
   it('The Rules description component renders', () => {
     cy.get(ROOT).should('have.length', 1);
@@ -100,5 +103,20 @@ describe('defaults', () => {
     cy.contains('a', 'Knowledgebase article')
       .should('have.attr', 'href')
       .and('eq', 'https://access.redhat.com/node/3570921');
+  });
+});
+
+describe('Tests RuleDetails with envContext', () => {
+  it('contains rule rating when displayRuleRating is true', () => {
+    mountComponent({
+      displayRuleRatings: true,
+    });
+    cy.contains('Is this recommendation helpful?').should('exist');
+  });
+  it('has no rule rating when displayRuleRating is false', () => {
+    mountComponent({
+      displayRuleRatings: false,
+    });
+    cy.contains('Is this recommendation helpful?').should('not.exist');
   });
 });

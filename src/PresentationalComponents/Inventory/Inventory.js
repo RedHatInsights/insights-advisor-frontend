@@ -279,8 +279,6 @@ const Inventory = ({
       let systemProfile = defaultColumns.filter(
         ({ key }) => key === 'system_profile',
       );
-      let tags = defaultColumns.filter(({ key }) => key === 'tags');
-      let groups = defaultColumns.filter(({ key }) => key === 'groups');
       //Link to the Systems in the Recommendation details table and Pathway details table
       displayName = {
         ...displayName[0],
@@ -300,33 +298,23 @@ const Inventory = ({
             }
           : {}),
       };
-
       lastSeenColumn = {
         ...lastSeenColumn[0],
         transforms: [wrappable],
       };
-
       systemProfile = {
         ...systemProfile[0],
         transforms: [wrappable],
       };
+      let columnList = [displayName, systemProfile, lastSeenColumn];
 
-      tags = {
-        ...tags[0],
-      };
-
-      groups = {
-        ...groups[0],
-        transforms: [wrappable],
-      };
-
-      let columnList = [
-        displayName,
-        groups,
-        tags,
-        systemProfile,
-        lastSeenColumn,
-      ];
+      if (envContext.displayGroupsTagsColumns) {
+        let tags = defaultColumns.filter(({ key }) => key === 'tags');
+        let groups = defaultColumns.filter(({ key }) => key === 'groups');
+        tags = { ...tags[0] };
+        groups = { ...groups[0], transforms: [wrappable] };
+        columnList.splice(1, 0, groups, tags);
+      }
 
       // Add column for impacted_date which is relevant for the rec system details table, but not pathways system table
       if (!pathway) {
@@ -344,7 +332,7 @@ const Inventory = ({
 
       return columnList;
     },
-    [pathway, rule],
+    [envContext.displayGroupsTagsColumns, pathway, rule],
   );
 
   const removeFilterParam = (param) => {
@@ -432,9 +420,9 @@ const Inventory = ({
         hideFilters={{
           all: true,
           name: false,
-          tags: !showTags,
+          tags: !showTags || !envContext.displayGroupsTagsColumns,
           operatingSystem: false,
-          hostGroupFilter: false,
+          hostGroupFilter: !envContext.displayGroupsTagsColumns,
         }}
         activeFiltersConfig={activeFiltersConfig}
         columns={(defaultColumns) => createColumns(defaultColumns)}
