@@ -4,23 +4,27 @@ import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import messages from '../Messages';
 import SystemAdvisor from '../SmartComponents/SystemAdvisor/SystemAdvisor';
+import { EnvironmentContext } from '../App';
+import { useHccEnvironmentContext } from '../Utilities/Hooks';
 
 const SystemDetail = ({ customItnl, intlProps, store, ...props }) => {
   const Wrapper = customItnl ? IntlProvider : Fragment;
   const ReduxProvider = store ? Provider : Fragment;
-
+  const envContext = useHccEnvironmentContext();
   return (
-    <Wrapper
-      {...(customItnl && {
-        locale: navigator.language.slice(0, 2),
-        messages,
-        ...intlProps,
-      })}
-    >
-      <ReduxProvider store={store}>
-        <SystemAdvisor {...props} />
-      </ReduxProvider>
-    </Wrapper>
+    <EnvironmentContext.Provider value={envContext}>
+      <Wrapper
+        {...(customItnl && {
+          locale: navigator.language.slice(0, 2),
+          messages,
+          ...intlProps,
+        })}
+      >
+        <ReduxProvider store={store}>
+          <SystemAdvisor {...props} />
+        </ReduxProvider>
+      </Wrapper>
+    </EnvironmentContext.Provider>
   );
 };
 

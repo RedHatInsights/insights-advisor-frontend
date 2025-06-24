@@ -646,11 +646,6 @@ export default defineMessages({
     description: 'Topics list, no topics body',
     defaultMessage: 'To continue, edit your filter settings and search again.',
   },
-  remediateButtonText: {
-    id: 'remediate',
-    description: 'Remediate',
-    defaultMessage: 'Plan remediation',
-  },
   downloadPlaybookButtonText: {
     id: 'downloadPlaybook',
     description: 'Download playbook',

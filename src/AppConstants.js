@@ -511,6 +511,7 @@ export const IOP_ENVIRONMENT_CONTEXT = {
   displayRecPathways: false,
   displayExecReportLink: false,
   displayDownloadPlaybookButton: true,
+  changeRemediationButtonForIop: true,
   updateDocumentTitle: (name) => (document.title = name),
   getUser: () => '',
   on: () => {},
