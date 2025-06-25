@@ -395,7 +395,9 @@ const Inventory = ({
           dataProvider={remediationDataProvider}
           onRemediationCreated={(result) => onRemediationCreated(result)}
         >
-          {intl.formatMessage(messages.remediateButtonText)}
+          {envContext.changeRemediationButtonForIop
+            ? 'Remediate'
+            : 'Plan remediation'}
         </RemediationButton>
       </Flex>,
     ];

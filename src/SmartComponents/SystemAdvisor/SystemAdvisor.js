@@ -4,7 +4,7 @@ import {
   FILTER_CATEGORIES as FC,
   INVENTORY_BASE_URL,
 } from '../../AppConstants';
-import { Spinner } from '@patternfly/react-core';
+import { Flex, Spinner } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';
 import React, {
   Fragment,
@@ -108,15 +108,19 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
   const actions =
     !isSystemProfileLoading && systemProfile?.host_type !== 'edge'
       ? [
-          <RemediationButton
-            key="remediation-button"
-            fallback={<Spinner size="md" />}
-            isDisabled={selectedAnsibleRules.length === 0}
-            dataProvider={() => processRemediation(selectedAnsibleRules)}
-            onRemediationCreated={(result) => onRemediationCreated(result)}
-          >
-            {intl.formatMessage(messages.remediateButtonText)}
-          </RemediationButton>,
+          <Flex key="inventory-actions">
+            <RemediationButton
+              key="remediation-button"
+              fallback={<Spinner size="md" />}
+              isDisabled={selectedAnsibleRules.length === 0}
+              dataProvider={() => processRemediation(selectedAnsibleRules)}
+              onRemediationCreated={(result) => onRemediationCreated(result)}
+            >
+              {envContext.changeRemediationButtonForIop
+                ? 'Remediate'
+                : 'Plan remediation'}
+            </RemediationButton>
+          </Flex>,
         ]
       : [];
 

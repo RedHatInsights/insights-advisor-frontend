@@ -95,6 +95,7 @@ describe('useHccEnvironmentContext', () => {
       displayRecPathways: true,
       displayExecReportLink: true,
       displayDownloadPlaybookButton: false,
+      changeRemediationButtonForIop: false,
       updateDocumentTitle: mockChrome.updateDocumentTitle,
       getUser: mockChrome.auth.getUser,
       on: mockChrome.on,
