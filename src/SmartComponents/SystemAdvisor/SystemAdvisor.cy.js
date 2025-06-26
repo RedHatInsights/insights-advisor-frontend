@@ -25,6 +25,9 @@ import { INVENTORY_BASE_URL } from '../../AppConstants';
 import systemProfile from '../../../cypress/fixtures/systemProfile.json';
 import { selectRandomEnabledRows } from '../../../cypress/utils/table';
 import messages from '../../Messages';
+import { Button } from '@patternfly/react-core';
+import { EnvironmentContext } from '../../App';
+import { createTestEnvironmentContext } from '../../../cypress/support/globals';
 
 const TABLE_HEADERS = [
   'Description',
@@ -46,6 +49,29 @@ const SYSTEM_INSIGHTS_ID = '456';
 //THIS FILE HAS COMMENTED OUT TEST BECAUSE THE FUNCTIONS/LABELS IMPORTED FROM FEC-UTILS
 //NEED TO BE UPDATED
 
+const mountComponent = (envContextOverrides = {}, IopModal) => {
+  let envContext = createTestEnvironmentContext();
+  const finalEnvContext = {
+    ...envContext,
+    ...envContextOverrides,
+  };
+
+  cy.mount(
+    <EnvironmentContext.Provider value={finalEnvContext}>
+      <Wrapper>
+        <SystemAdvisor
+          entity={{
+            id: SYSTEM_ID,
+            insights_id: SYSTEM_INSIGHTS_ID,
+          }}
+          inventoryId={SYSTEM_ID}
+          IopRemediationModal={IopModal}
+        />
+      </Wrapper>
+    </EnvironmentContext.Provider>,
+  );
+};
+
 describe('system rules table', () => {
   beforeEach(() => {
     cy.intercept('/api/insights/v1/account_setting/', {
@@ -62,17 +88,7 @@ describe('system rules table', () => {
       `${INVENTORY_BASE_URL}/hosts/${SYSTEM_ID}/system_profile`,
       systemProfile.data,
     ).as('getSystemProfile');
-    cy.mount(
-      <Wrapper>
-        <SystemAdvisor
-          entity={{
-            id: SYSTEM_ID,
-            insights_id: SYSTEM_INSIGHTS_ID,
-          }}
-          inventoryId={SYSTEM_ID}
-        />
-      </Wrapper>,
-    );
+    mountComponent();
   });
 
   it('renders table', () => {
@@ -364,3 +380,39 @@ describe('system rules table', () => {
 //     .should('include.text', kcsEntry?.publishedTitle)
 //     .should('have.attr', 'href', kcsEntry?.view_uri);
 // });
+
+describe.only('system rules table', () => {
+  beforeEach(() => {
+    cy.intercept('/api/insights/v1/account_setting/', {
+      statusCode: 200,
+      body: {},
+    });
+    cy.intercept(`/api/insights/v1/system/${SYSTEM_ID}/reports/`, fixtures);
+    cy.intercept('https://access.redhat.com/hydra/rest/search/kcs**', {
+      response: {
+        docs: fixturesKcs,
+      },
+    }).as('kcs');
+    cy.intercept(
+      `${INVENTORY_BASE_URL}/hosts/${SYSTEM_ID}/system_profile`,
+      systemProfile.data,
+    ).as('getSystemProfile');
+
+    mountComponent(
+      {},
+      <Button
+        variant="primary"
+        isDisabled={() => console.log('test')}
+        onClick={() => console.log('test')}
+      >
+        {'Remediate'}
+      </Button>,
+    );
+  });
+
+  describe('Toolbar actions are updated correctly', () => {
+    it('Should show remediation button when host is of type edge', () => {
+      cy.get('.ins-c-primary-toolbar__first-action').contains('Remediate');
+    });
+  });
+});

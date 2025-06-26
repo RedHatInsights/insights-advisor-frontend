@@ -41,7 +41,7 @@ import { useParams } from 'react-router-dom';
 import { SkeletonTable } from '@patternfly/react-component-groups';
 import { EnvironmentContext } from '../../App';
 
-const BaseSystemAdvisor = ({ entity, inventoryId }) => {
+const BaseSystemAdvisor = ({ entity, inventoryId, IopRemediationModal }) => {
   const intl = useIntl();
   const systemAdvisorRef = useRef({
     rowCount: 0,
@@ -109,17 +109,21 @@ const BaseSystemAdvisor = ({ entity, inventoryId }) => {
     !isSystemProfileLoading && systemProfile?.host_type !== 'edge'
       ? [
           <Flex key="inventory-actions">
-            <RemediationButton
-              key="remediation-button"
-              fallback={<Spinner size="md" />}
-              isDisabled={selectedAnsibleRules.length === 0}
-              dataProvider={() => processRemediation(selectedAnsibleRules)}
-              onRemediationCreated={(result) => onRemediationCreated(result)}
-            >
-              {envContext.changeRemediationButtonForIop
-                ? 'Remediate'
-                : 'Plan remediation'}
-            </RemediationButton>
+            {IopRemediationModal ? (
+              IopRemediationModal
+            ) : (
+              <RemediationButton
+                key="remediation-button"
+                fallback={<Spinner size="md" />}
+                isDisabled={selectedAnsibleRules.length === 0}
+                dataProvider={() => processRemediation(selectedAnsibleRules)}
+                onRemediationCreated={(result) => onRemediationCreated(result)}
+              >
+                {envContext.changeRemediationButtonForIop
+                  ? 'Remediate'
+                  : 'Plan remediation'}
+              </RemediationButton>
+            )}
           </Flex>,
         ]
       : [];
@@ -505,12 +509,19 @@ BaseSystemAdvisor.propTypes = {
     id: PropTypes.string,
   }),
   inventoryId: PropTypes.string.isRequired,
+  IopRemediationModal: PropTypes.element,
 };
 
 const SystemAdvisor = ({ ...props }) => {
   const entity = useSelector(({ entityDetails }) => entityDetails.entity);
 
-  return <BaseSystemAdvisor {...props} entity={entity} />;
+  return (
+    <BaseSystemAdvisor
+      {...props}
+      entity={entity}
+      IopRemediationModal={IopRemediationModal}
+    />
+  );
 };
 
 export default SystemAdvisor;
