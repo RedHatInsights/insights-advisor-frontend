@@ -35,6 +35,7 @@ const Inventory = ({
   permsExport,
   exportTable,
   showTags,
+  IopRemediationModal,
 }) => {
   const store = useStore();
   const intl = useIntl();
@@ -388,17 +389,21 @@ const Inventory = ({
             systems={selectedIds}
           />
         )}
-        <RemediationButton
-          key="remediation-button"
-          fallback={<Spinner size="md" />}
-          isDisabled={isRemediationButtonDisabled}
-          dataProvider={remediationDataProvider}
-          onRemediationCreated={(result) => onRemediationCreated(result)}
-        >
-          {envContext.changeRemediationButtonForIop
-            ? 'Remediate'
-            : 'Plan remediation'}
-        </RemediationButton>
+        {IopRemediationModal ? (
+          IopRemediationModal
+        ) : (
+          <RemediationButton
+            key="remediation-button"
+            fallback={<Spinner size="md" />}
+            isDisabled={isRemediationButtonDisabled}
+            dataProvider={remediationDataProvider}
+            onRemediationCreated={(result) => onRemediationCreated(result)}
+          >
+            {envContext.changeRemediationButtonForIop
+              ? 'Remediate'
+              : 'Plan remediation'}
+          </RemediationButton>
+        )}
       </Flex>,
     ];
     !pathway &&
@@ -505,6 +510,7 @@ Inventory.propTypes = {
   permsExport: PropTypes.bool,
   exportTable: PropTypes.string,
   showTags: PropTypes.bool,
+  IopRemediationModal: PropTypes.element,
 };
 
 export default Inventory;

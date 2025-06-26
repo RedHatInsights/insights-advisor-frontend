@@ -24,28 +24,14 @@ import {
 } from '@patternfly/react-icons';
 import NewDownloadExecReport from '../../PresentationalComponents/ExecutiveReport/NewDownload';
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
+import { createTestEnvironmentContext } from '../../../cypress/support/globals';
 
 const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
-  const requestPdfStub = cy.stub().as('requestPdfStub');
-
-  const defaultEnvContext = {
-    isLoading: false,
-    isExportEnabled: true,
-    isDisableRecEnabled: true,
-    isAllowedToViewRec: true,
-    displayRecPathways: true,
-    displayExecReportLink: true,
-    updateDocumentTitle: () => {},
-    getUser: () => {},
-    on: () => {},
-    hideGlobalFilter: () => {},
-    mapGlobalFilter: () => {},
-    globalFilterScope: () => {},
-    requestPdf: requestPdfStub,
-    isProd: true,
+  let envContext = createTestEnvironmentContext();
+  const finalEnvContext = {
+    ...envContext,
+    ...envContextOverrides,
   };
-
-  const finalEnvContext = { ...defaultEnvContext, ...envContextOverrides };
   const isPDFGeneratorEnabled = true;
 
   cy.mount(

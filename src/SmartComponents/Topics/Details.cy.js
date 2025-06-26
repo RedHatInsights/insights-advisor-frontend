@@ -10,6 +10,7 @@ import { EnvironmentContext } from '../../App';
 import fixtures from '../../../cypress/fixtures/recommendations.json';
 import { itExportsDataToFile } from '../../../cypress/utils/table';
 import { hasChip } from '@redhat-cloud-services/frontend-components-utilities';
+import { createTestEnvironmentContext } from '../../../cypress/support/globals';
 /**
  * Mounts the Details component with a configurable environment context.
  *
@@ -18,36 +19,11 @@ import { hasChip } from '@redhat-cloud-services/frontend-components-utilities';
  *
  */
 const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
-  const updateDocumentTitleStub = cy.stub().as('updateDocumentTitleStub');
-  const getUserStub = cy
-    .stub()
-    .returns({ identity: { user: { username: 'testuser' } } })
-    .as('getUserStub');
-  const onStub = cy.stub().as('onStub');
-  const hideGlobalFilterStub = cy.stub().as('hideGlobalFilterStub');
-  const mapGlobalFilterStub = cy.stub().as('mapGlobalFilterStub');
-  const globalFilterScopeStub = cy.stub().as('globalFilterScopeStub');
-  const requestPdfStub = cy.stub().as('requestPdfStub');
-  const isProdStub = cy.stub().returns(false).as('isProdStub');
-
-  const defaultEnvContext = {
-    isLoading: false,
-    isExportEnabled: true,
-    isDisableRecEnabled: true,
-    isAllowedToViewRec: true,
-    displayRecPathways: true,
-    displayExecReportLink: true,
-    updateDocumentTitle: updateDocumentTitleStub,
-    getUser: getUserStub,
-    on: onStub,
-    hideGlobalFilter: hideGlobalFilterStub,
-    mapGlobalFilter: mapGlobalFilterStub,
-    globalFilterScope: globalFilterScopeStub,
-    requestPdf: requestPdfStub,
-    isProd: isProdStub,
+  let envContext = createTestEnvironmentContext();
+  const finalEnvContext = {
+    ...envContext,
+    ...envContextOverrides,
   };
-
-  const finalEnvContext = { ...defaultEnvContext, ...envContextOverrides };
 
   cy.mount(
     <EnvironmentContext.Provider value={finalEnvContext}>

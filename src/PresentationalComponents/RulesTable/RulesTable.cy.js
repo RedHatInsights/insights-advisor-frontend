@@ -7,6 +7,7 @@ import { initStore } from '../../Store';
 import fixtures from '../../../cypress/fixtures/recommendations.json';
 import _ from 'lodash';
 import {
+  createTestEnvironmentContext,
   DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT,
   rulesTableColumns,
 } from '../../../cypress/support/globals';
@@ -56,43 +57,14 @@ const mountComponent = (
   { hasEdgeDevices = false } = {},
   envContextOverrides = {},
 ) => {
-  // Create stubs for functions that are expected to be called by the component.
-  // Using .as() allows you to reference these stubs later using @aliasName.
-  const updateDocumentTitleStub = cy.stub().as('updateDocumentTitleStub');
-  // Mock a user object that getUser would typically return
-  const getUserStub = cy
-    .stub()
-    .returns({ identity: { user: { username: 'testuser' } } })
-    .as('getUserStub');
-  const onStub = cy.stub().as('onStub');
-  const hideGlobalFilterStub = cy.stub().as('hideGlobalFilterStub');
-  const mapGlobalFilterStub = cy.stub().as('mapGlobalFilterStub');
-  const globalFilterScopeStub = cy.stub().as('globalFilterScopeStub');
-  const requestPdfStub = cy.stub().as('requestPdfStub');
-  // Default to non-production environment for testing
-  const isProdStub = cy.stub().returns(false).as('isProdStub');
-
-  // Define a default environment context with all stubs and typical test values
-  const defaultEnvContext = {
-    isLoading: false,
-    isExportEnabled: true, // Default to enabled unless overridden
-    isDisableRecEnabled: true,
-    isAllowedToViewRec: true,
-    updateDocumentTitle: updateDocumentTitleStub,
-    getUser: getUserStub,
-    on: onStub,
-    hideGlobalFilter: hideGlobalFilterStub,
-    mapGlobalFilter: mapGlobalFilterStub,
-    globalFilterScope: globalFilterScopeStub,
-    requestPdf: requestPdfStub,
-    isProd: isProdStub,
+  let envContext = createTestEnvironmentContext();
+  const finalEnvContext = {
+    ...envContext,
+    ...envContextOverrides,
   };
 
-  // Merge default context with any provided overrides
-  const envContext = { ...defaultEnvContext, ...envContextOverrides };
-
   cy.mount(
-    <EnvironmentContext.Provider value={envContext}>
+    <EnvironmentContext.Provider value={finalEnvContext}>
       <MemoryRouter>
         <AccountStatContext.Provider value={{ hasEdgeDevices }}>
           <IntlProvider

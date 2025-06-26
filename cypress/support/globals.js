@@ -5,11 +5,10 @@ import { createIntl, createIntlCache } from 'react-intl';
 const cache = createIntlCache();
 const intl = createIntl(
   {
-    // eslint-disable-next-line no-console
     onError: console.error,
     locale: navigator.language.slice(0, 2),
   },
-  cache
+  cache,
 );
 export const rulesTableColumns = [
   {
@@ -70,17 +69,38 @@ export const topicsTableColumns = [
   },
 ];
 
-export const DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT = {
-  isLoading: false,
-  isExportEnabled: true,
-  isDisableRecEnabled: true,
-  isAllowedToViewRec: true,
-  updateDocumentTitle: () => {},
-  getUser: () => '',
-  on: () => {},
-  hideGlobalFilter: () => {},
-  mapGlobalFilter: () => {},
-  globalFilterScope: () => {},
-  requestPdf: () => Promise.resolve(),
-  isProd: () => {},
+export const createTestEnvironmentContext = () => {
+  // These calls to cy.stub() will only execute when this function is called.
+  const updateDocumentTitleStub = cy.stub().as('updateDocumentTitleStub');
+  const getUserStub = cy
+    .stub()
+    .returns({ identity: { user: { username: 'testuser' } } })
+    .as('getUserStub');
+  const onStub = cy.stub().as('onStub');
+  const hideGlobalFilterStub = cy.stub().as('hideGlobalFilterStub');
+  const mapGlobalFilterStub = cy.stub().as('mapGlobalFilterStub');
+  const globalFilterScopeStub = cy.stub().as('globalFilterScopeStub');
+  const requestPdfStub = cy.stub().as('requestPdfStub');
+  const isProdStub = cy.stub().returns(false).as('isProdStub');
+
+  return {
+    isLoading: false,
+    isExportEnabled: true,
+    isDisableRecEnabled: true,
+    isAllowedToViewRec: true,
+    displayGroupsTagsColumns: true,
+    displayRuleRatings: true,
+    displayRecPathways: true,
+    displayExecReportLink: true,
+    displayDownloadPlaybookButton: false,
+    changeRemediationButtonForIop: false,
+    updateDocumentTitle: updateDocumentTitleStub,
+    getUser: getUserStub,
+    on: onStub,
+    hideGlobalFilter: hideGlobalFilterStub,
+    mapGlobalFilter: mapGlobalFilterStub,
+    globalFilterScope: globalFilterScopeStub,
+    requestPdf: requestPdfStub,
+    isProd: isProdStub,
+  };
 };
