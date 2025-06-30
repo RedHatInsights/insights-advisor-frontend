@@ -23,6 +23,7 @@ import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
 import { Flex, Spinner } from '@patternfly/react-core';
 import { EnvironmentContext } from '../../App';
+import { AsyncComponent } from '@redhat-cloud-services/frontend-components';
 
 const Inventory = ({
   tableProps,
@@ -399,9 +400,7 @@ const Inventory = ({
             dataProvider={remediationDataProvider}
             onRemediationCreated={(result) => onRemediationCreated(result)}
           >
-            {envContext.changeRemediationButtonForIop
-              ? 'Remediate'
-              : 'Plan remediation'}
+            Plan remediation
           </RemediationButton>
         )}
       </Flex>,
@@ -429,72 +428,146 @@ const Inventory = ({
           hosts={selectedIds}
         />
       )}
-      <InventoryTable
-        id="tablesContainer"
-        hasCheckbox
-        initialLoading
-        autoRefresh
-        hideFilters={{
-          all: true,
-          name: false,
-          tags: !showTags || !envContext.displayGroupsTagsColumns,
-          operatingSystem: false,
-          hostGroupFilter: !envContext.displayGroupsTagsColumns,
-        }}
-        activeFiltersConfig={activeFiltersConfig}
-        columns={(defaultColumns) => createColumns(defaultColumns)}
-        tableProps={{
-          variant: TableVariant.compact,
-          ...tableProps,
-          ...bulkSelectTableProps,
-        }}
-        customFilters={{
-          advisorFilters: filters,
-          selectedTags,
-          workloads,
-          SID,
-        }}
-        showTags={showTags}
-        getEntities={fetchSystems}
-        actionsConfig={getActionsConfig()}
-        {...toolbarProps}
-        onLoad={({
-          mergeWithEntities,
-          INVENTORY_ACTION_TYPES,
-          mergeWithDetail,
-        }) => {
-          store.replaceReducer(
-            updateReducers({
-              ...mergeWithEntities(systemReducer([], INVENTORY_ACTION_TYPES), {
-                page: Number(filters.offset / filters.limit + 1 || 1),
-                perPage: Number(filters.limit || 20),
+      {envContext.loadChromelessInventory ? (
+        <AsyncComponent
+          scope="inventory"
+          module="./IOPInventoryTable"
+          store={store}
+          id="tablesContainer"
+          hasCheckbox
+          initialLoading
+          autoRefresh
+          hideFilters={{
+            all: true,
+            name: false,
+            tags: true,
+            operatingSystem: false,
+            hostGroupFilter: true,
+          }}
+          activeFiltersConfig={activeFiltersConfig}
+          columns={(defaultColumns) => createColumns(defaultColumns)}
+          tableProps={{
+            variant: TableVariant.compact,
+            ...tableProps,
+            ...bulkSelectTableProps,
+          }}
+          customFilters={{
+            advisorFilters: filters,
+            SID,
+          }}
+          showTags={showTags}
+          getEntities={fetchSystems}
+          actionsConfig={getActionsConfig()}
+          {...toolbarProps}
+          onLoad={({
+            mergeWithEntities,
+            INVENTORY_ACTION_TYPES,
+            mergeWithDetail,
+          }) => {
+            store.replaceReducer(
+              updateReducers({
+                ...mergeWithEntities(
+                  systemReducer([], INVENTORY_ACTION_TYPES),
+                  {
+                    page: Number(filters.offset / filters.limit + 1 || 1),
+                    perPage: Number(filters.limit || 20),
+                  },
+                ),
+                ...mergeWithDetail(),
               }),
-              ...mergeWithDetail(),
-            }),
-          );
-        }}
-        exportConfig={
-          permsExport && {
-            label: intl.formatMessage(messages.exportCsv),
+            );
+          }}
+          exportConfig={
+            permsExport && {
+              label: intl.formatMessage(messages.exportCsv),
 
-            label: intl.formatMessage(messages.exportJson),
-            onSelect: (_e, fileType) =>
-              downloadReport(
-                exportTable,
-                fileType,
-                { rule_id: rule.rule_id, ...filters },
-                selectedTags,
-                workloads,
-                SID,
-                dispatch,
-              ),
-            isDisabled: !permsExport || entities?.rows?.length === 0,
-            tooltipText: permsExport
-              ? intl.formatMessage(messages.exportData)
-              : intl.formatMessage(messages.permsAction),
+              label: intl.formatMessage(messages.exportJson),
+              onSelect: (_e, fileType) =>
+                downloadReport(
+                  exportTable,
+                  fileType,
+                  { rule_id: rule.rule_id, ...filters },
+                  SID,
+                  dispatch,
+                ),
+              isDisabled: !permsExport || entities?.rows?.length === 0,
+              tooltipText: permsExport
+                ? intl.formatMessage(messages.exportData)
+                : intl.formatMessage(messages.permsAction),
+            }
           }
-        }
-      />
+        />
+      ) : (
+        <InventoryTable
+          id="tablesContainer"
+          hasCheckbox
+          initialLoading
+          autoRefresh
+          hideFilters={{
+            all: true,
+            name: false,
+            tags: !showTags,
+            operatingSystem: false,
+            hostGroupFilter: false,
+          }}
+          activeFiltersConfig={activeFiltersConfig}
+          columns={(defaultColumns) => createColumns(defaultColumns)}
+          tableProps={{
+            variant: TableVariant.compact,
+            ...tableProps,
+            ...bulkSelectTableProps,
+          }}
+          customFilters={{
+            advisorFilters: filters,
+            selectedTags,
+            workloads,
+            SID,
+          }}
+          showTags={showTags}
+          getEntities={fetchSystems}
+          actionsConfig={getActionsConfig()}
+          {...toolbarProps}
+          onLoad={({
+            mergeWithEntities,
+            INVENTORY_ACTION_TYPES,
+            mergeWithDetail,
+          }) => {
+            store.replaceReducer(
+              updateReducers({
+                ...mergeWithEntities(
+                  systemReducer([], INVENTORY_ACTION_TYPES),
+                  {
+                    page: Number(filters.offset / filters.limit + 1 || 1),
+                    perPage: Number(filters.limit || 20),
+                  },
+                ),
+                ...mergeWithDetail(),
+              }),
+            );
+          }}
+          exportConfig={
+            permsExport && {
+              label: intl.formatMessage(messages.exportCsv),
+
+              label: intl.formatMessage(messages.exportJson),
+              onSelect: (_e, fileType) =>
+                downloadReport(
+                  exportTable,
+                  fileType,
+                  { rule_id: rule.rule_id, ...filters },
+                  selectedTags,
+                  workloads,
+                  SID,
+                  dispatch,
+                ),
+              isDisabled: !permsExport || entities?.rows?.length === 0,
+              tooltipText: permsExport
+                ? intl.formatMessage(messages.exportData)
+                : intl.formatMessage(messages.permsAction),
+            }
+          }
+        />
+      )}
     </React.Fragment>
   );
 };
