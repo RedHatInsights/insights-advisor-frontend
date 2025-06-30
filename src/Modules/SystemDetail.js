@@ -7,7 +7,13 @@ import SystemAdvisor from '../SmartComponents/SystemAdvisor/SystemAdvisor';
 import { EnvironmentContext } from '../App';
 import { useHccEnvironmentContext } from '../Utilities/Hooks';
 
-const SystemDetail = ({ customItnl, intlProps, store, ...props }) => {
+const SystemDetail = ({
+  customItnl,
+  intlProps,
+  store,
+  IopRemediationModal,
+  ...props
+}) => {
   const Wrapper = customItnl ? IntlProvider : Fragment;
   const ReduxProvider = store ? Provider : Fragment;
   const envContext = useHccEnvironmentContext();
@@ -21,7 +27,7 @@ const SystemDetail = ({ customItnl, intlProps, store, ...props }) => {
         })}
       >
         <ReduxProvider store={store}>
-          <SystemAdvisor {...props} />
+          <SystemAdvisor {...props} IopRemediationModal={IopRemediationModal} />
         </ReduxProvider>
       </Wrapper>
     </EnvironmentContext.Provider>
@@ -35,6 +41,7 @@ SystemDetail.propTypes = {
     messages: PropTypes.array,
   }),
   store: PropTypes.object,
+  IopRemediationModal: PropTypes.elementType,
 };
 
 export default SystemDetail;
