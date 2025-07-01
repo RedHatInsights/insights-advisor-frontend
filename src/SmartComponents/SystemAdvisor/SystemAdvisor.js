@@ -109,8 +109,8 @@ const BaseSystemAdvisor = ({ entity, inventoryId, IopRemediationModal }) => {
     !isSystemProfileLoading && systemProfile?.host_type !== 'edge'
       ? [
           <Flex key="inventory-actions">
-            {IopRemediationModal ? (
-              IopRemediationModal
+            {React.isValidElement(IopRemediationModal) ? (
+              <IopRemediationModal />
             ) : (
               <RemediationButton
                 key="remediation-button"
@@ -512,7 +512,7 @@ BaseSystemAdvisor.propTypes = {
   IopRemediationModal: PropTypes.element,
 };
 
-const SystemAdvisor = ({ ...props }) => {
+const SystemAdvisor = ({ ...props }, IopRemediationModal) => {
   const entity = useSelector(({ entityDetails }) => entityDetails.entity);
 
   return (
