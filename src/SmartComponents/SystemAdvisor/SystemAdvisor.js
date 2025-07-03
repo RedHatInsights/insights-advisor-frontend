@@ -123,9 +123,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId, IopRemediationModal }) => {
                 dataProvider={() => processRemediation(selectedAnsibleRules)}
                 onRemediationCreated={(result) => onRemediationCreated(result)}
               >
-                {envContext.changeRemediationButtonForIop
-                  ? 'Remediate'
-                  : 'Plan remediation'}
+                Plan remediation
               </RemediationButton>
             )}
           </Flex>,
