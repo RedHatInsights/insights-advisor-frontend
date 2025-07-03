@@ -25,7 +25,6 @@ export const STATS_REPORTS_FETCH_URL = `${BASE_URL}/stats/reports/`;
 export const STATS_OVERVIEW_FETCH_URL = `${BASE_URL}/stats/overview/`;
 export const SYSTEMS_FETCH_URL = `${BASE_URL}/system/`;
 export const EDGE_DEVICE_BASE_URL = '/api/edge/v1';
-export const INVENTORY_BASE_URL = '/api/inventory/v1';
 export const REMEDIATIONS_BASE_URL = '/api/remediations/v1';
 export const SYSTEM_TYPES = { rhel: 105, ocp: 325 };
 export const RULE_CATEGORIES = {

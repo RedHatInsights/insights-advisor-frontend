@@ -38,7 +38,7 @@ const mergeByInventoryKey = (
 };
 
 export const useGetEntities =
-  (handleRefresh, pathway, rule) =>
+  (handleRefresh, pathway, rule, RULES_FETCH_URL, SYSTEMS_FETCH_URL) =>
   async (_items, config, showTags, defaultGetEntities) => {
     const {
       per_page,
@@ -64,7 +64,14 @@ export const useGetEntities =
       SID,
     );
     handleRefresh(options);
-    const allDetails = { ...config, pathway, rule, sort };
+    const allDetails = {
+      ...config,
+      pathway,
+      rule,
+      sort,
+      RULES_FETCH_URL,
+      SYSTEMS_FETCH_URL,
+    };
     const advisorData = await paginatedRequestHelper(allDetails);
     const systemIDs = advisorData?.data?.map((system) => system.system_uuid);
 

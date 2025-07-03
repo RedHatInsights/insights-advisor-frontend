@@ -1,6 +1,5 @@
 import './_Inventory.scss';
 
-import { BASE_URL, RULES_FETCH_URL } from '../../AppConstants';
 import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import { pruneFilters, urlBuilder } from '../Common/Tables';
@@ -107,6 +106,8 @@ const Inventory = ({
     setFullFilters,
     fullFilters,
     rule,
+    envContext.RULES_FETCH_URL,
+    envContext.SYSTEMS_FETCH_URL,
   );
 
   // Ensures rows are marked as selected, runs the check on remediation Status
@@ -134,7 +135,7 @@ const Inventory = ({
     if (rulesPlaybookCount < 0) {
       const associatedRuleDetails = (
         await Get(
-          `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
+          `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
           {},
           { name: filters.name },
         )
@@ -148,7 +149,7 @@ const Inventory = ({
       if (pathway) {
         let pathwayRules = (
           await Get(
-            `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
+            `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
             {},
             {},
           )
@@ -156,7 +157,7 @@ const Inventory = ({
 
         let pathwayReport = (
           await Get(
-            `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
+            `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
             {},
             {},
           )
@@ -205,7 +206,7 @@ const Inventory = ({
     if (pathway) {
       const pathways = (
         await Get(
-          `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
+          `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
           {},
           {},
         )
@@ -213,7 +214,7 @@ const Inventory = ({
 
       const systems = (
         await Get(
-          `${BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
+          `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
           {},
           {},
         )
@@ -487,6 +488,7 @@ const Inventory = ({
                 workloads,
                 SID,
                 dispatch,
+                envContext.BASE_URL,
               ),
             isDisabled: !permsExport || entities?.rows?.length === 0,
             tooltipText: permsExport

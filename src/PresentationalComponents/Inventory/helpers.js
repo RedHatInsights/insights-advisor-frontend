@@ -1,6 +1,5 @@
 import { Get } from '../../Utilities/Api';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
-import { RULES_FETCH_URL, SYSTEMS_FETCH_URL } from '../../AppConstants';
 import { createOptions, createSortParam } from '../helper';
 
 /*This functions purpose is to grab the currently set filters, and return all associated systems for it.*/
@@ -15,6 +14,8 @@ export const paginatedRequestHelper = async ({
   rule,
   selectedTags,
   sort,
+  RULES_FETCH_URL,
+  SYSTEMS_FETCH_URL,
 }) => {
   let options = createOptions(
     advisorFilters,
@@ -55,6 +56,8 @@ export const getEntities =
     setFullFilters,
     fullFilters,
     rule,
+    RULES_FETCH_URL,
+    SYSTEMS_FETCH_URL,
   ) =>
   async (_items, config, showTags, defaultGetEntities) => {
     const {
@@ -68,6 +71,8 @@ export const getEntities =
       SID,
       selectedTags,
     } = config;
+    console.log(RULES_FETCH_URL, 'HANDS');
+    console.log(SYSTEMS_FETCH_URL, 'PEPE');
 
     const sort = createSortParam(orderBy, orderDirection);
 
@@ -83,7 +88,15 @@ export const getEntities =
       SID,
     );
     handleRefresh(options);
-    const allDetails = { ...config, pathway, handleRefresh, rule, sort };
+    const allDetails = {
+      ...config,
+      pathway,
+      handleRefresh,
+      rule,
+      sort,
+      RULES_FETCH_URL,
+      SYSTEMS_FETCH_URL,
+    };
     setFullFilters(allDetails);
     const fetchedSystems = await paginatedRequestHelper(allDetails);
     const results = await defaultGetEntities(
