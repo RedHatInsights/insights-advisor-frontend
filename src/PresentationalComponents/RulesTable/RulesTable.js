@@ -254,6 +254,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
               workloads,
               SID,
               dispatch,
+              envContext.BASE_URL,
             ),
           isDisabled: !envContext.isExportEnabled,
           tooltipText: envContext.isExportEnabled

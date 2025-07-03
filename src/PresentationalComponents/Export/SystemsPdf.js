@@ -1,9 +1,8 @@
 import './_Export.scss';
 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { leadPage, TablePage } from './SystemsPdfBuild';
 
-import { BASE_URL } from '../../AppConstants';
 import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
 import { Get } from '../../Utilities/Api';
 import PropTypes from 'prop-types';
@@ -11,6 +10,7 @@ import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { workloadQueryBuilder } from '../Common/Tables';
+import { EnvironmentContext } from '../../App';
 
 const SystemsPdf = ({ filters }) => {
   const intl = useIntl();
@@ -20,6 +20,7 @@ const SystemsPdf = ({ filters }) => {
   );
   const workloads = useSelector(({ AdvisorStore }) => AdvisorStore?.workloads);
   const SID = useSelector(({ AdvisorStore }) => AdvisorStore?.SID);
+  const envContext = useContext(EnvironmentContext);
 
   const dataFetch = async () => {
     setLoading(true);
@@ -27,7 +28,11 @@ const SystemsPdf = ({ filters }) => {
     workloads &&
       (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
     const systems = (
-      await Get(`${BASE_URL}/export/systems/`, {}, { ...filters, ...options })
+      await Get(
+        `${envContext.BASE_URL}/export/systems/`,
+        {},
+        { ...filters, ...options },
+      )
     ).data;
 
     const firstPage = leadPage({

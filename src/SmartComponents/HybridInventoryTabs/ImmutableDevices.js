@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import {
   pruneFilters,
@@ -16,6 +16,7 @@ import messages from '../../Messages';
 import { useIntl } from 'react-intl';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import { useNavigate } from 'react-router-dom';
+import { EnvironmentContext } from '../../App';
 
 const ImmutableDevices = ({
   rule,
@@ -27,6 +28,7 @@ const ImmutableDevices = ({
   const store = useStore();
   const intl = useIntl();
   const navigate = useNavigate();
+  const envContext = useContext(EnvironmentContext);
   const [filters, setFilters] = useState({
     limit: 20,
     offset: 0,
@@ -48,7 +50,13 @@ const ImmutableDevices = ({
     !pathway && urlBuilder(refreshedFilters, selectedTags);
   };
 
-  const fetchSystems = useGetEntities(handleRefresh, pathway, rule);
+  const fetchSystems = useGetEntities(
+    handleRefresh,
+    pathway,
+    rule,
+    envContext.RULES_FETCH_URL,
+    envContext.SYSTEMS_FETCH_URL,
+  );
 
   const removeFilterParam = (param) => {
     const filter = { ...filters, offset: 0 };

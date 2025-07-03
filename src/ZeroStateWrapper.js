@@ -1,4 +1,10 @@
-import React, { Suspense, useState, useEffect, createContext } from 'react';
+import React, {
+  Suspense,
+  useState,
+  useEffect,
+  createContext,
+  useContext,
+} from 'react';
 import { Bullseye, Spinner } from '@patternfly/react-core';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import ErrorState from '@redhat-cloud-services/frontend-components/ErrorState';
@@ -11,6 +17,7 @@ import {
   useGetEdgeDevicesQuery,
   useGetConventionalDevicesQuery,
 } from './Services/SystemVariety';
+import { EnvironmentContext } from './App';
 
 export const AccountStatContext = createContext({
   hasConventionalSystems: true,
@@ -20,6 +27,7 @@ export const AccountStatContext = createContext({
 export const ZeroStateWrapper = ({ children }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  const envContext = useContext(EnvironmentContext);
   const [hasConventionalSystems, setHasConventionalSystems] = useState(true);
   const [hasEdgeDevices, setHasEdgeDevices] = useState(true);
   const {
@@ -27,13 +35,17 @@ export const ZeroStateWrapper = ({ children }) => {
     isSuccess: edgeQuerySuccess,
     isError: edgeError,
     error: edgeErrorMessage,
-  } = useGetEdgeDevicesQuery();
+  } = useGetEdgeDevicesQuery({
+    baseUrl: envContext.INVENTORY_BASE_URL,
+  });
   const {
     data: conventional,
     isSuccess: conventionalQuerySuccess,
     isError: conventionalError,
     error: conventErrorMessage,
-  } = useGetConventionalDevicesQuery();
+  } = useGetConventionalDevicesQuery({
+    baseUrl: envContext.INVENTORY_BASE_URL,
+  });
   useEffect(() => {
     setHasEdgeDevices(edge?.total > 0);
     setHasConventionalSystems(conventional?.total > 0);
