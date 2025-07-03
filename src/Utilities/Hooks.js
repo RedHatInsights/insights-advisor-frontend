@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { PERMISSIONS } from '../AppConstants';
+import { BASE_URL, PERMISSIONS } from '../AppConstants';
 
 export const useFeatureFlag = (flag) => {
   const { flagsReady } = useFlagsStatus();
@@ -85,5 +85,16 @@ export const useHccEnvironmentContext = () => {
     globalFilterScope: chrome.globalFilterScope,
     requestPdf: chrome.requestPdf,
     isProd: chrome.isProd,
+    BASE_URI: document.baseURI,
+    BASE_URL: '/api/insights/v1',
+    UI_BASE: './insights',
+    RULES_FETCH_URL: `${BASE_URL}/rule/`,
+    STATS_SYSTEMS_FETCH_URL: `${BASE_URL}/stats/systems/`,
+    STATS_REPORTS_FETCH_URL: `${BASE_URL}/stats/reports/`,
+    STATS_OVERVIEW_FETCH_URL: `${BASE_URL}/stats/overview/`,
+    SYSTEMS_FETCH_URL: `${BASE_URL}/system/`,
+    EDGE_DEVICE_BASE_URL: '/api/edge/v1',
+    INVENTORY_BASE_URL: '/api/inventory/v1',
+    REMEDIATIONS_BASE_URL: '/api/remediations/v1',
   };
 };

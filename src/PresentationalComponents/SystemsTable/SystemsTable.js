@@ -265,8 +265,9 @@ const SystemsTable = () => {
             SID,
             true,
           );
-          const fetchedSystems = (await Get(SYSTEMS_FETCH_URL, {}, options))
-            ?.data;
+          const fetchedSystems = (
+            await Get(envContext.SYSTEMS_FETCH_URL, {}, options)
+          )?.data;
 
           handleRefresh(options);
           const results = await defaultGetEntities(
@@ -307,6 +308,7 @@ const SystemsTable = () => {
               workloads,
               SID,
               dispatch,
+              envContext.BASE_URL,
             ),
           extraItems: [
             <li

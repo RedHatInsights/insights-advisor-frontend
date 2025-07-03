@@ -1,9 +1,25 @@
-import { INVENTORY_BASE_URL } from '../AppConstants';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
+const dynamicBaseQuery = async (args, api, extraOptions) => {
+  let baseUrl;
+  if (typeof args === 'string') {
+    baseUrl = '/api/inventory/v1';
+  } else if (args && typeof args === 'object' && args.baseUrl) {
+    baseUrl = args.baseUrl;
+  } else {
+    baseUrl = '/api/inventory/v1';
+  }
+
+  const rawBaseQuery = fetchBaseQuery({ baseUrl });
+  const finalArgsForFetchBaseQuery =
+    typeof args === 'string' ? args : { ...args, baseUrl: undefined };
+
+  return rawBaseQuery(finalArgsForFetchBaseQuery, api, extraOptions);
+};
 
 export const SystemVariety = createApi({
   reducerPath: 'systemVariety',
-  baseQuery: fetchBaseQuery({ baseUrl: INVENTORY_BASE_URL }),
+  baseQuery: dynamicBaseQuery,
   keepUnusedDataFor: 5,
   endpoints: (build) => ({
     getConventionalDevices: build.query({

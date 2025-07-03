@@ -1,7 +1,7 @@
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
 import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 
-import { BASE_URL, exportNotifications } from '../../AppConstants';
+import { exportNotifications } from '../../AppConstants';
 import { Get } from '../../Utilities/Api';
 import { workloadQueryBuilder } from '../Common/Tables';
 import { populateExportError } from '../helper';
@@ -23,6 +23,7 @@ const downloadHelper = async (
   SID,
   dispatch,
   display_name,
+  BASE_URL,
 ) => {
   try {
     let options = selectedTags?.length && { tags: selectedTags };
