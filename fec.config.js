@@ -3,6 +3,7 @@ const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 
 module.exports = {
   appUrl: '/insights/advisor',
+  //publicPath: 'auto', uncomment it when work in satellite env
   debug: false,
   useProxy: process.env.PROXY === 'true',
   proxyVerbose: false,
@@ -31,12 +32,17 @@ module.exports = {
     publicPath: 'auto',
   },
   moduleFederation: {
+    exclude: ['@unleash/proxy-client-react'],
     shared: [
       {
         'react-router-dom': {
           singleton: true,
           import: false,
           version: '^6.3.0',
+        },
+        '@unleash/proxy-client-react': {
+          singleton: true,
+          version: '*',
         },
       },
     ],
@@ -61,6 +67,14 @@ module.exports = {
       './SatelliteDemoComponent': resolve(
         __dirname,
         './src/Temporary/SatelliteDemoComponent.js',
+      ),
+      './RulesTable': resolve(
+        __dirname,
+        './src/PresentationalComponents/RulesTable/RulesTable.js',
+      ),
+      './RulesTableWrapped': resolve(
+        __dirname,
+        './src/PresentationalComponents/RulesTable/RulesTableWrapped.js',
       ),
     },
   },
