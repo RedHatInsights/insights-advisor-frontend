@@ -1,9 +1,6 @@
 import './SystemsTable.scss';
 
-import {
-  SYSTEM_FILTER_CATEGORIES as SFC,
-  SYSTEMS_FETCH_URL,
-} from '../../AppConstants';
+import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { TableVariant } from '@patternfly/react-table';
 import {

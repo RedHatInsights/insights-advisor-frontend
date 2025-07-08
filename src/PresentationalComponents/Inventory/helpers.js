@@ -71,8 +71,6 @@ export const getEntities =
       SID,
       selectedTags,
     } = config;
-    console.log(RULES_FETCH_URL, 'HANDS');
-    console.log(SYSTEMS_FETCH_URL, 'PEPE');
 
     const sort = createSortParam(orderBy, orderDirection);
 

@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useRbac, useHccEnvironmentContext } from './Hooks';
-import { PERMISSIONS } from '../AppConstants';
+import { BASE_URL, PERMISSIONS } from '../AppConstants';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   __esModule: true,
@@ -104,6 +104,17 @@ describe('useHccEnvironmentContext', () => {
       globalFilterScope: mockChrome.globalFilterScope,
       requestPdf: mockChrome.requestPdf,
       isProd: true,
+      BASE_URI: document.baseURI,
+      BASE_URL: '/api/insights/v1',
+      UI_BASE: './insights',
+      RULES_FETCH_URL: `${BASE_URL}/rule/`,
+      STATS_SYSTEMS_FETCH_URL: `${BASE_URL}/stats/systems/`,
+      STATS_REPORTS_FETCH_URL: `${BASE_URL}/stats/reports/`,
+      STATS_OVERVIEW_FETCH_URL: `${BASE_URL}/stats/overview/`,
+      SYSTEMS_FETCH_URL: `${BASE_URL}/system/`,
+      EDGE_DEVICE_BASE_URL: '/api/edge/v1',
+      INVENTORY_BASE_URL: '/api/inventory/v1',
+      REMEDIATIONS_BASE_URL: '/api/remediations/v1',
     });
   });
 });
