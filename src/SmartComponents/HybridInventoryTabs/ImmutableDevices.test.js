@@ -114,6 +114,8 @@ describe('ImmutableDevices', () => {
       expect.any(Function),
       'test-pathway',
       'test-rule',
+      '/api/insights/v1/rule/',
+      '/api/insights/v1/system/',
     );
   });
 
