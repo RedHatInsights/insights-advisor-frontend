@@ -8,13 +8,18 @@ export const Recs = createApi({
   keepUnusedDataFor: 5,
   endpoints: (build) => ({
     getRecs: build.query({
-      query: (options) => ({ url: `/rule/`, options }),
+      query: (options) => ({
+        url: `/rule/`,
+        urlOverride: options?.customUrl,
+        options,
+      }),
     }),
     getRec: build.query({
       query: (options) => {
         const ruleId = encodeURI(options.ruleId);
         return {
           url: `/rule/${ruleId}/`,
+          urlOverride: options?.customUrl,
           options: { ...options, ruleId },
         };
       },
@@ -22,6 +27,7 @@ export const Recs = createApi({
     getRecSystems: build.query({
       query: (options, search) => ({
         url: `/rule/${encodeURI(options.ruleId)}/systems/`,
+        urlOverride: options?.customUrl,
         options,
         search,
       }),
