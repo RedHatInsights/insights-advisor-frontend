@@ -45,7 +45,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
     isFetching,
     isError,
     refetch,
-  } = useGetRecQuery({ ruleId, customUrl: envContext.BASE_URL });
+  } = useGetRecQuery({ ruleId, customBasePath: envContext.BASE_URL });
 
   const {
     data: recAck = {},

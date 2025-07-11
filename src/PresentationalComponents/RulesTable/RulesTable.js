@@ -88,7 +88,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
   } = useGetRecsQuery({
     ...filterFetchBuilder(filters),
     ...options,
-    customUrl: envContext.BASE_URL,
+    customBasePath: envContext.BASE_URL,
   });
 
   const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);

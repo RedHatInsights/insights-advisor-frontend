@@ -11,8 +11,11 @@ import fixtures from '../../../cypress/fixtures/recommendations.json';
 import { itExportsDataToFile } from '../../../cypress/utils/table';
 import { hasChip } from '@redhat-cloud-services/frontend-components-utilities';
 import { createTestEnvironmentContext } from '../../../cypress/support/globals';
+
+const DEFAULT_API_BASE_PATH = '/api/insights/v1';
+
 /**
- * Mounts the Details component with a configurable environment context.
+ * Mounts the Details component with a configurable environment context AND sets up intercepts dynamically.
  *
  * @param {boolean} hasEdgeDevices - Whether the user has Edge devices.
  * @param {object} envContextOverrides - Optional overrides for the default EnvironmentContext values.
@@ -24,6 +27,36 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
     ...envContext,
     ...envContextOverrides,
   };
+
+  const currentRequestBasePath =
+    finalEnvContext.customBasePath || DEFAULT_API_BASE_PATH;
+
+  cy.intercept(`${currentRequestBasePath}/topic/123/?&topicId=123`, {
+    name: 'Amazon Web Services (AWS)',
+    slug: 'aws',
+    description:
+      'Increase stability of your RHEL workloads running on Amazon Web Services by applying these recommendations.',
+    tag: 'aws',
+    featured: true,
+    enabled: true,
+    impacted_systems_count: 0,
+  }).as('topic_details_call');
+
+  // Intercept for rules table call (general)
+  cy.intercept(
+    `${currentRequestBasePath}/rule/?impacting=true&rule_status=enabled&sort=-total_risk&limit=20&offset=0`,
+    {
+      data: [],
+    },
+  ).as('rules_table_call');
+
+  // Intercept for rules table initial call (specific filters)
+  cy.intercept(
+    `${currentRequestBasePath}/rule/?topic=123&update_method=ostree%2Cdnfyum&impacting=true&rule_status=enabled&sort=-total_risk&limit=10&offset=0`,
+    {
+      data: [],
+    },
+  ).as('rules_table_initial_call');
 
   cy.mount(
     <EnvironmentContext.Provider value={finalEnvContext}>
@@ -42,38 +75,13 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
   );
 };
 
-beforeEach(() => {
-  cy.intercept('/api/insights/v1/topic/123/?&topicId=123', {
-    name: 'Amazon Web Services (AWS)',
-    slug: 'aws',
-    description:
-      'Increase stability of your RHEL workloads running on Amazon Web Services by applying these recommendations.',
-    tag: 'aws',
-    featured: true,
-    enabled: true,
-    impacted_systems_count: 0,
-  }).as('topic_details_call');
-  cy.intercept(
-    '/api/insights/v1/rule/?&impacting=true&rule_status=enabled&sort=-total_risk&limit=20&offset=0',
-    {
-      data: [],
-    },
-  ).as('rules_table_call');
-  cy.intercept(
-    '/api/insights/v1/rule/?&topic=123&update_method=ostree%2Cdnfyum&impacting=true&rule_status=enabled&sort=-total_risk&limit=10&offset=0',
-    {
-      data: [],
-    },
-  ).as('rules_table_initial_call');
-});
-
 describe('Topic Details is loaded correctly for user with Edge systems', () => {
   beforeEach(() => {
     mountComponent(true);
   });
 
   it('Correct default filters for Recommendation table', () => {
-    cy.wait(['@rules_table_initial_call']);
+    cy.wait(['@rules_table_initial_call']); // This should now pass if the URL string is exact
     hasChip('Status', 'Enabled');
     hasChip('Systems impacted', '1 or more Conventional systems (RPM-DNF)');
     hasChip('Systems impacted', '1 or more Immutable (OSTree)');
@@ -104,7 +112,6 @@ describe('Export', () => {
   it(`works and downloads report is enabled`, () => {
     mountComponent(false);
     itExportsDataToFile(fixtures.data, 'Insights-Advisor_hits--');
-    // Ensure requestPdf is NOT called, as itExportsDataToFile likely simulates a direct download
     cy.get('@requestPdfStub').should('not.have.been.called');
   });
 });

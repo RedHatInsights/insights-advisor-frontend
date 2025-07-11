@@ -16,7 +16,7 @@ const Breadcrumbs = ({ current }) => {
     !(location[1] === 'recommendations' && location.length === 4) ||
     location[2] === 'pathways';
   const { data, isFetching } = useGetRecQuery(
-    { ruleId: location[2], customUrl: envContext.BASE_URL },
+    { ruleId: location[2], customBasePath: envContext.BASE_URL },
     { skip },
   );
 
