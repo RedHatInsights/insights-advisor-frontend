@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
 import { EnvironmentContext } from '../App';
+import { BASE_URL } from '../AppConstants';
 
 export const DEFAULT_TEST_ENVIRONMENT_CONTEXT = {
   isLoading: false,
@@ -19,6 +20,17 @@ export const DEFAULT_TEST_ENVIRONMENT_CONTEXT = {
   globalFilterScope: () => {},
   requestPdf: () => {},
   isProd: () => {},
+  BASE_URI: document.baseURI,
+  BASE_URL: '/api/insights/v1',
+  UI_BASE: './insights',
+  RULES_FETCH_URL: `${BASE_URL}/rule/`,
+  STATS_SYSTEMS_FETCH_URL: `${BASE_URL}/stats/systems/`,
+  STATS_REPORTS_FETCH_URL: `${BASE_URL}/stats/reports/`,
+  STATS_OVERVIEW_FETCH_URL: `${BASE_URL}/stats/overview/`,
+  SYSTEMS_FETCH_URL: `${BASE_URL}/system/`,
+  EDGE_DEVICE_BASE_URL: '/api/edge/v1',
+  INVENTORY_BASE_URL: '/api/inventory/v1',
+  REMEDIATIONS_BASE_URL: '/api/remediations/v1',
 };
 
 export const ComponentWithContext = ({

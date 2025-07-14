@@ -1,9 +1,5 @@
 import './SystemAdvisor.scss';
-import {
-  BASE_URL,
-  FILTER_CATEGORIES as FC,
-  INVENTORY_BASE_URL,
-} from '../../AppConstants';
+import { FILTER_CATEGORIES as FC } from '../../AppConstants';
 import { Flex, Spinner } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';
 import React, {
@@ -110,7 +106,11 @@ const BaseSystemAdvisor = ({ entity, inventoryId, IopRemediationModal }) => {
       ? [
           <Flex key="inventory-actions">
             {IopRemediationModal ? (
-              IopRemediationModal
+              React.isValidElement(IopRemediationModal) ? (
+                IopRemediationModal
+              ) : (
+                <IopRemediationModal />
+              )
             ) : (
               <RemediationButton
                 key="remediation-button"
@@ -383,7 +383,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId, IopRemediationModal }) => {
     const dataFetch = async () => {
       try {
         const reportsFetch = await Get(
-          `${BASE_URL}/system/${inventoryId}/reports/`,
+          `${envContext.BASE_URL}/system/${inventoryId}/reports/`,
           {
             credentials: 'include',
           },
@@ -406,7 +406,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId, IopRemediationModal }) => {
         setActiveReports(activeRuleFirstReportsData);
 
         const profileData = await Get(
-          `${INVENTORY_BASE_URL}/hosts/${inventoryId}/system_profile`,
+          `${envContext.INVENTORY_BASE_URL}/hosts/${inventoryId}/system_profile`,
           {
             credentials: 'include',
           },
@@ -466,6 +466,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId, IopRemediationModal }) => {
                 SID,
                 dispatch,
                 display_name,
+                envContext.BASE_URL,
               ),
             isDisabled: !envContext.isExportEnabled,
             tooltipText: envContext.isExportEnabled
@@ -513,13 +514,7 @@ BaseSystemAdvisor.propTypes = {
 const SystemAdvisor = ({ ...props }) => {
   const entity = useSelector(({ entityDetails }) => entityDetails.entity);
 
-  return (
-    <BaseSystemAdvisor
-      {...props}
-      entity={entity}
-      IopRemediationModal={IopRemediationModal}
-    />
-  );
+  return <BaseSystemAdvisor {...props} entity={entity} />;
 };
 
 export default SystemAdvisor;

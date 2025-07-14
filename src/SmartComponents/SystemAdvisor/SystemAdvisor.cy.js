@@ -49,7 +49,7 @@ const SYSTEM_INSIGHTS_ID = '456';
 //THIS FILE HAS COMMENTED OUT TEST BECAUSE THE FUNCTIONS/LABELS IMPORTED FROM FEC-UTILS
 //NEED TO BE UPDATED
 
-const mountComponent = (envContextOverrides = {}, IopModal) => {
+const mountComponent = (envContextOverrides = {}, IopRemediationModal) => {
   let envContext = createTestEnvironmentContext();
   const finalEnvContext = {
     ...envContext,
@@ -65,7 +65,7 @@ const mountComponent = (envContextOverrides = {}, IopModal) => {
             insights_id: SYSTEM_INSIGHTS_ID,
           }}
           inventoryId={SYSTEM_ID}
-          IopRemediationModal={IopModal}
+          IopRemediationModal={IopRemediationModal}
         />
       </Wrapper>
     </EnvironmentContext.Provider>,
@@ -326,6 +326,16 @@ describe('system rules table', () => {
     }
 
     it(`Export kebab tooltip displays the correct content.`, () => {
+      mountComponent(
+        { isExportEnabled: false },
+        <Button
+          variant="primary"
+          isDisabled={() => console.log('test')}
+          onClick={() => console.log('test')}
+        >
+          {'Satellite button'}
+        </Button>,
+      );
       cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
       cy.contains(messages.permsAction.defaultMessage).should('be.visible');
     });
@@ -381,7 +391,30 @@ describe('system rules table', () => {
 //     .should('have.attr', 'href', kcsEntry?.view_uri);
 // });
 
-describe.only('system rules table', () => {
+describe('System rules table toolbar actions', () => {
+  const DummyButton = () => (
+    <Button variant="primary" onClick={() => {}}>
+      Satellite button
+    </Button>
+  );
+  const interceptSystemProfile = (hostType = 'non-edge') => {
+    cy.intercept(`${INVENTORY_BASE_URL}/hosts/${SYSTEM_ID}/system_profile`, {
+      statusCode: 200,
+      body: {
+        ...systemProfile.data,
+        results: [
+          {
+            ...systemProfile.data.results[0],
+            system_profile: {
+              ...systemProfile.data.results[0].system_profile,
+              host_type: hostType,
+            },
+          },
+        ],
+      },
+    }).as('getSystemProfile');
+  };
+
   beforeEach(() => {
     cy.intercept('/api/insights/v1/account_setting/', {
       statusCode: 200,
@@ -393,26 +426,29 @@ describe.only('system rules table', () => {
         docs: fixturesKcs,
       },
     }).as('kcs');
-    cy.intercept(
-      `${INVENTORY_BASE_URL}/hosts/${SYSTEM_ID}/system_profile`,
-      systemProfile.data,
-    ).as('getSystemProfile');
-
-    mountComponent(
-      {},
-      <Button
-        variant="primary"
-        isDisabled={() => console.log('test')}
-        onClick={() => console.log('test')}
-      >
-        {'Remediate'}
-      </Button>,
-    );
   });
 
-  describe('Toolbar actions are updated correctly', () => {
-    it('Should show remediation button when host is of type edge', () => {
-      cy.get('.ins-c-primary-toolbar__first-action').contains('Remediate');
-    });
+  it('Shows default remediation button when IopRemediationModal is not passed', () => {
+    interceptSystemProfile('non-edge');
+
+    mountComponent({});
+
+    cy.get('.ins-c-primary-toolbar__first-action')
+      .contains('Remediation')
+      .should('exist');
+  });
+
+  it('Renders custom IOP remediation button when passed as prop', () => {
+    interceptSystemProfile('non-edge');
+    mountComponent({}, DummyButton);
+    cy.wait('@getSystemProfile');
+
+    cy.get('.ins-c-primary-toolbar__first-action')
+      .contains('Satellite button')
+      .should('exist');
+
+    cy.get('.ins-c-primary-toolbar__first-action')
+      .contains('Remediation')
+      .should('not.exist');
   });
 });

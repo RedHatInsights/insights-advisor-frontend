@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
@@ -6,15 +6,17 @@ import messages from '../../Messages';
 import { useGetRecQuery } from '../../Services/Recs';
 import { useLocation } from 'react-router-dom';
 import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
+import { EnvironmentContext } from '../../App';
 
 const Breadcrumbs = ({ current }) => {
   const location = useLocation().pathname?.split('/');
   const [items, setItems] = useState([]);
+  const envContext = useContext(EnvironmentContext);
   const skip =
     !(location[1] === 'recommendations' && location.length === 4) ||
     location[2] === 'pathways';
   const { data, isFetching } = useGetRecQuery(
-    { ruleId: location[2] },
+    { ruleId: location[2], customBasePath: envContext.BASE_URL },
     { skip },
   );
 
