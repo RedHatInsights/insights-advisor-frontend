@@ -85,7 +85,11 @@ const RulesTable = ({ isTabActive, pathway }) => {
     isLoading,
     isError,
     refetch,
-  } = useGetRecsQuery({ ...filterFetchBuilder(filters), ...options });
+  } = useGetRecsQuery({
+    ...filterFetchBuilder(filters),
+    ...options,
+    customBasePath: envContext.BASE_URL,
+  });
 
   const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
   const results = rules?.meta?.count || 0;

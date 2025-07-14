@@ -39,12 +39,13 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
   const dispatch = useDispatch();
   const ruleId = useParams().id;
   const addNotification = (data) => dispatch(notification(data));
+  const envContext = useContext(EnvironmentContext);
   const {
     data: rule = {},
     isFetching,
     isError,
     refetch,
-  } = useGetRecQuery({ ruleId });
+  } = useGetRecQuery({ ruleId, customBasePath: envContext.BASE_URL });
 
   const {
     data: recAck = {},
@@ -64,7 +65,6 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
   const [conventionalSystemsCount, setConventionalSystemsCount] = useState(0);
   const [areCountsLoading, setCountsLoading] = useState(true);
   const { hasEdgeDevices } = useContext(AccountStatContext);
-  const envContext = useContext(EnvironmentContext);
 
   const handleModalToggle = (disableRuleModalOpen, host = undefined) => {
     setDisableRuleModalOpen(disableRuleModalOpen);
