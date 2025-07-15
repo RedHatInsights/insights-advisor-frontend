@@ -4,9 +4,9 @@ import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 import messages from '../../Messages';
 import { useGetRecQuery } from '../../Services/Recs';
-import { useLocation } from 'react-router-dom';
-import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
+import { Link, useLocation } from 'react-router-dom';
 import { EnvironmentContext } from '../../App';
+import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 
 const Breadcrumbs = ({ current }) => {
   const location = useLocation().pathname?.split('/');
@@ -64,7 +64,13 @@ const Breadcrumbs = ({ current }) => {
         <Breadcrumb ouiaId="detail">
           {items.map((oneLink, key) => (
             <BreadcrumbItem key={key}>
-              <Link to={oneLink.navigate}>{oneLink.title}</Link>
+              {envContext.loadChromeless ? (
+                <Link to={oneLink.navigate}>{oneLink.title}</Link>
+              ) : (
+                <InsightsLink to={oneLink.navigate}>
+                  {oneLink.title}
+                </InsightsLink>
+              )}
             </BreadcrumbItem>
           ))}
           <BreadcrumbItem isActive>{current}</BreadcrumbItem>

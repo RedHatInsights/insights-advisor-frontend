@@ -512,6 +512,7 @@ export const IOP_ENVIRONMENT_CONTEXT = {
   displayExecReportLink: false,
   displayDownloadPlaybookButton: true,
   changeRemediationButtonForIop: true,
+  loadChromeless: true,
   updateDocumentTitle: (name) => (document.title = name),
   getUser: () => '',
   on: () => {},

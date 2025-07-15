@@ -174,6 +174,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
           setViewSystemsModalRule,
           setViewSystemsModalOpen,
           intl,
+          envContext,
         );
         setRows(rows);
       }
