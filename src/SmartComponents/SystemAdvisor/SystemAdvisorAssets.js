@@ -117,7 +117,7 @@ export const useBuildRows = (
   systemAdvisorRef,
   entity,
   inventoryReportFetchStatus,
-  isProd,
+  envContext,
 ) => {
   const location = useLocation().pathname?.split('/');
   return useCallback(
@@ -268,7 +268,7 @@ export const useBuildRows = (
                     }}
                     kbaDetail={kbaDetail}
                     kbaLoading={kbaLoading}
-                    isProd={isProd}
+                    isProd={envContext.isProd}
                   />
                 ),
               },

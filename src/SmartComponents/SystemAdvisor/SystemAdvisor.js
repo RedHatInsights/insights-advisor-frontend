@@ -149,7 +149,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId, IopRemediationModal }) => {
     systemAdvisorRef,
     entity,
     inventoryReportFetchStatus,
-    envContext.isProd,
+    envContext,
   );
   const onRowSelect = (_e, isSelected, rowId) =>
     setRows(
