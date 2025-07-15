@@ -3,7 +3,8 @@ const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 
 module.exports = {
   appUrl: '/insights/advisor',
-  //publicPath: 'auto', uncomment it when work in satellite env
+  // uncomment publicPath when working in satellite env
+  //publicPath: 'auto',
   debug: false,
   useProxy: process.env.PROXY === 'true',
   proxyVerbose: false,
@@ -52,6 +53,10 @@ module.exports = {
         `/src/${process.env.NODE_ENV !== 'production' ? 'Dev' : ''}AppEntry`,
       ),
       './SystemDetail': resolve(__dirname, 'src/Modules/SystemDetail'),
+      './SystemDetailWrapped': resolve(
+        __dirname,
+        'src/Modules/SystemDetailWrapped',
+      ),
       './BuildExecReport': resolve(
         __dirname,
         '/src/PresentationalComponents/ExecutiveReport/BuildExecReport',
@@ -75,6 +80,14 @@ module.exports = {
       './RulesTableWrapped': resolve(
         __dirname,
         './src/PresentationalComponents/RulesTable/RulesTableWrapped.js',
+      ),
+      './OverviewDetails': resolve(
+        __dirname,
+        './src/SmartComponents/Recs/Details.js',
+      ),
+      './RecsDetailsWrapped': resolve(
+        __dirname,
+        './src/SmartComponents/Recs/RecsDetailsWrapped.js',
       ),
     },
   },
