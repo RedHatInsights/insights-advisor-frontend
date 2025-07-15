@@ -337,7 +337,7 @@ export const FILTER_CATEGORIES = {
   },
   has_playbook: {
     type: conditionalFilterType.checkbox,
-    title: 'remediation',
+    title: 'remediation type',
     urlParam: 'has_playbook',
     values: [
       {
