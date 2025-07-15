@@ -483,13 +483,13 @@ export const buildRows = (
                   ViewAffectedLink={
                     value.rule_status === 'enabled' &&
                     (envContext.loadChromeless ? (
-                      <InsightsLink to={`/recommendations/${value.rule_id}`}>
+                      <Link to={`/recommendations/${value.rule_id}`}>
                         {value.impacted_systems_count === 0
                           ? ''
                           : intl.formatMessage(messages.viewAffectedSystems, {
                               systems: value.impacted_systems_count,
                             })}
-                      </InsightsLink>
+                      </Link>
                     ) : (
                       <InsightsLink to={`/recommendations/${value.rule_id}`}>
                         {value.impacted_systems_count === 0
