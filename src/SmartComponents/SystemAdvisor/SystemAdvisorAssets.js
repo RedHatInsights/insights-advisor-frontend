@@ -18,11 +18,11 @@ import {
   InsightsNotEnabled,
   InventoryReportFetchFailed,
 } from './EmptyStates';
-import { useLocation } from 'react-router-dom';
-import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
+import { Link, useLocation } from 'react-router-dom';
 
 import messages from '../../Messages';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
+import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 
 export const getColumns = (intl) => [
   {
@@ -176,13 +176,23 @@ export const useBuildRows = (
               {
                 title: (
                   <span key={key}>
-                    <Link
-                      key={key}
-                      app="advisor"
-                      to={`/recommendations/${rule.rule_id}`}
-                    >
-                      {rule.description}{' '}
-                    </Link>
+                    {envContext.loadChromeless ? (
+                      <Link
+                        key={key}
+                        app="advisor"
+                        to={`/recommendations/${rule.rule_id}`}
+                      >
+                        {rule.description}
+                      </Link>
+                    ) : (
+                      <InsightsLink
+                        key={key}
+                        app="advisor"
+                        to={`/recommendations/${rule.rule_id}`}
+                      >
+                        {rule.description}
+                      </InsightsLink>
+                    )}
                     <RuleLabels rule={rule} isCompact />
                   </span>
                 ),

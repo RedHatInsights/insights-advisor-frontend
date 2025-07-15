@@ -1,19 +1,26 @@
 import React from 'react';
-import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 import { wrappable } from '@patternfly/react-table';
 
 import messages from '../../Messages';
 import RuleLabels from '../Labels/RuleLabels';
+import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
+import { Link } from 'react-router-dom';
 
-export const systemsTableColumns = (intl) => [
+export const systemsTableColumns = (intl, envContext) => [
   {
     key: 'display_name',
     transforms: [wrappable],
     renderFunc: (data, id, system) => (
       <React.Fragment>
-        <Link key={id} to={`/systems/${system.system_uuid}`}>
-          {`${system.display_name} `}
-        </Link>
+        {envContext.loadChromeless ? (
+          <Link key={id} to={`/systems/${system.system_uuid}`}>
+            {`${system.display_name} `}
+          </Link>
+        ) : (
+          <InsightsLink key={id} to={`/systems/${system.system_uuid}`}>
+            {`${system.display_name} `}
+          </InsightsLink>
+        )}
         {system.incident_hits > 0 && <RuleLabels rule={{ tags: 'incident' }} />}
       </React.Fragment>
     ),

@@ -151,7 +151,7 @@ const SystemsTable = () => {
     urlBuilder(refreshedFilters, selectedTags);
   };
 
-  const columns = systemsTableColumns(intl);
+  const columns = systemsTableColumns(intl, envContext);
 
   useEffect(() => {
     let combinedFilters;

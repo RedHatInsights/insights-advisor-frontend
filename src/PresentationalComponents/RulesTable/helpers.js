@@ -7,7 +7,6 @@ import { addNotification as addNotificationAction } from '@redhat-cloud-services
 import * as AppConstants from '../../AppConstants';
 import messages from '../../Messages';
 import { FILTER_CATEGORIES as FC } from '../../AppConstants';
-import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
 import {
   Stack,
   StackItem,
@@ -34,6 +33,8 @@ import { conditionalFilterType } from '@redhat-cloud-services/frontend-component
 import { ruleResolutionRisk, pruneFilters } from '../Common/Tables';
 import { cellWidth, fitContent, sortable } from '@patternfly/react-table';
 import { getImpactingFilterChips } from '../Filters/impactingFilter';
+import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
+import { Link } from 'react-router-dom';
 
 export const emptyRows = (filters, toggleRulesDisabled) => [
   {
@@ -339,6 +340,7 @@ export const buildRows = (
   setViewSystemsModalRule,
   setViewSystemsModalOpen,
   intl,
+  envContext,
 ) => {
   const rows = rules.data.flatMap((value, key) => [
     {
@@ -348,10 +350,20 @@ export const buildRows = (
         {
           title: (
             <span key={key}>
-              <Link key={key} to={`/recommendations/${value.rule_id}`}>
-                {' '}
-                {value.description}{' '}
-              </Link>
+              {envContext.loadChromeless ? (
+                <Link key={key} to={`/recommendations/${value.rule_id}`}>
+                  {' '}
+                  {value.description}{' '}
+                </Link>
+              ) : (
+                <InsightsLink
+                  key={key}
+                  to={`/recommendations/${value.rule_id}`}
+                >
+                  {' '}
+                  {value.description}{' '}
+                </InsightsLink>
+              )}
               <RuleLabels rule={value} isCompact />
             </span>
           ),
@@ -397,10 +409,14 @@ export const buildRows = (
           title:
             value.rule_status !== 'enabled' ? (
               <span>{value.impacted_systems_count}</span>
-            ) : (
+            ) : envContext.loadChromeless ? (
               <Link key={key} to={`/recommendations/${value.rule_id}`}>
                 {`${value.impacted_systems_count.toLocaleString()}`}
               </Link>
+            ) : (
+              <InsightsLink key={key} to={`/recommendations/${value.rule_id}`}>
+                {`${value.impacted_systems_count.toLocaleString()}`}
+              </InsightsLink>
             ),
         },
         {
@@ -465,15 +481,24 @@ export const buildRows = (
                   isDetailsPage={false}
                   showViewAffected
                   ViewAffectedLink={
-                    value.rule_status === 'enabled' && (
-                      <Link to={`/recommendations/${value.rule_id}`}>
+                    value.rule_status === 'enabled' &&
+                    (envContext.loadChromeless ? (
+                      <InsightsLink to={`/recommendations/${value.rule_id}`}>
                         {value.impacted_systems_count === 0
                           ? ''
                           : intl.formatMessage(messages.viewAffectedSystems, {
                               systems: value.impacted_systems_count,
                             })}
-                      </Link>
-                    )
+                      </InsightsLink>
+                    ) : (
+                      <InsightsLink to={`/recommendations/${value.rule_id}`}>
+                        {value.impacted_systems_count === 0
+                          ? ''
+                          : intl.formatMessage(messages.viewAffectedSystems, {
+                              systems: value.impacted_systems_count,
+                            })}
+                      </InsightsLink>
+                    ))
                   }
                   knowledgebaseUrl={
                     value.node_id
