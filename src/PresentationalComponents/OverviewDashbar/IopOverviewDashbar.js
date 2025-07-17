@@ -24,7 +24,7 @@ import RuleLabels from '../Labels/RuleLabels';
 import { TagLabelWithTooltip } from '../Cards/OverviewDashbarCard/TagLabelWithTooltip';
 import { EnvironmentContext } from '../../App';
 
-const OverviewDashbar = ({ changeTab }) => {
+const IopOverviewDashbar = ({ changeTab }) => {
   const envContext = useContext(EnvironmentContext);
   const { data } = useOverviewData(envContext);
   const { pathways, incidents, critical, important, loaded, isError } = data;
@@ -117,8 +117,8 @@ const OverviewDashbar = ({ changeTab }) => {
   );
 };
 
-OverviewDashbar.propTypes = {
+IopOverviewDashbar.propTypes = {
   changeTab: propTypes.func,
 };
 
-export default OverviewDashbar;
+export default IopOverviewDashbar;

@@ -47,7 +47,12 @@ describe('OverviewDashbar', () => {
     });
 
     render(
-      <EnvironmentContext.Provider value={{ displayRecPathways: true }}>
+      <EnvironmentContext.Provider
+        value={{
+          displayRecPathways: true,
+          STATS_OVERVIEW_FETCH_URL: STATS_OVERVIEW_FETCH_URL,
+        }}
+      >
         <Provider store={store}>
           <OverviewDashbar changeTab={changeTab} />
         </Provider>
