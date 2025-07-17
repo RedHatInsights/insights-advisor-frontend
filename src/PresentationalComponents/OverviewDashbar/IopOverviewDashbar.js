@@ -10,16 +10,13 @@ import messages from '../../Messages';
 import {
   IMPORTANT_RECOMMENDATIONS,
   CRITICAL_RECOMMENDATIONS,
-  PATHWAYS_TAB,
   INCIDENT_TAG,
   CRITICAL_TAG,
   SEVERITY_MAP,
   IMPORTANT_TAG,
-  PATHWAYS,
   INCIDENTS,
 } from '../../AppConstants';
 import { QuestionTooltip } from '../Common/Common';
-import { RouteIcon } from '@patternfly/react-icons';
 import RuleLabels from '../Labels/RuleLabels';
 import { TagLabelWithTooltip } from '../Cards/OverviewDashbarCard/TagLabelWithTooltip';
 import { EnvironmentContext } from '../../App';
@@ -27,34 +24,13 @@ import { EnvironmentContext } from '../../App';
 const IopOverviewDashbar = ({ changeTab }) => {
   const envContext = useContext(EnvironmentContext);
   const { data } = useOverviewData(envContext);
-  const { pathways, incidents, critical, important, loaded, isError } = data;
+  const { incidents, critical, important, loaded, isError } = data;
   const mdSpan = envContext.displayRecPathways ? 3 : 4;
 
   const { onClickFilterByName } = useApplyFilters(changeTab);
 
   return !isError ? (
     <Grid hasGutter id="overview-dashbar">
-      {envContext.displayRecPathways && (
-        <GridItem span={12} md={mdSpan}>
-          <OverviewDashbarCard
-            name={PATHWAYS}
-            isLoaded={loaded}
-            title={
-              <Title headingLevel="h6" size="md">
-                {messages.pathways.defaultMessage}
-                <QuestionTooltip
-                  text={messages.recommendedPathways.defaultMessage}
-                />
-              </Title>
-            }
-            badge={<RouteIcon size="md" data-testid="route-icon" />}
-            count={pathways}
-            onClickFilterByName={() => {
-              changeTab(PATHWAYS_TAB);
-            }}
-          />
-        </GridItem>
-      )}
       <GridItem span={12} md={mdSpan}>
         <OverviewDashbarCard
           name={INCIDENTS}
