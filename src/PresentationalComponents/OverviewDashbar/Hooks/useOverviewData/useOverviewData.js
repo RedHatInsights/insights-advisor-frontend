@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { dataFetch } from '../../../../Services/Overview';
 
-function useOverviewData() {
+function useOverviewData(envContext) {
   const [data, setData] = useState({ loaded: false, isError: false });
 
   useEffect(() => {
     (async () => {
-      const responseDataWithInfo = await dataFetch();
+      const responseDataWithInfo = await dataFetch(envContext);
       setData(responseDataWithInfo);
     })();
   }, []);

@@ -1,10 +1,9 @@
 import { Get } from '../Utilities/Api';
 import messages from '../Messages';
-import { STATS_OVERVIEW_FETCH_URL } from '../AppConstants';
 
 const dataFetch = async () => {
   try {
-    const response = await Get(STATS_OVERVIEW_FETCH_URL);
+    const response = await Get(envContext.STATS_OVERVIEW_FETCH_URL);
     if (response.data) {
       const data = response.data;
       return { ...data, loaded: true, isError: false };

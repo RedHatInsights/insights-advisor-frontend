@@ -73,14 +73,6 @@ module.exports = {
         __dirname,
         './src/Temporary/SatelliteDemoComponent.js',
       ),
-      './RulesTable': resolve(
-        __dirname,
-        './src/PresentationalComponents/RulesTable/RulesTable.js',
-      ),
-      './RulesTableWrapped': resolve(
-        __dirname,
-        './src/PresentationalComponents/RulesTable/RulesTableWrapped.js',
-      ),
       './OverviewDetails': resolve(
         __dirname,
         './src/SmartComponents/Recs/Details.js',
@@ -88,6 +80,10 @@ module.exports = {
       './RecommendationDetailsWrapped': resolve(
         __dirname,
         './src/SmartComponents/Recs/RecommendationDetailsWrapped.js',
+      ),
+      './ListWrapped': resolve(
+        __dirname,
+        './src/SmartComponents/Recs/ListWrapped.js',
       ),
     },
   },
