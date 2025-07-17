@@ -85,9 +85,9 @@ module.exports = {
         __dirname,
         './src/SmartComponents/Recs/Details.js',
       ),
-      './RecsDetailsWrapped': resolve(
+      './RecommendationDetailsWrapped': resolve(
         __dirname,
-        './src/SmartComponents/Recs/RecsDetailsWrapped.js',
+        './src/SmartComponents/Recs/RecommendationDetailsWrapped.js',
       ),
     },
   },
