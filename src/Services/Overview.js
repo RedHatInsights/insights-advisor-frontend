@@ -1,7 +1,7 @@
 import { Get } from '../Utilities/Api';
 import messages from '../Messages';
 
-const dataFetch = async () => {
+const dataFetch = async (envContext) => {
   try {
     const response = await Get(envContext.STATS_OVERVIEW_FETCH_URL);
     if (response.data) {
