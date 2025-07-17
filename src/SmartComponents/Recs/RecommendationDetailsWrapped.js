@@ -7,7 +7,7 @@ import { EnvironmentContext } from '../../App';
 import { initStore } from '../../Store';
 import OverviewDetails from './Details';
 
-const RecsDetailsWrapped = (props) => (
+const RecommendationDetailsWrapped = (props) => (
   <IntlProvider locale="en" messages={messages}>
     <EnvironmentContext.Provider value={IOP_ENVIRONMENT_CONTEXT}>
       <Provider store={initStore()}>
@@ -17,4 +17,4 @@ const RecsDetailsWrapped = (props) => (
   </IntlProvider>
 );
 
-export default RecsDetailsWrapped;
+export default RecommendationDetailsWrapped;
