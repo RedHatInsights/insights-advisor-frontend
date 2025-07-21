@@ -51,10 +51,11 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
     data: recAck = {},
     isFetching: recAckIsFetching,
     refetch: recAckRefetch,
-  } = useGetRecAcksQuery({ ruleId });
+  } = useGetRecAcksQuery({ ruleId, customBasePath: envContext.BASE_URL });
 
-  const { data: topics = [], isFetching: topicIsFetching } =
-    useGetTopicsQuery();
+  const { data: topics = [], isFetching: topicIsFetching } = useGetTopicsQuery({
+    customBasePath: envContext.BASE_URL,
+  });
 
   const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false);
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
@@ -95,16 +96,22 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
       );
     }
   }, [envContext, rule.description, ruleId]);
-
   useEffect(() => {
-    edgeSystemsCheck(
-      ruleId,
-      setSystemsCount,
-      setEdgeSystemsCount,
-      setConventionalSystemsCount,
-      setCountsLoading,
-    );
-  }, [ruleId]);
+    if (
+      typeof envContext.BASE_URL === 'string' &&
+      envContext.BASE_URL.length > 0
+    ) {
+      edgeSystemsCheck(
+        ruleId,
+        setSystemsCount,
+        setEdgeSystemsCount,
+        setConventionalSystemsCount,
+        setCountsLoading,
+        '',
+        envContext.BASE_URL,
+      );
+    }
+  }, [ruleId, envContext.BASE_URL]);
 
   return (
     <React.Fragment>
@@ -212,6 +219,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                           addNotification,
                           intl,
                           rule,
+                          baseUrl: envContext.BASE_URL,
                         })
                       }
                       ouiaId="bulkHost"
@@ -229,6 +237,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                           intl,
                           addNotification,
                           handleModalToggle,
+                          envContext.BASE_URL,
                         )
                       }
                       ouiaId="rule"
