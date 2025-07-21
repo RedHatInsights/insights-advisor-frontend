@@ -589,7 +589,7 @@ export const getActiveFiltersConfig = (
         rule_status: 'enabled',
         limit: filters.limit,
         offset: filters.offset,
-        pathway: filters.pathway,
+        ...(filters.pathway && { pathway: filters.pathway }),
       });
     } else {
       itemsToRemove.map((item) => {
