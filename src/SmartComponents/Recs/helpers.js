@@ -1,4 +1,4 @@
-import { SYSTEM_TYPES, BASE_URL } from '../../AppConstants';
+import { SYSTEM_TYPES } from '../../AppConstants';
 import { DeleteApi, Get, Post } from '../../Utilities/Api';
 import messages from '../../Messages';
 import axios from 'axios';
@@ -16,9 +16,10 @@ export const enableRule = async (
   intl,
   addNotification,
   handleModalToggle,
+  baseUrl,
 ) => {
   try {
-    await DeleteApi(`${BASE_URL}/ack/${encodeURI(rule.rule_id)}/`);
+    await DeleteApi(`${baseUrl}/ack/${encodeURI(rule.rule_id)}/`);
     addNotification({
       variant: 'success',
       timeout: true,
@@ -42,11 +43,12 @@ export const bulkHostActions = async ({
   addNotification,
   intl,
   rule,
+  baseUrl,
 }) => {
   try {
     const hostAckResponse = (
       await Get(
-        `${BASE_URL}/hostack/`,
+        `${baseUrl}/hostack/`,
         {},
         { rule_id: rule.rule_id, limit: rule.hosts_acked_count },
       )
@@ -56,7 +58,7 @@ export const bulkHostActions = async ({
     };
 
     await Post(
-      `${BASE_URL}/rule/${encodeURI(rule.rule_id)}/unack_hosts/`,
+      `${baseUrl}/rule/${encodeURI(rule.rule_id)}/unack_hosts/`,
       {},
       data,
     );
@@ -77,21 +79,21 @@ export const bulkHostActions = async ({
   }
 };
 
-const getSystemCheckEndpoints = ({ ruleId, pathway }) => {
-  if (ruleId) {
+const getSystemCheckEndpoints = ({ ruleId, pathway, baseUrl }) => {
+  if (ruleId && baseUrl) {
     return {
-      conventionalURL: `/api/insights/v1/rule/${encodeURI(
+      conventionalURL: `${baseUrl}/rule/${encodeURI(
         ruleId,
       )}/systems_detail/?filter[system_profile][host_type][nil]=true&limit=1`,
-      edgeURL: `/api/insights/v1/rule/${encodeURI(
+      edgeURL: `${baseUrl}/rule/${encodeURI(
         ruleId,
       )}/systems_detail/?filter[system_profile][host_type]=edge&limit=1`,
     };
   }
 
   return {
-    conventionalURL: `/api/insights/v1/system/?limit=1&filter[system_profile][host_type][nil]=true&pathway=${pathway}`,
-    edgeURL: `/api/insights/v1/system/?limit=1&filter[system_profile][host_type]=edge&pathway=${pathway}`,
+    conventionalURL: `${baseUrl}/system/?limit=1&filter[system_profile][host_type][nil]=true&pathway=${pathway}`,
+    edgeURL: `${baseUrl}/system/?limit=1&filter[system_profile][host_type]=edge&pathway=${pathway}`,
   };
 };
 
@@ -102,11 +104,13 @@ export const edgeSystemsCheck = async (
   setConventionalSystemsCount,
   setCountsLoading,
   pathway,
+  baseUrl,
 ) => {
   let count = 0;
   const { conventionalURL, edgeURL } = getSystemCheckEndpoints({
     ruleId,
     pathway,
+    baseUrl,
   });
 
   try {

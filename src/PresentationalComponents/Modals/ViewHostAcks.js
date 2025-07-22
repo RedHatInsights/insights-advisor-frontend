@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -18,6 +18,7 @@ import { addNotification as notification } from '@redhat-cloud-services/frontend
 import { useDispatch } from 'react-redux';
 import { useGetHostAcksQuery } from '../../Services/Acks';
 import { useIntl } from 'react-intl';
+import { EnvironmentContext } from '../../App';
 
 const ViewHostAcks = ({
   handleModalToggle = () => {},
@@ -27,6 +28,7 @@ const ViewHostAcks = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  const envContext = useContext(EnvironmentContext);
   const addNotification = (data) => dispatch(notification(data));
   const columns = [
     intl.formatMessage(messages.systemName),
@@ -44,6 +46,7 @@ const ViewHostAcks = ({
   } = useGetHostAcksQuery({
     rule_id: rule.rule_id,
     limit: rule.hosts_acked_count,
+    customBasePath: envContext.BASE_URL,
   });
   const deleteAck = async (host) => {
     try {

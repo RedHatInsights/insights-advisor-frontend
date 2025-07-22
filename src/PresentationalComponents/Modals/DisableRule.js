@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
-import { BASE_URL } from '../../AppConstants';
 import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
 import { Checkbox } from '@patternfly/react-core/dist/esm/components/Checkbox/Checkbox';
 import { Form } from '@patternfly/react-core/dist/esm/components/Form/Form';
@@ -14,6 +13,7 @@ import messages from '../../Messages';
 import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { useSetAckMutation } from '../../Services/Acks';
+import { EnvironmentContext } from '../../App';
 
 const DisableRule = ({
   handleModalToggle = () => {},
@@ -25,6 +25,7 @@ const DisableRule = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  const envContext = useContext(EnvironmentContext);
   const notification = (data) => dispatch(addNotification(data));
   const [justification, setJustificaton] = useState('');
   const [singleSystem, setSingleSystem] = useState(
@@ -32,12 +33,18 @@ const DisableRule = ({
   );
   const justificationMaxLength = 255;
 
-  const [setAck] = useSetAckMutation();
+  const [setAck] = useSetAckMutation({
+    customBasePath: envContext.BASE_URL,
+  });
 
   const bulkHostActions = async () => {
     const data = { systems: hosts, justification };
     try {
-      await Post(`${BASE_URL}/rule/${rule.rule_id}/ack_hosts/`, {}, data);
+      await Post(
+        `${envContext.BASE_URL}/rule/${rule.rule_id}/ack_hosts/`,
+        {},
+        data,
+      );
       !singleSystem &&
         notification({
           variant: 'success',

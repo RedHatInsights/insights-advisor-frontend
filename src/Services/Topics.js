@@ -1,12 +1,9 @@
-import { AxiosBaseQuery } from '../Utilities/Api';
-import { BASE_URL } from '../AppConstants';
 import { createApi } from '@reduxjs/toolkit/query/react';
+import { dynamicRecsBaseQuery } from '../Utilities/Api';
 
 export const Topics = createApi({
   reducerPath: 'topics',
-  baseQuery: AxiosBaseQuery({
-    baseUrl: `${BASE_URL}`,
-  }),
+  baseQuery: dynamicRecsBaseQuery,
   endpoints: (build) => ({
     getTopics: build.query({
       query: (options) => ({ url: `/topic/`, options }),
