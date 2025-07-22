@@ -1,10 +1,9 @@
-import { AxiosBaseQuery } from '../Utilities/Api';
-import { BASE_URL } from '../AppConstants';
 import { createApi } from '@reduxjs/toolkit/query/react';
+import { dynamicRecsBaseQuery } from '../Utilities/Api';
 
 export const Acks = createApi({
   reducerPath: 'acks',
-  baseQuery: AxiosBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: dynamicRecsBaseQuery,
   endpoints: (build) => ({
     getRecAcks: build.query({
       query: (options) => ({ url: `/ack/${encodeURI(options.ruleId)}/` }),

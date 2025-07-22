@@ -1,6 +1,6 @@
 import './_TopicsAdminTable.scss';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { sortable } from '@patternfly/react-table';
 import {
   Table,
@@ -24,9 +24,11 @@ import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import messages from '../../Messages';
 import { useGetTopicsAdminQuery } from '../../Services/Topics';
 import { useIntl } from 'react-intl';
+import { EnvironmentContext } from '../../App';
 
 const TopicsAdminTable = () => {
   const intl = useIntl();
+  const envContext = useContext(EnvironmentContext);
 
   const {
     data: topics = [],
@@ -34,7 +36,9 @@ const TopicsAdminTable = () => {
     isFetching,
     isError,
     refetch,
-  } = useGetTopicsAdminQuery();
+  } = useGetTopicsAdminQuery({
+    customBasePath: envContext.BASE_URL,
+  });
 
   const [cols] = useState([
     { title: intl.formatMessage(messages.title), transforms: [sortable] },

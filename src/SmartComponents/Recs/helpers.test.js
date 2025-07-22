@@ -23,6 +23,8 @@ describe('edgeSystemsCheck state is getting set', () => {
       setEdgeSystemsCount,
       setConventionalSystemsCount,
       setCountsLoading,
+      'pathway',
+      '/api/insights/v1',
     );
 
     await expect(setSystemsCount).toHaveBeenCalledWith(2);
@@ -42,6 +44,8 @@ describe('edgeSystemsCheck state is getting set', () => {
       setEdgeSystemsCount,
       setConventionalSystemsCount,
       setCountsLoading,
+      'pathway',
+      '/api/insights/v1',
     );
 
     expect(axios.get).toHaveBeenCalledWith(
@@ -64,6 +68,7 @@ describe('edgeSystemsCheck state is getting set', () => {
       setConventionalSystemsCount,
       setCountsLoading,
       'pathway',
+      '/api/insights/v1',
     );
 
     expect(axios.get).toHaveBeenCalledWith(

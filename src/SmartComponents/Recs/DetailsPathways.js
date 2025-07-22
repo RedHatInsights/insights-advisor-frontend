@@ -134,15 +134,21 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
   }, []);
 
   useEffect(() => {
-    edgeSystemsCheck(
-      undefined,
-      undefined,
-      setEdgeSystemsCount,
-      setConventionalSystemsCount,
-      setCountsLoading,
-      pathwayName,
-    );
-  }, [pathwayName]);
+    if (
+      typeof envContext.BASE_URL === 'string' &&
+      envContext.BASE_URL.length > 0
+    ) {
+      edgeSystemsCheck(
+        undefined,
+        undefined,
+        setEdgeSystemsCount,
+        setConventionalSystemsCount,
+        setCountsLoading,
+        pathwayName,
+        envContext.BASE_URL,
+      );
+    }
+  }, [pathwayName, envContext.BASE_URL]);
 
   return (
     <React.Fragment>
