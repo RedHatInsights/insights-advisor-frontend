@@ -17,7 +17,7 @@ jest.mock('../Export/SystemsPdf', () => ({
   __esModule: true,
   default: jest.fn((props) => (
     <div {...props} aria-label="systems-pdf-mock">
-      SystemsPdf
+      NewSystemsPdf
     </div>
   )),
 }));

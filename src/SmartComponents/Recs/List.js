@@ -6,7 +6,6 @@ import React, { Suspense, lazy, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import useInsightsNavigate from '@redhat-cloud-services/frontend-components-utilities/useInsightsNavigate';
 
-import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
 import messages from '../../Messages';
 import OverviewDashbar from '../../PresentationalComponents/OverviewDashbar/OverviewDashbar';
@@ -33,8 +32,7 @@ import {
   ExternalLinkAltIcon,
   OutlinedQuestionCircleIcon,
 } from '@patternfly/react-icons';
-import { useFeatureFlag } from '../../Utilities/Hooks';
-import NewDownloadExecReport from '../../PresentationalComponents/ExecutiveReport/NewDownload';
+import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import { EnvironmentContext } from '../../App';
 
 const PathwaysTable = lazy(
@@ -47,7 +45,6 @@ const PathwaysTable = lazy(
 const List = () => {
   const { pathname } = useLocation();
   const navigate = useInsightsNavigate();
-  const isPDFGeneratorEnabled = useFeatureFlag('advisor.pdf_generator');
   const envContext = useContext(EnvironmentContext);
 
   useEffect(() => {
@@ -124,11 +121,7 @@ const List = () => {
             trigger={!envContext.isExportEnabled ? 'mouseenter' : ''}
             content={messages.permsAction.defaultMessage}
           >
-            {isPDFGeneratorEnabled ? (
-              <NewDownloadExecReport isDisabled={!envContext.isExportEnabled} />
-            ) : (
-              <DownloadExecReport isDisabled={!envContext.isExportEnabled} />
-            )}
+            <DownloadExecReport isDisabled={!envContext.isExportEnabled} />
           </Tooltip>
         )}
       </PageHeader>
