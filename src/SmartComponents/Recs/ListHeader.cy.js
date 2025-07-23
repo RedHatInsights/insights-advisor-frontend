@@ -22,7 +22,6 @@ import {
   ExternalLinkAltIcon,
   OutlinedQuestionCircleIcon,
 } from '@patternfly/react-icons';
-import NewDownloadExecReport from '../../PresentationalComponents/ExecutiveReport/NewDownload';
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import { createTestEnvironmentContext } from '../../../cypress/support/globals';
 
@@ -32,7 +31,6 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
     ...envContext,
     ...envContextOverrides,
   };
-  const isPDFGeneratorEnabled = true;
 
   cy.mount(
     <EnvironmentContext.Provider value={finalEnvContext}>
@@ -108,15 +106,9 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
                             }
                             content={messages.permsAction.defaultMessage}
                           >
-                            {isPDFGeneratorEnabled ? (
-                              <NewDownloadExecReport
-                                isDisabled={!finalEnvContext.isExportEnabled}
-                              />
-                            ) : (
-                              <DownloadExecReport
-                                isDisabled={!finalEnvContext.isExportEnabled}
-                              />
-                            )}
+                            <DownloadExecReport
+                              isDisabled={!finalEnvContext.isExportEnabled}
+                            />
                           </Tooltip>
                         )}
                     </PageHeader>

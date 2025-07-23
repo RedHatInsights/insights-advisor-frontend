@@ -1,19 +1,17 @@
 import './_Export.scss';
 
 import React, { useContext, useState } from 'react';
-import { leadPage, TablePage } from './SystemsPdfBuild';
-
-import { DownloadButton } from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
-import { Get } from '../../Utilities/Api';
+import { Button } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
-import messages from '../../Messages';
-import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { workloadQueryBuilder } from '../Common/Tables';
+import { exportNotifications } from '../../AppConstants';
+import { useDispatch } from 'react-redux';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
 import { EnvironmentContext } from '../../App';
 
 const SystemsPdf = ({ filters }) => {
-  const intl = useIntl();
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const selectedTags = useSelector(
     ({ AdvisorStore }) => AdvisorStore?.selectedTags,
@@ -24,68 +22,46 @@ const SystemsPdf = ({ filters }) => {
 
   const dataFetch = async () => {
     setLoading(true);
+    dispatch(addNotification(exportNotifications.pending));
+
     let options = selectedTags?.length && { tags: selectedTags };
     workloads &&
       (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
-    const systems = (
-      await Get(
-        `${envContext.BASE_URL}/export/systems/`,
-        {},
-        { ...filters, ...options },
-      )
-    ).data;
+    try {
+      await envContext.requestPdf({
+        filename: `Advisor_systems--${new Date()
+          .toUTCString()
+          .replace(/ /g, '-')}.pdf`,
+        payload: {
+          manifestLocation: '/apps/advisor/fed-mods.json',
+          scope: 'advisor',
+          module: './NewSystemsPdfBuild',
+          fetchDataParams: {
+            filters,
+            options,
+            selectedTags,
+          },
+        },
+      });
 
-    const firstPage = leadPage({
-      systemsTotal: systems?.length,
-      systems: systems.slice(0, 18),
-      filters,
-      tags: selectedTags,
-      intl,
-    });
-
-    const otherPages = systems
-      .slice(18, 982)
-      .reduce((resultArray, item, index) => {
-        const chunkIndex = Math.floor(index / 31);
-        !resultArray[chunkIndex] && (resultArray[chunkIndex] = []);
-        resultArray[chunkIndex].push(item);
-
-        return resultArray;
-      }, []);
-
-    setLoading(false);
-
-    return [
-      firstPage,
-      ...otherPages.map((pageSystems, index) => (
-        <TablePage key={index} page={index} systems={pageSystems} intl={intl} />
-      )),
-    ];
+      dispatch(addNotification(exportNotifications.success));
+    } catch (error) {
+      void error;
+      dispatch(addNotification(exportNotifications.error));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <DownloadButton
-      groupName={intl.formatMessage(messages.redHatInsights)}
-      allPagesHaveTitle={false}
-      label={
-        loading
-          ? intl.formatMessage(messages.loading)
-          : intl.formatMessage(messages.exportPdf)
-      }
-      asyncFunction={dataFetch}
-      buttonProps={{
-        variant: '',
-        component: 'button',
-        className: 'pf-v5-c-menu__item adv-c-dropdown-systems-pdf__menu-item',
-        ...(loading ? { isDisabled: true } : null),
-      }}
-      reportName={`${intl.formatMessage(messages.insightsHeader)}:`}
-      type={intl.formatMessage(messages.systems)}
-      fileName={`Advisor_systems--${new Date()
-        .toUTCString()
-        .replace(/ /g, '-')}.pdf`}
-      size={[841.89, 595.28]}
-    />
+    <Button
+      onClick={dataFetch}
+      variant="button"
+      isDisabled={loading}
+      className="pf-v5-c-menu__item adv-c-dropdown-systems-pdf__menu-item"
+    >
+      Export to PDF
+    </Button>
   );
 };
 

@@ -1,11 +1,16 @@
-import {
-  Column,
-  Section,
-  Table,
-} from '@redhat-cloud-services/frontend-components-pdf-generator/dist/esm/index';
-import { Link, StyleSheet, Text } from '@react-pdf/renderer';
+import { StyleSheet } from '@react-pdf/renderer';
 
-import { BASE_URI } from '../../AppConstants';
+import {
+  BASE_URL,
+  DUE_TO,
+  EXEC_REPORT_HEADER_SYSTEMS,
+  FILTERS_APPLIED,
+  INSIGHTS_HEADER,
+  NO_TAGS,
+  SYSCOUNT,
+  SYSTEMS,
+  TAGS_APPLIED,
+} from '../../AppConstants';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
@@ -17,154 +22,106 @@ import {
   global_link_Color,
   global_spacer_md,
 } from '@patternfly/react-tokens';
-import messages from '../../Messages';
+import TablePage from './TablePage';
+import chart_color_red_100 from '@patternfly/react-tokens/dist/js/chart_color_red_100';
 
 const styles = StyleSheet.create({
   bold: { fontWeight: global_FontWeight_bold.value },
   link: { color: global_link_Color.value },
-  text: { marginTop: global_spacer_md.value },
-  nameColumn: { width: '220px' },
+  text: { fontSize: 12 },
+  textMargin: { marginTop: global_spacer_md.value },
+  nameColumn: {
+    width: '10px',
+    fontSize: 8,
+    paddingTop: '1px',
+    paddingBottom: '1px',
+  },
+  document: {
+    paddingTop: '24px',
+    paddingLeft: '32px',
+    paddingRight: '32px',
+  },
   header: {
-    fontSize: 9,
+    fontSize: 12,
     color: chart_global_Fill_Color_700.value,
     paddingLeft: c_table_m_compact_cell_PaddingLeft.value,
     paddingBottom: c_table_m_compact_cell_PaddingBottom.value,
     paddingTop: c_table_m_compact_cell_PaddingTop.value,
   },
+  row: {
+    fontSize: 8,
+    paddingTop: '1px',
+    paddingBottom: '1px',
+    width: '10px',
+    textAlign: 'center',
+  },
+  lastSeenRow: { width: '90px' },
 });
 
-export const TablePage = ({ page, systems, intl }) => {
-  const header = [
-    { value: intl.formatMessage(messages.name), style: styles.nameColumn },
-    {
-      value: intl.formatMessage(messages.recommendations),
-      style: { width: '100px', textAlign: 'center' },
+export const fetchData = async (createAsyncRequest, options) => {
+  const systems = createAsyncRequest('advisor-backend', {
+    method: 'GET',
+    url: `${BASE_URL}/export/systems/`,
+    params: {
+      filters: options.filters,
+      ...options,
     },
-    {
-      value: intl.formatMessage(messages.critical),
-      style: { width: '70px', textAlign: 'center' },
-    },
-    {
-      value: intl.formatMessage(messages.important),
-      style: { width: '70px', textAlign: 'center' },
-    },
-    {
-      value: intl.formatMessage(messages.moderate),
-      style: { width: '60px', textAlign: 'center' },
-    },
-    {
-      value: intl.formatMessage(messages.low),
-      style: { width: '90px', textAlign: 'center' },
-    },
-    {
-      value: intl.formatMessage(messages.lastSeen),
-      style: { marginLeft: '20px' },
-    },
-  ];
-  const hitColumns = [
-    'hits',
-    'critical_hits',
-    'important_hits',
-    'moderate_hits',
-    'low_hits',
-  ];
-  const headerBuilder = ({ value, style }) => (
-    <Text style={{ ...style, ...styles.header, ...styles.bold }}>{value}</Text>
-  );
-  const rowBuilder = ({ value, style }) => <Text style={style}>{value}</Text>;
-  const rows = [
-    ...systems.map((system) => {
-      const [, date, month, year, time] = new Date(system.last_seen)
-        .toUTCString()
-        .split(' ');
-      const sysDate = `${date} ${month} ${year}, ${time
-        .split(':')
-        .slice(0, 2)
-        .join(':')} UTC`;
-      return [
-        <Text key={system.system_uuid} style={styles.nameColumn}>
-          <Link
-            style={styles.link}
-            src={`${BASE_URI}/insights/advisor/systems/${system.system_uuid}/`}
-          >
-            {system.display_name}
-          </Link>
-        </Text>,
-        ...hitColumns.map((item) =>
-          rowBuilder({ style: { width: '10px' }, value: system[item] }),
-        ),
-        <Text
-          key={system.last_seen}
-          style={{ width: '100px' }}
-        >{`${sysDate}`}</Text>,
-      ];
-    }),
-  ];
+  });
 
-  return (
-    <React.Fragment key={page}>
-      <Column>
-        <Table
-          withHeader
-          rows={[header.map((item) => headerBuilder(item)), ...rows]}
-        />
-      </Column>
-    </React.Fragment>
-  );
+  const data = await Promise.all([systems]);
+  return { data: data[0], options };
 };
 
-TablePage.propTypes = {
-  systems: PropTypes.object,
-  page: PropTypes.number,
-  intl: PropTypes.any,
-};
+const SystemsPdfBuild = ({ asyncData }) => {
+  const { data, options } = asyncData.data;
+  const filters = {
+    sort: '-last_seen',
+    limit: '20',
+    offset: '0',
+    hits: 'all',
+  };
 
-export const leadPage = ({ systemsTotal, systems, filters, tags, intl }) => {
-  delete filters.offset;
-  delete filters.limit;
   return (
-    <React.Fragment
-      key={`${intl.formatMessage(
-        messages.insightsHeader,
-      )}: ${intl.formatMessage(messages.systems)}`}
-    >
-      <Text key="sys-count" style={styles.text}>
-        {intl.formatMessage(messages.sysTableCount, {
-          systems: (
-            <Text key="sys-count-count" style={styles.bold}>
-              {intl.formatMessage(messages.execReportHeaderSystems, {
-                systems: systemsTotal,
-              })}
-              {systemsTotal > 1000 && intl.formatMessage(messages.dueTo)}
-            </Text>
-          ),
+    <div style={styles.document}>
+      <span style={{ fontSize: '24px', color: chart_color_red_100.value }}>
+        Red Hat Insights
+      </span>
+      <br />
+      <span style={{ fontSize: '32px', color: chart_color_red_100.value }}>
+        {`${INSIGHTS_HEADER}: ${SYSTEMS}`}
+      </span>
+      <div key="sys-count" style={{ ...styles.text, ...styles.textMargin }}>
+        {SYSCOUNT}
+        <span key="sys-count-count" style={{ ...styles.bold, ...styles.text }}>
+          {EXEC_REPORT_HEADER_SYSTEMS(data.length)}
+          {data.length > 1000 && DUE_TO}
+        </span>
+      </div>
+      <div key="sys-filters" style={{ ...styles.text, ...styles.textMargin }}>
+        {FILTERS_APPLIED}
+      </div>
+      <div key="sys-filters-values" style={{ ...styles.bold, ...styles.text }}>
+        {Object.entries(filters).map((value) => {
+          return <span key={value}>{`${value[0]}: ${value[1]}     `}</span>;
         })}
-      </Text>
-      <Text key="sys-filters" style={styles.text}>
-        {intl.formatMessage(messages.filtersApplied)}
-      </Text>
-      <Text key="sys-filters-values" style={styles.bold}>
-        {Object.entries(filters).map((value) => (
-          <Text key={value}>{`${value[0]}: ${value[1]}     `}</Text>
-        ))}
-      </Text>
-      <Text key="sys-tags" style={styles.text}>
-        {intl.formatMessage(messages.tagsApplied)}
-      </Text>
-      <Text key="sys-tags-values" style={styles.bold}>
-        {tags ? decodeURIComponent(tags) : intl.formatMessage(messages.noTags)}
-      </Text>
-      <Section key="systems" title="Systems">
-        <TablePage systems={systems} intl={intl} />
-      </Section>
-    </React.Fragment>
+      </div>
+      <div key="sys-tags" style={{ ...styles.text, ...styles.textMargin }}>
+        {TAGS_APPLIED}
+      </div>
+      <div key="sys-tags-values" style={{ ...styles.bold, ...styles.text }}>
+        {options.selectedTags
+          ? decodeURIComponent(options.selectedTags)
+          : NO_TAGS}
+      </div>
+      <div>
+        <TablePage systems={data} styles={styles} />
+      </div>
+    </div>
   );
 };
 
-leadPage.propTypes = {
-  systems: PropTypes.object,
-  systemsTotal: PropTypes.number,
-  filters: PropTypes.object,
-  tags: PropTypes.array,
-  intl: PropTypes.any,
+SystemsPdfBuild.propTypes = {
+  asyncData: PropTypes.object,
 };
+
+export default SystemsPdfBuild;

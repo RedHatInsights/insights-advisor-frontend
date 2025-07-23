@@ -15,7 +15,6 @@ import { Get } from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import Loading from '../Loading/Loading';
 import SystemsPdf from '../Export/SystemsPdf';
-import NewSystemsPdf from '../Export/NewSystemsPdf';
 import downloadReport from '../Common/DownloadHelper';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
 import messages from '../../Messages';
@@ -30,7 +29,6 @@ import { createOptions, createSortParam } from '../helper';
 import { createColumns } from './createColumns';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { EnvironmentContext } from '../../App';
-import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const SystemsTable = () => {
   const intl = useIntl();
@@ -44,7 +42,6 @@ const SystemsTable = () => {
   const setFilters = (filters) => dispatch(updateSysFilters(filters));
   const envContext = useContext(EnvironmentContext);
   const [filterBuilding, setFilterBuilding] = useState(true);
-  const isPDFGeneratorEnabled = useFeatureFlag('advisor.pdf_generator');
 
   const removeFilterParam = (param) => {
     const filter = { ...filters, offset: 0 };
@@ -315,11 +312,7 @@ const SystemsTable = () => {
               data-ouia-component-type="PF5/DropdownItem"
               data-ouia-component-id="DownloadPDF"
             >
-              {isPDFGeneratorEnabled ? (
-                <NewSystemsPdf filters={pdfFilters} />
-              ) : (
-                <SystemsPdf filters={pdfFilters} />
-              )}
+              <SystemsPdf filters={pdfFilters} />
             </li>,
           ],
           isDisabled: !envContext.isExportEnabled,

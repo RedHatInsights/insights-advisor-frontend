@@ -61,13 +61,9 @@ module.exports = {
         __dirname,
         '/src/PresentationalComponents/ExecutiveReport/BuildExecReport',
       ),
-      './NewBuildExecReport': resolve(
+      './SystemsPdfBuild': resolve(
         __dirname,
-        '/src/PresentationalComponents/ExecutiveReport/NewBuildExecReport',
-      ),
-      './NewSystemsPdfBuild': resolve(
-        __dirname,
-        '/src/PresentationalComponents/Export/NewSystemsPdfBuild',
+        '/src/PresentationalComponents/Export/SystemsPdfBuild',
       ),
       './SatelliteDemoComponent': resolve(
         __dirname,

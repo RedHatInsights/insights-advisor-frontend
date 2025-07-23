@@ -4,13 +4,11 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
 
-import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import messages from '../../Messages';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 import {
   Stack,
   StackItem,
-  Tooltip,
   Popover,
   TextContent,
   Flex,
@@ -86,14 +84,6 @@ const ListIop = () => {
             </React.Fragment>
           }
         />
-        {!envContext.isLoading && envContext.displayExecReportLink && (
-          <Tooltip
-            trigger={!envContext.isExportEnabled ? 'mouseenter' : ''}
-            content={messages.permsAction.defaultMessage}
-          >
-            <DownloadExecReport isDisabled={!envContext.isExportEnabled} />
-          </Tooltip>
-        )}
       </PageHeader>
       <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
         <Stack hasGutter>
