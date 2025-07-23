@@ -57,7 +57,7 @@ export const DetailsRules = ({
 
   return (
     <React.Fragment>
-      <PageHeader className="adv-c-page__header">
+      <PageHeader className="adv-c-page__header pf-v5-u-pb-0">
         <Breadcrumbs ouiaId="override" current={rule.description || ''} />
       </PageHeader>
       <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section pf-m-light pf-v5-u-pt-sm">
