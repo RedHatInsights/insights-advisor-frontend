@@ -11,7 +11,7 @@ import { Button } from '@patternfly/react-core';
 import { exportNotifications } from '../../AppConstants';
 import { EnvironmentContext } from '../../App';
 
-const NewDownloadExecReport = ({ isDisabled }) => {
+const DownloadExecReport = ({ isDisabled }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
@@ -29,7 +29,7 @@ const NewDownloadExecReport = ({ isDisabled }) => {
         payload: {
           manifestLocation: '/apps/advisor/fed-mods.json',
           scope: 'advisor',
-          module: './NewBuildExecReport',
+          module: './BuildExecReport',
           fetchDataParams: {
             limit: 3,
             sort: '-total_risk,-impacted_count',
@@ -62,8 +62,8 @@ const NewDownloadExecReport = ({ isDisabled }) => {
   );
 };
 
-NewDownloadExecReport.propTypes = {
+DownloadExecReport.propTypes = {
   isDisabled: PropTypes.bool,
 };
 
-export default NewDownloadExecReport;
+export default DownloadExecReport;

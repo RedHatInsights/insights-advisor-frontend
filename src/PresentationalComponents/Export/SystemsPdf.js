@@ -35,7 +35,7 @@ const SystemsPdf = ({ filters }) => {
         payload: {
           manifestLocation: '/apps/advisor/fed-mods.json',
           scope: 'advisor',
-          module: './NewSystemsPdfBuild',
+          module: './SystemsPdfBuild',
           fetchDataParams: {
             filters,
             options,
