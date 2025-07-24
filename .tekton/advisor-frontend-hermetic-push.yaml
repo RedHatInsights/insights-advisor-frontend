@@ -4,19 +4,18 @@ metadata:
   annotations:
     build.appstudio.openshift.io/repo: https://github.com/RedHatInsights/insights-advisor-frontend?rev={{revision}}
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
-    build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
-    pipelinesascode.tekton.dev/cancel-in-progress: "true"
+    pipelinesascode.tekton.dev/cancel-in-progress: "false"
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/on-cel-expression: event == "pull_request" && target_branch
+    pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
       == "master"
     pipelinesascode.tekton.dev/pipeline: https://github.com/RedHatInsights/konflux-pipelines/raw/v1.26.0/pipelines/docker-build-oci-ta.yaml
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: insights-advisor
-    appstudio.openshift.io/component: advisor-frontend
+    appstudio.openshift.io/component: advisor-frontend-hermetic
     pipelines.appstudio.openshift.io/type: build
-  name: advisor-frontend-on-pull-request
+  name: advisor-frontend-hermetic-on-push
   namespace: insights-management-tenant
 spec:
   params:
@@ -25,17 +24,21 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/insights-management-tenant/insights-advisor/advisor-frontend:on-pr-{{revision}}
-  - name: image-expires-after
-    value: 5d
+    value: quay.io/redhat-user-workloads/insights-management-tenant/advisor-frontend-hermetic:{{revision}}
   - name: dockerfile
-    value: build-tools/Dockerfile
-  - name: path-context
-    value: .
+    value: 'build-tools/Dockerfile.hermetic'
+  - name: build-source-image
+    value: "true"
+  - name: hermetic
+    value: "true"
+  - name: prefetch-input
+    value: '{"type": "npm", "path": "."}'
+  - name: prefetch-dev-package-managers
+    value: "true"
   pipelineRef:
     name: docker-build-oci-ta
   taskRunTemplate:
-    serviceAccountName: build-pipeline-advisor-frontend
+    serviceAccountName: build-pipeline-advisor-frontend-hermetic
   workspaces:
   - name: git-auth
     secret:
