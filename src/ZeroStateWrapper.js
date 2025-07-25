@@ -18,6 +18,7 @@ import {
   useGetConventionalDevicesQuery,
 } from './Services/SystemVariety';
 import { EnvironmentContext } from './App';
+import { INVENTORY_BASE_URL } from './AppConstants';
 
 export const AccountStatContext = createContext({
   hasConventionalSystems: true,
@@ -36,7 +37,8 @@ export const ZeroStateWrapper = ({ children }) => {
     isError: edgeError,
     error: edgeErrorMessage,
   } = useGetEdgeDevicesQuery({
-    baseUrl: envContext.INVENTORY_BASE_URL,
+    customBasePath: envContext.INVENTORY_BASE_URL,
+    inventoryBasePath: INVENTORY_BASE_URL,
   });
   const {
     data: conventional,
@@ -44,8 +46,10 @@ export const ZeroStateWrapper = ({ children }) => {
     isError: conventionalError,
     error: conventErrorMessage,
   } = useGetConventionalDevicesQuery({
-    baseUrl: envContext.INVENTORY_BASE_URL,
+    customBasePath: envContext.INVENTORY_BASE_URL,
+    inventoryBasePath: INVENTORY_BASE_URL,
   });
+
   useEffect(() => {
     setHasEdgeDevices(edge?.total > 0);
     setHasConventionalSystems(conventional?.total > 0);
