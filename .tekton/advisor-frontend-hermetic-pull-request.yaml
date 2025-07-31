@@ -14,9 +14,9 @@ metadata:
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: insights-advisor
-    appstudio.openshift.io/component: advisor-frontend
+    appstudio.openshift.io/component: advisor-frontend-hermetic
     pipelines.appstudio.openshift.io/type: build
-  name: advisor-frontend-on-pull-request
+  name: advisor-frontend-hermetic-on-pull-request
   namespace: insights-management-tenant
 spec:
   params:
@@ -25,17 +25,23 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/insights-management-tenant/insights-advisor/advisor-frontend:on-pr-{{revision}}
+    value: quay.io/redhat-user-workloads/insights-management-tenant/advisor-frontend-hermetic:on-pr-{{revision}}
   - name: image-expires-after
     value: 5d
   - name: dockerfile
-    value: build-tools/Dockerfile
-  - name: path-context
-    value: .
+    value: 'build-tools/Dockerfile.hermetic'
+  - name: build-source-image
+    value: "true"
+  - name: hermetic
+    value: "true"
+  - name: prefetch-input
+    value: '{"type": "npm", "path": "."}'
+  - name: prefetch-dev-package-managers
+    value: "true"
   pipelineRef:
     name: docker-build-oci-ta
   taskRunTemplate:
-    serviceAccountName: build-pipeline-advisor-frontend
+    serviceAccountName: build-pipeline-advisor-frontend-hermetic
   workspaces:
   - name: git-auth
     secret:
