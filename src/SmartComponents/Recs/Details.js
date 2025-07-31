@@ -32,12 +32,13 @@ import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 import { AccountStatContext } from '../../ZeroStateWrapper.js';
 import DetailsTitle from './DetailsTitle.js';
 import { EnvironmentContext } from '../../App';
+import { useParams } from 'react-router-dom';
 
 const OverviewDetails = (props) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
-  const ruleId = props.ruleId;
+  const ruleId = useParams().id || props.ruleId;
   const addNotification = (data) => dispatch(notification(data));
   const {
     data: rule = {},
