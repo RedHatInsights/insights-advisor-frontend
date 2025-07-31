@@ -18,7 +18,7 @@ import {
   InsightsNotEnabled,
   InventoryReportFetchFailed,
 } from './EmptyStates';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import messages from '../../Messages';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
@@ -118,6 +118,7 @@ export const useBuildRows = (
   entity,
   inventoryReportFetchStatus,
   envContext,
+  generateRuleUrl,
 ) => {
   const location = useLocation().pathname?.split('/');
   return useCallback(
@@ -177,13 +178,9 @@ export const useBuildRows = (
                 title: (
                   <span key={key}>
                     {envContext.loadChromeless ? (
-                      <Link
-                        key={key}
-                        app="advisor"
-                        to={`/recommendations/${rule.rule_id}`}
-                      >
+                      <a href={generateRuleUrl(rule.rule_id)}>
                         {rule.description}
-                      </Link>
+                      </a>
                     ) : (
                       <InsightsLink
                         key={key}
