@@ -6,7 +6,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import propTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
-import { useParams } from 'react-router-dom';
 import {
   Card,
   CardBody,
@@ -34,12 +33,12 @@ import { AccountStatContext } from '../../ZeroStateWrapper.js';
 import DetailsTitle from './DetailsTitle.js';
 import { EnvironmentContext } from '../../App';
 
-const OverviewDetails = ({ isImmutableTabOpen }) => {
+const OverviewDetails = (props) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const ruleId = useParams().id;
-  const addNotification = (data) => dispatch(notification(data));
   const envContext = useContext(EnvironmentContext);
+  const ruleId = props.ruleId;
+  const addNotification = (data) => dispatch(notification(data));
   const {
     data: rule = {},
     isFetching,
@@ -262,7 +261,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                   rule={rule}
                   afterDisableFn={afterDisableFn}
                   handleModalToggle={handleModalToggle}
-                  isImmutableTabOpen={isImmutableTabOpen}
+                  isImmutableTabOpen={props.isImmutableTabOpen}
                   isRecommendationDetail
                   edgeSystemsCount={edgeSystemsCount}
                   conventionalSystemsCount={conventionalSystemsCount}
@@ -270,6 +269,7 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
                   tabPathname={`/insights/advisor/recommendations/${encodeURI(
                     ruleId,
                   )}`}
+                  axios={props.axios}
                 />
               </React.Fragment>
             )}
@@ -306,5 +306,8 @@ const OverviewDetails = ({ isImmutableTabOpen }) => {
 
 OverviewDetails.propTypes = {
   isImmutableTabOpen: propTypes.bool,
+  axios: propTypes.func,
+  ruleId: propTypes.string,
 };
+
 export default OverviewDetails;

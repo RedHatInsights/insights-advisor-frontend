@@ -19,7 +19,7 @@ import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
-import { Flex, Spinner } from '@patternfly/react-core';
+import { Button, Flex, Spinner } from '@patternfly/react-core';
 import { EnvironmentContext } from '../../App';
 import { AsyncComponent } from '@redhat-cloud-services/frontend-components';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
@@ -36,7 +36,8 @@ const Inventory = ({
   permsExport,
   exportTable,
   showTags,
-  IopRemediationModal,
+  IopRemediationModal = true,
+  axios,
 }) => {
   const store = useStore();
   const intl = useIntl();
@@ -110,6 +111,7 @@ const Inventory = ({
     rule,
     envContext.RULES_FETCH_URL,
     envContext.SYSTEMS_FETCH_URL,
+    axios,
   );
 
   // Ensures rows are marked as selected, runs the check on remediation Status
@@ -399,7 +401,7 @@ const Inventory = ({
           />
         )}
         {IopRemediationModal ? (
-          IopRemediationModal
+          <Button>This is temp button to be replaced</Button>
         ) : (
           <RemediationButton
             key="remediation-button"
@@ -458,12 +460,13 @@ const Inventory = ({
             variant: TableVariant.compact,
             ...tableProps,
             ...bulkSelectTableProps,
+            envContext: envContext,
           }}
           customFilters={{
             advisorFilters: filters,
             SID,
           }}
-          showTags={showTags}
+          showTags={envContext.loadChromeless ? false : showTags}
           getEntities={fetchSystems}
           actionsConfig={getActionsConfig()}
           {...toolbarProps}
@@ -504,6 +507,7 @@ const Inventory = ({
                 : intl.formatMessage(messages.permsAction),
             }
           }
+          axios={axios}
         />
       ) : (
         <InventoryTable
@@ -514,9 +518,9 @@ const Inventory = ({
           hideFilters={{
             all: true,
             name: false,
-            tags: !showTags,
+            tags: true,
             operatingSystem: false,
-            hostGroupFilter: false,
+            hostGroupFilter: true,
           }}
           activeFiltersConfig={activeFiltersConfig}
           columns={(defaultColumns) => createColumns(defaultColumns)}
@@ -531,7 +535,7 @@ const Inventory = ({
             workloads,
             SID,
           }}
-          showTags={showTags}
+          showTags={envContext.loadChromeless ? false : showTags}
           getEntities={fetchSystems}
           actionsConfig={getActionsConfig()}
           {...toolbarProps}
@@ -593,6 +597,7 @@ Inventory.propTypes = {
   exportTable: PropTypes.string,
   showTags: PropTypes.bool,
   IopRemediationModal: PropTypes.element,
+  axios: PropTypes.func,
 };
 
 export default Inventory;
