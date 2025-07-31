@@ -520,7 +520,7 @@ export const IOP_ENVIRONMENT_CONTEXT = {
   mapGlobalFilter: () => {},
   globalFilterScope: () => {},
   requestPdf: () => Promise.resolve(),
-  isProd: false,
+  isProd: !/stage.*\.redhat\.com$/.test(window.location.hostname),
   BASE_URI: document.baseURI,
   BASE_URL: '/insights_cloud/api/insights/v1',
   UI_BASE: './insights',
