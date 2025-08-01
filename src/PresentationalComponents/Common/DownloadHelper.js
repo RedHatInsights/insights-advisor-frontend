@@ -22,8 +22,8 @@ const downloadHelper = async (
   workloads,
   SID,
   dispatch,
-  display_name,
   BASE_URL,
+  display_name,
 ) => {
   try {
     let options = selectedTags?.length && { tags: selectedTags };
