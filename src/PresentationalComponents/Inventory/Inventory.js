@@ -36,7 +36,6 @@ const Inventory = ({
   permsExport,
   exportTable,
   showTags,
-  IopRemediationModal = true,
   axios,
 }) => {
   const store = useStore();
@@ -400,7 +399,7 @@ const Inventory = ({
             systems={selectedIds}
           />
         )}
-        {IopRemediationModal ? (
+        {envContext.loadChromeless ? (
           <Button>This is temp button to be replaced</Button>
         ) : (
           <RemediationButton
