@@ -95,6 +95,7 @@ export const createTestEnvironmentContext = () => {
     displayExecReportLink: true,
     displayDownloadPlaybookButton: false,
     changeRemediationButtonForIop: false,
+    loadChromeless: false,
     updateDocumentTitle: updateDocumentTitleStub,
     getUser: getUserStub,
     on: onStub,

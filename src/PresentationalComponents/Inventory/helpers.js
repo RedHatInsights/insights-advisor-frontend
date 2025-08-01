@@ -58,6 +58,7 @@ export const getEntities =
     rule,
     RULES_FETCH_URL,
     SYSTEMS_FETCH_URL,
+    axios,
   ) =>
   async (_items, config, showTags, defaultGetEntities) => {
     const {
@@ -71,7 +72,6 @@ export const getEntities =
       SID,
       selectedTags,
     } = config;
-
     const sort = createSortParam(orderBy, orderDirection);
 
     let options = createOptions(
@@ -103,6 +103,7 @@ export const getEntities =
         per_page,
         hasItems: true,
         fields: { system_profile: ['operating_system'] },
+        axios,
       },
       showTags,
     );
