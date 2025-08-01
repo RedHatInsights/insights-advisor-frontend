@@ -37,7 +37,12 @@ import { useParams } from 'react-router-dom';
 import { SkeletonTable } from '@patternfly/react-component-groups';
 import { EnvironmentContext } from '../../App';
 
-const BaseSystemAdvisor = ({ entity, inventoryId, IopRemediationModal }) => {
+const BaseSystemAdvisor = ({
+  entity,
+  inventoryId,
+  IopRemediationModal,
+  generateRuleUrl,
+}) => {
   const intl = useIntl();
   const systemAdvisorRef = useRef({
     rowCount: 0,
@@ -150,6 +155,7 @@ const BaseSystemAdvisor = ({ entity, inventoryId, IopRemediationModal }) => {
     entity,
     inventoryReportFetchStatus,
     envContext,
+    generateRuleUrl,
   );
   const onRowSelect = (_e, isSelected, rowId) =>
     setRows(
@@ -272,6 +278,15 @@ const BaseSystemAdvisor = ({ entity, inventoryId, IopRemediationModal }) => {
     onDelete: onChipDelete,
   };
 
+  const getKbaDetailsIOP = (reportsData) => {
+    const kbaIds = reportsData.map(({ rule }) => rule.node_id).filter((x) => x);
+    return kbaIds.map((kbaId) => ({
+      publishedTitle: '',
+      view_uri: `https://access.redhat.com/node/${kbaId}`,
+      id: kbaId,
+    }));
+  };
+
   const fetchKbaDetails = async (reportsData) => {
     const kbaIds = reportsData.map(({ rule }) => rule.node_id).filter((x) => x);
     try {
@@ -390,18 +405,32 @@ const BaseSystemAdvisor = ({ entity, inventoryId, IopRemediationModal }) => {
         );
 
         const activeRuleFirstReportsData = activeRuleFirst(reportsFetch.data);
-        fetchKbaDetails(activeRuleFirstReportsData);
-
-        setRows(
-          buildRows(
-            activeRuleFirstReportsData,
-            {},
-            filters,
-            rows,
-            searchValue,
-            true,
-          ),
-        );
+        if (envContext.loadChromeless) {
+          const kbaDetailsIOP = getKbaDetailsIOP(activeRuleFirstReportsData);
+          setKbaDetailsData(kbaDetailsIOP);
+          setRows(
+            buildRows(
+              activeRuleFirstReportsData,
+              kbaDetailsIOP,
+              filters,
+              rows,
+              searchValue,
+              false,
+            ),
+          );
+        } else {
+          fetchKbaDetails(activeRuleFirstReportsData);
+          setRows(
+            buildRows(
+              activeRuleFirstReportsData,
+              {},
+              filters,
+              rows,
+              searchValue,
+              true,
+            ),
+          );
+        }
         setInventoryReportFetchStatus('fulfilled');
         setActiveReports(activeRuleFirstReportsData);
 
@@ -509,6 +538,7 @@ BaseSystemAdvisor.propTypes = {
   }),
   inventoryId: PropTypes.string.isRequired,
   IopRemediationModal: PropTypes.element,
+  generateRuleUrl: PropTypes.func, // for generating rule URLs in IOP environment
 };
 
 const SystemAdvisor = ({ ...props }) => {
