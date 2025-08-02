@@ -90,9 +90,10 @@ const dynamicRecsBaseQuery = async (args, api, extraOptions) => {
     search: argSearch,
     method: argMethod,
     customBasePath: argCustomBasePath,
+    inventoryBasePath: argInventoryBasePath,
     ...remainingParams
   } = processedArgs;
-  let baseUrlToUse = argCustomBasePath || BASE_URL;
+  let baseUrlToUse = argCustomBasePath || argInventoryBasePath || BASE_URL;
 
   let actualUrlPath = argUrl || '';
 
