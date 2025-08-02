@@ -8,6 +8,14 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   default: jest.fn(),
 }));
 
+jest.mock('@unleash/proxy-client-react', () => ({
+  ...jest.requireActual('@unleash/proxy-client-react'),
+  useFlagsStatus: jest.fn(() => ({
+    flagsReady: true,
+  })),
+  useFlag: jest.fn(() => false),
+}));
+
 describe('useRbac', () => {
   const mockPermissions = [
     { permission: 'advisor:export' },
@@ -86,6 +94,7 @@ describe('useHccEnvironmentContext', () => {
     });
 
     expect(result.current).toEqual({
+      isLightspeedEnabled: false,
       isLoading: false,
       isExportEnabled: false,
       isDisableRecEnabled: false,

@@ -147,7 +147,7 @@ const BuildExecReport = ({ asyncData }) => {
       {truncate(rule.summary, { length: 280 })}
     </Text>
   );
-
+  // TODO Replace insights with lightsped when figuring out how to.
   return (
     <div
       style={{ paddingTop: '24px', paddingLeft: '32px', paddingRight: '32px' }}

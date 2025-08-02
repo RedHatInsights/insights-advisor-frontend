@@ -6,11 +6,6 @@ export default defineMessages({
     description: 'Used as a title',
     defaultMessage: 'Rules',
   },
-  redHatInsights: {
-    id: 'redHatInsights',
-    description: 'Used as a title',
-    defaultMessage: 'Red Hat Insights',
-  },
   recommendation: {
     id: 'recommendation',
     description: 'Recommendation',
@@ -445,11 +440,6 @@ export default defineMessages({
     description: 'Overview system inventory chart systems OK',
     defaultMessage: 'All systes are up to date',
   },
-  overviewActioncallTitle: {
-    id: 'overview.actioncall.title',
-    description: 'Overview, call to action title',
-    defaultMessage: 'Get started with Red Hat Insights',
-  },
   overviewConnectsystemsTitle: {
     id: 'overview.connectsystems.title',
     description: 'Overview, title for connecting first systems',
@@ -461,50 +451,10 @@ export default defineMessages({
     defaultMessage:
       'Connect at least 10 systems to get a better awareness of issues and optimizations identified across your infastructure',
   },
-  overviewConnectsystemsAction: {
-    id: 'overview.connectsystems.action',
-    description: 'Overview, action link for connecting first systems',
-    defaultMessage: `Learn how to connect a system to Insights`,
-  },
-  overviewRemediateTitle: {
-    id: 'overview.remediate.title',
-    description: 'Overview, title for remediate',
-    defaultMessage: 'Remediate Insights findings with Ansible',
-  },
-  overviewRemediateBody: {
-    id: 'overview.remediate.body',
-    description: 'Overview, body for remediate',
-    defaultMessage: `Easily generate an Ansible playbook to
-        quickly and effectively remediate Insights findings`,
-  },
-  overviewRemediateAction: {
-    id: 'overview.remediate.action',
-    description: 'Overview, action link for remediate',
-    defaultMessage: 'Get started with Insights and Ansible Playbooks',
-  },
-  overviewDeployTitle: {
-    id: 'overview.deploy.title',
-    description: 'Overview, title for deploy',
-    defaultMessage: 'Deploy Insights at scale',
-  },
-  overviewDeployBody: {
-    id: 'overview.deploy.body',
-    description: 'Overview, body for deploy',
-    defaultMessage: `Get more out of Insights with more systems.
-        Quickly connect systems with <linkansible> Ansible </linkansible>
-        or <linkpuppet> Puppet </linkpuppet>`,
-  },
   overviewDeployAction: {
     id: 'overview.deploy.action',
     description: 'Overview, action link for deploy',
     defaultMessage: 'Download Ansible Playbook',
-  },
-  overviewActionCallNoSystemsBody: {
-    id: 'overview.actioncallnosystems.body',
-    description: 'Overview, action call body when there are no systems',
-    defaultMessage: `With predictive analytics, avoid problems and unplanned <break> </break>
-        downtime in your Red Hat environment. Red Hat Insights is <break> </break>
-        included with your Red Hat Enterprise Linux subscription`,
   },
   overviewActionCallNoSystemsAction: {
     id: 'overview.actioncallnosystems.action',
@@ -515,11 +465,6 @@ export default defineMessages({
     id: 'installClient',
     description: 'Install the client on the RHEL system',
     defaultMessage: 'Install the client on the RHEL system.',
-  },
-  registerSystem: {
-    id: 'registerSystem',
-    description: 'Register the system to Red Hat Insights',
-    defaultMessage: 'Register the system to Red Hat Insights.',
   },
   rulesDetailsModifieddate: {
     id: 'rulesdetails.modifieddate',
@@ -973,17 +918,6 @@ export default defineMessages({
     defaultMessage:
       'Indicates configurations that are currently affecting your systems',
   },
-  cveAlert: {
-    id: 'cveAlert',
-    description: 'Cve alert body',
-    defaultMessage:
-      'As of April 20th, 2020, all CVE recommendations previously shown in recommendations have moved over to the Vulnerability section of Red Hat Insights which provides additional capabilities for enhanced CVE identification and remediation.',
-  },
-  cveAlertTitle: {
-    id: 'cveAlertTitle',
-    description: 'Cve alert title',
-    defaultMessage: 'CVE recommendations relocated',
-  },
   downloadExecutiveLabel: {
     id: 'downloadExecutiveLabel',
     description: 'Label given to link for downloading exec report',
@@ -1230,16 +1164,15 @@ export default defineMessages({
     defaultMessage:
       'This pathway is expected to improve <strong>{category}</strong> on <strong>{systems, plural, one {# system} other {# systems}}</strong> and resolve <strong>{incidents, plural, one {# incident} other {# incidents}}</strong>.',
   },
-  introLearnMoreButton: {
-    id: 'introLearnMoreButton',
-    description: 'App intro label',
-    defaultMessage:
-      'Learn more about Insights with self-guided onboarding tours in the Resource Center.',
+  notConnectedTitleInsights: {
+    id: 'notConnectedTitleInsights',
+    description: 'Not Connected title text',
+    defaultMessage: 'This system is not yet connected to Insights',
   },
   notConnectedTitle: {
     id: 'notConnectedTitle',
     description: 'Not Connected title text',
-    defaultMessage: 'This system is not yet connected to Insights',
+    defaultMessage: 'This system is not yet connected to Red Hat Lightspeed',
   },
   notConnectedBody: {
     id: 'notConnectedBody',
