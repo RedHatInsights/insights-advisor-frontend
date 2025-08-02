@@ -88,8 +88,8 @@ const BaseSystemAdvisor = ({
       const fetchAndSetData = async () => {
         const resolutionsData = await fetchResolutionsData(
           selectedAnsibleRules,
-          props.response.insights_attributes.uuid,
-          props.hostName,
+          props?.response?.insights_attributes?.uuid,
+          props?.hostName,
         );
         setResolutions(resolutionsData);
       };
@@ -97,8 +97,8 @@ const BaseSystemAdvisor = ({
     }
   }, [
     selectedAnsibleRules,
-    props.hostName,
-    props.response.insights_attributes.uuid,
+    props?.hostName,
+    props?.response?.insights_attributes?.uuid,
   ]);
 
   const cols = getColumns(intl);
