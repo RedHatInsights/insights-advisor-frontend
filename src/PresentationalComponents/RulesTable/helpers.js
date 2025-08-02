@@ -351,7 +351,10 @@ export const buildRows = (
           title: (
             <span key={key}>
               {envContext.loadChromeless ? (
-                <Link key={key} to={`/recommendations/${value.rule_id}`}>
+                <Link
+                  key={key}
+                  to={`/foreman_rh_cloud/recommendations/${value.rule_id}`}
+                >
                   {' '}
                   {value.description}{' '}
                 </Link>
@@ -410,7 +413,10 @@ export const buildRows = (
             value.rule_status !== 'enabled' ? (
               <span>{value.impacted_systems_count}</span>
             ) : envContext.loadChromeless ? (
-              <Link key={key} to={`/recommendations/${value.rule_id}`}>
+              <Link
+                key={key}
+                to={`/foreman_rh_cloud/recommendations/${value.rule_id}`}
+              >
                 {`${value.impacted_systems_count.toLocaleString()}`}
               </Link>
             ) : (
@@ -483,7 +489,9 @@ export const buildRows = (
                   ViewAffectedLink={
                     value.rule_status === 'enabled' &&
                     (envContext.loadChromeless ? (
-                      <Link to={`/recommendations/${value.rule_id}`}>
+                      <Link
+                        to={`/foreman_rh_cloud/recommendations/${value.rule_id}`}
+                      >
                         {value.impacted_systems_count === 0
                           ? ''
                           : intl.formatMessage(messages.viewAffectedSystems, {
