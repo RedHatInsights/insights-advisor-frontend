@@ -5,9 +5,9 @@ import messages from '../../../locales/translations.json';
 import { IOP_ENVIRONMENT_CONTEXT } from '../../AppConstants';
 import { EnvironmentContext } from '../../App';
 import { initStore } from '../../Store';
-import OverviewDetails from './Details';
 
 import axios from 'axios';
+import IopRecommendationDetails from './IopRecommendationDetails';
 
 window.insights = {
   chrome: {
@@ -38,7 +38,7 @@ const RecommendationDetailsWrapped = (props) => (
   <IntlProvider locale="en" messages={messages}>
     <EnvironmentContext.Provider value={IOP_ENVIRONMENT_CONTEXT}>
       <Provider store={initStore()}>
-        <OverviewDetails {...props} axios={instance} />
+        <IopRecommendationDetails {...props} axios={instance} />
       </Provider>
     </EnvironmentContext.Provider>
   </IntlProvider>

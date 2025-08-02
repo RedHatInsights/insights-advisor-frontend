@@ -4,7 +4,11 @@ import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import { pruneFilters, urlBuilder } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
-import { getEntities, allCurrentSystemIds } from './helpers';
+import {
+  getEntities,
+  allCurrentSystemIds,
+  iopResolutionsMapper,
+} from './helpers';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { Get } from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
@@ -19,7 +23,7 @@ import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
-import { Button, Flex, Spinner } from '@patternfly/react-core';
+import { Flex, Spinner } from '@patternfly/react-core';
 import { EnvironmentContext } from '../../App';
 import { AsyncComponent } from '@redhat-cloud-services/frontend-components';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
@@ -37,6 +41,7 @@ const Inventory = ({
   exportTable,
   showTags,
   axios,
+  IopRemediationModal,
 }) => {
   const store = useStore();
   const intl = useIntl();
@@ -294,11 +299,7 @@ const Inventory = ({
           ? {
               renderFunc: (name, id) => {
                 return envContext.loadChromeless ? (
-                  <Link
-                    to={`/recommendations/${rule.rule_id}/${id}?activeRule=true`}
-                  >
-                    {name}
-                  </Link>
+                  <Link to={`/new/hosts/${name}/#Overview`}>{name}</Link>
                 ) : (
                   <InsightsLink
                     to={`/recommendations/${rule.rule_id}/${id}?activeRule=true`}
@@ -388,6 +389,21 @@ const Inventory = ({
       }
     },
   };
+  const [resolutions, setResolutions] = useState([]);
+
+  useEffect(() => {
+    if (selectedIds?.length > 0) {
+      const fetchAndSetData = async () => {
+        const resolutionsData = await iopResolutionsMapper(
+          entities,
+          rule,
+          selectedIds,
+        );
+        setResolutions(resolutionsData);
+      };
+      fetchAndSetData();
+    }
+  }, [selectedIds]);
 
   const getActionsConfig = () => {
     const actions = [
@@ -399,8 +415,11 @@ const Inventory = ({
             systems={selectedIds}
           />
         )}
-        {envContext.loadChromeless ? (
-          <Button>This is temp button to be replaced</Button>
+        {IopRemediationModal ? (
+          <IopRemediationModal.WrappedComponent
+            selectedIds={selectedIds}
+            iopData={resolutions}
+          />
         ) : (
           <RemediationButton
             key="remediation-button"
