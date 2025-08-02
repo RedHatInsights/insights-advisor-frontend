@@ -5,7 +5,13 @@ import { useSelector } from 'react-redux';
 import { useActionResolver } from '../helpers';
 import { EnvironmentContext } from '../../../App';
 
-const ConventionalSystems = ({ rule, afterDisableFn, handleModalToggle }) => {
+const ConventionalSystems = ({
+  rule,
+  afterDisableFn,
+  handleModalToggle,
+  axios,
+  ...props
+}) => {
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const SID = useSelector(({ filters }) => filters.SID);
@@ -30,6 +36,8 @@ const ConventionalSystems = ({ rule, afterDisableFn, handleModalToggle }) => {
       permsExport={envContext.isExportEnabled}
       exportTable="systems"
       showTags={true}
+      axios={axios}
+      IopRemediationModal={props.props.IopRemediationModal}
     />
   );
 };
@@ -38,5 +46,9 @@ ConventionalSystems.propTypes = {
   rule: PropTypes.object,
   afterDisableFn: PropTypes.func,
   handleModalToggle: PropTypes.func,
+  axios: PropTypes.func,
+  props: {
+    IopRemediationModal: PropTypes.element,
+  },
 };
 export default ConventionalSystems;

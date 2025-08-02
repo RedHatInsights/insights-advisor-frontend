@@ -6,6 +6,7 @@ import React, {
   Fragment,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -36,12 +37,14 @@ import downloadReport from '../../PresentationalComponents/Common/DownloadHelper
 import { useParams } from 'react-router-dom';
 import { SkeletonTable } from '@patternfly/react-component-groups';
 import { EnvironmentContext } from '../../App';
+import { fetchResolutionsData } from './helpers';
 
 const BaseSystemAdvisor = ({
   entity,
   inventoryId,
   IopRemediationModal,
   generateRuleUrl,
+  ...props
 }) => {
   const intl = useIntl();
   const systemAdvisorRef = useRef({
@@ -69,13 +72,34 @@ const BaseSystemAdvisor = ({
   const envContext = useContext(EnvironmentContext);
 
   const getSelectedItems = (rows) => rows.filter((row) => row.selected);
-  const selectedAnsibleRules = getSelectedItems(rows).filter(
-    (r) => r.resolution?.has_playbook,
-  );
+  const selectedAnsibleRules = useMemo(() => {
+    const getSelectedItems = (rows) => rows.filter((row) => row.selected);
+    return getSelectedItems(rows).filter((r) => r.resolution?.has_playbook);
+  }, [rows]);
   const selectedItemsLength = getSelectedItems(rows).length;
   const selectableItemsLength = rows.filter(
     (r) => r.resolution?.has_playbook,
   ).length;
+
+  const [resolutions, setResolutions] = useState([]);
+
+  useEffect(() => {
+    if (selectedAnsibleRules.length > 0) {
+      const fetchAndSetData = async () => {
+        const resolutionsData = await fetchResolutionsData(
+          selectedAnsibleRules,
+          props.response.insights_attributes.uuid,
+          props.hostName,
+        );
+        setResolutions(resolutionsData);
+      };
+      fetchAndSetData();
+    }
+  }, [
+    selectedAnsibleRules,
+    props.hostName,
+    props.response.insights_attributes.uuid,
+  ]);
 
   const cols = getColumns(intl);
 
@@ -111,11 +135,10 @@ const BaseSystemAdvisor = ({
       ? [
           <Flex key="inventory-actions">
             {IopRemediationModal ? (
-              React.isValidElement(IopRemediationModal) ? (
-                IopRemediationModal
-              ) : (
-                <IopRemediationModal />
-              )
+              <IopRemediationModal.WrappedComponent
+                selectedIds={selectedAnsibleRules}
+                iopData={resolutions}
+              />
             ) : (
               <RemediationButton
                 key="remediation-button"
@@ -538,7 +561,13 @@ BaseSystemAdvisor.propTypes = {
   }),
   inventoryId: PropTypes.string.isRequired,
   IopRemediationModal: PropTypes.element,
-  generateRuleUrl: PropTypes.func, // for generating rule URLs in IOP environment
+  generateRuleUrl: PropTypes.func,
+  response: PropTypes.shape({
+    insights_attributes: PropTypes.shape({
+      uuid: PropTypes.string,
+    }).isRequired,
+  }).isRequired,
+  hostName: PropTypes.string.isRequired,
 };
 
 const SystemAdvisor = ({ ...props }) => {
