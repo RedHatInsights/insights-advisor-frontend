@@ -199,8 +199,7 @@ export const iopResolutionsMapper = async (entitites, rule, selectedIds) => {
         resolutions: resolutions,
         rulename: rule.rule_id,
         description: rule.description,
-        rebootable: false,
-        //this is missing from the api response
+        rebootable: rule.reboot_required,
       };
     });
     return resolutionData;
