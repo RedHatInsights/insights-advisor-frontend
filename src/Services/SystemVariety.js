@@ -7,12 +7,16 @@ export const SystemVariety = createApi({
   keepUnusedDataFor: 5,
   endpoints: (build) => ({
     getConventionalDevices: build.query({
-      query: () =>
-        '/hosts?page=1&per_page=1&filter[system_profile][host_type]=nil',
+      query: (args) => ({
+        url: '/hosts?page=1&per_page=1&filter[system_profile][host_type]=nil',
+        ...args,
+      }),
     }),
     getEdgeDevices: build.query({
-      query: () =>
-        '/hosts?page=1&per_page=1&filter[system_profile][host_type]=edge',
+      query: (args) => ({
+        url: '/hosts?page=1&per_page=1&filter[system_profile][host_type]=edge',
+        ...args,
+      }),
     }),
   }),
 });
