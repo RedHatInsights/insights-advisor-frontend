@@ -80,9 +80,7 @@ const fetchStatusID = async () => {
 };
 
 const dynamicRecsBaseQuery = async (args, api, extraOptions) => {
-  // If customBasePath is provided in the query arguments, use it; otherwise, fall back to BASE_URL.
   const processedArgs = typeof args === 'object' && args !== null ? args : {};
-
   const {
     url: argUrl,
     headers: argHeaders,
@@ -93,24 +91,30 @@ const dynamicRecsBaseQuery = async (args, api, extraOptions) => {
     inventoryBasePath: argInventoryBasePath,
     ...remainingParams
   } = processedArgs;
+
   let baseUrlToUse = argCustomBasePath || argInventoryBasePath || BASE_URL;
 
-  let actualUrlPath = argUrl || '';
+  const [urlPath, existingQueryString] = (argUrl || '').split('?', 2);
+  let finalSearchString = '';
 
-  let finalSearchString = argSearch;
-  if (Object.keys(remainingParams).length > 0) {
-    const remainingQueryParams = new URLSearchParams(
-      remainingParams,
-    ).toString();
-    if (finalSearchString) {
-      finalSearchString += `&${remainingQueryParams}`;
-    } else {
-      finalSearchString = remainingQueryParams;
-    }
+  const allParams = new URLSearchParams(existingQueryString);
+
+  if (argSearch) {
+    new URLSearchParams(argSearch).forEach((value, key) => {
+      allParams.set(key, value);
+    });
   }
 
+  if (Object.keys(remainingParams).length > 0) {
+    new URLSearchParams(remainingParams).forEach((value, key) => {
+      allParams.set(key, value);
+    });
+  }
+
+  finalSearchString = allParams.toString();
+
   const finalArgsForAxiosBaseQuery = {
-    url: actualUrlPath,
+    url: urlPath,
     headers: argHeaders,
     options: argOptions,
     search: finalSearchString,
