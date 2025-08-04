@@ -502,6 +502,7 @@ export const PERMISSIONS = {
 };
 
 export const IOP_ENVIRONMENT_CONTEXT = {
+  isLightspeedEnabled: false,
   isLoading: false,
   isExportEnabled: false,
   isDisableRecEnabled: false,
