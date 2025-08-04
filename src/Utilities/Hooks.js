@@ -59,6 +59,7 @@ export const useRbac = (requestedPerms) => {
 
 export const useHccEnvironmentContext = () => {
   const chrome = useChrome();
+  const isLightspeedEnabled = useFeatureFlag('platform.lightspeed-rebrand');
 
   const [[canExport, canDisableRec, canViewRecs], isRbacLoading] = useRbac([
     PERMISSIONS.export,
@@ -67,6 +68,7 @@ export const useHccEnvironmentContext = () => {
   ]);
 
   return {
+    isLightspeedEnabled,
     isLoading: isRbacLoading,
     isExportEnabled: canExport,
     isDisableRecEnabled: canDisableRec,
