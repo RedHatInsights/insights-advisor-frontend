@@ -37,7 +37,7 @@ const ConventionalSystems = ({
       exportTable="systems"
       showTags={true}
       axios={axios}
-      IopRemediationModal={props.props.IopRemediationModal}
+      IopRemediationModal={props?.props?.IopRemediationModal}
     />
   );
 };
