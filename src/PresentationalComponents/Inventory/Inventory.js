@@ -419,6 +419,7 @@ const Inventory = ({
           <IopRemediationModal.WrappedComponent
             selectedIds={selectedIds}
             iopData={resolutions}
+            isDisabled={isRemediationButtonDisabled}
           />
         ) : (
           <RemediationButton
