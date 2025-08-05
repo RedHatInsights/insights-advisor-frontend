@@ -410,7 +410,7 @@ const Inventory = ({
       <Flex key="inventory-actions">
         {envContext.displayDownloadPlaybookButton && (
           <DownloadPlaybookButton
-            isDisabled={selectedIds.length === 0}
+            isDisabled={isRemediationButtonDisabled}
             rules={[rule]}
             systems={selectedIds}
           />
