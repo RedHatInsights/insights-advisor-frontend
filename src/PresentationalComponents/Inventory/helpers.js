@@ -148,3 +148,63 @@ export const allCurrentSystemIds =
     setIsLoading(false);
     return merged;
   };
+
+/**
+ * Fetches remediation resolutions from an API for a specific rule and a list of selected systems.
+ * It formats the API response into a new array of objects, where each object represents a selected
+ * host and includes its name, ID, and the relevant resolutions.
+ *
+ * @param {object} entitites An object containing a `rows` property, which is an array of system objects. Each system object must have an `id` and `display_name`.
+ * @param {object} rule An object representing the rule, containing a `rule_id` property.
+ * @param {string[]} selectedIds An array of strings representing the IDs of the selected systems.
+ * @returns {Promise<object[]>} A promise that resolves to an array of objects. Each object contains
+ * `hostid`, `host_name`, `resolutions`, `rulename`, and `description`. Returns an empty
+ * array if the fetch fails or if an error occurs.
+ */
+export const iopResolutionsMapper = async (entitites, rule, selectedIds) => {
+  const formattedIssue = `advisor:${rule.rule_id}`;
+
+  try {
+    const response = await fetch(
+      '/insights_cloud/api/remediations/v1/resolutions',
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'X-CSRF-Token': document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute('content'),
+        },
+        body: JSON.stringify({ issues: [formattedIssue] }),
+      },
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${errorText}`,
+      );
+    }
+
+    const data = await response.json();
+    const resolutions = data[formattedIssue]?.resolutions || [];
+
+    const resolutionData = selectedIds.map((id) => {
+      const matchingEntity = entitites.rows.find((entity) => entity.id === id);
+      const hostName = matchingEntity ? matchingEntity.display_name : id;
+
+      return {
+        hostid: id,
+        host_name: hostName,
+        resolutions: resolutions,
+        rulename: rule.rule_id,
+        description: rule.description,
+        rebootable: rule.reboot_required,
+      };
+    });
+    return resolutionData;
+  } catch (err) {
+    console.error('An error occurred during fetch:', err);
+    return [];
+  }
+};

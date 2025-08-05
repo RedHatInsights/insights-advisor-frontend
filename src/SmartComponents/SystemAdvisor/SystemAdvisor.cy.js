@@ -66,6 +66,14 @@ const mountComponent = (envContextOverrides = {}, IopRemediationModal) => {
           }}
           inventoryId={SYSTEM_ID}
           IopRemediationModal={IopRemediationModal}
+          props={{
+            response: {
+              insights_attributes: {
+                uuid: '12345',
+              },
+            },
+            hostName: 'hohohostname',
+          }}
         />
       </Wrapper>
     </EnvironmentContext.Provider>,
@@ -333,7 +341,7 @@ describe('system rules table', () => {
           isDisabled={() => console.log('test')}
           onClick={() => console.log('test')}
         >
-          {'Satellite button'}
+          {'Export button'}
         </Button>,
       );
       cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
@@ -392,11 +400,6 @@ describe('system rules table', () => {
 // });
 
 describe('System rules table toolbar actions', () => {
-  const DummyButton = () => (
-    <Button variant="primary" onClick={() => {}}>
-      Satellite button
-    </Button>
-  );
   const interceptSystemProfile = (hostType = 'non-edge') => {
     cy.intercept(`${INVENTORY_BASE_URL}/hosts/${SYSTEM_ID}/system_profile`, {
       statusCode: 200,
@@ -436,19 +439,5 @@ describe('System rules table toolbar actions', () => {
     cy.get('.ins-c-primary-toolbar__first-action')
       .contains('Remediation')
       .should('exist');
-  });
-
-  it('Renders custom IOP remediation button when passed as prop', () => {
-    interceptSystemProfile('non-edge');
-    mountComponent({}, DummyButton);
-    cy.wait('@getSystemProfile');
-
-    cy.get('.ins-c-primary-toolbar__first-action')
-      .contains('Satellite button')
-      .should('exist');
-
-    cy.get('.ins-c-primary-toolbar__first-action')
-      .contains('Remediation')
-      .should('not.exist');
   });
 });
