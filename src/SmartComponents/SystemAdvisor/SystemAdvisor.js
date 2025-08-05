@@ -38,6 +38,7 @@ import { useParams } from 'react-router-dom';
 import { SkeletonTable } from '@patternfly/react-component-groups';
 import { EnvironmentContext } from '../../App';
 import { fetchResolutionsData } from './helpers';
+import DownloadPlaybookButton from '../../Utilities/DownloadPlaybookButton';
 
 const BaseSystemAdvisor = ({
   entity,
@@ -134,6 +135,13 @@ const BaseSystemAdvisor = ({
     !isSystemProfileLoading && systemProfile?.host_type !== 'edge'
       ? [
           <Flex key="inventory-actions">
+            {envContext.displayDownloadPlaybookButton && (
+              <DownloadPlaybookButton
+                isDisabled={selectedAnsibleRules.length === 0}
+                rules={selectedAnsibleRules.map((rule) => rule.rule)}
+                systems={[inventoryId]}
+              />
+            )}
             {IopRemediationModal ? (
               <IopRemediationModal.WrappedComponent
                 selectedIds={selectedAnsibleRules}
