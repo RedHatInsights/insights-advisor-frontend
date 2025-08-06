@@ -93,6 +93,7 @@ const IopRecommendationDetails = (props) => {
       );
     }
   }, [envContext, rule.description, ruleId]);
+
   useEffect(() => {
     if (
       typeof envContext.BASE_URL === 'string' &&
