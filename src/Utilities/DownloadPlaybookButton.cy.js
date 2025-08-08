@@ -1,6 +1,5 @@
 import React from 'react';
 import DownloadPlaybookButton from './DownloadPlaybookButton';
-import { REMEDIATIONS_BASE_URL } from '../AppConstants';
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import { initStore } from '../Store';
@@ -36,10 +35,17 @@ describe('DownloadPlaybookButton Component', () => {
   it('renders the button and triggers download when clicked', () => {
     mountComponent();
 
-    cy.intercept('POST', `${REMEDIATIONS_BASE_URL}/playbook`, {
-      statusCode: 200,
-      body: 'mock-playbook-content',
-    }).as('postPlaybook');
+    cy.intercept(
+      'POST',
+      '/insights_cloud/api/remediations/v1/playbook',
+      (req) => {
+        req.headers['X-CSRF-Token'] = 'x-csrf-token';
+        req.reply({
+          statusCode: 200,
+          body: 'mock-playbook-content',
+        });
+      },
+    ).as('postPlaybook');
 
     cy.get('button').contains('Download playbook').click();
     cy.wait('@postPlaybook')

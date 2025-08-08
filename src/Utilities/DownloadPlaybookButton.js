@@ -4,7 +4,6 @@ import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import messages from '../Messages';
 import { Post } from './Api';
-import { REMEDIATIONS_BASE_URL } from '../AppConstants';
 import { useDispatch } from 'react-redux';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 
@@ -16,8 +15,12 @@ const DownloadPlaybookButton = ({ isDisabled, rules, systems }) => {
   const download = async (payload) => {
     try {
       const response = await Post(
-        `${REMEDIATIONS_BASE_URL}/playbook`,
-        {},
+        '/insights_cloud/api/remediations/v1/playbook',
+        {
+          'X-CSRF-Token': document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute('content'),
+        },
         payload,
       );
 

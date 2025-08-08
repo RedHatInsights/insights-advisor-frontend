@@ -530,7 +530,7 @@ export const IOP_ENVIRONMENT_CONTEXT = {
   STATS_REPORTS_FETCH_URL: `/insights_cloud/api/insights/v1/stats/reports/`,
   STATS_OVERVIEW_FETCH_URL: `/insights_cloud/api/insights/v1/stats/overview/`,
   SYSTEMS_FETCH_URL: `/insights_cloud/api/insights/v1/system/`,
-  EDGE_DEVICE_BASE_URL: '/api/edge/v1',
+  EDGE_DEVICE_BASE_URL: '/insights_cloud/api/edge/v1',
   INVENTORY_BASE_URL: '/insights_cloud/api/inventory/v1',
-  REMEDIATIONS_BASE_URL: '/api/remediations/v1',
+  REMEDIATIONS_BASE_URL: '/insights_cloud/api/remediations/v1',
 };
