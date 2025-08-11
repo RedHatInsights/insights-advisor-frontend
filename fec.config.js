@@ -3,11 +3,10 @@ const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 
 module.exports = {
   appUrl: '/insights/advisor',
-  // uncomment publicPath when working in satellite env
-  //publicPath: 'auto',
-  debug: false,
+  publicPath: process.env.PROXY ? '' : 'auto',
+  debug: true,
   useProxy: process.env.PROXY === 'true',
-  proxyVerbose: false,
+  proxyVerbose: true,
   devtool: 'hidden-source-map',
   plugins: [
     // Put the Sentry Webpack plugin after all other plugins
