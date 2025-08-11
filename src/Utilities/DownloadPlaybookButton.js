@@ -1,23 +1,27 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import messages from '../Messages';
 import { Post } from './Api';
-import { REMEDIATIONS_BASE_URL } from '../AppConstants';
 import { useDispatch } from 'react-redux';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/';
+import { EnvironmentContext } from '../App';
 
 const DownloadPlaybookButton = ({ isDisabled, rules, systems }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const notification = (data) => dispatch(addNotification(data));
+  const envContext = useContext(EnvironmentContext);
 
   const download = async (payload) => {
     try {
+      const csrfToken = document
+        ?.querySelector('meta[name="csrf-token"]')
+        ?.getAttribute('content');
       const response = await Post(
-        `${REMEDIATIONS_BASE_URL}/playbook`,
-        {},
+        `${envContext.REMEDIATIONS_BASE_URL}/playbook`,
+        { 'X-CSRF-Token': csrfToken },
         payload,
       );
 

@@ -1,9 +1,10 @@
 import React from 'react';
 import DownloadPlaybookButton from './DownloadPlaybookButton';
-import { REMEDIATIONS_BASE_URL } from '../AppConstants';
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import { initStore } from '../Store';
+import { IOP_ENVIRONMENT_CONTEXT } from '../AppConstants';
+import { EnvironmentContext } from '../App';
 
 const mockRules = [
   {
@@ -20,15 +21,17 @@ const mountComponent = (
   systems = mockSystems,
 ) => {
   cy.mount(
-    <IntlProvider locale={navigator.language.slice(0, 2)}>
-      <Provider store={initStore()}>
-        <DownloadPlaybookButton
-          isDisabled={isDisabled}
-          rules={rules}
-          systems={systems}
-        />
-      </Provider>
-    </IntlProvider>,
+    <EnvironmentContext.Provider value={IOP_ENVIRONMENT_CONTEXT}>
+      <IntlProvider locale={navigator.language.slice(0, 2)}>
+        <Provider store={initStore()}>
+          <DownloadPlaybookButton
+            isDisabled={isDisabled}
+            rules={rules}
+            systems={systems}
+          />
+        </Provider>
+      </IntlProvider>
+    </EnvironmentContext.Provider>,
   );
 };
 
@@ -36,9 +39,14 @@ describe('DownloadPlaybookButton Component', () => {
   it('renders the button and triggers download when clicked', () => {
     mountComponent();
 
-    cy.intercept('POST', `${REMEDIATIONS_BASE_URL}/playbook`, {
-      statusCode: 200,
-      body: 'mock-playbook-content',
+    const playbookURL = `${IOP_ENVIRONMENT_CONTEXT.REMEDIATIONS_BASE_URL}/playbook`;
+    cy.log('Intercepting playbook URL:', playbookURL);
+    cy.intercept('POST', playbookURL, (req) => {
+      req.headers['X-CSRF-Token'] = 'x-csrf-token';
+      req.reply({
+        statusCode: 200,
+        body: 'mock-playbook-content',
+      });
     }).as('postPlaybook');
 
     cy.get('button').contains('Download playbook').click();
