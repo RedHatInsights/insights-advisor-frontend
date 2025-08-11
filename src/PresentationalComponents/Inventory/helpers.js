@@ -190,7 +190,9 @@ export const iopResolutionsMapper = async (entitites, rule, selectedIds) => {
     const resolutions = data[formattedIssue]?.resolutions || [];
 
     const resolutionData = selectedIds.map((id) => {
-      const matchingEntity = entitites.rows.find((entity) => entity.id === id);
+      const matchingEntity = entitites?.rows?.find(
+        (entity) => entity.id === id,
+      );
       const hostName = matchingEntity ? matchingEntity.display_name : id;
 
       return {

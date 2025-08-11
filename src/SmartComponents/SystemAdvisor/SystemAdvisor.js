@@ -146,6 +146,7 @@ const BaseSystemAdvisor = ({
               <IopRemediationModal.WrappedComponent
                 selectedIds={selectedAnsibleRules}
                 iopData={resolutions}
+                isDisabled={selectedAnsibleRules.length === 0}
               />
             ) : (
               <RemediationButton

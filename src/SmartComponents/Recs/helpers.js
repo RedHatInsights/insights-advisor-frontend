@@ -116,11 +116,12 @@ export const edgeSystemsCheck = async (
   try {
     await axios.get(conventionalURL).then(({ data }) => {
       count = count += data.meta.count;
-      setConventionalSystemsCount(data.meta.count);
+      setConventionalSystemsCount &&
+        setConventionalSystemsCount(data.meta.count);
     });
     await axios.get(edgeURL).then(({ data }) => {
       count = count += data.meta.count;
-      setEdgeSystemsCount(data.meta.count);
+      setEdgeSystemsCount && setEdgeSystemsCount(data.meta.count);
     });
 
     setSystemsCount && setSystemsCount(count);
