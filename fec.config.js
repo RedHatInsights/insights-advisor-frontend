@@ -3,7 +3,7 @@ const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 
 module.exports = {
   appUrl: '/insights/advisor',
-  publicPath: process.env.PROXY ? '' : 'auto',
+  publicPath: process.env.IOP_BUILD ? 'auto' : '',
   debug: true,
   useProxy: process.env.PROXY === 'true',
   proxyVerbose: true,
