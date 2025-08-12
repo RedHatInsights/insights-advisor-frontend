@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/RedHatInsights/frontend-components/refs/heads/master/packages/config-utils/src/feo/spec/frontend-crd.schema.json
+---
 apiVersion: v1
 kind: Template
 metadata:
@@ -8,6 +10,7 @@ objects:
     metadata:
       name: advisor
     spec:
+      feoConfigEnabled: true
       envName: ${ENV_NAME}
       title: Advisor
       deploymentRepo: https://github.com/RedHatInsights/insights-advisor-frontend
@@ -18,14 +21,154 @@ objects:
         paths:
           - /apps/advisor
       image: ${IMAGE}:${IMAGE_TAG}
+
       module:
-        manifestLocation: "/apps/advisor/fed-mods.json"
+        analytics:
+          APIKey: apRCg9V6oMXCcnTingqRYW6m1er4hkCW
+        manifestLocation: /apps/advisor/fed-mods.json
+        config:
+          supportCaseData:
+            product: Red Hat Insights
+            version: Advisor
         modules:
-          - id: "advisor"
-            module: "./RootApp"
+          - id: advisor
+            module: ./RootApp
             routes:
               - pathname: /insights/advisor
               - pathname: /ansible/advisor
+
+      bundleSegments:
+        - segmentId: advisor-insights-operations
+          bundleId: insights
+          position: 500
+          navItems:
+            - title: Operations
+              id: operations
+              expandable: true
+              routes:
+                - title: Advisor
+                  id: advisor
+                  expandable: true
+                  routes:
+                    - id: recommendations
+                      title: Recommendations
+                      href: /insights/advisor/recommendations
+                      product: Red Hat Insights
+                    - id: advisorSystems
+                      title: Systems
+                      href: /insights/advisor/systems
+                      product: Red Hat Insights
+                    - id: topics
+                      title: Topics
+                      href: /insights/advisor/topics
+                      product: Red Hat Insights
+
+        - segmentId: advisor-ansible
+          bundleId: ansible
+          position: 1500
+          navItems:
+            - title: Advisor
+              id: advisor
+              expandable: true
+              routes:
+                - id: recommendations
+                  title: Recommendations
+                  href: /ansible/advisor/recommendations
+                  product: Red Hat Insights
+                - id: advisorSystems
+                  title: Systems
+                  href: /ansible/advisor/systems
+                  product: Red Hat Insights
+                - id: topics
+                  title: Topics
+                  href: /ansible/advisor/topics
+                  product: Red Hat Insights
+
+      serviceTiles:
+        - id: advisor-rhel-security
+          title: Advisor
+          description: "See targeted recommendations to optimize your Red Hat Enterprise Linux systems' availability, performance, and security."
+          href: /insights/advisor/recommendations
+          group: rhel
+          section: security
+          icon: InsightsIcon
+        - id: advisor-rhel-observe
+          title: Advisor
+          description: "See targeted recommendations to optimize your Red Hat Enterprise Linux systems' availability, performance, and security."
+          href: /insights/advisor/recommendations
+          group: rhel
+          section: observe
+          icon: InsightsIcon
+        - id: advisor-ansible-observe
+          title: Advisor
+          description: "See targeted recommendations to optimize your Red Hat Enterprise Linux systems' availability, performance, and security."
+          href: /ansible/advisor/recommendations
+          group: ansible
+          section: observe
+          icon: InsightsIcon
+
+      searchEntries:
+        - id: advisor-rhel
+          title: Advisor
+          description: "See targeted recommendations to optimize your Red Hat Enterprise Linux systems' availability, performance, and security."
+          href: /insights/advisor/recommendations
+          alt_title:
+            - advisor
+            - insights
+            - rules
+            - rule
+            - recommendations
+            - recommendation
+            - critical recommendations
+            - important recommendations
+            - critical
+            - important
+            - remediations
+            - remediation
+            - playbooks
+            - playbook
+            - security
+            - stability
+            - performance
+            - availability
+            - incidents
+            - incident
+            - configuration
+            - upgrade
+            - upgrade risk
+            - pathways
+            - pathway
+
+        - id: advisor-ansible
+          title: Advisor
+          description: "See targeted recommendations to optimize your Red Hat Enterprise Linux systems' availability, performance, and security."
+          href: /ansible/advisor/recommendations
+          alt_title:
+            - advisor
+            - insights
+            - rules
+            - rule
+            - recommendations
+            - recommendation
+            - critical recommendations
+            - important recommendations
+            - critical
+            - important
+            - remediations
+            - remediation
+            - playbooks
+            - playbook
+            - security
+            - stability
+            - performance
+            - availability
+            - incidents
+            - incident
+            - configuration
+            - upgrade
+            - upgrade risk
+            - pathways
+            - pathway
 
 parameters:
   - name: ENV_NAME
