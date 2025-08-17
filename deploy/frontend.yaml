@@ -21,10 +21,10 @@ objects:
         paths:
           - /apps/advisor
       image: ${IMAGE}:${IMAGE_TAG}
-
       module:
         analytics:
           APIKey: apRCg9V6oMXCcnTingqRYW6m1er4hkCW
+          APIKeyDev: aMINBssUhXV1okzk7ZBaqwdTgtA0ySpg
         manifestLocation: /apps/advisor/fed-mods.json
         config:
           supportCaseData:
@@ -62,7 +62,6 @@ objects:
                       title: Topics
                       href: /insights/advisor/topics
                       product: Red Hat Insights
-
         - segmentId: advisor-ansible
           bundleId: ansible
           position: 1500
@@ -101,15 +100,15 @@ objects:
           icon: InsightsIcon
         - id: advisor-ansible-observe
           title: Advisor
-          description: "See targeted recommendations to optimize your Red Hat Enterprise Linux systems' availability, performance, and security."
+          description: "See targeted recommendations to optimize your Ansible hosts’ availability, performance, and security."
           href: /ansible/advisor/recommendations
           group: ansible
           section: observe
-          icon: InsightsIcon
+          icon: AnsibleIcon
 
       searchEntries:
         - id: advisor-rhel
-          title: Advisor
+          title: Recommendations - Advisor
           description: "See targeted recommendations to optimize your Red Hat Enterprise Linux systems' availability, performance, and security."
           href: /insights/advisor/recommendations
           alt_title:
@@ -138,10 +137,9 @@ objects:
             - upgrade risk
             - pathways
             - pathway
-
         - id: advisor-ansible
-          title: Advisor
-          description: "See targeted recommendations to optimize your Red Hat Enterprise Linux systems' availability, performance, and security."
+          title: Recommendations - Advisor
+          description: "See targeted recommendations to optimize your Ansible hosts’ availability, performance, and security."
           href: /ansible/advisor/recommendations
           alt_title:
             - advisor
