@@ -83,4 +83,5 @@ module.exports = {
     },
   },
   _unstableSpdy: true,
+  frontendCRDPath: resolve(__dirname, './deploy/frontend.yml'),
 };
