@@ -102,6 +102,7 @@ const Inventory = ({
     itemIdsOnPage: grabPageIds,
     identitfier: 'system_uuid',
     isLoading,
+    disabled: envContext.loadChromeless && rulesPlaybookCount <= 0,
   });
 
   const fetchSystems = getEntities(
@@ -116,6 +117,7 @@ const Inventory = ({
     envContext.RULES_FETCH_URL,
     envContext.SYSTEMS_FETCH_URL,
     axios,
+    envContext,
   );
 
   // Ensures rows are marked as selected, runs the check on remediation Status
@@ -434,12 +436,12 @@ const Inventory = ({
         )}
       </Flex>,
     ];
-    !pathway &&
+    envContext.isDisableRecEnabled &&
+      !pathway &&
       actions.push({
         label: intl.formatMessage(messages.disableRuleForSystems),
         props: {
-          isDisabled:
-            (selectedIds || []).length === 0 || !envContext.isDisableRecEnabled,
+          isDisabled: (selectedIds || []).length === 0,
         },
         onClick: () => handleModalToggle(true),
       });
