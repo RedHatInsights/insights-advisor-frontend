@@ -21,6 +21,7 @@ const useBulkSelect = ({
   itemIdsOnPage,
   identifier = 'id',
   isLoading,
+  disabled,
 }) => {
   const enableBulkSelect = !!onSelect;
   const {
@@ -36,7 +37,7 @@ const useBulkSelect = ({
   const allSelected = selectedIdsTotal === total;
   const noneSelected = selectedIdsTotal === 0;
 
-  const isDisabled = total === 0 || isLoading;
+  const isDisabled = disabled || total === 0 || isLoading;
   const checked = checkboxState(selectedIdsTotal, total);
   const title = compileTitle(selectedIdsTotal, isLoading);
 

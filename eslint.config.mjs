@@ -16,8 +16,9 @@ const flatPlugins = [
 ];
 
 export default defineConfig([
-    globalIgnores(["node_modules/*", "static/*", "dist/*"]),
-    ...flatPlugins, {
+  globalIgnores(['node_modules/*', 'static/*', 'dist/*']),
+  ...flatPlugins,
+  {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
       parser: tsParser,
@@ -30,6 +31,7 @@ export default defineConfig([
     },
     rules: {
       'no-unused-vars': 'warn',
+      'testing-library/no-node-access': 'off',
       // Add other TypeScript-specific rules here
     },
   },
@@ -37,6 +39,8 @@ export default defineConfig([
     rules: {
       'rulesdir/disallow-fec-relative-imports': 'off',
       'rulesdir/forbid-pf-relative-imports': 'off',
+      'testing-library/no-node-access': 'off',
       // Add other non-TypeScript specific rules here
     },
-  },]);
+  },
+]);
