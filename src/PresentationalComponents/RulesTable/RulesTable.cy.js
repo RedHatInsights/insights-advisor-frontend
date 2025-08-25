@@ -840,19 +840,17 @@ describe('Disable kebab recommendation', () => {
       },
     }).as('call');
   });
-  it(`tooltip displays disabled message`, () => {
+  it(`is not rendered if isDisableRecEnabled is false`, () => {
     mountComponent(
       {},
       {
         isDisableRecEnabled: false,
       },
     );
-    cy.get(
-      'button[class="pf-v5-c-menu-toggle pf-m-plain pf-m-disabled"]',
-    ).should('exist');
+    cy.get('button[aria-label="Kebab toggle"]').should('not.exist');
   });
 
-  it(`is enabled`, () => {
+  it(`is rendered and enabled when isDisableRecEnabled is true`, () => {
     mountComponent(
       {},
       {
@@ -863,6 +861,7 @@ describe('Disable kebab recommendation', () => {
       'Reboot fails when there is no "kernelopts" option in the grubenv',
     );
     cy.contains('Disable recommendation').should('be.visible');
+    cy.get('button[aria-label="Kebab toggle"]').should('exist');
   });
 });
 
