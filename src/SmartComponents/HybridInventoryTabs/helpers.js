@@ -1,12 +1,15 @@
 import { createOptions } from '../../PresentationalComponents/helper';
-import { paginatedRequestHelper } from '../../PresentationalComponents/Inventory/helpers';
+import {
+  impactedDateColumn,
+  lastSeenColumn,
+  paginatedRequestHelper,
+} from '../../PresentationalComponents/Inventory/helpers';
 import { Post } from '../../Utilities/Api';
 import { EDGE_DEVICE_BASE_URL } from '../../AppConstants';
 import { useCallback } from 'react';
 import { systemReducer } from '../../Store/AppReducer';
 import { updateReducers } from '../../Store';
 import { useStore } from 'react-redux';
-import { wrappable } from '@patternfly/react-table';
 import { createSortParam } from '../../PresentationalComponents/helper';
 
 const mergeByInventoryKey = (
@@ -142,18 +145,9 @@ export const useOnLoad = (filters) => {
 };
 
 export const mergeAppColumns = (defaultColumns, isRecommendationDetail) => {
-  const lastSeenColumn = defaultColumns.find(({ key }) => key === 'updated');
-  const impacted_date = {
-    key: 'impacted_date',
-    title: 'First impacted',
-    sortKey: 'impacted_date',
-    transforms: [wrappable],
-    props: { width: 15 },
-    renderFunc: lastSeenColumn.renderFunc,
-  };
-
   return [
     ...defaultColumns,
-    ...(isRecommendationDetail ? [impacted_date] : []),
+    lastSeenColumn,
+    isRecommendationDetail && impactedDateColumn,
   ];
 };

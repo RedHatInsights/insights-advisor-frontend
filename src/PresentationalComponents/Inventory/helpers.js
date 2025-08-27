@@ -1,6 +1,10 @@
 import { Get } from '../../Utilities/Api';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
 import { createOptions, createSortParam } from '../helper';
+import LastSeenColumnHeader from '../../Utilities/LastSeenColumnHeader';
+import { fitContent } from '@patternfly/react-table';
+import { DateFormat } from '@redhat-cloud-services/frontend-components';
+import React from 'react';
 
 /*This functions purpose is to grab the currently set filters, and return all associated systems for it.*/
 export const paginatedRequestHelper = async ({
@@ -215,4 +219,25 @@ export const iopResolutionsMapper = async (entitites, rule, selectedIds) => {
     console.error('An error occurred during fetch:', err);
     return [];
   }
+};
+
+export const lastSeenColumn = {
+  key: 'last_seen',
+  title: <LastSeenColumnHeader />,
+  sortKey: 'last_seen',
+  transforms: [fitContent],
+  props: { width: 10 },
+  renderFunc: (last_seen) => (
+    <DateFormat date={last_seen} extraTitle={'Last Seen: '} />
+  ),
+};
+export const impactedDateColumn = {
+  key: 'impacted_date',
+  title: 'First impacted',
+  sortKey: 'impacted_date',
+  transforms: [fitContent],
+  props: { width: 15 },
+  renderFunc: (impacted_date) => (
+    <DateFormat date={impacted_date} extraTitle={'First impacted: '} />
+  ),
 };
