@@ -8,6 +8,8 @@ import {
   getEntities,
   allCurrentSystemIds,
   iopResolutionsMapper,
+  impactedDateColumn,
+  lastSeenColumn,
 } from './helpers';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { Get } from '../../Utilities/Api';
@@ -283,14 +285,8 @@ const Inventory = ({
 
   const createColumns = useCallback(
     (defaultColumns) => {
-      let lastSeenColumn = defaultColumns.filter(
-        ({ key }) => key === 'updated',
-      );
       let displayName = defaultColumns.filter(
         ({ key }) => key === 'display_name',
-      );
-      let systemProfile = defaultColumns.filter(
-        ({ key }) => key === 'system_profile',
       );
       //Link to the Systems in the Recommendation details table and Pathway details table
       displayName = {
@@ -313,10 +309,9 @@ const Inventory = ({
             }
           : {}),
       };
-      lastSeenColumn = {
-        ...lastSeenColumn[0],
-        transforms: [wrappable],
-      };
+      let systemProfile = defaultColumns.filter(
+        ({ key }) => key === 'system_profile',
+      );
       systemProfile = {
         ...systemProfile[0],
         transforms: [wrappable],
@@ -333,15 +328,7 @@ const Inventory = ({
 
       // Add column for impacted_date which is relevant for the rec system details table, but not pathways system table
       if (!pathway) {
-        const impacted_date = {
-          key: 'impacted_date',
-          title: 'First impacted',
-          sortKey: 'impacted_date',
-          transforms: [wrappable],
-          props: { width: 15 },
-          renderFunc: lastSeenColumn.renderFunc,
-        };
-        columnList.push(impacted_date);
+        columnList.push(impactedDateColumn);
         lastSeenColumn.props.width = 15;
       }
 

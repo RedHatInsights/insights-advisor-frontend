@@ -8,6 +8,7 @@ import advisorRecommendationData from './fixtures/advisorRecommendationData.json
 import edgeData from './fixtures/edgeData.json';
 import { updateReducers } from '../../Store';
 import { getEntities } from '../../PresentationalComponents/Inventory/helpers';
+import { fitContent } from '@patternfly/react-table';
 
 // Mock dependencies
 jest.mock('../../Utilities/Api', () => ({
@@ -344,13 +345,30 @@ const defaultColumns = [
 ];
 
 describe('mergeAppColumns', () => {
-  test('Should use last seen column render function for impacted column', () => {
+  test('Should contain both Last seen and Impacted date columns', () => {
     const result = mergeAppColumns(defaultColumns, true);
 
+    const last_seen = result.find((column) => column.key === 'last_seen');
+    expect(last_seen).toEqual({
+      key: 'last_seen',
+      title: expect.any(Object),
+      sortKey: 'last_seen',
+      transforms: [fitContent],
+      props: { width: 10 },
+      renderFunc: expect.any(Function),
+    });
     const impacted_date = result.find(
       (column) => column.key === 'impacted_date',
     );
-    expect(impacted_date.renderFunc).toEqual(defaultColumns[0].renderFunc);
+    expect(impacted_date.title).toEqual('First impacted');
+  });
+
+  test('Should not have Impacted date column when isRecommendationDetail is false', () => {
+    const result = mergeAppColumns(defaultColumns, false);
+    const impacted_date = result.find(
+      (column) => column.key === 'impacted_date',
+    );
+    expect(impacted_date).toBe(undefined);
   });
 });
 
