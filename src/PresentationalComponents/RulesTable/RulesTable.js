@@ -295,7 +295,9 @@ const RulesTable = ({ isTabActive, pathway }) => {
         <Table
           aria-label={'rule-table'}
           variant={TableVariant.compact}
-          actionResolver={actionResolver}
+          actionResolver={
+            envContext.isDisableRecEnabled ? actionResolver : null
+          }
           onCollapse={handleOnCollapse}
           sortBy={sortBy}
           onSort={onSort}
