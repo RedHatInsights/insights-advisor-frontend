@@ -25,7 +25,7 @@ const ConventionalSystems = ({
     <Inventory
       tableProps={{
         canSelectAll: false,
-        actionResolver,
+        actionResolver: envContext.isDisableRecEnabled ? actionResolver : null,
         isStickyHeader: true,
       }}
       rule={rule}

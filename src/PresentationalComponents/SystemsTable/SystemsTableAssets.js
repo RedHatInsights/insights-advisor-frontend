@@ -5,6 +5,7 @@ import messages from '../../Messages';
 import RuleLabels from '../Labels/RuleLabels';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 import { Link } from 'react-router-dom';
+import { lastSeenColumn } from '../Inventory/helpers';
 
 export const systemsTableColumns = (intl, envContext) => [
   {
@@ -62,8 +63,5 @@ export const systemsTableColumns = (intl, envContext) => [
     transforms: [wrappable],
     key: 'low_hits',
   },
-  {
-    key: 'updated',
-    transforms: [wrappable],
-  },
+  lastSeenColumn,
 ];
