@@ -37,6 +37,16 @@ spec:
     value: '{"type": "npm", "path": "."}'
   - name: prefetch-dev-package-managers
     value: "true"
+  - name: labels
+    value:
+      - 'url="https://www.redhat.com"'
+      - 'name="iop-advisor-frontend"'
+      - 'description="This adds the satellite/iop-advisor-frontend-rhel9 image to the Red Hat container registry. To pull this container image, run the following command: podman pull registry.redhat.io/satellite/iop-advisor-frontend-rhel9"'
+      - 'summary="A new satellite/iop-advisor-frontend-rhel9 container image is now generally available in the Red Hat container registry."'
+      - 'com.redhat.component="iop-advisor-frontend"'
+      - 'io.k8s.display-name="IoP Advisor-Frontend"'
+      - 'io.k8s.description="This adds the satellite/iop-advisor-frontend-rhel9 image to the Red Hat container registry. To pull this container image, run the following command: podman pull registry.redhat.io/satellite/iop-advisor-frontend-rhel9"'
+      - 'io.openshift.tags="insights satellite iop advisor-frontend"'
   pipelineRef:
     name: docker-build-oci-ta
   taskRunTemplate:
