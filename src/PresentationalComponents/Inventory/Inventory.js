@@ -397,13 +397,6 @@ const Inventory = ({
   const getActionsConfig = () => {
     const actions = [
       <Flex key="inventory-actions">
-        {envContext.displayDownloadPlaybookButton && (
-          <DownloadPlaybookButton
-            isDisabled={isRemediationButtonDisabled}
-            rules={[rule]}
-            systems={selectedIds}
-          />
-        )}
         {IopRemediationModal ? (
           <IopRemediationModal.WrappedComponent
             selectedIds={selectedIds}
@@ -420,6 +413,13 @@ const Inventory = ({
           >
             Plan remediation
           </RemediationButton>
+        )}
+        {envContext.displayDownloadPlaybookButton && (
+          <DownloadPlaybookButton
+            isDisabled={isRemediationButtonDisabled}
+            rules={[rule]}
+            systems={selectedIds}
+          />
         )}
       </Flex>,
     ];
