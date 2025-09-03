@@ -146,8 +146,9 @@ export const useOnLoad = (filters) => {
 
 export const mergeAppColumns = (defaultColumns, isRecommendationDetail) => {
   return [
-    ...defaultColumns,
-    lastSeenColumn,
+    // replace 'updated' column with 'last seen'
+    ...defaultColumns.filter(({ key }) => key !== 'updated'),
+    defaultColumns.find(({ key }) => key === 'updated') && lastSeenColumn,
     isRecommendationDetail && impactedDateColumn,
   ];
 };

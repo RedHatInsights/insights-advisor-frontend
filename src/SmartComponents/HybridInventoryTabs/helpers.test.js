@@ -348,6 +348,8 @@ describe('mergeAppColumns', () => {
   test('Should contain both Last seen and Impacted date columns', () => {
     const result = mergeAppColumns(defaultColumns, true);
 
+    const updated = result.find((column) => column.key === 'updated');
+    expect(updated).toBe(undefined); // 'updated' column should be removed
     const last_seen = result.find((column) => column.key === 'last_seen');
     expect(last_seen).toEqual({
       key: 'last_seen',
