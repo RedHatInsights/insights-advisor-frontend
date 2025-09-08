@@ -67,7 +67,7 @@
     ]
   },
   "dependencies": {
-    "@babel/runtime": "^7.26.0",
+    "@babel/runtime": "^7.28.4",
     "@patternfly/patternfly": "^5.3.1",
     "@patternfly/react-charts": "^7.4.0",
     "@patternfly/react-component-groups": "^5.5.3",
@@ -105,10 +105,10 @@
     "typescript-eslint": "^8.34.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.0",
-    "@babel/plugin-transform-runtime": "^7.25.9",
-    "@babel/preset-env": "^7.26.0",
-    "@babel/preset-react": "^7.26.3",
+    "@babel/core": "^7.28.4",
+    "@babel/plugin-transform-runtime": "^7.28.3",
+    "@babel/preset-env": "^7.28.3",
+    "@babel/preset-react": "^7.27.1",
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
     "@cypress/code-coverage": "^3.14.5",
@@ -122,9 +122,9 @@
     "@testing-library/user-event": "^14.5.1",
     "axios": "^1.8.4",
     "babel-eslint": "10.1.0",
-    "babel-jest": "^29.7.0",
-    "babel-loader": "^9.2.1",
-    "babel-plugin-istanbul": "^7.0.0",
+    "babel-jest": "^30.1.2",
+    "babel-loader": "^10.0.0",
+    "babel-plugin-istanbul": "^7.0.1",
     "babel-plugin-lodash": "3.3.4",
     "cypress": "^14.5.4",
     "eslint": "^9.34.0",
