@@ -5,3 +5,21 @@
 .pf-v5-l-flex {
     --pf-v5-l-flex--spacer--column--base: var(--pf-v5-global--spacer--sm);
 }
+
+// Override Satellite/Foreman styles that impact the styling of the Inventory table
+// Prevent the toolbar buttons being pushed to the end of the toolbar
+#tablesContainer .pf-v5-c-toolbar__group {
+    flex-grow: 0;
+}
+#tablesContainer .pf-v5-c-toolbar__group:first-child {
+    margin-right: 1rem;
+    width: auto;
+}
+// Fix the vertical position of the checkbox in the bulk select
+#tablesContainer input[type="checkbox"] {
+    margin: 1px 0 0;
+}
+// Fix the size of the (missing) title of Operating System filter group
+#tablesContainer .pf-v5-c-menu__group-title {
+    margin: 0;
+}

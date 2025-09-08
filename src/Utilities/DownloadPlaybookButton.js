@@ -1,5 +1,6 @@
+import './DownloadPlaybookButton.scss';
 import React, { useContext } from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, Icon } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import messages from '../Messages';
@@ -7,6 +8,7 @@ import { Post } from './Api';
 import { useDispatch } from 'react-redux';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { EnvironmentContext } from '../App';
+import { DownloadIcon } from '@patternfly/react-icons';
 
 const DownloadPlaybookButton = ({ isDisabled, rules, systems }) => {
   const intl = useIntl();
@@ -67,12 +69,18 @@ const DownloadPlaybookButton = ({ isDisabled, rules, systems }) => {
 
   return (
     <Button
-      key="playbook-download-button"
-      variant="primary"
+      id="download-playbook-button"
+      key="download-playbook-button"
+      variant="secondary"
       isDisabled={isDisabled}
       onClick={() => download(preparePayload(rules, systems))}
     >
-      {intl.formatMessage(messages.downloadPlaybookButtonText)}
+      <span>
+        <Icon>
+          <DownloadIcon />
+        </Icon>
+        {intl.formatMessage(messages.downloadPlaybookButtonText)}
+      </span>
     </Button>
   );
 };
