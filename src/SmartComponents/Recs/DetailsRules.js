@@ -118,60 +118,66 @@ export const DetailsRules = ({
         >
           <Flex>
             <FlexItem align={{ default: 'alignRight' }}>
-              <Tooltip
-                trigger={!permsDisableRec ? 'mouseenter' : ''}
-                content={intl.formatMessage(messages.permsAction)}
-              >
-                <Dropdown
-                  className="adv-c-dropdown-details-actions"
-                  onSelect={() => setActionsDropdownOpen(!actionsDropdownOpen)}
-                  position="right"
-                  ouiaId="actions"
-                  toggle={
-                    <DropdownToggle
-                      isDisabled={!permsDisableRec}
-                      onToggle={(_event, actionsDropdownOpen) =>
-                        setActionsDropdownOpen(actionsDropdownOpen)
-                      }
-                      toggleIndicator={CaretDownIcon}
-                    >
-                      {intl.formatMessage(messages.actions)}
-                    </DropdownToggle>
-                  }
-                  isOpen={actionsDropdownOpen}
-                  dropdownItems={
-                    rule && rule.rule_status === 'enabled'
-                      ? [
-                          <DropdownItem
-                            key="link"
-                            ouiaId="disable"
-                            onClick={() => {
-                              handleModalToggle(true);
-                            }}
-                          >
-                            {intl.formatMessage(messages.disableRule)}
-                          </DropdownItem>,
-                        ]
-                      : [
-                          <DropdownItem
-                            key="link"
-                            ouiaId="enable"
-                            onClick={() => {
-                              enableRule(
-                                rule,
-                                refetch,
-                                intl,
-                                addNotification,
-                                handleModalToggle,
-                              );
-                            }}
-                          >
-                            {intl.formatMessage(messages.enableRule)}
-                          </DropdownItem>,
-                        ]
-                  }
-                />
-              </Tooltip>
+              {envContext.isDisableRecEnabled ? (
+                <Tooltip
+                  trigger={!permsDisableRec ? 'mouseenter' : ''}
+                  content={intl.formatMessage(messages.permsAction)}
+                >
+                  <Dropdown
+                    className="adv-c-dropdown-details-actions"
+                    onSelect={() =>
+                      setActionsDropdownOpen(!actionsDropdownOpen)
+                    }
+                    position="right"
+                    ouiaId="actions"
+                    toggle={
+                      <DropdownToggle
+                        isDisabled={!permsDisableRec}
+                        onToggle={(_event, actionsDropdownOpen) =>
+                          setActionsDropdownOpen(actionsDropdownOpen)
+                        }
+                        toggleIndicator={CaretDownIcon}
+                      >
+                        {intl.formatMessage(messages.actions)}
+                      </DropdownToggle>
+                    }
+                    isOpen={actionsDropdownOpen}
+                    dropdownItems={
+                      rule && rule.rule_status === 'enabled'
+                        ? [
+                            <DropdownItem
+                              key="link"
+                              ouiaId="disable"
+                              onClick={() => {
+                                handleModalToggle(true);
+                              }}
+                            >
+                              {intl.formatMessage(messages.disableRule)}
+                            </DropdownItem>,
+                          ]
+                        : [
+                            <DropdownItem
+                              key="link"
+                              ouiaId="enable"
+                              onClick={() => {
+                                enableRule(
+                                  rule,
+                                  refetch,
+                                  intl,
+                                  addNotification,
+                                  handleModalToggle,
+                                );
+                              }}
+                            >
+                              {intl.formatMessage(messages.enableRule)}
+                            </DropdownItem>,
+                          ]
+                    }
+                  />
+                </Tooltip>
+              ) : (
+                <></>
+              )}
             </FlexItem>
           </Flex>
         </RuleDetails>

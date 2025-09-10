@@ -246,26 +246,24 @@ const RulesTable = ({ isTabActive, pathway }) => {
           },
           isCompact: true,
         }}
-        exportConfig={{
-          label: intl.formatMessage(messages.exportCsv),
-
-          label: intl.formatMessage(messages.exportJson),
-          onSelect: (_e, fileType) =>
-            downloadReport(
-              'hits',
-              fileType,
-              filterFetchBuilder(filters),
-              selectedTags,
-              workloads,
-              SID,
-              dispatch,
-              envContext.BASE_URL,
-            ),
-          isDisabled: !envContext.isExportEnabled,
-          tooltipText: envContext.isExportEnabled
-            ? intl.formatMessage(messages.exportData)
-            : intl.formatMessage(messages.permsAction),
-        }}
+        exportConfig={
+          envContext.isExportEnabled && {
+            label: intl.formatMessage(messages.exportCsv),
+            label: intl.formatMessage(messages.exportJson),
+            onSelect: (_e, fileType) =>
+              downloadReport(
+                'hits',
+                fileType,
+                filterFetchBuilder(filters),
+                selectedTags,
+                workloads,
+                SID,
+                dispatch,
+                envContext.BASE_URL,
+              ),
+            tooltipText: intl.formatMessage(messages.exportData),
+          }
+        }
         filterConfig={{
           items: [
             ...filterConfigItems(
