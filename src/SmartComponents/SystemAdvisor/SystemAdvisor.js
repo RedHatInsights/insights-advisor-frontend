@@ -78,9 +78,6 @@ const BaseSystemAdvisor = ({
     return getSelectedItems(rows).filter((r) => r.resolution?.has_playbook);
   }, [rows]);
   const selectedItemsLength = getSelectedItems(rows).length;
-  const selectableItemsLength = rows.filter(
-    (r) => r.resolution?.has_playbook,
-  ).length;
 
   const [resolutions, setResolutions] = useState([]);
 
@@ -135,13 +132,6 @@ const BaseSystemAdvisor = ({
     !isSystemProfileLoading && systemProfile?.host_type !== 'edge'
       ? [
           <Flex key="inventory-actions">
-            {envContext.displayDownloadPlaybookButton && (
-              <DownloadPlaybookButton
-                isDisabled={selectedAnsibleRules.length === 0}
-                rules={selectedAnsibleRules.map((rule) => rule.rule)}
-                systems={[inventoryId]}
-              />
-            )}
             {IopRemediationModal ? (
               <IopRemediationModal.WrappedComponent
                 selectedIds={selectedAnsibleRules}
@@ -158,6 +148,13 @@ const BaseSystemAdvisor = ({
               >
                 Plan remediation
               </RemediationButton>
+            )}
+            {envContext.displayDownloadPlaybookButton && (
+              <DownloadPlaybookButton
+                isDisabled={selectedAnsibleRules.length === 0}
+                rules={selectedAnsibleRules.map((rule) => rule.rule)}
+                systems={[inventoryId]}
+              />
             )}
           </Flex>,
         ]
@@ -220,16 +217,11 @@ const BaseSystemAdvisor = ({
     );
   };
   const checkedStatus = () => {
-    if (selectedItemsLength === systemAdvisorRef.current.rowCount) {
-      return 1;
-    } else if (
-      selectedItemsLength > 0 ||
-      selectableItemsLength !== systemAdvisorRef.current.rowCount
-    ) {
-      return null;
-    } else {
-      return 0;
-    }
+    return selectedItemsLength > 0
+      ? selectedItemsLength === systemAdvisorRef.current.rowCount
+        ? 1
+        : null
+      : 0;
   };
 
   const bulkSelect = {
@@ -497,7 +489,10 @@ const BaseSystemAdvisor = ({
       buttonText={intl.formatMessage(messages.notConnectedButton)}
     />
   ) : (
-    <div className="ins-c-inventory-insights__overrides">
+    <div
+      id="system-advisor-table"
+      className="ins-c-inventory-insights__overrides"
+    >
       {inventoryReportFetchStatus === 'pending' ||
       entity?.insights_id === null ? (
         <Fragment />
@@ -517,27 +512,25 @@ const BaseSystemAdvisor = ({
             </Fragment>
           }
           activeFiltersConfig={activeFiltersConfig}
-          exportConfig={{
-            label: intl.formatMessage(messages.exportCsv),
-
-            label: intl.formatMessage(messages.exportJson),
-            onSelect: (_e, fileType) =>
-              downloadReport(
-                'hits',
-                fileType,
-                { ...filters, text: searchValue },
-                selectedTags,
-                workloads,
-                SID,
-                dispatch,
-                display_name,
-                envContext.BASE_URL,
-              ),
-            isDisabled: !envContext.isExportEnabled,
-            tooltipText: envContext.isExportEnabled
-              ? intl.formatMessage(messages.exportData)
-              : intl.formatMessage(messages.permsAction),
-          }}
+          exportConfig={
+            envContext.isExportEnabled && {
+              label: intl.formatMessage(messages.exportCsv),
+              label: intl.formatMessage(messages.exportJson),
+              onSelect: (_e, fileType) =>
+                downloadReport(
+                  'hits',
+                  fileType,
+                  { ...filters, text: searchValue },
+                  selectedTags,
+                  workloads,
+                  SID,
+                  dispatch,
+                  display_name,
+                  envContext.BASE_URL,
+                ),
+              tooltipText: intl.formatMessage(messages.exportData),
+            }
+          }
         />
       )}
       {inventoryReportFetchStatus === 'pending' && (

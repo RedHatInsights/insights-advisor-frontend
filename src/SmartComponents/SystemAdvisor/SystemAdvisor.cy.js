@@ -335,7 +335,7 @@ describe('system rules table', () => {
 
     it(`Export kebab tooltip displays the correct content.`, () => {
       mountComponent(
-        { isExportEnabled: false },
+        { isExportEnabled: true },
         <Button
           variant="primary"
           isDisabled={() => console.log('test')}
@@ -345,7 +345,7 @@ describe('system rules table', () => {
         </Button>,
       );
       cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
-      cy.contains(messages.permsAction.defaultMessage).should('be.visible');
+      cy.contains(messages.exportData.defaultMessage).should('be.visible');
     });
 
     it(`Critical tooltip displays the correct content.`, () => {

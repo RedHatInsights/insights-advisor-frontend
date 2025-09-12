@@ -101,12 +101,19 @@ describe('Topic Details is loaded correctly for user without Edge systems', () =
 });
 
 describe('Export', () => {
-  it(`Export kebab tooltip displays the correct content if disabled.`, () => {
+  it(`download button not rendered if export not enabled`, () => {
     mountComponent(true, {
       isExportEnabled: false,
     });
+    cy.get('button[aria-label="Export"]').should('not.exist');
+  });
+
+  it(`download button tooltip displays the correct content if enabled`, () => {
+    mountComponent(true, {
+      isExportEnabled: true,
+    });
     cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
-    cy.contains(messages.permsAction.defaultMessage).should('be.visible');
+    cy.contains(messages.exportData.defaultMessage).should('be.visible');
   });
 
   it(`works and downloads report is enabled`, () => {

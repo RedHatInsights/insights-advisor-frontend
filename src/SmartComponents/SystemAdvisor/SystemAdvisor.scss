@@ -31,3 +31,17 @@
     text-align: center;
   }
 }
+
+// Override Satellite/Foreman styles that impact the styling of the Inventory table
+// Prevent the toolbar buttons being pushed to the end of the toolbar
+#system-advisor-table .pf-v5-c-toolbar__group {
+    flex-grow: 0;
+}
+#system-advisor-table .pf-v5-c-toolbar__group:first-child {
+    margin-right: 1rem;
+    width: auto;
+}
+// Fix the vertical position of the checkbox in the bulk select
+#system-advisor-table input[type="checkbox"] {
+    margin: 0;
+}

@@ -812,15 +812,25 @@ describe('Export', () => {
       },
     }).as('call');
   });
-  it(`kebab tooltip displays disabled message`, () => {
+  it(`download button not rendered if export not enabled`, () => {
     mountComponent(
       {},
       {
         isExportEnabled: false,
       },
     );
+    cy.get('button[aria-label="Export"]').should('not.exist');
+  });
+
+  it(`download button tooltip displays the correct content if enabled`, () => {
+    mountComponent(
+      {},
+      {
+        isExportEnabled: true,
+      },
+    );
     cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
-    cy.contains(messages.permsAction.defaultMessage).should('be.visible');
+    cy.contains(messages.exportData.defaultMessage).should('be.visible');
   });
 
   it(`works and downloads report is enabled`, () => {
