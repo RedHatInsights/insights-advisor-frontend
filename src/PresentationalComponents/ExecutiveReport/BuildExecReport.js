@@ -31,7 +31,7 @@ import RecommendationCharts from './RecommendationCharts';
 /**
  * fetchData must remain in the same file as the template per pdf-generator
  */
-export const fetchData = async (createAsyncRequest) => {
+export const fetchData = async (createAsyncRequest, options) => {
   const statsReports = createAsyncRequest('advisor-backend', {
     method: 'GET',
     url: STATS_REPORTS_FETCH_URL,
@@ -45,9 +45,9 @@ export const fetchData = async (createAsyncRequest) => {
     method: 'GET',
     url: RULES_FETCH_URL,
     params: {
-      limit: 3,
-      sort: '-total_risk,-impacted_count',
-      impacting: true,
+      limit: options.limit,
+      sort: options.sort,
+      impacting: options.impacting,
     },
   });
 
@@ -55,7 +55,8 @@ export const fetchData = async (createAsyncRequest) => {
   return data;
 };
 
-const BuildExecReport = ({ asyncData }) => {
+const BuildExecReport = ({ asyncData, additionalData }) => {
+  const isLightspeedEnabled = additionalData.isLightspeedEnabled;
   const [statsReports, statsSystems, topActiveRec] = asyncData.data;
   const calcPercent = (value, total) =>
     Math.round(Number((value / total) * 100));
@@ -147,13 +148,12 @@ const BuildExecReport = ({ asyncData }) => {
       {truncate(rule.summary, { length: 280 })}
     </Text>
   );
-  // TODO Replace insights with lightsped when figuring out how to.
   return (
     <div
       style={{ paddingTop: '24px', paddingLeft: '32px', paddingRight: '32px' }}
     >
       <span style={{ fontSize: '24px', color: chart_color_red_100.value }}>
-        Red Hat Insights
+        Red Hat {isLightspeedEnabled ? 'Lightspeed' : 'Insights'}
       </span>
       <br />
       <span style={{ fontSize: '32px', color: chart_color_red_100.value }}>
@@ -227,6 +227,7 @@ const BuildExecReport = ({ asyncData }) => {
 
 BuildExecReport.propTypes = {
   asyncData: PropTypes.object,
+  additionalData: PropTypes.object,
 };
 
 export default BuildExecReport;
