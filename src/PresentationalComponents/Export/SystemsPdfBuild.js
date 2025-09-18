@@ -12,7 +12,7 @@ import {
   TAGS_APPLIED,
 } from '../../AppConstants';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   c_table_m_compact_cell_PaddingBottom,
   c_table_m_compact_cell_PaddingLeft,
@@ -24,6 +24,7 @@ import {
 } from '@patternfly/react-tokens';
 import TablePage from './TablePage';
 import chart_color_red_100 from '@patternfly/react-tokens/dist/js/chart_color_red_100';
+import { EnvironmentContext } from '../../App';
 
 const styles = StyleSheet.create({
   bold: { fontWeight: global_FontWeight_bold.value },
@@ -81,11 +82,13 @@ const SystemsPdfBuild = ({ asyncData, additionalData }) => {
     offset: '0',
     hits: 'all',
   };
+  const envContext = useContext(EnvironmentContext);
+  const brandName = envContext.isLightspeedEnabled ? 'Lightspeed' : 'Insights';
 
   return (
     <div style={styles.document}>
       <span style={{ fontSize: '24px', color: chart_color_red_100.value }}>
-        Red Hat {isLightspeedEnabled ? 'Lightspeed' : 'Insights'}
+        Red Hat {brandName}
       </span>
       <br />
       <span style={{ fontSize: '32px', color: chart_color_red_100.value }}>
