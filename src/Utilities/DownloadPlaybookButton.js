@@ -15,6 +15,7 @@ const DownloadPlaybookButton = ({ isDisabled, rules, systems }) => {
   const dispatch = useDispatch();
   const notification = (data) => dispatch(addNotification(data));
   const envContext = useContext(EnvironmentContext);
+  const brandName = envContext.isLightspeedEnabled ? 'Lightspeed' : 'Insights';
 
   const download = async (payload) => {
     try {
@@ -32,7 +33,7 @@ const DownloadPlaybookButton = ({ isDisabled, rules, systems }) => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'insights-remediation-playbook.yml');
+      link.setAttribute('download', `${brandName}-remediation-playbook.yml`);
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);

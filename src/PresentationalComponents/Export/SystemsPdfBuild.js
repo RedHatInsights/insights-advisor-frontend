@@ -72,7 +72,8 @@ export const fetchData = async (createAsyncRequest, options) => {
   return { data: data[0], options };
 };
 
-const SystemsPdfBuild = ({ asyncData }) => {
+const SystemsPdfBuild = ({ asyncData, additionalData }) => {
+  const isLightspeedEnabled = additionalData.isLightspeedEnabled;
   const { data, options } = asyncData.data;
   const filters = {
     sort: '-last_seen',
@@ -84,7 +85,7 @@ const SystemsPdfBuild = ({ asyncData }) => {
   return (
     <div style={styles.document}>
       <span style={{ fontSize: '24px', color: chart_color_red_100.value }}>
-        Red Hat Insights
+        Red Hat {isLightspeedEnabled ? 'Lightspeed' : 'Insights'}
       </span>
       <br />
       <span style={{ fontSize: '32px', color: chart_color_red_100.value }}>
@@ -122,6 +123,7 @@ const SystemsPdfBuild = ({ asyncData }) => {
 
 SystemsPdfBuild.propTypes = {
   asyncData: PropTypes.object,
+  additionalData: PropTypes.object,
 };
 
 export default SystemsPdfBuild;

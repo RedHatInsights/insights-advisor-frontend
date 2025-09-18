@@ -3,7 +3,7 @@ import { downloadFile } from '@redhat-cloud-services/frontend-components-utiliti
 
 import { exportNotifications } from '../../AppConstants';
 import { Get } from '../../Utilities/Api';
-import { workloadQueryBuilder } from '../Common/Tables';
+import { workloadQueryBuilder } from './Tables';
 import { populateExportError } from '../helper';
 
 const fileName = (exportTable) => {
@@ -11,7 +11,7 @@ const fileName = (exportTable) => {
     date: new Date().toISOString().replace(/[T:]/g, '-').split('.')[0] + '-utc',
   };
 
-  return `Insights-Advisor_${exportTable}--${defaultParams.date}`;
+  return `Advisor_${exportTable}--${defaultParams.date}`;
 };
 
 const downloadHelper = async (
