@@ -211,8 +211,8 @@ const TopicsAdminTable = () => {
           </PrimaryToolbar>
           {!isLoading && !isFetching && (
             <Table
-              ouiaId="adminTable"
               aria-label={'topics-admin-table'}
+              ouiaId={'topics-admin-table'}
               sortBy={sortBy}
               onSort={onSort}
               cells={cols}

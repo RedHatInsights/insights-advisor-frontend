@@ -4,7 +4,15 @@ import { POUND_OF_RECS } from '../../AppConstants';
 import { Text } from '@react-pdf/renderer';
 import { ChartPie } from '@patternfly/react-charts';
 import { Flex, FlexItem } from '@patternfly/react-core';
-import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import {
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  TableVariant,
+} from '@patternfly/react-table';
 import chart_color_red_100 from '@patternfly/react-tokens/dist/js/chart_color_red_100';
 import global_BackgroundColor_150 from '@patternfly/react-tokens/dist/js/global_BackgroundColor_150';
 
@@ -20,7 +28,11 @@ const RecommendationCharts = ({
       <Text style={{ color: chart_color_red_100.value }}>{header}</Text>
       <Flex defaultspaceItems={{ default: 'spaceItemsLg' }}>
         <FlexItem style={{ width: '40%' }}>
-          <Table variant="compact">
+          <Table
+            aria-label={'recommendation-chart-table'}
+            ouiaId={'recommendation-chart-table'}
+            variant={TableVariant.compact}
+          >
             <Thead>
               <Tr>
                 <Th>{columnHeader}</Th>
