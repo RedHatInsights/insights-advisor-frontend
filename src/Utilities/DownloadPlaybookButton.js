@@ -72,6 +72,7 @@ const DownloadPlaybookButton = ({ isDisabled, rules, systems }) => {
     <Button
       id="download-playbook-button"
       key="download-playbook-button"
+      ouiaId="download-playbook-button"
       variant="secondary"
       isDisabled={isDisabled}
       onClick={() => download(preparePayload(rules, systems))}

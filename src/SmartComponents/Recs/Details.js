@@ -151,7 +151,7 @@ const OverviewDetails = (props) => {
           )}
           <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
             {(rule.hosts_acked_count > 0 || rule.rule_status !== 'enabled') && (
-              <Card className="adv-c-card-details">
+              <Card className="adv-c-card-details" ouiaId="rule-details-card">
                 <CardHeader>
                   <Title headingLevel="h4" size="xl">
                     <BellSlashIcon size="sm" />

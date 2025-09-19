@@ -50,6 +50,7 @@ export const TotalRiskCard = (props) => {
       isFlat
       isPlain
       className="adv-c-card-pathway adv__background--global-100 pf-v5-u-h-100"
+      ouiaId="total-risk-card"
     >
       <CardTitle>{intl.formatMessage(messages.totalRiskPathway)}</CardTitle>
       <CardBody className="body">

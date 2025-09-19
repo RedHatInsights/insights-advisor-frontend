@@ -498,6 +498,7 @@ const BaseSystemAdvisor = ({
         <Fragment />
       ) : (
         <PrimaryToolbar
+          ouiaId="system-advisor-table-toolbar"
           expandAll={{ isAllExpanded, onClick: onExpandAllClick }}
           actionsConfig={{ actions }}
           bulkSelect={bulkSelect}
@@ -539,8 +540,8 @@ const BaseSystemAdvisor = ({
       {inventoryReportFetchStatus === 'fulfilled' && (
         <Fragment>
           <Table
-            id={'system-advisor-report-table'}
-            aria-label={'report-table'}
+            ouiaId={'system-advisor-table'}
+            aria-label={'system-advisor-table'}
             onSelect={!(rows.length === 1 && rows[0].heightAuto) && onRowSelect}
             onCollapse={handleOnCollapse}
             rows={rows}

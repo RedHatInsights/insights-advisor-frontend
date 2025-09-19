@@ -393,6 +393,7 @@ const PathwaysTable = ({ isTabActive }) => {
       ) : (
         <Table
           aria-label={'pathways-table'}
+          ouiaId={'pathways-table'}
           variant={TableVariant.compact}
           sortBy={sortBy}
           onSort={onSort}
