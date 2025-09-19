@@ -452,6 +452,7 @@ const Inventory = ({
           module="./IOPInventoryTable"
           store={store}
           id="tablesContainer"
+          ouiaId="iop-inventory-table"
           hasCheckbox
           initialLoading
           autoRefresh
@@ -519,7 +520,8 @@ const Inventory = ({
         />
       ) : (
         <InventoryTable
-          id="tablesContainer"
+          id={'tablesContainer'}
+          ouiaId={'inventory-table'}
           hasCheckbox
           initialLoading
           autoRefresh
@@ -568,7 +570,6 @@ const Inventory = ({
           exportConfig={
             permsExport && {
               label: intl.formatMessage(messages.exportCsv),
-
               label: intl.formatMessage(messages.exportJson),
               onSelect: (_e, fileType) =>
                 downloadReport(

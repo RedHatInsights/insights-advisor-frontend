@@ -18,7 +18,7 @@ export const OverviewDashbarCard = ({
   count,
   onClickFilterByName,
 }) => (
-  <Card isFullHeight className="dashbar-item">
+  <Card isFullHeight className="dashbar-item" ouiaId="overview-dashbar-card">
     <CardBody>
       {title}
 

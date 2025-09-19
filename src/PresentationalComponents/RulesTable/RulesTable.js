@@ -291,7 +291,8 @@ const RulesTable = ({ isTabActive, pathway }) => {
         </Table>
       ) : (
         <Table
-          aria-label={'rule-table'}
+          aria-label={'rules-table'}
+          ouiaId={'rules-table'}
           variant={TableVariant.compact}
           actionResolver={
             envContext.isDisableRecEnabled ? actionResolver : null

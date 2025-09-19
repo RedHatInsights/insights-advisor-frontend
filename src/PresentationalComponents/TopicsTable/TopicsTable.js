@@ -152,11 +152,11 @@ const TopicsTable = ({ props }) => {
           />
           <Table
             aria-label={'topics-table'}
+            ouiaId={'topics-table'}
             sortBy={sort}
             onSort={onSort}
             cells={cols}
             rows={rows}
-            ouiaId="topicTable"
             isStickyHeader
           >
             <TableHeader />

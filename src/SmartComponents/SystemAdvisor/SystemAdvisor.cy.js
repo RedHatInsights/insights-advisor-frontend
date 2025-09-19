@@ -36,7 +36,7 @@ const TABLE_HEADERS = [
   'Total risk',
   'Remediation type',
 ];
-const ROOT = 'table[id=system-advisor-report-table]';
+const ROOT = 'table[data-ouia-component-id=system-advisor-table]';
 const SYSTEM_ID = '123';
 const SYSTEM_INSIGHTS_ID = '456';
 
