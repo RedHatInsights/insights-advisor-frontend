@@ -81,7 +81,6 @@ const RulesTable = ({ isTabActive, pathway }) => {
 
   const {
     data: rules = [],
-    isFetching,
     isLoading,
     isError,
     refetch,
@@ -279,7 +278,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
         }}
         activeFiltersConfig={activeFiltersConfig}
       />
-      {isFetching ? (
+      {isLoading ? (
         <SkeletonTable
           columns={cols.map((c) => c.title)}
           isExpandable
