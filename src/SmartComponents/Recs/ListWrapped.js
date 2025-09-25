@@ -7,10 +7,12 @@ import { EnvironmentContext } from '../../App';
 import { initStore } from '../../Store';
 import ListIop from './ListIop';
 
+const dbStore = initStore();
+
 const ListWrapped = (props) => (
   <IntlProvider locale="en" messages={messages}>
     <EnvironmentContext.Provider value={IOP_ENVIRONMENT_CONTEXT}>
-      <Provider store={initStore()}>
+      <Provider store={dbStore}>
         <ListIop {...props} />
       </Provider>
     </EnvironmentContext.Provider>
