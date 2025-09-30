@@ -8,7 +8,6 @@ import fixtures from '../../../cypress/fixtures/recommendations.json';
 import _ from 'lodash';
 import {
   createTestEnvironmentContext,
-  DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT,
   rulesTableColumns,
 } from '../../../cypress/support/globals';
 import {
@@ -133,7 +132,7 @@ describe('renders correctly', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
+    mountComponent(false);
   });
 
   it('The Rules table renders', () => {
@@ -157,7 +156,7 @@ describe('defaults', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
+    mountComponent(false);
   });
 
   it(`pagination is set to ${DEFAULT_ROW_COUNT}`, () => {
@@ -210,7 +209,7 @@ describe('pagination', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
+    mountComponent(false);
   });
 
   it('shows correct total number of rules', () => {
@@ -238,7 +237,7 @@ describe('filtering', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
+    mountComponent(false);
   });
 
   it('can clear filters', () => {
@@ -360,7 +359,7 @@ describe('making request based on filters', () => {
         ...fixtures,
       },
     }).as('has_playbook=true');
-    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
+    mountComponent(false);
   });
 
   Object.entries(filtersConf).forEach(([key, config]) => {
@@ -393,7 +392,7 @@ describe('sorting', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
+    mountComponent(false);
   });
 
   function checkSortingUrl(label, order, dataField) {
@@ -478,7 +477,7 @@ describe('content', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
+    mountComponent(false);
   });
 
   it('has correct links', () => {
@@ -523,7 +522,7 @@ describe('Conditional Filter', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
+    mountComponent(false);
   });
 
   it(`Name filter box correctly updates chips.`, () => {
@@ -780,7 +779,7 @@ describe('Tooltips', () => {
         ...fixtures,
       },
     }).as('call');
-    mountComponent(false, DEFAULT_TEST_CY_ENVIRONMENT_CONTEXT);
+    mountComponent(false);
   });
 
   it(`Incident tooltip displays the correct content.`, () => {
