@@ -93,7 +93,7 @@ describe('Pathways table tests', () => {
 
   describe('defaults', () => {
     it(`The amount of rows shown is ${ROWS_SHOWN}`, () => {
-      cy.get('.pf-v5-c-menu-toggle__text')
+      cy.get('.pf-v6-c-menu-toggle__text')
         .find('b')
         .eq(0)
         .should('have.text', `1 - ${ROWS_SHOWN}`);
@@ -218,7 +218,7 @@ describe('Pathways table tests', () => {
 
   describe('Tooltips', () => {
     it(`Recommendation level tooltip displays the correct content.`, () => {
-      cy.get('.pf-v5-c-table__column-help-action').trigger('mouseenter');
+      cy.get('.pf-v6-c-table__column-help-action').trigger('mouseenter');
       cy.contains(messages.reclvldetails.defaultMessage).should('be.visible');
     });
 

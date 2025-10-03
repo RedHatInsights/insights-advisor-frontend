@@ -22,7 +22,6 @@ import { Get } from '../../Utilities/Api';
 import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
-import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import { capitalize } from '../../PresentationalComponents/Common/Tables';
 import messages from '../../Messages';
 import NotConnected from '@redhat-cloud-services/frontend-components/NotConnected';
@@ -39,6 +38,7 @@ import { SkeletonTable } from '@patternfly/react-component-groups';
 import { EnvironmentContext } from '../../App';
 import { fetchResolutionsData } from './helpers';
 import DownloadPlaybookButton from '../../Utilities/DownloadPlaybookButton';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 
 const BaseSystemAdvisor = ({
   entity,
@@ -52,7 +52,7 @@ const BaseSystemAdvisor = ({
     rowCount: 0,
   });
   const dispatch = useDispatch();
-  const addNotification = (data) => dispatch(addNotificationAction(data));
+  const addNotification = useAddNotification();
   const { id: ruleIdParam } = useParams();
 
   const [inventoryReportFetchStatus, setInventoryReportFetchStatus] =
@@ -528,6 +528,7 @@ const BaseSystemAdvisor = ({
                   dispatch,
                   display_name,
                   envContext.BASE_URL,
+                  addNotification,
                 ),
               tooltipText: intl.formatMessage(messages.exportData),
             }

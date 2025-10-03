@@ -10,14 +10,7 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
-import {
-  Flex,
-  Icon,
-  Popover,
-  Text,
-  TextContent,
-  Tooltip,
-} from '@patternfly/react-core';
+import { Flex, Icon, Popover, Content, Tooltip } from '@patternfly/react-core';
 import {
   ExternalLinkAltIcon,
   OutlinedQuestionCircleIcon,
@@ -58,17 +51,17 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
                               <Popover
                                 headerContent="About advisor recommendations"
                                 bodyContent={
-                                  <TextContent>
+                                  <Content>
                                     <Flex direction={{ default: 'column' }}>
-                                      <Text component={'p'}>
+                                      <Content component={'p'}>
                                         The advisor service assesses and
                                         monitors the health of your Red Hat
                                         Enterprise Linux (RHEL) infrastructure,
                                         and provides recommendations to address
                                         availability, stability, performance,
                                         and security issues.
-                                      </Text>
-                                      <Text component={'p'}>
+                                      </Content>
+                                      <Content component={'p'}>
                                         <a
                                           rel="noreferrer"
                                           target="_blank"
@@ -83,19 +76,19 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
                                             ? ' Lightspeed '
                                             : ' Insights '}
                                           Advisor Service
-                                          <Icon className="pf-v5-u-ml-xs">
+                                          <Icon className="pf-v6-u-ml-xs">
                                             <ExternalLinkAltIcon />
                                           </Icon>
                                         </a>
-                                      </Text>
+                                      </Content>
                                     </Flex>
-                                  </TextContent>
+                                  </Content>
                                 }
                               >
                                 <Icon>
                                   <OutlinedQuestionCircleIcon
-                                    className="pf-v5-u-ml-sm"
-                                    color="var(--pf-v5-global--secondary-color--100)"
+                                    className="pf-v6-u-ml-sm"
+                                    color="var(--pf-t--global--icon--color--subtle)"
                                     style={{
                                       verticalAlign: 0,
                                       fontSize: 16,
@@ -159,16 +152,16 @@ describe('Recommendations table header', () => {
     cy.get('button[aria-label="Download Exec Report"]');
 
     cy.get('h1[data-ouia-component-type="RHI/Header"]').find('svg').click();
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('h6')
       .contains('About advisor recommendations');
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('p')
       .eq(0)
       .contains(
         'The advisor service assesses and monitors the health of your Red Hat Enterprise Linux (RHEL) infrastructure, and provides recommendations to address availability, stability, performance, and security issues.',
       );
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('a')
       .contains(
         'Assessing RHEL Configuration Issues Using the Red Hat Insights Advisor Service',
@@ -187,16 +180,16 @@ describe('Recommendations table header', () => {
     cy.get('button[aria-label="Download Exec Report"]').should('not.exist');
 
     cy.get('h1[data-ouia-component-type="RHI/Header"]').find('svg').click();
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('h6')
       .contains('About advisor recommendations');
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('p')
       .eq(0)
       .contains(
         'The advisor service assesses and monitors the health of your Red Hat Enterprise Linux (RHEL) infrastructure, and provides recommendations to address availability, stability, performance, and security issues.',
       );
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('a')
       .contains(
         'Assessing RHEL Configuration Issues Using the Red Hat Insights Advisor Service',
@@ -213,16 +206,16 @@ describe('Recommendations table header', () => {
     cy.get('button[aria-label="Download Exec Report"]').should('exist');
 
     cy.get('h1[data-ouia-component-type="RHI/Header"]').find('svg').click();
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('h6')
       .contains('About advisor recommendations');
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('p')
       .eq(0)
       .contains(
         'The advisor service assesses and monitors the health of your Red Hat Enterprise Linux (RHEL) infrastructure, and provides recommendations to address availability, stability, performance, and security issues.',
       );
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('a')
       .contains(
         'Assessing RHEL Configuration Issues Using the Red Hat Insights Advisor Service',

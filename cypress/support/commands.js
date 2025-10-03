@@ -29,7 +29,7 @@ Cypress.Commands.add(
   (subject, item, el = '') => {
     const attr = `${el}[data-ouia-component-id="${item}"]`;
     return subject ? cy.wrap(subject).find(attr) : cy.get(attr);
-  }
+  },
 );
 
 Cypress.Commands.add(
@@ -38,11 +38,11 @@ Cypress.Commands.add(
   (subject, item, el = '') => {
     const attr = `${el}[data-ouia-component-type="${item}"]`;
     return subject ? cy.wrap(subject).find(attr) : cy.get(attr);
-  }
+  },
 );
 
 Cypress.Commands.add('clickOnRowKebab', (name) => {
   cy.contains('tbody [data-ouia-component-type="PF5/TableRow"]', name)
-    .find('.pf-v5-c-menu-toggle')
+    .find('.pf-v6-c-menu-toggle')
     .click();
 });

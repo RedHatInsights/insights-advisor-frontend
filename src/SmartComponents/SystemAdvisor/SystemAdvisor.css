@@ -3,30 +3,31 @@
 }
 
 .ins-c-inventory-insights__overrides .successColorOverride {
-  color: var(--pf-v5-global--success-color--100);
+  color: var(--pf-v6-global--success-color--100);
 }
 
 .ins-c-inventory-insights__overrides .chartSpikeIconColor {
-  color: var(--pf-v5-global--primary-color--100);
+  color: var(--pf-v6-global--primary-color--100);
 }
 
 .ins-c-inventory-insights__overrides .pf-v5-c-clipboard-copy__group-copy {
-  background-color: var(--pf-v5-global--BackgroundColor--100);
+  background-color: var(--pf-v6-global--BackgroundColor--100);
 }
 
 .ins-c-inventory-insights__overrides .pf-v5-l-stack {
-  color: var(--pf-v5-c-empty-state__body--Color);
+  color: var(--pf-v6-c-empty-state__body--Color);
 }
 
 .ins-c-inventory-insights__overrides .ins-c-insights__check {
-  color: var(--pf-v5-global--success-color--200);
+  color: var(--pf-v6-global--success-color--200);
 }
 
 .ins-c-inventory-insights__overrides .ins-c-background__default {
-  color: var(--pf-v5-global--BackgroundColor--100);
+  color: var(--pf-v6-global--BackgroundColor--100);
 }
 
 .ins-c-inventory-insights__overrides .ins-c-center-text {
   text-align: center;
 }
+
 /*# sourceMappingURL=SystemAdvisor.css.map */

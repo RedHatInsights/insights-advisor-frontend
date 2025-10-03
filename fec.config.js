@@ -64,10 +64,6 @@ module.exports = {
         __dirname,
         '/src/PresentationalComponents/Export/SystemsPdfBuild',
       ),
-      './SatelliteDemoComponent': resolve(
-        __dirname,
-        './src/Temporary/SatelliteDemoComponent.js',
-      ),
       './OverviewDetails': resolve(
         __dirname,
         './src/SmartComponents/Recs/Details.js',

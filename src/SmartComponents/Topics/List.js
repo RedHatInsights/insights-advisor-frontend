@@ -37,7 +37,7 @@ const List = () => {
       <PageHeader>
         <PageHeaderTitle title={`${messages.topics.defaultMessage}`} />
       </PageHeader>
-      <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
+      <section className="pf-v6-l-page__main-section pf-v6-c-page__main-section">
         <TopicsTable props={{ data, isLoading, isFetching, isError }} />
       </section>
     </React.Fragment>

@@ -9,8 +9,7 @@ import { Bullseye, Spinner } from '@patternfly/react-core';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import ErrorState from '@redhat-cloud-services/frontend-components/ErrorState';
 import PropTypes from 'prop-types';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
-import { useDispatch } from 'react-redux';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { useIntl } from 'react-intl';
 import messages from './Messages';
 import {
@@ -27,7 +26,6 @@ export const AccountStatContext = createContext({
 
 export const ZeroStateWrapper = ({ children }) => {
   const intl = useIntl();
-  const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
   const [hasConventionalSystems, setHasConventionalSystems] = useState(true);
   const [hasEdgeDevices, setHasEdgeDevices] = useState(true);
@@ -49,6 +47,7 @@ export const ZeroStateWrapper = ({ children }) => {
     customBasePath: envContext.INVENTORY_BASE_URL,
     inventoryBasePath: INVENTORY_BASE_URL,
   });
+  const addNotification = useAddNotification();
 
   useEffect(() => {
     setHasEdgeDevices(edge?.total > 0);
@@ -58,16 +57,14 @@ export const ZeroStateWrapper = ({ children }) => {
 
   useEffect(() => {
     if (edgeErrorMessage?.status || conventErrorMessage?.status) {
-      dispatch(
-        addNotification({
-          variant: 'danger',
-          dismissable: true,
-          title: intl.formatMessage(messages.error),
-          description:
-            `${JSON.stringify(edgeErrorMessage?.data)}` ||
-            `${JSON.stringify(conventErrorMessage?.data)}`,
-        }),
-      );
+      addNotification({
+        variant: 'danger',
+        dismissable: true,
+        title: intl.formatMessage(messages.error),
+        description:
+          `${JSON.stringify(edgeErrorMessage?.data)}` ||
+          `${JSON.stringify(conventErrorMessage?.data)}`,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [edgeError, conventionalError]);

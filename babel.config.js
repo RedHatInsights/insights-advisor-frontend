@@ -12,8 +12,15 @@ module.exports = {
       {
         include: ['NODE_ENV'],
       },
+      '@babel/plugin-transform-runtime',
     ],
-    '@babel/plugin-transform-runtime',
+    [
+      'formatjs',
+      {
+        idInterpolationPattern: '[sha512:contenthash:base64:6]',
+        ast: true,
+      },
+    ],
     'lodash',
   ],
   env: {

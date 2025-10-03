@@ -2,8 +2,6 @@ import {
   EmptyState,
   EmptyStateVariant,
   EmptyStateBody,
-  EmptyStateIcon,
-  EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
@@ -14,17 +12,21 @@ const MessageState = ({
   className,
   children,
   icon = CubesIcon,
-  iconClass,
   iconStyle,
   text,
   title = '',
   variant = EmptyStateVariant.full,
 }) => (
-  <EmptyState className={className} variant={variant}>
-    {icon !== 'none' && (
-      <EmptyStateIcon className={iconClass} style={iconStyle} icon={icon} />
-    )}
-    <EmptyStateHeader titleText={<>{title}</>} headingLevel="h5" />
+  <EmptyState
+    headingLevel="h5"
+    titleText={<>{title}</>}
+    className={className}
+    variant={variant}
+    icon={icon}
+    style={{
+      '--pf-c-empty-state__icon--Color': iconStyle?.color || 'inherit',
+    }}
+  >
     <EmptyStateBody
       style={{
         marginBottom: '16px',
@@ -41,7 +43,6 @@ MessageState.propTypes = {
   className: PropTypes.string,
   children: PropTypes.any,
   icon: PropTypes.any,
-  iconClass: PropTypes.any,
   iconStyle: PropTypes.any,
   text: PropTypes.any,
   title: PropTypes.string,

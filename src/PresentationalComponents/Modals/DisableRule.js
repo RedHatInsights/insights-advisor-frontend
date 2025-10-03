@@ -4,13 +4,12 @@ import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button
 import { Checkbox } from '@patternfly/react-core/dist/esm/components/Checkbox/Checkbox';
 import { Form } from '@patternfly/react-core/dist/esm/components/Form/Form';
 import { FormGroup } from '@patternfly/react-core/dist/esm/components/Form/FormGroup';
-import { Modal } from '@patternfly/react-core/dist/esm/components/Modal/Modal';
+import { Modal } from '@patternfly/react-core/deprecated';
 import { Post } from '../../Utilities/Api';
 import PropTypes from 'prop-types';
 import { TextInput } from '@patternfly/react-core/dist/esm/components/TextInput/TextInput';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import messages from '../../Messages';
-import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { useSetAckMutation } from '../../Services/Acks';
 import { EnvironmentContext } from '../../App';
@@ -24,9 +23,8 @@ const DisableRule = ({
   afterFn = () => {},
 }) => {
   const intl = useIntl();
-  const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
-  const notification = (data) => dispatch(addNotification(data));
+  const addNotification = useAddNotification();
   const [justification, setJustificaton] = useState('');
   const [singleSystem, setSingleSystem] = useState(
     host !== undefined || hosts.length > 0,
@@ -46,7 +44,7 @@ const DisableRule = ({
         data,
       );
       !singleSystem &&
-        notification({
+        addNotification({
           variant: 'success',
           dismissable: true,
           timeout: true,
@@ -54,7 +52,7 @@ const DisableRule = ({
         });
       afterFn && afterFn();
     } catch (error) {
-      notification({
+      addNotification({
         variant: 'danger',
         dismissable: true,
         title: intl.formatMessage(messages.error),
@@ -84,7 +82,7 @@ const DisableRule = ({
       try {
         await setAck(options).unwrap();
 
-        notification({
+        addNotification({
           variant: 'success',
           timeout: true,
           dismissable: true,
@@ -94,7 +92,7 @@ const DisableRule = ({
         setJustificaton('');
         afterFn && afterFn();
       } catch (error) {
-        notification({
+        addNotification({
           variant: 'danger',
           dismissable: true,
           title: intl.formatMessage(messages.error),

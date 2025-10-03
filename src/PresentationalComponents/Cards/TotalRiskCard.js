@@ -19,12 +19,6 @@ import {
 } from '@patternfly/react-core/dist/esm/layouts/Grid/index';
 
 import React from 'react';
-import {
-  chart_color_black_100,
-  chart_color_gold_400,
-  chart_color_orange_300,
-  chart_color_red_100,
-} from '@patternfly/react-tokens';
 import messages from '../../Messages';
 import { strong } from '../../Utilities/intlHelper';
 import { useIntl } from 'react-intl';
@@ -47,9 +41,8 @@ export const TotalRiskCard = (props) => {
       : cats[0]?.name;
   return (
     <Card
-      isFlat
       isPlain
-      className="adv-c-card-pathway adv__background--global-100 pf-v5-u-h-100"
+      className="adv-c-card-pathway adv__background--global-100 pf-v6-u-h-100"
       ouiaId="total-risk-card"
     >
       <CardTitle>{intl.formatMessage(messages.totalRiskPathway)}</CardTitle>
@@ -93,25 +86,25 @@ export const TotalRiskCard = (props) => {
                         name: 'Critical',
                         x: 'Critical',
                         y: critical_risk_count,
-                        fill: chart_color_red_100.value,
+                        fill: '#a30000',
                       },
                       {
                         name: 'Important',
                         x: 'Important',
                         y: high_risk_count,
-                        fill: chart_color_orange_300.value,
+                        fill: '#ec7a08',
                       },
                       {
                         name: 'Moderate',
                         x: 'Moderate',
                         y: medium_risk_count,
-                        fill: chart_color_gold_400.value,
+                        fill: '#f0ab00',
                       },
                       {
                         name: 'Low',
                         x: 'Low',
                         y: low_risk_count,
-                        fill: chart_color_black_100.value,
+                        fill: '#f0f0f0',
                       },
                     ]}
                   />
@@ -119,7 +112,7 @@ export const TotalRiskCard = (props) => {
               </Chart>
             </div>
           </GridItem>
-          <GridItem span={6} className="pf-v5-u-font-size-sm">
+          <GridItem span={6} className="pf-v6-u-font-size-sm">
             {intl.formatMessage(messages.thisPathway, {
               category: catString(categories),
               systems: impacted_systems_count,

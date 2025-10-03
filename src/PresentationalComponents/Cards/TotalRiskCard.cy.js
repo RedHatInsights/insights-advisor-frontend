@@ -15,7 +15,7 @@ const mountComponent = () => {
     <MemoryRouter>
       <IntlProvider locale={navigator.language.slice(0.2)}>
         <Provider store={initStore()}>
-          <section className="pf-v5-u-p-lg">
+          <section className="pf-v6-u-p-lg">
             <Grid hasGutter>
               <GridItem sm={12} md={6}>
                 <TotalRiskCard {...pathwayFixtures} />

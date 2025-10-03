@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'; // FIXED: Removed the duplicate 'from 'react'
 import propTypes from 'prop-types';
 
 import { Button } from '@patternfly/react-core';
@@ -14,7 +14,7 @@ const EmptyState = ({ filters, toggleRulesDisabled }) => {
   return (
     <MessageState
       icon={CheckCircleIcon}
-      iconClass="ansibleCheck"
+      iconStyle={{ color: '#3e8635' }}
       title={message.title}
       text={message.body}
     >

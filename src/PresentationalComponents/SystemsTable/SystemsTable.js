@@ -29,6 +29,7 @@ import { createOptions, createSortParam } from '../helper';
 import { createColumns } from './createColumns';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { EnvironmentContext } from '../../App';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 
 const SystemsTable = () => {
   const intl = useIntl();
@@ -42,6 +43,7 @@ const SystemsTable = () => {
   const setFilters = (filters) => dispatch(updateSysFilters(filters));
   const envContext = useContext(EnvironmentContext);
   const [filterBuilding, setFilterBuilding] = useState(true);
+  const addNotification = useAddNotification();
 
   const removeFilterParam = (param) => {
     const filter = { ...filters, offset: 0 };
@@ -303,11 +305,12 @@ const SystemsTable = () => {
               SID,
               dispatch,
               envContext.BASE_URL,
+              addNotification,
             ),
           extraItems: [
             <li
               key="download-pdf"
-              className="pf-v5-c-menu__list-item"
+              className="pf-v6-c-menu__list-item"
               style={{ justifyContent: 'center', display: 'flex' }}
               data-ouia-component-type="PF5/DropdownItem"
               data-ouia-component-id="DownloadPDF"

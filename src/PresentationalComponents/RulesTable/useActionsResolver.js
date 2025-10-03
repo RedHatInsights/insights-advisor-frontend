@@ -9,6 +9,7 @@ export const useActionsResolver = (
   setSelectedRule,
   setDisableRuleOpen,
   refetch,
+  addNotification,
 ) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ export const useActionsResolver = (
                   refetch,
                   dispatch,
                   intl,
+                  addNotification,
                 ),
             },
           ]
@@ -48,6 +50,7 @@ export const useActionsResolver = (
                   refetch,
                   dispatch,
                   intl,
+                  addNotification,
                 ),
             },
           ];
