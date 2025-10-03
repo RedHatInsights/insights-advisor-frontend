@@ -5,18 +5,18 @@ exports[`EdgeSystemsBanner does not render with no edge hosts 1`] = `<DocumentFr
 exports[`EdgeSystemsBanner does render with edge hosts present 1`] = `
 <DocumentFragment>
   <div
-    class="pf-v5-c-alert pf-m-inline pf-m-info"
+    class="pf-v6-c-alert pf-m-inline pf-m-info"
     data-ouia-component-id="OUIA-Generated-Alert-info-1"
-    data-ouia-component-type="PF5/Alert"
+    data-ouia-component-type="PF6/Alert"
     data-ouia-safe="true"
     style="margin-bottom: 1.5rem;"
   >
     <div
-      class="pf-v5-c-alert__icon"
+      class="pf-v6-c-alert__icon"
     >
       <svg
         aria-hidden="true"
-        class="pf-v5-svg"
+        class="pf-v6-svg"
         fill="currentColor"
         height="1em"
         role="img"
@@ -29,10 +29,10 @@ exports[`EdgeSystemsBanner does render with edge hosts present 1`] = `
       </svg>
     </div>
     <h4
-      class="pf-v5-c-alert__title"
+      class="pf-v6-c-alert__title"
     >
       <span
-        class="pf-v5-screen-reader"
+        class="pf-v6-screen-reader"
       >
         Info alert:
       </span>
