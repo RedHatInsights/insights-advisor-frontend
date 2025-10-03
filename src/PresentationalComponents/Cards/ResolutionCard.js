@@ -24,9 +24,8 @@ export const ResolutionCard = ({
 
   return (
     <Card
-      isFlat
       isPlain
-      className="adv-c-card-pathway adv__background--global-100 pf-v5-u-h-100 flex-row"
+      className="adv-c-card-pathway adv__background--global-100 pf-v6-u-h-100 flex-row"
       ouiaId="resolution-card"
     >
       <div className="flex-coloumn">
@@ -34,14 +33,14 @@ export const ResolutionCard = ({
 
         <div className="flex-row ">
           <div className="halfWidth">
-            <p className="pf-v5-u-font-weight-bold pf-v5-u-font-size-sm pf-v5-u-pl-lg">
+            <p className="pf-v6-u-font-weight-bold pf-v6-u-font-size-sm pf-v6-u-pl-lg">
               {intl.formatMessage(messages.remediation)}
             </p>
-            <p className="pf-v5-u-font-size-sm pf-v5-u-pl-lg">{name}</p>
+            <p className="pf-v6-u-font-size-sm pf-v6-u-pl-lg">{name}</p>
           </div>
 
-          <CardBody className=" pf-v5-u-pl-xl halfWidth">
-            <p className="pf-v5-u-font-weight-bold pf-v5-u-font-size-sm">
+          <CardBody className=" pf-v6-u-pl-xl halfWidth">
+            <p className="pf-v6-u-font-weight-bold pf-v6-u-font-size-sm">
               {intl.formatMessage(messages.riskOfChange)}
             </p>
             <InsightsLabel
@@ -53,14 +52,14 @@ export const ResolutionCard = ({
           </CardBody>
         </div>
 
-        <CardBody className="body pf-v5-u-font-size-sm">
+        <CardBody className="body pf-v6-u-font-size-sm">
           {intl.formatMessage(messages.staticRemediationDesc)}
         </CardBody>
         <CardBody className="body">{RebootRequired(reboot_required)}</CardBody>
       </div>
 
-      <div className="pathwayRight pf-v5-u-p-lg ">
-        <p className="pf-v5-u-font-weight-bold pf-v5-u-font-size-sm">
+      <div className="pathwayRight pf-v6-u-p-lg ">
+        <p className="pf-v6-u-font-weight-bold pf-v6-u-font-size-sm">
           {intl.formatMessage(messages.reclvl)}
         </p>
         <div>

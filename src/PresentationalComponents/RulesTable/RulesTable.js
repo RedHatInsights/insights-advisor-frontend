@@ -28,6 +28,7 @@ import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
 import debounce from '../../Utilities/Debounce';
 import downloadReport from '../Common/DownloadHelper';
 import messages from '../../Messages';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 
 import { updateRecFilters } from '../../Services/Filters';
 import { useGetRecsQuery } from '../../Services/Recs';
@@ -72,6 +73,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
   const [isAllExpanded, setIsAllExpanded] = useState(false);
   const setFilters = (filters) => dispatch(updateRecFilters(filters));
   const { hasEdgeDevices, edgeQuerySuccess } = useContext(AccountStatContext);
+  const addNotification = useAddNotification();
 
   const options = {
     ...(selectedTags?.length ? { tags: selectedTags.join(',') } : {}),
@@ -130,6 +132,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
     setSelectedRule,
     setDisableRuleOpen,
     refetch,
+    addNotification,
   );
 
   const impactingFilterDef = impactingFilter(
@@ -260,6 +263,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
                 SID,
                 dispatch,
                 envContext.BASE_URL,
+                addNotification,
               ),
             tooltipText: intl.formatMessage(messages.exportData),
           }

@@ -4,7 +4,6 @@ import { UI_BASE } from '../../AppConstants';
 import messages from '../../Messages';
 import React, { useContext, useEffect, useState } from 'react';
 import propTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
 import {
   Card,
@@ -21,7 +20,7 @@ import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
-import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { cveToRuleid } from '../../cveToRuleid.js';
 import { useGetRecAcksQuery } from '../../Services/Acks';
 import { useGetRecQuery } from '../../Services/Recs';
@@ -36,10 +35,9 @@ import { useParams } from 'react-router-dom';
 
 const OverviewDetails = (props) => {
   const intl = useIntl();
-  const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
   const ruleId = useParams().id || props.ruleId;
-  const addNotification = (data) => dispatch(notification(data));
+  const addNotification = useAddNotification();
   const {
     data: rule = {},
     isFetching,
@@ -149,7 +147,7 @@ const OverviewDetails = (props) => {
               refetch={refetch}
             />
           )}
-          <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
+          <section className="pf-v6-l-page__main-section pf-v6-c-page__main-section">
             {(rule.hosts_acked_count > 0 || rule.rule_status !== 'enabled') && (
               <Card className="adv-c-card-details" ouiaId="rule-details-card">
                 <CardHeader>
@@ -251,7 +249,7 @@ const OverviewDetails = (props) => {
             )}
             {rule.rule_status === 'enabled' && (
               <React.Fragment>
-                <Title className="pf-v5-u-mb-lg" headingLevel="h3" size="2xl">
+                <Title className="pf-v6-u-mb-lg" headingLevel="h3" size="2xl">
                   <DetailsTitle
                     areCountsLoading={areCountsLoading}
                     hasEdgeDevices={hasEdgeDevices}

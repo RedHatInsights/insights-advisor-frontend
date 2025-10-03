@@ -12,7 +12,7 @@ const dropdownOpen = false;
 import { DetailsRules } from './DetailsRules';
 const ruleDescription = rulesfixtures.description;
 const ROOT =
-  'div[class="pf-v5-l-flex pf-m-column pf-m-row-on-lg pf-m-nowrap ins-c-rule-details"]';
+  'div[class="pf-v6-l-flex pf-m-column pf-m-row-on-lg pf-m-nowrap ins-c-rule-details"]';
 import { EnvironmentContext } from '../../App';
 
 const mountComponent = (envContext = {}) => {

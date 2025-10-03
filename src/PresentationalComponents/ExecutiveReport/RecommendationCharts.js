@@ -13,8 +13,6 @@ import {
   Tr,
   TableVariant,
 } from '@patternfly/react-table';
-import chart_color_red_100 from '@patternfly/react-tokens/dist/js/chart_color_red_100';
-import global_BackgroundColor_150 from '@patternfly/react-tokens/dist/js/global_BackgroundColor_150';
 
 const RecommendationCharts = ({
   columnHeader,
@@ -25,7 +23,7 @@ const RecommendationCharts = ({
 }) => {
   return (
     <React.Fragment>
-      <Text style={{ color: chart_color_red_100.value }}>{header}</Text>
+      <Text style={{ color: '#A30000' }}>{header}</Text>
       <Flex defaultspaceItems={{ default: 'spaceItemsLg' }}>
         <FlexItem style={{ width: '40%' }}>
           <Table
@@ -44,8 +42,7 @@ const RecommendationCharts = ({
                 <Tr
                   key={`${columnHeader}-row-${index}`}
                   style={{
-                    backgroundColor:
-                      (index + 1) % 2 && global_BackgroundColor_150.var,
+                    backgroundColor: (index + 1) % 2 && '#f0f0f0',
                     fontSize: '12px',
                   }}
                 >

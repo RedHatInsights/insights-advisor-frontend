@@ -23,9 +23,7 @@ import {
 import { truncate } from 'lodash';
 import { Text } from '@react-pdf/renderer';
 import { Flex, FlexItem } from '@patternfly/react-core';
-import chart_color_red_100 from '@patternfly/react-tokens/dist/js/chart_color_red_100';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
-import global_Color_dark_200 from '@patternfly/react-tokens/dist/js/global_Color_dark_200';
 import RecommendationCharts from './RecommendationCharts';
 
 /**
@@ -152,11 +150,11 @@ const BuildExecReport = ({ asyncData, additionalData }) => {
     <div
       style={{ paddingTop: '24px', paddingLeft: '32px', paddingRight: '32px' }}
     >
-      <span style={{ fontSize: '24px', color: chart_color_red_100.value }}>
+      <span style={{ fontSize: '24px', color: '#A30000' }}>
         Red Hat {isLightspeedEnabled ? 'Lightspeed' : 'Insights'}
       </span>
       <br />
-      <span style={{ fontSize: '32px', color: chart_color_red_100.value }}>
+      <span style={{ fontSize: '32px', color: '#A30000' }}>
         {`Executive report: ${INSIGHTS_HEADER}`}
       </span>
       <br />
@@ -182,16 +180,14 @@ const BuildExecReport = ({ asyncData, additionalData }) => {
         pieLegend={categoryLegend}
         rows={categoryRows}
       />
-      <Text style={{ color: chart_color_red_100.value }}>
-        {TOP_THREE_RULES_HEADER}
-      </Text>
+      <Text style={{ color: '#A30000' }}>{TOP_THREE_RULES_HEADER}</Text>
       {topActiveRec.data.map((rule, key) => (
         <Flex style={{ paddingTop: '24px' }} key={key}>
           <Flex direction={{ default: 'column' }}>
             <FlexItem
               style={{
                 fontSize: '12px',
-                color: global_Color_dark_200.value,
+                color: '#36373a',
               }}
             >
               {SYSTEMS_EXPOSED}
@@ -204,7 +200,7 @@ const BuildExecReport = ({ asyncData, additionalData }) => {
             <FlexItem
               style={{
                 fontSize: '12px',
-                color: global_Color_dark_200.value,
+                color: '#36373a',
               }}
             >
               {TOTAL_RISK}
