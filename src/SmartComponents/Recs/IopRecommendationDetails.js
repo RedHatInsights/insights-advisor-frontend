@@ -26,7 +26,7 @@ import { cveToRuleid } from '../../cveToRuleid.js';
 import { useGetRecAcksQuery } from '../../Services/Acks';
 import { useGetRecQuery } from '../../Services/Recs';
 import { useGetTopicsQuery } from '../../Services/Topics';
-import { enableRule, bulkHostActions, edgeSystemsCheck } from './helpers';
+import { enableRule, bulkHostActions, systemsCheck } from './helpers';
 import { DetailsRules } from './DetailsRules';
 import { AccountStatContext } from '../../ZeroStateWrapper.js';
 import DetailsTitle from './DetailsTitle.js';
@@ -99,10 +99,9 @@ const IopRecommendationDetails = (props) => {
       typeof envContext.BASE_URL === 'string' &&
       envContext.BASE_URL.length > 0
     ) {
-      edgeSystemsCheck(
+      systemsCheck(
         ruleId,
         setSystemsCount,
-        null,
         null,
         setCountsLoading,
         '',

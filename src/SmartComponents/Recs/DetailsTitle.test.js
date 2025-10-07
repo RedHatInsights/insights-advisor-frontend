@@ -20,21 +20,9 @@ describe('DetailsTitle', () => {
     expect(screen.getByText('Affected Systems')).toBeVisible();
   });
 
-  it('Should display "Affected Systems" when edge parity is enabled but there is no edge device in an account level', () => {
+  it('Should display "10 Affected Systems"', () => {
     useFeatureFlag.mockReturnValue(true);
-    render(<DetailsTitle areCountsLoading={false} hasEdgeDevices={false} />);
-    expect(screen.getByText('Affected Systems')).toBeVisible();
-  });
-
-  it('Should display "10  Total Systems" when edge parity is enabled and there is an edge device in an account level', () => {
-    useFeatureFlag.mockReturnValue(true);
-    render(
-      <DetailsTitle
-        areCountsLoading={false}
-        hasEdgeDevices={true}
-        systemsCount={10}
-      />,
-    );
-    expect(screen.getByText('10 Total Systems')).toBeVisible();
+    render(<DetailsTitle areCountsLoading={false} systemsCount={10} />);
+    expect(screen.getByText('10 Affected Systems')).toBeVisible();
   });
 });
