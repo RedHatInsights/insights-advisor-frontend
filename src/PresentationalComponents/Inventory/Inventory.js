@@ -60,6 +60,7 @@ const Inventory = ({
   const entities = useSelector(({ entities }) => entities || {});
   const envContext = useContext(EnvironmentContext);
   const addNotification = useAddNotification();
+
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [curPageIds, setCurPageIds] = useState([]);
   const [pathwayRulesList, setPathwayRulesList] = useState({});

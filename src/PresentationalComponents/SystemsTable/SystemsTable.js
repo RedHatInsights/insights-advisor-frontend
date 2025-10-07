@@ -205,6 +205,8 @@ const SystemsTable = () => {
           tags: false,
           hostGroupFilter: false,
           operatingSystem: false,
+          systemTypeFilter: false,
+          systemType: false,
         }}
         initialLoading
         autoRefresh
