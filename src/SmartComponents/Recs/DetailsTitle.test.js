@@ -15,11 +15,6 @@ describe('DetailsTitle', () => {
     expect(screen.getByLabelText('Table title skeleton')).toBeVisible();
   });
 
-  it('Should display "Affected Systems" when edge parity is disabled', () => {
-    render(<DetailsTitle areCountsLoading={false} />);
-    expect(screen.getByText('Affected Systems')).toBeVisible();
-  });
-
   it('Should display "10 Affected Systems"', () => {
     useFeatureFlag.mockReturnValue(true);
     render(<DetailsTitle areCountsLoading={false} systemsCount={10} />);

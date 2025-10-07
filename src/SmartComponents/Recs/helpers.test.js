@@ -25,8 +25,7 @@ describe('systemsCheck state is getting set', () => {
       '/api/insights/v1',
     );
 
-    await expect(setSystemsCount).toHaveBeenCalledWith(2);
-    await expect(setEdgeSystemsCount).toHaveBeenCalledWith(1);
+    await expect(setSystemsCount).toHaveBeenCalledWith(1);
     await expect(setConventionalSystemsCount).toHaveBeenCalledWith(1);
     await expect(setCountsLoading).toHaveBeenCalledWith(false);
   });
@@ -48,9 +47,6 @@ describe('systemsCheck state is getting set', () => {
     expect(axios.get).toHaveBeenCalledWith(
       '/api/insights/v1/rule/test/systems_detail/?filter[system_profile][host_type][nil]=true&limit=1',
     );
-    expect(axios.get).toHaveBeenCalledWith(
-      '/api/insights/v1/rule/test/systems_detail/?filter[system_profile][host_type]=edge&limit=1',
-    );
   });
 
   test('should get pathway data', async () => {
@@ -69,9 +65,6 @@ describe('systemsCheck state is getting set', () => {
 
     expect(axios.get).toHaveBeenCalledWith(
       '/api/insights/v1/system/?limit=1&filter[system_profile][host_type][nil]=true&pathway=pathway',
-    );
-    expect(axios.get).toHaveBeenCalledWith(
-      '/api/insights/v1/system/?limit=1&filter[system_profile][host_type]=edge&pathway=pathway',
     );
   });
 });
