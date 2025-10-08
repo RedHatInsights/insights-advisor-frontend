@@ -26,10 +26,9 @@ import { cveToRuleid } from '../../cveToRuleid.js';
 import { useGetRecAcksQuery } from '../../Services/Acks';
 import { useGetRecQuery } from '../../Services/Recs';
 import { useGetTopicsQuery } from '../../Services/Topics';
-import { enableRule, bulkHostActions, edgeSystemsCheck } from './helpers';
+import { enableRule, bulkHostActions, systemsCheck } from './helpers';
 import { DetailsRules } from './DetailsRules';
 import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
-import { AccountStatContext } from '../../ZeroStateWrapper.js';
 import DetailsTitle from './DetailsTitle.js';
 import { EnvironmentContext } from '../../App';
 import { useParams } from 'react-router-dom';
@@ -62,10 +61,8 @@ const OverviewDetails = (props) => {
   const [host, setHost] = useState(undefined);
   const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
   const [systemsCount, setSystemsCount] = useState(0);
-  const [edgeSystemsCount, setEdgeSystemsCount] = useState(0);
   const [conventionalSystemsCount, setConventionalSystemsCount] = useState(0);
   const [areCountsLoading, setCountsLoading] = useState(true);
-  const { hasEdgeDevices } = useContext(AccountStatContext);
 
   const handleModalToggle = (disableRuleModalOpen, host = undefined) => {
     setDisableRuleModalOpen(disableRuleModalOpen);
@@ -102,10 +99,9 @@ const OverviewDetails = (props) => {
       typeof envContext.BASE_URL === 'string' &&
       envContext.BASE_URL.length > 0
     ) {
-      edgeSystemsCheck(
+      systemsCheck(
         ruleId,
         setSystemsCount,
-        setEdgeSystemsCount,
         setConventionalSystemsCount,
         setCountsLoading,
         '',
@@ -254,7 +250,6 @@ const OverviewDetails = (props) => {
                 <Title className="pf-v5-u-mb-lg" headingLevel="h3" size="2xl">
                   <DetailsTitle
                     areCountsLoading={areCountsLoading}
-                    hasEdgeDevices={hasEdgeDevices}
                     systemsCount={systemsCount}
                   />
                 </Title>
@@ -263,9 +258,7 @@ const OverviewDetails = (props) => {
                   rule={rule}
                   afterDisableFn={afterDisableFn}
                   handleModalToggle={handleModalToggle}
-                  isImmutableTabOpen={props.isImmutableTabOpen}
                   isRecommendationDetail
-                  edgeSystemsCount={edgeSystemsCount}
                   conventionalSystemsCount={conventionalSystemsCount}
                   areCountsLoading={areCountsLoading}
                   tabPathname={`/insights/advisor/recommendations/${encodeURI(
@@ -307,7 +300,6 @@ const OverviewDetails = (props) => {
 };
 
 OverviewDetails.propTypes = {
-  isImmutableTabOpen: propTypes.bool,
   axios: propTypes.func,
   ruleId: propTypes.string,
 };
