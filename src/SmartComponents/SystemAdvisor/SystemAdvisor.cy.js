@@ -257,7 +257,7 @@ describe('system rules table', () => {
 
       // select a couple
       //  but only ones that can be selected
-      cy.get('.pf-v5-c-table__tbody').then((rows) => {
+      cy.get('.pf-v6-c-table__tbody').then((rows) => {
         selectRandomEnabledRows({ rows: rows, numberOfRowsToSelect: 3 });
       });
 
@@ -266,7 +266,7 @@ describe('system rules table', () => {
 
       // Select None
       cy.get(
-        ':nth-child(2) > .pf-v5-c-menu-toggle > .pf-v5-c-menu-toggle__controls',
+        ':nth-child(2) > .pf-v6-c-menu-toggle > .pf-v6-c-menu-toggle__controls',
       ).click();
       cy.get(PT_BULK_SELECT_LIST).contains('Select none').click();
 
@@ -275,7 +275,7 @@ describe('system rules table', () => {
 
       // Select All
       cy.get(
-        ':nth-child(2) > .pf-v5-c-menu-toggle > .pf-v5-c-menu-toggle__controls',
+        ':nth-child(2) > .pf-v6-c-menu-toggle > .pf-v6-c-menu-toggle__controls',
       ).click();
       cy.get(PT_BULK_SELECT_LIST).contains('Select all').click();
 
@@ -289,7 +289,7 @@ describe('system rules table', () => {
       cy.get(PT_BULK_SELECT).should('have.text', '');
 
       // select some
-      cy.get('.pf-v5-c-table__tbody').then((rows) => {
+      cy.get('.pf-v6-c-table__tbody').then((rows) => {
         selectRandomEnabledRows({ rows: rows, numberOfRowsToSelect: 3 });
       });
 
