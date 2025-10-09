@@ -1,12 +1,7 @@
-import React, { Suspense, lazy, useContext } from 'react';
+import React, { Suspense, lazy } from 'react';
 import propTypes from 'prop-types';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
-import { AccountStatContext } from '../../ZeroStateWrapper';
 import { Bullseye, Spinner } from '@patternfly/react-core';
-
-const ImmutableDevices = lazy(
-  () => import(/* webpackChunkName: "ImmutableDevices" */ './ImmutableDevices'),
-);
 
 const RecommendationSystems = lazy(
   () =>
@@ -23,15 +18,11 @@ const PathwaySystems = lazy(
 );
 
 const HybridInventory = ({
-  isImmutableTabOpen,
   conventionalSystemsCount,
-  edgeSystemsCount,
   areCountsLoading,
   tabPathname,
   ...tabProps
 }) => {
-  const { hasEdgeDevices } = useContext(AccountStatContext);
-
   return areCountsLoading ? (
     <Bullseye>
       <Spinner size="lg" />
@@ -56,34 +47,16 @@ const HybridInventory = ({
           )}
         </Suspense>
       }
-      ImmutableDevicesTab={
-        <Suspense
-          fallback={
-            <Bullseye>
-              <Spinner size="xl" />
-            </Bullseye>
-          }
-        >
-          <ImmutableDevices {...tabProps} />
-        </Suspense>
-      }
       tabPathname={tabPathname}
-      isImmutableTabOpen={isImmutableTabOpen}
-      isEdgeParityEnabled
       fallback={<div />}
       columns
-      accountHasEdgeImages={hasEdgeDevices}
-      hasConventionalSystems={
-        conventionalSystemsCount > 0 || edgeSystemsCount <= 0
-      }
+      hasConventionalSystems={conventionalSystemsCount > 0}
     />
   );
 };
 
 HybridInventory.propTypes = {
-  isImmutableTabOpen: propTypes.bool,
   conventionalSystemsCount: propTypes.number,
-  edgeSystemsCount: propTypes.number,
   areCountsLoading: propTypes.bool,
   tabPathname: propTypes.string,
   rule: propTypes.object,

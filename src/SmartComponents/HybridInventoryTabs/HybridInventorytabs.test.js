@@ -39,12 +39,10 @@ jest.mock('../../Utilities/Hooks', () => ({
 
 const accountContextValue = {
   hasConventionalSystems: true,
-  hasEdgeDevices: true,
 };
 
 const hybridSystemsCounts = {
   conventionalSystemsCount: 10,
-  edgeSystemsCount: 10,
   areCountsLoading: false,
 };
 
@@ -63,72 +61,6 @@ const waitAsyncComponent = async () => {
 };
 
 describe('HybridInventoryTabs', () => {
-  it('Should auto switch to edge tab  when there is no conventional systems, but there is edge device', async () => {
-    renderComponent(
-      { ...hybridSystemsCounts, conventionalSystemsCount: 0 },
-      accountContextValue,
-    );
-
-    await waitAsyncComponent();
-    expect(AsynComponent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        hasConventionalSystems: false,
-      }),
-      {},
-    );
-  });
-  it('Should not auto switch to edge tab automatically when there is no conventional systems and no edge device', async () => {
-    renderComponent(
-      {
-        ...hybridSystemsCounts,
-        conventionalSystemsCount: 0,
-        edgeSystemsCount: 0,
-      },
-      accountContextValue,
-    );
-
-    await waitAsyncComponent();
-    expect(AsynComponent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        hasConventionalSystems: true,
-      }),
-      {},
-    );
-  });
-  it('Should not auto switch to edge tab automatically when there are both conventional systems and edge device', async () => {
-    renderComponent(hybridSystemsCounts, accountContextValue);
-
-    await waitAsyncComponent();
-    expect(AsynComponent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        hasConventionalSystems: true,
-      }),
-      {},
-    );
-  });
-  it('Should pass isImmutableTabOpen prop to fed-module', async () => {
-    renderComponent({ isImmutableTabOpen: true, ...hybridSystemsCounts });
-
-    await waitAsyncComponent();
-    expect(AsynComponent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        isImmutableTabOpen: true,
-      }),
-      {},
-    );
-  });
-  it('Should pass accountHasEdgeImages prop to fed-module from accountContext', async () => {
-    renderComponent(hybridSystemsCounts);
-
-    await waitAsyncComponent();
-    expect(AsynComponent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        accountHasEdgeImages: true,
-      }),
-      {},
-    );
-  });
-
   it('Should pass correct tabPath prop to fed-module from accountContext', async () => {
     renderComponent({
       ...hybridSystemsCounts,
