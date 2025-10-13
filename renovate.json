@@ -5,8 +5,31 @@
   "ignorePaths": [
     ".pre-commit-config.yaml"
   ],
-  "baseBranchPatterns": [
+  "baseBranches": [
     "master"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["\\.tekton/.*\\.yaml$"],
+      "matchStrings": [
+        "RedHatInsights/konflux-pipelines/raw/v(?<currentValue>[\\d.]+)"
+      ],
+      "depNameTemplate": "RedHatInsights/konflux-pipelines",
+      "datasourceTemplate": "github-releases"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": ["RedHatInsights/konflux-pipelines"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "description": "Disable all npm dependency updates",
+      "matchManagers": ["npm"],
+      "enabled": false
+    }
   ],
   "tekton": {
     "enabled": true,
