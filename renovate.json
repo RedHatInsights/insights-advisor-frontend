@@ -26,6 +26,12 @@
       "automerge": true
     },
     {
+      "description": "Automerge build-tools submodule updates",
+      "matchManagers": ["git-submodules"],
+      "matchPackageNames": ["build-tools"],
+      "automerge": true
+    },
+    {
       "description": "Disable all npm dependency updates",
       "matchManagers": ["npm"],
       "enabled": false
