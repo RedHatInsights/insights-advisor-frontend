@@ -1,12 +1,10 @@
 {
   "extends": [
-    "github>konflux-ci/mintmaker//config/renovate/renovate.json"
+    "github>konflux-ci/mintmaker//config/renovate/renovate.json",
+    "github>RedHatInsights/konflux-pipelines/renovate/foreman_satellite/renovate.json"
   ],
   "ignorePaths": [
     ".pre-commit-config.yaml"
-  ],
-  "baseBranches": [
-    "master"
   ],
   "customManagers": [
     {
@@ -39,6 +37,7 @@
   ],
   "tekton": {
     "enabled": true,
+    "schedule": ["at any time"],
     "packageRules": [
       {
         "matchUpdateTypes": [
