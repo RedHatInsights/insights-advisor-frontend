@@ -22,7 +22,7 @@ import {
 } from '../../AppConstants';
 import { truncate } from 'lodash';
 import { Text } from '@react-pdf/renderer';
-import { Flex, FlexItem } from '@patternfly/react-core';
+import { Content, Flex, FlexItem } from '@patternfly/react-core';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
 import RecommendationCharts from './RecommendationCharts';
 
@@ -141,10 +141,10 @@ const BuildExecReport = ({ asyncData, additionalData }) => {
   );
 
   const rulesDesc = (rule) => (
-    <Text>
-      <Text style={{ fontWeight: 700 }}> {rule.description}</Text>&nbsp;
+    <Content component="p">
+      <Content style={{ fontWeight: 700 }}> {rule.description}</Content>&nbsp;
       {truncate(rule.summary, { length: 280 })}
-    </Text>
+    </Content>
   );
   return (
     <div

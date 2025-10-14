@@ -51,8 +51,12 @@
       "!src/**/*.cy.js"
     ],
     "moduleNameMapper": {
-      "\\.(css|scss)$": "identity-obj-proxy"
-    },
+    "\\.(css|scss)$": "identity-obj-proxy",
+    "^@patternfly/react-styles$": "<rootDir>/node_modules/@patternfly/react-styles/dist/js",
+    "^@patternfly/react-tokens.*$": "<rootDir>/node_modules/@patternfly/react-tokens/dist/js/index.js",
+    "^@patternfly/react-core/dist/esm/(.*)": "<rootDir>/node_modules/@patternfly/react-core/dist/js/$1",
+    "^@patternfly/react-core$": "<rootDir>/node_modules/@patternfly/react-core/dist/js"
+  },
     "roots": [
       "<rootDir>/src/"
     ],

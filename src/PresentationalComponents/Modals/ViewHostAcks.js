@@ -1,13 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {
-  Table,
-  TableBody,
-  TableHeader,
-  Modal,
-} from '@patternfly/react-table/deprecated';
+import { Table, TableBody, TableHeader } from '@patternfly/react-table';
 
 import { BASE_URL } from '../../AppConstants';
-import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { DeleteApi } from '../../Utilities/Api';
 import { List } from 'react-content-loader';
@@ -18,6 +12,7 @@ import { useAddNotification } from '@redhat-cloud-services/frontend-components-n
 import { useGetHostAcksQuery } from '../../Services/Acks';
 import { useIntl } from 'react-intl';
 import { EnvironmentContext } from '../../App';
+import { Modal, Button } from '@patternfly/react-core';
 
 const ViewHostAcks = ({
   handleModalToggle = () => {},

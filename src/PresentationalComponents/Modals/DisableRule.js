@@ -1,13 +1,15 @@
 import React, { useContext, useState } from 'react';
 
-import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
-import { Checkbox } from '@patternfly/react-core/dist/esm/components/Checkbox/Checkbox';
-import { Form } from '@patternfly/react-core/dist/esm/components/Form/Form';
-import { FormGroup } from '@patternfly/react-core/dist/esm/components/Form/FormGroup';
-import { Modal } from '@patternfly/react-core/deprecated';
+import {
+  Modal,
+  Button,
+  Checkbox,
+  Form,
+  FormGroup,
+  TextInput,
+} from '@patternfly/react-core';
 import { Post } from '../../Utilities/Api';
 import PropTypes from 'prop-types';
-import { TextInput } from '@patternfly/react-core/dist/esm/components/TextInput/TextInput';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import messages from '../../Messages';
 import { useIntl } from 'react-intl';

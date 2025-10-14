@@ -5,18 +5,18 @@ import React, { useState } from 'react';
 import {
   Split,
   SplitItem,
-} from '@patternfly/react-core/dist/esm/layouts/Split/index';
+  Modal,
+  Form,
+  FormGroup,
+  Checkbox,
+  Button,
+  Radio,
+  TextArea,
+  TextInput,
+} from '@patternfly/react-core';
 
 import { BASE_URL } from '../../AppConstants';
-import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
-import { Checkbox } from '@patternfly/react-core/dist/esm/components/Checkbox/Checkbox';
-import { Form } from '@patternfly/react-core/dist/esm/components/Form/Form';
-import { FormGroup } from '@patternfly/react-core/dist/esm/components/Form/FormGroup';
-import { Modal } from '@patternfly/react-core/deprecated/';
 import PropTypes from 'prop-types';
-import { Radio } from '@patternfly/react-core/dist/esm/components/Radio/Radio';
-import { TextArea } from '@patternfly/react-core/dist/esm/components/TextArea/TextArea';
-import { TextInput } from '@patternfly/react-core/dist/esm/components/TextInput/TextInput';
 import messages from '../../Messages';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { useIntl } from 'react-intl';

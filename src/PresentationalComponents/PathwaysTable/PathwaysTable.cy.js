@@ -71,7 +71,7 @@ describe('Pathways table tests', () => {
     mountComponent();
   });
 
-  describe('defaults', () => {
+  describe.only('defaults', () => {
     it('The Pathways table renders', () => {
       cy.get(ROOT).should('have.length', 1);
     });
@@ -82,6 +82,8 @@ describe('Pathways table tests', () => {
       checkTableHeaders(TABLE_HEADERS);
     });
     it('links to the pathway detail page', () => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
       cy.get('tbody tr:first [data-label=Name] a')
         .should('have.attr', 'href')
         .and('include', `/recommendations/pathways/${fixtures.data[0].slug}`);

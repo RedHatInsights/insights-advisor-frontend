@@ -55,7 +55,15 @@ export const useActionsResolver = (
             },
           ];
     },
-    [rows, setSelectedRule, setDisableRuleOpen, refetch, dispatch, intl],
+    [
+      rows,
+      setSelectedRule,
+      setDisableRuleOpen,
+      refetch,
+      dispatch,
+      intl,
+      addNotification,
+    ],
   );
 
   return actionResolver;
