@@ -21,13 +21,15 @@
     {
       "matchPackageNames": ["RedHatInsights/konflux-pipelines"],
       "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true
+      "automerge": true,
+      "platformAutomerge": true
     },
     {
       "description": "Automerge build-tools submodule updates",
       "matchManagers": ["git-submodules"],
       "matchPackageNames": ["build-tools"],
-      "automerge": true
+      "automerge": true,
+      "platformAutomerge": true
     },
     {
       "description": "Disable all npm dependency updates",
