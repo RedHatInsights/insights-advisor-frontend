@@ -34,14 +34,13 @@ jest.mock('react-redux', () => ({
 }));
 
 describe('Systems', () => {
-  it('Should always show conventional systems by filtering host_type', () => {
+  it('Should render', () => {
     render(<ComponentWithContext Component={SystemsTable} />);
 
     expect(InventoryTable).toHaveBeenCalledWith(
       expect.objectContaining({
         customFilters: expect.objectContaining({
           advisorFilters: {
-            'filter[system_profile][host_type][nil]': true,
             sysState: { page: 1, sort: '-last_seen' },
           },
         }),

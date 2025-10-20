@@ -84,10 +84,10 @@ const getSystemCheckEndpoints = ({ ruleId, pathway, baseUrl }) => {
     return {
       conventionalURL: `${baseUrl}/rule/${encodeURI(
         ruleId,
-      )}/systems_detail/?filter[system_profile][host_type][nil]=true&limit=1`,
+      )}/systems_detail/?filter[system_profile][system_type][conventional]=true&limit=1`,
       edgeURL: `${baseUrl}/rule/${encodeURI(
         ruleId,
-      )}/systems_detail/?filter[system_profile][host_type]=edge&limit=1`,
+      )}/systems_detail/?filter[system_profile][system_type]=edge&filter[system_profile][system_type]=bootc_status&filter[system_profile][system_type]=edge&limit=1`,
     };
   }
 

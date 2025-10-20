@@ -211,8 +211,6 @@ const SystemsTable = () => {
         customFilters={{
           advisorFilters: {
             ...filters,
-            //Systems table should always be filtered by host type
-            'filter[system_profile][host_type][nil]': true,
           },
           workloads,
           SID,
