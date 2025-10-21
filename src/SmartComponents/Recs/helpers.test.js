@@ -45,7 +45,7 @@ describe('systemsCheck state is getting set', () => {
     );
 
     expect(axios.get).toHaveBeenCalledWith(
-      '/api/insights/v1/rule/test/systems_detail/?filter[system_profile]&limit=1',
+      '/api/insights/v1/rule/test/systems_detail/?filter[system_profile]=true&limit=1',
     );
   });
 
@@ -64,7 +64,7 @@ describe('systemsCheck state is getting set', () => {
     );
 
     expect(axios.get).toHaveBeenCalledWith(
-      '/api/insights/v1/system/?limit=1&filter[system_profile][host_type][nil]=true&pathway=pathway',
+      '/api/insights/v1/system/?limit=1&filter[system_profile]&pathway=pathway',
     );
   });
 });
