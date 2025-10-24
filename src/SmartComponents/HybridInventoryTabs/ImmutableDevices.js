@@ -118,8 +118,6 @@ const ImmutableDevices = ({
       customFilters={{
         advisorFilters: {
           ...filters,
-          //Immutable devices table should always be filtered by host_type=edge
-          'filter[system_profile][host_type]': 'edge',
         },
       }}
       getEntities={fetchSystems}

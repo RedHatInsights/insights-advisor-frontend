@@ -41,7 +41,7 @@ describe('Systems', () => {
       expect.objectContaining({
         customFilters: expect.objectContaining({
           advisorFilters: {
-            'filter[system_profile][host_type][nil]': true,
+            'filter[system_profile]': true,
             sysState: { page: 1, sort: '-last_seen' },
           },
         }),
