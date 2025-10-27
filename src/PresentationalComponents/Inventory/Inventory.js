@@ -409,6 +409,7 @@ const Inventory = ({
             isDisabled={isRemediationButtonDisabled}
             dataProvider={remediationDataProvider}
             onRemediationCreated={(result) => onRemediationCreated(result)}
+            hasSelected={selectedIds?.length > 0}
           >
             Plan remediation
           </RemediationButton>

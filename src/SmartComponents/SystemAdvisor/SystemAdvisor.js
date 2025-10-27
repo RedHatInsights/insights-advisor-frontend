@@ -145,6 +145,7 @@ const BaseSystemAdvisor = ({
                 isDisabled={selectedAnsibleRules.length === 0}
                 dataProvider={() => processRemediation(selectedAnsibleRules)}
                 onRemediationCreated={(result) => onRemediationCreated(result)}
+                hasSelected={selectedAnsibleRules?.length > 0}
               >
                 Plan remediation
               </RemediationButton>

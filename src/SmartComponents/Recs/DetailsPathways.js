@@ -32,7 +32,7 @@ import { useParams } from 'react-router-dom';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
 import { useLocation } from 'react-router-dom';
 import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
-import { edgeSystemsCheck } from './helpers';
+import { systemsCheck } from './helpers';
 import { EnvironmentContext } from '../../App';
 
 const RulesTable = lazy(
@@ -42,7 +42,7 @@ const RulesTable = lazy(
     ),
 );
 
-const PathwayDetails = ({ isImmutableTabOpen }) => {
+const PathwayDetails = () => {
   const intl = useIntl();
   const pathwayName = useParams().id;
   const dispatch = useDispatch();
@@ -53,7 +53,6 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
   const recFilters = useSelector(({ filters }) => filters.recState);
   const sysFilters = useSelector(({ filters }) => filters.sysState);
 
-  const [edgeSystemsCount, setEdgeSystemsCount] = useState(0);
   const [conventionalSystemsCount, setConventionalSystemsCount] = useState(0);
   const [areCountsLoading, setCountsLoading] = useState(true);
 
@@ -138,10 +137,9 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
       typeof envContext.BASE_URL === 'string' &&
       envContext.BASE_URL.length > 0
     ) {
-      edgeSystemsCheck(
+      systemsCheck(
         undefined,
         undefined,
-        setEdgeSystemsCount,
         setConventionalSystemsCount,
         setCountsLoading,
         pathwayName,
@@ -235,9 +233,7 @@ const PathwayDetails = ({ isImmutableTabOpen }) => {
                   selectedTags={selectedTags}
                   workloads={workloads}
                   SID={SID}
-                  isImmutableTabOpen={isImmutableTabOpen}
                   tabPathname={`/insights/advisor/recommendations/pathways/${pathwayName}`}
-                  edgeSystemsCount={edgeSystemsCount}
                   conventionalSystemsCount={conventionalSystemsCount}
                   areCountsLoading={areCountsLoading}
                 />

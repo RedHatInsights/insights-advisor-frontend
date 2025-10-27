@@ -2,12 +2,12 @@ import React from 'react';
 import propTypes from 'prop-types';
 import { Skeleton } from '@patternfly/react-core';
 
-const DetailsTitle = ({ areCountsLoading, hasEdgeDevices, systemsCount }) => {
+const DetailsTitle = ({ areCountsLoading, systemsCount }) => {
   if (areCountsLoading) {
     return <Skeleton width="25%" aria-label="Table title skeleton" />;
   }
 
-  return hasEdgeDevices ? `${systemsCount} Total Systems` : 'Affected Systems';
+  return `${systemsCount} Affected Systems`;
 };
 
 DetailsTitle.propTypes = {

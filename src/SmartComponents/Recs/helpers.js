@@ -97,17 +97,16 @@ const getSystemCheckEndpoints = ({ ruleId, pathway, baseUrl }) => {
   };
 };
 
-export const edgeSystemsCheck = async (
+export const systemsCheck = async (
   ruleId,
   setSystemsCount,
-  setEdgeSystemsCount,
   setConventionalSystemsCount,
   setCountsLoading,
   pathway,
   baseUrl,
 ) => {
   let count = 0;
-  const { conventionalURL, edgeURL } = getSystemCheckEndpoints({
+  const { conventionalURL } = getSystemCheckEndpoints({
     ruleId,
     pathway,
     baseUrl,
@@ -118,10 +117,6 @@ export const edgeSystemsCheck = async (
       count = count += data.meta.count;
       setConventionalSystemsCount &&
         setConventionalSystemsCount(data.meta.count);
-    });
-    await axios.get(edgeURL).then(({ data }) => {
-      count = count += data.meta.count;
-      setEdgeSystemsCount && setEdgeSystemsCount(data.meta.count);
     });
 
     setSystemsCount && setSystemsCount(count);
