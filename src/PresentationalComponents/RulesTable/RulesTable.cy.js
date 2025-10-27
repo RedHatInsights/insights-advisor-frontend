@@ -88,7 +88,7 @@ const mountComponent = (
 
 /*
 const expandContent = (rowNumber) => {
-  cy.get('tbody[class="pf-v5-c-table__tbody pf-m-width-100"]')
+  cy.get('tbody[class="pf-v6-c-table__tbody pf-m-width-100"]')
     .eq(rowNumber)
     .find('button')
     .children()
@@ -160,7 +160,7 @@ describe('defaults', () => {
   });
 
   it(`pagination is set to ${DEFAULT_ROW_COUNT}`, () => {
-    cy.get('.pf-v5-c-menu-toggle__text')
+    cy.get('.pf-v6-c-menu-toggle__text')
       .find('b')
       .eq(0)
       .should('have.text', `1 - ${DEFAULT_ROW_COUNT}`);
@@ -186,7 +186,7 @@ describe('defaults', () => {
     //initial call
     cy.wait('@call');
     cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
-    cy.get(CHIP_GROUP).find('.pf-v5-c-chip__text').should('have.length', 2);
+    cy.get(CHIP_GROUP).find('.pf-v6-c-chip__text').should('have.length', 2);
   });
 
   it('name filter is a default filter', () => {
@@ -949,7 +949,7 @@ describe('defaults with edge devices', () => {
     mountComponent();
   });
   it(`pagination is set to ${DEFAULT_ROW_COUNT}`, () => {
-    cy.get('.pf-v5-c-menu-toggle__text')
+    cy.get('.pf-v6-c-menu-toggle__text')
       .find('b')
       .eq(0)
       .should('have.text', `1 - ${DEFAULT_ROW_COUNT}`);
@@ -965,7 +965,7 @@ describe('defaults with edge devices', () => {
     cy.wait('@call');
     cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
     hasChip('Systems impacted', '1 or more');
-    cy.get(CHIP_GROUP).find('.pf-v5-c-chip__text').should('have.length', 3);
+    cy.get(CHIP_GROUP).find('.pf-v6-c-chip__text').should('have.length', 3);
   });
 
   it('name filter is a default filter', () => {

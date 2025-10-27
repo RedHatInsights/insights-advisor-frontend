@@ -9,7 +9,6 @@ import {
 } from '@redhat-cloud-services/frontend-components/PageHeader';
 import React, { useContext } from 'react';
 import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
-import CaretDownIcon from '@patternfly/react-icons/dist/esm/icons/caret-down-icon';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { Flex } from '@patternfly/react-core/dist/esm/layouts/Flex/Flex';
 import { FlexItem } from '@patternfly/react-core/dist/esm/layouts/Flex/FlexItem';
@@ -27,11 +26,7 @@ import {
 import messages from '../../Messages';
 import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
 import { ruleResolutionRisk, enableRule } from './helpers';
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownToggle,
-} from '@patternfly/react-core/dist/esm/deprecated/components/Dropdown';
+import { Dropdown, DropdownItem, MenuToggle } from '@patternfly/react-core';
 import { EnvironmentContext } from '../../App';
 
 export const DetailsRules = ({
@@ -57,10 +52,10 @@ export const DetailsRules = ({
 
   return (
     <React.Fragment>
-      <PageHeader className="adv-c-page__header pf-v5-u-pb-0">
+      <PageHeader className="adv-c-page__header pf-v6-u-pb-0">
         <Breadcrumbs ouiaId="override" current={rule.description || ''} />
       </PageHeader>
-      <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section pf-m-light pf-v5-u-pt-sm">
+      <section className="pf-v6-l-page__main-section pf-v6-c-page__main-section pf-m-light pf-v6-u-pt-sm">
         <RuleDetails
           messages={formatMessages(
             intl,
@@ -96,7 +91,7 @@ export const DetailsRules = ({
                 }
               />
               <p>
-                <span className="pf-v5-u-mr-md">
+                <span className="pf-v6-u-mr-md">
                   {intl.formatMessage(messages.rulesDetailsModifieddate, {
                     date: (
                       <DateFormat
@@ -131,15 +126,14 @@ export const DetailsRules = ({
                     position="right"
                     ouiaId="actions"
                     toggle={
-                      <DropdownToggle
+                      <MenuToggle
                         isDisabled={!permsDisableRec}
-                        onToggle={(_event, actionsDropdownOpen) =>
+                        onClick={(_event, actionsDropdownOpen) =>
                           setActionsDropdownOpen(actionsDropdownOpen)
                         }
-                        toggleIndicator={CaretDownIcon}
                       >
                         {intl.formatMessage(messages.actions)}
-                      </DropdownToggle>
+                      </MenuToggle>
                     }
                     isOpen={actionsDropdownOpen}
                     dropdownItems={
