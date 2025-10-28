@@ -5,7 +5,6 @@ import {
 import React, { useContext, useEffect } from 'react';
 import SystemsTable from '../../PresentationalComponents/SystemsTable/SystemsTable';
 import messages from '../../Messages';
-import EdgeSystemsBanner from './EdgeSystemsBanner';
 import { EnvironmentContext } from '../../App';
 
 const List = () => {
@@ -20,7 +19,6 @@ const List = () => {
         <PageHeaderTitle title={`${messages.systems.defaultMessage}`} />
       </PageHeader>
       <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
-        <EdgeSystemsBanner />
         <SystemsTable />
       </section>
     </React.Fragment>
