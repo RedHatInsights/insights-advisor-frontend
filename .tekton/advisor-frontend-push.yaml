@@ -29,6 +29,12 @@ spec:
     value: build-tools/Dockerfile
   - name: path-context
     value: .
+  - name: build-container-additional-secret
+    value: build-container-additional-secret
+  - name: build-args
+    value:
+      - ENABLE_SENTRY=true
+      - SENTRY_RELEASE={{revision}}
   pipelineRef:
     name: docker-build-oci-ta
   taskRunTemplate:
