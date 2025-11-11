@@ -39,7 +39,7 @@ import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/Prima
 import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
 import RecommendationLevel from '../Labels/RecommendationLevel';
 import RuleLabels from '../Labels/RuleLabels';
-import SearchIcon from '@patternfly/react-icons';
+import { SearchIcon } from '@patternfly/react-icons';
 import debounce from '../../Utilities/Debounce';
 import messages from '../../Messages';
 import { updatePathFilters } from '../../Services/Filters';
