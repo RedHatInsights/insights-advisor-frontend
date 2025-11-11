@@ -1,15 +1,44 @@
 {
   "extends": [
-    "github>konflux-ci/mintmaker//config/renovate/renovate.json"
+    "github>RedHatInsights/konflux-pipelines//renovate/foreman_satellite/renovate.json"
   ],
   "ignorePaths": [
     ".pre-commit-config.yaml"
   ],
-  "baseBranchPatterns": [
-    "master"
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["\\.tekton/.*\\.yaml$"],
+      "matchStrings": [
+        "RedHatInsights/konflux-pipelines/raw/v(?<currentValue>[\\d.]+)"
+      ],
+      "depNameTemplate": "RedHatInsights/konflux-pipelines",
+      "datasourceTemplate": "github-releases"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": ["RedHatInsights/konflux-pipelines"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "description": "Automerge build-tools submodule updates",
+      "matchManagers": ["git-submodules"],
+      "matchPackageNames": ["build-tools"],
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "description": "Disable all npm dependency updates",
+      "matchManagers": ["npm"],
+      "enabled": false
+    }
   ],
   "tekton": {
     "enabled": true,
+    "schedule": ["at any time"],
     "packageRules": [
       {
         "matchUpdateTypes": [

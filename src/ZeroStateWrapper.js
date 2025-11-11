@@ -12,10 +12,7 @@ import PropTypes from 'prop-types';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { useIntl } from 'react-intl';
 import messages from './Messages';
-import {
-  useGetEdgeDevicesQuery,
-  useGetConventionalDevicesQuery,
-} from './Services/SystemVariety';
+import { useGetConventionalDevicesQuery } from './Services/SystemVariety';
 import { EnvironmentContext } from './App';
 import { INVENTORY_BASE_URL } from './AppConstants';
 
@@ -28,16 +25,7 @@ export const ZeroStateWrapper = ({ children }) => {
   const intl = useIntl();
   const envContext = useContext(EnvironmentContext);
   const [hasConventionalSystems, setHasConventionalSystems] = useState(true);
-  const [hasEdgeDevices, setHasEdgeDevices] = useState(true);
-  const {
-    data: edge,
-    isSuccess: edgeQuerySuccess,
-    isError: edgeError,
-    error: edgeErrorMessage,
-  } = useGetEdgeDevicesQuery({
-    customBasePath: envContext.INVENTORY_BASE_URL,
-    inventoryBasePath: INVENTORY_BASE_URL,
-  });
+
   const {
     data: conventional,
     isSuccess: conventionalQuerySuccess,
@@ -50,26 +38,24 @@ export const ZeroStateWrapper = ({ children }) => {
   const addNotification = useAddNotification();
 
   useEffect(() => {
-    setHasEdgeDevices(edge?.total > 0);
     setHasConventionalSystems(conventional?.total > 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [edgeQuerySuccess, conventionalQuerySuccess]);
+  }, [conventionalQuerySuccess]);
 
   useEffect(() => {
-    if (edgeErrorMessage?.status || conventErrorMessage?.status) {
-      addNotification({
-        variant: 'danger',
-        dismissable: true,
-        title: intl.formatMessage(messages.error),
-        description:
-          `${JSON.stringify(edgeErrorMessage?.data)}` ||
-          `${JSON.stringify(conventErrorMessage?.data)}`,
-      });
+    if (conventErrorMessage?.status) {
+      dispatch(
+        addNotification({
+          variant: 'danger',
+          dismissable: true,
+          title: intl.formatMessage(messages.error),
+          description: `${JSON.stringify(conventErrorMessage?.data)}`,
+        }),
+      );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [edgeError, conventionalError]);
+  }, [conventionalError]);
 
-  const hasSystems = hasEdgeDevices || hasConventionalSystems;
+  const hasSystems = hasConventionalSystems;
 
   return (
     <Suspense
@@ -96,9 +82,7 @@ export const ZeroStateWrapper = ({ children }) => {
           />
         </Suspense>
       ) : (
-        <AccountStatContext.Provider
-          value={{ hasConventionalSystems, hasEdgeDevices, edgeQuerySuccess }}
-        >
+        <AccountStatContext.Provider value={{ hasConventionalSystems }}>
           {children}
         </AccountStatContext.Provider>
       )}

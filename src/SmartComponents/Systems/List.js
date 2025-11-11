@@ -5,7 +5,6 @@ import {
 import React, { useContext, useEffect } from 'react';
 import SystemsTable from '../../PresentationalComponents/SystemsTable/SystemsTable';
 import messages from '../../Messages';
-import EdgeSystemsBanner from './EdgeSystemsBanner';
 import { EnvironmentContext } from '../../App';
 
 const List = () => {

@@ -8,18 +8,11 @@ export const SystemVariety = createApi({
   endpoints: (build) => ({
     getConventionalDevices: build.query({
       query: (args) => ({
-        url: '/hosts?page=1&per_page=1&filter[system_profile][host_type]=nil',
-        ...args,
-      }),
-    }),
-    getEdgeDevices: build.query({
-      query: (args) => ({
-        url: '/hosts?page=1&per_page=1&filter[system_profile][host_type]=edge',
+        url: '/hosts?page=1&per_page=1',
         ...args,
       }),
     }),
   }),
 });
 
-export const { useGetConventionalDevicesQuery, useGetEdgeDevicesQuery } =
-  SystemVariety;
+export const { useGetConventionalDevicesQuery } = SystemVariety;
