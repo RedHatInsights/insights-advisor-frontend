@@ -6,7 +6,7 @@ import React from 'react';
 import propTypes from 'prop-types';
 
 const Failed = ({ message }) => (
-  <Card className="adv-c-card-empty-rule">
+  <Card className="adv-c-card-empty-rule" ouiaId="failed-card">
     <CardHeader>
       <FrownOpenIcon size="lg" />
     </CardHeader>

@@ -27,6 +27,7 @@ export const ResolutionCard = ({
       isFlat
       isPlain
       className="adv-c-card-pathway adv__background--global-100 pf-v5-u-h-100 flex-row"
+      ouiaId="resolution-card"
     >
       <div className="flex-coloumn">
         <CardTitle>{intl.formatMessage(messages.resolution)}</CardTitle>

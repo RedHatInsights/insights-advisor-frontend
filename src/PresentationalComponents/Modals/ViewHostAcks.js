@@ -110,13 +110,19 @@ const ViewHostAcks = ({
       }}
     >
       {!isFetching ? (
-        <Table aria-label="host-ack-table" rows={rows} cells={columns}>
+        <Table
+          aria-label={'host-ack-table'}
+          ouiaId={'host-ack-table'}
+          rows={rows}
+          cells={columns}
+        >
           <TableHeader />
           <TableBody />
         </Table>
       ) : (
         <Table
-          aria-label="host-ack-table"
+          aria-label={'host-ack-table'}
+          ouiaId={'host-ack-table'}
           rows={[
             {
               cells: [{ props: { colSpan: 3 }, title: <List /> }],

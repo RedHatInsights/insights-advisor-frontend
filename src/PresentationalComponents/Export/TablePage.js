@@ -7,7 +7,15 @@ import {
 } from '../../AppConstants';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import {
+  Table,
+  TableVariant,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from '@patternfly/react-table';
 import global_BackgroundColor_200 from '@patternfly/react-tokens/dist/js/global_BackgroundColor_200';
 
 export const TablePage = ({ systems, styles }) => {
@@ -102,7 +110,11 @@ export const TablePage = ({ systems, styles }) => {
   ];
 
   return (
-    <Table variant="compact">
+    <Table
+      aria-label={'export-table'}
+      ouiaId={'export-table'}
+      variant={TableVariant.compact}
+    >
       <Thead>
         {header.map((colHeader) =>
           headerBuilder({ value: colHeader.value, style: colHeader.style }),

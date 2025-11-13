@@ -113,7 +113,7 @@ const DEFAULT_FILTERS = {
   status: 'Enabled',
 };
 const TABLE_HEADERS = _.map(rulesTableColumns, (it) => it.title);
-const ROOT = 'table[aria-label=rule-table]';
+const ROOT = 'table[data-ouia-component-id=rules-table]';
 const CRITICAL_TOOLTIP_CONTENT =
   'The total risk of this remediation is critical, based on the combination of likelihood and impact to remediate.';
 const IMPORTANT_TOOLTIP_CONTENT =
