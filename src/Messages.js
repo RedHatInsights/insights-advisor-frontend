@@ -1217,4 +1217,14 @@ export default defineMessages({
     description: 'Bottom message displayed in an empty Systems table.',
     defaultMessage: 'To continue, edit your filter settings and search again.',
   },
+  rulesTableErrorStateTitle: {
+    id: 'rulesTableErrorStateTitle',
+    description: 'Error state title displayed when rules table fails to load',
+    defaultMessage: 'Unable to load recommendations',
+  },
+  rulesTableErrorStateBody: {
+    id: 'rulesTableErrorStateBody',
+    description: 'Error state body text displayed when rules table fails to load',
+    defaultMessage: 'There was a problem loading recommendations. Please try again later.',
+  },
 });

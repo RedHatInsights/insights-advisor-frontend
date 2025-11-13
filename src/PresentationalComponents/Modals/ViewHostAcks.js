@@ -1,5 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Table, TableBody, TableHeader } from '@patternfly/react-table';
+import {
+  Table,
+  TableBody,
+  TableHeader,
+} from '@patternfly/react-table/deprecated';
 
 import { BASE_URL } from '../../AppConstants';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
