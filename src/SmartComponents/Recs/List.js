@@ -93,8 +93,7 @@ const List = () => {
                               rel="noreferrer"
                               target="_blank"
                               href={
-                                'https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html/' +
-                                'assessing_rhel_configuration_issues_using_the_red_hat_insights_advisor_service'
+                                'https://docs.redhat.com/en/documentation/red_hat_lightspeed/1-latest/html/assessing_rhel_configuration_issues_by_using_the_red_hat_lightspeed_advisor_service/index'
                               }
                             >
                               Assessing RHEL Configuration Issues Using the Red
