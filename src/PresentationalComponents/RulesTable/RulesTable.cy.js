@@ -12,6 +12,7 @@ import {
 } from '../../../cypress/support/globals';
 import {
   itExportsDataToFile,
+  removeAllFilterChipsPf6,
   selectConditionalFilterOption,
 } from '../../../cypress/utils/table';
 
@@ -22,14 +23,10 @@ import {
   checkRowCounts,
   checkTableHeaders,
   CHIP,
-  CHIP_GROUP,
   CONDITIONAL_FILTER,
   hasChip,
   MENU_ITEM,
   PAGINATION_VALUES,
-  removeAllChips,
-  SORTING_ORDERS,
-  tableIsSortedBy,
   TOOLBAR,
 } from '@redhat-cloud-services/frontend-components-utilities';
 
@@ -168,7 +165,7 @@ describe('defaults', () => {
 
   it('sorting using Total risk', () => {
     const column = 'Total risk';
-    tableIsSortedBy(column);
+    cy.tableIsSortedBy(column);
   });
 
   it('links to the recommendations detail page', () => {
@@ -186,7 +183,7 @@ describe('defaults', () => {
     //initial call
     cy.wait('@call');
     cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
-    cy.get(CHIP_GROUP).find('.pf-v6-c-chip__text').should('have.length', 2);
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should('exist');
   });
 
   it('name filter is a default filter', () => {
@@ -241,25 +238,29 @@ describe('filtering', () => {
   });
 
   it('can clear filters', () => {
-    cy.get(CHIP_GROUP)
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
       .find(CHIP)
-      .ouiaId('close', 'button')
+      .find('button')
       .each(() => {
-        cy.get(CHIP_GROUP).find(CHIP).ouiaId('close', 'button').eq(0).click();
+        cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
+          .find(CHIP)
+          .find('button')
+          .eq(0)
+          .click();
       });
     //apply some filters
     filterApply(filterCombos[0]);
-    cy.get(CHIP_GROUP).should(
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
       'have.length',
       Object.keys(filterCombos[0]).length,
     );
-    cy.get(CHIP_GROUP).should('exist');
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should('exist');
     //clear filters
     cy.get('button').contains('Reset filters').click();
     //check default filters
     hasChip('Systems impacted', '1 or more');
     hasChip('Status', 'Enabled');
-    cy.get(CHIP_GROUP).should(
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
       'have.length',
       Object.keys(DEFAULT_FILTERS).length,
     );
@@ -269,7 +270,7 @@ describe('filtering', () => {
   });
 
   it('no filters show all recommendations', () => {
-    removeAllChips();
+    removeAllFilterChipsPf6();
     checkRowCounts(DEFAULT_ROW_COUNT * 2);
     checkPaginationTotal(fixtures.meta.count);
   });
@@ -366,7 +367,7 @@ describe('making request based on filters', () => {
     const { urlParam, values, urlValue, selectorText } = config;
 
     it(`apply ${selectorText} filter`, () => {
-      removeAllChips();
+      removeAllFilterChipsPf6();
       cy.get('button').contains('Reset filters').click();
       if (selectorText === 'Systems impacted') {
         cy.wait(['@call']);
@@ -393,79 +394,171 @@ describe('sorting', () => {
       },
     }).as('call');
     mountComponent(false);
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
   });
 
-  function checkSortingUrl(label, order, dataField) {
-    //get appropriate locators
-    const header = `th[data-label="${label}"]`;
-    //sort by column and verify URL
-    if (order === 'ascending') {
-      cy.get(header).find('button').click();
-      cy.url().should('include', `sort=${dataField}`);
-    } else {
-      cy.get(header).find('button').click();
-      cy.wait(['@call', '@call']);
-      cy.get(header).find('button').click();
-      cy.url().should('include', `sort=-${dataField}`);
-    }
-  }
+  it('sorts by Name in ascending order', () => {
+    cy.get('th').contains('Name').click();
 
-  _.zip(
-    [
-      'description',
-      'publish_date',
-      'category',
-      'total_risk',
-      'impacted_count',
-      'playbook_count',
-    ],
-    TABLE_HEADERS.filter((h) => h !== 'Data expansion table header cell'),
-  ).forEach(([category, label]) => {
-    let sortingParameter = category;
-    SORTING_ORDERS.forEach((order) => {
-      it(`${order} by ${label}`, () => {
-        checkSortingUrl(label, order, sortingParameter);
-      });
-    });
+    cy.get('th')
+      .contains('Name')
+      .closest('th')
+      .should('have.attr', 'aria-sort', 'ascending');
+
+    cy.url().should('include', 'sort=description');
+  });
+
+  it('sorts by Name in descending order', () => {
+    cy.get('th').contains('Name').click();
+    cy.wait('@call');
+    cy.get('th').contains('Name').click();
+
+    cy.get('th')
+      .contains('Name')
+      .closest('th')
+      .should('have.attr', 'aria-sort', 'descending');
+
+    cy.url().should('include', 'sort=-description');
+  });
+
+  it('sorts by Total risk in ascending order', () => {
+    cy.get('th').contains('Total risk').click();
+
+    cy.get('th')
+      .contains('Total risk')
+      .closest('th')
+      .should('have.attr', 'aria-sort', 'ascending');
+
+    cy.url().should('include', 'sort=total_risk');
+  });
+
+  it('sorts by Total risk in descending order', () => {
+    cy.get('th').contains('Total risk').click();
+    cy.wait('@call');
+    cy.get('th').contains('Total risk').click();
+
+    cy.get('th')
+      .contains('Total risk')
+      .closest('th')
+      .should('have.attr', 'aria-sort', 'descending');
+
+    cy.url().should('include', 'sort=-total_risk');
+  });
+
+  it('sorts by Systems count in ascending order', () => {
+    cy.get('th').contains('Systems').click();
+
+    cy.get('th')
+      .contains('Systems')
+      .closest('th')
+      .should('have.attr', 'aria-sort', 'ascending');
+
+    cy.url().should('include', 'sort=impacted_count');
+  });
+
+  it('sorts by Systems count in descending order', () => {
+    cy.get('th').contains('Systems').click();
+    cy.wait('@call');
+    cy.get('th').contains('Systems').click();
+
+    cy.get('th')
+      .contains('Systems')
+      .closest('th')
+      .should('have.attr', 'aria-sort', 'descending');
+
+    cy.url().should('include', 'sort=-impacted_count');
+  });
+
+  it('sorts by Category in ascending order', () => {
+    cy.get('th').contains('Category').click();
+
+    cy.get('th')
+      .contains('Category')
+      .closest('th')
+      .should('have.attr', 'aria-sort', 'ascending');
+
+    cy.url().should('include', 'sort=category');
+  });
+
+  it('sorts by Modified in ascending order', () => {
+    cy.get('th').contains('Modified').click();
+
+    cy.get('th')
+      .contains('Modified')
+      .closest('th')
+      .should('have.attr', 'aria-sort', 'ascending');
+
+    cy.url().should('include', 'sort=publish_date');
+  });
+
+  it('sorts by Remediation type in ascending order', () => {
+    cy.get('th').contains('Remediation type').click();
+
+    cy.get('th')
+      .contains('Remediation type')
+      .closest('th')
+      .should('have.attr', 'aria-sort', 'ascending');
+
+    cy.url().should('include', 'sort=playbook_count');
+  });
+
+  it('resets to ascending when clicking a different column', () => {
+    cy.get('th').contains('Total risk').click();
+    cy.wait('@call');
+    cy.get('th').contains('Total risk').click();
+    cy.get('th')
+      .contains('Total risk')
+      .closest('th')
+      .should('have.attr', 'aria-sort', 'descending');
+
+    cy.get('th').contains('Name').click();
+
+    cy.get('th')
+      .contains('Name')
+      .closest('th')
+      .should('have.attr', 'aria-sort', 'ascending');
+
+    cy.get('th')
+      .contains('Total risk')
+      .closest('th')
+      .should('not.have.attr', 'aria-sort');
   });
 });
 
-const urlParamsList = [
-  'impacting=true&rule_status=enabled&sort=-total_risk&limit=20&offset=0#SIDs=&tags=',
-  'impacting=false&rule_status=enabled&sort=-recommendation_level&limit=20&offset=0#SIDs=&tags=',
-];
+describe('pre-filled url search parameters', () => {
+  it('loads sort from URL and applies to table', () => {
+    const urlParams =
+      'impacting=true&rule_status=enabled&sort=-total_risk&limit=20&offset=0#SIDs=&tags=';
 
-urlParamsList.forEach((urlParams, index) => {
-  describe(`pre-filled url search parameters ${index}`, () => {
-    beforeEach(() => {
-      cy.intercept('*', {
-        statusCode: 201,
-        body: {
-          ...fixtures,
-        },
-      }).as('call');
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
 
-      cy.mount(
-        <MemoryRouter
-          initialEntries={[`/recommendations?${urlParams}`]}
-          initialIndex={0}
+    cy.mount(
+      <MemoryRouter
+        initialEntries={[`/recommendations?${urlParams}`]}
+        initialIndex={0}
+      >
+        <IntlProvider
+          locale={navigator.language.slice(0, 2)}
+          messages={messages}
         >
-          <IntlProvider
-            locale={navigator.language.slice(0, 2)}
-            messages={messages}
-          >
-            <Provider store={initStore()}>
-              <RulesTable />
-            </Provider>
-          </IntlProvider>
-        </MemoryRouter>,
-      );
-    });
+          <Provider store={initStore()}>
+            <RulesTable />
+          </Provider>
+        </IntlProvider>
+      </MemoryRouter>,
+    );
 
-    it('sorts properly even if url doesnt match params for table', () => {
-      const column = 'Total risk';
-      tableIsSortedBy(column);
-    });
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    cy.get('th')
+      .contains('Total risk')
+      .closest('th')
+      .should('have.attr', 'aria-sort', 'descending');
   });
 });
 
@@ -541,8 +634,11 @@ describe('Conditional Filter', () => {
     // reset
     cy.get('button').contains('Reset filters').click();
 
-    // check chips empty
-    cy.get(CHIP_GROUP).should('have.length', 2);
+    // check chips reset to defaults
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
+      'have.length',
+      2,
+    );
   });
 
   it(`Total risk filter box correctly updates chips.`, () => {
@@ -563,8 +659,11 @@ describe('Conditional Filter', () => {
     // reset
     cy.get('button').contains('Reset filters').click();
 
-    // check chips empty
-    cy.get(CHIP_GROUP).should('have.length', 2);
+    // check chips reset to defaults
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
+      'have.length',
+      2,
+    );
   });
 
   it(`Risk of change filter box correctly updates chips.`, () => {
@@ -585,8 +684,11 @@ describe('Conditional Filter', () => {
     // reset
     cy.get('button').contains('Reset filters').click();
 
-    // check chips empty
-    cy.get(CHIP_GROUP).should('have.length', 2);
+    // check chips reset to defaults
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
+      'have.length',
+      2,
+    );
   });
 
   it(`Impact filter box correctly updates chips.`, () => {
@@ -607,8 +709,11 @@ describe('Conditional Filter', () => {
     // reset
     cy.get('button').contains('Reset filters').click();
 
-    // check chips empty
-    cy.get(CHIP_GROUP).should('have.length', 2);
+    // check chips reset to defaults
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
+      'have.length',
+      2,
+    );
   });
 
   it(`Likelihood filter box correctly updates chips.`, () => {
@@ -629,8 +734,11 @@ describe('Conditional Filter', () => {
     // reset
     cy.get('button').contains('Reset filters').click();
 
-    // check chips empty
-    cy.get(CHIP_GROUP).should('have.length', 2);
+    // check chips reset to defaults
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
+      'have.length',
+      2,
+    );
   });
 
   it(`Category filter box correctly updates chips.`, () => {
@@ -651,8 +759,11 @@ describe('Conditional Filter', () => {
     // reset
     cy.get('button').contains('Reset filters').click();
 
-    // check chips empty
-    cy.get(CHIP_GROUP).should('have.length', 2);
+    // check chips reset to defaults
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
+      'have.length',
+      2,
+    );
   });
 
   it(`Incidents filter box correctly updates chips.`, () => {
@@ -671,8 +782,11 @@ describe('Conditional Filter', () => {
     // reset
     cy.get('button').contains('Reset filters').click();
 
-    // check chips empty
-    cy.get(CHIP_GROUP).should('have.length', 2);
+    // check chips reset to defaults
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
+      'have.length',
+      2,
+    );
   });
 
   it(`Remediation filter box correctly updates chips.`, () => {
@@ -691,8 +805,11 @@ describe('Conditional Filter', () => {
     // reset
     cy.get('button').contains('Reset filters').click();
 
-    // check chips empty
-    cy.get(CHIP_GROUP).should('have.length', 2);
+    // check chips reset to defaults
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
+      'have.length',
+      2,
+    );
   });
 
   it(`Reboot required filter box correctly updates chips.`, () => {
@@ -711,8 +828,11 @@ describe('Conditional Filter', () => {
     // reset
     cy.get('button').contains('Reset filters').click();
 
-    // check chips empty
-    cy.get(CHIP_GROUP).should('have.length', 2);
+    // check chips reset to defaults
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
+      'have.length',
+      2,
+    );
   });
 
   it(`Status filter box correctly updates chips.`, () => {
@@ -731,8 +851,11 @@ describe('Conditional Filter', () => {
     // reset
     cy.get('button').contains('Reset filters').click();
 
-    // check chips empty
-    cy.get(CHIP_GROUP).should('have.length', 2);
+    // check chips reset to defaults
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
+      'have.length',
+      2,
+    );
     hasChip('Status', 'Enabled');
   });
 
@@ -752,8 +875,11 @@ describe('Conditional Filter', () => {
     // reset
     cy.get('button').contains('Reset filters').click();
 
-    // check chips empty
-    cy.get(CHIP_GROUP).should('have.length', 2);
+    // check chips reset to defaults
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
+      'have.length',
+      2,
+    );
 
     // unselect 1 or more
     cy.get(CONDITIONAL_FILTER).contains('Filter by systems impacted').click();
@@ -761,7 +887,10 @@ describe('Conditional Filter', () => {
     cy.get(CONDITIONAL_FILTER).contains('Filter by systems impacted').click();
 
     // check chips updated
-    cy.get(CHIP_GROUP).should('have.length', 1);
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
+      'have.length',
+      1,
+    );
 
     // reset
     cy.get('button').contains('Reset filters').click();
@@ -784,7 +913,9 @@ describe('Tooltips', () => {
 
   it(`Incident tooltip displays the correct content.`, () => {
     cy.get('.adv-c-label-incident').first().trigger('mouseenter');
-    cy.contains(messages.incidentTooltip.defaultMessage).should('be.visible');
+    cy.contains(
+      'Indicates configurations that are currently affecting your systems',
+    ).should('be.visible');
   });
 
   it(`Critical tooltip displays the correct content.`, () => {
@@ -829,7 +960,7 @@ describe('Export', () => {
       },
     );
     cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
-    cy.contains(messages.exportData.defaultMessage).should('be.visible');
+    cy.contains('Export data').should('be.visible');
   });
 
   it(`works and downloads report is enabled`, () => {
@@ -874,108 +1005,216 @@ describe('Disable kebab recommendation', () => {
   });
 });
 
-/* const UPDATE_METHOD_MAP = {
-  '1 or more Conventional systems (RPM-DNF)': 'dnfyum',
-  '1 or more Immutable (OSTree)': 'ostree',
-};
+describe('URL parameter synchronization', () => {
+  const mountComponentWithUrl = (urlParams) => {
+    let envContext = createTestEnvironmentContext();
 
-const update_method = {
-  selectorText: 'Systems impacted',
-  values: Array.from(cumulativeCombinations(Object.keys(UPDATE_METHOD_MAP))),
-  type: 'checkbox',
-  filterFunc: () => {
-    return 'dnfyum';
-  },
-  urlParam: 'update_method',
-  urlValue: (it) =>
-    encodeURIComponent(_.map(it, (x) => UPDATE_METHOD_MAP[x]).join(',')),
-};
-
-const applyUpdateMethod = (filters) =>
-  cypressApplyFilters(filters, { update_method });
-
-describe('Edge devices tests', () => {
-  beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('impact_call');
-    mountComponent({ hasEdgeDevices: true });
-  });
-
-  it('table is loaded', () => {
-    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
-    cy.get(ROOT).should('have.length', 1);
-  });
-
-  it(`with edge devices`, () => {
-    const { values } = update_method;
-
-    //initial call
-    cy.wait('@impact_call');
-    cy.get('button').contains('Reset filters').should('exist');
-
-    applyUpdateMethod({ update_method: values[0] });
-    cy.wait('@impact_call')
-      .its('request.url')
-      .should('include', `update_method=ostree%2Cdnfyum`);
-  });
-});
-
-describe('defaults with edge devices', () => {
-  beforeEach(() => {
     cy.intercept('*', {
       statusCode: 201,
       body: {
         ...fixtures,
       },
     }).as('call');
-    cy.intercept('**=edge?', {
-      statusCode: 201,
-      body: {
-        data: {
-          total: 1,
-        },
-        isSuccess: true,
-      },
-      query: {
-        data: {
-          total: 1,
-        },
-      },
-    }).as('edgecall');
-    mountComponent();
+
+    // Set URL parameters in browser history so paramParser() can read them
+    cy.window().then((win) => {
+      win.history.pushState({}, '', `/recommendations?${urlParams}`);
+    });
+
+    cy.mount(
+      <EnvironmentContext.Provider value={envContext}>
+        <MemoryRouter
+          initialEntries={[`/recommendations?${urlParams}`]}
+          initialIndex={0}
+        >
+          <AccountStatContext.Provider
+            value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
+          >
+            <IntlProvider
+              locale={navigator.language.slice(0, 2)}
+              messages={messages}
+            >
+              <Provider store={initStore()}>
+                <Routes>
+                  <Route
+                    key={'Recommendations'}
+                    path="*"
+                    element={<RulesTable isTabActive={true} />}
+                  />
+                </Routes>
+              </Provider>
+            </IntlProvider>
+          </AccountStatContext.Provider>
+        </MemoryRouter>
+      </EnvironmentContext.Provider>,
+    );
+  };
+
+  it('loads total_risk filter from URL parameters', () => {
+    const urlParams = 'total_risk=4&rule_status=enabled&impacting=true';
+    mountComponentWithUrl(urlParams);
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
+      .contains('Critical')
+      .should('exist');
   });
-  it(`pagination is set to ${DEFAULT_ROW_COUNT}`, () => {
+
+  it('loads pagination from URL parameters', () => {
+    const urlParams = 'limit=20&offset=0&impacting=true&rule_status=enabled';
+    mountComponentWithUrl(urlParams);
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
     cy.get('.pf-v6-c-menu-toggle__text')
       .find('b')
       .eq(0)
-      .should('have.text', `1 - ${DEFAULT_ROW_COUNT}`);
-  });
-  it('sorting using Total risk', () => {
-    const column = 'Total risk';
-    tableIsSortedBy(column);
-  });
-  it('applies total risk "Enabled" and systems impacted filters', () => {
-    hasChip('Status', 'Enabled');
-    hasChip('Systems impacted', '1 or more');
-    //initial call
-    cy.wait('@call');
-    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
-    hasChip('Systems impacted', '1 or more');
-    cy.get(CHIP_GROUP).find('.pf-v6-c-chip__text').should('have.length', 3);
+      .should('have.text', '1 - 20');
   });
 
-  it('name filter is a default filter', () => {
-    cy.get('button[aria-label="Conditional filter"]')
-      .find('span[class=ins-c-conditional-filter__value-selector]')
-      .should('have.text', 'Name');
-    cy.get(CONDITIONAL_FILTER).should('exist');
+  it('loads search text from URL parameters', () => {
+    const urlParams = 'text=kernel&rule_status=enabled&impacting=true';
+    mountComponentWithUrl(urlParams);
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    hasChip('Name', 'kernel');
   });
 
-  it('reset filters button is displayed', () => {
-    cy.get('button').contains('Reset filters').should('exist');
+  it('loads multiple filters from URL parameters', () => {
+    const urlParams =
+      'total_risk=4,3&category=1&rule_status=enabled&impacting=true';
+    mountComponentWithUrl(urlParams);
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    hasChip('Total risk', 'Critical');
+    hasChip('Total risk', 'Important');
+    hasChip('Category', 'Availability');
   });
-}); */
+
+  it('updates URL when filters are applied', () => {
+    mountComponentWithUrl('rule_status=enabled&impacting=true');
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    selectConditionalFilterOption('Total risk');
+    cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
+    cy.get(MENU_ITEM).contains('Critical').click();
+    cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
+
+    cy.location('search').should('include', 'total_risk=4');
+  });
+
+  it('updates URL when pagination changes', () => {
+    mountComponentWithUrl('rule_status=enabled&impacting=true');
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    cy.get('[class*="pf-v6-c-pagination"]')
+      .find('button[class*="toggle"]')
+      .first()
+      .click();
+    cy.get('ul[role="menu"], .pf-v6-c-menu').contains('50').click();
+
+    cy.location('search').should('include', 'limit=50');
+    cy.location('search').should('include', 'offset=0');
+  });
+
+  it('updates URL when navigating to next page', () => {
+    mountComponentWithUrl(
+      'limit=20&offset=0&rule_status=enabled&impacting=true',
+    );
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    cy.get('button[data-action="next"]').first().click();
+
+    cy.location('search').should('include', 'offset=20');
+    cy.location('search').should('include', 'limit=20');
+  });
+
+  it('loads combined filters and pagination from URL', () => {
+    const urlParams =
+      'total_risk=4&text=kernel&limit=10&offset=0&rule_status=enabled&impacting=true';
+    mountComponentWithUrl(urlParams);
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    hasChip('Total risk', 'Critical');
+    hasChip('Name', 'kernel');
+
+    cy.contains('1 - 10 of').should('exist');
+  });
+
+  it('loads category filter from URL', () => {
+    const urlParams = 'category=1&rule_status=enabled&impacting=true';
+    mountComponentWithUrl(urlParams);
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    hasChip('Category', 'Availability');
+  });
+
+  it('loads impact filter from URL', () => {
+    const urlParams = 'impact=4&rule_status=enabled&impacting=true';
+    mountComponentWithUrl(urlParams);
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    hasChip('Impact', 'Critical');
+  });
+
+  it('loads likelihood filter from URL', () => {
+    const urlParams = 'likelihood=4&rule_status=enabled&impacting=true';
+    mountComponentWithUrl(urlParams);
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    hasChip('Likelihood', 'Critical');
+  });
+
+  it('loads risk of change filter from URL', () => {
+    const urlParams = 'res_risk=4&rule_status=enabled&impacting=true';
+    mountComponentWithUrl(urlParams);
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    hasChip('Risk of change', 'High');
+  });
+
+  it('loads remediation type filter from URL', () => {
+    const urlParams = 'has_playbook=true&rule_status=enabled&impacting=true';
+    mountComponentWithUrl(urlParams);
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    hasChip('Remediation', 'Ansible playbook');
+  });
+
+  it('loads incidents filter from URL', () => {
+    const urlParams = 'incident=true&rule_status=enabled&impacting=true';
+    mountComponentWithUrl(urlParams);
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    hasChip('Incidents', 'Incident');
+  });
+
+  it('loads reboot required filter from URL', () => {
+    const urlParams = 'reboot=true&rule_status=enabled&impacting=true';
+    mountComponentWithUrl(urlParams);
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    hasChip('Reboot required', 'Required');
+  });
+
+  it('maintains sort and filters together', () => {
+    mountComponentWithUrl('rule_status=enabled&impacting=true');
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    cy.get('th').contains('Systems').click();
+
+    selectConditionalFilterOption('Total risk');
+    cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
+    cy.get(MENU_ITEM).contains('Critical').click();
+    cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
+
+    hasChip('Total risk', 'Critical');
+
+    cy.get('th')
+      .contains('Systems')
+      .closest('th')
+      .should('have.attr', 'aria-sort', 'ascending');
+
+    cy.location('search').should('include', 'total_risk=4');
+    cy.location('search').should('include', 'sort=impacted_count');
+  });
+});

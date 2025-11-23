@@ -17,6 +17,12 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core/dist/esm/layouts/Grid/index';
+import {
+  t_global_icon_color_severity_critical_default,
+  t_global_icon_color_severity_important_default,
+  t_global_icon_color_severity_moderate_default,
+  t_global_background_color_200,
+} from '@patternfly/react-tokens';
 
 import React from 'react';
 import messages from '../../Messages';
@@ -86,25 +92,25 @@ export const TotalRiskCard = (props) => {
                         name: 'Critical',
                         x: 'Critical',
                         y: critical_risk_count,
-                        fill: '#a30000',
+                        fill: t_global_icon_color_severity_critical_default.value,
                       },
                       {
                         name: 'Important',
                         x: 'Important',
                         y: high_risk_count,
-                        fill: '#ec7a08',
+                        fill: t_global_icon_color_severity_important_default.value,
                       },
                       {
                         name: 'Moderate',
                         x: 'Moderate',
                         y: medium_risk_count,
-                        fill: '#f0ab00',
+                        fill: t_global_icon_color_severity_moderate_default.value,
                       },
                       {
                         name: 'Low',
                         x: 'Low',
                         y: low_risk_count,
-                        fill: '#f0f0f0',
+                        fill: t_global_background_color_200.value,
                       },
                     ]}
                   />

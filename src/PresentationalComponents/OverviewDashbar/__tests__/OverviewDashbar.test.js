@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations';
 
 import OverviewDashbar from '../OverviewDashbar';
 import {
@@ -36,12 +37,26 @@ jest.mock('../Hooks/useOverviewData/useOverviewData.js', () => ({
 jest.mock('../../../Messages.js', () => ({
   __esModule: true,
   default: {
-    pathways: { defaultMessage: 'Pathways' },
-    recommendedPathways: { defaultMessage: 'Recommended pathways help' },
-    incidents: { defaultMessage: 'Incidents' },
-    incidentTooltip: { defaultMessage: 'Incident tooltip' },
-    noOverviewAvailable: { defaultMessage: 'No Overview Available' },
+    pathways: { id: 'pathways', defaultMessage: 'Pathways' },
+    recommendedPathways: {
+      id: 'recommendedPathways',
+      defaultMessage: 'Recommended pathways help',
+    },
+    incidents: { id: 'incidents', defaultMessage: 'Incidents' },
+    incident: { id: 'incident', defaultMessage: 'Incident' },
+    incidentTooltip: { id: 'incidentTooltip', defaultMessage: 'Incident tooltip' },
+    ruleIsDisabledTooltip: {
+      id: 'ruleIsDisabledTooltip',
+      defaultMessage: 'Rule is disabled',
+    },
+    disabled: { id: 'disabled', defaultMessage: 'Disabled' },
+    redhatDisabled: { id: 'redhatDisabled', defaultMessage: 'Red Hat Disabled' },
+    noOverviewAvailable: {
+      id: 'noOverviewAvailable',
+      defaultMessage: 'No Overview Available',
+    },
     overviewDashbarError: {
+      id: 'overviewDashbarError',
       defaultMessage:
         'An unexpected error has occurred while trying to fetch the overview information. Please try again.',
     },
@@ -117,16 +132,18 @@ describe('OverviewDashbar', () => {
     const changeTab = jest.fn();
 
     render(
-      <EnvironmentContext.Provider
-        value={{
-          displayRecPathways: true,
-          STATS_OVERVIEW_FETCH_URL: '/api/stats-overview',
-        }}
-      >
-        <Provider store={store}>
-          <OverviewDashbar changeTab={changeTab} />
-        </Provider>
-      </EnvironmentContext.Provider>,
+      <IntlProvider>
+        <EnvironmentContext.Provider
+          value={{
+            displayRecPathways: true,
+            STATS_OVERVIEW_FETCH_URL: '/api/stats-overview',
+          }}
+        >
+          <Provider store={store}>
+            <OverviewDashbar changeTab={changeTab} />
+          </Provider>
+        </EnvironmentContext.Provider>
+      </IntlProvider>,
     );
 
     await screen.findByText(/Pathways/);
@@ -173,11 +190,13 @@ describe('OverviewDashbar', () => {
   it('Should not display pathways card if displayRecPathways is false', async () => {
     const changeTab = jest.fn();
     render(
-      <EnvironmentContext.Provider value={{ displayRecPathways: false }}>
-        <Provider store={store}>
-          <OverviewDashbar changeTab={changeTab} />
-        </Provider>
-      </EnvironmentContext.Provider>,
+      <IntlProvider>
+        <EnvironmentContext.Provider value={{ displayRecPathways: false }}>
+          <Provider store={store}>
+            <OverviewDashbar changeTab={changeTab} />
+          </Provider>
+        </EnvironmentContext.Provider>
+      </IntlProvider>,
     );
 
     await screen.findByText(/Incidents/);
@@ -201,9 +220,11 @@ describe('OverviewDashbar', () => {
     });
 
     render(
-      <Provider store={store}>
-        <OverviewDashbar changeTab={changeTab} />
-      </Provider>,
+      <IntlProvider>
+        <Provider store={store}>
+          <OverviewDashbar changeTab={changeTab} />
+        </Provider>
+      </IntlProvider>,
     );
 
     await screen.findByText(/No Overview Available/);
@@ -230,9 +251,11 @@ describe('OverviewDashbar', () => {
     });
 
     render(
-      <Provider store={store}>
-        <OverviewDashbar changeTab={changeTab} />
-      </Provider>,
+      <IntlProvider>
+        <Provider store={store}>
+          <OverviewDashbar changeTab={changeTab} />
+        </Provider>
+      </IntlProvider>,
     );
 
     await screen.findByText(/No Overview Available/);

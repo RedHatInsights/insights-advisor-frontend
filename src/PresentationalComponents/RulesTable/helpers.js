@@ -23,7 +23,6 @@ import {
   RuleDetailsMessagesKeys,
   AdvisorProduct,
 } from '@redhat-cloud-services/frontend-components-advisor-components';
-import RuleLabels from '../Labels/RuleLabels';
 import CategoryLabel from '../Labels/CategoryLabel';
 
 import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
@@ -34,6 +33,7 @@ import { getImpactingFilterChips } from '../Filters/impactingFilter';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 import { Link } from 'react-router-dom';
 import { Content } from '@patternfly/react-core';
+import RuleLabels from '../Labels/RuleLabels';
 
 export const emptyRows = (filters, toggleRulesDisabled) => [
   {
@@ -366,7 +366,7 @@ export const buildRows = (
                   {value.description}{' '}
                 </InsightsLink>
               )}
-              <RuleLabels rule={value} isCompact />
+              <RuleLabels rule={value} intl={intl} isCompact />
             </span>
           ),
         },

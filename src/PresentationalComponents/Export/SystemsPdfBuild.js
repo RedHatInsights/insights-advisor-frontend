@@ -18,13 +18,15 @@ import {
   t_global_font_weight_heading_bold,
   t_global_spacer_md,
   t_global_spacer_sm,
+  t_global_text_color_link_default,
+  t_global_text_color_status_danger_default,
 } from '@patternfly/react-tokens';
 
 import TablePage from './TablePage';
 
 const styles = StyleSheet.create({
   bold: { fontWeight: t_global_font_weight_heading_bold.value },
-  link: { color: '#06c' },
+  link: { color: t_global_text_color_link_default.value },
   text: { fontSize: 12 },
   textMargin: { marginTop: t_global_spacer_md.value },
   nameColumn: {
@@ -81,11 +83,11 @@ const SystemsPdfBuild = ({ asyncData, additionalData }) => {
 
   return (
     <div style={styles.document}>
-      <span style={{ fontSize: '24px', color: '#A30000' }}>
+      <span style={{ fontSize: '24px', color: t_global_text_color_status_danger_default.value }}>
         Red Hat {isLightspeedEnabled ? 'Lightspeed' : 'Insights'}
       </span>
       <br />
-      <span style={{ fontSize: '32px', color: '#A30000' }}>
+      <span style={{ fontSize: '32px', color: t_global_text_color_status_danger_default.value }}>
         {`${INSIGHTS_HEADER}: ${SYSTEMS}`}
       </span>
       <div key="sys-count" style={{ ...styles.text, ...styles.textMargin }}>

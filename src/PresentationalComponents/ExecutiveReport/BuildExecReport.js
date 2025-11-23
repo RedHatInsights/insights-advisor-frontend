@@ -24,6 +24,10 @@ import { truncate } from 'lodash';
 import { Text } from '@react-pdf/renderer';
 import { Content, Flex, FlexItem } from '@patternfly/react-core';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
+import {
+  t_global_text_color_status_danger_default,
+  t_global_text_color_200,
+} from '@patternfly/react-tokens';
 import RecommendationCharts from './RecommendationCharts';
 
 /**
@@ -150,11 +154,11 @@ const BuildExecReport = ({ asyncData, additionalData }) => {
     <div
       style={{ paddingTop: '24px', paddingLeft: '32px', paddingRight: '32px' }}
     >
-      <span style={{ fontSize: '24px', color: '#A30000' }}>
+      <span style={{ fontSize: '24px', color: t_global_text_color_status_danger_default.value }}>
         Red Hat {isLightspeedEnabled ? 'Lightspeed' : 'Insights'}
       </span>
       <br />
-      <span style={{ fontSize: '32px', color: '#A30000' }}>
+      <span style={{ fontSize: '32px', color: t_global_text_color_status_danger_default.value }}>
         {`Executive report: ${INSIGHTS_HEADER}`}
       </span>
       <br />
@@ -180,14 +184,14 @@ const BuildExecReport = ({ asyncData, additionalData }) => {
         pieLegend={categoryLegend}
         rows={categoryRows}
       />
-      <Text style={{ color: '#A30000' }}>{TOP_THREE_RULES_HEADER}</Text>
+      <Text style={{ color: t_global_text_color_status_danger_default.value }}>{TOP_THREE_RULES_HEADER}</Text>
       {topActiveRec.data.map((rule, key) => (
         <Flex style={{ paddingTop: '24px' }} key={key}>
           <Flex direction={{ default: 'column' }}>
             <FlexItem
               style={{
                 fontSize: '12px',
-                color: '#36373a',
+                color: t_global_text_color_200.value,
               }}
             >
               {SYSTEMS_EXPOSED}
@@ -200,7 +204,7 @@ const BuildExecReport = ({ asyncData, additionalData }) => {
             <FlexItem
               style={{
                 fontSize: '12px',
-                color: '#36373a',
+                color: t_global_text_color_200.value,
               }}
             >
               {TOTAL_RISK}

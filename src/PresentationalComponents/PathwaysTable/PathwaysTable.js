@@ -11,18 +11,7 @@ import {
   PaginationVariant,
 } from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
 import React, { useEffect, useState } from 'react';
-import {
-  TableVariant,
-  cellWidth,
-  fitContent,
-  info,
-  sortable,
-} from '@patternfly/react-table';
-import {
-  Table,
-  TableBody,
-  TableHeader,
-} from '@patternfly/react-table/deprecated';
+import { Table, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolbar';
 import {
   filterFetchBuilder,
@@ -77,38 +66,6 @@ const PathwaysTable = ({ isTabActive }) => {
     ...options,
   });
 
-  const cols = [
-    {
-      title: intl.formatMessage(messages.pathwaysName),
-      transforms: [sortable, cellWidth(45)],
-    },
-    {
-      title: intl.formatMessage(messages.category),
-      // transforms: [sortable, cellWidth(15)],
-    },
-    {
-      title: intl.formatMessage(messages.systems),
-      transforms: [sortable, cellWidth(10)],
-    },
-    {
-      title: intl.formatMessage(messages.reboot),
-      // transforms: [sortable, cellWidth(10)],
-    },
-    {
-      title: intl.formatMessage(messages.reclvl),
-      transforms: [
-        sortable,
-        cellWidth(20),
-        fitContent,
-        info({
-          tooltip: intl.formatMessage(messages.reclvldetails),
-          tooltipProps: {
-            isContentLeftAligned: true,
-          },
-        }),
-      ],
-    },
-  ];
   const sortIndices = {
     0: 'name',
     // 1: 'category',
@@ -141,84 +98,56 @@ const PathwaysTable = ({ isTabActive }) => {
     return pruneFilters(localFilters, { ...FC, ...PFC });
   };
 
-  const rowBuilder = (pathways) =>
-    pathways.length === 0
-      ? [
-          {
-            cells: [
-              {
-                title: (
-                  <MessageState
-                    icon={SearchIcon}
-                    title={intl.formatMessage(messages.noResults)}
-                    text={intl.formatMessage(messages.adjustFilters)}
-                  />
-                ),
-                props: { colSpan: 6 },
-              },
-            ],
-          },
-        ]
-      : pathways.flatMap((pathway, key) => [
-          {
-            cells: [
-              {
-                title: (
-                  <span key={key}>
-                    <Link
-                      key={key}
-                      to={`/recommendations/pathways/${pathway.slug}`}
-                    >
-                      {' '}
-                      {pathway.name}{' '}
-                    </Link>
-                    {pathway.has_incident && (
-                      <RuleLabels rule={{ tags: 'incident' }} isCompact />
-                    )}
-                  </span>
-                ),
-              },
-              {
-                title: (
-                  <CategoryLabel
-                    key={key}
-                    labelList={pathway.categories}
-                    isCompact
-                  />
-                ),
-              },
-              {
-                title: (
-                  <Link
-                    key={key}
-                    to={`/recommendations/pathways/${pathway.slug}`}
-                  >
-                    {`${pathway.impacted_systems_count.toLocaleString()}`}
-                  </Link>
-                ),
-              },
-              {
-                title: (
-                  <span key={key}>
-                    {intl.formatMessage(
-                      pathway.reboot_required
-                        ? messages.required
-                        : messages.notRequired,
-                    )}
-                  </span>
-                ),
-              },
-              {
-                title: (
-                  <RecommendationLevel
-                    key={key}
-                    recLvl={pathway.recommendation_level}
-                  />
-                ),
-              },
-            ],
-          },
-        ]);
+  const buildRows = (pathways) => {
+    if (!pathways || pathways.length === 0) {
+      return (
+        <Tr>
+          <Td colSpan={5}>
+            <MessageState
+              icon={SearchIcon}
+              title={intl.formatMessage(messages.noResults)}
+              text={intl.formatMessage(messages.adjustFilters)}
+            />
+          </Td>
+        </Tr>
+      );
+    }
+
+    return pathways.map((pathway) => (
+      <Tr key={pathway.slug}>
+        <Td dataLabel={intl.formatMessage(messages.pathwaysName)}>
+          <span>
+            <Link to={`/recommendations/pathways/${pathway.slug}`}>
+              {pathway.name}
+            </Link>
+            {pathway.has_incident && (
+              <RuleLabels
+                rule={{ tags: 'incident' }}
+                intl={intl}
+                isCompact
+              />
+            )}
+          </span>
+        </Td>
+        <Td dataLabel={intl.formatMessage(messages.category)}>
+          <CategoryLabel labelList={pathway.categories} isCompact />
+        </Td>
+        <Td dataLabel={intl.formatMessage(messages.systems)}>
+          <Link to={`/recommendations/pathways/${pathway.slug}`}>
+            {pathway.impacted_systems_count.toLocaleString()}
+          </Link>
+        </Td>
+        <Td dataLabel={intl.formatMessage(messages.reboot)}>
+          {intl.formatMessage(
+            pathway.reboot_required ? messages.required : messages.notRequired,
+          )}
+        </Td>
+        <Td dataLabel={intl.formatMessage(messages.reclvl)}>
+          <RecommendationLevel recLvl={pathway.recommendation_level} />
+        </Td>
+      </Tr>
+    ));
+  };
 
   const removeFilterParam = (param) => {
     const filter = { ...filters, offset: 0 };
@@ -388,24 +317,70 @@ const PathwaysTable = ({ isTabActive }) => {
         activeFiltersConfig={activeFiltersConfig}
       />
       {isFetching ? (
-        <SkeletonTable columns={cols.map((c) => c.title)} variant="compact" />
+        <SkeletonTable
+          columns={[
+            intl.formatMessage(messages.pathwaysName),
+            intl.formatMessage(messages.category),
+            intl.formatMessage(messages.systems),
+            intl.formatMessage(messages.reboot),
+            intl.formatMessage(messages.reclvl),
+          ]}
+          variant="compact"
+        />
       ) : isError ? (
         <Table>
           <ErrorState />
         </Table>
       ) : (
         <Table
-          aria-label={'pathways-table'}
-          ouiaId={'pathways-table'}
-          variant={TableVariant.compact}
-          sortBy={sortBy}
-          onSort={onSort}
-          cells={cols}
-          rows={rowBuilder(pathways?.data)}
+          aria-label="pathways-table"
+          ouiaId="pathways-table"
+          variant="compact"
           isStickyHeader
         >
-          <TableHeader />
-          <TableBody />
+          <Thead>
+            <Tr>
+              <Th
+                sort={{
+                  sortBy,
+                  onSort,
+                  columnIndex: 0,
+                }}
+                width={45}
+              >
+                {intl.formatMessage(messages.pathwaysName)}
+              </Th>
+              <Th>{intl.formatMessage(messages.category)}</Th>
+              <Th
+                sort={{
+                  sortBy,
+                  onSort,
+                  columnIndex: 2,
+                }}
+                width={10}
+              >
+                {intl.formatMessage(messages.systems)}
+              </Th>
+              <Th>{intl.formatMessage(messages.reboot)}</Th>
+              <Th
+                sort={{
+                  sortBy,
+                  onSort,
+                  columnIndex: 4,
+                }}
+                width={20}
+                info={{
+                  tooltip: intl.formatMessage(messages.reclvldetails),
+                  tooltipProps: {
+                    isContentLeftAligned: true,
+                  },
+                }}
+              >
+                {intl.formatMessage(messages.reclvl)}
+              </Th>
+            </Tr>
+          </Thead>
+          <Tbody>{buildRows(pathways?.data)}</Tbody>
         </Table>
       )}
       <TableToolbar isFooter>

@@ -263,6 +263,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
                 SID,
                 dispatch,
                 envContext.BASE_URL,
+                '',
                 addNotification,
               ),
             tooltipText: intl.formatMessage(messages.exportData),

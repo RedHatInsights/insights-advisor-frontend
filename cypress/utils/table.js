@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import {
+  CHIP,
   CONDITIONAL_FILTER_TOGGLE,
   PT_CONDITIONAL_FILTER_LIST,
 } from '@redhat-cloud-services/frontend-components-utilities';
@@ -165,6 +166,19 @@ const itExportsDataToFile = (jsonData, filenamePrefix) => {
   });
 };
 
+const removeAllFilterChipsPf6 = () => {
+  cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
+    .find(CHIP)
+    .find('button')
+    .each(() => {
+      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
+        .find(CHIP)
+        .find('button')
+        .eq(0)
+        .click();
+    });
+};
+
 export {
   checkSorting,
   cypressApplyFilters,
@@ -172,4 +186,5 @@ export {
   selectRandomEnabledRows,
   selectConditionalFilterOption,
   itExportsDataToFile,
+  removeAllFilterChipsPf6,
 };

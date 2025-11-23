@@ -42,7 +42,26 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('clickOnRowKebab', (name) => {
-  cy.contains('tbody [data-ouia-component-type="PF5/TableRow"]', name)
+  cy.contains('tbody [data-ouia-component-type="PF6/TableRow"]', name)
     .find('.pf-v6-c-menu-toggle')
     .click();
+});
+
+Cypress.Commands.add('tableIsSortedBy', (columnTitle, direction = null) => {
+  if (direction) {
+    return cy
+      .get('th')
+      .contains(columnTitle)
+      .closest('th')
+      .should('have.class', 'pf-v6-c-table__sort')
+      .and('have.class', 'pf-m-selected')
+      .and('have.attr', 'aria-sort', direction);
+  }
+
+  return cy
+    .get('th')
+    .contains(columnTitle)
+    .closest('th')
+    .should('have.class', 'pf-v6-c-table__sort')
+    .and('have.class', 'pf-m-selected');
 });

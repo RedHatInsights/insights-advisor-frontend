@@ -7,6 +7,7 @@ import {
   TooltipPosition,
 } from '@patternfly/react-core';
 import { createIntl, createIntlCache } from 'react-intl';
+import { t_global_text_color_200 } from '@patternfly/react-tokens';
 
 import {
   OutlinedQuestionCircleIcon,
@@ -55,7 +56,7 @@ const QuestionTooltip = ({ text }) => (
     content={<div>{text}</div>}
   >
     <span aria-label="Action" data-testid={`question-tooltip-${text}`}>
-      <OutlinedQuestionCircleIcon className="pf-v6-u-ml-xs" color={'#6a6e73'} />
+      <OutlinedQuestionCircleIcon className="pf-v6-u-ml-xs" color={t_global_text_color_200.value} />
     </span>
   </Tooltip>
 );

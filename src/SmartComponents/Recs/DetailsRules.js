@@ -86,7 +86,7 @@ export const DetailsRules = ({
                 ouiaId="rule-title-text"
                 title={
                   <React.Fragment>
-                    {rule.description} <RuleLabels rule={rule} />
+                    {rule.description} <RuleLabels rule={rule} intl={intl} />
                   </React.Fragment>
                 }
               />

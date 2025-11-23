@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { initStore } from '../../../Store';
 import NoSystemsTable from './NoSystemsTable';
-import messages from '../../../Messages';
 
 const mountComponent = () => {
   cy.mount(
@@ -25,11 +24,9 @@ describe('No systems table test', () => {
 
   describe('defaults', () => {
     it('The empty message wording is correct', () => {
+      cy.get('div[class*="bullseye"]').contains('No matching systems found');
       cy.get('div[class*="bullseye"]').contains(
-        messages.noSystemsFoundHeader.defaultMessage,
-      );
-      cy.get('div[class*="bullseye"]').contains(
-        messages.noSystemsFoundBody.defaultMessage,
+        'To continue, edit your filter settings and search again.',
       );
     });
   });

@@ -19,7 +19,6 @@ const List = () => {
         <PageHeaderTitle title={`${messages.systems.defaultMessage}`} />
       </PageHeader>
       <section className="pf-v6-l-page__main-section pf-v6-c-page__main-section">
-        <EdgeSystemsBanner />
         <SystemsTable />
       </section>
     </React.Fragment>

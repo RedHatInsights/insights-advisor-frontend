@@ -323,13 +323,14 @@ describe('system rules table', () => {
 
   describe(`Tooltips`, () => {
     function constructLikelihoodImpactTooltipContent(likelihood, impact) {
+      // Use hardcoded strings since messages might not be properly initialized in test environment
+      const likelihoodMsg = 'The likelihood that this will be a problem is {level}.';
+      const impactMsg = 'The impact of the problem would be {level} if it occurred.';
+
       return (
-        messages.likelihoodDescription.defaultMessage.replace(
-          /{(.*?)}/g,
-          likelihood,
-        ) +
+        likelihoodMsg.replace(/{(.*?)}/g, likelihood) +
         ' ' +
-        messages.impactDescription.defaultMessage.replace(/{(.*?)}/g, impact)
+        impactMsg.replace(/{(.*?)}/g, impact)
       );
     }
 
@@ -345,7 +346,7 @@ describe('system rules table', () => {
         </Button>,
       );
       cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
-      cy.contains(messages.exportData.defaultMessage).should('be.visible');
+      cy.contains('Export data').should('be.visible');
     });
 
     it(`Critical tooltip displays the correct content.`, () => {
@@ -368,7 +369,7 @@ describe('system rules table', () => {
     });
 
     it(`Moderate tooltip displays the correct content.`, () => {
-      cy.get('td[data-label="Total risk"] .pf-m-gold')
+      cy.get('td[data-label="Total risk"] .pf-m-yellow')
         .first()
         .trigger('mouseenter');
       cy.contains(
