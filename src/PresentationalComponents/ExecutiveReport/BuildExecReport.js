@@ -150,15 +150,26 @@ const BuildExecReport = ({ asyncData, additionalData }) => {
       {truncate(rule.summary, { length: 280 })}
     </Content>
   );
+
   return (
     <div
       style={{ paddingTop: '24px', paddingLeft: '32px', paddingRight: '32px' }}
     >
-      <span style={{ fontSize: '24px', color: t_global_text_color_status_danger_default.value }}>
+      <span
+        style={{
+          fontSize: '24px',
+          color: t_global_text_color_status_danger_default.value,
+        }}
+      >
         Red Hat {isLightspeedEnabled ? 'Lightspeed' : 'Insights'}
       </span>
       <br />
-      <span style={{ fontSize: '32px', color: t_global_text_color_status_danger_default.value }}>
+      <span
+        style={{
+          fontSize: '32px',
+          color: t_global_text_color_status_danger_default.value,
+        }}
+      >
         {`Executive report: ${INSIGHTS_HEADER}`}
       </span>
       <br />
@@ -184,7 +195,9 @@ const BuildExecReport = ({ asyncData, additionalData }) => {
         pieLegend={categoryLegend}
         rows={categoryRows}
       />
-      <Text style={{ color: t_global_text_color_status_danger_default.value }}>{TOP_THREE_RULES_HEADER}</Text>
+      <Text style={{ color: t_global_text_color_status_danger_default.value }}>
+        {TOP_THREE_RULES_HEADER}
+      </Text>
       {topActiveRec.data.map((rule, key) => (
         <Flex style={{ paddingTop: '24px' }} key={key}>
           <Flex direction={{ default: 'column' }}>

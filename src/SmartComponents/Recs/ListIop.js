@@ -72,7 +72,7 @@ const ListIop = () => {
                 <Icon>
                   <OutlinedQuestionCircleIcon
                     className="pf-v5-u-ml-sm"
-                    color="var(--pf-v5-global--secondary-color--100)"
+                    color="var(--pf-t--temp--dev--tbd)"
                     style={{
                       verticalAlign: 0,
                       fontSize: 16,

@@ -121,11 +121,7 @@ const PathwaysTable = ({ isTabActive }) => {
               {pathway.name}
             </Link>
             {pathway.has_incident && (
-              <RuleLabels
-                rule={{ tags: 'incident' }}
-                intl={intl}
-                isCompact
-              />
+              <RuleLabels rule={{ tags: 'incident' }} intl={intl} isCompact />
             )}
           </span>
         </Td>

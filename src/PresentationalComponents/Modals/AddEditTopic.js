@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 import {
   Split,
   SplitItem,
-  Modal,
   Form,
   FormGroup,
   Checkbox,
@@ -14,6 +13,7 @@ import {
   TextArea,
   TextInput,
 } from '@patternfly/react-core';
+import { Modal } from '@patternfly/react-core/deprecated';
 
 import { BASE_URL } from '../../AppConstants';
 import PropTypes from 'prop-types';

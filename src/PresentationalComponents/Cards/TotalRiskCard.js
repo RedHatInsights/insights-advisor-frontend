@@ -12,7 +12,7 @@ import {
   ChartBar,
   ChartGroup,
   ChartVoronoiContainer,
-} from '@patternfly/react-charts';
+} from '@patternfly/react-charts/victory';
 import {
   Grid,
   GridItem,

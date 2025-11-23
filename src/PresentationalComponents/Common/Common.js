@@ -56,7 +56,10 @@ const QuestionTooltip = ({ text }) => (
     content={<div>{text}</div>}
   >
     <span aria-label="Action" data-testid={`question-tooltip-${text}`}>
-      <OutlinedQuestionCircleIcon className="pf-v6-u-ml-xs" color={t_global_text_color_200.value} />
+      <OutlinedQuestionCircleIcon
+        className="pf-v6-u-ml-xs"
+        color={t_global_text_color_200.value}
+      />
     </span>
   </Tooltip>
 );

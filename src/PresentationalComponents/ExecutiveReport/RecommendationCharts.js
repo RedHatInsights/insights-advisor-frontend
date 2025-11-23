@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { POUND_OF_RECS } from '../../AppConstants';
 import { Text } from '@react-pdf/renderer';
-import { ChartPie } from '@patternfly/react-charts';
+import { ChartPie } from '@patternfly/react-charts/victory';
 import { Flex, FlexItem } from '@patternfly/react-core';
 import {
   Table,
@@ -31,7 +31,9 @@ const RecommendationCharts = ({
 }) => {
   return (
     <React.Fragment>
-      <Text style={{ color: t_global_text_color_status_danger_default.value }}>{header}</Text>
+      <Text style={{ color: t_global_text_color_status_danger_default.value }}>
+        {header}
+      </Text>
       <Flex defaultspaceItems={{ default: 'spaceItemsLg' }}>
         <FlexItem style={{ width: '40%' }}>
           <Table
@@ -50,7 +52,8 @@ const RecommendationCharts = ({
                 <Tr
                   key={`${columnHeader}-row-${index}`}
                   style={{
-                    backgroundColor: (index + 1) % 2 && t_global_background_color_200.value,
+                    backgroundColor:
+                      (index + 1) % 2 && t_global_background_color_200.value,
                     fontSize: '12px',
                   }}
                 >

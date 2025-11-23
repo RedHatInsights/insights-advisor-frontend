@@ -1,4 +1,4 @@
-import React from 'react'; // FIXED: Removed the duplicate 'from 'react'
+import React from 'react';
 import propTypes from 'prop-types';
 
 import { Button } from '@patternfly/react-core';

@@ -1,13 +1,13 @@
 import React, { useContext, useState } from 'react';
 
 import {
-  Modal,
   Button,
   Checkbox,
   Form,
   FormGroup,
   TextInput,
 } from '@patternfly/react-core';
+import { Modal } from '@patternfly/react-core/deprecated';
 import { Post } from '../../Utilities/Api';
 import PropTypes from 'prop-types';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';

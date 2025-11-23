@@ -16,7 +16,8 @@ import { useAddNotification } from '@redhat-cloud-services/frontend-components-n
 import { useGetHostAcksQuery } from '../../Services/Acks';
 import { useIntl } from 'react-intl';
 import { EnvironmentContext } from '../../App';
-import { Modal, Button } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
+import { Modal } from '@patternfly/react-core/deprecated';
 
 const ViewHostAcks = ({
   handleModalToggle = () => {},

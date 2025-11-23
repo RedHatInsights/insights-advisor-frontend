@@ -44,13 +44,19 @@ jest.mock('../../../Messages.js', () => ({
     },
     incidents: { id: 'incidents', defaultMessage: 'Incidents' },
     incident: { id: 'incident', defaultMessage: 'Incident' },
-    incidentTooltip: { id: 'incidentTooltip', defaultMessage: 'Incident tooltip' },
+    incidentTooltip: {
+      id: 'incidentTooltip',
+      defaultMessage: 'Incident tooltip',
+    },
     ruleIsDisabledTooltip: {
       id: 'ruleIsDisabledTooltip',
       defaultMessage: 'Rule is disabled',
     },
     disabled: { id: 'disabled', defaultMessage: 'Disabled' },
-    redhatDisabled: { id: 'redhatDisabled', defaultMessage: 'Red Hat Disabled' },
+    redhatDisabled: {
+      id: 'redhatDisabled',
+      defaultMessage: 'Red Hat Disabled',
+    },
     noOverviewAvailable: {
       id: 'noOverviewAvailable',
       defaultMessage: 'No Overview Available',

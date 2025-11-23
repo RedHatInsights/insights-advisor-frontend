@@ -24,7 +24,6 @@ import Wrapper from '../../Utilities/Wrapper';
 import { INVENTORY_BASE_URL } from '../../AppConstants';
 import systemProfile from '../../../cypress/fixtures/systemProfile.json';
 import { selectRandomEnabledRows } from '../../../cypress/utils/table';
-import messages from '../../Messages';
 import { Button } from '@patternfly/react-core';
 import { EnvironmentContext } from '../../App';
 import { createTestEnvironmentContext } from '../../../cypress/support/globals';
@@ -323,9 +322,10 @@ describe('system rules table', () => {
 
   describe(`Tooltips`, () => {
     function constructLikelihoodImpactTooltipContent(likelihood, impact) {
-      // Use hardcoded strings since messages might not be properly initialized in test environment
-      const likelihoodMsg = 'The likelihood that this will be a problem is {level}.';
-      const impactMsg = 'The impact of the problem would be {level} if it occurred.';
+      const likelihoodMsg =
+        'The likelihood that this will be a problem is {level}.';
+      const impactMsg =
+        'The impact of the problem would be {level} if it occurred.';
 
       return (
         likelihoodMsg.replace(/{(.*?)}/g, likelihood) +

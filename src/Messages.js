@@ -1224,7 +1224,9 @@ export default defineMessages({
   },
   rulesTableErrorStateBody: {
     id: 'rulesTableErrorStateBody',
-    description: 'Error state body text displayed when rules table fails to load',
-    defaultMessage: 'There was a problem loading recommendations. Please try again later.',
+    description:
+      'Error state body text displayed when rules table fails to load',
+    defaultMessage:
+      'There was a problem loading recommendations. Please try again later.',
   },
 });

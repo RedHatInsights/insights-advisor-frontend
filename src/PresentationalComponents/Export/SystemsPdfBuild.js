@@ -83,11 +83,21 @@ const SystemsPdfBuild = ({ asyncData, additionalData }) => {
 
   return (
     <div style={styles.document}>
-      <span style={{ fontSize: '24px', color: t_global_text_color_status_danger_default.value }}>
+      <span
+        style={{
+          fontSize: '24px',
+          color: t_global_text_color_status_danger_default.value,
+        }}
+      >
         Red Hat {isLightspeedEnabled ? 'Lightspeed' : 'Insights'}
       </span>
       <br />
-      <span style={{ fontSize: '32px', color: t_global_text_color_status_danger_default.value }}>
+      <span
+        style={{
+          fontSize: '32px',
+          color: t_global_text_color_status_danger_default.value,
+        }}
+      >
         {`${INSIGHTS_HEADER}: ${SYSTEMS}`}
       </span>
       <div key="sys-count" style={{ ...styles.text, ...styles.textMargin }}>
