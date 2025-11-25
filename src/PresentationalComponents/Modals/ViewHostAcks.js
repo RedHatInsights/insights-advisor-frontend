@@ -5,7 +5,6 @@ import {
   TableHeader,
 } from '@patternfly/react-table/deprecated';
 
-import { BASE_URL } from '../../AppConstants';
 import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { DeleteApi } from '../../Utilities/Api';
@@ -19,6 +18,7 @@ import { useDispatch } from 'react-redux';
 import { useGetHostAcksQuery } from '../../Services/Acks';
 import { useIntl } from 'react-intl';
 import { EnvironmentContext } from '../../App';
+import { getCsrfTokenHeader } from '../helper';
 
 const ViewHostAcks = ({
   handleModalToggle = () => {},
@@ -39,7 +39,7 @@ const ViewHostAcks = ({
   const [rows, setRows] = useState([]);
   const [unclean, setUnclean] = useState(false);
   const {
-    data: hostAcks = [],
+    data: hostAcks,
     isFetching,
     isLoading,
     refetch,
@@ -50,7 +50,11 @@ const ViewHostAcks = ({
   });
   const deleteAck = async (host) => {
     try {
-      await DeleteApi(`${BASE_URL}/hostack/${host.id}/`);
+      await DeleteApi(
+        `${envContext.BASE_URL}/hostack/${host.id}/`,
+        {},
+        getCsrfTokenHeader(),
+      );
       refetch();
       setUnclean(true);
     } catch (error) {

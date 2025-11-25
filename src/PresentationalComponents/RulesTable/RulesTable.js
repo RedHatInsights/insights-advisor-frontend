@@ -130,6 +130,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
     setSelectedRule,
     setDisableRuleOpen,
     refetch,
+    envContext.BASE_URL,
   );
 
   const impactingFilterDef = impactingFilter(
