@@ -58,7 +58,6 @@ const RulesTable = ({ isTabActive, pathway }) => {
 
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
-  const SID = useSelector(({ filters }) => filters.SID);
   const filters = useSelector(({ filters }) => filters.recState);
 
   const [rows, setRows] = useState([]);
@@ -75,7 +74,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
 
   const options = {
     ...(selectedTags?.length ? { tags: selectedTags.join(',') } : {}),
-    ...(workloads ? workloadQueryBuilder(workloads, SID) : {}),
+    ...(workloads ? workloadQueryBuilder(workloads) : {}),
     ...(pathway ? { pathway } : {}),
   };
 
@@ -99,7 +98,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
       urlBuilder(filters, selectedTags);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, selectedTags, workloads, SID]);
+  }, [filters, selectedTags, workloads]);
 
   const onSort = (_event, index, direction) => {
     const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
@@ -257,7 +256,6 @@ const RulesTable = ({ isTabActive, pathway }) => {
                 filterFetchBuilder(filters),
                 selectedTags,
                 workloads,
-                SID,
                 dispatch,
                 envContext.BASE_URL,
               ),

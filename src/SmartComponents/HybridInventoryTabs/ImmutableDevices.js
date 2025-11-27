@@ -146,7 +146,6 @@ ImmutableDevices.propTypes = {
   pathway: PropTypes.object,
   selectedTags: PropTypes.any,
   workloads: PropTypes.any,
-  SID: PropTypes.any,
   permsExport: PropTypes.bool,
   exportTable: PropTypes.string,
   showTags: PropTypes.bool,
