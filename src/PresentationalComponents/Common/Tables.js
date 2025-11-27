@@ -204,7 +204,6 @@ export const workloadQueryBuilder = (workloads, SID) =>
             not_nil: true,
           },
         }),
-        ...(SID?.length > 0 && { sap_sids: SID }),
       },
     },
     undefined,

@@ -14,7 +14,7 @@ describe('Tables', () => {
     expect(workloadFilter).toEqual({});
   });
 
-  it('should render workloads or SIDs', () => {
+  it('should render workloads', () => {
     workloads = fixtures.allWorkloadsFiltersTrue;
     SID = ['AB1', 'XY1'];
 
