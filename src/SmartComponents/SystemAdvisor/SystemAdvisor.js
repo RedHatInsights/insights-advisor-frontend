@@ -69,7 +69,6 @@ const BaseSystemAdvisor = ({
   const [isSystemProfileLoading, setSystemsProfileLoading] = useState(true);
   const selectedTags = useSelector(({ filters }) => filters?.selectedTags);
   const workloads = useSelector(({ filters }) => filters?.workloads);
-  const SID = useSelector(({ filters }) => filters?.SID);
   const envContext = useContext(EnvironmentContext);
 
   const getSelectedItems = (rows) => rows.filter((row) => row.selected);
@@ -525,10 +524,9 @@ const BaseSystemAdvisor = ({
                   { ...filters, text: searchValue },
                   selectedTags,
                   workloads,
-                  SID,
                   dispatch,
-                  display_name,
                   envContext.BASE_URL,
+                  display_name,
                 ),
               tooltipText: intl.formatMessage(messages.exportData),
             }

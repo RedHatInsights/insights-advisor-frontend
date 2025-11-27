@@ -13,7 +13,6 @@ export const paginatedRequestHelper = async ({
   advisorFilters,
   filters,
   workloads,
-  SID,
   pathway,
   rule,
   selectedTags,
@@ -30,7 +29,6 @@ export const paginatedRequestHelper = async ({
     filters,
     selectedTags,
     workloads,
-    SID,
   );
 
   return pathway
@@ -74,7 +72,6 @@ export const getEntities =
       advisorFilters,
       filters,
       workloads,
-      SID,
       selectedTags,
     } = config;
     const sort = createSortParam(orderBy, orderDirection);
@@ -88,7 +85,6 @@ export const getEntities =
       filters,
       selectedTags,
       workloads,
-      SID,
     );
     handleRefresh(options);
     const allDetails = {

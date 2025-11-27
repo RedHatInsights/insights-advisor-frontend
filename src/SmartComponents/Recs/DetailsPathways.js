@@ -49,7 +49,6 @@ const PathwayDetails = () => {
   const envContext = useContext(EnvironmentContext);
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
-  const SID = useSelector(({ filters }) => filters.SID);
   const recFilters = useSelector(({ filters }) => filters.recState);
   const sysFilters = useSelector(({ filters }) => filters.sysState);
 
@@ -63,7 +62,7 @@ const PathwayDetails = () => {
       ...{ tags: selectedTags.join(',') },
     });
   workloads &&
-    (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
+    (options = { ...options, ...workloadQueryBuilder(workloads) });
   const { data: pathway = {}, isFetching } = useGetPathwayQuery({
     ...options,
     slug: pathwayName,
@@ -232,7 +231,6 @@ const PathwayDetails = () => {
                   pathway={pathway}
                   selectedTags={selectedTags}
                   workloads={workloads}
-                  SID={SID}
                   tabPathname={`/insights/advisor/recommendations/pathways/${pathwayName}`}
                   conventionalSystemsCount={conventionalSystemsCount}
                   areCountsLoading={areCountsLoading}

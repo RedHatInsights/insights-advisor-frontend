@@ -14,7 +14,6 @@ import { EnvironmentContext } from '../../App';
 const List = () => {
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
-  const SID = useSelector(({ filters }) => filters.SID);
   const envContext = useContext(EnvironmentContext);
 
   useEffect(() => {
@@ -23,7 +22,7 @@ const List = () => {
 
   let options = selectedTags?.length && { tags: selectedTags };
   workloads &&
-    (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
+    (options = { ...options, ...workloadQueryBuilder(workloads) });
   options = { ...options, customBasePath: envContext.BASE_URL };
   const {
     data = [],
