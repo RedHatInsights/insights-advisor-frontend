@@ -24,8 +24,7 @@ const SystemsPdf = ({ filters }) => {
     dispatch(addNotification(exportNotifications.pending));
 
     let options = selectedTags?.length && { tags: selectedTags };
-    workloads &&
-      (options = { ...options, ...workloadQueryBuilder(workloads) });
+    workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
     try {
       await envContext.requestPdf({
         filename: `Advisor_systems--${new Date()

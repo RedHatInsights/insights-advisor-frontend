@@ -26,8 +26,7 @@ const downloadHelper = async (
 ) => {
   try {
     let options = selectedTags?.length && { tags: selectedTags };
-    workloads &&
-      (options = { ...options, ...workloadQueryBuilder(workloads) });
+    workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
     dispatch(addNotification(exportNotifications.pending));
     const data = (
       await Get(

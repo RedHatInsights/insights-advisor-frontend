@@ -21,8 +21,7 @@ const List = () => {
   }, [envContext]);
 
   let options = selectedTags?.length && { tags: selectedTags };
-  workloads &&
-    (options = { ...options, ...workloadQueryBuilder(workloads) });
+  workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
   options = { ...options, customBasePath: envContext.BASE_URL };
   const {
     data = [],

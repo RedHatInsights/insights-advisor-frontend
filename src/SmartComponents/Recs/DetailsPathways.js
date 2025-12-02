@@ -61,8 +61,7 @@ const PathwayDetails = () => {
       ...options,
       ...{ tags: selectedTags.join(',') },
     });
-  workloads &&
-    (options = { ...options, ...workloadQueryBuilder(workloads) });
+  workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
   const { data: pathway = {}, isFetching } = useGetPathwayQuery({
     ...options,
     slug: pathwayName,

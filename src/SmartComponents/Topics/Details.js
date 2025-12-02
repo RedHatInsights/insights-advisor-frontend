@@ -38,8 +38,7 @@ const Details = () => {
   const recFilters = useSelector(({ filters }) => filters.recState);
   const topicId = useParams().id;
   let options = selectedTags?.length && { tags: selectedTags };
-  workloads &&
-    (options = { ...options, ...workloadQueryBuilder(workloads) });
+  workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
   const hasEdgeDevices = useContext(AccountStatContext);
 
   const {

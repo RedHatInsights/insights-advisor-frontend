@@ -64,8 +64,7 @@ const PathwaysTable = ({ isTabActive }) => {
       ...options,
       ...{ tags: selectedTags.join(',') },
     });
-  workloads &&
-    (options = { ...options, ...workloadQueryBuilder(workloads) });
+  workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
   const {
     data: pathways = [],
     isFetching,
