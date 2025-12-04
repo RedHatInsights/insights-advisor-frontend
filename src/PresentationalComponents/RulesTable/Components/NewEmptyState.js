@@ -1,16 +1,17 @@
 import React from 'react';
 import propTypes from 'prop-types';
-
 import { Button } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { t_global_icon_color_status_success_default } from '@patternfly/react-tokens';
 import MessageState from '../../MessageState/MessageState';
-import { messageMapping } from '../helpers';
+import { messageMapping } from '../newrulestablehelpers';
+import messages from '../../../Messages';
 
-const EmptyState = ({ filters, toggleRulesDisabled }) => {
+const NewEmptyState = ({ filters, toggleRulesDisabled }) => {
+  const intl = useIntl();
   const message =
-    messageMapping()[filters.rule_status] || messageMapping().default;
+    messageMapping(intl)[filters.rule_status] || messageMapping(intl).default;
 
   return (
     <MessageState
@@ -25,16 +26,16 @@ const EmptyState = ({ filters, toggleRulesDisabled }) => {
           style={{ paddingTop: 24 }}
           onClick={() => toggleRulesDisabled('rhdisabled')}
         >
-          <FormattedMessage id="rulestable.norulehits.adddisabledbutton" />
+          {intl.formatMessage(messages.rulesTableNoRuleHitsAddDisabledButton)}
         </Button>
       )}
     </MessageState>
   );
 };
 
-EmptyState.propTypes = {
+NewEmptyState.propTypes = {
   filters: propTypes.object,
   toggleRulesDisabled: propTypes.func,
 };
 
-export default EmptyState;
+export default NewEmptyState;

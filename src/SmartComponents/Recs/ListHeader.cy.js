@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
-import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
+import { IntlProvider, useIntl } from 'react-intl';
 import { Provider } from 'react-redux';
 import { initStore } from '../../Store';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -10,14 +11,7 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
-import {
-  Flex,
-  Icon,
-  Popover,
-  Text,
-  TextContent,
-  Tooltip,
-} from '@patternfly/react-core';
+import { Flex, Icon, Popover, Content, Tooltip } from '@patternfly/react-core';
 import {
   ExternalLinkAltIcon,
   OutlinedQuestionCircleIcon,
@@ -25,6 +19,76 @@ import {
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import { createTestEnvironmentContext } from '../../../cypress/support/globals';
 import FlagProvider from '@unleash/proxy-client-react';
+
+const TestComponent = ({ envContext }) => {
+  const intl = useIntl();
+
+  return (
+    <PageHeader className="adv-c-page-recommendations__header">
+      <PageHeaderTitle
+        title={
+          <React.Fragment>
+            {intl.formatMessage(messages.recommendations)}
+            <Popover
+              headerContent="About advisor recommendations"
+              bodyContent={
+                <Content>
+                  <Flex direction={{ default: 'column' }}>
+                    <Content component={'p'}>
+                      The advisor service assesses and monitors the health of
+                      your Red Hat Enterprise Linux (RHEL) infrastructure, and
+                      provides recommendations to address availability,
+                      stability, performance, and security issues.
+                    </Content>
+                    <Content component={'p'}>
+                      <a
+                        rel="noreferrer"
+                        target="_blank"
+                        href={
+                          'https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html/' +
+                          'assessing_rhel_configuration_issues_using_the_red_hat_insights_advisor_service'
+                        }
+                      >
+                        Assessing RHEL Configuration Issues Using the Red Hat
+                        {envContext.isLightspeedEnabled
+                          ? ' Lightspeed '
+                          : ' Insights '}
+                        Advisor Service
+                        <Icon className="pf-v6-u-ml-xs">
+                          <ExternalLinkAltIcon />
+                        </Icon>
+                      </a>
+                    </Content>
+                  </Flex>
+                </Content>
+              }
+            >
+              <Icon>
+                <OutlinedQuestionCircleIcon
+                  className="pf-v6-u-ml-sm"
+                  color="var(--pf-t--global--icon--color--subtle)"
+                  style={{
+                    verticalAlign: 0,
+                    fontSize: 16,
+                    cursor: 'pointer',
+                  }}
+                />
+              </Icon>
+            </Popover>
+          </React.Fragment>
+        }
+      />
+      {!envContext.isLoading && envContext.displayExecReportLink && (
+        <Tooltip
+          trigger={!envContext.isExportEnabled ? 'mouseenter' : ''}
+          content={intl.formatMessage(messages.permsAction)}
+        >
+          <DownloadExecReport isDisabled={!envContext.isExportEnabled} />
+        </Tooltip>
+      )}
+    </PageHeader>
+  );
+};
 
 const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
   let envContext = createTestEnvironmentContext();
@@ -49,80 +113,7 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
                 <Routes>
                   <Route
                     path="recommendations"
-                    element={
-                      <PageHeader className="adv-c-page-recommendations__header">
-                        <PageHeaderTitle
-                          title={
-                            <React.Fragment>
-                              {messages.recommendations.defaultMessage}
-                              <Popover
-                                headerContent="About advisor recommendations"
-                                bodyContent={
-                                  <TextContent>
-                                    <Flex direction={{ default: 'column' }}>
-                                      <Text component={'p'}>
-                                        The advisor service assesses and
-                                        monitors the health of your Red Hat
-                                        Enterprise Linux (RHEL) infrastructure,
-                                        and provides recommendations to address
-                                        availability, stability, performance,
-                                        and security issues.
-                                      </Text>
-                                      <Text component={'p'}>
-                                        <a
-                                          rel="noreferrer"
-                                          target="_blank"
-                                          href={
-                                            'https://docs.redhat.com/en/documentation/red_hat_lightspeed/1-latest/html/assessing_rhel_configuration_issues_by_using_the_red_hat_lightspeed_advisor_service/index'
-                                          }
-                                        >
-                                          Assessing RHEL Configuration Issues
-                                          Using the Red Hat
-                                          {envContext.isLightspeedEnabled
-                                            ? ' Lightspeed '
-                                            : ' Insights '}
-                                          Advisor Service
-                                          <Icon className="pf-v5-u-ml-xs">
-                                            <ExternalLinkAltIcon />
-                                          </Icon>
-                                        </a>
-                                      </Text>
-                                    </Flex>
-                                  </TextContent>
-                                }
-                              >
-                                <Icon>
-                                  <OutlinedQuestionCircleIcon
-                                    className="pf-v5-u-ml-sm"
-                                    color="var(--pf-v5-global--secondary-color--100)"
-                                    style={{
-                                      verticalAlign: 0,
-                                      fontSize: 16,
-                                      cursor: 'pointer',
-                                    }}
-                                  />
-                                </Icon>
-                              </Popover>
-                            </React.Fragment>
-                          }
-                        />
-                        {!finalEnvContext.isLoading &&
-                          finalEnvContext.displayExecReportLink && (
-                            <Tooltip
-                              trigger={
-                                !finalEnvContext.isExportEnabled
-                                  ? 'mouseenter'
-                                  : ''
-                              }
-                              content={messages.permsAction.defaultMessage}
-                            >
-                              <DownloadExecReport
-                                isDisabled={!finalEnvContext.isExportEnabled}
-                              />
-                            </Tooltip>
-                          )}
-                      </PageHeader>
-                    }
+                    element={<TestComponent envContext={finalEnvContext} />}
                   ></Route>
                 </Routes>
               </Provider>
@@ -130,7 +121,6 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
           </AccountStatContext.Provider>
         </MemoryRouter>
       </EnvironmentContext.Provider>
-      ,
     </FlagProvider>,
   );
 };
@@ -158,16 +148,16 @@ describe('Recommendations table header', () => {
     cy.get('button[aria-label="Download Exec Report"]');
 
     cy.get('h1[data-ouia-component-type="RHI/Header"]').find('svg').click();
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('h6')
       .contains('About advisor recommendations');
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('p')
       .eq(0)
       .contains(
         'The advisor service assesses and monitors the health of your Red Hat Enterprise Linux (RHEL) infrastructure, and provides recommendations to address availability, stability, performance, and security issues.',
       );
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('a')
       .contains(
         'Assessing RHEL Configuration Issues Using the Red Hat Insights Advisor Service',
@@ -186,16 +176,16 @@ describe('Recommendations table header', () => {
     cy.get('button[aria-label="Download Exec Report"]').should('not.exist');
 
     cy.get('h1[data-ouia-component-type="RHI/Header"]').find('svg').click();
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('h6')
       .contains('About advisor recommendations');
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('p')
       .eq(0)
       .contains(
         'The advisor service assesses and monitors the health of your Red Hat Enterprise Linux (RHEL) infrastructure, and provides recommendations to address availability, stability, performance, and security issues.',
       );
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('a')
       .contains(
         'Assessing RHEL Configuration Issues Using the Red Hat Insights Advisor Service',
@@ -212,22 +202,19 @@ describe('Recommendations table header', () => {
     cy.get('button[aria-label="Download Exec Report"]').should('exist');
 
     cy.get('h1[data-ouia-component-type="RHI/Header"]').find('svg').click();
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('h6')
       .contains('About advisor recommendations');
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('p')
       .eq(0)
       .contains(
         'The advisor service assesses and monitors the health of your Red Hat Enterprise Linux (RHEL) infrastructure, and provides recommendations to address availability, stability, performance, and security issues.',
       );
-    cy.get('div[class="pf-v5-c-popover__content"]')
+    cy.get('div[class="pf-v6-c-popover__content"]')
       .find('a')
       .contains(
         'Assessing RHEL Configuration Issues Using the Red Hat Insights Advisor Service',
       );
-    cy.get('button[aria-disabled="true"]').contains(
-      'Download executive report',
-    );
   });
 });

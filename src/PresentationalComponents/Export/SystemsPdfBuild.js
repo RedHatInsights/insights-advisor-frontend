@@ -14,22 +14,21 @@ import {
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
-  c_table_m_compact_cell_PaddingBottom,
-  c_table_m_compact_cell_PaddingLeft,
-  c_table_m_compact_cell_PaddingTop,
-  chart_global_Fill_Color_700,
-  global_FontWeight_bold,
-  global_link_Color,
-  global_spacer_md,
+  global_text_color_default,
+  t_global_font_weight_heading_bold,
+  t_global_spacer_md,
+  t_global_spacer_sm,
+  t_global_text_color_link_default,
+  t_global_text_color_status_danger_default,
 } from '@patternfly/react-tokens';
+
 import TablePage from './TablePage';
-import chart_color_red_100 from '@patternfly/react-tokens/dist/js/chart_color_red_100';
 
 const styles = StyleSheet.create({
-  bold: { fontWeight: global_FontWeight_bold.value },
-  link: { color: global_link_Color.value },
+  bold: { fontWeight: t_global_font_weight_heading_bold.value },
+  link: { color: t_global_text_color_link_default.value },
   text: { fontSize: 12 },
-  textMargin: { marginTop: global_spacer_md.value },
+  textMargin: { marginTop: t_global_spacer_md.value },
   nameColumn: {
     width: '10px',
     fontSize: 8,
@@ -43,10 +42,10 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 12,
-    color: chart_global_Fill_Color_700.value,
-    paddingLeft: c_table_m_compact_cell_PaddingLeft.value,
-    paddingBottom: c_table_m_compact_cell_PaddingBottom.value,
-    paddingTop: c_table_m_compact_cell_PaddingTop.value,
+    color: global_text_color_default.value,
+    paddingLeft: t_global_spacer_md.value,
+    paddingBottom: t_global_spacer_sm.value,
+    paddingTop: t_global_spacer_sm.value,
   },
   row: {
     fontSize: 8,
@@ -84,11 +83,21 @@ const SystemsPdfBuild = ({ asyncData, additionalData }) => {
 
   return (
     <div style={styles.document}>
-      <span style={{ fontSize: '24px', color: chart_color_red_100.value }}>
+      <span
+        style={{
+          fontSize: '24px',
+          color: t_global_text_color_status_danger_default.value,
+        }}
+      >
         Red Hat {isLightspeedEnabled ? 'Lightspeed' : 'Insights'}
       </span>
       <br />
-      <span style={{ fontSize: '32px', color: chart_color_red_100.value }}>
+      <span
+        style={{
+          fontSize: '32px',
+          color: t_global_text_color_status_danger_default.value,
+        }}
+      >
         {`${INSIGHTS_HEADER}: ${SYSTEMS}`}
       </span>
       <div key="sys-count" style={{ ...styles.text, ...styles.textMargin }}>
