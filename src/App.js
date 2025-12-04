@@ -19,17 +19,25 @@ const App = () => {
 
   useEffect(() => {
     envContext?.globalFilterScope?.('insights');
-    if (envContext?.globalFilterScope) {
-      envContext.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
-        const [workloads, selectedTags] =
-          envContext?.mapGlobalFilter?.(data, false, true) || [];
-        batch(() => {
-          dispatch(updateWorkloads(workloads));
-          dispatch(updateTags(selectedTags));
-        });
+
+    envContext.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
+      const [workloads, , encodedTags] = envContext?.mapGlobalFilter?.(
+        data,
+        true,
+        true,
+      ) || [null, null, []];
+
+      const selectedTags =
+        encodedTags?.map((tag) =>
+          decodeURIComponent(decodeURIComponent(tag)),
+        ) || [];
+
+      batch(() => {
+        dispatch(updateWorkloads(workloads));
+        dispatch(updateTags(selectedTags));
       });
-    }
-  }, []);
+    });
+  }, [envContext, dispatch]);
 
   return (
     !envContext?.isLoading &&
