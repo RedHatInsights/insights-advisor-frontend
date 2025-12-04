@@ -78,6 +78,9 @@ const BaseSystemAdvisor = ({
     return getSelectedItems(rows).filter((r) => r.resolution?.has_playbook);
   }, [rows]);
   const selectedItemsLength = getSelectedItems(rows).length;
+  const selectableItemsLength = rows.filter(
+    (r) => r.resolution?.has_playbook,
+  ).length;
 
   const [resolutions, setResolutions] = useState([]);
 
@@ -218,11 +221,16 @@ const BaseSystemAdvisor = ({
     );
   };
   const checkedStatus = () => {
-    return selectedItemsLength > 0
-      ? selectedItemsLength === systemAdvisorRef.current.rowCount
-        ? 1
-        : null
-      : 0;
+    if (selectedItemsLength === systemAdvisorRef.current.rowCount) {
+      return 1;
+    } else if (
+      selectedItemsLength > 0 ||
+      selectableItemsLength !== systemAdvisorRef.current.rowCount
+    ) {
+      return null;
+    } else {
+      return 0;
+    }
   };
 
   const bulkSelect = {
