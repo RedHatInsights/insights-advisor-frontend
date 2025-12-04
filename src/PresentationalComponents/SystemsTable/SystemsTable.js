@@ -37,7 +37,6 @@ const SystemsTable = () => {
   const { search } = useLocation();
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
-  const SID = useSelector(({ filters }) => filters.SID);
   const filters = useSelector(({ filters }) => filters.sysState);
   const setFilters = (filters) => dispatch(updateSysFilters(filters));
   const envContext = useContext(EnvironmentContext);
@@ -214,7 +213,6 @@ const SystemsTable = () => {
             'filter[system_profile]': true,
           },
           workloads,
-          SID,
           selectedTags,
         }}
         columns={(defaultColumns) => createColumns(defaultColumns, columns)}
@@ -242,7 +240,6 @@ const SystemsTable = () => {
             advisorFilters,
             filters,
             workloads,
-            SID,
           } = config;
           const sort = createSortParam(orderBy, orderDirection);
 
@@ -255,7 +252,6 @@ const SystemsTable = () => {
             filters,
             selectedTags,
             workloads,
-            SID,
             true,
           );
           const fetchedSystems = (
@@ -299,7 +295,6 @@ const SystemsTable = () => {
               filters,
               selectedTags,
               workloads,
-              SID,
               dispatch,
               envContext.BASE_URL,
             ),

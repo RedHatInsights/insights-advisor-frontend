@@ -51,7 +51,6 @@ export const useGetEntities =
       advisorFilters,
       filters,
       workloads,
-      SID,
       selectedTags,
     } = config;
     const sort = createSortParam(orderBy, orderDirection);
@@ -64,7 +63,6 @@ export const useGetEntities =
       filters,
       selectedTags,
       workloads,
-      SID,
     );
     handleRefresh(options);
     const allDetails = {

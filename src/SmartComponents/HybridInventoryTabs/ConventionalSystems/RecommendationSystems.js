@@ -14,7 +14,6 @@ const ConventionalSystems = ({
 }) => {
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
-  const SID = useSelector(({ filters }) => filters.SID);
   const envContext = useContext(EnvironmentContext);
   const actionResolver = useActionResolver(
     handleModalToggle,
@@ -32,7 +31,6 @@ const ConventionalSystems = ({
       afterDisableFn={afterDisableFn}
       selectedTags={selectedTags}
       workloads={workloads}
-      SID={SID}
       permsExport={envContext.isExportEnabled}
       exportTable="systems"
       showTags={true}
