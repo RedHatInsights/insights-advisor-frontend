@@ -104,7 +104,6 @@ const Inventory = ({
     itemIdsOnPage: grabPageIds,
     identitfier: 'system_uuid',
     isLoading,
-    disabled: envContext.loadChromeless && rulesPlaybookCount <= 0,
   });
 
   const fetchSystems = getEntities(
@@ -119,7 +118,6 @@ const Inventory = ({
     envContext.RULES_FETCH_URL,
     envContext.SYSTEMS_FETCH_URL,
     axios,
-    envContext,
   );
 
   // Ensures rows are marked as selected, runs the check on remediation Status
