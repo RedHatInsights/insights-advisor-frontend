@@ -189,7 +189,7 @@ export const pruneFilters = (localFilters, filterCategories) => {
 };
 
 // builds workload query filter
-export const workloadQueryBuilder = (workloads, SID) =>
+export const workloadQueryBuilder = (workloads) =>
   generateFilter(
     {
       system_profile: {
@@ -204,7 +204,6 @@ export const workloadQueryBuilder = (workloads, SID) =>
             not_nil: true,
           },
         }),
-        ...(SID?.length > 0 && { sap_sids: SID }),
       },
     },
     undefined,

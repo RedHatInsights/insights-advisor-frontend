@@ -2,7 +2,7 @@ import './App.scss';
 
 import React, { useEffect, useContext, createContext } from 'react';
 import { batch, useDispatch } from 'react-redux';
-import { updateSID, updateTags, updateWorkloads } from './Services/Filters';
+import { updateTags, updateWorkloads } from './Services/Filters';
 import MessageState from './PresentationalComponents/MessageState/MessageState';
 import { AdvisorRoutes } from './Routes';
 import messages from './Messages';
@@ -19,18 +19,25 @@ const App = () => {
 
   useEffect(() => {
     envContext?.globalFilterScope?.('insights');
-    if (envContext?.globalFilterScope) {
-      envContext.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
-        const [workloads, SID, selectedTags] =
-          envContext?.mapGlobalFilter?.(data, false, true) || [];
-        batch(() => {
-          dispatch(updateWorkloads(workloads));
-          dispatch(updateTags(selectedTags));
-          dispatch(updateSID(SID));
-        });
+
+    envContext.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
+      const [workloads, , encodedTags] = envContext?.mapGlobalFilter?.(
+        data,
+        true,
+        true,
+      ) || [null, null, []];
+
+      const selectedTags =
+        encodedTags?.map((tag) =>
+          decodeURIComponent(decodeURIComponent(tag)),
+        ) || [];
+
+      batch(() => {
+        dispatch(updateWorkloads(workloads));
+        dispatch(updateTags(selectedTags));
       });
-    }
-  }, []);
+    });
+  }, [envContext, dispatch]);
 
   return (
     !envContext?.isLoading &&
