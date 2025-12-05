@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { useSetAckMutation } from '../../Services/Acks';
 import { EnvironmentContext } from '../../App';
+import { getCsrfTokenHeader } from '../helper';
 
 const DisableRule = ({
   handleModalToggle = () => {},
@@ -33,16 +34,14 @@ const DisableRule = ({
   );
   const justificationMaxLength = 255;
 
-  const [setAck] = useSetAckMutation({
-    customBasePath: envContext.BASE_URL,
-  });
+  const [setAck] = useSetAckMutation();
 
   const bulkHostActions = async () => {
     const data = { systems: hosts, justification };
     try {
       await Post(
         `${envContext.BASE_URL}/rule/${rule.rule_id}/ack_hosts/`,
-        {},
+        getCsrfTokenHeader(),
         data,
       );
       !singleSystem &&
@@ -65,7 +64,7 @@ const DisableRule = ({
 
   const disableRule = async () => {
     if (rule.rule_status === 'enabled' && !hosts.length) {
-      const options = singleSystem
+      let options = singleSystem
         ? {
             type: 'HOST',
             options: {
@@ -82,6 +81,15 @@ const DisableRule = ({
             },
           };
       try {
+        if (envContext.loadChromeless) {
+          options = {
+            customBasePath: envContext.BASE_URL,
+            csrfToken: document
+              ?.querySelector('meta[name="csrf-token"]')
+              ?.getAttribute('content'),
+            ...options,
+          };
+        }
         await setAck(options).unwrap();
 
         notification({

@@ -35,6 +35,8 @@ import { cellWidth, fitContent, sortable } from '@patternfly/react-table';
 import { getImpactingFilterChips } from '../Filters/impactingFilter';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 import { Link } from 'react-router-dom';
+import { BASE_URL } from '../../AppConstants';
+import { getCsrfTokenHeader } from '../helper';
 
 export const emptyRows = (filters, toggleRulesDisabled) => [
   {
@@ -148,6 +150,7 @@ export const hideReports = async (
   refetch,
   dispatch,
   intl,
+  baseUrl = BASE_URL,
 ) => {
   const rule = rows[rowId].rule;
   const addNotification = (data) => dispatch(addNotificationAction(data));
@@ -158,7 +161,11 @@ export const hideReports = async (
       setDisableRuleOpen(true);
     } else {
       try {
-        await DeleteApi(`${AppConstants.BASE_URL}/ack/${rule.rule_id}/`);
+        await DeleteApi(
+          `${baseUrl}/ack/${encodeURI(rule.rule_id)}/`,
+          {},
+          getCsrfTokenHeader(),
+        );
         addNotification({
           variant: 'success',
           timeout: true,

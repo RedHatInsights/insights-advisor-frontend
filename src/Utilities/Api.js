@@ -23,9 +23,7 @@ const Put = (url, data = {}, headers = {}) => {
 };
 
 const DeleteApi = (url, data = {}, headers = {}) => {
-  return axios.delete(url, data, {
-    headers,
-  });
+  return axios.delete(url, { data, headers });
 };
 
 const AxiosBaseQuery =
@@ -40,7 +38,7 @@ const AxiosBaseQuery =
               headers,
               options,
             )
-          : Post(`${baseUrl}${url}`, headers, options);
+          : await Post(`${baseUrl}${url}`, headers, options);
 
       return { data: result.data };
     } catch (axiosError) {

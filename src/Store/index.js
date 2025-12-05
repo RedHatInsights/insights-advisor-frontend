@@ -49,6 +49,7 @@ const getMiddlewares = (appMiddlewares) => {
           'LOAD_ENTITY',
           'CLEAR_FILTERS',
           'LOAD_ENTITY_FULFILLED',
+          'LOAD_ENTITIES_FULFILLED',
         ],
       },
       immutableCheck: {

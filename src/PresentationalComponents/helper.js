@@ -94,3 +94,9 @@ export const populateExportError = (error) => {
     title: `${exportNotifications.error.title}: ${error.message}`,
   };
 };
+
+export const getCsrfTokenHeader = () => {
+  // X-CSRF-Token header is required for LoP mutations
+  const csrfToken = document?.querySelector('meta[name="csrf-token"]')?.content;
+  return csrfToken ? { 'X-CSRF-Token': csrfToken } : {};
+};
