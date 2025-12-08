@@ -13,7 +13,6 @@ export const paginatedRequestHelper = async ({
   advisorFilters,
   filters,
   workloads,
-  SID,
   pathway,
   rule,
   selectedTags,
@@ -30,7 +29,6 @@ export const paginatedRequestHelper = async ({
     filters,
     selectedTags,
     workloads,
-    SID,
   );
 
   return pathway
@@ -63,7 +61,6 @@ export const getEntities =
     RULES_FETCH_URL,
     SYSTEMS_FETCH_URL,
     axios,
-    envContext,
   ) =>
   async (_items, config, showTags, defaultGetEntities) => {
     const {
@@ -74,7 +71,6 @@ export const getEntities =
       advisorFilters,
       filters,
       workloads,
-      SID,
       selectedTags,
     } = config;
     const sort = createSortParam(orderBy, orderDirection);
@@ -88,7 +84,6 @@ export const getEntities =
       filters,
       selectedTags,
       workloads,
-      SID,
     );
     handleRefresh(options);
     const allDetails = {
@@ -102,11 +97,6 @@ export const getEntities =
     };
     setFullFilters(allDetails);
     const fetchedSystems = await paginatedRequestHelper(allDetails);
-    // In IOP env, disable checkboxes for systems when the rule doesn't have a playbook
-    envContext?.loadChromeless &&
-      fetchedSystems.data.map(
-        (system) => (system.disableCheckbox = rule.playbook_count <= 0),
-      );
     const results = await defaultGetEntities(
       fetchedSystems.data.map((system) => system.system_uuid),
       {

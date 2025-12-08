@@ -31,7 +31,6 @@ export const createOptions = (
   filters,
   selectedTags,
   workloads,
-  SID,
   systemsPage,
 ) => {
   const osFilter = filters.osFilter && buildOsFilter(filters.osFilter);
@@ -64,7 +63,7 @@ export const createOptions = (
       groups: filters.hostGroupFilter.join(','),
     }),
     ...(filters.tagFilters?.length && buildTagFilter(filters.tagFilters)),
-    ...(workloads ? workloadQueryBuilder(workloads, SID) : {}),
+    ...(workloads ? workloadQueryBuilder(workloads) : {}),
     ...(selectedTags?.length > 0 ? { tags: selectedTags.join(',') } : {}),
   };
   return options;

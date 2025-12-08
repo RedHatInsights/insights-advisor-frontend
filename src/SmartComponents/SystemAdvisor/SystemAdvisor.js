@@ -69,7 +69,6 @@ const BaseSystemAdvisor = ({
   const [isSystemProfileLoading, setSystemsProfileLoading] = useState(true);
   const selectedTags = useSelector(({ filters }) => filters?.selectedTags);
   const workloads = useSelector(({ filters }) => filters?.workloads);
-  const SID = useSelector(({ filters }) => filters?.SID);
   const envContext = useContext(EnvironmentContext);
 
   const getSelectedItems = (rows) => rows.filter((row) => row.selected);
@@ -78,6 +77,9 @@ const BaseSystemAdvisor = ({
     return getSelectedItems(rows).filter((r) => r.resolution?.has_playbook);
   }, [rows]);
   const selectedItemsLength = getSelectedItems(rows).length;
+  const selectableItemsLength = rows.filter(
+    (r) => r.resolution?.has_playbook,
+  ).length;
 
   const [resolutions, setResolutions] = useState([]);
 
@@ -218,11 +220,16 @@ const BaseSystemAdvisor = ({
     );
   };
   const checkedStatus = () => {
-    return selectedItemsLength > 0
-      ? selectedItemsLength === systemAdvisorRef.current.rowCount
-        ? 1
-        : null
-      : 0;
+    if (selectedItemsLength === systemAdvisorRef.current.rowCount) {
+      return 1;
+    } else if (
+      selectedItemsLength > 0 ||
+      selectableItemsLength !== systemAdvisorRef.current.rowCount
+    ) {
+      return null;
+    } else {
+      return 0;
+    }
   };
 
   const bulkSelect = {
@@ -525,10 +532,9 @@ const BaseSystemAdvisor = ({
                   { ...filters, text: searchValue },
                   selectedTags,
                   workloads,
-                  SID,
                   dispatch,
-                  display_name,
                   envContext.BASE_URL,
+                  display_name,
                   addNotification,
                 ),
               tooltipText: intl.formatMessage(messages.exportData),

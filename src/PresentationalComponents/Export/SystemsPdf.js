@@ -15,7 +15,6 @@ const SystemsPdf = ({ filters }) => {
     ({ AdvisorStore }) => AdvisorStore?.selectedTags,
   );
   const workloads = useSelector(({ AdvisorStore }) => AdvisorStore?.workloads);
-  const SID = useSelector(({ AdvisorStore }) => AdvisorStore?.SID);
   const envContext = useContext(EnvironmentContext);
   const addNotification = useAddNotification();
   const dataFetch = async () => {
@@ -23,8 +22,7 @@ const SystemsPdf = ({ filters }) => {
     addNotification(exportNotifications.pending);
 
     let options = selectedTags?.length && { tags: selectedTags };
-    workloads &&
-      (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
+    workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
     try {
       await envContext.requestPdf({
         filename: `Advisor_systems--${new Date()

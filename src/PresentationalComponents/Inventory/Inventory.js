@@ -38,7 +38,6 @@ const Inventory = ({
   pathway,
   selectedTags,
   workloads,
-  SID,
   permsExport,
   exportTable,
   showTags,
@@ -104,7 +103,6 @@ const Inventory = ({
     itemIdsOnPage: grabPageIds,
     identitfier: 'system_uuid',
     isLoading,
-    disabled: envContext.loadChromeless && rulesPlaybookCount <= 0,
   });
 
   const fetchSystems = getEntities(
@@ -119,7 +117,6 @@ const Inventory = ({
     envContext.RULES_FETCH_URL,
     envContext.SYSTEMS_FETCH_URL,
     axios,
-    envContext,
   );
 
   // Ensures rows are marked as selected, runs the check on remediation Status
@@ -474,7 +471,6 @@ const Inventory = ({
           }}
           customFilters={{
             advisorFilters: filters,
-            SID,
           }}
           showTags={envContext.loadChromeless ? false : showTags}
           getEntities={fetchSystems}
@@ -507,7 +503,8 @@ const Inventory = ({
                   exportTable,
                   fileType,
                   { rule_id: rule.rule_id, ...filters },
-                  SID,
+                  selectedTags,
+                  workloads,
                   dispatch,
                   envContext.BASE_URL,
                 ),
@@ -544,7 +541,6 @@ const Inventory = ({
             advisorFilters: filters,
             selectedTags,
             workloads,
-            SID,
           }}
           showTags={envContext.loadChromeless ? false : showTags}
           getEntities={fetchSystems}
@@ -579,7 +575,6 @@ const Inventory = ({
                   { rule_id: rule.rule_id, ...filters },
                   selectedTags,
                   workloads,
-                  SID,
                   dispatch,
                   envContext.BASE_URL,
                   addNotification,
@@ -603,7 +598,6 @@ Inventory.propTypes = {
   pathway: PropTypes.object,
   selectedTags: PropTypes.any,
   workloads: PropTypes.any,
-  SID: PropTypes.any,
   permsExport: PropTypes.bool,
   exportTable: PropTypes.string,
   showTags: PropTypes.bool,

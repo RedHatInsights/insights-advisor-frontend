@@ -20,4 +20,10 @@ describe('DetailsTitle', () => {
     render(<DetailsTitle areCountsLoading={false} systemsCount={10} />);
     expect(screen.getByText('10 Affected Systems')).toBeVisible();
   });
+
+  it('Should not display "1 Affected Systems"', () => {
+    useFeatureFlag.mockReturnValue(true);
+    render(<DetailsTitle areCountsLoading={false} systemsCount={1} />);
+    expect(screen.queryByText('1 Affected Systems')).not.toBeInTheDocument();
+  });
 });

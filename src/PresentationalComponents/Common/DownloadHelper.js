@@ -19,7 +19,6 @@ const downloadHelper = async (
   filters,
   selectedTags,
   workloads,
-  SID,
   dispatch,
   BASE_URL,
   display_name,
@@ -27,9 +26,8 @@ const downloadHelper = async (
 ) => {
   try {
     let options = selectedTags?.length && { tags: selectedTags };
-    workloads &&
-      (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
-    addNotification(exportNotifications.pending);
+    workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
+    dispatch(addNotification(exportNotifications.pending));
     const data = (
       await Get(
         `${BASE_URL}/export/${exportTable}.${

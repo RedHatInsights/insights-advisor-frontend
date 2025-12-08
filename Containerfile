@@ -16,6 +16,8 @@ COPY ./build-tools/server_config_gen.sh /opt/app-root/bin/server_config_gen.sh
 COPY --chown=default . .
 
 ARG NPM_BUILD_SCRIPT=""
+ARG PACKAGE_JSON_PATH=package.json
+ENV APP_NAME="advisor-frontend"
 RUN universal_build.sh
 
 FROM scratch

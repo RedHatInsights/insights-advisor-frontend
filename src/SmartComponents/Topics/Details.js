@@ -35,12 +35,10 @@ const Details = () => {
   const envContext = useContext(EnvironmentContext);
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
-  const SID = useSelector(({ filters }) => filters.SID);
   const recFilters = useSelector(({ filters }) => filters.recState);
   const topicId = useParams().id;
   let options = selectedTags?.length && { tags: selectedTags };
-  workloads &&
-    (options = { ...options, ...workloadQueryBuilder(workloads, SID) });
+  workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
   const hasEdgeDevices = useContext(AccountStatContext);
 
   const {
