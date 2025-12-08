@@ -7,7 +7,7 @@ const DetailsTitle = ({ areCountsLoading, systemsCount }) => {
     return <Skeleton width="25%" aria-label="Table title skeleton" />;
   }
 
-  return `${systemsCount} Affected Systems`;
+  return `${systemsCount} Affected System${systemsCount !== 1 ? 's' : ''}`;
 };
 
 DetailsTitle.propTypes = {
