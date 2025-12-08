@@ -6,10 +6,20 @@ export const Acks = createApi({
   baseQuery: dynamicRecsBaseQuery,
   endpoints: (build) => ({
     getRecAcks: build.query({
-      query: (options) => ({ url: `/ack/${encodeURI(options.ruleId)}/` }),
+      query: (options) => ({
+        url: `/ack/${encodeURI(options.ruleId)}/`,
+        customBasePath: options.customBasePath || undefined,
+      }),
     }),
     getHostAcks: build.query({
-      query: (options) => ({ url: `/hostack/`, options }),
+      query: (options) => {
+        const { customBasePath, ...otherOptions } = options;
+        return {
+          url: `/hostack/`,
+          options: otherOptions,
+          customBasePath: customBasePath || undefined,
+        };
+      },
       transformResponse: (response) => response.data,
     }),
     setAck: build.mutation({
@@ -17,6 +27,9 @@ export const Acks = createApi({
         url: `${options.type === 'RULE' ? '/ack/' : '/hostack/'}`,
         options: options.options,
         method: 'post',
+        customBasePath: options.customBasePath || undefined,
+        headers:
+          (options.csrfToken && { 'X-CSRF-Token': options.csrfToken }) || {},
       }),
     }),
   }),
