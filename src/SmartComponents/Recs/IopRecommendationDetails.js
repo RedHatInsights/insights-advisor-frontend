@@ -108,7 +108,7 @@ const IopRecommendationDetails = (props) => {
         envContext.BASE_URL,
       );
     }
-  }, [ruleId, envContext.BASE_URL]);
+  }, [ruleId, envContext.BASE_URL, recAckIsFetching, isFetching]);
 
   return (
     <React.Fragment>
