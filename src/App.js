@@ -26,12 +26,18 @@ const App = () => {
         true,
         true,
       ) || [null, null, []];
-
       const selectedTags =
-        encodedTags?.map((tag) =>
-          decodeURIComponent(decodeURIComponent(tag)),
-        ) || [];
+        encodedTags?.map((tag) => {
+          const fullyDecoded = decodeURIComponent(decodeURIComponent(tag));
+          const slashIndex = fullyDecoded.indexOf('/');
+          const equalsIndex = fullyDecoded.indexOf('=', slashIndex);
+          if (equalsIndex === -1) return fullyDecoded;
 
+          const namespaceAndKey = fullyDecoded.substring(0, equalsIndex);
+          const value = fullyDecoded.substring(equalsIndex + 1);
+          const encodedValue = value.replace(/=/g, '%3D').replace(/\//g, '%2F');
+          return `${namespaceAndKey}=${encodedValue}`;
+        }) || [];
       batch(() => {
         dispatch(updateWorkloads(workloads));
         dispatch(updateTags(selectedTags));
