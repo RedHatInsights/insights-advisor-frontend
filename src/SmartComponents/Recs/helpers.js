@@ -2,6 +2,7 @@ import { SYSTEM_TYPES } from '../../AppConstants';
 import { DeleteApi, Get, Post } from '../../Utilities/Api';
 import messages from '../../Messages';
 import axios from 'axios';
+import { getCsrfTokenHeader } from '../../PresentationalComponents/helper';
 export const ruleResolutionRisk = (rule) => {
   const resolution = rule?.resolution_set?.find(
     (resolution) =>
@@ -19,7 +20,11 @@ export const enableRule = async (
   baseUrl,
 ) => {
   try {
-    await DeleteApi(`${baseUrl}/ack/${encodeURI(rule.rule_id)}/`);
+    await DeleteApi(
+      `${baseUrl}/ack/${encodeURI(rule.rule_id)}/`,
+      {},
+      getCsrfTokenHeader(),
+    );
     addNotification({
       variant: 'success',
       timeout: true,
@@ -59,7 +64,7 @@ export const bulkHostActions = async ({
 
     await Post(
       `${baseUrl}/rule/${encodeURI(rule.rule_id)}/unack_hosts/`,
-      {},
+      getCsrfTokenHeader(),
       data,
     );
     refetch();
