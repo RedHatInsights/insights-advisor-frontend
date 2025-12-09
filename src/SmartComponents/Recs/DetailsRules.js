@@ -166,6 +166,7 @@ export const DetailsRules = ({
                                   intl,
                                   addNotification,
                                   handleModalToggle,
+                                  envContext.BASE_URL,
                                 );
                               }}
                             >
