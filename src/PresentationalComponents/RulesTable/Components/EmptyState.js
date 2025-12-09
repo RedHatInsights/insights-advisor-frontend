@@ -9,8 +9,11 @@ import MessageState from '../../MessageState/MessageState';
 import { messageMapping } from '../helpers';
 
 const EmptyState = ({ filters, toggleRulesDisabled }) => {
-  const message =
-    messageMapping()[filters.rule_status] || messageMapping().default;
+  const ruleStatus = Array.isArray(filters.rule_status)
+    ? filters.rule_status[0]
+    : filters.rule_status;
+
+  const message = messageMapping()[ruleStatus] || messageMapping().default;
 
   return (
     <MessageState
@@ -19,7 +22,7 @@ const EmptyState = ({ filters, toggleRulesDisabled }) => {
       title={message.title}
       text={message.body}
     >
-      {filters.rule_status === 'enabled' && (
+      {ruleStatus === 'enabled' && (
         <Button
           variant="link"
           style={{ paddingTop: 24 }}

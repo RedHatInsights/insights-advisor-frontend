@@ -26,7 +26,12 @@ import {
 import messages from '../../Messages';
 import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
 import { ruleResolutionRisk, enableRule } from './helpers';
-import { Dropdown, DropdownItem, MenuToggle } from '@patternfly/react-core';
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownList,
+  MenuToggle,
+} from '@patternfly/react-core';
 import { EnvironmentContext } from '../../App';
 
 export const DetailsRules = ({
@@ -120,54 +125,55 @@ export const DetailsRules = ({
                 >
                   <Dropdown
                     className="adv-c-dropdown-details-actions"
-                    onSelect={() =>
-                      setActionsDropdownOpen(!actionsDropdownOpen)
-                    }
-                    position="right"
+                    onSelect={() => setActionsDropdownOpen(false)}
+                    onOpenChange={(isOpen) => setActionsDropdownOpen(isOpen)}
+                    popperProps={{ position: 'right' }}
                     ouiaId="actions"
-                    toggle={
+                    toggle={(toggleRef) => (
                       <MenuToggle
+                        ref={toggleRef}
                         isDisabled={!permsDisableRec}
-                        onClick={(_event, actionsDropdownOpen) =>
-                          setActionsDropdownOpen(actionsDropdownOpen)
+                        onClick={() =>
+                          setActionsDropdownOpen(!actionsDropdownOpen)
                         }
+                        isExpanded={actionsDropdownOpen}
                       >
                         {intl.formatMessage(messages.actions)}
                       </MenuToggle>
-                    }
+                    )}
                     isOpen={actionsDropdownOpen}
-                    dropdownItems={
-                      rule && rule.rule_status === 'enabled'
-                        ? [
-                            <DropdownItem
-                              key="link"
-                              ouiaId="disable"
-                              onClick={() => {
-                                handleModalToggle(true);
-                              }}
-                            >
-                              {intl.formatMessage(messages.disableRule)}
-                            </DropdownItem>,
-                          ]
-                        : [
-                            <DropdownItem
-                              key="link"
-                              ouiaId="enable"
-                              onClick={() => {
-                                enableRule(
-                                  rule,
-                                  refetch,
-                                  intl,
-                                  addNotification,
-                                  handleModalToggle,
-                                );
-                              }}
-                            >
-                              {intl.formatMessage(messages.enableRule)}
-                            </DropdownItem>,
-                          ]
-                    }
-                  />
+                  >
+                    <DropdownList>
+                      {rule && rule.rule_status === 'enabled' ? (
+                        <DropdownItem
+                          key="link"
+                          ouiaId="disable"
+                          onClick={() => {
+                            handleModalToggle(true);
+                          }}
+                        >
+                          {intl.formatMessage(messages.disableRule)}
+                        </DropdownItem>
+                      ) : (
+                        <DropdownItem
+                          key="link"
+                          ouiaId="enable"
+                          onClick={() => {
+                            enableRule(
+                              rule,
+                              refetch,
+                              intl,
+                              addNotification,
+                              handleModalToggle,
+                              envContext.BASE_URL,
+                            );
+                          }}
+                        >
+                          {intl.formatMessage(messages.enableRule)}
+                        </DropdownItem>
+                      )}
+                    </DropdownList>
+                  </Dropdown>
                 </Tooltip>
               ) : (
                 <></>

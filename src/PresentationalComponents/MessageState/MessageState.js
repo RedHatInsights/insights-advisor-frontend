@@ -3,6 +3,7 @@ import {
   EmptyStateVariant,
   EmptyStateBody,
   EmptyStateFooter,
+  EmptyStateActions,
 } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
@@ -24,7 +25,7 @@ const MessageState = ({
     variant={variant}
     icon={icon}
     style={{
-      '--pf-c-empty-state__icon--Color': iconStyle?.color || 'inherit',
+      '--pf-v6-c-empty-state__icon--Color': iconStyle?.color || 'inherit',
     }}
   >
     <EmptyStateBody
@@ -35,7 +36,9 @@ const MessageState = ({
     >
       {text}
     </EmptyStateBody>
-    <EmptyStateFooter>{children}</EmptyStateFooter>
+    <EmptyStateFooter>
+      <EmptyStateActions>{children}</EmptyStateActions>
+    </EmptyStateFooter>
   </EmptyState>
 );
 

@@ -41,7 +41,6 @@ const AxiosBaseQuery =
               options,
             )
           : Post(`${baseUrl}${url}`, headers, options);
-      console.log('Axios Result:', result);
       return { data: result.data };
     } catch (axiosError) {
       let err = axiosError;

@@ -507,6 +507,8 @@ const Inventory = ({
                   workloads,
                   dispatch,
                   envContext.BASE_URL,
+                  displayName,
+                  addNotification,
                 ),
               isDisabled: !permsExport || entities?.rows?.length === 0,
               tooltipText: permsExport
@@ -577,6 +579,7 @@ const Inventory = ({
                   workloads,
                   dispatch,
                   envContext.BASE_URL,
+                  display_name,
                   addNotification,
                 ),
               isDisabled: !permsExport || entities?.rows?.length === 0,

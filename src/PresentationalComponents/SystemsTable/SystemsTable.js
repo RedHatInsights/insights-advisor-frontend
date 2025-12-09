@@ -301,14 +301,14 @@ const SystemsTable = () => {
               workloads,
               dispatch,
               envContext.BASE_URL,
+              display_name,
               addNotification,
             ),
           extraItems: [
             <li
               key="download-pdf"
               className="pf-v6-c-menu__list-item"
-              style={{ justifyContent: 'center', display: 'flex' }}
-              data-ouia-component-type="PF5/DropdownItem"
+              data-ouia-component-type="PF6/DropdownItem"
               data-ouia-component-id="DownloadPDF"
             >
               <SystemsPdf filters={pdfFilters} />
