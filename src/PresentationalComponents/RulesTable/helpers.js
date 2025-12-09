@@ -34,6 +34,8 @@ import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLin
 import { Link } from 'react-router-dom';
 import { Content } from '@patternfly/react-core';
 import RuleLabels from '../Labels/RuleLabels';
+import { BASE_URL } from '../../AppConstants';
+import { getCsrfTokenHeader } from '../helper';
 
 export const emptyRows = (filters, toggleRulesDisabled) => [
   {
@@ -148,6 +150,7 @@ export const hideReports = async (
   dispatch,
   intl,
   addNotification,
+  baseUrl = BASE_URL,
 ) => {
   const rule = rows[rowId].rule;
 
@@ -157,7 +160,11 @@ export const hideReports = async (
       setDisableRuleOpen(true);
     } else {
       try {
-        await DeleteApi(`${AppConstants.BASE_URL}/ack/${rule.rule_id}/`);
+        await DeleteApi(
+          `${baseUrl}/ack/${encodeURI(rule.rule_id)}/`,
+          {},
+          getCsrfTokenHeader(),
+        );
         addNotification({
           variant: 'success',
           timeout: true,

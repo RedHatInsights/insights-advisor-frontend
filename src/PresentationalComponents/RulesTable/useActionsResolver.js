@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import messages from '../../Messages';
 import { hideReports } from './helpers';
+import { BASE_URL } from '../../AppConstants';
 
 export const useActionsResolver = (
   rows,
@@ -10,6 +11,7 @@ export const useActionsResolver = (
   setDisableRuleOpen,
   refetch,
   addNotification,
+  baseUrl = BASE_URL,
 ) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -35,6 +37,7 @@ export const useActionsResolver = (
                   dispatch,
                   intl,
                   addNotification,
+                  baseUrl,
                 ),
             },
           ]
@@ -51,6 +54,7 @@ export const useActionsResolver = (
                   dispatch,
                   intl,
                   addNotification,
+                  baseUrl,
                 ),
             },
           ];
@@ -63,6 +67,7 @@ export const useActionsResolver = (
       dispatch,
       intl,
       addNotification,
+      baseUrl,
     ],
   );
 
