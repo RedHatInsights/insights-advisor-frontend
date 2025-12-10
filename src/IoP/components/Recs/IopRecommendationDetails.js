@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Recommendation detail page component for IoP environment.
+ * Displays detailed information about a specific recommendation including rule details,
+ * acknowledgement status, affected systems, and remediation options.
+ */
+
 import './Details.scss';
 
 import { UI_BASE } from '../../AppConstants';
@@ -20,7 +26,7 @@ import { InvalidObject } from '@redhat-cloud-services/frontend-components/Invali
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
-import IopViewHostAcks from '../../PresentationalComponents/Modals/IopViewHostAcks';
+import IopViewHostAcks from '../Modals/IopViewHostAcks';
 import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { cveToRuleid } from '../../cveToRuleid.js';
 import { useGetRecAcksQuery } from '../../Services/Acks';
@@ -34,6 +40,30 @@ import { EnvironmentContext } from '../../App';
 import { useParams } from 'react-router-dom';
 import ConventionalSystems from '../HybridInventoryTabs/ConventionalSystems/RecommendationSystems';
 
+/**
+ * Recommendation detail page component for IoP environment.
+ * Shows comprehensive information about a recommendation including:
+ * - Rule details and metadata
+ * - Acknowledgement status (rule-level and host-level)
+ * - List of affected systems
+ * - Options to enable/disable the rule
+ * - Remediation actions
+ *
+ * Handles CVE rules by redirecting to the vulnerability service.
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {boolean} [props.isImmutableTabOpen] - Whether the immutable systems tab is open
+ * @param {Function} [props.axios] - Custom axios instance for API calls
+ * @param {string} [props.ruleId] - Rule ID (alternative to URL param)
+ * @returns {React.ReactElement} Recommendation detail page with rule info and affected systems
+ *
+ * @example
+ * <IopRecommendationDetails
+ *   ruleId="RULE_123"
+ *   axios={customAxios}
+ * />
+ */
 const IopRecommendationDetails = (props) => {
   const intl = useIntl();
   const dispatch = useDispatch();

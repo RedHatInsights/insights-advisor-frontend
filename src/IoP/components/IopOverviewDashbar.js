@@ -4,7 +4,7 @@ import propTypes from 'prop-types';
 import useApplyFilters from './Hooks/useApplyFilters/useApplyFilters';
 import useOverviewData from './Hooks/useOverviewData/useOverviewData';
 import { Grid, GridItem, Title } from '@patternfly/react-core';
-import { IopOverviewDashbarCard } from '../Cards/OverviewDashbarCard/IopOverviewDashbarCard';
+import { IopOverviewDashbarCard } from './Cards/IopOverviewDashbarCard';
 import MessageState from '../MessageState/MessageState';
 import messages from '../../Messages';
 import {
@@ -21,6 +21,20 @@ import RuleLabels from '../Labels/RuleLabels';
 import { TagLabelWithTooltip } from '../Cards/OverviewDashbarCard/TagLabelWithTooltip';
 import { EnvironmentContext } from '../../App';
 
+/**
+ * Overview dashboard component for IoP environment.
+ * Displays key metrics in a responsive grid layout including incidents,
+ * critical recommendations, and important recommendations. Each metric
+ * card is clickable to filter the recommendations list.
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {Function} props.changeTab - Callback to change active tab when filtering
+ * @returns {React.ReactElement} Grid of overview metric cards or error state
+ *
+ * @example
+ * <IopOverviewDashbar changeTab={(tabIndex) => setActiveTab(tabIndex)} />
+ */
 const IopOverviewDashbar = ({ changeTab }) => {
   const envContext = useContext(EnvironmentContext);
   const { data } = useOverviewData(envContext);
