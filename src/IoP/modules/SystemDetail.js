@@ -30,7 +30,10 @@ import IopSystemAdvisor from '../components/IopSystemAdvisor';
  * />
  */
 const SystemDetail = (props) => (
-  <IopSystemAdvisor {...props} IopRemediationModal={props.IopRemediationModal} />
+  <IopSystemAdvisor
+    {...props}
+    IopRemediationModal={props.IopRemediationModal}
+  />
 );
 
 SystemDetail.propTypes = {
