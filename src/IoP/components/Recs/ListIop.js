@@ -11,8 +11,8 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
 
-import messages from '../../Messages';
-import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
+import messages from '../../../Messages';
+import RulesTable from '../../../PresentationalComponents/RulesTable/RulesTable';
 import {
   Stack,
   StackItem,
@@ -28,7 +28,7 @@ import {
   ExternalLinkAltIcon,
   OutlinedQuestionCircleIcon,
 } from '@patternfly/react-icons';
-import { EnvironmentContext } from '../../App';
+import { EnvironmentContext } from '../../../App';
 import IopOverviewDashbar from '../IopOverviewDashbar';
 
 /**

@@ -1,3 +1,4 @@
+/* eslint-disable rulesdir/no-chrome-api-call-from-window */
 import React from 'react';
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
@@ -7,11 +8,45 @@ import { initStore } from '../../Store';
 import { IOP_ENVIRONMENT_CONTEXT } from '../constants';
 
 /**
+ * Initializes mock chrome object for IoP environment.
+ * Sets up window.insights.chrome with stub functions that inventory components expect.
+ */
+const initializeMockChrome = () => {
+  if (typeof window !== 'undefined') {
+    window.insights = window.insights || {};
+    if (!window.insights.chrome) {
+      window.insights.chrome = {
+        auth: {
+          getUser: () => Promise.resolve({}),
+        },
+        getUserPermissions: () => Promise.resolve([]),
+        isBeta: () => false,
+        isProd: IOP_ENVIRONMENT_CONTEXT.isProd,
+        on: () => {},
+        updateDocumentTitle: IOP_ENVIRONMENT_CONTEXT.updateDocumentTitle,
+        hideGlobalFilter: () => {},
+        mapGlobalFilter: () => {},
+        globalFilterScope: () => {},
+        requestPdf: () => Promise.resolve(),
+        appAction: () => {},
+        appObjectId: () => {},
+        appNavClick: () => {},
+        identifyApp: () => {},
+        init: () => Promise.resolve(),
+      };
+    }
+  }
+};
+
+initializeMockChrome();
+
+/**
  * Higher-Order Component that wraps a component with IoP environment context.
  * Provides the following context layers:
  * 1. IntlProvider - Internationalization with English locale
  * 2. EnvironmentContext - IoP-specific environment configuration
  * 3. Redux Provider - Application state management
+ * 4. Mock chrome object on window.insights.chrome
  *
  * This HOC ensures that components have access to all necessary context
  * and configuration for the IoP (Insights on Premise) environment.
@@ -28,6 +63,7 @@ import { IOP_ENVIRONMENT_CONTEXT } from '../constants';
  * // - useIntl() hook for translations
  * // - useContext(EnvironmentContext) for IoP config
  * // - useSelector/useDispatch for Redux
+ * // - window.insights.chrome for inventory components
  *
  * @example
  * // Usage in IoP index.js

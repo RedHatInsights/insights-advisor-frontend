@@ -1,11 +1,10 @@
 import React, { useContext } from 'react';
 import propTypes from 'prop-types';
-
-import useApplyFilters from './Hooks/useApplyFilters/useApplyFilters';
-import useOverviewData from './Hooks/useOverviewData/useOverviewData';
+import useApplyFilters from '../../PresentationalComponents/OverviewDashbar/Hooks/useApplyFilters/useApplyFilters';
+import useOverviewData from '../../PresentationalComponents/OverviewDashbar/Hooks/useOverviewData/useOverviewData';
 import { Grid, GridItem, Title } from '@patternfly/react-core';
 import { IopOverviewDashbarCard } from './Cards/IopOverviewDashbarCard';
-import MessageState from '../MessageState/MessageState';
+import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import messages from '../../Messages';
 import {
   IMPORTANT_RECOMMENDATIONS,
@@ -16,9 +15,9 @@ import {
   IMPORTANT_TAG,
   INCIDENTS,
 } from '../../AppConstants';
-import { QuestionTooltip } from '../Common/Common';
-import RuleLabels from '../Labels/RuleLabels';
-import { TagLabelWithTooltip } from '../Cards/OverviewDashbarCard/TagLabelWithTooltip';
+import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
+import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
+import { TagLabelWithTooltip } from '../../PresentationalComponents/Cards/OverviewDashbarCard/TagLabelWithTooltip';
 import { EnvironmentContext } from '../../App';
 
 /**
