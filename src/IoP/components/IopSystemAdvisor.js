@@ -1,8 +1,8 @@
 import React from 'react';
-import { BaseSystemAdvisor } from './SystemAdvisor';
 import PropTypes from 'prop-types';
+import { BaseSystemAdvisor } from '../../SmartComponents/SystemAdvisor/SystemAdvisor';
 
-const SystemAdvisorWrapped = ({ ...props }) => {
+const IopSystemAdvisor = ({ ...props }) => {
   const inventoryId = props.response?.insights_attributes?.uuid;
   const entity = {
     id: inventoryId,
@@ -14,12 +14,13 @@ const SystemAdvisorWrapped = ({ ...props }) => {
   );
 };
 
-SystemAdvisorWrapped.propTypes = {
+IopSystemAdvisor.propTypes = {
   response: PropTypes.shape({
     insights_attributes: PropTypes.shape({
       uuid: PropTypes.string,
     }),
   }),
+  IopRemediationModal: PropTypes.elementType,
 };
 
-export default SystemAdvisorWrapped;
+export default IopSystemAdvisor;

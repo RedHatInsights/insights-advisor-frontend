@@ -54,7 +54,7 @@ module.exports = {
       './SystemDetail': resolve(__dirname, 'src/Modules/SystemDetail'),
       './SystemDetailWrapped': resolve(
         __dirname,
-        'src/Modules/SystemDetailWrapped',
+        'src/IoP/exports/SystemDetailWrapped',
       ),
       './BuildExecReport': resolve(
         __dirname,
@@ -74,12 +74,9 @@ module.exports = {
       ),
       './RecommendationDetailsWrapped': resolve(
         __dirname,
-        './src/SmartComponents/Recs/RecommendationDetailsWrapped.js',
+        './src/IoP/exports/RecommendationDetailsWrapped.js',
       ),
-      './ListWrapped': resolve(
-        __dirname,
-        './src/SmartComponents/Recs/ListWrapped.js',
-      ),
+      './ListWrapped': resolve(__dirname, './src/IoP/exports/ListWrapped.js'),
     },
   },
   _unstableSpdy: true,

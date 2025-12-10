@@ -22,7 +22,7 @@ import {
   OutlinedQuestionCircleIcon,
 } from '@patternfly/react-icons';
 import { EnvironmentContext } from '../../App';
-import IopOverviewDashbar from '../../PresentationalComponents/OverviewDashbar/IopOverviewDashbar';
+import IopOverviewDashbar from '../IopOverviewDashbar';
 
 const ListIop = () => {
   const envContext = useContext(EnvironmentContext);
