@@ -4,7 +4,7 @@ import propTypes from 'prop-types';
 import useApplyFilters from './Hooks/useApplyFilters/useApplyFilters';
 import useOverviewData from './Hooks/useOverviewData/useOverviewData';
 import { Grid, GridItem, Title } from '@patternfly/react-core';
-import { OverviewDashbarCard } from '../Cards/OverviewDashbarCard/OverviewDashbarCard';
+import { IopOverviewDashbarCard } from '../Cards/OverviewDashbarCard/IopOverviewDashbarCard';
 import MessageState from '../MessageState/MessageState';
 import messages from '../../Messages';
 import {
@@ -32,7 +32,7 @@ const IopOverviewDashbar = ({ changeTab }) => {
   return !isError ? (
     <Grid hasGutter id="overview-dashbar">
       <GridItem span={12} md={mdSpan}>
-        <OverviewDashbarCard
+        <IopOverviewDashbarCard
           name={INCIDENTS}
           isLoaded={loaded}
           title={
@@ -54,7 +54,7 @@ const IopOverviewDashbar = ({ changeTab }) => {
         />
       </GridItem>
       <GridItem span={12} md={mdSpan}>
-        <OverviewDashbarCard
+        <IopOverviewDashbarCard
           name={CRITICAL_RECOMMENDATIONS}
           isLoaded={loaded}
           title={
@@ -68,7 +68,7 @@ const IopOverviewDashbar = ({ changeTab }) => {
         />
       </GridItem>
       <GridItem span={12} md={mdSpan}>
-        <OverviewDashbarCard
+        <IopOverviewDashbarCard
           name={IMPORTANT_RECOMMENDATIONS}
           isLoaded={loaded}
           title={
