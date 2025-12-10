@@ -20,7 +20,7 @@ import { InvalidObject } from '@redhat-cloud-services/frontend-components/Invali
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
-import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
+import IopViewHostAcks from '../../PresentationalComponents/Modals/IopViewHostAcks';
 import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { cveToRuleid } from '../../cveToRuleid.js';
 import { useGetRecAcksQuery } from '../../Services/Acks';
@@ -108,14 +108,14 @@ const IopRecommendationDetails = (props) => {
         envContext.BASE_URL,
       );
     }
-  }, [ruleId, envContext.BASE_URL]);
+  }, [ruleId, envContext.BASE_URL, recAckIsFetching, isFetching]);
 
   return (
     <React.Fragment>
       {!isFetching && !isError ? (
         <React.Fragment>
           {viewSystemsModalOpen && (
-            <ViewHostAcks
+            <IopViewHostAcks
               handleModalToggle={(toggleModal) =>
                 setViewSystemsModalOpen(toggleModal)
               }
