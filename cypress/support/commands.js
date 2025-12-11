@@ -29,7 +29,7 @@ Cypress.Commands.add(
   (subject, item, el = '') => {
     const attr = `${el}[data-ouia-component-id="${item}"]`;
     return subject ? cy.wrap(subject).find(attr) : cy.get(attr);
-  }
+  },
 );
 
 Cypress.Commands.add(
@@ -38,11 +38,30 @@ Cypress.Commands.add(
   (subject, item, el = '') => {
     const attr = `${el}[data-ouia-component-type="${item}"]`;
     return subject ? cy.wrap(subject).find(attr) : cy.get(attr);
-  }
+  },
 );
 
 Cypress.Commands.add('clickOnRowKebab', (name) => {
-  cy.contains('tbody [data-ouia-component-type="PF5/TableRow"]', name)
-    .find('.pf-v5-c-menu-toggle')
+  cy.contains('tbody [data-ouia-component-type="PF6/TableRow"]', name)
+    .find('.pf-v6-c-menu-toggle')
     .click();
+});
+
+Cypress.Commands.add('tableIsSortedBy', (columnTitle, direction = null) => {
+  if (direction) {
+    return cy
+      .get('th')
+      .contains(columnTitle)
+      .closest('th')
+      .should('have.class', 'pf-v6-c-table__sort')
+      .and('have.class', 'pf-m-selected')
+      .and('have.attr', 'aria-sort', direction);
+  }
+
+  return cy
+    .get('th')
+    .contains(columnTitle)
+    .closest('th')
+    .should('have.class', 'pf-v6-c-table__sort')
+    .and('have.class', 'pf-m-selected');
 });

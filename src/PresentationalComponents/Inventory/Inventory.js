@@ -19,7 +19,6 @@ import RemediationButton from '@redhat-cloud-services/frontend-components-remedi
 import DownloadPlaybookButton from '../../Utilities/DownloadPlaybookButton';
 import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import messages from '../../Messages';
-import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { systemReducer } from '../../Store/AppReducer';
 import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
@@ -30,6 +29,7 @@ import { EnvironmentContext } from '../../App';
 import { AsyncComponent } from '@redhat-cloud-services/frontend-components';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 import { Link } from 'react-router-dom';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 
 const Inventory = ({
   tableProps,
@@ -58,8 +58,8 @@ const Inventory = ({
   const [total, setTotal] = useState(0);
   const entities = useSelector(({ entities }) => entities || {});
   const envContext = useContext(EnvironmentContext);
+  const addNotification = useAddNotification();
 
-  const addNotification = (data) => dispatch(notification(data));
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [curPageIds, setCurPageIds] = useState([]);
   const [pathwayRulesList, setPathwayRulesList] = useState({});
@@ -507,6 +507,8 @@ const Inventory = ({
                   workloads,
                   dispatch,
                   envContext.BASE_URL,
+                  displayName,
+                  addNotification,
                 ),
               isDisabled: !permsExport || entities?.rows?.length === 0,
               tooltipText: permsExport
@@ -577,6 +579,8 @@ const Inventory = ({
                   workloads,
                   dispatch,
                   envContext.BASE_URL,
+                  display_name,
+                  addNotification,
                 ),
               isDisabled: !permsExport || entities?.rows?.length === 0,
               tooltipText: permsExport

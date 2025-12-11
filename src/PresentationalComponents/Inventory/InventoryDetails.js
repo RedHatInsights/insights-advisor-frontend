@@ -62,8 +62,8 @@ const InventoryDetails = ({ entity }) => {
         {entity && <Breadcrumbs current={entity.display_name || entity.id} />}
         <InventoryDetailHead hideBack fallback={<InventoryHeadFallback />} />
       </PageHeader>
-      <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
-        <Title className="pf-v5-u-mb-lg" headingLevel="h3" size="2xl">
+      <section className="pf-v6-l-page__main-section pf-v6-c-page__main-section">
+        <Title className="pf-v6-u-mb-lg" headingLevel="h3" size="2xl">
           {intl.formatMessage(messages.recommendations)}
         </Title>
         <Grid hasGutter>
