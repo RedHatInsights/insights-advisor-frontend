@@ -1,0 +1,31 @@
+@use '~@redhat-cloud-services/frontend-components-utilities/styles/all';
+
+.adv-c-page__header {
+  padding-bottom: .1px;
+}
+
+.adv-c-card-details {
+  margin-bottom: var(--pf-v5-global--spacer--md);
+}
+
+.adv-c-title-details {
+  margin-bottom: var(--pf-v5-global--spacer--lg);
+}
+
+.adv-c-card__body {
+  padding-bottom: var(--pf-v5-global--spacer--md);
+}
+
+.adv-c-label-category {
+  margin-left: var(--pf-v5-global--spacer--md)
+}
+
+.wrap-justification-note {
+  overflow-wrap: anywhere;
+}
+
+@media only screen and (max-width: 768px) {
+  .adv-c-dropdown-details-actions {
+    @include all.rem('top', -55px);
+  }
+}
