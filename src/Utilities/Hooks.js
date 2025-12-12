@@ -27,18 +27,20 @@ export const matchPermissions = (permissionA, permissionB) => {
 
 /**
  * Checks whether user has particular permissions
- * @param {array} requestedPermissions - array of strings each represening a permission (defined in constants.js > PERMISSIONS)
+ * @param {array} requestedPerms - array of strings each representing a permission (defined in constants.js > PERMISSIONS)
  * @param app - application to get permissions for
  * @returns {array} - array where first element is an array of bools, representing each permission from parameter array,
  * second element is bool whether permissions are loading
  */
-export const useRbac = (requestedPerms) => {
+export const useRbac = (requestedPerms, app = 'advisor') => {
   const [allPerms, setAllPerms] = useState([]);
   const [loading, setLoading] = useState(true);
   const chrome = useChrome();
 
   useEffect(() => {
-    chrome?.getUserPermissions?.().then((permissions) => {
+    const permissionsFunc =
+      chrome?.getUserPermissions || chrome?.auth?.getUserPermissions;
+    permissionsFunc?.(app).then((permissions) => {
       setAllPerms(permissions);
       setLoading(false);
     });
