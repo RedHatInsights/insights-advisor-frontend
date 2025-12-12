@@ -6,17 +6,37 @@ import { IOP_ENVIRONMENT_CONTEXT } from '../../AppConstants';
 import { EnvironmentContext } from '../../App';
 import { initStore } from '../../Store';
 import ListIop from './ListIop';
+import PropTypes from 'prop-types';
 
 const dbStore = initStore();
 
-const ListWrapped = (props) => (
-  <IntlProvider locale="en" messages={messages}>
-    <EnvironmentContext.Provider value={IOP_ENVIRONMENT_CONTEXT}>
-      <Provider store={dbStore}>
-        <ListIop {...props} />
-      </Provider>
-    </EnvironmentContext.Provider>
-  </IntlProvider>
-);
+const ListWrapped = (props) => {
+  // TODO: change this line when getUserPermissions is available
+  const userPermissions = props.getUserPermissions
+    ? props.getUserPermissions('advisor').then((perms) => perms)
+    : [{ permissions: 'advisor:disable-recommendations:write' }];
+  const hasDisableRecPermission = userPermissions.some((item) =>
+    item.permissions.includes('advisor:disable-recommendations:write'),
+  );
+
+  return (
+    <IntlProvider locale="en" messages={messages}>
+      <EnvironmentContext.Provider
+        value={{
+          ...IOP_ENVIRONMENT_CONTEXT,
+          isDisableRecEnabled: hasDisableRecPermission,
+        }}
+      >
+        <Provider store={dbStore}>
+          <ListIop {...props} />
+        </Provider>
+      </EnvironmentContext.Provider>
+    </IntlProvider>
+  );
+};
+
+ListWrapped.propTypes = {
+  getUserPermissions: PropTypes.func,
+};
 
 export default ListWrapped;
