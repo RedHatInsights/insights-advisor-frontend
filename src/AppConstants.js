@@ -505,7 +505,7 @@ export const IOP_ENVIRONMENT_CONTEXT = {
   isLightspeedEnabled: false,
   isLoading: false,
   isExportEnabled: false,
-  isDisableRecEnabled: true, // needs to be toggled according to user permissions
+  isDisableRecEnabled: false, // set later according to user permissions
   isAllowedToViewRec: true,
   displayGroupsTagsColumns: false,
   displayRuleRatings: false,

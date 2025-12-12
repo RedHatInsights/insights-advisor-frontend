@@ -1,5 +1,5 @@
 import * as axios from 'axios';
-import { systemsCheck } from './helpers';
+import { systemsCheck, fetchIOPUserPermissions } from './helpers';
 
 jest.mock('axios');
 
@@ -66,5 +66,69 @@ describe('systemsCheck state is getting set', () => {
     expect(axios.get).toHaveBeenCalledWith(
       '/api/insights/v1/system/?limit=1&filter[system_profile]&pathway=pathway',
     );
+  });
+});
+
+describe('fetchIOPUserPermissions', () => {
+  const getUserPermissionsFunc = jest.fn();
+  const setHasPermissionsFunc = jest.fn();
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('should set hasPermissions to true when user has write permission', async () => {
+    const mockPermissions = [
+      { permission: 'advisor:disable-recommendations:write' },
+      { permission: 'advisor:exports:read' },
+    ];
+
+    getUserPermissionsFunc.mockResolvedValue(mockPermissions);
+    await fetchIOPUserPermissions(
+      getUserPermissionsFunc,
+      setHasPermissionsFunc,
+    );
+
+    expect(getUserPermissionsFunc).toHaveBeenCalledWith('advisor');
+    expect(setHasPermissionsFunc).toHaveBeenCalledWith(true);
+  });
+
+  test('should set hasPermissions to false when user does not have write permission', async () => {
+    const mockPermissions = [
+      { permission: 'advisor:disable-recommendations:read' },
+      { permission: 'advisor:exports:read' },
+    ];
+
+    getUserPermissionsFunc.mockResolvedValue(mockPermissions);
+    await fetchIOPUserPermissions(
+      getUserPermissionsFunc,
+      setHasPermissionsFunc,
+    );
+
+    expect(getUserPermissionsFunc).toHaveBeenCalledWith('advisor');
+    expect(setHasPermissionsFunc).toHaveBeenCalledWith(false);
+  });
+
+  test('should set hasPermissions to false when permissions array is empty', async () => {
+    getUserPermissionsFunc.mockResolvedValue([]);
+    await fetchIOPUserPermissions(
+      getUserPermissionsFunc,
+      setHasPermissionsFunc,
+    );
+
+    expect(getUserPermissionsFunc).toHaveBeenCalledWith('advisor');
+    expect(setHasPermissionsFunc).toHaveBeenCalledWith(false);
+  });
+
+  test('should handle when getUserPermissionsFunc is undefined', async () => {
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+    await fetchIOPUserPermissions(undefined, setHasPermissionsFunc);
+
+    expect(setHasPermissionsFunc).not.toHaveBeenCalled();
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      'Error fetching permissions: ',
+      expect.any(TypeError),
+    );
+    consoleLogSpy.mockRestore();
   });
 });
