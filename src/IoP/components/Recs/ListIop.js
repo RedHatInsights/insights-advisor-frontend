@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Main recommendations list page component for IoP environment.
+ * Displays the overview dashboard and recommendations table with IoP-specific
+ * header and documentation links.
+ */
+
 import './ListIop.scss';
 import React, { useContext, useEffect } from 'react';
 import {
@@ -5,8 +11,8 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
 
-import messages from '../../Messages';
-import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
+import messages from '../../../Messages';
+import RulesTable from '../../../PresentationalComponents/RulesTable/RulesTable';
 import {
   Stack,
   StackItem,
@@ -22,9 +28,22 @@ import {
   ExternalLinkAltIcon,
   OutlinedQuestionCircleIcon,
 } from '@patternfly/react-icons';
-import { EnvironmentContext } from '../../App';
-import IopOverviewDashbar from '../../PresentationalComponents/OverviewDashbar/IopOverviewDashbar';
+import { EnvironmentContext } from '../../../App';
+import IopOverviewDashbar from '../IopOverviewDashbar';
 
+/**
+ * Recommendations list page component for IoP environment.
+ * Displays a page header with an about popover, overview dashboard showing
+ * key metrics, and the recommendations table. The header includes a link to
+ * Red Hat Lightspeed or Insights Advisor documentation based on feature flags.
+ *
+ * @component
+ * @returns {React.ReactElement} Page with header, overview dashboard, and recommendations table
+ *
+ * @example
+ * // Used as a route component in IoP environment
+ * <Route path="/recommendations" component={ListIop} />
+ */
 const ListIop = () => {
   const envContext = useContext(EnvironmentContext);
 
