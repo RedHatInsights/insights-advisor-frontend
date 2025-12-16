@@ -1,8 +1,14 @@
+/**
+ * @fileoverview Recommendation detail page component for IoP environment.
+ * Displays detailed information about a specific recommendation including rule details,
+ * acknowledgement status, affected systems, and remediation options.
+ */
+
 import './Details.scss';
 
-import { UI_BASE } from '../../AppConstants';
-import messages from '../../Messages';
-import React, { useContext, useEffect, useState } from 'react';
+import { UI_BASE } from '../../../AppConstants';
+import messages from '../../../Messages';
+import React, { useContext, useEffect, useState, Suspense } from 'react';
 import propTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
@@ -17,23 +23,52 @@ import {
 import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { InvalidObject } from '@redhat-cloud-services/frontend-components/InvalidObject';
-import Loading from '../../PresentationalComponents/Loading/Loading';
-import MessageState from '../../PresentationalComponents/MessageState/MessageState';
-import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
-import IopViewHostAcks from '../../PresentationalComponents/Modals/IopViewHostAcks';
-import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
-import { cveToRuleid } from '../../cveToRuleid.js';
-import { useGetRecAcksQuery } from '../../Services/Acks';
-import { useGetRecQuery } from '../../Services/Recs';
-import { useGetTopicsQuery } from '../../Services/Topics';
-import { enableRule, bulkHostActions, systemsCheck } from './helpers';
-import { DetailsRules } from './DetailsRules';
-import { AccountStatContext } from '../../ZeroStateWrapper.js';
-import DetailsTitle from './DetailsTitle.js';
-import { EnvironmentContext } from '../../App';
-import { useParams } from 'react-router-dom';
-import ConventionalSystems from '../HybridInventoryTabs/ConventionalSystems/RecommendationSystems';
+import Loading from '../../../PresentationalComponents/Loading/Loading';
+import MessageState from '../../../PresentationalComponents/MessageState/MessageState';
+import DisableRule from '../../../PresentationalComponents/Modals/DisableRule';
 
+const IopViewHostAcks = React.lazy(() => import('../Modals/IopViewHostAcks'));
+import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
+import { cveToRuleid } from '../../../cveToRuleid.js';
+import { useGetRecAcksQuery } from '../../../Services/Acks';
+import { useGetRecQuery } from '../../../Services/Recs';
+import { useGetTopicsQuery } from '../../../Services/Topics';
+import {
+  enableRule,
+  bulkHostActions,
+  systemsCheck,
+} from '../../../SmartComponents/Recs/helpers';
+import { DetailsRules } from '../../../SmartComponents/Recs/DetailsRules';
+import { AccountStatContext } from '../../../ZeroStateWrapper.js';
+import DetailsTitle from '../../../SmartComponents/Recs/DetailsTitle.js';
+import { EnvironmentContext } from '../../../App';
+import { useParams } from 'react-router-dom';
+import ConventionalSystems from '../../../SmartComponents/HybridInventoryTabs/ConventionalSystems/RecommendationSystems';
+
+/**
+ * Recommendation detail page component for IoP environment.
+ * Shows comprehensive information about a recommendation including:
+ * - Rule details and metadata
+ * - Acknowledgement status (rule-level and host-level)
+ * - List of affected systems
+ * - Options to enable/disable the rule
+ * - Remediation actions
+ *
+ * Handles CVE rules by redirecting to the vulnerability service.
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {boolean} [props.isImmutableTabOpen] - Whether the immutable systems tab is open
+ * @param {Function} [props.axios] - Custom axios instance for API calls
+ * @param {string} [props.ruleId] - Rule ID (alternative to URL param)
+ * @returns {React.ReactElement} Recommendation detail page with rule info and affected systems
+ *
+ * @example
+ * <IopRecommendationDetails
+ *   ruleId="RULE_123"
+ *   axios={customAxios}
+ * />
+ */
 const IopRecommendationDetails = (props) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -115,14 +150,16 @@ const IopRecommendationDetails = (props) => {
       {!isFetching && !isError ? (
         <React.Fragment>
           {viewSystemsModalOpen && (
-            <IopViewHostAcks
-              handleModalToggle={(toggleModal) =>
-                setViewSystemsModalOpen(toggleModal)
-              }
-              isModalOpen={viewSystemsModalOpen}
-              afterFn={() => refetch()}
-              rule={rule}
-            />
+            <Suspense fallback={<Loading />}>
+              <IopViewHostAcks
+                handleModalToggle={(toggleModal) =>
+                  setViewSystemsModalOpen(toggleModal)
+                }
+                isModalOpen={viewSystemsModalOpen}
+                afterFn={() => refetch()}
+                rule={rule}
+              />
+            </Suspense>
           )}
           {disableRuleModalOpen && (
             <DisableRule
