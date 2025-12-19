@@ -38,6 +38,7 @@ const IopViewHostAcks = ({
   ];
   const [rows, setRows] = useState([]);
   const [unclean, setUnclean] = useState(false);
+  const [initializing, setInitializing] = useState(true);
   const {
     data: hostAcks,
     isFetching,
@@ -75,12 +76,6 @@ const IopViewHostAcks = ({
   };
 
   useEffect(() => {
-    if (isModalOpen) {
-      refetch();
-    }
-  }, [isModalOpen, refetch]);
-
-  useEffect(() => {
     const rows = hostAcks?.map((item) => ({
       cells: [
         item.display_name || item.system_uuid,
@@ -106,12 +101,13 @@ const IopViewHostAcks = ({
       ],
     }));
 
-    if (!isLoading && hostAcks.length === 0) {
+    if (!(isLoading || isFetching) && !initializing && hostAcks.length === 0) {
       afterFn();
       handleModalToggle(false);
     }
 
     setRows(rows);
+    setInitializing(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hostAcks]);
 
