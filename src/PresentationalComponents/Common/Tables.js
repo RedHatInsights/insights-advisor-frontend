@@ -201,12 +201,12 @@ export const workloadQueryBuilder = (workloads) =>
           }),
           ...(workloads?.['Ansible Automation Platform']?.isSelected && {
             ansible: {
-              controller_version: {not_nil: true},
+              controller_version: { not_nil: true },
             },
           }),
           ...(workloads?.['Microsoft SQL']?.isSelected && {
             mssql: {
-              version: {not_nil: true},
+              version: { not_nil: true },
             },
           }),
         },
