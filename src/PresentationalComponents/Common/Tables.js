@@ -193,17 +193,23 @@ export const workloadQueryBuilder = (workloads) =>
   generateFilter(
     {
       system_profile: {
-        ...(workloads?.SAP?.isSelected && { sap_system: true }),
-        ...(workloads?.['Ansible Automation Platform']?.isSelected && {
-          ansible: {
-            not_nil: true,
-          },
-        }),
-        ...(workloads?.['Microsoft SQL']?.isSelected && {
-          mssql: {
-            not_nil: true,
-          },
-        }),
+        workloads: {
+          ...(workloads?.SAP?.isSelected && {
+            sap: {
+              sap_system: true,
+            },
+          }),
+          ...(workloads?.['Ansible Automation Platform']?.isSelected && {
+            ansible: {
+              controller_version: {not_nil: true},
+            },
+          }),
+          ...(workloads?.['Microsoft SQL']?.isSelected && {
+            mssql: {
+              version: {not_nil: true},
+            },
+          }),
+        },
       },
     },
     undefined,

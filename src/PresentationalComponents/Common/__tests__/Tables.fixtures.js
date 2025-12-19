@@ -20,8 +20,8 @@ const allWorkloadsFiltersTrue = {
 };
 
 const fullBuiltWorkloadQuery = {
-  'filter[system_profile][ansible][not_nil]': true,
-  'filter[system_profile][sap_system]': true,
+  'filter[system_profile][workloads][ansible][controller_version]': 'not_nil',
+  'filter[system_profile][workloads][sap][sap_system]': true,
 };
 
 export default {
