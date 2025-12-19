@@ -38,16 +38,23 @@ const ViewHostAcks = ({
   ];
   const [rows, setRows] = useState([]);
   const [unclean, setUnclean] = useState(false);
+  const [initializing, setInitializing] = useState(true);
   const {
     data: hostAcks = [],
     isFetching,
     isLoading,
     refetch,
-  } = useGetHostAcksQuery({
-    rule_id: rule.rule_id,
-    limit: rule.hosts_acked_count,
-    customBasePath: envContext.BASE_URL,
-  });
+  } = useGetHostAcksQuery(
+    {
+      rule_id: rule.rule_id,
+      limit: rule.hosts_acked_count,
+      customBasePath: envContext.BASE_URL,
+    },
+    {
+      skip: !isModalOpen,
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const deleteAck = async (host) => {
     try {
       await DeleteApi(`${BASE_URL}/hostack/${host.id}/`);
@@ -90,12 +97,13 @@ const ViewHostAcks = ({
       ],
     }));
 
-    if (!isLoading && hostAcks.length === 0) {
+    if (!(isLoading || isFetching) && !initializing && hostAcks.length === 0) {
       afterFn();
       handleModalToggle(false);
     }
 
     setRows(rows);
+    setInitializing(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hostAcks]);
 
