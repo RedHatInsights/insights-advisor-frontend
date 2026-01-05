@@ -126,7 +126,7 @@
     "babel-loader": "^10.0.0",
     "babel-plugin-istanbul": "^7.0.1",
     "babel-plugin-lodash": "3.3.4",
-    "cypress": "^15.2.0",
+    "cypress": "^15.8.1",
     "eslint": "^9.36.0",
     "eslint-plugin-cypress": "^5.1.1",
     "eslint-plugin-jest-dom": "^5.5.0",
