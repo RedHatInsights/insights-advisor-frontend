@@ -99,7 +99,7 @@ const expandContent = (rowNumber) => {
 */
 
 const expandAll = () => {
-  cy.get('button[aria-label="Expand all"]').click();
+  cy.get('button[aria-label="Expand all rows"]').click();
 };
 
 const filterApply = (filters) => cypressApplyFilters(filters, filtersConf);
@@ -172,10 +172,10 @@ describe('defaults', () => {
   });
 
   it('links to the recommendations detail page', () => {
-    cy.get('tbody tr:first [data-label=Name] a')
+    cy.get('tbody tr:first [data-label="Name"] a')
       .should('have.attr', 'href')
       .and('include', `/recommendations/${fixtures.data[0].rule_id}`);
-    cy.get('tbody tr:first [data-label=Systems] a')
+    cy.get('tbody tr:first [data-label="Systems"] a')
       .should('have.attr', 'href')
       .and('include', `/recommendations/${fixtures.data[0].rule_id}`);
   });
