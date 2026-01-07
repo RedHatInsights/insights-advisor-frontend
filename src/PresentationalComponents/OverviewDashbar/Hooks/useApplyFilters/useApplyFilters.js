@@ -4,7 +4,6 @@ import {
   filtersInitialState,
 } from '../../../../Services/Filters';
 import {
-  PATHWAYS,
   INCIDENTS,
   IMPORTANT_RECOMMENDATIONS,
   CRITICAL_RECOMMENDATIONS,
@@ -43,8 +42,6 @@ function useApplyFilters(changeTab) {
         changeTab(RECOMMENDATIONS_TAB);
         break;
       default:
-        console.log(`Error! applyFiltersByName was provided with an invalid title. Valid titles are:
-          '${PATHWAYS}', '${INCIDENTS}', '${IMPORTANT_RECOMMENDATIONS}' and '${CRITICAL_RECOMMENDATIONS}'`);
         break;
     }
   };

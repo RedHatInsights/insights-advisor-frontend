@@ -1,25 +1,26 @@
 import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
+import { IntlProvider } from 'react-intl';
 import { initStore } from '../../Store';
 
 import rulesfixtures from '../../../cypress/fixtures/detailsrules.json';
 import topicsfixtures from '../../../cypress/fixtures/detailsrulestopic.json';
+import messages from '../../../locales/translations.json';
 
 const disableRec = true;
 const dropdownOpen = false;
 import { DetailsRules } from './DetailsRules';
 const ruleDescription = rulesfixtures.description;
 const ROOT =
-  'div[class="pf-v5-l-flex pf-m-column pf-m-row-on-lg pf-m-nowrap ins-c-rule-details"]';
+  'div[class="pf-v6-l-flex pf-m-column pf-m-row-on-lg pf-m-nowrap ins-c-rule-details"]';
 import { EnvironmentContext } from '../../App';
 
 const mountComponent = (envContext = {}) => {
   cy.mount(
     <EnvironmentContext.Provider value={envContext}>
       <MemoryRouter>
-        <IntlProvider locale={navigator.language.slice(0, 2)}>
+        <IntlProvider messages={messages} defaultLocale="en" locale="en">
           <Provider store={initStore()}>
             <Routes>
               <Route
@@ -71,6 +72,12 @@ describe('defaults', () => {
       rulesfixtures.generic.trim(),
     );
   });
+  it('displays the total risk label', () => {
+    cy.contains('Total risk').should('exist');
+  });
+  it('displays the total risk badge', () => {
+    cy.get('.ins-c-rule-details__total-risk').should('exist');
+  });
   it('rule voting is rendered', () => {
     cy.get('.ins-c-rule-details__vote').should(
       'contain',
@@ -84,13 +91,17 @@ describe('defaults', () => {
       'Moderate',
     );
   });
+  it('displays risk of change section', () => {
+    cy.contains('Risk of change').should('exist');
+    cy.get('.ins-c-rule-details__risk-of-ch-label').should('exist');
+  });
   it('tells that reboot is required', () => {
     cy.get('.ins-c-rule-details__reboot').should(
       'have.text',
       'System reboot is required.',
     );
   });
-  it('the request is sent when voted', () => {
+  it('the request is sent when voted with thumbs up', () => {
     cy.intercept('/api/insights/v1/rating', { statusCode: 200 }).as('rating');
     // eslint-disable-next-line cypress/unsafe-to-chain-command
     cy.ouiaId('thumbsUp')
@@ -98,6 +109,20 @@ describe('defaults', () => {
       .then(() => {
         cy.wait('@rating');
       });
+  });
+  it('the request is sent when voted with thumbs down', () => {
+    cy.intercept('/api/insights/v1/rating', { statusCode: 200 }).as('rating');
+    // eslint-disable-next-line cypress/unsafe-to-chain-command
+    cy.ouiaId('thumbsDown')
+      .click()
+      .then(() => {
+        cy.wait('@rating');
+      });
+  });
+  it('displays thank you message after voting', () => {
+    cy.intercept('/api/insights/v1/rating', { statusCode: 200 }).as('rating');
+    cy.ouiaId('thumbsUp').click();
+    cy.contains('Thank you for your feedback!').should('exist');
   });
   it('knowledgebase article has right link', () => {
     cy.contains('a', 'Knowledgebase article')

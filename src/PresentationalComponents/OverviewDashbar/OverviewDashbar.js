@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import propTypes from 'prop-types';
+import { useIntl } from 'react-intl';
 
 import useApplyFilters from './Hooks/useApplyFilters/useApplyFilters';
 import useOverviewData from './Hooks/useOverviewData/useOverviewData';
@@ -20,11 +21,12 @@ import {
 } from '../../AppConstants';
 import { QuestionTooltip } from '../Common/Common';
 import { RouteIcon } from '@patternfly/react-icons';
-import RuleLabels from '../Labels/RuleLabels';
 import { TagLabelWithTooltip } from '../Cards/OverviewDashbarCard/TagLabelWithTooltip';
 import { EnvironmentContext } from '../../App';
+import RuleLabels from '../Labels/RuleLabels';
 
 const OverviewDashbar = ({ changeTab }) => {
+  const intl = useIntl();
   const envContext = useContext(EnvironmentContext);
   const { data } = useOverviewData(envContext);
   const { pathways, incidents, critical, important, loaded, isError } = data;
@@ -71,6 +73,7 @@ const OverviewDashbar = ({ changeTab }) => {
               noMargin
               isCompact
               rule={{ tags: INCIDENT_TAG }}
+              intl={intl}
             />
           }
           count={incidents}

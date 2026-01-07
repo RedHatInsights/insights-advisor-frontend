@@ -12,19 +12,19 @@ import {
   ChartBar,
   ChartGroup,
   ChartVoronoiContainer,
-} from '@patternfly/react-charts';
+} from '@patternfly/react-charts/victory';
 import {
   Grid,
   GridItem,
 } from '@patternfly/react-core/dist/esm/layouts/Grid/index';
+import {
+  t_global_icon_color_severity_critical_default,
+  t_global_icon_color_severity_important_default,
+  t_global_icon_color_severity_moderate_default,
+  t_global_background_color_200,
+} from '@patternfly/react-tokens';
 
 import React from 'react';
-import {
-  chart_color_black_100,
-  chart_color_gold_400,
-  chart_color_orange_300,
-  chart_color_red_100,
-} from '@patternfly/react-tokens';
 import messages from '../../Messages';
 import { strong } from '../../Utilities/intlHelper';
 import { useIntl } from 'react-intl';
@@ -47,9 +47,8 @@ export const TotalRiskCard = (props) => {
       : cats[0]?.name;
   return (
     <Card
-      isFlat
       isPlain
-      className="adv-c-card-pathway adv__background--global-100 pf-v5-u-h-100"
+      className="adv-c-card-pathway adv__background--global-100 pf-v6-u-h-100"
       ouiaId="total-risk-card"
     >
       <CardTitle>{intl.formatMessage(messages.totalRiskPathway)}</CardTitle>
@@ -93,25 +92,25 @@ export const TotalRiskCard = (props) => {
                         name: 'Critical',
                         x: 'Critical',
                         y: critical_risk_count,
-                        fill: chart_color_red_100.value,
+                        fill: t_global_icon_color_severity_critical_default.value,
                       },
                       {
                         name: 'Important',
                         x: 'Important',
                         y: high_risk_count,
-                        fill: chart_color_orange_300.value,
+                        fill: t_global_icon_color_severity_important_default.value,
                       },
                       {
                         name: 'Moderate',
                         x: 'Moderate',
                         y: medium_risk_count,
-                        fill: chart_color_gold_400.value,
+                        fill: t_global_icon_color_severity_moderate_default.value,
                       },
                       {
                         name: 'Low',
                         x: 'Low',
                         y: low_risk_count,
-                        fill: chart_color_black_100.value,
+                        fill: t_global_background_color_200.value,
                       },
                     ]}
                   />
@@ -119,7 +118,7 @@ export const TotalRiskCard = (props) => {
               </Chart>
             </div>
           </GridItem>
-          <GridItem span={6} className="pf-v5-u-font-size-sm">
+          <GridItem span={6} className="pf-v6-u-font-size-sm">
             {intl.formatMessage(messages.thisPathway, {
               category: catString(categories),
               systems: impacted_systems_count,
