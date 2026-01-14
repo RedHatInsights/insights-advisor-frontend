@@ -31,7 +31,6 @@ import CategoryLabel from '../Labels/CategoryLabel';
 import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { ruleResolutionRisk, pruneFilters } from '../Common/Tables';
-import { cellWidth, fitContent, sortable } from '@patternfly/react-table';
 import { getImpactingFilterChips } from '../Filters/impactingFilter';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 import { Link } from 'react-router-dom';
@@ -535,27 +534,33 @@ export const buildRows = (
 export const getColumns = (intl) => [
   {
     title: intl.formatMessage(messages.name),
-    transforms: [sortable, cellWidth(40)],
+    sortable: true,
+    width: 40,
   },
   {
     title: intl.formatMessage(messages.modified),
-    transforms: [sortable, fitContent],
+    sortable: true,
+    modifier: 'fitContent',
   },
   {
     title: intl.formatMessage(messages.category),
-    transforms: [sortable, fitContent],
+    sortable: true,
+    modifier: 'fitContent',
   },
   {
     title: intl.formatMessage(messages.totalRisk),
-    transforms: [sortable, fitContent],
+    sortable: true,
+    modifier: 'fitContent',
   },
   {
     title: intl.formatMessage(messages.systems),
-    transforms: [sortable, fitContent],
+    sortable: true,
+    modifier: 'fitContent',
   },
   {
     title: intl.formatMessage(messages.remediation),
-    transforms: [sortable, fitContent],
+    sortable: true,
+    modifier: 'fitContent',
   },
 ];
 
@@ -572,12 +577,12 @@ const buildFilterChips = (filters, hasEdgeDevice) => {
 };
 
 export const sortIndices = {
-  1: 'description',
-  2: 'publish_date',
-  3: 'category',
-  4: 'total_risk',
-  5: 'impacted_count',
-  6: 'playbook_count',
+  0: 'description',
+  1: 'publish_date',
+  2: 'category',
+  3: 'total_risk',
+  4: 'impacted_count',
+  5: 'playbook_count',
 };
 
 export const getDefaultImpactingFilter = (hasEdgeDevices) =>

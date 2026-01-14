@@ -1,6 +1,5 @@
 import './SystemAdvisor.scss';
 import React, { useCallback } from 'react';
-import { fitContent, sortable } from '@patternfly/react-table';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import InsightsLabel from '@redhat-cloud-services/frontend-components/InsightsLabel';
 import DateFormat from '@redhat-cloud-services/frontend-components/DateFormat';
@@ -27,23 +26,27 @@ import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLin
 export const getColumns = (intl) => [
   {
     title: intl.formatMessage(messages.topicAddEditDescription),
-    transforms: [sortable],
+    sortable: true,
   },
   {
     title: intl.formatMessage(messages.modified),
-    transforms: [sortable, fitContent],
+    sortable: true,
+    modifier: 'fitContent',
   },
   {
     title: intl.formatMessage(messages.firstImpacted),
-    transforms: [sortable, fitContent],
+    sortable: true,
+    modifier: 'fitContent',
   },
   {
     title: intl.formatMessage(messages.totalRisk),
-    transforms: [sortable, fitContent],
+    sortable: true,
+    modifier: 'fitContent',
   },
   {
     title: intl.formatMessage(messages.remediation),
-    transforms: [sortable, fitContent],
+    sortable: true,
+    modifier: 'fitContent',
   },
 ];
 
