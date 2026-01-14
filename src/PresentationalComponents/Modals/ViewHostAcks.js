@@ -6,10 +6,11 @@ import {
 } from '@patternfly/react-table/deprecated';
 
 import { BASE_URL } from '../../AppConstants';
+import { Button, Modal } from '@patternfly/react-core';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { DeleteApi } from '../../Utilities/Api';
 import { List } from 'react-content-loader';
-import OutlinedBellIcon from '@patternfly/react-icons/dist/esm/icons/outlined-bell-icon';
+import { OutlinedBellIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
 import messages from '../../Messages';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
@@ -36,16 +37,23 @@ const ViewHostAcks = ({
   ];
   const [rows, setRows] = useState([]);
   const [unclean, setUnclean] = useState(false);
+  const [initializing, setInitializing] = useState(true);
   const {
     data: hostAcks = [],
     isFetching,
     isLoading,
     refetch,
-  } = useGetHostAcksQuery({
-    rule_id: rule.rule_id,
-    limit: rule.hosts_acked_count,
-    customBasePath: envContext.BASE_URL,
-  });
+  } = useGetHostAcksQuery(
+    {
+      rule_id: rule.rule_id,
+      limit: rule.hosts_acked_count,
+      customBasePath: envContext.BASE_URL,
+    },
+    {
+      skip: !isModalOpen,
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const deleteAck = async (host) => {
     try {
       await DeleteApi(`${BASE_URL}/hostack/${host.id}/`);
@@ -88,12 +96,13 @@ const ViewHostAcks = ({
       ],
     }));
 
-    if (!isLoading && hostAcks.length === 0) {
+    if (!(isLoading || isFetching) && !initializing && hostAcks.length === 0) {
       afterFn();
       handleModalToggle(false);
     }
 
     setRows(rows);
+    setInitializing(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hostAcks]);
 

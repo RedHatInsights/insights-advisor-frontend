@@ -108,7 +108,7 @@ function selectConditionalFilterOption(option) {
 function selectRandomEnabledRows({ rows, numberOfRowsToSelect }) {
   const enabledRows = Array.from(rows).filter((row) => {
     const checkbox = row.querySelector('input[type="checkbox"]');
-    if (!checkbox.hasAttribute('disabled')) {
+    if (checkbox && !checkbox.hasAttribute('disabled')) {
       return true;
     }
   });
