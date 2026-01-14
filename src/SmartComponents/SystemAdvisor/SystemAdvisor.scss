@@ -45,3 +45,12 @@
 #system-advisor-table input[type="checkbox"] {
     margin: 0;
 }
+
+// Remove bottom border from parent rows when they are expanded (followed by expandable content)
+#system-advisor-table .pf-v5-c-table tr.pf-v5-c-table__tr:has(+ tr.pf-m-expanded) {
+  border-bottom: 0;
+}
+
+#system-advisor-table .pf-v5-c-table__expandable-row-content {
+  padding: 0;
+}
