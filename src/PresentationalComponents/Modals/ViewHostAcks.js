@@ -6,7 +6,6 @@ import {
 } from '@patternfly/react-table/deprecated';
 
 import { BASE_URL } from '../../AppConstants';
-import { Button, Modal } from '@patternfly/react-core';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { DeleteApi } from '../../Utilities/Api';
 import { List } from 'react-content-loader';

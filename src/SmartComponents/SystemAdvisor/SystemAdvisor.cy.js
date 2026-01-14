@@ -263,25 +263,27 @@ describe('system rules table', () => {
       // check that it shows correct number
       cy.get(PT_BULK_SELECT).should('have.text', '3 selected');
 
-      // Select None
-      cy.get(
-        ':nth-child(2) > .pf-v6-c-menu-toggle > .pf-v6-c-menu-toggle__controls',
-      ).click();
+      // Select None - click the bulk select dropdown toggle
+      cy.get(PT_BULK_SELECT)
+        .parent()
+        .find('.pf-v6-c-menu-toggle__controls')
+        .click();
       cy.get(PT_BULK_SELECT_LIST).contains('Select none').click();
 
       // check that none selected
       cy.get(PT_BULK_SELECT).should('have.text', '');
 
-      // Select All
-      cy.get(
-        ':nth-child(2) > .pf-v6-c-menu-toggle > .pf-v6-c-menu-toggle__controls',
-      ).click();
+      // Select All - click the bulk select dropdown toggle
+      cy.get(PT_BULK_SELECT)
+        .parent()
+        .find('.pf-v6-c-menu-toggle__controls')
+        .click();
       cy.get(PT_BULK_SELECT_LIST).contains('Select all').click();
 
       // check that all selected
       cy.get(PT_BULK_SELECT).should('have.text', '7 selected');
 
-      // click the BS
+      // click the bulk select to deselect
       cy.get(PT_BULK_SELECT).click();
 
       // check that none selected
@@ -292,7 +294,7 @@ describe('system rules table', () => {
         selectRandomEnabledRows({ rows: rows, numberOfRowsToSelect: 3 });
       });
 
-      // click the BS
+      // click the bulk select to select all
       cy.get(PT_BULK_SELECT).click();
 
       // check that all selected

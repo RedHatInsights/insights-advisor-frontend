@@ -106,7 +106,9 @@ function selectConditionalFilterOption(option) {
 }
 
 function selectRandomEnabledRows({ rows, numberOfRowsToSelect }) {
-  const enabledRows = Array.from(rows).filter((row) => {
+  const allRows = Array.from(rows[0].querySelectorAll('tr'));
+
+  const enabledRows = allRows.filter((row) => {
     const checkbox = row.querySelector('input[type="checkbox"]');
     if (checkbox && !checkbox.hasAttribute('disabled')) {
       return true;
@@ -114,8 +116,10 @@ function selectRandomEnabledRows({ rows, numberOfRowsToSelect }) {
   });
   const rowCount = enabledRows.length;
 
+  const maxRowsToSelect = Math.min(numberOfRowsToSelect, rowCount);
+
   const randomIndices = [];
-  while (randomIndices.length < numberOfRowsToSelect) {
+  while (randomIndices.length < maxRowsToSelect) {
     const randomIndex = Math.floor(Math.random() * rowCount);
     if (!randomIndices.includes(randomIndex)) {
       randomIndices.push(randomIndex);
