@@ -12,7 +12,7 @@ import {
 } from '@redhat-cloud-services/frontend-components/PageHeader';
 
 import messages from '../../../Messages';
-import RulesTable from '../../../PresentationalComponents/RulesTable/RulesTable';
+import IopRulesTable from './IopRulesTable';
 import {
   Stack,
   StackItem,
@@ -113,7 +113,7 @@ const ListIop = () => {
             <IopOverviewDashbar changeTab={0} />
           </StackItem>
           <StackItem>
-            <RulesTable />
+            <IopRulesTable />
           </StackItem>
         </Stack>
       </section>

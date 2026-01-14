@@ -5,12 +5,11 @@ import {
   TableHeader,
 } from '@patternfly/react-table/deprecated';
 
-import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
+import { Button, Modal } from '@patternfly/react-core';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { DeleteApi } from '../../../Utilities/Api';
 import { List } from 'react-content-loader';
-import { Modal } from '@patternfly/react-core/dist/esm/components/Modal/Modal';
-import OutlinedBellIcon from '@patternfly/react-icons/dist/esm/icons/outlined-bell-icon';
+import { OutlinedBellIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
 import messages from '../../../Messages';
 import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
@@ -139,7 +138,7 @@ const IopViewHostAcks = ({
       ],
     }));
 
-    if (!isLoading && hostAcks.length === 0) {
+    if (!isLoading && hostAcks?.length === 0) {
       afterFn();
       handleModalToggle(false);
     }

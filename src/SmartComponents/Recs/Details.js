@@ -14,7 +14,7 @@ import {
   Button,
   Title,
 } from '@patternfly/react-core';
-import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
+import { BellSlashIcon } from '@patternfly/react-icons';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { InvalidObject } from '@redhat-cloud-services/frontend-components/InvalidObject';
 import Loading from '../../PresentationalComponents/Loading/Loading';
