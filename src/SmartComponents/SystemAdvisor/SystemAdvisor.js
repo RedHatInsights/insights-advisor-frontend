@@ -10,12 +10,15 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { SortByDirection, TableVariant } from '@patternfly/react-table';
 import {
   Table,
-  TableBody,
-  TableHeader,
-} from '@patternfly/react-table/deprecated';
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  ExpandableRowContent,
+} from '@patternfly/react-table';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Get } from '../../Utilities/Api';
@@ -58,13 +61,14 @@ const BaseSystemAdvisor = ({
   const [inventoryReportFetchStatus, setInventoryReportFetchStatus] =
     useState('pending');
   const [rows, setRows] = useState([]);
+  const [expandedRows, setExpandedRows] = useState(new Set());
+  const [areAllExpanded, setAreAllExpanded] = useState(false);
   const [activeReports, setActiveReports] = useState([]);
   const [kbaDetailsData, setKbaDetailsData] = useState([]);
   const [sortBy, setSortBy] = useState({});
   const [filters, setFilters] = useState({});
   const [searchValue, setSearchValue] = useState('');
   const [isSelected, setIsSelected] = useState(false);
-  const [isAllExpanded, setIsAllExpanded] = useState(false);
   const [systemProfile, setSystemsProfile] = useState({});
   const [isSystemProfileLoading, setSystemsProfileLoading] = useState(true);
   const selectedTags = useSelector(({ filters }) => filters?.selectedTags);
@@ -103,17 +107,21 @@ const BaseSystemAdvisor = ({
 
   const cols = getColumns(intl);
 
-  const onExpandAllClick = (_e, isOpen) => {
-    setIsAllExpanded(isOpen);
-    const allRows = [...rows];
-
-    allRows.map((row) => {
-      if (Object.prototype.hasOwnProperty.call(row, 'isOpen')) {
-        row.isOpen = isOpen;
-      }
-    });
-
-    setRows(allRows);
+  const onExpandAll = () => {
+    if (areAllExpanded) {
+      // All rows are currently expanded, so collapse all rows
+      setExpandedRows(new Set());
+    } else {
+      // Expand all rows
+      const allRowIndices = new Set();
+      rows.forEach((row, idx) => {
+        if (row.parent === undefined) {
+          allRowIndices.add(idx);
+        }
+      });
+      setExpandedRows(allRowIndices);
+    }
+    setAreAllExpanded(!areAllExpanded);
   };
 
   const onRemediationCreated = (result) => {
@@ -175,10 +183,18 @@ const BaseSystemAdvisor = ({
       : activeReports;
   };
 
-  const handleOnCollapse = (_e, rowId, isOpen) => {
-    const collapseRows = [...rows];
-    collapseRows[rowId] = { ...collapseRows[rowId], isOpen };
-    setRows(collapseRows);
+  const isRowExpanded = (rowIndex) => expandedRows.has(rowIndex);
+
+  const setRowExpanded = (rowIndex, isExpanding) => {
+    setExpandedRows((prevExpanded) => {
+      const newExpanded = new Set(prevExpanded);
+      if (isExpanding) {
+        newExpanded.add(rowIndex);
+      } else {
+        newExpanded.delete(rowIndex);
+      }
+      return newExpanded;
+    });
   };
 
   const buildRows = useBuildRows(
@@ -351,20 +367,20 @@ const BaseSystemAdvisor = ({
 
   const onSort = (_e, index, direction) => {
     const sortedReports = {
-      2: 'rule.description',
-      3: 'rule.publish_date',
-      4: 'impacted_date',
-      5: 'rule.total_risk',
-      6: 'resolution.has_playbook',
+      0: 'rule.description',
+      1: 'rule.publish_date',
+      2: 'impacted_date',
+      3: 'rule.total_risk',
+      4: 'resolution.has_playbook',
     };
-    const d = direction === SortByDirection.asc ? 1 : -1;
+    const d = direction === 'asc' ? 1 : -1;
 
     const sort = () =>
       activeReports.concat().sort((firstItem, secondItem) => {
         let fst = get(firstItem, sortedReports[index]);
         let snd = get(secondItem, sortedReports[index]);
 
-        if (index === 3 || index === 4) {
+        if (index === 1 || index === 2) {
           fst = new Date(fst);
           snd = new Date(snd);
         }
@@ -388,6 +404,15 @@ const BaseSystemAdvisor = ({
       ),
     );
   };
+
+  const getSortParams = (columnIndex) => ({
+    sortBy: {
+      index: sortBy.index,
+      direction: sortBy.direction,
+    },
+    onSort,
+    columnIndex,
+  });
 
   const onFilterChange = (param, values) => {
     const removeFilterParam = (param) => {
@@ -507,7 +532,6 @@ const BaseSystemAdvisor = ({
       ) : (
         <PrimaryToolbar
           ouiaId="system-advisor-table-toolbar"
-          expandAll={{ isAllExpanded, onClick: onExpandAllClick }}
           actionsConfig={{ actions }}
           bulkSelect={bulkSelect}
           filterConfig={{ items: filterConfigItems }}
@@ -549,18 +573,97 @@ const BaseSystemAdvisor = ({
           <Table
             ouiaId={'system-advisor-table'}
             aria-label={'system-advisor-table'}
-            onSelect={!(rows.length === 1 && rows[0].heightAuto) && onRowSelect}
-            onCollapse={handleOnCollapse}
-            rows={rows}
-            cells={cols}
-            sortBy={sortBy}
-            canSelectAll={false}
-            onSort={onSort}
-            variant={TableVariant.compact}
+            variant="compact"
             isStickyHeader
           >
-            <TableHeader />
-            <TableBody />
+            <Thead>
+              <Tr>
+                <Th
+                  expand={{
+                    areAllExpanded: !areAllExpanded,
+                    onToggle: onExpandAll,
+                  }}
+                />
+                <Th /> {/* Empty header for selection column */}
+                {cols.map((col, index) => (
+                  <Th
+                    key={index}
+                    data-label={col.title}
+                    sort={col.sortable ? getSortParams(index) : undefined}
+                    width={col.width}
+                    modifier={col.modifier}
+                  >
+                    {col.title}
+                  </Th>
+                ))}
+              </Tr>
+            </Thead>
+            <Tbody>
+              {rows.map((row, rowIndex) => {
+                // Handle empty state row
+                if (row.heightAuto) {
+                  return (
+                    <Tr key={rowIndex}>
+                      <Td
+                        data-label={row.cells[0].title}
+                        colSpan={cols.length + 2}
+                      >
+                        {row.cells[0].title}
+                      </Td>
+                    </Tr>
+                  );
+                }
+
+                // Handle child/expandable content rows
+                if (row.parent !== undefined) {
+                  const parentIndex = row.parent;
+                  return (
+                    <Tr key={rowIndex} isExpanded={isRowExpanded(parentIndex)}>
+                      <Td colSpan={cols.length + 2}>
+                        <ExpandableRowContent>
+                          {row.cells[0].title}
+                        </ExpandableRowContent>
+                      </Td>
+                    </Tr>
+                  );
+                }
+
+                // Handle parent/main rows
+                const isExpanded = isRowExpanded(rowIndex);
+                const isSelectable = !row.disableSelection;
+
+                return (
+                  <Tr key={rowIndex}>
+                    <Td
+                      expand={
+                        row.isOpen !== undefined
+                          ? {
+                              rowIndex,
+                              isExpanded,
+                              onToggle: (_event, _rowIndex, isExpanding) =>
+                                setRowExpanded(rowIndex, isExpanding),
+                            }
+                          : undefined
+                      }
+                    />
+                    <Td
+                      select={{
+                        rowIndex,
+                        onSelect: (_event, isSelecting) =>
+                          onRowSelect(_event, isSelecting, rowIndex),
+                        isSelected: row.selected,
+                        isDisabled: !isSelectable,
+                      }}
+                    />
+                    {row.cells.map((cell, cellIndex) => (
+                      <Td key={cellIndex} data-label={cols[cellIndex]?.title}>
+                        {cell.title}
+                      </Td>
+                    ))}
+                  </Tr>
+                );
+              })}
+            </Tbody>
           </Table>
         </Fragment>
       )}

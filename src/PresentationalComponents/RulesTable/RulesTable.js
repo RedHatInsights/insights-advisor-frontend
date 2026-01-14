@@ -6,12 +6,16 @@ import {
 } from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
 import React, { useContext, useEffect, useState } from 'react';
 
-import { TableVariant } from '@patternfly/react-table';
 import {
   Table,
-  TableBody,
-  TableHeader,
-} from '@patternfly/react-table/deprecated';
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  ExpandableRowContent,
+  ActionsColumn,
+} from '@patternfly/react-table';
 import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolbar';
 
 import {
@@ -60,7 +64,8 @@ const RulesTable = ({ isTabActive, pathway }) => {
   const workloads = useSelector(({ filters }) => filters.workloads);
   const filters = useSelector(({ filters }) => filters.recState);
 
-  const [rows, setRows] = useState([]);
+  const [expandedRows, setExpandedRows] = useState(new Set());
+  const [areAllExpanded, setAreAllExpanded] = useState(false);
   const [sortBy, setSortBy] = useState({});
   const [filterBuilding, setFilterBuilding] = useState(true);
   const [searchText, setSearchText] = useState(filters?.text || '');
@@ -68,7 +73,6 @@ const RulesTable = ({ isTabActive, pathway }) => {
   const [selectedRule, setSelectedRule] = useState({});
   const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
   const [viewSystemsModalRule, setViewSystemsModalRule] = useState({});
-  const [isAllExpanded, setIsAllExpanded] = useState(false);
   const setFilters = (filters) => dispatch(updateRecFilters(filters));
   const { hasEdgeDevices, edgeQuerySuccess } = useContext(AccountStatContext);
 
@@ -111,11 +115,6 @@ const RulesTable = ({ isTabActive, pathway }) => {
     setFilters({ ...filters, offset: newOffset });
   };
 
-  const handleOnCollapse = (_e, rowId, isOpen) => {
-    const collapseRows = [...rows];
-    collapseRows[rowId] = { ...collapseRows[rowId], isOpen };
-    setRows(collapseRows);
-  };
   const toggleRulesDisabled = (rule_status) => {
     setFilters({
       ...filters,
@@ -123,6 +122,26 @@ const RulesTable = ({ isTabActive, pathway }) => {
       offset: 0,
     });
   };
+
+  // Build rows from the old structure
+  const buildRowsFromOldFormat = () => {
+    if (!rules.data) return [];
+
+    if (rules.data.length === 0) {
+      return emptyRows(filters, toggleRulesDisabled);
+    }
+
+    return buildRows(
+      rules,
+      areAllExpanded,
+      setViewSystemsModalRule,
+      setViewSystemsModalOpen,
+      intl,
+      envContext,
+    );
+  };
+
+  const rows = buildRowsFromOldFormat();
 
   const actionResolver = useActionsResolver(
     rows,
@@ -164,25 +183,6 @@ const RulesTable = ({ isTabActive, pathway }) => {
   }, [filters.sort]);
 
   useEffect(() => {
-    if (rules.data) {
-      if (rules.data.length === 0) {
-        setRows(emptyRows(filters, toggleRulesDisabled));
-      } else {
-        const rows = buildRows(
-          rules,
-          isAllExpanded,
-          setViewSystemsModalRule,
-          setViewSystemsModalOpen,
-          intl,
-          envContext,
-        );
-        setRows(rows);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rules]);
-
-  useEffect(() => {
     if (!filterBuilding && !isLoading) {
       const filter = { ...filters };
       const text = searchText.length ? { text: searchText } : {};
@@ -200,17 +200,45 @@ const RulesTable = ({ isTabActive, pathway }) => {
     hasEdgeDevices,
   );
 
-  const onExpandAllClick = (_e, isOpen) => {
-    const allRows = [...rows];
-    setIsAllExpanded(isOpen);
-    allRows.map((row, key) => {
-      if (Object.prototype.hasOwnProperty.call(row, 'isOpen')) {
-        allRows[key] = { ...row, isOpen };
-      }
-    });
+  const isRowExpanded = (rowIndex) => expandedRows.has(rowIndex);
 
-    setRows(allRows);
+  const setRowExpanded = (rowIndex, isExpanding) => {
+    setExpandedRows((prevExpanded) => {
+      const newExpanded = new Set(prevExpanded);
+      if (isExpanding) {
+        newExpanded.add(rowIndex);
+      } else {
+        newExpanded.delete(rowIndex);
+      }
+      return newExpanded;
+    });
   };
+
+  const onExpandAll = () => {
+    if (areAllExpanded) {
+      // All rows are currently expanded, so collapse all rows
+      setExpandedRows(new Set());
+    } else {
+      // Expand all rows
+      const allRowIndices = new Set();
+      rows.forEach((row, idx) => {
+        if (row.parent === undefined) {
+          allRowIndices.add(idx);
+        }
+      });
+      setExpandedRows(allRowIndices);
+    }
+    setAreAllExpanded(!areAllExpanded);
+  };
+
+  const getColumnSortParams = (columnIndex) => ({
+    sortBy: {
+      index: sortBy.index,
+      direction: sortBy.direction,
+    },
+    onSort,
+    columnIndex,
+  });
 
   return (
     <React.Fragment>
@@ -233,7 +261,6 @@ const RulesTable = ({ isTabActive, pathway }) => {
         />
       )}
       <PrimaryToolbar
-        expandAll={{ isAllExpanded, onClick: onExpandAllClick }}
         pagination={{
           itemCount: results,
           page: filters.offset / filters.limit + 1,
@@ -292,21 +319,94 @@ const RulesTable = ({ isTabActive, pathway }) => {
         <Table
           aria-label={'rules-table'}
           ouiaId={'rules-table'}
-          variant={TableVariant.compact}
-          actionResolver={
-            envContext.isDisableRecEnabled ? actionResolver : null
-          }
-          onCollapse={handleOnCollapse}
-          sortBy={sortBy}
-          onSort={onSort}
-          cells={cols}
-          rows={rows}
-          areActionsDisabled={() => !envContext.isDisableRecEnabled}
+          variant="compact"
           isStickyHeader
-          expandId="expand-button"
         >
-          <TableHeader />
-          <TableBody className="pf-m-width-100" />
+          <Thead>
+            <Tr>
+              <Th
+                expand={{
+                  areAllExpanded: !areAllExpanded,
+                  onToggle: onExpandAll,
+                }}
+              />
+              {cols.map((col, index) => (
+                <Th
+                  key={index}
+                  data-label={col.title}
+                  sort={col.sortable ? getColumnSortParams(index) : undefined}
+                  width={col.width}
+                  modifier={col.modifier}
+                >
+                  {col.title}
+                </Th>
+              ))}
+              {envContext.isDisableRecEnabled && <Th />}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {rows.map((row, rowIndex) => {
+              // Handle empty state row
+              if (row.cells && row.cells[0]?.props?.colSpan) {
+                return (
+                  <Tr key={rowIndex}>
+                    <Td
+                      data-label={row.cells[0].title}
+                      colSpan={cols.length + 2}
+                    >
+                      {row.cells[0].title}
+                    </Td>
+                  </Tr>
+                );
+              }
+
+              // Handle child/expandable content rows
+              if (row.parent !== undefined) {
+                const parentIndex = row.parent;
+                return (
+                  <Tr key={rowIndex} isExpanded={isRowExpanded(parentIndex)}>
+                    <Td
+                      data-label={row.cells[0].title}
+                      colSpan={cols.length + 2}
+                    >
+                      <ExpandableRowContent>
+                        {row.cells[0].title}
+                      </ExpandableRowContent>
+                    </Td>
+                  </Tr>
+                );
+              }
+
+              // Handle parent/main rows
+              const isExpanded = isRowExpanded(rowIndex);
+              const actions = envContext.isDisableRecEnabled
+                ? actionResolver(row, { rowIndex })
+                : null;
+
+              return (
+                <Tr key={rowIndex} className={isExpanded ? 'expanded-row' : ''}>
+                  <Td
+                    expand={{
+                      rowIndex,
+                      isExpanded,
+                      onToggle: (_event, _rowIndex, isExpanding) =>
+                        setRowExpanded(rowIndex, isExpanding),
+                    }}
+                  />
+                  {row.cells.map((cell, cellIndex) => (
+                    <Td key={cellIndex} data-label={cols[cellIndex]?.title}>
+                      {cell.title}
+                    </Td>
+                  ))}
+                  {envContext.isDisableRecEnabled && actions && (
+                    <Td isActionCell>
+                      <ActionsColumn items={actions} />
+                    </Td>
+                  )}
+                </Tr>
+              );
+            })}
+          </Tbody>
         </Table>
       )}
       <TableToolbar isFooter>

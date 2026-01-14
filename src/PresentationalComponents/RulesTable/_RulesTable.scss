@@ -19,3 +19,12 @@
 .pf-v5-c-chip-group__list {
     margin-bottom: 0;
 }
+
+// Remove border under parent row when expanded
+.pf-v5-c-table tr.expanded-row {
+    border-bottom: none;
+}
+
+.pf-v5-c-table__expandable-row .pf-v5-c-table__expandable-row-content {
+    padding: 0;
+}
