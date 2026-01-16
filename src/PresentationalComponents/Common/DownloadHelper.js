@@ -1,4 +1,3 @@
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
 import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 
 import { exportNotifications } from '../../AppConstants';
@@ -23,11 +22,12 @@ const downloadHelper = async (
   dispatch,
   BASE_URL,
   display_name,
+  addNotification,
 ) => {
   try {
     let options = selectedTags?.length && { tags: selectedTags };
     workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
-    dispatch(addNotification(exportNotifications.pending));
+    addNotification(exportNotifications.pending);
     const data = (
       await Get(
         `${BASE_URL}/export/${exportTable}.${
@@ -41,10 +41,10 @@ const downloadHelper = async (
         },
       )
         .then((result) => {
-          dispatch(addNotification(exportNotifications.success));
+          addNotification(exportNotifications.success);
           return result;
         })
-        .catch((error) => dispatch(addNotification(populateExportError(error))))
+        .catch((error) => addNotification(populateExportError(error)))
     ).data;
 
     let formattedData = format === 'json' ? JSON.stringify(data) : data;

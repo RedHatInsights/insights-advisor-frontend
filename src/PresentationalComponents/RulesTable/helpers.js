@@ -3,7 +3,6 @@ import EmptyState from './Components/EmptyState';
 import { FormattedMessage } from 'react-intl';
 import { paramParser } from '../Common/Tables';
 import { DeleteApi } from '../../Utilities/Api';
-import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
 import * as AppConstants from '../../AppConstants';
 import messages from '../../Messages';
 import { FILTER_CATEGORIES as FC } from '../../AppConstants';
@@ -11,7 +10,6 @@ import {
   Stack,
   StackItem,
 } from '@patternfly/react-core/dist/esm/layouts/Stack/index';
-import { Text } from '@patternfly/react-core';
 import {
   Tooltip,
   TooltipPosition,
@@ -25,7 +23,6 @@ import {
   RuleDetailsMessagesKeys,
   AdvisorProduct,
 } from '@redhat-cloud-services/frontend-components-advisor-components';
-import RuleLabels from '../Labels/RuleLabels';
 import CategoryLabel from '../Labels/CategoryLabel';
 
 import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
@@ -34,6 +31,8 @@ import { ruleResolutionRisk, pruneFilters } from '../Common/Tables';
 import { getImpactingFilterChips } from '../Filters/impactingFilter';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 import { Link } from 'react-router-dom';
+import { Content } from '@patternfly/react-core';
+import RuleLabels from '../Labels/RuleLabels';
 import { BASE_URL } from '../../AppConstants';
 import { getCsrfTokenHeader } from '../helper';
 
@@ -56,12 +55,12 @@ export const messageMapping = () => {
       title,
       body: (
         <>
-          <Text>
+          <Content component="p">
             <FormattedMessage id="rulestable.norulehits.enabledrulesbody" />
-          </Text>
-          <Text>
+          </Content>
+          <Content component="p">
             <FormattedMessage id="rulestable.norulehits.enabledrulesbodysecondline" />
-          </Text>
+          </Content>
         </>
       ),
     },
@@ -69,29 +68,29 @@ export const messageMapping = () => {
       title,
       body: (
         <>
-          <Text>
+          <Content component="p">
             <FormattedMessage id="rulestable.norules.disabledrulesbody" />
-          </Text>
-          <Text>
+          </Content>
+          <Content component="p">
             <FormattedMessage id="rulestable.norules.disabledrulesbodysecondline" />
-          </Text>
+          </Content>
         </>
       ),
     },
     rhdisabled: {
       title,
       body: (
-        <Text>
+        <Content component="p">
           <FormattedMessage id="rulestable.norules.redhatdisabledrulesbody" />
-        </Text>
+        </Content>
       ),
     },
     default: {
       title,
       body: (
-        <Text>
+        <Content component="p">
           <FormattedMessage id="noRecommendations" />
-        </Text>
+        </Content>
       ),
     },
   };
@@ -149,10 +148,10 @@ export const hideReports = async (
   refetch,
   dispatch,
   intl,
+  addNotification,
   baseUrl = BASE_URL,
 ) => {
   const rule = rows[rowId].rule;
-  const addNotification = (data) => dispatch(addNotificationAction(data));
 
   try {
     if (rule.rule_status === 'enabled') {
@@ -373,7 +372,7 @@ export const buildRows = (
                   {value.description}{' '}
                 </InsightsLink>
               )}
-              <RuleLabels rule={value} isCompact />
+              <RuleLabels rule={value} intl={intl} isCompact />
             </span>
           ),
         },
@@ -450,7 +449,7 @@ export const buildRows = (
       cells: [
         {
           title: (
-            <section className="pf-v5-c-page__main-section pf-m-light">
+            <section className="pf-v6-c-page__main-section pf-m-light">
               <Stack hasGutter>
                 {value.hosts_acked_count ? (
                   <StackItem>

@@ -164,7 +164,7 @@ const PathwayDetails = () => {
                 </React.Fragment>
               }
             />
-            <p className="pf-v5-u-mb-lg">
+            <p className="pf-v6-u-mb-lg">
               {intl.formatMessage(messages.pathwaysDetailsModifieddate, {
                 date: (
                   <DateFormat
@@ -173,13 +173,13 @@ const PathwayDetails = () => {
                   />
                 ),
               })}
-              <span className="pf-v5-u-pl-sm">
+              <span className="pf-v6-u-pl-sm">
                 <CategoryLabel labelList={pathway.categories} />
               </span>
             </p>
-            <p className="pf-v5-u-mb-lg">{pathway.description}</p>
+            <p className="pf-v6-u-mb-lg">{pathway.description}</p>
           </PageHeader>
-          <section className="pf-v5-u-p-lg">
+          <section className="pf-v6-u-p-lg">
             <Grid hasGutter>
               <GridItem sm={12} md={6}>
                 <TotalRiskCard {...pathway} />
@@ -192,7 +192,7 @@ const PathwayDetails = () => {
         </React.Fragment>
       )}
       {isFetching && <Loading />}
-      <section className="pf-v5-u-px-lg pf-v5-u-pb-lg">
+      <section className="pf-v6-u-px-lg pf-v6-u-pb-lg">
         <Tabs
           className="adv__background--global-100"
           activeKey={activeTab}

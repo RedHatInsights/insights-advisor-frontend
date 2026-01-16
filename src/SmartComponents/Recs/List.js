@@ -20,11 +20,11 @@ import {
   Spinner,
   Bullseye,
   Popover,
-  TextContent,
+  Content,
   Flex,
-  Text,
-  TextVariants,
+  ContentVariants,
   Icon,
+  FlexItem,
 } from '@patternfly/react-core';
 
 import { RECOMMENDATIONS_TAB, PATHWAYS_TAB } from '../../AppConstants';
@@ -66,68 +66,80 @@ const List = () => {
   return (
     <React.Fragment>
       <PageHeader className="adv-c-page-recommendations__header">
-        <PageHeaderTitle
-          title={
-            <React.Fragment>
-              {messages.recommendations.defaultMessage}
-              <Popover
-                headerContent="About advisor recommendations"
-                bodyContent={
-                  <TextContent>
-                    <Flex direction={{ default: 'column' }}>
-                      <Text component={TextVariants.p}>
-                        The advisor service assesses and monitors the health of
-                        your Red Hat Enterprise Linux (RHEL) infrastructure, and
-                        provides recommendations to address availability,
-                        stability, performance, and security issues.
-                      </Text>
-                      <Text component={TextVariants.p}>
-                        <a
-                          rel="noreferrer"
-                          target="_blank"
-                          href={
-                            'https://docs.redhat.com/en/documentation/red_hat_lightspeed/1-latest/html/assessing_rhel_configuration_issues_by_using_the_red_hat_lightspeed_advisor_service/index'
-                          }
-                        >
-                          Assessing RHEL Configuration Issues Using the Red Hat
-                          {envContext.isLightspeedEnabled
-                            ? ' Lightspeed '
-                            : ' Insights '}
-                          Advisor Service
-                          <Icon className="pf-v5-u-ml-xs">
-                            <ExternalLinkAltIcon />
-                          </Icon>
-                        </a>
-                      </Text>
-                    </Flex>
-                  </TextContent>
-                }
+        <Flex
+          justifyContent={{ default: 'justifyContentSpaceBetween' }}
+          alignItems={{ default: 'alignItemsCenter' }}
+          style={{ width: '100%' }}
+        >
+          <FlexItem>
+            <PageHeaderTitle
+              title={
+                <React.Fragment>
+                  {messages.recommendations.defaultMessage}
+                  <Popover
+                    headerContent="About advisor recommendations"
+                    bodyContent={
+                      <Content>
+                        <Flex direction={{ default: 'column' }}>
+                          <Content component={ContentVariants.p}>
+                            The advisor service assesses and monitors the health
+                            of your Red Hat Enterprise Linux (RHEL)
+                            infrastructure, and provides recommendations to
+                            address availability, stability, performance, and
+                            security issues.
+                          </Content>
+                          <Content component={ContentVariants.p}>
+                            <a
+                              rel="noreferrer"
+                              target="_blank"
+                              href={
+                                'https://docs.redhat.com/en/documentation/red_hat_lightspeed/1-latest/html/assessing_rhel_configuration_issues_by_using_the_red_hat_lightspeed_advisor_service/index'
+                              }
+                            >
+                              Assessing RHEL Configuration Issues Using the Red
+                              Hat
+                              {envContext.isLightspeedEnabled
+                                ? ' Lightspeed '
+                                : ' Insights '}
+                              Advisor Service
+                              <Icon className="pf-v6-u-ml-xs">
+                                <ExternalLinkAltIcon />
+                              </Icon>
+                            </a>
+                          </Content>
+                        </Flex>
+                      </Content>
+                    }
+                  >
+                    <Icon>
+                      <OutlinedQuestionCircleIcon
+                        className="pf-v6-u-ml-sm"
+                        color="var(--pf-t--global--icon--color--subtle)"
+                        style={{
+                          verticalAlign: 0,
+                          fontSize: 16,
+                          cursor: 'pointer',
+                        }}
+                      />
+                    </Icon>
+                  </Popover>
+                </React.Fragment>
+              }
+            />
+          </FlexItem>
+          {!envContext.isLoading && envContext.displayExecReportLink && (
+            <FlexItem className="pf-v6-u-mt-xl">
+              <Tooltip
+                trigger={!envContext.isExportEnabled ? 'mouseenter' : ''}
+                content={messages.permsAction.defaultMessage}
               >
-                <Icon>
-                  <OutlinedQuestionCircleIcon
-                    className="pf-v5-u-ml-sm"
-                    color="var(--pf-v5-global--secondary-color--100)"
-                    style={{
-                      verticalAlign: 0,
-                      fontSize: 16,
-                      cursor: 'pointer',
-                    }}
-                  />
-                </Icon>
-              </Popover>
-            </React.Fragment>
-          }
-        />
-        {!envContext.isLoading && envContext.displayExecReportLink && (
-          <Tooltip
-            trigger={!envContext.isExportEnabled ? 'mouseenter' : ''}
-            content={messages.permsAction.defaultMessage}
-          >
-            <DownloadExecReport isDisabled={!envContext.isExportEnabled} />
-          </Tooltip>
-        )}
+                <DownloadExecReport isDisabled={!envContext.isExportEnabled} />
+              </Tooltip>
+            </FlexItem>
+          )}
+        </Flex>
       </PageHeader>
-      <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
+      <section className="pf-v6-l-page__main-section pf-v6-c-page__main-section">
         <Stack hasGutter>
           <StackItem>
             <OverviewDashbar changeTab={changeTab} />

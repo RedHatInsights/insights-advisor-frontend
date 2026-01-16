@@ -7,14 +7,13 @@ import fixtures from '../../../cypress/fixtures/topics.json';
 
 import {
   checkTableHeaders,
-  tableIsSortedBy,
   CHIP_GROUP,
-  CHIP,
   SORTING_ORDERS,
 } from '@redhat-cloud-services/frontend-components-utilities';
 import { topicsTableColumns } from '../../../cypress/support/globals';
 import _ from 'lodash';
 import TopicsTable from './TopicsTable';
+import { removeAllFilterChipsPf6 } from '../../../cypress/utils/table';
 
 const TABLE_HEADERS = _.map(topicsTableColumns, (it) => it.title);
 const filterCombos = [{ name: ['HTTP'] }];
@@ -75,7 +74,7 @@ describe('defaults', () => {
   });
   it('sorting using Featured', () => {
     const column = 'Featured';
-    tableIsSortedBy(column);
+    cy.tableIsSortedBy(column);
   });
 });
 
@@ -85,12 +84,7 @@ describe('filtering', () => {
   });
   it('can clear filters', () => {
     cy.get('div.ins-c-primary-toolbar__filter').find('input').type('HTTP');
-    cy.get(CHIP_GROUP)
-      .find(CHIP)
-      .ouiaId('close', 'button')
-      .each(() => {
-        cy.get(CHIP_GROUP).find(CHIP).ouiaId('close', 'button').eq(0).click();
-      });
+    removeAllFilterChipsPf6();
   });
 
   it('can add filters', () => {

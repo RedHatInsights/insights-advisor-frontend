@@ -1,8 +1,4 @@
-.ansibleCheck {
-    color: var(--pf-v5-global--success-color--100);
-}
-
-.ins-c-conditional-filter .ins-c-conditional-filter__group .pf-v5-c-dropdown__toggle-text {
+.ins-c-conditional-filter .ins-c-conditional-filter__group .pf-v6-c-dropdown__toggle-text {
     @media screen and (min-width: 884px) {
         min-width: 150px !important;
     }
@@ -12,11 +8,11 @@
     text-align: center;
 }
 
-.pf-v5-c-table tr > :last-child {
-    --pf-v5-c-table--cell--PaddingRight: 0px;
+.pf-v6-c-table tr > :last-child {
+    --pf-v6-c-table--cell--PaddingRight: 0px;
 }
 
-.pf-v5-c-chip-group__list {
+.pf-v6-c-chip-group__list {
     margin-bottom: 0;
 }
 

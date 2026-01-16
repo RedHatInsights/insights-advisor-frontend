@@ -3,26 +3,24 @@ import {
   EmptyStateBody,
   EmptyState,
   EmptyStateVariant,
-  Text,
-  TextContent,
-  TextVariants,
+  Content,
+  ContentVariants,
   Bullseye,
-  EmptyStateHeader,
 } from '@patternfly/react-core';
 
 const NoSystemsTable = () => (
   <Bullseye>
-    <EmptyState variant={EmptyStateVariant.full}>
-      <EmptyStateHeader
-        titleText="No matching systems found"
-        headingLevel="h2"
-      />
+    <EmptyState
+      headingLevel="h2"
+      titleText="No matching systems found"
+      variant={EmptyStateVariant.full}
+    >
       <EmptyStateBody>
-        <TextContent>
-          <Text component={TextVariants.p}>
+        <Content>
+          <Content component={ContentVariants.p}>
             To continue, edit your filter settings and search again.
-          </Text>
-        </TextContent>
+          </Content>
+        </Content>
       </EmptyStateBody>
     </EmptyState>
   </Bullseye>
