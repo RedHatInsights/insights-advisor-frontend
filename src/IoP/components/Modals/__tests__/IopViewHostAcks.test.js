@@ -2,21 +2,21 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import IopViewHostAcks from './IopViewHostAcks';
-import { useGetHostAcksQuery } from '../../Services/Acks';
-import { DeleteApi } from '../../Utilities/Api';
-import { ComponentWithContext } from '../../Utilities/TestingUtilities';
-import { getCsrfTokenHeader } from '../helper';
+import IopViewHostAcks from '../IopViewHostAcks';
+import { useGetHostAcksQuery } from '../../../../Services/Acks';
+import { DeleteApi } from '../../../../Utilities/Api';
+import { ComponentWithContext } from '../../../../Utilities/TestingUtilities';
+import { getCsrfTokenHeader } from '../../../../PresentationalComponents/helper';
 
-jest.mock('../../Services/Acks', () => ({
+jest.mock('../../../../Services/Acks', () => ({
   useGetHostAcksQuery: jest.fn(),
 }));
 
-jest.mock('../../Utilities/Api', () => ({
+jest.mock('../../../../Utilities/Api', () => ({
   DeleteApi: jest.fn(),
 }));
 
-jest.mock('../helper', () => ({
+jest.mock('../../../../PresentationalComponents/helper', () => ({
   getCsrfTokenHeader: jest.fn(() => ({ 'X-CSRF-Token': 'mock-csrf-token' })),
 }));
 

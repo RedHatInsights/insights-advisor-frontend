@@ -17,7 +17,7 @@ import {
   TooltipPosition,
 } from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
-import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
+import { BellSlashIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import {

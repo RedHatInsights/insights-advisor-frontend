@@ -3,7 +3,9 @@ const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 
 module.exports = {
   appUrl: '/insights/advisor',
-  publicPath: 'auto',
+  ...(process.env.IOP === 'true'
+    ? { deployment: 'assets/apps' }
+    : { publicPath: 'auto' }),
   debug: true,
   useProxy: process.env.PROXY === 'true',
   proxyVerbose: true,
@@ -54,7 +56,7 @@ module.exports = {
       './SystemDetail': resolve(__dirname, 'src/Modules/SystemDetail'),
       './SystemDetailWrapped': resolve(
         __dirname,
-        'src/Modules/SystemDetailWrapped',
+        'src/IoP/exports/SystemDetailWrapped',
       ),
       './BuildExecReport': resolve(
         __dirname,
@@ -64,22 +66,15 @@ module.exports = {
         __dirname,
         '/src/PresentationalComponents/Export/SystemsPdfBuild',
       ),
-      './SatelliteDemoComponent': resolve(
-        __dirname,
-        './src/Temporary/SatelliteDemoComponent.js',
-      ),
       './OverviewDetails': resolve(
         __dirname,
         './src/SmartComponents/Recs/Details.js',
       ),
       './RecommendationDetailsWrapped': resolve(
         __dirname,
-        './src/SmartComponents/Recs/RecommendationDetailsWrapped.js',
+        './src/IoP/exports/RecommendationDetailsWrapped.js',
       ),
-      './ListWrapped': resolve(
-        __dirname,
-        './src/SmartComponents/Recs/ListWrapped.js',
-      ),
+      './ListWrapped': resolve(__dirname, './src/IoP/exports/ListWrapped.js'),
     },
   },
   _unstableSpdy: true,
