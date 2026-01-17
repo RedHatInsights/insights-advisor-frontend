@@ -131,3 +131,18 @@ export const systemsCheck = async (
     setCountsLoading(false);
   }
 };
+
+export const fetchIOPUserPermissions = async (
+  getUserPermissionsFunc,
+  setHasPermissionsFunc,
+) => {
+  try {
+    const userPermissions = await getUserPermissionsFunc('advisor');
+    const hasWritePermission = userPermissions.some(
+      (item) => item.permission === 'advisor:disable-recommendations:write',
+    );
+    setHasPermissionsFunc(hasWritePermission);
+  } catch (error) {
+    console.log('Error fetching permissions: ', error);
+  }
+};
