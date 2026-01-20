@@ -26,9 +26,9 @@ export const useActionsResolver = (
         ? [
             {
               title: intl.formatMessage(messages.disableRule),
-              onClick: (_event, rowId) =>
+              onClick: () =>
                 hideReports(
-                  rowId,
+                  rowIndex,
                   rows,
                   setSelectedRule,
                   setDisableRuleOpen,
@@ -42,9 +42,9 @@ export const useActionsResolver = (
         : [
             {
               title: intl.formatMessage(messages.enableRule),
-              onClick: (_event, rowId) =>
+              onClick: () =>
                 hideReports(
-                  rowId,
+                  rowIndex,
                   rows,
                   setSelectedRule,
                   setDisableRuleOpen,
