@@ -21,6 +21,11 @@ describe('useRbac', () => {
     { permission: 'advisor:export' },
     { permission: 'advisor:disableRec' },
   ];
+  const mockPermissionsDisableRecTrue = [
+    { permission: 'advisor:exports-read' },
+    { permission: 'advisor:disable-recommendations:write' },
+    { permission: 'advisor:recommendation-results:read' },
+  ];
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -61,6 +66,42 @@ describe('useRbac', () => {
 
     expect(result.current[1]).toBe(true);
     expect(result.current[0]).toEqual([[], [], []]);
+  });
+
+  it('should handle getUserPermissions from chrome or chrome.auth', async () => {
+    const getUserPermissionsFunc = [
+      {
+        auth: {
+          getUserPermissions: () =>
+            Promise.resolve(mockPermissionsDisableRecTrue),
+        },
+      },
+      {
+        getUserPermissions: () =>
+          Promise.resolve(mockPermissionsDisableRecTrue),
+      },
+    ];
+
+    for (const func of getUserPermissionsFunc) {
+      useChrome.mockReturnValue(func);
+      const { result } = renderHook(() => useRbac([PERMISSIONS.disableRec]));
+      await waitFor(() => {
+        expect(result.current[1]).toBe(false);
+      });
+      expect(result.current[0]).toEqual([true]);
+    }
+  });
+
+  it('should handle getUserPermissions not available or undefined', async () => {
+    const getUserPermissionsFunc = [{}, undefined];
+
+    for (const func of getUserPermissionsFunc) {
+      useChrome.mockReturnValue(func);
+      const { result } = renderHook(() => useRbac([PERMISSIONS.disableRec]));
+      // Should remain in loading state since permissions function isn't available
+      expect(result.current[1]).toBe(true);
+      expect(result.current[0]).toEqual([[]]);
+    }
   });
 });
 
