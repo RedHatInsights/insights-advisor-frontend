@@ -74,7 +74,13 @@ const ViewHostAcks = ({
     const rows = hostAcks?.map((item) => ({
       cells: [
         item.display_name || item.system_uuid,
-        item.justification || intl.formatMessage(messages.none),
+        {
+          title: (
+            <span style={{ overflowWrap: 'anywhere' }}>
+              {item.justification || intl.formatMessage(messages.none)}
+            </span>
+          ),
+        },
         {
           title: (
             <DateFormat date={new Date(item.updated_at)} type="onlyDate" />
