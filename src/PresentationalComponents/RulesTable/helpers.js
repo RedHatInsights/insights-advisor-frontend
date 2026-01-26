@@ -1,41 +1,41 @@
-import React from 'react';
-import EmptyState from './Components/EmptyState';
-import { FormattedMessage } from 'react-intl';
-import { paramParser } from '../Common/Tables';
-import { DeleteApi } from '../../Utilities/Api';
-import { addNotification as addNotificationAction } from '@redhat-cloud-services/frontend-components-notifications/';
-import * as AppConstants from '../../AppConstants';
-import messages from '../../Messages';
-import { FILTER_CATEGORIES as FC } from '../../AppConstants';
+import React from "react";
+import EmptyState from "./Components/EmptyState";
+import { FormattedMessage } from "react-intl";
+import { paramParser } from "../Common/Tables";
+import { DeleteApi } from "../../Utilities/Api";
+import { addNotification as addNotificationAction } from "@redhat-cloud-services/frontend-components-notifications/";
+import * as AppConstants from "../../AppConstants";
+import messages from "../../Messages";
+import { FILTER_CATEGORIES as FC } from "../../AppConstants";
 import {
   Stack,
   StackItem,
-} from '@patternfly/react-core/dist/esm/layouts/Stack/index';
-import { Text } from '@patternfly/react-core';
+} from "@patternfly/react-core/dist/esm/layouts/Stack/index";
+import { Text } from "@patternfly/react-core";
 import {
   Tooltip,
   TooltipPosition,
-} from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
-import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
-import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
-import { Button } from '@patternfly/react-core/dist/esm/components/Button/Button';
-import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
+} from "@patternfly/react-core/dist/esm/components/Tooltip/Tooltip";
+import { InsightsLabel } from "@redhat-cloud-services/frontend-components/InsightsLabel";
+import BellSlashIcon from "@patternfly/react-icons/dist/esm/icons/bell-slash-icon";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/Button";
+import { DateFormat } from "@redhat-cloud-services/frontend-components/DateFormat";
 import {
   RuleDetails,
   RuleDetailsMessagesKeys,
   AdvisorProduct,
-} from '@redhat-cloud-services/frontend-components-advisor-components';
-import RuleLabels from '../Labels/RuleLabels';
-import CategoryLabel from '../Labels/CategoryLabel';
+} from "@redhat-cloud-services/frontend-components-advisor-components";
+import RuleLabels from "../Labels/RuleLabels";
+import CategoryLabel from "../Labels/CategoryLabel";
 
-import { formatMessages, mapContentToValues } from '../../Utilities/intlHelper';
-import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
-import { ruleResolutionRisk, pruneFilters } from '../Common/Tables';
-import { getImpactingFilterChips } from '../Filters/impactingFilter';
-import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
-import { Link } from 'react-router-dom';
-import { BASE_URL } from '../../AppConstants';
-import { getCsrfTokenHeader } from '../helper';
+import { formatMessages, mapContentToValues } from "../../Utilities/intlHelper";
+import { conditionalFilterType } from "@redhat-cloud-services/frontend-components/ConditionalFilter";
+import { ruleResolutionRisk, pruneFilters } from "../Common/Tables";
+import { getImpactingFilterChips } from "../Filters/impactingFilter";
+import InsightsLink from "@redhat-cloud-services/frontend-components/InsightsLink";
+import { Link } from "react-router-dom";
+import { BASE_URL } from "../../AppConstants";
+import { getCsrfTokenHeader } from "../helper";
 
 export const emptyRows = (filters, toggleRulesDisabled) => [
   {
@@ -112,13 +112,13 @@ export const urlFilterBuilder = (
       !sortingValues?.includes(paramsObject.sort[0]) ||
       !sortingValues?.includes(`-${paramsObject.sort[0]}`)
     ) {
-      paramsObject.sort = '-total_risk';
+      paramsObject.sort = "-total_risk";
     }
   } else if (!sortingValues?.includes(paramsObject.sort)) {
-    paramsObject.sort = '-total_risk';
+    paramsObject.sort = "-total_risk";
   }
   paramsObject.text === undefined
-    ? setSearchText('')
+    ? setSearchText("")
     : setSearchText(paramsObject.text);
   paramsObject.has_playbook !== undefined &&
     !Array.isArray(paramsObject.has_playbook) &&
@@ -138,6 +138,9 @@ export const urlFilterBuilder = (
   paramsObject.impacting !== undefined &&
     !Array.isArray(paramsObject.impacting) &&
     (paramsObject.impacting = [`${paramsObject.impacting}`]);
+  paramsObject.groups !== undefined &&
+    !Array.isArray(paramsObject.groups) &&
+    (paramsObject.groups = [`${paramsObject.groups}`]);
   setFilters({ ...filters, ...paramsObject });
 };
 
@@ -155,7 +158,7 @@ export const hideReports = async (
   const addNotification = (data) => dispatch(addNotificationAction(data));
 
   try {
-    if (rule.rule_status === 'enabled') {
+    if (rule.rule_status === "enabled") {
       setSelectedRule(rule);
       setDisableRuleOpen(true);
     } else {
@@ -166,7 +169,7 @@ export const hideReports = async (
           getCsrfTokenHeader(),
         );
         addNotification({
-          variant: 'success',
+          variant: "success",
           timeout: true,
           dismissable: true,
           title: intl.formatMessage(messages.recSuccessfullyEnabled),
@@ -174,7 +177,7 @@ export const hideReports = async (
         refetch();
       } catch (error) {
         addNotification({
-          variant: 'danger',
+          variant: "danger",
           dismissable: true,
           title: intl.formatMessage(messages.error),
           description: `${error}`,
@@ -183,10 +186,10 @@ export const hideReports = async (
     }
   } catch (error) {
     addNotification({
-      variant: 'danger',
+      variant: "danger",
       dismissable: true,
       title:
-        rule.rule_status === 'enabled'
+        rule.rule_status === "enabled"
           ? intl.formatMessage(messages.rulesTableHideReportsErrorDisabled)
           : intl.formatMessage(messages.rulesTableHideReportsErrorEnabled),
       description: `${error}`,
@@ -201,7 +204,7 @@ export const removeFilterParam = (
   setSearchText,
 ) => {
   const filter = { ...filters, offset: 0 };
-  param === 'text' && setSearchText('');
+  param === "text" && setSearchText("");
   delete filter[param];
   setFilters(filter);
 };
@@ -213,6 +216,7 @@ export const filterConfigItems = (
   setSearchText,
   toggleRulesDisabled,
   intl,
+  workspaces = [],
 ) => {
   const addFilterParam = (param, values) => {
     values.length > 0
@@ -220,7 +224,7 @@ export const filterConfigItems = (
       : removeFilterParam(param, filters, setFilters, setSearchText);
   };
 
-  return [
+  const filterItems = [
     {
       label: intl.formatMessage(messages.name).toLowerCase(),
       type: conditionalFilterType.text,
@@ -338,6 +342,28 @@ export const filterConfigItems = (
       },
     },
   ];
+
+  // Add workspace filter only if workspaces are available
+  if (workspaces.length > 0) {
+    const workspaceFilterItems = workspaces.map((workspace) => ({
+      label: workspace.name,
+      value: workspace.name,
+    }));
+
+    filterItems.splice(1, 0, {
+      label: "workspace",
+      type: conditionalFilterType.checkbox,
+      id: "groups",
+      value: "checkbox-groups",
+      filterValues: {
+        onChange: (_event, values) => addFilterParam("groups", values),
+        value: filters.groups,
+        items: workspaceFilterItems,
+      },
+    });
+  }
+
+  return filterItems;
 };
 
 export const buildRows = (
@@ -361,16 +387,16 @@ export const buildRows = (
                   key={key}
                   to={`/foreman_rh_cloud/recommendations/${value.rule_id}`}
                 >
-                  {' '}
-                  {value.description}{' '}
+                  {" "}
+                  {value.description}{" "}
                 </Link>
               ) : (
                 <InsightsLink
                   key={key}
                   to={`/recommendations/${value.rule_id}`}
                 >
-                  {' '}
-                  {value.description}{' '}
+                  {" "}
+                  {value.description}{" "}
                 </InsightsLink>
               )}
               <RuleLabels rule={value} isCompact />
@@ -401,7 +427,7 @@ export const buildRows = (
                   <>
                     The total risk of this remediation is
                     <strong>
-                      {' '}
+                      {" "}
                       {AppConstants.TOTAL_RISK_LABEL_LOWER[value.total_risk]}
                     </strong>
                     , based on the combination of likelihood and impact to
@@ -416,7 +442,7 @@ export const buildRows = (
         },
         {
           title:
-            value.rule_status !== 'enabled' ? (
+            value.rule_status !== "enabled" ? (
               <span>{value.impacted_systems_count}</span>
             ) : envContext.loadChromeless ? (
               <Link
@@ -462,7 +488,7 @@ export const buildRows = (
                           messages.ruleIsDisabledForSystemsBody,
                           { systems: value.hosts_acked_count },
                         )}
-                    &nbsp;{' '}
+                    &nbsp;{" "}
                     <Button
                       isInline
                       variant="link"
@@ -493,13 +519,13 @@ export const buildRows = (
                   isDetailsPage={false}
                   showViewAffected
                   ViewAffectedLink={
-                    value.rule_status === 'enabled' &&
+                    value.rule_status === "enabled" &&
                     (envContext.loadChromeless ? (
                       <Link
                         to={`/foreman_rh_cloud/recommendations/${value.rule_id}`}
                       >
                         {value.impacted_systems_count === 0
-                          ? ''
+                          ? ""
                           : intl.formatMessage(messages.viewAffectedSystems, {
                               systems: value.impacted_systems_count,
                             })}
@@ -507,7 +533,7 @@ export const buildRows = (
                     ) : (
                       <InsightsLink to={`/recommendations/${value.rule_id}`}>
                         {value.impacted_systems_count === 0
-                          ? ''
+                          ? ""
                           : intl.formatMessage(messages.viewAffectedSystems, {
                               systems: value.impacted_systems_count,
                             })}
@@ -517,7 +543,7 @@ export const buildRows = (
                   knowledgebaseUrl={
                     value.node_id
                       ? `https://access.redhat.com/node/${value.node_id}`
-                      : ''
+                      : ""
                   }
                 />
               </Stack>
@@ -540,27 +566,27 @@ export const getColumns = (intl) => [
   {
     title: intl.formatMessage(messages.modified),
     sortable: true,
-    modifier: 'fitContent',
+    modifier: "fitContent",
   },
   {
     title: intl.formatMessage(messages.category),
     sortable: true,
-    modifier: 'fitContent',
+    modifier: "fitContent",
   },
   {
     title: intl.formatMessage(messages.totalRisk),
     sortable: true,
-    modifier: 'fitContent',
+    modifier: "fitContent",
   },
   {
     title: intl.formatMessage(messages.systems),
     sortable: true,
-    modifier: 'fitContent',
+    modifier: "fitContent",
   },
   {
     title: intl.formatMessage(messages.remediation),
     sortable: true,
-    modifier: 'fitContent',
+    modifier: "fitContent",
   },
 ];
 
@@ -577,18 +603,18 @@ const buildFilterChips = (filters, hasEdgeDevice) => {
 };
 
 export const sortIndices = {
-  0: 'description',
-  1: 'publish_date',
-  2: 'category',
-  3: 'total_risk',
-  4: 'impacted_count',
-  5: 'playbook_count',
+  0: "description",
+  1: "publish_date",
+  2: "category",
+  3: "total_risk",
+  4: "impacted_count",
+  5: "playbook_count",
 };
 
 export const getDefaultImpactingFilter = (hasEdgeDevices) =>
   hasEdgeDevices
-    ? { update_method: ['ostree', 'dnfyum'], impacting: ['true'] }
-    : { impacting: ['true'] };
+    ? { update_method: ["ostree", "dnfyum"], impacting: ["true"] }
+    : { impacting: ["true"] };
 
 export const getActiveFiltersConfig = (
   filters,
@@ -602,11 +628,11 @@ export const getActiveFiltersConfig = (
   showDeleteButton: true,
   onDelete: (_event, itemsToRemove, isAll) => {
     if (isAll) {
-      setSearchText('');
+      setSearchText("");
       setFilters({
         ...(filters.topic && { topic: filters.topic }),
         ...getDefaultImpactingFilter(hasEdgeDevice),
-        rule_status: 'enabled',
+        rule_status: "enabled",
         limit: filters.limit,
         offset: filters.offset,
         ...(filters.pathway && { pathway: filters.pathway }),
@@ -615,9 +641,9 @@ export const getActiveFiltersConfig = (
       itemsToRemove.map((item) => {
         const newFilters = Object.assign({}, filters);
         if (
-          item.urlParam === 'update_method' &&
+          item.urlParam === "update_method" &&
           newFilters?.update_method.length === 1 &&
-          Object.prototype.hasOwnProperty.call(newFilters, 'impacting')
+          Object.prototype.hasOwnProperty.call(newFilters, "impacting")
         ) {
           delete newFilters.impacting;
         }
@@ -627,7 +653,7 @@ export const getActiveFiltersConfig = (
             ? newFilters[item.urlParam].filter(
                 (value) => String(value) !== String(item.chips[0].value),
               )
-            : '',
+            : "",
         };
 
         removedFilter[item.urlParam].length > 0

@@ -1,10 +1,10 @@
-import './_RulesTable.scss';
-import { DEBOUNCE_DELAY } from '../../AppConstants';
+import "./_RulesTable.scss";
+import { DEBOUNCE_DELAY } from "../../AppConstants";
 import {
   Pagination,
   PaginationVariant,
-} from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
-import React, { useContext, useEffect, useState } from 'react';
+} from "@patternfly/react-core/dist/esm/components/Pagination/Pagination";
+import React, { useContext, useEffect, useState } from "react";
 
 import {
   Table,
@@ -15,29 +15,29 @@ import {
   Td,
   ExpandableRowContent,
   ActionsColumn,
-} from '@patternfly/react-table';
-import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolbar';
+} from "@patternfly/react-table";
+import TableToolbar from "@redhat-cloud-services/frontend-components/TableToolbar";
 
 import {
   filterFetchBuilder,
   urlBuilder,
   workloadQueryBuilder,
-} from '../Common/Tables';
-import { useDispatch, useSelector } from 'react-redux';
+} from "../Common/Tables";
+import { useDispatch, useSelector } from "react-redux";
 
-import DisableRule from '../Modals/DisableRule';
-import { ErrorState } from '@redhat-cloud-services/frontend-components/ErrorState';
-import { PrimaryToolbar } from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
-import ViewHostAcks from '../../PresentationalComponents/Modals/ViewHostAcks';
-import debounce from '../../Utilities/Debounce';
-import downloadReport from '../Common/DownloadHelper';
-import messages from '../../Messages';
+import DisableRule from "../Modals/DisableRule";
+import { ErrorState } from "@redhat-cloud-services/frontend-components/ErrorState";
+import { PrimaryToolbar } from "@redhat-cloud-services/frontend-components/PrimaryToolbar";
+import ViewHostAcks from "../../PresentationalComponents/Modals/ViewHostAcks";
+import debounce from "../../Utilities/Debounce";
+import downloadReport from "../Common/DownloadHelper";
+import messages from "../../Messages";
 
-import { updateRecFilters } from '../../Services/Filters';
-import { useGetRecsQuery } from '../../Services/Recs';
-import { useIntl } from 'react-intl';
-import PropTypes from 'prop-types';
-import { filtersInitialState } from '../../Services/Filters';
+import { updateRecFilters } from "../../Services/Filters";
+import { useGetRecsQuery } from "../../Services/Recs";
+import { useIntl } from "react-intl";
+import PropTypes from "prop-types";
+import { filtersInitialState } from "../../Services/Filters";
 import {
   buildRows,
   emptyRows,
@@ -47,12 +47,14 @@ import {
   sortIndices,
   getActiveFiltersConfig,
   getDefaultImpactingFilter,
-} from './helpers';
-import { useActionsResolver } from './useActionsResolver';
-import impactingFilter from '../Filters/impactingFilter';
-import { AccountStatContext } from '../../ZeroStateWrapper';
-import { SkeletonTable } from '@patternfly/react-component-groups';
-import { EnvironmentContext } from '../../App';
+} from "./helpers";
+import { useActionsResolver } from "./useActionsResolver";
+import impactingFilter from "../Filters/impactingFilter";
+import { AccountStatContext } from "../../ZeroStateWrapper";
+import { SkeletonTable } from "@patternfly/react-component-groups";
+import { EnvironmentContext } from "../../App";
+import { useKesselWorkspaces } from "../../Utilities/useKesselWorkspaces";
+import { useFeatureFlag } from "../../Utilities/Hooks";
 
 const RulesTable = ({ isTabActive, pathway }) => {
   const intl = useIntl();
@@ -64,11 +66,17 @@ const RulesTable = ({ isTabActive, pathway }) => {
   const workloads = useSelector(({ filters }) => filters.workloads);
   const filters = useSelector(({ filters }) => filters.recState);
 
+  // Fetch workspaces for filtering (only when Kessel is enabled)
+  const isKesselEnabled = useFeatureFlag("hbi.kessel-migration");
+  const { data: workspaces = [] } = useKesselWorkspaces({
+    enabled: isKesselEnabled,
+  });
+
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [areAllExpanded, setAreAllExpanded] = useState(false);
   const [sortBy, setSortBy] = useState({});
   const [filterBuilding, setFilterBuilding] = useState(true);
-  const [searchText, setSearchText] = useState(filters?.text || '');
+  const [searchText, setSearchText] = useState(filters?.text || "");
   const [disableRuleOpen, setDisableRuleOpen] = useState(false);
   const [selectedRule, setSelectedRule] = useState({});
   const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
@@ -77,9 +85,10 @@ const RulesTable = ({ isTabActive, pathway }) => {
   const { hasEdgeDevices, edgeQuerySuccess } = useContext(AccountStatContext);
 
   const options = {
-    ...(selectedTags?.length ? { tags: selectedTags.join(',') } : {}),
+    ...(selectedTags?.length ? { tags: selectedTags.join(",") } : {}),
     ...(workloads ? workloadQueryBuilder(workloads) : {}),
     ...(pathway ? { pathway } : {}),
+    ...(filters.groups?.length ? { groups: filters.groups.join(",") } : {}),
   };
 
   const {
@@ -105,7 +114,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
   }, [filters, selectedTags, workloads]);
 
   const onSort = (_event, index, direction) => {
-    const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
+    const orderParam = `${direction === "asc" ? "" : "-"}${sortIndices[index]}`;
     setSortBy({ index, direction });
     setFilters({ ...filters, sort: orderParam, offset: 0 });
   };
@@ -177,7 +186,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
       (item) => item[1] === filters.sort || `-${item[1]}` === filters.sort,
     );
     if (filters.sort !== undefined && sortIndex) {
-      const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
+      const sortDirection = filters.sort[0] === "-" ? "desc" : "asc";
       setSortBy({ index: Number(sortIndex[0]), direction: sortDirection });
     }
   }, [filters.sort]);
@@ -279,7 +288,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
             label: intl.formatMessage(messages.exportJson),
             onSelect: (_e, fileType) =>
               downloadReport(
-                'hits',
+                "hits",
                 fileType,
                 filterFetchBuilder(filters),
                 selectedTags,
@@ -299,6 +308,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
               setSearchText,
               toggleRulesDisabled,
               intl,
+              workspaces,
             ),
             impactingFilterDef,
           ],
@@ -317,8 +327,8 @@ const RulesTable = ({ isTabActive, pathway }) => {
         </Table>
       ) : (
         <Table
-          aria-label={'rules-table'}
-          ouiaId={'rules-table'}
+          aria-label={"rules-table"}
+          ouiaId={"rules-table"}
           variant="compact"
           isStickyHeader
         >
@@ -384,7 +394,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
                 : null;
 
               return (
-                <Tr key={rowIndex} className={isExpanded ? 'expanded-row' : ''}>
+                <Tr key={rowIndex} className={isExpanded ? "expanded-row" : ""}>
                   <Td
                     expand={{
                       rowIndex,
