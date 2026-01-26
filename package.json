@@ -64,11 +64,16 @@
     ],
     "setupFiles": [
       "<rootDir>/config/setupTests.js"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/config/setupTestsAfterEnv.js"
     ]
   },
   "dependencies": {
     "@babel/runtime": "^7.28.4",
     "@patternfly/patternfly": "^5.3.1",
+    "@project-kessel/react-kessel-access-check": "^0.2.0",
+    "@tanstack/react-query": "^5.90.5",
     "@patternfly/react-charts": "^7.4.0",
     "@patternfly/react-component-groups": "^5.5.3",
     "@patternfly/react-core": "^5.3.3",

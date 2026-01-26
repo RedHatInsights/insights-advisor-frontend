@@ -53,6 +53,9 @@ import impactingFilter from '../Filters/impactingFilter';
 import { AccountStatContext } from '../../ZeroStateWrapper';
 import { SkeletonTable } from '@patternfly/react-component-groups';
 import { EnvironmentContext } from '../../App';
+import { useKesselWorkspaces } from '../../Utilities/useKesselWorkspaces';
+import { useFilteredWorkspaces } from '../../Utilities/useFilteredWorkspaces';
+import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const RulesTable = ({ isTabActive, pathway }) => {
   const intl = useIntl();
@@ -63,6 +66,18 @@ const RulesTable = ({ isTabActive, pathway }) => {
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const filters = useSelector(({ filters }) => filters.recState);
+
+  // Fetch workspaces for filtering (only when Kessel is enabled)
+  const isKesselEnabled = useFeatureFlag('hbi.kessel-migration');
+  const { data: workspaces = [] } = useKesselWorkspaces({
+    enabled: isKesselEnabled,
+  });
+
+  // Filter workspaces based on user's view permissions
+  const { filteredWorkspaces } = useFilteredWorkspaces(
+    workspaces,
+    isKesselEnabled,
+  );
 
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [areAllExpanded, setAreAllExpanded] = useState(false);
@@ -80,6 +95,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
     ...(selectedTags?.length ? { tags: selectedTags.join(',') } : {}),
     ...(workloads ? workloadQueryBuilder(workloads) : {}),
     ...(pathway ? { pathway } : {}),
+    ...(filters.groups?.length ? { groups: filters.groups.join(',') } : {}),
   };
 
   const {
@@ -299,6 +315,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
               setSearchText,
               toggleRulesDisabled,
               intl,
+              filteredWorkspaces,
             ),
             impactingFilterDef,
           ],

@@ -138,6 +138,9 @@ export const urlFilterBuilder = (
   paramsObject.impacting !== undefined &&
     !Array.isArray(paramsObject.impacting) &&
     (paramsObject.impacting = [`${paramsObject.impacting}`]);
+  paramsObject.groups !== undefined &&
+    !Array.isArray(paramsObject.groups) &&
+    (paramsObject.groups = [`${paramsObject.groups}`]);
   setFilters({ ...filters, ...paramsObject });
 };
 
@@ -213,6 +216,7 @@ export const filterConfigItems = (
   setSearchText,
   toggleRulesDisabled,
   intl,
+  workspaces = [],
 ) => {
   const addFilterParam = (param, values) => {
     values.length > 0
@@ -220,7 +224,7 @@ export const filterConfigItems = (
       : removeFilterParam(param, filters, setFilters, setSearchText);
   };
 
-  return [
+  const filterItems = [
     {
       label: intl.formatMessage(messages.name).toLowerCase(),
       type: conditionalFilterType.text,
@@ -338,6 +342,28 @@ export const filterConfigItems = (
       },
     },
   ];
+
+  // Add workspace filter only if workspaces are available
+  if (workspaces.length > 0) {
+    const workspaceFilterItems = workspaces.map((workspace) => ({
+      label: workspace.name,
+      value: workspace.name,
+    }));
+
+    filterItems.splice(1, 0, {
+      label: 'workspace',
+      type: conditionalFilterType.checkbox,
+      id: 'groups',
+      value: 'checkbox-groups',
+      filterValues: {
+        onChange: (_event, values) => addFilterParam('groups', values),
+        value: filters.groups,
+        items: workspaceFilterItems,
+      },
+    });
+  }
+
+  return filterItems;
 };
 
 export const buildRows = (

@@ -7,8 +7,13 @@ import MessageState from './PresentationalComponents/MessageState/MessageState';
 import { AdvisorRoutes } from './Routes';
 import messages from './Messages';
 import { useIntl } from 'react-intl';
-import { useHccEnvironmentContext } from './Utilities/Hooks';
+import { useHccEnvironmentContext, useFeatureFlag } from './Utilities/Hooks';
 import { LockIcon } from '@patternfly/react-icons';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AccessCheck } from '@project-kessel/react-kessel-access-check';
+
+const queryClient = new QueryClient();
+const KESSEL_API_PATH = '/api/inventory/v1beta2';
 
 export const EnvironmentContext = createContext({});
 
@@ -62,11 +67,25 @@ const App = () => {
 
 const AppWithHccContext = () => {
   const envContext = useHccEnvironmentContext();
+  const isKesselEnabled = useFeatureFlag('hbi.kessel-migration');
 
   return (
-    <EnvironmentContext.Provider value={envContext}>
-      <App />
-    </EnvironmentContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      {isKesselEnabled ? (
+        <AccessCheck.Provider
+          baseUrl={window.location.origin}
+          apiPath={KESSEL_API_PATH}
+        >
+          <EnvironmentContext.Provider value={envContext}>
+            <App />
+          </EnvironmentContext.Provider>
+        </AccessCheck.Provider>
+      ) : (
+        <EnvironmentContext.Provider value={envContext}>
+          <App />
+        </EnvironmentContext.Provider>
+      )}
+    </QueryClientProvider>
   );
 };
 
