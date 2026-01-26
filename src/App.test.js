@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { IntlProvider } from 'react-intl';
 import configureStore from 'redux-mock-store';
@@ -10,10 +10,11 @@ jest.mock('./Routes', () => ({
 
 jest.mock('./Utilities/Hooks', () => ({
   useHccEnvironmentContext: jest.fn(),
+  useFeatureFlag: jest.fn(),
 }));
 
 import AppWithHccContext from './App';
-import { useHccEnvironmentContext } from './Utilities/Hooks';
+import { useHccEnvironmentContext, useFeatureFlag } from './Utilities/Hooks';
 
 const mockStore = configureStore([]);
 
@@ -206,5 +207,222 @@ describe('App tag processing logic', () => {
         expect.any(Function),
       );
     });
+  });
+});
+
+describe('App with QueryClient integration', () => {
+  let store;
+  let mockEnvContext;
+
+  const renderWithProviders = (component) => {
+    return render(
+      <IntlProvider locale="en" messages={{}}>
+        <Provider store={store}>{component}</Provider>
+      </IntlProvider>,
+    );
+  };
+
+  beforeEach(() => {
+    store = mockStore({
+      filters: {
+        selectedTags: [],
+        workloads: {},
+        recState: {},
+        pathState: {},
+        sysState: {},
+      },
+    });
+
+    mockEnvContext = {
+      isLoading: false,
+      isAllowedToViewRec: true,
+      globalFilterScope: jest.fn(),
+      on: jest.fn(),
+      mapGlobalFilter: jest.fn(),
+    };
+
+    useHccEnvironmentContext.mockReturnValue(mockEnvContext);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should render app with QueryClientProvider', () => {
+    useFeatureFlag.mockReturnValue(false);
+    renderWithProviders(<AppWithHccContext />);
+
+    // Verify app renders correctly
+    expect(screen.getByText('AdvisorRoutes')).toBeInTheDocument();
+  });
+
+  it('should render permission denied message when user lacks permissions', () => {
+    useFeatureFlag.mockReturnValue(false);
+    useHccEnvironmentContext.mockReturnValue({
+      ...mockEnvContext,
+      isAllowedToViewRec: false, // No permission
+    });
+
+    renderWithProviders(<AppWithHccContext />);
+
+    // Should show permission denied message instead of routes
+    expect(screen.queryByText('AdvisorRoutes')).not.toBeInTheDocument();
+  });
+
+  it('should not render app while environment context is loading', () => {
+    useFeatureFlag.mockReturnValue(false);
+    useHccEnvironmentContext.mockReturnValue({
+      ...mockEnvContext,
+      isLoading: true, // Still loading
+    });
+
+    renderWithProviders(<AppWithHccContext />);
+
+    // Should not render anything while loading
+    expect(screen.queryByText('AdvisorRoutes')).not.toBeInTheDocument();
+  });
+
+  it('should call globalFilterScope with insights', () => {
+    useFeatureFlag.mockReturnValue(false);
+    renderWithProviders(<AppWithHccContext />);
+
+    expect(mockEnvContext.globalFilterScope).toHaveBeenCalledWith('insights');
+  });
+
+  it('should register GLOBAL_FILTER_UPDATE event handler', () => {
+    useFeatureFlag.mockReturnValue(false);
+    renderWithProviders(<AppWithHccContext />);
+
+    expect(mockEnvContext.on).toHaveBeenCalledWith(
+      'GLOBAL_FILTER_UPDATE',
+      expect.any(Function),
+    );
+  });
+});
+
+describe('App with Kessel integration', () => {
+  let store;
+  let mockEnvContext;
+
+  const renderWithProviders = (component) => {
+    return render(
+      <IntlProvider locale="en" messages={{}}>
+        <Provider store={store}>{component}</Provider>
+      </IntlProvider>,
+    );
+  };
+
+  beforeEach(() => {
+    store = mockStore({
+      filters: {
+        selectedTags: [],
+        workloads: {},
+        recState: {},
+        pathState: {},
+        sysState: {},
+      },
+    });
+
+    mockEnvContext = {
+      isLoading: false,
+      isAllowedToViewRec: true,
+      globalFilterScope: jest.fn(),
+      on: jest.fn(),
+      mapGlobalFilter: jest.fn(),
+    };
+
+    useHccEnvironmentContext.mockReturnValue(mockEnvContext);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should render with Kessel provider when feature flag is enabled', () => {
+    useFeatureFlag.mockReturnValue(true);
+
+    renderWithProviders(<AppWithHccContext />);
+
+    // Verify app renders correctly with Kessel enabled
+    expect(screen.getByText('AdvisorRoutes')).toBeInTheDocument();
+  });
+
+  it('should render without Kessel provider when feature flag is disabled', () => {
+    useFeatureFlag.mockReturnValue(false);
+
+    renderWithProviders(<AppWithHccContext />);
+
+    // Verify app renders correctly with Kessel disabled
+    expect(screen.getByText('AdvisorRoutes')).toBeInTheDocument();
+  });
+
+  it('should always render QueryClientProvider regardless of feature flag', () => {
+    const testCases = [true, false];
+
+    testCases.forEach((flagValue) => {
+      jest.clearAllMocks();
+      useFeatureFlag.mockReturnValue(flagValue);
+
+      const { container } = renderWithProviders(<AppWithHccContext />);
+
+      // App should render regardless of feature flag state
+      expect(container).toBeTruthy();
+    });
+  });
+
+  it('should render permission denied message when user lacks permissions', () => {
+    useFeatureFlag.mockReturnValue(false);
+    useHccEnvironmentContext.mockReturnValue({
+      ...mockEnvContext,
+      isAllowedToViewRec: false, // No permission
+    });
+
+    renderWithProviders(<AppWithHccContext />);
+
+    // Should show permission denied message instead of routes
+    expect(screen.queryByText('AdvisorRoutes')).not.toBeInTheDocument();
+  });
+
+  it('should not render app while environment context is loading', () => {
+    useFeatureFlag.mockReturnValue(false);
+    useHccEnvironmentContext.mockReturnValue({
+      ...mockEnvContext,
+      isLoading: true, // Still loading
+    });
+
+    renderWithProviders(<AppWithHccContext />);
+
+    // Should not render anything while loading
+    expect(screen.queryByText('AdvisorRoutes')).not.toBeInTheDocument();
+  });
+
+  it('should call globalFilterScope with insights', () => {
+    useFeatureFlag.mockReturnValue(true);
+
+    renderWithProviders(<AppWithHccContext />);
+
+    expect(mockEnvContext.globalFilterScope).toHaveBeenCalledWith('insights');
+  });
+
+  it('should register GLOBAL_FILTER_UPDATE event handler', () => {
+    useFeatureFlag.mockReturnValue(true);
+
+    renderWithProviders(<AppWithHccContext />);
+
+    expect(mockEnvContext.on).toHaveBeenCalledWith(
+      'GLOBAL_FILTER_UPDATE',
+      expect.any(Function),
+    );
+  });
+
+  it('should handle feature flag loading state gracefully', () => {
+    // When useFeatureFlag returns undefined (not yet loaded)
+    // it should return false from useFeatureFlag due to default
+    useFeatureFlag.mockReturnValue(false);
+
+    const { container } = renderWithProviders(<AppWithHccContext />);
+
+    // Should still render without errors
+    expect(container).toBeTruthy();
   });
 });

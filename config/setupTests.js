@@ -1,5 +1,27 @@
 import React from 'react';
 
+// Mock Kessel SDK
+// eslint-disable-next-line react/prop-types
+const KesselProvider = ({ children }) => (
+  <div data-testid="kessel-provider">{children}</div>
+);
+KesselProvider.displayName = 'KesselProvider';
+
+jest.mock('@project-kessel/react-kessel-access-check', () => ({
+  __esModule: true,
+  AccessCheck: {
+    Provider: KesselProvider,
+  },
+  useSelfAccessCheck: jest.fn(() => ({
+    data: { allowed: true },
+    loading: false,
+    error: null,
+  })),
+}));
+
+// TanStack Query - no mocking needed, tests that use it will provide their own QueryClient
+// This allows the real implementation to work properly in tests
+
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   __esModule: true,
   default: () => ({
@@ -81,3 +103,6 @@ global.window.__scalprum__ = {
     remediations: {},
   },
 };
+
+// Mock global fetch for workspace API calls
+global.fetch = jest.fn();
