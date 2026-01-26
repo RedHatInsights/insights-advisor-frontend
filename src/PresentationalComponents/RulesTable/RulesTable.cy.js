@@ -14,6 +14,7 @@ import {
   itExportsDataToFile,
   selectConditionalFilterOption,
 } from '../../../cypress/utils/table';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import {
   changePagination,
@@ -42,6 +43,8 @@ import {
 } from '../../../cypress/utils/table';
 import { filtersConf } from '../../../cypress/rulestablesconsts';
 import { EnvironmentContext } from '../../App';
+import FlagProvider from '@unleash/proxy-client-react';
+import { AccessCheck } from '@project-kessel/react-kessel-access-check';
 
 /**
  * Mounts the RulesTable component with a configurable environment context.
@@ -62,27 +65,66 @@ const mountComponent = (
     ...envContextOverrides,
   };
 
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
+  // Intercept Kessel workspaces API call
+  cy.intercept('/api/rbac/v2/workspaces/?limit=1000&type=default', {
+    statusCode: 200,
+    body: {
+      data: [],
+    },
+  }).as('workspaces_call');
+
+  // Intercept feature flags endpoint
+  cy.intercept('GET', '/feature_flags*', {
+    statusCode: 200,
+    body: {
+      toggles: [],
+    },
+  }).as('getFeatureFlag');
+
   cy.mount(
-    <EnvironmentContext.Provider value={finalEnvContext}>
-      <MemoryRouter>
-        <AccountStatContext.Provider value={{ hasEdgeDevices }}>
-          <IntlProvider
-            locale={navigator.language.slice(0, 2)}
-            messages={messages}
-          >
-            <Provider store={initStore()}>
-              <Routes>
-                <Route
-                  key={'Recommendations'}
-                  path="*"
-                  element={<RulesTable />}
-                />
-              </Routes>
-            </Provider>
-          </IntlProvider>
-        </AccountStatContext.Provider>
-      </MemoryRouter>
-    </EnvironmentContext.Provider>,
+    <FlagProvider
+      config={{
+        url: 'http://localhost:8002/feature_flags',
+        clientKey: 'abc',
+        appName: 'abc',
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        <AccessCheck.Provider
+          baseUrl={window.location.origin}
+          apiPath="/api/inventory/v1beta2"
+        >
+          <EnvironmentContext.Provider value={finalEnvContext}>
+            <MemoryRouter>
+              <AccountStatContext.Provider value={{ hasEdgeDevices }}>
+                <IntlProvider
+                  locale={navigator.language.slice(0, 2)}
+                  messages={messages}
+                >
+                  <Provider store={initStore()}>
+                    <Routes>
+                      <Route
+                        key={'Recommendations'}
+                        path="*"
+                        element={<RulesTable />}
+                      />
+                    </Routes>
+                  </Provider>
+                </IntlProvider>
+              </AccountStatContext.Provider>
+            </MemoryRouter>
+          </EnvironmentContext.Provider>
+        </AccessCheck.Provider>
+      </QueryClientProvider>
+    </FlagProvider>,
   );
 };
 
@@ -445,20 +487,59 @@ urlParamsList.forEach((urlParams, index) => {
         },
       }).as('call');
 
+      // Intercept Kessel workspaces API call
+      cy.intercept('/api/rbac/v2/workspaces/?limit=1000&type=default', {
+        statusCode: 200,
+        body: {
+          data: [],
+        },
+      }).as('workspaces_call');
+
+      // Intercept feature flags endpoint
+      cy.intercept('GET', '/feature_flags*', {
+        statusCode: 200,
+        body: {
+          toggles: [],
+        },
+      }).as('getFeatureFlag');
+
+      const queryClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: false,
+          },
+        },
+      });
+
       cy.mount(
-        <MemoryRouter
-          initialEntries={[`/recommendations?${urlParams}`]}
-          initialIndex={0}
+        <FlagProvider
+          config={{
+            url: 'http://localhost:8002/feature_flags',
+            clientKey: 'abc',
+            appName: 'abc',
+          }}
         >
-          <IntlProvider
-            locale={navigator.language.slice(0, 2)}
-            messages={messages}
-          >
-            <Provider store={initStore()}>
-              <RulesTable />
-            </Provider>
-          </IntlProvider>
-        </MemoryRouter>,
+          <QueryClientProvider client={queryClient}>
+            <AccessCheck.Provider
+              baseUrl={window.location.origin}
+              apiPath="/api/inventory/v1beta2"
+            >
+              <MemoryRouter
+                initialEntries={[`/recommendations?${urlParams}`]}
+                initialIndex={0}
+              >
+                <IntlProvider
+                  locale={navigator.language.slice(0, 2)}
+                  messages={messages}
+                >
+                  <Provider store={initStore()}>
+                    <RulesTable />
+                  </Provider>
+                </IntlProvider>
+              </MemoryRouter>
+            </AccessCheck.Provider>
+          </QueryClientProvider>
+        </FlagProvider>,
       );
     });
 

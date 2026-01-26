@@ -11,6 +11,9 @@ import fixtures from '../../../cypress/fixtures/recommendations.json';
 import { itExportsDataToFile } from '../../../cypress/utils/table';
 import { hasChip } from '@redhat-cloud-services/frontend-components-utilities';
 import { createTestEnvironmentContext } from '../../../cypress/support/globals';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import FlagProvider from '@unleash/proxy-client-react';
+import { AccessCheck } from '@project-kessel/react-kessel-access-check';
 
 const DEFAULT_API_BASE_PATH = '/api/insights/v1';
 
@@ -58,20 +61,59 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
     },
   ).as('rules_table_initial_call');
 
+  // Intercept Kessel workspaces API call
+  cy.intercept('/api/rbac/v2/workspaces/?limit=1000&type=default', {
+    statusCode: 200,
+    body: {
+      data: [],
+    },
+  }).as('workspaces_call');
+
+  // Intercept feature flags endpoint
+  cy.intercept('GET', '/feature_flags*', {
+    statusCode: 200,
+    body: {
+      toggles: [],
+    },
+  }).as('getFeatureFlag');
+
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
   cy.mount(
-    <EnvironmentContext.Provider value={finalEnvContext}>
-      <MemoryRouter initialEntries={['/topics/123']}>
-        <AccountStatContext.Provider value={{ hasEdgeDevices }}>
-          <IntlProvider locale={navigator.language.slice(0, 2)}>
-            <Provider store={initStore()}>
-              <Routes>
-                <Route path="topics/:id" element={<Details />}></Route>
-              </Routes>
-            </Provider>
-          </IntlProvider>
-        </AccountStatContext.Provider>
-      </MemoryRouter>
-    </EnvironmentContext.Provider>,
+    <FlagProvider
+      config={{
+        url: 'http://localhost:8002/feature_flags',
+        clientKey: 'abc',
+        appName: 'abc',
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        <AccessCheck.Provider
+          baseUrl={window.location.origin}
+          apiPath="/api/inventory/v1beta2"
+        >
+          <EnvironmentContext.Provider value={finalEnvContext}>
+            <MemoryRouter initialEntries={['/topics/123']}>
+              <AccountStatContext.Provider value={{ hasEdgeDevices }}>
+                <IntlProvider locale={navigator.language.slice(0, 2)}>
+                  <Provider store={initStore()}>
+                    <Routes>
+                      <Route path="topics/:id" element={<Details />}></Route>
+                    </Routes>
+                  </Provider>
+                </IntlProvider>
+              </AccountStatContext.Provider>
+            </MemoryRouter>
+          </EnvironmentContext.Provider>
+        </AccessCheck.Provider>
+      </QueryClientProvider>
+    </FlagProvider>,
   );
 };
 
