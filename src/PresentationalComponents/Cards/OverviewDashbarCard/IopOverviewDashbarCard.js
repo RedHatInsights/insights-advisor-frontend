@@ -7,7 +7,6 @@ import {
   Flex,
   FlexItem,
   Skeleton,
-  Text,
 } from '@patternfly/react-core';
 
 export const IopOverviewDashbarCard = ({
@@ -31,11 +30,11 @@ export const IopOverviewDashbarCard = ({
         <FlexItem>{badge}</FlexItem>
         <FlexItem>
           {isLoaded ? (
-            <Text className="pf-v5-u-font-size-lg pf-v5-u-font-weight-bold pf-v5-u-mt-xs">
+            <span className="pf-v5-u-font-size-lg pf-v5-u-font-weight-bold pf-v5-u-mt-xs">
               <a onClick={() => onClickFilterByName(name)} data-testid={name}>
                 {count}
               </a>
-            </Text>
+            </span>
           ) : (
             <Skeleton width="50px" className="pf-v5-u-mt-xs" />
           )}

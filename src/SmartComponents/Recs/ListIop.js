@@ -11,10 +11,8 @@ import {
   Stack,
   StackItem,
   Popover,
-  TextContent,
+  Content,
   Flex,
-  Text,
-  TextVariants,
   Icon,
 } from '@patternfly/react-core';
 
@@ -42,15 +40,15 @@ const ListIop = () => {
               <Popover
                 headerContent="About advisor recommendations"
                 bodyContent={
-                  <TextContent>
+                  <Content>
                     <Flex direction={{ default: 'column' }}>
-                      <Text component={TextVariants.p}>
+                      <Content component="p">
                         The advisor service assesses and monitors the health of
                         your Red Hat Enterprise Linux (RHEL) infrastructure, and
                         provides recommendations to address availability,
                         stability, performance, and security issues.
-                      </Text>
-                      <Text component={TextVariants.p}>
+                      </Content>
+                      <Content component="p">
                         <a
                           rel="noreferrer"
                           target="_blank"
@@ -67,15 +65,15 @@ const ListIop = () => {
                             <ExternalLinkAltIcon />
                           </Icon>
                         </a>
-                      </Text>
+                      </Content>
                     </Flex>
-                  </TextContent>
+                  </Content>
                 }
               >
                 <Icon>
                   <OutlinedQuestionCircleIcon
                     className="pf-v5-u-ml-sm"
-                    color="var(--pf-v5-global--secondary-color--100)"
+                    color="var(--pf-t--temp--dev--tbd)"
                     style={{
                       verticalAlign: 0,
                       fontSize: 16,

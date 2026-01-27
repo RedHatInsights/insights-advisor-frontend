@@ -8,8 +8,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { EnvironmentContext } from '../../App';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 import { buildBreadcrumbs } from './helpers';
+import { useIntl } from 'react-intl';
 
 const Breadcrumbs = ({ current }) => {
+  const intl = useIntl();
   const location = useLocation().pathname?.split('/');
   const [items, setItems] = useState([]);
   const envContext = useContext(EnvironmentContext);
@@ -44,7 +46,7 @@ const Breadcrumbs = ({ current }) => {
           <BreadcrumbItem isActive>{current}</BreadcrumbItem>
         </Breadcrumb>
       ) : (
-        messages.loading.defaultMessage
+        intl.formatMessage(messages.loading)
       )}
     </React.Fragment>
   );

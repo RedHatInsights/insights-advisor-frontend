@@ -5,15 +5,13 @@ import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import messages from '../Messages';
 import { Post } from './Api';
-import { useDispatch } from 'react-redux';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { EnvironmentContext } from '../App';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { DownloadIcon } from '@patternfly/react-icons';
 
 const DownloadPlaybookButton = ({ isDisabled, rules, systems }) => {
   const intl = useIntl();
-  const dispatch = useDispatch();
-  const notification = (data) => dispatch(addNotification(data));
+  const addNotification = useAddNotification();
   const envContext = useContext(EnvironmentContext);
   const brandName = envContext.isLightspeedEnabled ? 'Lightspeed' : 'Insights';
 
@@ -39,7 +37,7 @@ const DownloadPlaybookButton = ({ isDisabled, rules, systems }) => {
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      notification({
+      addNotification({
         variant: 'danger',
         dismissable: true,
         title: intl.formatMessage(messages.error),

@@ -6,18 +6,18 @@ import {
 } from '@patternfly/react-table/deprecated';
 
 import { BASE_URL } from '../../AppConstants';
-import { Button, Modal } from '@patternfly/react-core';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { DeleteApi } from '../../Utilities/Api';
 import { List } from 'react-content-loader';
 import { OutlinedBellIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
 import messages from '../../Messages';
-import { addNotification as notification } from '@redhat-cloud-services/frontend-components-notifications/';
-import { useDispatch } from 'react-redux';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { useGetHostAcksQuery } from '../../Services/Acks';
 import { useIntl } from 'react-intl';
 import { EnvironmentContext } from '../../App';
+import { Button } from '@patternfly/react-core';
+import { Modal } from '@patternfly/react-core/deprecated';
 
 const ViewHostAcks = ({
   handleModalToggle = () => {},
@@ -25,10 +25,9 @@ const ViewHostAcks = ({
   rule = {},
   afterFn = () => {},
 }) => {
+  const addNotification = useAddNotification();
   const intl = useIntl();
-  const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
-  const addNotification = (data) => dispatch(notification(data));
   const columns = [
     intl.formatMessage(messages.systemName),
     intl.formatMessage(messages.justificationNote),
@@ -89,12 +88,12 @@ const ViewHostAcks = ({
         {
           title: (
             <Button
+              icon={<OutlinedBellIcon size="sm" />}
               key={item.system_uuid}
               isInline
               variant="link"
               onClick={() => deleteAck(item)}
             >
-              <OutlinedBellIcon size="sm" />
               {` ${intl.formatMessage(messages.enable)}`}
             </Button>
           ),

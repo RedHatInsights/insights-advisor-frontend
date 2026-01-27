@@ -5,12 +5,12 @@ import React from 'react';
 import messages from '../../Messages';
 import { Label, Tooltip, TooltipPosition } from '@patternfly/react-core';
 
-const RuleLabels = ({ rule, isCompact = true, noMargin }) => {
+const RuleLabels = ({ rule, intl, isCompact = true, noMargin }) => {
   return (
     <React.Fragment>
       {rule?.tags?.search('incident') !== -1 && (
         <Tooltip
-          content={messages.incidentTooltip.defaultMessage}
+          content={intl.formatMessage(messages.incidentTooltip)}
           position={TooltipPosition.right}
         >
           <Label
@@ -18,27 +18,27 @@ const RuleLabels = ({ rule, isCompact = true, noMargin }) => {
             className={noMargin ? null : 'adv-c-label-incident'}
             isCompact={isCompact}
           >
-            {messages.incident.defaultMessage}
+            {intl.formatMessage(messages.incident)}
           </Label>
         </Tooltip>
       )}
       {rule?.rule_status === 'disabled' && (
         <Tooltip
-          content={messages.ruleIsDisabledTooltip.defaultMessage}
+          content={intl.formatMessage(messages.ruleIsDisabledTooltip)}
           position={TooltipPosition.right}
         >
           <Label color="gray" isCompact={isCompact}>
-            {messages.disabled.defaultMessage}
+            {intl.formatMessage(messages.disabled)}
           </Label>
         </Tooltip>
       )}
       {rule?.rule_status === 'rhdisabled' && (
         <Tooltip
-          content={messages.ruleIsDisabledTooltip.defaultMessage}
+          content={intl.formatMessage(messages.ruleIsDisabledTooltip)}
           position={TooltipPosition.right}
         >
           <Label color="gray" isCompact={isCompact}>
-            {messages.redhatDisabled.defaultMessage}
+            {intl.formatMessage(messages.redhatDisabled)}
           </Label>
         </Tooltip>
       )}
@@ -48,6 +48,7 @@ const RuleLabels = ({ rule, isCompact = true, noMargin }) => {
 
 RuleLabels.propTypes = {
   rule: PropTypes.object,
+  intl: PropTypes.object.isRequired,
   isCompact: PropTypes.bool,
   noMargin: PropTypes.bool,
 };

@@ -6,22 +6,20 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { workloadQueryBuilder } from '../Common/Tables';
 import { exportNotifications } from '../../AppConstants';
-import { useDispatch } from 'react-redux';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
 import { EnvironmentContext } from '../../App';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 
 const SystemsPdf = ({ filters }) => {
-  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const selectedTags = useSelector(
     ({ AdvisorStore }) => AdvisorStore?.selectedTags,
   );
   const workloads = useSelector(({ AdvisorStore }) => AdvisorStore?.workloads);
   const envContext = useContext(EnvironmentContext);
-
+  const addNotification = useAddNotification();
   const dataFetch = async () => {
     setLoading(true);
-    dispatch(addNotification(exportNotifications.pending));
+    addNotification(exportNotifications.pending);
 
     let options = selectedTags?.length && { tags: selectedTags };
     workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
@@ -45,10 +43,10 @@ const SystemsPdf = ({ filters }) => {
         },
       });
 
-      dispatch(addNotification(exportNotifications.success));
+      addNotification(exportNotifications.success);
     } catch (error) {
       void error;
-      dispatch(addNotification(exportNotifications.error));
+      addNotification(exportNotifications.error);
     } finally {
       setLoading(false);
     }
@@ -59,7 +57,7 @@ const SystemsPdf = ({ filters }) => {
       onClick={dataFetch}
       variant="button"
       isDisabled={loading}
-      className="pf-v5-c-menu__item adv-c-dropdown-systems-pdf__menu-item"
+      className="pf-v6-c-menu__item adv-c-dropdown-systems-pdf__menu-item"
     >
       Export to PDF
     </Button>

@@ -7,7 +7,7 @@ import {
   Flex,
   FlexItem,
   Skeleton,
-  Text,
+  Content,
 } from '@patternfly/react-core';
 
 export const OverviewDashbarCard = ({
@@ -26,13 +26,16 @@ export const OverviewDashbarCard = ({
         <FlexItem>{badge}</FlexItem>
         <FlexItem>
           {isLoaded ? (
-            <Text className="pf-v5-u-font-size-lg pf-v5-u-font-weight-bold pf-v5-u-mt-xs">
+            <Content
+              component="p"
+              className="pf-v6-u-font-size-lg pf-v6-u-font-weight-bold pf-v6-u-mt-xs"
+            >
               <a onClick={() => onClickFilterByName(name)} data-testid={name}>
                 {count}
               </a>
-            </Text>
+            </Content>
           ) : (
-            <Skeleton width="50px" className="pf-v5-u-mt-xs" />
+            <Skeleton width="50px" className="pf-v6-u-mt-xs" />
           )}
         </FlexItem>
       </Flex>

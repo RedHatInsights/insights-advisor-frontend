@@ -24,7 +24,6 @@ import Wrapper from '../../Utilities/Wrapper';
 import { INVENTORY_BASE_URL } from '../../AppConstants';
 import systemProfile from '../../../cypress/fixtures/systemProfile.json';
 import { selectRandomEnabledRows } from '../../../cypress/utils/table';
-import messages from '../../Messages';
 import { Button } from '@patternfly/react-core';
 import { EnvironmentContext } from '../../App';
 import { createTestEnvironmentContext } from '../../../cypress/support/globals';
@@ -257,43 +256,45 @@ describe('system rules table', () => {
 
       // select a couple
       //  but only ones that can be selected
-      cy.get('.pf-v5-c-table__tbody > .pf-v5-c-table__tr').then((rows) => {
+      cy.get('.pf-v6-c-table__tbody').then((rows) => {
         selectRandomEnabledRows({ rows: rows, numberOfRowsToSelect: 3 });
       });
 
       // check that it shows correct number
       cy.get(PT_BULK_SELECT).should('have.text', '3 selected');
 
-      // Select None
-      cy.get('button.pf-v5-c-menu-toggle > .pf-v5-c-menu-toggle__controls')
-        .first()
+      // Select None - click the bulk select dropdown toggle
+      cy.get(PT_BULK_SELECT)
+        .parent()
+        .find('.pf-v6-c-menu-toggle__controls')
         .click();
       cy.get(PT_BULK_SELECT_LIST).contains('Select none').click();
 
       // check that none selected
       cy.get(PT_BULK_SELECT).should('have.text', '');
 
-      // Select All
-      cy.get('button.pf-v5-c-menu-toggle > .pf-v5-c-menu-toggle__controls')
-        .first()
+      // Select All - click the bulk select dropdown toggle
+      cy.get(PT_BULK_SELECT)
+        .parent()
+        .find('.pf-v6-c-menu-toggle__controls')
         .click();
       cy.get(PT_BULK_SELECT_LIST).contains('Select all').click();
 
       // check that all selected
       cy.get(PT_BULK_SELECT).should('have.text', '7 selected');
 
-      // click the BS
+      // click the bulk select to deselect
       cy.get(PT_BULK_SELECT).click();
 
       // check that none selected
       cy.get(PT_BULK_SELECT).should('have.text', '');
 
       // select some
-      cy.get('.pf-v5-c-table__tbody > .pf-v5-c-table__tr').then((rows) => {
+      cy.get('.pf-v6-c-table__tbody').then((rows) => {
         selectRandomEnabledRows({ rows: rows, numberOfRowsToSelect: 3 });
       });
 
-      // click the BS
+      // click the bulk select to select all
       cy.get(PT_BULK_SELECT).click();
 
       // check that all selected
@@ -323,13 +324,15 @@ describe('system rules table', () => {
 
   describe(`Tooltips`, () => {
     function constructLikelihoodImpactTooltipContent(likelihood, impact) {
+      const likelihoodMsg =
+        'The likelihood that this will be a problem is {level}.';
+      const impactMsg =
+        'The impact of the problem would be {level} if it occurred.';
+
       return (
-        messages.likelihoodDescription.defaultMessage.replace(
-          /{(.*?)}/g,
-          likelihood,
-        ) +
+        likelihoodMsg.replace(/{(.*?)}/g, likelihood) +
         ' ' +
-        messages.impactDescription.defaultMessage.replace(/{(.*?)}/g, impact)
+        impactMsg.replace(/{(.*?)}/g, impact)
       );
     }
 
@@ -345,7 +348,7 @@ describe('system rules table', () => {
         </Button>,
       );
       cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
-      cy.contains(messages.exportData.defaultMessage).should('be.visible');
+      cy.contains('Export data').should('be.visible');
     });
 
     it(`Critical tooltip displays the correct content.`, () => {
@@ -368,7 +371,7 @@ describe('system rules table', () => {
     });
 
     it(`Moderate tooltip displays the correct content.`, () => {
-      cy.get('td[data-label="Total risk"] .pf-m-gold')
+      cy.get('td[data-label="Total risk"] .pf-m-yellow')
         .first()
         .trigger('mouseenter');
       cy.contains(

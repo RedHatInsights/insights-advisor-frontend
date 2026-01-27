@@ -1,16 +1,17 @@
-.pf-v5-c-table__sort-indicator {
-  margin-left: var(--pf-v5-global--spacer--xs);
+.pf-v6-c-table__sort-indicator {
+  margin-left: var(--pf-v6-global--spacer--xs);
 }
 
-.pf-v5-c-table tr > :last-child {
-  padding-left: var(--pf-v5-global--spacer--xs);
+.pf-v6-c-table tr> :last-child {
+  padding-left: var(--pf-v6-global--spacer--xs);
 }
 
-.pf-v5-c-table .pf-v5-c-table__sort {
+.pf-v6-c-table .pf-v6-c-table__sort {
   min-width: initial;
 }
 
-table.ins-c-entity-table.pf-v5-c-table .ins-composed-col * {
-  font-size: var(--pf-v5-global--FontSize--md);
+table.ins-c-entity-table.pf-v6-c-table .ins-composed-col * {
+  font-size: var(--pf-v6-global--FontSize--md);
 }
+
 /*# sourceMappingURL=SystemsTable.css.map */

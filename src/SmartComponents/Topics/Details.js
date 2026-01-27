@@ -2,9 +2,9 @@ import './_Details.scss';
 
 import React, { useContext, useEffect } from 'react';
 import {
-  Text,
-  TextVariants,
-} from '@patternfly/react-core/dist/esm/components/Text/Text';
+  Content,
+  ContentVariants,
+} from '@patternfly/react-core/dist/esm/components/Content/Content';
 
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import { Label } from '@patternfly/react-core/dist/esm/components/Label/Label';
@@ -13,7 +13,7 @@ import MessageState from '../../PresentationalComponents/MessageState/MessageSta
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 import StarIcon from '@patternfly/react-icons/dist/esm/icons/star-icon';
-import { TextContent } from '@patternfly/react-core/dist/esm/components/Text/TextContent';
+
 import TimesCircleIcon from '@patternfly/react-icons/dist/esm/icons/times-circle-icon';
 import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import { Truncate } from '@redhat-cloud-services/frontend-components/Truncate';
@@ -77,7 +77,7 @@ const Details = () => {
         {topic?.name && <Breadcrumbs current={topic?.name} ouiaId="details" />}
         {!isFetching && (
           <React.Fragment>
-            <Title headingLevel="h3" size="2xl" className="pf-v5-u-mb-lg">
+            <Title headingLevel="h3" size="2xl" className="pf-v6-u-mb-lg">
               {topic.name}
               {topic.featured && (
                 <Label
@@ -89,8 +89,8 @@ const Details = () => {
                 </Label>
               )}
             </Title>
-            <TextContent className="pf-v5-u-mt-md">
-              <Text component={TextVariants.p}>
+            <Content className="pf-v6-u-mt-md">
+              <Content component={ContentVariants.p}>
                 <Truncate
                   text={topic.description}
                   length={600}
@@ -98,17 +98,17 @@ const Details = () => {
                   collapseText={intl.formatMessage(messages.readless)}
                   inline
                 />
-              </Text>
-            </TextContent>
+              </Content>
+            </Content>
           </React.Fragment>
         )}
         {isFetching || (isLoading && <Loading />)}
       </PageHeader>
-      <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
+      <section className="pf-v6-l-page__main-section pf-v6-c-page__main-section">
         <React.Fragment>
           {!isError ? (
             <React.Fragment>
-              <Title headingLevel="h3" size="2xl" className="pf-v5-u-mb-lg">
+              <Title headingLevel="h3" size="2xl" className="pf-v6-u-mb-lg">
                 {intl.formatMessage(messages.recommendations)}
               </Title>
               <RulesTable />
