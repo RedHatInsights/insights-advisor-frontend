@@ -11,21 +11,6 @@ import IopRecommendationDetails from './IopRecommendationDetails';
 import { useRbac } from '../../Utilities/Hooks';
 import { PERMISSIONS } from '../../AppConstants';
 
-window.insights = {
-  chrome: {
-    auth: {
-      getUser: () =>
-        new Promise((resolve) =>
-          resolve({
-            identity: {
-              user: {},
-            },
-          }),
-        ),
-    },
-    getUserPermissions: () => Promise.resolve([]),
-  },
-};
 export function responseDataInterceptor(response) {
   if (response.data) {
     return response.data;
