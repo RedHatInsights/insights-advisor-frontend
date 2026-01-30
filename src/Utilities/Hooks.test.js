@@ -1,7 +1,15 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { useRbac, useHccEnvironmentContext } from './Hooks';
-import { BASE_URL, PERMISSIONS } from '../AppConstants';
+import {
+  useRbac,
+  useHccEnvironmentContext,
+  useIopEnvironmentContext,
+} from './Hooks';
+import {
+  BASE_URL,
+  PERMISSIONS,
+  IOP_ENVIRONMENT_CONTEXT,
+} from '../AppConstants';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   __esModule: true,
@@ -167,5 +175,109 @@ describe('useHccEnvironmentContext', () => {
       INVENTORY_BASE_URL: '/api/inventory/v1',
       REMEDIATIONS_BASE_URL: '/api/remediations/v1',
     });
+  });
+});
+
+describe('useIopEnvironmentContext', () => {
+  const mockChrome = {
+    getUserPermissions: () =>
+      Promise.resolve([
+        { permission: 'advisor:disable-recommendations:write' },
+        { permission: 'advisor:recommendation-results:read' },
+      ]),
+    updateDocumentTitle: jest.fn(),
+    auth: { getUser: jest.fn() },
+    on: jest.fn(),
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    useChrome.mockReturnValue(mockChrome);
+  });
+
+  it('returns expected IOP environment context values with permissions', async () => {
+    const { result } = renderHook(() => useIopEnvironmentContext());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current).toEqual({
+      ...IOP_ENVIRONMENT_CONTEXT,
+      isLoading: false,
+      isDisableRecEnabled: true,
+      isAllowedToViewRec: true,
+    });
+  });
+
+  it('returns expected IOP environment context values without permissions', async () => {
+    useChrome.mockReturnValue({
+      getUserPermissions: () => Promise.resolve([]),
+      auth: { getUser: jest.fn() },
+    });
+
+    const { result } = renderHook(() => useIopEnvironmentContext());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current).toEqual({
+      ...IOP_ENVIRONMENT_CONTEXT,
+      isLoading: false,
+      isDisableRecEnabled: false,
+      isAllowedToViewRec: false,
+    });
+  });
+
+  it('returns loading state initially', () => {
+    useChrome.mockReturnValue({
+      getUserPermissions: () => new Promise(() => {}),
+      auth: { getUser: jest.fn() },
+    });
+
+    const { result } = renderHook(() => useIopEnvironmentContext());
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.isDisableRecEnabled).toEqual([]);
+    expect(result.current.isAllowedToViewRec).toEqual([]);
+  });
+
+  it('returns partial permissions when user has only view permission', async () => {
+    useChrome.mockReturnValue({
+      getUserPermissions: () =>
+        Promise.resolve([
+          { permission: 'advisor:recommendation-results:read' },
+        ]),
+      auth: { getUser: jest.fn() },
+    });
+
+    const { result } = renderHook(() => useIopEnvironmentContext());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.isDisableRecEnabled).toBe(false);
+    expect(result.current.isAllowedToViewRec).toBe(true);
+  });
+
+  it('returns partial permissions when user has only disable permission', async () => {
+    useChrome.mockReturnValue({
+      getUserPermissions: () =>
+        Promise.resolve([
+          { permission: 'advisor:disable-recommendations:write' },
+        ]),
+      auth: { getUser: jest.fn() },
+    });
+
+    const { result } = renderHook(() => useIopEnvironmentContext());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.isDisableRecEnabled).toBe(true);
+    expect(result.current.isAllowedToViewRec).toBe(false);
   });
 });
