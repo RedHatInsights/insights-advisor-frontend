@@ -12,14 +12,28 @@ import { PERMISSIONS } from '../../AppConstants';
 const dbStore = initStore();
 
 const ListWrapped = (props) => {
-  const [[hasDisableRecPermission]] = useRbac([PERMISSIONS.disableRec]);
+  const [[hasDisableRecPermission, hasViewRecPermission]] = useRbac([
+    PERMISSIONS.disableRec,
+    PERMISSIONS.viewRecs,
+  ]);
+
+  const disableRecPermission =
+    Array.isArray(hasDisableRecPermission) &&
+    hasDisableRecPermission.length === 0
+      ? false
+      : hasDisableRecPermission;
+  const viewRecPermission =
+    Array.isArray(hasViewRecPermission) && hasViewRecPermission.length === 0
+      ? false
+      : hasViewRecPermission;
 
   return (
     <IntlProvider locale="en" messages={messages}>
       <EnvironmentContext.Provider
         value={{
           ...IOP_ENVIRONMENT_CONTEXT,
-          isDisableRecEnabled: hasDisableRecPermission,
+          isDisableRecEnabled: disableRecPermission,
+          isAllowedToViewRec: viewRecPermission,
         }}
       >
         <Provider store={dbStore}>
