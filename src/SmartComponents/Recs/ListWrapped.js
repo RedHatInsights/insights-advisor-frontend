@@ -12,7 +12,10 @@ import { PERMISSIONS } from '../../AppConstants';
 const dbStore = initStore();
 
 const ListWrapped = (props) => {
-  const [[hasDisableRecPermission]] = useRbac([PERMISSIONS.disableRec]);
+  const [[hasDisableRecPermission, hasViewRecPermission]] = useRbac([
+    PERMISSIONS.disableRec,
+    PERMISSIONS.viewRecs,
+  ]);
 
   return (
     <IntlProvider locale="en" messages={messages}>
@@ -20,6 +23,7 @@ const ListWrapped = (props) => {
         value={{
           ...IOP_ENVIRONMENT_CONTEXT,
           isDisableRecEnabled: hasDisableRecPermission,
+          isAllowedToViewRec: hasViewRecPermission,
         }}
       >
         <Provider store={dbStore}>
