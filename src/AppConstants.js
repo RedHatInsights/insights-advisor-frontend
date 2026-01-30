@@ -506,7 +506,7 @@ export const IOP_ENVIRONMENT_CONTEXT = {
   isLoading: false,
   isExportEnabled: false,
   isDisableRecEnabled: false, // set later according to user permissions
-  isAllowedToViewRec: true,
+  isAllowedToViewRec: false, // set later according to user permissions
   displayGroupsTagsColumns: false,
   displayRuleRatings: false,
   displayRecPathways: false,
