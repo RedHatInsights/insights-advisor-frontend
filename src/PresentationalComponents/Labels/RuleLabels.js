@@ -4,8 +4,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import messages from '../../Messages';
 import { Label, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { useIntl } from 'react-intl';
 
-const RuleLabels = ({ rule, intl, isCompact = true, noMargin }) => {
+const RuleLabels = ({ rule, isCompact = true, noMargin }) => {
+  const intl = useIntl();
   return (
     <React.Fragment>
       {rule?.tags?.search('incident') !== -1 && (
@@ -48,7 +50,6 @@ const RuleLabels = ({ rule, intl, isCompact = true, noMargin }) => {
 
 RuleLabels.propTypes = {
   rule: PropTypes.object,
-  intl: PropTypes.object.isRequired,
   isCompact: PropTypes.bool,
   noMargin: PropTypes.bool,
 };
