@@ -22,7 +22,9 @@ export const systemsTableColumns = (intl, envContext) => [
             {`${system.display_name} `}
           </InsightsLink>
         )}
-        {system.incident_hits > 0 && <RuleLabels rule={{ tags: 'incident' }} />}
+        {system.incident_hits > 0 && (
+          <RuleLabels rule={{ tags: 'incident' }} intl={intl} />
+        )}
       </React.Fragment>
     ),
   },

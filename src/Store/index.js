@@ -7,8 +7,6 @@ import { Recs } from '../Services/Recs';
 import { Systems } from '../Services/Systems';
 import { Topics } from '../Services/Topics';
 import filters from '../Services/Filters';
-import { notificationsMiddleware } from '@redhat-cloud-services/frontend-components-notifications/';
-import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import promiseMiddleware from 'redux-promise-middleware';
 import { SystemVariety } from '../Services/SystemVariety';
 
@@ -20,7 +18,6 @@ const reducer = {
   [Acks.reducerPath]: Acks.reducer,
   [SystemVariety.reducerPath]: SystemVariety.reducer,
   filters,
-  notifications: notificationsReducer,
   systemReducer: systemReducer([], {}),
   entitiesDetailsReducer: entitiesDetailsReducer({}),
 };
@@ -34,10 +31,6 @@ const getMiddlewares = (appMiddlewares) => {
     Topics.middleware,
     Acks.middleware,
     SystemVariety.middleware,
-    notificationsMiddleware({
-      errorTitleKey: ['message'],
-      errorDescriptionKey: ['response.data.detail'],
-    }),
     ...appMiddlewares,
   ];
 

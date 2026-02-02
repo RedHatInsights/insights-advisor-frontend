@@ -22,10 +22,12 @@ import {
 } from '../../AppConstants';
 import { truncate } from 'lodash';
 import { Text } from '@react-pdf/renderer';
-import { Flex, FlexItem } from '@patternfly/react-core';
-import chart_color_red_100 from '@patternfly/react-tokens/dist/js/chart_color_red_100';
+import { Content, Flex, FlexItem } from '@patternfly/react-core';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
-import global_Color_dark_200 from '@patternfly/react-tokens/dist/js/global_Color_dark_200';
+import {
+  t_global_text_color_status_danger_default,
+  t_global_text_color_200,
+} from '@patternfly/react-tokens';
 import RecommendationCharts from './RecommendationCharts';
 
 /**
@@ -143,20 +145,31 @@ const BuildExecReport = ({ asyncData, additionalData }) => {
   );
 
   const rulesDesc = (rule) => (
-    <Text>
-      <Text style={{ fontWeight: 700 }}> {rule.description}</Text>&nbsp;
+    <Content component="p">
+      <Content style={{ fontWeight: 700 }}> {rule.description}</Content>&nbsp;
       {truncate(rule.summary, { length: 280 })}
-    </Text>
+    </Content>
   );
+
   return (
     <div
       style={{ paddingTop: '24px', paddingLeft: '32px', paddingRight: '32px' }}
     >
-      <span style={{ fontSize: '24px', color: chart_color_red_100.value }}>
+      <span
+        style={{
+          fontSize: '24px',
+          color: t_global_text_color_status_danger_default.value,
+        }}
+      >
         Red Hat {isLightspeedEnabled ? 'Lightspeed' : 'Insights'}
       </span>
       <br />
-      <span style={{ fontSize: '32px', color: chart_color_red_100.value }}>
+      <span
+        style={{
+          fontSize: '32px',
+          color: t_global_text_color_status_danger_default.value,
+        }}
+      >
         {`Executive report: ${INSIGHTS_HEADER}`}
       </span>
       <br />
@@ -182,7 +195,7 @@ const BuildExecReport = ({ asyncData, additionalData }) => {
         pieLegend={categoryLegend}
         rows={categoryRows}
       />
-      <Text style={{ color: chart_color_red_100.value }}>
+      <Text style={{ color: t_global_text_color_status_danger_default.value }}>
         {TOP_THREE_RULES_HEADER}
       </Text>
       {topActiveRec.data.map((rule, key) => (
@@ -191,7 +204,7 @@ const BuildExecReport = ({ asyncData, additionalData }) => {
             <FlexItem
               style={{
                 fontSize: '12px',
-                color: global_Color_dark_200.value,
+                color: t_global_text_color_200.value,
               }}
             >
               {SYSTEMS_EXPOSED}
@@ -204,7 +217,7 @@ const BuildExecReport = ({ asyncData, additionalData }) => {
             <FlexItem
               style={{
                 fontSize: '12px',
-                color: global_Color_dark_200.value,
+                color: t_global_text_color_200.value,
               }}
             >
               {TOTAL_RISK}

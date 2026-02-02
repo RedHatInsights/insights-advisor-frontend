@@ -1,16 +1,16 @@
 import React from 'react';
 import Details from './Details';
-import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
+import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import { initStore } from '../../Store';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AccountStatContext } from '../../ZeroStateWrapper';
-import messages from '../../Messages';
 import { EnvironmentContext } from '../../App';
 import fixtures from '../../../cypress/fixtures/recommendations.json';
 import { itExportsDataToFile } from '../../../cypress/utils/table';
 import { hasChip } from '@redhat-cloud-services/frontend-components-utilities';
 import { createTestEnvironmentContext } from '../../../cypress/support/globals';
+import messages from '../../../locales/translations.json';
 
 const DEFAULT_API_BASE_PATH = '/api/insights/v1';
 
@@ -62,7 +62,7 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
     <EnvironmentContext.Provider value={finalEnvContext}>
       <MemoryRouter initialEntries={['/topics/123']}>
         <AccountStatContext.Provider value={{ hasEdgeDevices }}>
-          <IntlProvider locale={navigator.language.slice(0, 2)}>
+          <IntlProvider messages={messages} defaultLocale="en" locale="en">
             <Provider store={initStore()}>
               <Routes>
                 <Route path="topics/:id" element={<Details />}></Route>
@@ -113,7 +113,7 @@ describe('Export', () => {
       isExportEnabled: true,
     });
     cy.get('button[aria-label="Export"]').first().trigger('mouseenter');
-    cy.contains(messages.exportData.defaultMessage).should('be.visible');
+    cy.contains('Export data').should('be.visible');
   });
 
   it(`works and downloads report is enabled`, () => {

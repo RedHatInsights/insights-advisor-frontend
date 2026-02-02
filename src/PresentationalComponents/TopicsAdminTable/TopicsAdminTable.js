@@ -169,11 +169,12 @@ const TopicsAdminTable = () => {
             {
               title: (
                 <Button
+                  icon={<EditAltIcon />}
                   ouiaId="hide"
                   variant="link"
                   onClick={() => hideTopics(value)}
                 >
-                  <EditAltIcon /> {intl.formatMessage(messages.topicAdminEdit)}
+                  {intl.formatMessage(messages.topicAdminEdit)}
                 </Button>
               ),
             },
@@ -198,7 +199,7 @@ const TopicsAdminTable = () => {
           {intl.formatMessage(messages.topicAdminTitle)}
         </Title>
       </PageHeader>
-      <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
+      <section className="pf-v6-l-page__main-section pf-v6-c-page__main-section">
         <React.Fragment>
           <PrimaryToolbar className="toolbar-padding-override">
             <Button

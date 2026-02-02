@@ -1,13 +1,13 @@
 import './_Common.scss';
 
 import {
-  Text,
-  TextContent,
-  TextVariants,
+  Content,
+  ContentVariants,
   Tooltip,
   TooltipPosition,
 } from '@patternfly/react-core';
 import { createIntl, createIntlCache } from 'react-intl';
+import { t_global_text_color_200 } from '@patternfly/react-tokens';
 
 import {
   OutlinedQuestionCircleIcon,
@@ -15,7 +15,6 @@ import {
 } from '@patternfly/react-icons';
 import React from 'react';
 import propTypes from 'prop-types';
-import { global_secondary_color_100 } from '@patternfly/react-tokens';
 import messages from '../../Messages';
 import { strong } from '../../Utilities/intlHelper';
 
@@ -37,16 +36,16 @@ const RebootRequired = (reboot_required) => (
           : 'adv-c-icon-no-reboot-required'
       }
     />
-    <TextContent className="adv-c-text-system-reboot-message pf-v5-u-font-size-sm">
-      <Text component={TextVariants.p}>
+    <Content className="adv-c-text-system-reboot-message pf-v6-u-font-size-sm">
+      <Content component={ContentVariants.p}>
         {intl.formatMessage(messages.systemReboot, {
           strong: (str) => strong(str),
           status: reboot_required
             ? intl.formatMessage(messages.is)
             : intl.formatMessage(messages.isNot),
         })}
-      </Text>
-    </TextContent>
+      </Content>
+    </Content>
   </span>
 );
 
@@ -58,8 +57,8 @@ const QuestionTooltip = ({ text }) => (
   >
     <span aria-label="Action" data-testid={`question-tooltip-${text}`}>
       <OutlinedQuestionCircleIcon
-        className="pf-v5-u-ml-xs"
-        color={global_secondary_color_100.value}
+        className="pf-v6-u-ml-xs"
+        color={t_global_text_color_200.value}
       />
     </span>
   </Tooltip>

@@ -1,17 +1,17 @@
 .ins-c-background__default {
-    color: var(--pf-v5-global--BackgroundColor--100);
+    color: var(--pf-v6-global--BackgroundColor--100);
 }
 
-.pf-v5-l-flex {
-    --pf-v5-l-flex--spacer--column--base: var(--pf-v5-global--spacer--sm);
+.pf-v6-l-flex {
+    --pf-v6-l-flex--spacer--column--base: var(--pf-v6-global--spacer--sm);
 }
 
 // Override Satellite/Foreman styles that impact the styling of the Inventory table
 // Prevent the toolbar buttons being pushed to the end of the toolbar
-#tablesContainer .pf-v5-c-toolbar__group {
+#tablesContainer .pf-v6-c-toolbar__group {
     flex-grow: 0;
 }
-#tablesContainer .pf-v5-c-toolbar__group:first-child {
+#tablesContainer .pf-v6-c-toolbar__group:first-child {
     margin-right: 1rem;
     width: auto;
 }
@@ -20,6 +20,6 @@
     margin: 0;
 }
 // Fix the size of the (missing) title of Operating System filter group
-#tablesContainer .pf-v5-c-menu__group-title {
+#tablesContainer .pf-v6-c-menu__group-title {
     margin: 0;
 }

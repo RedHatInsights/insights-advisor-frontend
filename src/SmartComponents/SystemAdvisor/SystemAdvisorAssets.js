@@ -193,7 +193,7 @@ export const useBuildRows = (
                         {rule.description}
                       </InsightsLink>
                     )}
-                    <RuleLabels rule={rule} isCompact />
+                    <RuleLabels rule={rule} intl={intl} isCompact />
                   </span>
                 ),
               },

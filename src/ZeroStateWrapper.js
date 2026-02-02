@@ -9,8 +9,7 @@ import { Bullseye, Spinner } from '@patternfly/react-core';
 import AsynComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import ErrorState from '@redhat-cloud-services/frontend-components/ErrorState';
 import PropTypes from 'prop-types';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
-import { useDispatch } from 'react-redux';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { useIntl } from 'react-intl';
 import messages from './Messages';
 import { useGetConventionalDevicesQuery } from './Services/SystemVariety';
@@ -24,7 +23,6 @@ export const AccountStatContext = createContext({
 
 export const ZeroStateWrapper = ({ children }) => {
   const intl = useIntl();
-  const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
   const [hasConventionalSystems, setHasConventionalSystems] = useState(true);
 
@@ -37,6 +35,7 @@ export const ZeroStateWrapper = ({ children }) => {
     customBasePath: envContext.INVENTORY_BASE_URL,
     inventoryBasePath: INVENTORY_BASE_URL,
   });
+  const addNotification = useAddNotification();
 
   useEffect(() => {
     setHasConventionalSystems(conventional?.total > 0);
@@ -54,7 +53,6 @@ export const ZeroStateWrapper = ({ children }) => {
         }),
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conventionalError]);
 
   const hasSystems = hasConventionalSystems;

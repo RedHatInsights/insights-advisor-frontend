@@ -1,8 +1,7 @@
 import './_Download.scss';
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux/actions/notifications';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 
 import { ExportIcon } from '@patternfly/react-icons';
 import messages from '../../Messages';
@@ -14,14 +13,13 @@ import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const DownloadExecReport = ({ isDisabled }) => {
   const intl = useIntl();
-  const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
   const [loading, setLoading] = useState(false);
   const isLightspeedEnabled = useFeatureFlag('platform.lightspeed-rebrand');
-
+  const addNotification = useAddNotification();
   const dataFetch = async () => {
     setLoading(true);
-    dispatch(addNotification(exportNotifications.pending));
+    addNotification(exportNotifications.pending);
 
     try {
       await envContext.requestPdf({
@@ -44,11 +42,11 @@ const DownloadExecReport = ({ isDisabled }) => {
       });
 
       setLoading(false);
-      dispatch(addNotification(exportNotifications.success));
+      addNotification(exportNotifications.success);
     } catch (error) {
       void error;
       setLoading(false);
-      dispatch(addNotification(exportNotifications.error));
+      addNotification(exportNotifications.error);
     }
   };
 

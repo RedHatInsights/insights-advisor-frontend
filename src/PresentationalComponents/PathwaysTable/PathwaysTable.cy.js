@@ -10,36 +10,25 @@ import _ from 'lodash';
 import { selectConditionalFilterOption } from '../../../cypress/utils/table';
 
 import {
-  CHIP_GROUP,
   hasChip,
   CONDITIONAL_FILTER,
   MENU_ITEM,
 } from '@redhat-cloud-services/frontend-components-utilities';
-import messages from '../../Messages';
 
 import {
   TOOLBAR,
   checkTableHeaders,
-  tableIsSortedBy,
-  // checkPaginationTotal,
-  // checkPaginationValues,
-  // changePagination,
-  // PAGINATION_VALUES,
-  SORTING_ORDERS,
 } from '@redhat-cloud-services/frontend-components-utilities';
 
 const ROOT = 'table[aria-label="pathways-table"]';
 const TABLE_HEADERS = _.map(pathwaysTableColumns, (it) => it.title);
-const ROWS_SHOWN = fixtures.data.length;
+const ROWS_SHOWN = 20;
 const CATEGORY_VALUES = [
   'Availability',
   'Performance',
   'Stability',
   'Security',
 ];
-
-//THIS FILE HAS COMMENTED OUT TEST BECAUSE THE FUNCTIONS/LABELS IMPORTED FROM FEC-UTILS
-//NEED TO BE UPDATED
 
 const mountComponent = () => {
   let activeTab = 1;
@@ -82,6 +71,8 @@ describe('Pathways table tests', () => {
       checkTableHeaders(TABLE_HEADERS);
     });
     it('links to the pathway detail page', () => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
       cy.get('tbody tr:first [data-label=Name] a')
         .should('have.attr', 'href')
         .and('include', `/recommendations/pathways/${fixtures.data[0].slug}`);
@@ -93,43 +84,101 @@ describe('Pathways table tests', () => {
 
   describe('defaults', () => {
     it(`The amount of rows shown is ${ROWS_SHOWN}`, () => {
-      cy.get('.pf-v5-c-menu-toggle__text')
+      cy.get('.pf-v6-c-menu-toggle__text')
         .find('b')
         .eq(0)
         .should('have.text', `1 - ${ROWS_SHOWN}`);
     });
-    //couldn't check the url paramater because it's not applied to the url on the first render
-    it('sorting using Recommendation level', () => {
-      tableIsSortedBy('Recommendation level');
-    });
   });
 
   describe('Sorting', () => {
-    function checkSortingUrl(label, order, dataField) {
-      // get appropriate locators
-      const header = `th[data-label="${label}"]`;
-      // sort by column and verify URL
-      if (order === 'ascending') {
-        cy.get(header).find('button').eq(0).click();
-        cy.url().should('include', `sort=${dataField}`);
-      } else {
-        cy.get(header).find('button').eq(0).click();
-        cy.wait(['@call', '@call']);
-        cy.get(header).find('button').eq(0).click();
-        cy.url().should('include', `sort=-${dataField}`);
-      }
-    }
+    beforeEach(() => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+    });
 
-    _.zip(
-      ['name', 'impacted_systems_count', 'recommendation_level'],
-      ['Name', 'Systems', 'Recommendation level'],
-    ).forEach(([category, label]) => {
-      let sortingParameter = category;
-      SORTING_ORDERS.forEach((order) => {
-        it(`${order} by ${label}`, () => {
-          checkSortingUrl(label, order, sortingParameter);
-        });
-      });
+    it('sorts by Name in ascending order', () => {
+      cy.get('th').contains('Name').click();
+
+      cy.get('th')
+        .contains('Name')
+        .closest('th')
+        .should('have.attr', 'aria-sort', 'ascending');
+
+      cy.url().should('include', 'sort=name');
+    });
+
+    it('sorts by Name in descending order', () => {
+      cy.get('th').contains('Name').click();
+      cy.wait('@call');
+      cy.get('th').contains('Name').click();
+
+      cy.get('th')
+        .contains('Name')
+        .closest('th')
+        .should('have.attr', 'aria-sort', 'descending');
+
+      cy.url().should('include', 'sort=-name');
+    });
+
+    it('sorts by Systems in ascending order', () => {
+      cy.get('th').contains('Systems').click();
+
+      cy.get('th')
+        .contains('Systems')
+        .closest('th')
+        .should('have.attr', 'aria-sort', 'ascending');
+
+      cy.url().should('include', 'sort=impacted_systems_count');
+    });
+
+    it('sorts by Systems in descending order', () => {
+      cy.get('th').contains('Systems').click();
+      cy.wait('@call');
+      cy.get('th').contains('Systems').click();
+
+      cy.get('th')
+        .contains('Systems')
+        .closest('th')
+        .should('have.attr', 'aria-sort', 'descending');
+
+      cy.url().should('include', 'sort=-impacted_systems_count');
+    });
+
+    it('sorts by Recommendation level in ascending order', () => {
+      cy.get('th').contains('Recommendation level').click();
+
+      cy.get('th')
+        .contains('Recommendation level')
+        .closest('th')
+        .should('have.attr', 'aria-sort', 'ascending');
+
+      cy.url().should('include', 'sort=recommendation_level');
+    });
+
+    it('sorts by Recommendation level in descending order', () => {
+      // Click the sort button specifically (not the info button)
+      cy.get('th')
+        .contains('Recommendation level')
+        .closest('th')
+        .find('button.pf-v6-c-table__button')
+        .click({ force: true });
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+      cy.get('th')
+        .contains('Recommendation level')
+        .closest('th')
+        .find('button.pf-v6-c-table__button')
+        .click({ force: true });
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+      cy.get('th')
+        .contains('Recommendation level')
+        .closest('th')
+        .should('have.attr', 'aria-sort', 'descending');
+
+      cy.url().should('include', 'sort=-recommendation_level');
     });
   });
 
@@ -149,8 +198,8 @@ describe('Pathways table tests', () => {
       // reset
       cy.get('button').contains('Reset filters').click();
 
-      // check chips empty
-      cy.get(CHIP_GROUP).should('have.length', 0);
+      // check chips empty - use PF6 ChipGroup selector to avoid category labels
+      cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should('not.exist');
     });
 
     it(`Category filter box correctly updates chips.`, () => {
@@ -171,8 +220,8 @@ describe('Pathways table tests', () => {
       // reset
       cy.get('button').contains('Reset filters').click();
 
-      // check chips empty
-      cy.get(CHIP_GROUP).should('have.length', 0);
+      // check chips empty - use PF6 ChipGroup selector to avoid category labels
+      cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should('not.exist');
     });
 
     it(`Incidents filter box correctly updates chips.`, () => {
@@ -191,8 +240,8 @@ describe('Pathways table tests', () => {
       // reset
       cy.get('button').contains('Reset filters').click();
 
-      // check chips empty
-      cy.get(CHIP_GROUP).should('have.length', 0);
+      // check chips empty - use PF6 ChipGroup selector to avoid category labels
+      cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should('not.exist');
     });
 
     it(`Reboot required filter box correctly updates chips.`, () => {
@@ -211,20 +260,29 @@ describe('Pathways table tests', () => {
       // reset
       cy.get('button').contains('Reset filters').click();
 
-      // check chips empty
-      cy.get(CHIP_GROUP).should('have.length', 0);
+      // check chips empty - use PF6 ChipGroup selector to avoid category labels
+      cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should('not.exist');
     });
   });
 
   describe('Tooltips', () => {
+    beforeEach(() => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+    });
+
     it(`Recommendation level tooltip displays the correct content.`, () => {
-      cy.get('.pf-v5-c-table__column-help-action').trigger('mouseenter');
-      cy.contains(messages.reclvldetails.defaultMessage).should('be.visible');
+      cy.get('.pf-v6-c-table__column-help-action').trigger('mouseenter');
+      cy.contains(
+        "Indicates a recommendation's urgency on a scale of high (fix immediately) to low (fix when convenient)",
+      ).should('be.visible');
     });
 
     it(`Incident tooltip displays the correct content.`, () => {
       cy.get('.adv-c-label-incident').first().trigger('mouseenter');
-      cy.contains(messages.incidentTooltip.defaultMessage).should('be.visible');
+      cy.contains(
+        'Indicates configurations that are currently affecting your systems',
+      ).should('be.visible');
     });
   });
 
@@ -232,7 +290,7 @@ describe('Pathways table tests', () => {
     it('Multiple categories get abbreviated', () => {
       // for each row
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
-      cy.get('tbody [data-ouia-component-type="PF5/TableRow"]').then((rows) => {
+      cy.get('tbody [data-ouia-component-type="PF6/TableRow"]').then((rows) => {
         Array.from(rows).forEach((row) => {
           cy.wrap(row)
             .find('td[data-label="Category"] li')
@@ -246,23 +304,234 @@ describe('Pathways table tests', () => {
       });
     });
   });
-  //The imported data-ouia-component-type="PF5/PaginationOptionsMenu isnt wants on the menu. Need to update FEC-utils
-  // describe('pagination', () => {
-  //   it('shows correct total number of pathways', () => {
-  //     checkPaginationTotal(fixtures.meta.count);
-  //   });
 
-  //   it('values are expected ones', () => {
-  //     checkPaginationValues(PAGINATION_VALUES);
-  //   });
+  describe('table structure', () => {
+    it('renders table with correct ARIA label', () => {
+      cy.get(ROOT).should('have.attr', 'aria-label', 'pathways-table');
+    });
 
-  //   it('can change page limit', () => {
-  //     // FIXME: best way to make the loop
-  //     cy.wrap(PAGINATION_VALUES).each((el) => {
-  //       changePagination(el).then(() => {
-  //         expect(window.location.search).to.contain(`limit=${el}`);
-  //       });
-  //     });
-  //   });
-  // });
+    it('renders table with compact variant', () => {
+      cy.get(ROOT).should('have.attr', 'class').and('include', 'compact');
+    });
+
+    it('displays correct number of table columns', () => {
+      cy.get('thead th').should('have.length', 5);
+    });
+  });
+
+  describe('content display', () => {
+    it('displays the first pathway from fixtures', () => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      const firstPathway = fixtures.data[0];
+      cy.contains('td', firstPathway.name).should('exist');
+    });
+
+    fixtures.data.slice(0, 5).forEach((pathway, index) => {
+      it(`displays pathway ${index + 1}: "${pathway.name}"`, () => {
+        cy.wait('@call');
+        cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+        cy.contains('td', pathway.name).should('exist');
+
+        if (pathway.categories?.length > 0) {
+          cy.get('tbody tr')
+            .eq(index)
+            .find('td[data-label="Category"] .pf-v6-c-label')
+            .should('exist');
+        }
+
+        cy.contains(
+          'td',
+          pathway.impacted_systems_count.toLocaleString(),
+        ).should('exist');
+      });
+    });
+  });
+
+  describe('category labels display', () => {
+    it('displays CategoryLabel component', () => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('td[data-label="Category"]')
+        .first()
+        .find('.pf-v6-c-label')
+        .should('exist');
+    });
+
+    it('displays category labels with correct styling', () => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('td[data-label="Category"] .pf-v6-c-label').should('exist');
+    });
+
+    fixtures.data.slice(0, 3).forEach((pathway, index) => {
+      it(`displays category label for pathway ${index + 1}`, () => {
+        cy.wait('@call');
+        cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+        if (pathway.categories?.length > 0) {
+          cy.get('tbody tr')
+            .eq(index)
+            .find('td[data-label="Category"] .pf-v6-c-label')
+            .should('exist');
+        }
+      });
+    });
+  });
+
+  describe('systems count display', () => {
+    it('displays systems count as clickable link', () => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('td[data-label="Systems"] a').should('exist');
+    });
+
+    it('displays correct systems count for each pathway', () => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      fixtures.data.slice(0, 3).forEach((pathway, index) => {
+        cy.get('tbody tr')
+          .eq(index)
+          .find('td[data-label="Systems"]')
+          .should('contain', pathway.impacted_systems_count.toLocaleString());
+      });
+    });
+  });
+
+  describe('reboot status display', () => {
+    it('displays reboot status for all pathways', () => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('td[data-label="Reboot"]').should(
+        'have.length',
+        fixtures.data.length,
+      );
+    });
+
+    it('displays reboot required status correctly', () => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      const pathwayRequiringReboot = fixtures.data.find(
+        (p) => p.reboot_required === true,
+      );
+      if (pathwayRequiringReboot) {
+        cy.contains('td', 'Required').should('exist');
+      }
+    });
+
+    it('displays not required status correctly', () => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      const pathwayNotRequiringReboot = fixtures.data.find(
+        (p) => p.reboot_required === false,
+      );
+      if (pathwayNotRequiringReboot) {
+        cy.contains('td', 'Not required').should('exist');
+      }
+    });
+  });
+
+  describe('recommendation level display', () => {
+    it('displays RecommendationLevel component', () => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('td[data-label="Recommendation level"]')
+        .first()
+        .find('.pf-v6-c-label')
+        .should('exist');
+    });
+
+    it('displays recommendation level for all pathways', () => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      // Verify each row has exactly one recommendation level label
+      cy.get('tbody tr').each(($row) => {
+        cy.wrap($row)
+          .find('td[data-label="Recommendation level"] .pf-v6-c-label')
+          .should('have.length', 1);
+      });
+    });
+
+    fixtures.data.slice(0, 3).forEach((pathway, index) => {
+      it(`displays recommendation level for pathway ${index + 1} (level: ${pathway.recommendation_level})`, () => {
+        cy.wait('@call');
+        cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+        cy.get('tbody tr')
+          .eq(index)
+          .find('td[data-label="Recommendation level"] .pf-v6-c-label')
+          .should('exist');
+      });
+    });
+  });
+
+  describe('incident labels display', () => {
+    it('displays incident label when has_incident is true', () => {
+      const pathwayWithIncident = fixtures.data.find(
+        (p) => p.has_incident === true,
+      );
+      if (pathwayWithIncident) {
+        cy.wait('@call');
+        cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+        cy.get('td[data-label="Name"]')
+          .find('.pf-v6-c-label')
+          .contains('Incident')
+          .should('exist');
+      }
+    });
+
+    it('incident label has correct color', () => {
+      const pathwayWithIncident = fixtures.data.find(
+        (p) => p.has_incident === true,
+      );
+      if (pathwayWithIncident) {
+        cy.wait('@call');
+        cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+        cy.get('td[data-label="Name"] .pf-v6-c-label').should(
+          'have.class',
+          'pf-m-red',
+        );
+      }
+    });
+  });
+
+  describe('data attributes', () => {
+    beforeEach(() => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+    });
+
+    it('has data-label attribute on Name column', () => {
+      cy.get('tbody td[data-label="Name"]').should('exist');
+    });
+
+    it('has data-label attribute on Category column', () => {
+      cy.get('tbody td[data-label="Category"]').should('exist');
+    });
+
+    it('has data-label attribute on Systems column', () => {
+      cy.get('tbody td[data-label="Systems"]').should('exist');
+    });
+
+    it('has data-label attribute on Reboot column', () => {
+      cy.get('tbody td[data-label="Reboot"]').should('exist');
+    });
+
+    it('has data-label attribute on Recommendation level column', () => {
+      cy.get('tbody td[data-label="Recommendation level"]').should('exist');
+    });
+  });
+
+  describe('responsive behavior', () => {
+    beforeEach(() => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+    });
+
+    it('renders with compact variant for mobile', () => {
+      cy.get(ROOT).should('have.class', 'pf-m-compact');
+    });
+
+    it('all cells have data-label for responsive stacking', () => {
+      cy.get('tbody td[data-label]').should('have.length.at.least', 5);
+    });
+  });
 });

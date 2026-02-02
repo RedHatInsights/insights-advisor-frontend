@@ -10,6 +10,7 @@ export const useActionsResolver = (
   setSelectedRule,
   setDisableRuleOpen,
   refetch,
+  addNotification,
   baseUrl = BASE_URL,
 ) => {
   const intl = useIntl();
@@ -35,6 +36,7 @@ export const useActionsResolver = (
                   refetch,
                   dispatch,
                   intl,
+                  addNotification,
                   baseUrl,
                 ),
             },
@@ -51,12 +53,22 @@ export const useActionsResolver = (
                   refetch,
                   dispatch,
                   intl,
+                  addNotification,
                   baseUrl,
                 ),
             },
           ];
     },
-    [rows, setSelectedRule, setDisableRuleOpen, refetch, dispatch, intl],
+    [
+      rows,
+      setSelectedRule,
+      setDisableRuleOpen,
+      refetch,
+      dispatch,
+      intl,
+      addNotification,
+      baseUrl,
+    ],
   );
 
   return actionResolver;
