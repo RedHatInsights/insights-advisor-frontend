@@ -1,7 +1,11 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { BASE_URL, PERMISSIONS } from '../AppConstants';
+import {
+  BASE_URL,
+  PERMISSIONS,
+  IOP_ENVIRONMENT_CONTEXT,
+} from '../AppConstants';
 
 export const useFeatureFlag = (flag) => {
   const { flagsReady } = useFlagsStatus();
@@ -118,5 +122,22 @@ export const useHccEnvironmentContext = () => {
       chrome.requestPdf,
       chrome.isProd,
     ],
+  );
+};
+
+export const useIopEnvironmentContext = () => {
+  const [[canDisableRec, canViewRecs], isRbacLoading] = useRbac([
+    PERMISSIONS.disableRec,
+    PERMISSIONS.viewRecs,
+  ]);
+
+  return useMemo(
+    () => ({
+      ...IOP_ENVIRONMENT_CONTEXT,
+      isLoading: isRbacLoading,
+      isDisableRecEnabled: canDisableRec,
+      isAllowedToViewRec: canViewRecs,
+    }),
+    [canDisableRec, canViewRecs, isRbacLoading],
   );
 };

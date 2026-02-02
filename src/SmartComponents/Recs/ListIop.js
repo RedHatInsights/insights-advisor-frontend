@@ -18,10 +18,12 @@ import {
 
 import {
   ExternalLinkAltIcon,
+  LockIcon,
   OutlinedQuestionCircleIcon,
 } from '@patternfly/react-icons';
 import { EnvironmentContext } from '../../App';
 import IopOverviewDashbar from '../../PresentationalComponents/OverviewDashbar/IopOverviewDashbar';
+import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 
 const ListIop = () => {
   const envContext = useContext(EnvironmentContext);
@@ -30,7 +32,14 @@ const ListIop = () => {
     envContext.updateDocumentTitle('Recommendations - Advisor');
   }, [envContext]);
 
-  return (
+  return !envContext.isAllowedToViewRec ? (
+    <MessageState
+      variant="large"
+      icon={LockIcon}
+      title={messages.permsTitle.defaultMessage}
+      text={messages.permsBody.defaultMessage}
+    />
+  ) : (
     <React.Fragment>
       <PageHeader className="adv-c-page-recommendations__header">
         <PageHeaderTitle
