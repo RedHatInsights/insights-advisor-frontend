@@ -2,26 +2,19 @@ import React from 'react';
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import messages from '../../../locales/translations.json';
-import { IOP_ENVIRONMENT_CONTEXT } from '../../AppConstants';
 import { EnvironmentContext } from '../../App';
 import { initStore } from '../../Store';
 import ListIop from './ListIop';
-import { useRbac } from '../../Utilities/Hooks';
-import { PERMISSIONS } from '../../AppConstants';
+import { useIopEnvironmentContext } from '../../Utilities/Hooks';
 
 const dbStore = initStore();
 
 const ListWrapped = (props) => {
-  const [[hasDisableRecPermission]] = useRbac([PERMISSIONS.disableRec]);
+  const envContext = useIopEnvironmentContext();
 
   return (
     <IntlProvider locale="en" messages={messages}>
-      <EnvironmentContext.Provider
-        value={{
-          ...IOP_ENVIRONMENT_CONTEXT,
-          isDisableRecEnabled: hasDisableRecPermission,
-        }}
-      >
+      <EnvironmentContext.Provider value={envContext}>
         <Provider store={dbStore}>
           <ListIop {...props} />
         </Provider>
