@@ -11,6 +11,7 @@ import { useHccEnvironmentContext, useFeatureFlag } from './Utilities/Hooks';
 import { useKesselEnvironmentContext } from './Utilities/useKesselEnvironmentContext';
 import { LockIcon } from '@patternfly/react-icons';
 import { AccessCheck } from '@project-kessel/react-kessel-access-check';
+import { KESSEL_API_BASE_URL } from './AppConstants';
 
 export const EnvironmentContext = createContext({});
 
@@ -62,25 +63,38 @@ const App = () => {
   );
 };
 
-const AppWithContextProviders = () => {
-  const isKesselEnabled = useFeatureFlag('advisor.kessel_enabled');
+const AppWithRbacV1 = () => {
   const hccContext = useHccEnvironmentContext();
-  const kesselContext = useKesselEnvironmentContext();
-
-  const envContext = isKesselEnabled ? kesselContext : hccContext;
 
   return (
-    <EnvironmentContext.Provider value={envContext}>
+    <EnvironmentContext.Provider value={hccContext}>
+      <App />
+    </EnvironmentContext.Provider>
+  );
+};
+
+const AppWithKessel = () => {
+  const kesselContext = useKesselEnvironmentContext();
+
+  return (
+    <EnvironmentContext.Provider value={kesselContext}>
       <App />
     </EnvironmentContext.Provider>
   );
 };
 
 const AppWithHccContext = () => {
-  return (
-    <AccessCheck.Provider>
-      <AppWithContextProviders />
+  const isKesselEnabled = useFeatureFlag('advisor.kessel_enabled');
+
+  return isKesselEnabled ? (
+    <AccessCheck.Provider
+      baseUrl={window.location.origin}
+      apiPath={KESSEL_API_BASE_URL}
+    >
+      <AppWithKessel />
     </AccessCheck.Provider>
+  ) : (
+    <AppWithRbacV1 />
   );
 };
 
