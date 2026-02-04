@@ -7,10 +7,7 @@ import MessageState from './PresentationalComponents/MessageState/MessageState';
 import { AdvisorRoutes } from './Routes';
 import messages from './Messages';
 import { useIntl } from 'react-intl';
-import {
-  useHccEnvironmentContext,
-  useFeatureFlag,
-} from './Utilities/Hooks';
+import { useHccEnvironmentContext, useFeatureFlag } from './Utilities/Hooks';
 import { useKesselEnvironmentContext } from './Utilities/useKesselEnvironmentContext';
 import { LockIcon } from '@patternfly/react-icons';
 import { AccessCheck } from '@project-kessel/react-kessel-access-check';

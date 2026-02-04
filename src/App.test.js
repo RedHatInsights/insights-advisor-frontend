@@ -1,5 +1,6 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import { IntlProvider } from 'react-intl';
 import configureStore from 'redux-mock-store';
@@ -19,15 +20,13 @@ jest.mock('./Utilities/useKesselEnvironmentContext', () => ({
 
 jest.mock('@project-kessel/react-kessel-access-check', () => ({
   AccessCheck: {
+    // eslint-disable-next-line react/prop-types
     Provider: ({ children }) => <div>{children}</div>,
   },
 }));
 
 import AppWithHccContext from './App';
-import {
-  useHccEnvironmentContext,
-  useFeatureFlag,
-} from './Utilities/Hooks';
+import { useHccEnvironmentContext, useFeatureFlag } from './Utilities/Hooks';
 import { useKesselEnvironmentContext } from './Utilities/useKesselEnvironmentContext';
 
 const mockStore = configureStore([]);
@@ -269,11 +268,11 @@ describe('App tag processing logic', () => {
         isAllowedToViewRec: false,
       });
 
-      const { getByText } = renderWithProviders(<AppWithHccContext />);
+      renderWithProviders(<AppWithHccContext />);
 
       expect(
-        getByText(/You must be granted permissions to use Advisor/i),
-      ).toBeTruthy();
+        screen.getByText(/You must be granted permissions to use Advisor/i),
+      ).toBeInTheDocument();
     });
 
     it('shows lock screen when user lacks permissions (RBAC v1 mode)', () => {
@@ -283,11 +282,11 @@ describe('App tag processing logic', () => {
         isAllowedToViewRec: false,
       });
 
-      const { getByText } = renderWithProviders(<AppWithHccContext />);
+      renderWithProviders(<AppWithHccContext />);
 
       expect(
-        getByText(/You must be granted permissions to use Advisor/i),
-      ).toBeTruthy();
+        screen.getByText(/You must be granted permissions to use Advisor/i),
+      ).toBeInTheDocument();
     });
   });
 });
