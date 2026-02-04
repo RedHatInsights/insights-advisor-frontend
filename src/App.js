@@ -7,8 +7,13 @@ import MessageState from './PresentationalComponents/MessageState/MessageState';
 import { AdvisorRoutes } from './Routes';
 import messages from './Messages';
 import { useIntl } from 'react-intl';
-import { useHccEnvironmentContext } from './Utilities/Hooks';
+import {
+  useHccEnvironmentContext,
+  useFeatureFlag,
+} from './Utilities/Hooks';
+import { useKesselEnvironmentContext } from './Utilities/useKesselEnvironmentContext';
 import { LockIcon } from '@patternfly/react-icons';
+import { AccessCheck } from '@project-kessel/react-kessel-access-check';
 
 export const EnvironmentContext = createContext({});
 
@@ -60,13 +65,25 @@ const App = () => {
   );
 };
 
-const AppWithHccContext = () => {
-  const envContext = useHccEnvironmentContext();
+const AppWithContextProviders = () => {
+  const isKesselEnabled = useFeatureFlag('advisor.kessel_enabled');
+  const hccContext = useHccEnvironmentContext();
+  const kesselContext = useKesselEnvironmentContext();
+
+  const envContext = isKesselEnabled ? kesselContext : hccContext;
 
   return (
     <EnvironmentContext.Provider value={envContext}>
       <App />
     </EnvironmentContext.Provider>
+  );
+};
+
+const AppWithHccContext = () => {
+  return (
+    <AccessCheck.Provider>
+      <AppWithContextProviders />
+    </AccessCheck.Provider>
   );
 };
 

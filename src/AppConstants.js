@@ -520,6 +520,12 @@ export const PERMISSIONS = {
   viewRecs: 'advisor:recommendation-results:read',
 };
 
+export const KESSEL_RELATIONS = {
+  export: 'advisor_exports_view',
+  disableRec: 'advisor_disable_recommendations_edit',
+  viewRecs: 'advisor_recommendation_results_view',
+};
+
 export const IOP_ENVIRONMENT_CONTEXT = {
   isLightspeedEnabled: false,
   isLoading: false,

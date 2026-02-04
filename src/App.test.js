@@ -10,10 +10,25 @@ jest.mock('./Routes', () => ({
 
 jest.mock('./Utilities/Hooks', () => ({
   useHccEnvironmentContext: jest.fn(),
+  useFeatureFlag: jest.fn(),
+}));
+
+jest.mock('./Utilities/useKesselEnvironmentContext', () => ({
+  useKesselEnvironmentContext: jest.fn(),
+}));
+
+jest.mock('@project-kessel/react-kessel-access-check', () => ({
+  AccessCheck: {
+    Provider: ({ children }) => <div>{children}</div>,
+  },
 }));
 
 import AppWithHccContext from './App';
-import { useHccEnvironmentContext } from './Utilities/Hooks';
+import {
+  useHccEnvironmentContext,
+  useFeatureFlag,
+} from './Utilities/Hooks';
+import { useKesselEnvironmentContext } from './Utilities/useKesselEnvironmentContext';
 
 const mockStore = configureStore([]);
 
@@ -50,6 +65,8 @@ describe('App tag processing logic', () => {
     };
 
     useHccEnvironmentContext.mockReturnValue(mockEnvContext);
+    useKesselEnvironmentContext.mockReturnValue(mockEnvContext);
+    useFeatureFlag.mockReturnValue(false); // Default to RBAC v1
   });
 
   afterEach(() => {
@@ -205,6 +222,72 @@ describe('App tag processing logic', () => {
         'GLOBAL_FILTER_UPDATE',
         expect.any(Function),
       );
+    });
+  });
+
+  describe('Kessel feature flag', () => {
+    it('uses RBAC v1 context when feature flag is disabled', () => {
+      useFeatureFlag.mockReturnValue(false);
+
+      renderWithProviders(<AppWithHccContext />);
+
+      expect(useFeatureFlag).toHaveBeenCalledWith('advisor.kessel_enabled');
+      expect(useHccEnvironmentContext).toHaveBeenCalled();
+    });
+
+    it('uses Kessel context when feature flag is enabled', () => {
+      useFeatureFlag.mockReturnValue(true);
+
+      renderWithProviders(<AppWithHccContext />);
+
+      expect(useFeatureFlag).toHaveBeenCalledWith('advisor.kessel_enabled');
+      expect(useKesselEnvironmentContext).toHaveBeenCalled();
+    });
+
+    it('renders correctly with RBAC v1 (feature flag OFF)', () => {
+      useFeatureFlag.mockReturnValue(false);
+
+      const { container } = renderWithProviders(<AppWithHccContext />);
+
+      expect(container).toBeTruthy();
+      expect(mockEnvContext.globalFilterScope).toHaveBeenCalledWith('insights');
+    });
+
+    it('renders correctly with Kessel (feature flag ON)', () => {
+      useFeatureFlag.mockReturnValue(true);
+
+      const { container } = renderWithProviders(<AppWithHccContext />);
+
+      expect(container).toBeTruthy();
+      expect(mockEnvContext.globalFilterScope).toHaveBeenCalledWith('insights');
+    });
+
+    it('shows lock screen when user lacks permissions (Kessel mode)', () => {
+      useFeatureFlag.mockReturnValue(true);
+      useKesselEnvironmentContext.mockReturnValue({
+        ...mockEnvContext,
+        isAllowedToViewRec: false,
+      });
+
+      const { getByText } = renderWithProviders(<AppWithHccContext />);
+
+      expect(
+        getByText(/You must be granted permissions to use Advisor/i),
+      ).toBeTruthy();
+    });
+
+    it('shows lock screen when user lacks permissions (RBAC v1 mode)', () => {
+      useFeatureFlag.mockReturnValue(false);
+      useHccEnvironmentContext.mockReturnValue({
+        ...mockEnvContext,
+        isAllowedToViewRec: false,
+      });
+
+      const { getByText } = renderWithProviders(<AppWithHccContext />);
+
+      expect(
+        getByText(/You must be granted permissions to use Advisor/i),
+      ).toBeTruthy();
     });
   });
 });
