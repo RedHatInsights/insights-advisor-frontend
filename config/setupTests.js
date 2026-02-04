@@ -40,6 +40,17 @@ jest.mock('@redhat-cloud-services/frontend-components/AsyncComponent', () => ({
   ),
 }));
 
+jest.mock('@project-kessel/react-kessel-access-check', () => ({
+  __esModule: true,
+  AccessCheck: {
+    Provider: ({ children }) => <div>{children}</div>,
+  },
+  useSelfAccessCheck: () => ({
+    isAllowed: true,
+    isLoading: false,
+  }),
+}));
+
 global.insights = {
   chrome: {
     auth: {
