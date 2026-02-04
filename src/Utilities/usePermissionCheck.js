@@ -13,29 +13,23 @@ export const useRbacV1Permissions = () => {
 };
 
 export const useKesselPermissions = () => {
-  const {
-    isAllowed: canExport,
-    isLoading: isExportLoading,
-  } = useSelfAccessCheck({
-    resourceType: 'advisor',
-    relation: KESSEL_RELATIONS.export,
-  });
+  const { isAllowed: canExport, isLoading: isExportLoading } =
+    useSelfAccessCheck({
+      resourceType: 'advisor',
+      relation: KESSEL_RELATIONS.export,
+    });
 
-  const {
-    isAllowed: canDisableRec,
-    isLoading: isDisableRecLoading,
-  } = useSelfAccessCheck({
-    resourceType: 'advisor',
-    relation: KESSEL_RELATIONS.disableRec,
-  });
+  const { isAllowed: canDisableRec, isLoading: isDisableRecLoading } =
+    useSelfAccessCheck({
+      resourceType: 'advisor',
+      relation: KESSEL_RELATIONS.disableRec,
+    });
 
-  const {
-    isAllowed: canViewRecs,
-    isLoading: isViewRecsLoading,
-  } = useSelfAccessCheck({
-    resourceType: 'advisor',
-    relation: KESSEL_RELATIONS.viewRecs,
-  });
+  const { isAllowed: canViewRecs, isLoading: isViewRecsLoading } =
+    useSelfAccessCheck({
+      resourceType: 'advisor',
+      relation: KESSEL_RELATIONS.viewRecs,
+    });
 
   const isLoading = isExportLoading || isDisableRecLoading || isViewRecsLoading;
 
