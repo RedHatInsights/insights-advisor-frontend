@@ -1,6 +1,7 @@
 import { useSelfAccessCheck } from '@project-kessel/react-kessel-access-check';
 import { PERMISSIONS, KESSEL_RELATIONS } from '../AppConstants';
 import { useRbac } from './Hooks';
+import { useFetchDefaultWorkspaceId } from './useKesselWorkspaces';
 
 export const useRbacV1Permissions = () => {
   const [[canExport, canDisableRec, canViewRecs], isLoading] = useRbac([
@@ -13,25 +14,45 @@ export const useRbacV1Permissions = () => {
 };
 
 export const useKesselPermissions = () => {
-  const { isAllowed: canExport, isLoading: isExportLoading } =
-    useSelfAccessCheck({
-      resourceType: 'advisor',
-      relation: KESSEL_RELATIONS.export,
-    });
+  const { workspaceId, isLoading: workspaceLoading } =
+    useFetchDefaultWorkspaceId();
 
-  const { isAllowed: canDisableRec, isLoading: isDisableRecLoading } =
-    useSelfAccessCheck({
-      resourceType: 'advisor',
-      relation: KESSEL_RELATIONS.disableRec,
-    });
+  const resources = workspaceId
+    ? [
+        {
+          id: workspaceId,
+          type: 'workspace',
+          relation: KESSEL_RELATIONS.export,
+          reporter: { type: 'rbac' },
+        },
+        {
+          id: workspaceId,
+          type: 'workspace',
+          relation: KESSEL_RELATIONS.disableRec,
+          reporter: { type: 'rbac' },
+        },
+        {
+          id: workspaceId,
+          type: 'workspace',
+          relation: KESSEL_RELATIONS.viewRecs,
+          reporter: { type: 'rbac' },
+        },
+      ]
+    : [];
 
-  const { isAllowed: canViewRecs, isLoading: isViewRecsLoading } =
-    useSelfAccessCheck({
-      resourceType: 'advisor',
-      relation: KESSEL_RELATIONS.viewRecs,
-    });
+  const { data, loading, error } = useSelfAccessCheck({ resources });
 
-  const isLoading = isExportLoading || isDisableRecLoading || isViewRecsLoading;
+  if (workspaceLoading) {
+    return [false, false, false, true];
+  }
 
-  return [canExport, canDisableRec, canViewRecs, isLoading];
+  if (!workspaceId || error) {
+    return [false, false, false, false];
+  }
+
+  const canExport = data?.[0]?.allowed ?? false;
+  const canDisableRec = data?.[1]?.allowed ?? false;
+  const canViewRecs = data?.[2]?.allowed ?? false;
+
+  return [canExport, canDisableRec, canViewRecs, loading];
 };

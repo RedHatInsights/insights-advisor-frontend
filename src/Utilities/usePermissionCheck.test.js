@@ -1,7 +1,11 @@
 import { renderHook } from '@testing-library/react';
-import { useRbacV1Permissions, useKesselPermissions } from './usePermissionCheck';
+import {
+  useRbacV1Permissions,
+  useKesselPermissions,
+} from './usePermissionCheck';
 import * as Hooks from './Hooks';
 import { useSelfAccessCheck } from '@project-kessel/react-kessel-access-check';
+import * as useKesselWorkspaces from './useKesselWorkspaces';
 
 jest.mock('./Hooks', () => ({
   useRbac: jest.fn(),
@@ -14,6 +18,10 @@ jest.mock('./Hooks', () => ({
 
 jest.mock('@project-kessel/react-kessel-access-check', () => ({
   useSelfAccessCheck: jest.fn(),
+}));
+
+jest.mock('./useKesselWorkspaces', () => ({
+  useFetchDefaultWorkspaceId: jest.fn(),
 }));
 
 describe('usePermissionCheck', () => {
@@ -56,12 +64,19 @@ describe('usePermissionCheck', () => {
   describe('useKesselPermissions', () => {
     beforeEach(() => {
       useSelfAccessCheck.mockReset();
+      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReset();
     });
 
     it('should return correct Kessel permissions when all granted', () => {
-      useSelfAccessCheck.mockReturnValue({
-        isAllowed: true,
+      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReturnValue({
+        workspaceId: 'workspace-123',
         isLoading: false,
+        error: null,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [{ allowed: true }, { allowed: true }, { allowed: true }],
+        loading: false,
       });
 
       const { result } = renderHook(() => useKesselPermissions());
@@ -70,9 +85,15 @@ describe('usePermissionCheck', () => {
     });
 
     it('should return correct Kessel permissions when all denied', () => {
-      useSelfAccessCheck.mockReturnValue({
-        isAllowed: false,
+      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReturnValue({
+        workspaceId: 'workspace-123',
         isLoading: false,
+        error: null,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [{ allowed: false }, { allowed: false }, { allowed: false }],
+        loading: false,
       });
 
       const { result } = renderHook(() => useKesselPermissions());
@@ -81,55 +102,108 @@ describe('usePermissionCheck', () => {
     });
 
     it('should handle loading state', () => {
-      useSelfAccessCheck.mockReturnValue({
-        isAllowed: false,
-        isLoading: true,
-      });
-
-      const { result } = renderHook(() => useKesselPermissions());
-
-      expect(result.current[3]).toBe(true); // isLoading should be true
-    });
-
-    it('should handle mixed loading states', () => {
-      let callCount = 0;
-      useSelfAccessCheck.mockImplementation(() => {
-        callCount++;
-        if (callCount === 1) {
-          return { isAllowed: true, isLoading: false };
-        } else if (callCount === 2) {
-          return { isAllowed: false, isLoading: true }; // One is loading
-        } else {
-          return { isAllowed: true, isLoading: false };
-        }
-      });
-
-      const { result } = renderHook(() => useKesselPermissions());
-
-      expect(result.current[3]).toBe(true); // isLoading should be true if any is loading
-    });
-
-    it('should call useSelfAccessCheck with correct Kessel relations', () => {
-      useSelfAccessCheck.mockReturnValue({
-        isAllowed: true,
+      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReturnValue({
+        workspaceId: 'workspace-123',
         isLoading: false,
+        error: null,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [{ allowed: false }, { allowed: false }, { allowed: false }],
+        loading: true,
+      });
+
+      const { result } = renderHook(() => useKesselPermissions());
+
+      expect(result.current[3]).toBe(true);
+    });
+
+    it('should handle workspace loading state', () => {
+      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReturnValue({
+        workspaceId: null,
+        isLoading: true,
+        error: null,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [],
+        loading: false,
+      });
+
+      const { result } = renderHook(() => useKesselPermissions());
+
+      expect(result.current).toEqual([false, false, false, true]);
+    });
+
+    it('should handle missing workspace ID', () => {
+      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReturnValue({
+        workspaceId: null,
+        isLoading: false,
+        error: null,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [],
+        loading: false,
+      });
+
+      const { result } = renderHook(() => useKesselPermissions());
+
+      expect(result.current).toEqual([false, false, false, false]);
+    });
+
+    it('should handle mixed permissions', () => {
+      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReturnValue({
+        workspaceId: 'workspace-123',
+        isLoading: false,
+        error: null,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [{ allowed: true }, { allowed: false }, { allowed: true }],
+        loading: false,
+      });
+
+      const { result } = renderHook(() => useKesselPermissions());
+
+      expect(result.current).toEqual([true, false, true, false]);
+    });
+
+    it('should call useSelfAccessCheck with correct workspace-scoped Kessel relations', () => {
+      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReturnValue({
+        workspaceId: 'workspace-123',
+        isLoading: false,
+        error: null,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [{ allowed: true }, { allowed: true }, { allowed: true }],
+        loading: false,
       });
 
       renderHook(() => useKesselPermissions());
 
       expect(useSelfAccessCheck).toHaveBeenCalledWith({
-        resourceType: 'advisor',
-        relation: 'advisor_exports_view',
-      });
-
-      expect(useSelfAccessCheck).toHaveBeenCalledWith({
-        resourceType: 'advisor',
-        relation: 'advisor_disable_recommendations_edit',
-      });
-
-      expect(useSelfAccessCheck).toHaveBeenCalledWith({
-        resourceType: 'advisor',
-        relation: 'advisor_recommendation_results_view',
+        resources: [
+          {
+            id: 'workspace-123',
+            type: 'workspace',
+            relation: 'advisor_exports_view',
+            reporter: { type: 'rbac' },
+          },
+          {
+            id: 'workspace-123',
+            type: 'workspace',
+            relation: 'advisor_disable_recommendations_edit',
+            reporter: { type: 'rbac' },
+          },
+          {
+            id: 'workspace-123',
+            type: 'workspace',
+            relation: 'advisor_recommendation_results_view',
+            reporter: { type: 'rbac' },
+          },
+        ],
       });
     });
   });
