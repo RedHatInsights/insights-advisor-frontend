@@ -3,9 +3,8 @@ import messages from '../Messages';
 
 const dataFetch = async (envContext) => {
   try {
-    const response = await instance.get(envContext.STATS_OVERVIEW_FETCH_URL);
-    if (response.data) {
-      const data = response.data;
+    const data = await instance.get(envContext.STATS_OVERVIEW_FETCH_URL);
+    if (data) {
       return { ...data, loaded: true, isError: false };
     }
     throw messages.overviewDashbarResponseMissingDataError.defaultMessage;

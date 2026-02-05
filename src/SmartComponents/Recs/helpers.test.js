@@ -20,7 +20,7 @@ const setConventionalSystemsCount = jest.fn();
 const setCountsLoading = jest.fn();
 describe('systemsCheck state is getting set', () => {
   test('All state variables get called', async () => {
-    const resp = { data: { meta: { count: 1 } } };
+    const resp = { meta: { count: 1 } };
 
     instance.get.mockImplementation(() => Promise.resolve(resp));
 
@@ -39,7 +39,7 @@ describe('systemsCheck state is getting set', () => {
   });
 
   test('should get recommendation data', async () => {
-    const resp = { data: { meta: { count: 1 } } };
+    const resp = { meta: { count: 1 } };
 
     instance.get.mockImplementation(() => Promise.resolve(resp));
 
@@ -58,7 +58,7 @@ describe('systemsCheck state is getting set', () => {
   });
 
   test('should get pathway data', async () => {
-    const resp = { data: { meta: { count: 1 } } };
+    const resp = { meta: { count: 1 } };
 
     instance.get.mockImplementation(() => Promise.resolve(resp));
 

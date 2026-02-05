@@ -37,7 +37,7 @@ const ClassicRedirect = () => {
         const [classicId, redirectBase] = getData(window.location.pathname);
         const inventoryId = (
           await instance.get(`/api/inventory/v1/hosts?insights_id=${classicId}`)
-        ).data.results[0].id;
+        ).results[0].id;
         setRedirect(`${redirectBase}/${inventoryId}`);
         setFetchStatus('fulfilled');
       } catch (error) {

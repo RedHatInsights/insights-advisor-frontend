@@ -28,24 +28,22 @@ const downloadHelper = async (
     let options = selectedTags?.length && { tags: selectedTags };
     workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
     addNotification(exportNotifications.pending);
-    const data = (
-      await instance
-        .get(
-          `${BASE_URL}/export/${exportTable}.${format === 'json' ? 'json' : 'csv'}`,
-          {
-            params: {
-              ...filters,
-              ...options,
-              ...(display_name && { display_name: display_name }),
-            },
+    const data = await instance
+      .get(
+        `${BASE_URL}/export/${exportTable}.${format === 'json' ? 'json' : 'csv'}`,
+        {
+          params: {
+            ...filters,
+            ...options,
+            ...(display_name && { display_name: display_name }),
           },
-        )
-        .then((result) => {
-          addNotification(exportNotifications.success);
-          return result;
-        })
-        .catch((error) => addNotification(populateExportError(error)))
-    ).data;
+        },
+      )
+      .then((result) => {
+        addNotification(exportNotifications.success);
+        return result;
+      })
+      .catch((error) => addNotification(populateExportError(error)));
 
     let formattedData = format === 'json' ? JSON.stringify(data) : data;
     downloadFile(formattedData, fileName(exportTable), format);

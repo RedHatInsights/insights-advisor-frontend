@@ -147,7 +147,7 @@ const Inventory = ({
           `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
           { params: { name: filters.name } },
         )
-      )?.data.playbook_count;
+      )?.playbook_count;
       setRulesPlaybookCount(associatedRuleDetails);
     }
   };
@@ -159,13 +159,13 @@ const Inventory = ({
           await instance.get(
             `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
           )
-        )?.data.data;
+        )?.data;
 
         let pathwayReport = (
           await instance.get(
             `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
           )
-        )?.data.rules;
+        )?.rules;
         setHasPathwayDetails(true);
         setPathwayReportList(pathwayReport);
         setPathwayRulesList(pathwayRules);
@@ -212,13 +212,13 @@ const Inventory = ({
         await instance.get(
           `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
         )
-      )?.data.data;
+      )?.data;
 
       const systems = (
         await instance.get(
           `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
         )
-      )?.data.rules;
+      )?.rules;
 
       let issues = [];
       pathways.forEach((rec) => {

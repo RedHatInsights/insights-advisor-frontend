@@ -89,13 +89,13 @@ export const useGetEntities =
     let edgeData = [];
     let enforceEdgeGroups = false;
     if (systemIDs?.length) {
-      const { data: devicesData } = await instance.post(
+      const devicesData = await instance.post(
         `${EDGE_DEVICE_BASE_URL}/devices/devicesview`,
         { devices_uuid: systemIDs },
       );
 
-      edgeData = devicesData?.data?.devices || [];
-      enforceEdgeGroups = devicesData?.data?.enforce_edge_groups;
+      edgeData = devicesData?.devices || [];
+      enforceEdgeGroups = devicesData?.enforce_edge_groups;
     }
 
     const fullData = mergeByInventoryKey(

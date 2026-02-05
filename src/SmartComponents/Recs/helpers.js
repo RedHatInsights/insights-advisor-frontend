@@ -52,7 +52,7 @@ export const bulkHostActions = async ({
       params: { rule_id: rule.rule_id, limit: rule.hosts_acked_count },
     });
     const data = {
-      systems: hostAckResponse?.data?.map((item) => item.system_uuid),
+      systems: hostAckResponse?.map((item) => item.system_uuid),
     };
 
     await instance.post(
@@ -111,7 +111,7 @@ export const systemsCheck = async (
   });
 
   try {
-    await instance.get(conventionalURL).then(({ data }) => {
+    await instance.get(conventionalURL).then((data) => {
       count = count += data.meta.count;
       setConventionalSystemsCount &&
         setConventionalSystemsCount(data.meta.count);

@@ -27,7 +27,7 @@ const DownloadPlaybookButton = ({ isDisabled, rules, systems }) => {
       );
 
       // download the playbook in the response as a yaml file
-      const blob = new Blob([response.data], { type: 'application/x-yaml' });
+      const blob = new Blob([response], { type: 'application/x-yaml' });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;

@@ -258,11 +258,10 @@ const SystemsTable = () => {
             workloads,
             true,
           );
-          const fetchedSystems = (
-            await instance.get(envContext.SYSTEMS_FETCH_URL, {
-              params: options,
-            })
-          )?.data;
+          const fetchedSystems = await instance.get(
+            envContext.SYSTEMS_FETCH_URL,
+            { params: options },
+          );
 
           handleRefresh(options);
           const results = await defaultGetEntities(

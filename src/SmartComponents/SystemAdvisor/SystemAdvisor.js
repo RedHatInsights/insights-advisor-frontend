@@ -345,7 +345,7 @@ const BaseSystemAdvisor = ({
           )})&fq=documentKind:(Solution%20or%20Article)&fl=view_uri,id,publishedTitle&redhat_client=$ADVISOR`,
           { params: { credentials: 'include' } },
         )
-      ).data.response.docs;
+      ).response.docs;
 
       setKbaDetailsData(kbaDetailsFetch);
       setRows(
@@ -462,7 +462,7 @@ const BaseSystemAdvisor = ({
           },
         );
 
-        const activeRuleFirstReportsData = activeRuleFirst(reportsFetch.data);
+        const activeRuleFirstReportsData = activeRuleFirst(reportsFetch);
         if (envContext.loadChromeless) {
           const kbaDetailsIOP = getKbaDetailsIOP(activeRuleFirstReportsData);
           setKbaDetailsData(kbaDetailsIOP);
@@ -501,7 +501,7 @@ const BaseSystemAdvisor = ({
           },
         );
 
-        setSystemsProfile(profileData?.data?.results[0]?.system_profile || {});
+        setSystemsProfile(profileData?.results[0]?.system_profile || {});
         setSystemsProfileLoading(false);
       } catch (error) {
         void error;

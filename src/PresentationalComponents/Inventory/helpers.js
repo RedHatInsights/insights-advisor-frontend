@@ -32,17 +32,13 @@ export const paginatedRequestHelper = async ({
   );
 
   return pathway
-    ? (
-        await instance.get(`${SYSTEMS_FETCH_URL}`, {
-          params: { ...options, pathway: pathway.slug },
-        })
-      )?.data
-    : (
-        await instance.get(
-          `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/systems_detail/`,
-          { params: options },
-        )
-      )?.data;
+    ? await instance.get(`${SYSTEMS_FETCH_URL}`, {
+        params: { ...options, pathway: pathway.slug },
+      })
+    : await instance.get(
+        `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/systems_detail/`,
+        { params: options },
+      );
 };
 
 export const getEntities =
