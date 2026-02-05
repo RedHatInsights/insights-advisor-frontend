@@ -1,7 +1,7 @@
 import { useSelfAccessCheck } from '@project-kessel/react-kessel-access-check';
 import { PERMISSIONS, KESSEL_RELATIONS } from '../AppConstants';
 import { useRbac } from './Hooks';
-import { useFetchDefaultWorkspaceId } from './useKesselWorkspaces';
+import { useDefaultWorkspace } from './useDefaultWorkspace';
 
 export const useRbacV1Permissions = () => {
   const [[canExport, canDisableRec, canViewRecs], isLoading] = useRbac([
@@ -14,8 +14,7 @@ export const useRbacV1Permissions = () => {
 };
 
 export const useKesselPermissions = () => {
-  const { workspaceId, isLoading: workspaceLoading } =
-    useFetchDefaultWorkspaceId();
+  const { workspaceId, isLoading: workspaceLoading } = useDefaultWorkspace();
 
   const resources = workspaceId
     ? [

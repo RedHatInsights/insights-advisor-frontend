@@ -63,38 +63,38 @@ const App = () => {
   );
 };
 
-const AppWithRbacV1 = () => {
-  const hccContext = useHccEnvironmentContext();
-
+const AppWithRbacV1Context = () => {
+  const envContext = useHccEnvironmentContext();
   return (
-    <EnvironmentContext.Provider value={hccContext}>
+    <EnvironmentContext.Provider value={envContext}>
       <App />
     </EnvironmentContext.Provider>
   );
 };
 
-const AppWithKessel = () => {
-  const kesselContext = useKesselEnvironmentContext();
-
+const AppWithKesselContext = () => {
+  const envContext = useKesselEnvironmentContext();
   return (
-    <EnvironmentContext.Provider value={kesselContext}>
+    <EnvironmentContext.Provider value={envContext}>
       <App />
     </EnvironmentContext.Provider>
   );
+};
+
+const AppWithContextProviders = () => {
+  const isKesselEnabled = useFeatureFlag('advisor.kessel_enabled');
+
+  return isKesselEnabled ? <AppWithKesselContext /> : <AppWithRbacV1Context />;
 };
 
 const AppWithHccContext = () => {
-  const isKesselEnabled = useFeatureFlag('advisor.kessel_enabled');
-
-  return isKesselEnabled ? (
+  return (
     <AccessCheck.Provider
       baseUrl={window.location.origin}
       apiPath={KESSEL_API_BASE_URL}
     >
-      <AppWithKessel />
+      <AppWithContextProviders />
     </AccessCheck.Provider>
-  ) : (
-    <AppWithRbacV1 />
   );
 };
 

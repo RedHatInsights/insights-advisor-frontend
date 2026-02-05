@@ -5,7 +5,7 @@ import {
 } from './usePermissionCheck';
 import * as Hooks from './Hooks';
 import { useSelfAccessCheck } from '@project-kessel/react-kessel-access-check';
-import * as useKesselWorkspaces from './useKesselWorkspaces';
+import * as useDefaultWorkspaceModule from './useDefaultWorkspace';
 
 jest.mock('./Hooks', () => ({
   useRbac: jest.fn(),
@@ -20,8 +20,8 @@ jest.mock('@project-kessel/react-kessel-access-check', () => ({
   useSelfAccessCheck: jest.fn(),
 }));
 
-jest.mock('./useKesselWorkspaces', () => ({
-  useFetchDefaultWorkspaceId: jest.fn(),
+jest.mock('./useDefaultWorkspace', () => ({
+  useDefaultWorkspace: jest.fn(),
 }));
 
 describe('usePermissionCheck', () => {
@@ -64,11 +64,11 @@ describe('usePermissionCheck', () => {
   describe('useKesselPermissions', () => {
     beforeEach(() => {
       useSelfAccessCheck.mockReset();
-      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReset();
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReset();
     });
 
     it('should return correct Kessel permissions when all granted', () => {
-      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReturnValue({
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
         workspaceId: 'workspace-123',
         isLoading: false,
         error: null,
@@ -85,7 +85,7 @@ describe('usePermissionCheck', () => {
     });
 
     it('should return correct Kessel permissions when all denied', () => {
-      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReturnValue({
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
         workspaceId: 'workspace-123',
         isLoading: false,
         error: null,
@@ -102,7 +102,7 @@ describe('usePermissionCheck', () => {
     });
 
     it('should handle loading state', () => {
-      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReturnValue({
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
         workspaceId: 'workspace-123',
         isLoading: false,
         error: null,
@@ -119,7 +119,7 @@ describe('usePermissionCheck', () => {
     });
 
     it('should handle workspace loading state', () => {
-      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReturnValue({
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
         workspaceId: null,
         isLoading: true,
         error: null,
@@ -136,7 +136,7 @@ describe('usePermissionCheck', () => {
     });
 
     it('should handle missing workspace ID', () => {
-      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReturnValue({
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
         workspaceId: null,
         isLoading: false,
         error: null,
@@ -153,7 +153,7 @@ describe('usePermissionCheck', () => {
     });
 
     it('should handle mixed permissions', () => {
-      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReturnValue({
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
         workspaceId: 'workspace-123',
         isLoading: false,
         error: null,
@@ -170,7 +170,7 @@ describe('usePermissionCheck', () => {
     });
 
     it('should call useSelfAccessCheck with correct workspace-scoped Kessel relations', () => {
-      useKesselWorkspaces.useFetchDefaultWorkspaceId.mockReturnValue({
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
         workspaceId: 'workspace-123',
         isLoading: false,
         error: null,
