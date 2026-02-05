@@ -8,7 +8,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { Modal } from '@patternfly/react-core/deprecated';
-import { Post } from '../../Utilities/Api';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import PropTypes from 'prop-types';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import messages from '../../Messages';
@@ -39,10 +39,10 @@ const DisableRule = ({
   const bulkHostActions = async () => {
     const data = { systems: hosts, justification };
     try {
-      await Post(
+      await instance.post(
         `${envContext.BASE_URL}/rule/${rule.rule_id}/ack_hosts/`,
-        getCsrfTokenHeader(),
         data,
+        { headers: getCsrfTokenHeader() },
       );
       !singleSystem &&
         addNotification({

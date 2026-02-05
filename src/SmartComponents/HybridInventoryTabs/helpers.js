@@ -4,7 +4,7 @@ import {
   lastSeenColumn,
   paginatedRequestHelper,
 } from '../../PresentationalComponents/Inventory/helpers';
-import { Post } from '../../Utilities/Api';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { EDGE_DEVICE_BASE_URL } from '../../AppConstants';
 import { useCallback } from 'react';
 import { systemReducer } from '../../Store/AppReducer';
@@ -89,9 +89,8 @@ export const useGetEntities =
     let edgeData = [];
     let enforceEdgeGroups = false;
     if (systemIDs?.length) {
-      const { data: devicesData } = await Post(
+      const { data: devicesData } = await instance.post(
         `${EDGE_DEVICE_BASE_URL}/devices/devicesview`,
-        {},
         { devices_uuid: systemIDs },
       );
 

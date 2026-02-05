@@ -16,7 +16,9 @@ describe('createAdvisorBaseQuery', () => {
   });
 
   it('should make a GET request with default base URL', async () => {
-    const baseQuery = createAdvisorBaseQuery({ baseUrl: 'https://api.example.com' });
+    const baseQuery = createAdvisorBaseQuery({
+      baseUrl: 'https://api.example.com',
+    });
     mockAxios.mockResolvedValue({ data: 'test-data' });
 
     const result = await baseQuery({ url: '/test' });
@@ -33,7 +35,9 @@ describe('createAdvisorBaseQuery', () => {
   });
 
   it('should handle customBasePath override', async () => {
-    const baseQuery = createAdvisorBaseQuery({ baseUrl: 'https://api.example.com' });
+    const baseQuery = createAdvisorBaseQuery({
+      baseUrl: 'https://api.example.com',
+    });
     mockAxios.mockResolvedValue({ data: 'test-data' });
 
     await baseQuery({
@@ -44,12 +48,14 @@ describe('createAdvisorBaseQuery', () => {
     expect(mockAxios).toHaveBeenCalledWith(
       expect.objectContaining({
         url: 'https://custom.example.com/test',
-      })
+      }),
     );
   });
 
   it('should handle inventoryBasePath override', async () => {
-    const baseQuery = createAdvisorBaseQuery({ baseUrl: 'https://api.example.com' });
+    const baseQuery = createAdvisorBaseQuery({
+      baseUrl: 'https://api.example.com',
+    });
     mockAxios.mockResolvedValue({ data: 'test-data' });
 
     await baseQuery({
@@ -60,12 +66,14 @@ describe('createAdvisorBaseQuery', () => {
     expect(mockAxios).toHaveBeenCalledWith(
       expect.objectContaining({
         url: 'https://inventory.example.com/test',
-      })
+      }),
     );
   });
 
   it('should prioritize customBasePath over inventoryBasePath', async () => {
-    const baseQuery = createAdvisorBaseQuery({ baseUrl: 'https://api.example.com' });
+    const baseQuery = createAdvisorBaseQuery({
+      baseUrl: 'https://api.example.com',
+    });
     mockAxios.mockResolvedValue({ data: 'test-data' });
 
     await baseQuery({
@@ -77,12 +85,14 @@ describe('createAdvisorBaseQuery', () => {
     expect(mockAxios).toHaveBeenCalledWith(
       expect.objectContaining({
         url: 'https://custom.example.com/test',
-      })
+      }),
     );
   });
 
   it('should handle POST requests with data', async () => {
-    const baseQuery = createAdvisorBaseQuery({ baseUrl: 'https://api.example.com' });
+    const baseQuery = createAdvisorBaseQuery({
+      baseUrl: 'https://api.example.com',
+    });
     mockAxios.mockResolvedValue({ data: 'created' });
 
     const postData = { name: 'test' };
@@ -97,12 +107,14 @@ describe('createAdvisorBaseQuery', () => {
         url: 'https://api.example.com/create',
         method: 'post',
         data: postData,
-      })
+      }),
     );
   });
 
   it('should handle query parameters from search string', async () => {
-    const baseQuery = createAdvisorBaseQuery({ baseUrl: 'https://api.example.com' });
+    const baseQuery = createAdvisorBaseQuery({
+      baseUrl: 'https://api.example.com',
+    });
     mockAxios.mockResolvedValue({ data: 'test-data' });
 
     await baseQuery({
@@ -113,12 +125,14 @@ describe('createAdvisorBaseQuery', () => {
     expect(mockAxios).toHaveBeenCalledWith(
       expect.objectContaining({
         url: 'https://api.example.com/test?limit=10&offset=0',
-      })
+      }),
     );
   });
 
   it('should handle query parameters from remaining params', async () => {
-    const baseQuery = createAdvisorBaseQuery({ baseUrl: 'https://api.example.com' });
+    const baseQuery = createAdvisorBaseQuery({
+      baseUrl: 'https://api.example.com',
+    });
     mockAxios.mockResolvedValue({ data: 'test-data' });
 
     await baseQuery({
@@ -130,12 +144,14 @@ describe('createAdvisorBaseQuery', () => {
     expect(mockAxios).toHaveBeenCalledWith(
       expect.objectContaining({
         url: 'https://api.example.com/test?limit=10&offset=0',
-      })
+      }),
     );
   });
 
   it('should merge existing query string with additional params', async () => {
-    const baseQuery = createAdvisorBaseQuery({ baseUrl: 'https://api.example.com' });
+    const baseQuery = createAdvisorBaseQuery({
+      baseUrl: 'https://api.example.com',
+    });
     mockAxios.mockResolvedValue({ data: 'test-data' });
 
     await baseQuery({
@@ -147,22 +163,24 @@ describe('createAdvisorBaseQuery', () => {
     expect(mockAxios).toHaveBeenCalledWith(
       expect.objectContaining({
         url: expect.stringContaining('existing=value'),
-      })
+      }),
     );
     expect(mockAxios).toHaveBeenCalledWith(
       expect.objectContaining({
         url: expect.stringContaining('limit=10'),
-      })
+      }),
     );
     expect(mockAxios).toHaveBeenCalledWith(
       expect.objectContaining({
         url: expect.stringContaining('offset=0'),
-      })
+      }),
     );
   });
 
   it('should handle custom headers', async () => {
-    const baseQuery = createAdvisorBaseQuery({ baseUrl: 'https://api.example.com' });
+    const baseQuery = createAdvisorBaseQuery({
+      baseUrl: 'https://api.example.com',
+    });
     mockAxios.mockResolvedValue({ data: 'test-data' });
 
     const headers = { 'X-CSRF-Token': 'token123' };
@@ -174,12 +192,14 @@ describe('createAdvisorBaseQuery', () => {
     expect(mockAxios).toHaveBeenCalledWith(
       expect.objectContaining({
         headers,
-      })
+      }),
     );
   });
 
   it('should handle options as data fallback', async () => {
-    const baseQuery = createAdvisorBaseQuery({ baseUrl: 'https://api.example.com' });
+    const baseQuery = createAdvisorBaseQuery({
+      baseUrl: 'https://api.example.com',
+    });
     mockAxios.mockResolvedValue({ data: 'test-data' });
 
     const options = { key: 'value' };
@@ -192,12 +212,14 @@ describe('createAdvisorBaseQuery', () => {
       expect.objectContaining({
         data: options,
         params: options,
-      })
+      }),
     );
   });
 
   it('should return error object on axios error', async () => {
-    const baseQuery = createAdvisorBaseQuery({ baseUrl: 'https://api.example.com' });
+    const baseQuery = createAdvisorBaseQuery({
+      baseUrl: 'https://api.example.com',
+    });
     const error = {
       response: {
         status: 404,
@@ -217,7 +239,9 @@ describe('createAdvisorBaseQuery', () => {
   });
 
   it('should handle error without response', async () => {
-    const baseQuery = createAdvisorBaseQuery({ baseUrl: 'https://api.example.com' });
+    const baseQuery = createAdvisorBaseQuery({
+      baseUrl: 'https://api.example.com',
+    });
     const error = new Error('Network error');
     mockAxios.mockRejectedValue(error);
 
@@ -232,7 +256,9 @@ describe('createAdvisorBaseQuery', () => {
   });
 
   it('should use paramsSerializer for query params', async () => {
-    const baseQuery = createAdvisorBaseQuery({ baseUrl: 'https://api.example.com' });
+    const baseQuery = createAdvisorBaseQuery({
+      baseUrl: 'https://api.example.com',
+    });
     mockAxios.mockResolvedValue({ data: 'test-data' });
 
     await baseQuery({
@@ -243,7 +269,7 @@ describe('createAdvisorBaseQuery', () => {
     expect(mockAxios).toHaveBeenCalledWith(
       expect.objectContaining({
         paramsSerializer: expect.any(Function),
-      })
+      }),
     );
 
     const call = mockAxios.mock.calls[0][0];

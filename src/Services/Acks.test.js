@@ -9,7 +9,10 @@ import {
   useSetAckMutation,
 } from './Acks';
 
-jest.mock('@redhat-cloud-services/frontend-components-utilities/interceptors', () => jest.fn());
+jest.mock(
+  '@redhat-cloud-services/frontend-components-utilities/interceptors',
+  () => jest.fn(),
+);
 
 const instance = require('@redhat-cloud-services/frontend-components-utilities/interceptors');
 
@@ -22,7 +25,11 @@ const createWrapper = () => {
       getDefaultMiddleware().concat(Acks.middleware),
   });
 
-  return ({ children }) => <Provider store={store}>{children}</Provider>;
+  // eslint-disable-next-line react/prop-types
+  const Wrapper = ({ children }) => (
+    <Provider store={store}>{children}</Provider>
+  );
+  return Wrapper;
 };
 
 describe('Acks Service', () => {
@@ -46,7 +53,7 @@ describe('Acks Service', () => {
         () => useGetRecAcksQuery({ ruleId: 'test-rule' }),
         {
           wrapper: createWrapper(),
-        }
+        },
       );
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -55,7 +62,7 @@ describe('Acks Service', () => {
         expect.objectContaining({
           url: expect.stringContaining('/ack/test-rule/'),
           method: 'get',
-        })
+        }),
       );
       expect(result.current.data).toEqual(mockData);
     });
@@ -72,7 +79,7 @@ describe('Acks Service', () => {
           }),
         {
           wrapper: createWrapper(),
-        }
+        },
       );
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -80,7 +87,7 @@ describe('Acks Service', () => {
       expect(instance).toHaveBeenCalledWith(
         expect.objectContaining({
           url: expect.stringContaining('https://custom.api.com/ack/test-rule/'),
-        })
+        }),
       );
     });
 
@@ -92,7 +99,7 @@ describe('Acks Service', () => {
         () => useGetRecAcksQuery({ ruleId: 'test/rule' }),
         {
           wrapper: createWrapper(),
-        }
+        },
       );
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -100,7 +107,7 @@ describe('Acks Service', () => {
       expect(instance).toHaveBeenCalledWith(
         expect.objectContaining({
           url: expect.stringContaining('/ack/test'),
-        })
+        }),
       );
     });
   });
@@ -115,12 +122,9 @@ describe('Acks Service', () => {
       };
       instance.mockResolvedValue(mockData);
 
-      const { result } = renderHook(
-        () => useGetHostAcksQuery({ limit: 10 }),
-        {
-          wrapper: createWrapper(),
-        }
-      );
+      const { result } = renderHook(() => useGetHostAcksQuery({ limit: 10 }), {
+        wrapper: createWrapper(),
+      });
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
@@ -128,7 +132,7 @@ describe('Acks Service', () => {
         expect.objectContaining({
           url: expect.stringContaining('/hostack/'),
           method: 'get',
-        })
+        }),
       );
       expect(result.current.data).toEqual(mockData.data);
     });
@@ -145,7 +149,7 @@ describe('Acks Service', () => {
           }),
         {
           wrapper: createWrapper(),
-        }
+        },
       );
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -153,7 +157,7 @@ describe('Acks Service', () => {
       expect(instance).toHaveBeenCalledWith(
         expect.objectContaining({
           url: expect.stringContaining('https://custom.api.com/hostack/'),
-        })
+        }),
       );
     });
   });
@@ -183,7 +187,7 @@ describe('Acks Service', () => {
         expect.objectContaining({
           url: expect.stringContaining('/ack/'),
           method: 'post',
-        })
+        }),
       );
     });
 
@@ -211,7 +215,7 @@ describe('Acks Service', () => {
         expect.objectContaining({
           url: expect.stringContaining('/hostack/'),
           method: 'post',
-        })
+        }),
       );
     });
 
@@ -236,7 +240,7 @@ describe('Acks Service', () => {
       expect(instance).toHaveBeenCalledWith(
         expect.objectContaining({
           headers: { 'X-CSRF-Token': 'test-csrf-token' },
-        })
+        }),
       );
     });
 
@@ -261,7 +265,7 @@ describe('Acks Service', () => {
       expect(instance).toHaveBeenCalledWith(
         expect.objectContaining({
           url: expect.stringContaining('https://custom.api.com/ack/'),
-        })
+        }),
       );
     });
 

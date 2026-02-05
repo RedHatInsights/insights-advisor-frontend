@@ -2,9 +2,17 @@ import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import { Recs, useGetRecsQuery, useGetRecQuery, useGetRecSystemsQuery } from './Recs';
+import {
+  Recs,
+  useGetRecsQuery,
+  useGetRecQuery,
+  useGetRecSystemsQuery,
+} from './Recs';
 
-jest.mock('@redhat-cloud-services/frontend-components-utilities/interceptors', () => jest.fn());
+jest.mock(
+  '@redhat-cloud-services/frontend-components-utilities/interceptors',
+  () => jest.fn(),
+);
 
 const instance = require('@redhat-cloud-services/frontend-components-utilities/interceptors');
 
@@ -17,7 +25,11 @@ const createWrapper = () => {
       getDefaultMiddleware().concat(Recs.middleware),
   });
 
-  return ({ children }) => <Provider store={store}>{children}</Provider>;
+  // eslint-disable-next-line react/prop-types
+  const Wrapper = ({ children }) => (
+    <Provider store={store}>{children}</Provider>
+  );
+  return Wrapper;
 };
 
 describe('Recs Service', () => {
@@ -49,7 +61,7 @@ describe('Recs Service', () => {
         expect.objectContaining({
           url: expect.stringContaining('/rule/'),
           method: 'get',
-        })
+        }),
       );
       expect(result.current.data).toEqual(mockData);
     });
@@ -66,7 +78,7 @@ describe('Recs Service', () => {
           }),
         {
           wrapper: createWrapper(),
-        }
+        },
       );
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -74,7 +86,7 @@ describe('Recs Service', () => {
       expect(instance).toHaveBeenCalledWith(
         expect.objectContaining({
           url: expect.stringContaining('https://custom.api.com/rule/'),
-        })
+        }),
       );
     });
 
@@ -112,7 +124,7 @@ describe('Recs Service', () => {
         () => useGetRecQuery({ ruleId: 'test-rule' }),
         {
           wrapper: createWrapper(),
-        }
+        },
       );
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -121,7 +133,7 @@ describe('Recs Service', () => {
         expect.objectContaining({
           url: expect.stringContaining('/rule/test-rule/'),
           method: 'get',
-        })
+        }),
       );
       expect(result.current.data).toEqual(mockData);
     });
@@ -134,7 +146,7 @@ describe('Recs Service', () => {
         () => useGetRecQuery({ ruleId: 'test/rule' }),
         {
           wrapper: createWrapper(),
-        }
+        },
       );
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -142,7 +154,7 @@ describe('Recs Service', () => {
       expect(instance).toHaveBeenCalledWith(
         expect.objectContaining({
           url: expect.stringContaining('test%2Frule'),
-        })
+        }),
       );
     });
   });
@@ -161,7 +173,7 @@ describe('Recs Service', () => {
         () => useGetRecSystemsQuery({ ruleId: 'test-rule', limit: 20 }),
         {
           wrapper: createWrapper(),
-        }
+        },
       );
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -170,7 +182,7 @@ describe('Recs Service', () => {
         expect.objectContaining({
           url: expect.stringContaining('/rule/test-rule/systems/'),
           method: 'get',
-        })
+        }),
       );
       expect(result.current.data).toEqual(mockData);
     });

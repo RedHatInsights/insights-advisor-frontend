@@ -4,7 +4,7 @@ import { Button, Icon } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import messages from '../Messages';
-import { Post } from './Api';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { EnvironmentContext } from '../App';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { DownloadIcon } from '@patternfly/react-icons';
@@ -20,10 +20,10 @@ const DownloadPlaybookButton = ({ isDisabled, rules, systems }) => {
       const csrfToken = document
         ?.querySelector('meta[name="csrf-token"]')
         ?.getAttribute('content');
-      const response = await Post(
+      const response = await instance.post(
         `${envContext.REMEDIATIONS_BASE_URL}/playbook`,
-        { 'X-CSRF-Token': csrfToken },
         payload,
+        { headers: { 'X-CSRF-Token': csrfToken } },
       );
 
       // download the playbook in the response as a yaml file

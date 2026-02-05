@@ -1,7 +1,6 @@
 import { SYSTEM_TYPES } from '../../AppConstants';
-import { DeleteApi, Get, Post } from '../../Utilities/Api';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import messages from '../../Messages';
-import axios from 'axios';
 import { getCsrfTokenHeader } from '../../PresentationalComponents/helper';
 export const ruleResolutionRisk = (rule) => {
   const resolution = rule?.resolution_set?.find(
@@ -20,11 +19,9 @@ export const enableRule = async (
   baseUrl,
 ) => {
   try {
-    await DeleteApi(
-      `${baseUrl}/ack/${encodeURI(rule.rule_id)}/`,
-      {},
-      getCsrfTokenHeader(),
-    );
+    await instance.delete(`${baseUrl}/ack/${encodeURI(rule.rule_id)}/`, {
+      headers: getCsrfTokenHeader(),
+    });
     addNotification({
       variant: 'success',
       timeout: true,
@@ -51,21 +48,17 @@ export const bulkHostActions = async ({
   baseUrl,
 }) => {
   try {
-    const hostAckResponse = (
-      await Get(
-        `${baseUrl}/hostack/`,
-        {},
-        { rule_id: rule.rule_id, limit: rule.hosts_acked_count },
-      )
-    ).data;
+    const hostAckResponse = await instance.get(`${baseUrl}/hostack/`, {
+      params: { rule_id: rule.rule_id, limit: rule.hosts_acked_count },
+    });
     const data = {
       systems: hostAckResponse?.data?.map((item) => item.system_uuid),
     };
 
-    await Post(
+    await instance.post(
       `${baseUrl}/rule/${encodeURI(rule.rule_id)}/unack_hosts/`,
-      getCsrfTokenHeader(),
       data,
+      { headers: getCsrfTokenHeader() },
     );
     refetch();
     addNotification({
@@ -118,7 +111,7 @@ export const systemsCheck = async (
   });
 
   try {
-    await axios.get(conventionalURL).then(({ data }) => {
+    await instance.get(conventionalURL).then(({ data }) => {
       count = count += data.meta.count;
       setConventionalSystemsCount &&
         setConventionalSystemsCount(data.meta.count);

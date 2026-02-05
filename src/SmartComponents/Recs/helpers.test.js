@@ -1,7 +1,15 @@
-import * as axios from 'axios';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { systemsCheck } from './helpers';
 
-jest.mock('axios');
+jest.mock(
+  '@redhat-cloud-services/frontend-components-utilities/interceptors',
+  () => ({
+    __esModule: true,
+    default: {
+      get: jest.fn(),
+    },
+  }),
+);
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -14,7 +22,7 @@ describe('systemsCheck state is getting set', () => {
   test('All state variables get called', async () => {
     const resp = { data: { meta: { count: 1 } } };
 
-    axios.get.mockImplementation(() => Promise.resolve(resp));
+    instance.get.mockImplementation(() => Promise.resolve(resp));
 
     await systemsCheck(
       'test',
@@ -33,7 +41,7 @@ describe('systemsCheck state is getting set', () => {
   test('should get recommendation data', async () => {
     const resp = { data: { meta: { count: 1 } } };
 
-    axios.get.mockImplementation(() => Promise.resolve(resp));
+    instance.get.mockImplementation(() => Promise.resolve(resp));
 
     await systemsCheck(
       'test',
@@ -44,7 +52,7 @@ describe('systemsCheck state is getting set', () => {
       '/api/insights/v1',
     );
 
-    expect(axios.get).toHaveBeenCalledWith(
+    expect(instance.get).toHaveBeenCalledWith(
       '/api/insights/v1/rule/test/systems_detail/?filter[system_profile]=true&limit=1',
     );
   });
@@ -52,7 +60,7 @@ describe('systemsCheck state is getting set', () => {
   test('should get pathway data', async () => {
     const resp = { data: { meta: { count: 1 } } };
 
-    axios.get.mockImplementation(() => Promise.resolve(resp));
+    instance.get.mockImplementation(() => Promise.resolve(resp));
 
     await systemsCheck(
       undefined,
@@ -63,7 +71,7 @@ describe('systemsCheck state is getting set', () => {
       '/api/insights/v1',
     );
 
-    expect(axios.get).toHaveBeenCalledWith(
+    expect(instance.get).toHaveBeenCalledWith(
       '/api/insights/v1/system/?limit=1&filter[system_profile]&pathway=pathway',
     );
   });

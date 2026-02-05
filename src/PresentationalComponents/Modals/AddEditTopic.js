@@ -1,6 +1,6 @@
 import './_AddEditTopic.scss';
 
-import { DeleteApi, Post, Put } from '../../Utilities/Api';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import React, { useState } from 'react';
 import {
   Split,
@@ -36,11 +36,11 @@ const AddEditTopic = ({ handleModalToggleCallback, isModalOpen, topic }) => {
     try {
       const data = { name, slug, tag, description, enabled, featured };
       if (type === 'DELETE') {
-        await DeleteApi(`${BASE_URL}/topic/${slug}`);
+        await instance.delete(`${BASE_URL}/topic/${slug}`);
       } else if (topic.slug) {
-        await Put(`${BASE_URL}/topic/${slug}/`, data);
+        await instance.put(`${BASE_URL}/topic/${slug}/`, data);
       } else {
-        await Post(`${BASE_URL}/topic/`, {}, data);
+        await instance.post(`${BASE_URL}/topic/`, data);
       }
     } catch (error) {
       addNotification({

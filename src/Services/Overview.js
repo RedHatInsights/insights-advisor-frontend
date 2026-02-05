@@ -1,9 +1,9 @@
-import { Get } from '../Utilities/Api';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import messages from '../Messages';
 
 const dataFetch = async (envContext) => {
   try {
-    const response = await Get(envContext.STATS_OVERVIEW_FETCH_URL);
+    const response = await instance.get(envContext.STATS_OVERVIEW_FETCH_URL);
     if (response.data) {
       const data = response.data;
       return { ...data, loaded: true, isError: false };

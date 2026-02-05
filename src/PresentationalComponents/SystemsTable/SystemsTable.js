@@ -11,7 +11,7 @@ import {
 } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 
-import { Get } from '../../Utilities/Api';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import Loading from '../Loading/Loading';
 import SystemsPdf from '../Export/SystemsPdf';
@@ -259,7 +259,9 @@ const SystemsTable = () => {
             true,
           );
           const fetchedSystems = (
-            await Get(envContext.SYSTEMS_FETCH_URL, {}, options)
+            await instance.get(envContext.SYSTEMS_FETCH_URL, {
+              params: options,
+            })
           )?.data;
 
           handleRefresh(options);

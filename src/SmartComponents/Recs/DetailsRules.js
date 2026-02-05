@@ -2,7 +2,7 @@
 import './Details.scss';
 
 import { BASE_URL, RISK_OF_CHANGE_DESC } from '../../AppConstants';
-import { Post } from '../../Utilities/Api';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import {
   PageHeader,
   PageHeaderTitle,
@@ -48,11 +48,10 @@ export const DetailsRules = ({
   const envContext = useContext(EnvironmentContext);
 
   const onVoteClick = async (ruleId, calculatedRating) => {
-    await Post(
-      `${BASE_URL}/rating/`,
-      {},
-      { rule: ruleId, rating: calculatedRating },
-    );
+    await instance.post(`${BASE_URL}/rating/`, {
+      rule: ruleId,
+      rating: calculatedRating,
+    });
   };
 
   return (

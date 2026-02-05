@@ -7,7 +7,7 @@ import {
 
 import { BASE_URL } from '../../AppConstants';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
-import { DeleteApi } from '../../Utilities/Api';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { List } from 'react-content-loader';
 import { OutlinedBellIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
@@ -55,7 +55,7 @@ const ViewHostAcks = ({
   );
   const deleteAck = async (host) => {
     try {
-      await DeleteApi(`${BASE_URL}/hostack/${host.id}/`);
+      await instance.delete(`${BASE_URL}/hostack/${host.id}/`);
       refetch();
       setUnclean(true);
     } catch (error) {

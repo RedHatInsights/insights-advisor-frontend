@@ -1,7 +1,7 @@
 import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 
 import { exportNotifications } from '../../AppConstants';
-import { Get } from '../../Utilities/Api';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { workloadQueryBuilder } from './Tables';
 import { populateExportError } from '../helper';
 
@@ -29,17 +29,17 @@ const downloadHelper = async (
     workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
     addNotification(exportNotifications.pending);
     const data = (
-      await Get(
-        `${BASE_URL}/export/${exportTable}.${
-          format === 'json' ? 'json' : 'csv'
-        }`,
-        {},
-        {
-          ...filters,
-          ...options,
-          ...(display_name && { display_name: display_name }),
-        },
-      )
+      await instance
+        .get(
+          `${BASE_URL}/export/${exportTable}.${format === 'json' ? 'json' : 'csv'}`,
+          {
+            params: {
+              ...filters,
+              ...options,
+              ...(display_name && { display_name: display_name }),
+            },
+          },
+        )
         .then((result) => {
           addNotification(exportNotifications.success);
           return result;

@@ -21,7 +21,7 @@ import {
 } from '@patternfly/react-table';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Get } from '../../Utilities/Api';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
@@ -339,12 +339,11 @@ const BaseSystemAdvisor = ({
     const kbaIds = reportsData.map(({ rule }) => rule.node_id).filter((x) => x);
     try {
       const kbaDetailsFetch = (
-        await Get(
+        await instance.get(
           `https://access.redhat.com/hydra/rest/search/kcs?q=id:(${kbaIds.join(
             ` OR `,
           )})&fq=documentKind:(Solution%20or%20Article)&fl=view_uri,id,publishedTitle&redhat_client=$ADVISOR`,
-          {},
-          { credentials: 'include' },
+          { params: { credentials: 'include' } },
         )
       ).data.response.docs;
 
@@ -454,10 +453,12 @@ const BaseSystemAdvisor = ({
   useEffect(() => {
     const dataFetch = async () => {
       try {
-        const reportsFetch = await Get(
+        const reportsFetch = await instance.get(
           `${envContext.BASE_URL}/system/${inventoryId}/reports/`,
           {
-            credentials: 'include',
+            headers: {
+              credentials: 'include',
+            },
           },
         );
 
@@ -491,10 +492,12 @@ const BaseSystemAdvisor = ({
         setInventoryReportFetchStatus('fulfilled');
         setActiveReports(activeRuleFirstReportsData);
 
-        const profileData = await Get(
+        const profileData = await instance.get(
           `${envContext.INVENTORY_BASE_URL}/hosts/${inventoryId}/system_profile`,
           {
-            credentials: 'include',
+            headers: {
+              credentials: 'include',
+            },
           },
         );
 

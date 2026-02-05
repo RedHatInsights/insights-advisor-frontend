@@ -2,7 +2,7 @@ import React from 'react';
 import EmptyState from './Components/EmptyState';
 import { FormattedMessage } from 'react-intl';
 import { paramParser } from '../Common/Tables';
-import { DeleteApi } from '../../Utilities/Api';
+import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import * as AppConstants from '../../AppConstants';
 import messages from '../../Messages';
 import { FILTER_CATEGORIES as FC } from '../../AppConstants';
@@ -159,11 +159,9 @@ export const hideReports = async (
       setDisableRuleOpen(true);
     } else {
       try {
-        await DeleteApi(
-          `${baseUrl}/ack/${encodeURI(rule.rule_id)}/`,
-          {},
-          getCsrfTokenHeader(),
-        );
+        await instance.delete(`${baseUrl}/ack/${encodeURI(rule.rule_id)}/`, {
+          headers: getCsrfTokenHeader(),
+        });
         addNotification({
           variant: 'success',
           timeout: true,
