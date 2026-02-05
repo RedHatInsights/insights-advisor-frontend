@@ -48,7 +48,10 @@
       "!src/**/*.fixtures.js",
       "!**/node_modules/**",
       "!src/{entry,entry-dev}.js",
-      "!src/**/*.cy.js"
+      "!src/**/*.cy.js",
+      "!src/{App,AppEntry,DevAppEntry,Routes,bootstrap,cveToRuleid}.js",
+      "!src/**/__fixtures__/**",
+      "!src/**/__factories__/**"
     ],
     "moduleNameMapper": {
       "\\.(css|scss)$": "identity-obj-proxy",
@@ -172,7 +175,9 @@
       "src/**/DevAppEntry.js",
       "src/**/Routes.js",
       "src/**/bootstrap.js",
-      "src/**/cveToRuleid.js"
+      "src/**/cveToRuleid.js",
+      "src/**/__fixtures__/**",
+      "src/**/__factories__/**"
     ]
   },
   "overrides": {
