@@ -1,9 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { dynamicRecsBaseQuery } from '../Utilities/Api';
+import { createAdvisorBaseQuery } from '../Utilities/createAdvisorBaseQuery';
+import { BASE_URL } from '../AppConstants';
 
 export const SystemVariety = createApi({
   reducerPath: 'systemVariety',
-  baseQuery: dynamicRecsBaseQuery,
+  baseQuery: createAdvisorBaseQuery({ baseUrl: BASE_URL }),
   keepUnusedDataFor: 5,
   endpoints: (build) => ({
     getConventionalDevices: build.query({
