@@ -10,7 +10,6 @@ import tseslint from 'typescript-eslint';
 const flatPlugins = [
   fecPlugin,
   pluginCypress.configs.recommended,
-  reactHooks.configs['recommended-latest'],
   testingLibrary.configs['flat/react'],
   jestDom.configs['flat/recommended'],
 ];
@@ -18,6 +17,16 @@ const flatPlugins = [
 export default defineConfig([
   globalIgnores(['node_modules/*', 'static/*', 'dist/*']),
   ...flatPlugins,
+  {
+    files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx'],
+    plugins: {
+      'react-hooks': reactHooks,
+    },
+    rules: {
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+    },
+  },
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
