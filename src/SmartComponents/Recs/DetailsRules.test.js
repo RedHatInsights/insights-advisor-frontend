@@ -1,15 +1,18 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { IntlProvider } from 'react-intl';
 import { DetailsRules } from './DetailsRules';
 import { EnvironmentContext } from '../../App';
-import * as Api from '../../Utilities/Api';
 
 // Mock dependencies
 jest.mock('@redhat-cloud-services/frontend-components/PageHeader', () => ({
   PageHeader: ({ children }) => <div data-testid="page-header">{children}</div>,
-  PageHeaderTitle: ({ title }) => <div data-testid="page-header-title">{title}</div>,
+  PageHeaderTitle: ({ title }) => (
+    <div data-testid="page-header-title">{title}</div>
+  ),
 }));
 
 jest.mock('@redhat-cloud-services/frontend-components/InsightsLink', () => {
@@ -32,17 +35,20 @@ jest.mock('../../PresentationalComponents/Labels/CategoryLabel', () => {
   return () => <span data-testid="category-label">Category</span>;
 });
 
-jest.mock('@redhat-cloud-services/frontend-components-advisor-components', () => ({
-  RuleDetails: ({ children, header, onVoteClick, ViewAffectedLink, ...props }) => (
-    <div data-testid="rule-details">
-      <div data-testid="rule-details-header">{header}</div>
-      <div data-testid="rule-details-children">{children}</div>
-    </div>
-  ),
-  RuleDetailsMessagesKeys: [],
-  AdvisorProduct: { rhel: 'rhel' },
-  topicLinks: () => [],
-}));
+jest.mock(
+  '@redhat-cloud-services/frontend-components-advisor-components',
+  () => ({
+    RuleDetails: ({ children, header }) => (
+      <div data-testid="rule-details">
+        <div data-testid="rule-details-header">{header}</div>
+        <div data-testid="rule-details-children">{children}</div>
+      </div>
+    ),
+    RuleDetailsMessagesKeys: [],
+    AdvisorProduct: { rhel: 'rhel' },
+    topicLinks: () => [],
+  }),
+);
 
 jest.mock('../../Utilities/Api', () => ({
   Post: jest.fn(),
@@ -141,7 +147,7 @@ describe('DetailsRules Component', () => {
     it('enables actions dropdown when permsDisableRec is true', () => {
       renderComponent({ permsDisableRec: true });
       const actionsButton = screen.getByRole('button', { name: /actions/i });
-      expect(actionsButton).not.toBeDisabled();
+      expect(actionsButton).toBeEnabled();
     });
 
     it('disables actions dropdown when permsDisableRec is false', () => {
@@ -187,7 +193,7 @@ describe('DetailsRules Component', () => {
     it('enables actions when Kessel permsDisableRec is true', () => {
       renderComponent({ permsDisableRec: true }, kesselContext);
       const actionsButton = screen.getByRole('button', { name: /actions/i });
-      expect(actionsButton).not.toBeDisabled();
+      expect(actionsButton).toBeEnabled();
     });
 
     it('disables actions when Kessel permsDisableRec is false', () => {
@@ -230,7 +236,7 @@ describe('DetailsRules Component', () => {
       const setActionsDropdownOpen = jest.fn();
       renderComponent({
         setActionsDropdownOpen,
-        actionsDropdownOpen: true
+        actionsDropdownOpen: true,
       });
 
       const disableOption = screen.getByText(/disable recommendation/i);
@@ -243,9 +249,9 @@ describe('DetailsRules Component', () => {
       const handleModalToggle = jest.fn();
       renderComponent({ handleModalToggle, actionsDropdownOpen: true });
 
+      const disableOption = screen.getByText(/disable recommendation/i);
+      fireEvent.click(disableOption);
       await waitFor(() => {
-        const disableOption = screen.getByText('Disable recommendation');
-        fireEvent.click(disableOption);
         expect(handleModalToggle).toHaveBeenCalledWith(true);
       });
     });
@@ -265,10 +271,9 @@ describe('DetailsRules Component', () => {
         actionsDropdownOpen: true,
       });
 
+      const enableOption = screen.getByText(/enable recommendation/i);
+      fireEvent.click(enableOption);
       await waitFor(() => {
-        const enableOption = screen.getByText('Enable recommendation');
-        fireEvent.click(enableOption);
-
         expect(enableRule).toHaveBeenCalledWith(
           disabledRule,
           refetch,
@@ -290,7 +295,7 @@ describe('DetailsRules Component', () => {
       renderComponent({ permsDisableRec: true }, envContext);
 
       const actionsButton = screen.getByRole('button', { name: /actions/i });
-      expect(actionsButton).not.toBeDisabled();
+      expect(actionsButton).toBeEnabled();
     });
 
     it('shows disabled dropdown for users without RBAC v1 edit permission', () => {
@@ -313,7 +318,7 @@ describe('DetailsRules Component', () => {
       renderComponent({ permsDisableRec: true }, kesselContext);
 
       const actionsButton = screen.getByRole('button', { name: /actions/i });
-      expect(actionsButton).not.toBeDisabled();
+      expect(actionsButton).toBeEnabled();
     });
 
     it('shows disabled dropdown for users without Kessel workspace edit permission', () => {
@@ -360,7 +365,7 @@ describe('DetailsRules Component', () => {
 
       expect(screen.getByText('Actions')).toBeInTheDocument();
       const actionsButton = screen.getByRole('button', { name: /actions/i });
-      expect(actionsButton).not.toBeDisabled();
+      expect(actionsButton).toBeEnabled();
     });
 
     it('shows actions dropdown when both global and user permissions are enabled (Kessel)', () => {
@@ -373,7 +378,7 @@ describe('DetailsRules Component', () => {
 
       expect(screen.getByText('Actions')).toBeInTheDocument();
       const actionsButton = screen.getByRole('button', { name: /actions/i });
-      expect(actionsButton).not.toBeDisabled();
+      expect(actionsButton).toBeEnabled();
     });
   });
 
@@ -445,23 +450,33 @@ describe('DetailsRules Component', () => {
       },
     ];
 
-    testCases.forEach(({ description, envContext, permsDisableRec, expectedDropdown, expectedEnabled }) => {
-      it(description, () => {
-        renderComponent({ permsDisableRec }, envContext);
+    testCases.forEach(
+      ({
+        description,
+        envContext,
+        permsDisableRec,
+        expectedDropdown,
+        expectedEnabled,
+      }) => {
+        it(description, () => {
+          renderComponent({ permsDisableRec }, envContext);
 
-        if (expectedDropdown) {
-          const actionsButton = screen.getByRole('button', { name: /actions/i });
-          expect(actionsButton).toBeInTheDocument();
+          if (expectedDropdown) {
+            const actionsButton = screen.getByRole('button', {
+              name: /actions/i,
+            });
+            expect(actionsButton).toBeInTheDocument();
 
-          if (expectedEnabled) {
-            expect(actionsButton).not.toBeDisabled();
+            if (expectedEnabled) {
+              expect(actionsButton).toBeEnabled();
+            } else {
+              expect(actionsButton).toBeDisabled();
+            }
           } else {
-            expect(actionsButton).toBeDisabled();
+            expect(screen.queryByText('Actions')).not.toBeInTheDocument();
           }
-        } else {
-          expect(screen.queryByText('Actions')).not.toBeInTheDocument();
-        }
-      });
-    });
+        });
+      },
+    );
   });
 });

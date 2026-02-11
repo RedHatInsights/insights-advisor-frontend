@@ -126,7 +126,7 @@ describe('DisableRule Modal', () => {
       };
       renderComponent({}, envContext);
       const saveButton = screen.getByRole('button', { name: /save/i });
-      expect(saveButton).not.toBeDisabled();
+      expect(saveButton).toBeEnabled();
     });
   });
 
@@ -149,7 +149,7 @@ describe('DisableRule Modal', () => {
       };
       renderComponent({}, kesselEnvContext);
       const saveButton = screen.getByRole('button', { name: /save/i });
-      expect(saveButton).not.toBeDisabled();
+      expect(saveButton).toBeEnabled();
     });
 
     it('component should not be shown when isDisableRecEnabled is false', () => {
@@ -158,11 +158,8 @@ describe('DisableRule Modal', () => {
         isDisableRecEnabled: false,
         isKesselMode: true,
       };
-      const { container } = renderComponent(
-        { isModalOpen: false },
-        kesselEnvContext,
-      );
-      expect(container.querySelector('.pf-v5-c-modal-box')).not.toBeInTheDocument();
+      renderComponent({ isModalOpen: false }, kesselEnvContext);
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
   });
 
@@ -171,7 +168,7 @@ describe('DisableRule Modal', () => {
       renderComponent();
       const input = screen.getByRole('textbox');
       fireEvent.change(input, { target: { value: 'Test justification' } });
-      expect(input.value).toBe('Test justification');
+      expect(input).toHaveValue('Test justification');
     });
 
     it('toggles single system checkbox', () => {
@@ -304,7 +301,7 @@ describe('DisableRule Modal', () => {
         },
       };
       renderComponent({}, kesselContext);
-      expect(screen.getByRole('button', { name: /save/i })).not.toBeDisabled();
+      expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
     });
 
     it('uses correct BASE_URL from Kessel context', async () => {
