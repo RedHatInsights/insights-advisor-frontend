@@ -298,16 +298,26 @@ const SystemsTable = () => {
           }
 
           handleRefresh(options);
-          const results = await defaultGetEntities(
-            // additional request to fetch hosts' operating system values
-            fetchedSystems.data.map((system) => system.system_uuid),
-            {
-              per_page,
-              hasItems: true,
-              fields: { system_profile: ['operating_system'] },
-            },
-            showTags,
+
+          // Filter systems that exist in inventory (have last_seen)
+          // Systems with last_seen: null don't exist in inventory and cause 404
+          const systemsInInventory = fetchedSystems.data.filter(
+            (system) => system.last_seen !== null,
           );
+
+          let results = { results: [] };
+          if (systemsInInventory.length > 0) {
+            results = await defaultGetEntities(
+              // additional request to fetch hosts' operating system values
+              systemsInInventory.map((system) => system.system_uuid),
+              {
+                per_page,
+                hasItems: true,
+                fields: { system_profile: ['operating_system'] },
+              },
+              showTags,
+            );
+          }
 
           return Promise.resolve({
             results: mergeArraysByDiffKeys(
