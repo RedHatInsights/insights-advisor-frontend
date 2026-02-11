@@ -14,7 +14,7 @@ import {
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
-  global_text_color_default,
+  t_global_text_color_regular,
   t_global_font_weight_heading_bold,
   t_global_spacer_md,
   t_global_spacer_sm,
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 12,
-    color: global_text_color_default.value,
+    color: t_global_text_color_regular.value,
     paddingLeft: t_global_spacer_md.value,
     paddingBottom: t_global_spacer_sm.value,
     paddingTop: t_global_spacer_sm.value,

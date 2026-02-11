@@ -301,7 +301,7 @@ const SystemsTable = () => {
               workloads,
               dispatch,
               envContext.BASE_URL,
-              display_name,
+              filters.display_name,
               addNotification,
             ),
           extraItems: [

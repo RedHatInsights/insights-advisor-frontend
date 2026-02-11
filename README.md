@@ -14,6 +14,65 @@
 
 In case you want to use the stable environment instead of beta you can run the app with `npm run start:proxy` and access it from https://stage.foo.redhat.com:1337/insights/advisor/. Usually there is no difference between these two environments unless there is a large feature in progress which is hidden behind `isBeta` flag.
 
+## Running with PDF Generator
+
+To test PDF generation features locally, you'll need to run additional services alongside the advisor frontend.
+
+### Prerequisites
+
+Clone the required repositories:
+- [insights-chrome](https://github.com/RedHatInsights/insights-chrome)
+- [pdf-generator](https://github.com/RedHatInsights/pdf-generator)
+
+### Quick Start
+
+1. **Authenticate with quay.io** - Login once to access Red Hat container images:
+   ```bash
+   podman login quay.io
+   ```
+   Your credentials will be saved persistently and you won't need to login again after reboot.
+
+2. **Configure insights-chrome** - Add routing for advisor and pdf-generator in `config/webpack.config.js`:
+   ```javascript
+   '/apps/compliance/': { host: 'http://localhost:8003/' }
+   '/api/crc-pdf-generator/': { host: 'http://localhost:8000/' }
+   ```
+
+3. **Start services in separate terminals:**
+
+   Terminal 1 - insights-chrome:
+   ```bash
+   cd ~/RH/insights-chrome
+   npm run dev
+   ```
+
+   Terminal 2 - pdf-generator containers:
+   ```bash
+   cd ~/RH/pdf-generator
+   echo 'MINIO_ACCESS_KEY="minioadmin"
+   MINIO_SECRET_KEY="minioadmin"
+   MAX_CONCURRENCY=2' > .env
+   podman-compose up
+   ```
+
+   Terminal 3 - pdf-generator server:
+   ```bash
+   cd ~/RH/pdf-generator
+   PROXY_AGENT=http://squid.corp.redhat.com:3128/ \
+   ASSETS_HOST=https://localhost:1337/ \
+   API_HOST=https://console.stage.redhat.com/ \
+   npm run start:server
+   ```
+
+   Terminal 4 - advisor frontend:
+   ```bash
+   npm run static
+   ```
+
+4. **Access the app** at https://stage.foo.redhat.com:1337/insights/advisor
+
+For detailed setup instructions and troubleshooting, see [PDF-GENERATOR-LOCAL-SETUP.md](./PDF-GENERATOR-LOCAL-SETUP.md).
+
 ## Testing federated modules with another application
 
 If you want to test Advisor with another application deployed locally, you can utilise `LOCAL_APPS` environment variable and deploy the needed application on separate ports. To learn more about the variable, see https://github.com/RedHatInsights/frontend-components/tree/master/packages/config#running-multiple-local-frontend-applications.

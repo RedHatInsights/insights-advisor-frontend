@@ -16,7 +16,7 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
-import global_palette_black_200 from '@patternfly/react-tokens';
+import { t_global_background_color_200 } from '@patternfly/react-tokens';
 
 export const TablePage = ({ systems, styles }) => {
   const header = [
@@ -74,7 +74,7 @@ export const TablePage = ({ systems, styles }) => {
 
       const isOddRow = (idx + 1) % 2;
       const customStyle = {
-        backgroundColor: global_palette_black_200.var,
+        backgroundColor: t_global_background_color_200.var,
       };
       return (
         <Tr
