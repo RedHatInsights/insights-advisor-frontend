@@ -252,6 +252,6 @@ describe('Permission-based UI State', () => {
     );
 
     cy.contains('button', 'Actions').should('be.disabled');
-    cy.contains('button', 'Actions').trigger('mouseenter');
+    cy.contains('button', 'Actions').trigger('mouseenter', { force: true });
   });
 });

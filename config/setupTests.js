@@ -47,11 +47,7 @@ jest.mock('@project-kessel/react-kessel-access-check', () => ({
     Provider: ({ children }) => <div>{children}</div>,
   },
   useSelfAccessCheck: () => ({
-    data: [
-      { allowed: true },
-      { allowed: true },
-      { allowed: true },
-    ],
+    data: [{ allowed: true }, { allowed: true }, { allowed: true }],
     loading: false,
     error: null,
   }),

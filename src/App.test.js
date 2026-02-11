@@ -321,10 +321,10 @@ describe('App tag processing logic', () => {
         isAllowedToViewRec: true,
       });
 
-      const { container } = renderWithProviders(<AppWithHccContext />);
+      renderWithProviders(<AppWithHccContext />);
 
       expect(screen.queryByText('AdvisorRoutes')).not.toBeInTheDocument();
-      expect(container.querySelector('.pf-v5-c-modal-box')).not.toBeInTheDocument();
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
     it('waits for loading to complete before rendering (RBAC v1 mode)', () => {
@@ -335,7 +335,7 @@ describe('App tag processing logic', () => {
         isAllowedToViewRec: true,
       });
 
-      const { container } = renderWithProviders(<AppWithHccContext />);
+      renderWithProviders(<AppWithHccContext />);
 
       expect(screen.queryByText('AdvisorRoutes')).not.toBeInTheDocument();
     });
@@ -443,7 +443,7 @@ describe('App tag processing logic', () => {
       const { container } = renderWithProviders(<AppWithHccContext />);
 
       expect(screen.queryByText('AdvisorRoutes')).not.toBeInTheDocument();
-      expect(container.textContent).toBe('');
+      expect(container).toHaveTextContent('');
     });
 
     it('renders lock screen after loading if no view permission (Kessel)', () => {
