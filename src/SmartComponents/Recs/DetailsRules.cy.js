@@ -145,3 +145,113 @@ describe('Tests RuleDetails with envContext', () => {
     cy.contains('Is this recommendation helpful?').should('not.exist');
   });
 });
+
+describe('Actions Dropdown Permissions', () => {
+  it('renders actions dropdown when isDisableRecEnabled is true', () => {
+    mountComponent({
+      isDisableRecEnabled: true,
+    });
+    cy.contains('button', 'Actions').should('exist');
+  });
+
+  it('does not render actions dropdown when isDisableRecEnabled is false', () => {
+    mountComponent({
+      isDisableRecEnabled: false,
+    });
+    cy.contains('button', 'Actions').should('not.exist');
+  });
+
+  it('actions dropdown is enabled when permsDisableRec is true', () => {
+    const DetailsRulesWithPerm = () => (
+      <DetailsRules
+        rule={rulesfixtures}
+        topics={topicsfixtures}
+        permsDisableRec={true}
+        setActionsDropdownOpen={cy.stub()}
+        actionsDropdownOpen={false}
+        addNotification={cy.stub()}
+        handleModalToggle={cy.stub()}
+        refetch={cy.stub()}
+      />
+    );
+
+    cy.mount(
+      <EnvironmentContext.Provider value={{ isDisableRecEnabled: true }}>
+        <MemoryRouter>
+          <IntlProvider messages={messages} defaultLocale="en" locale="en">
+            <Provider store={initStore()}>
+              <DetailsRulesWithPerm />
+            </Provider>
+          </IntlProvider>
+        </MemoryRouter>
+      </EnvironmentContext.Provider>,
+    );
+
+    cy.contains('button', 'Actions').should('not.be.disabled');
+  });
+
+  it('actions dropdown is disabled when permsDisableRec is false', () => {
+    const DetailsRulesWithoutPerm = () => (
+      <DetailsRules
+        rule={rulesfixtures}
+        topics={topicsfixtures}
+        permsDisableRec={false}
+        setActionsDropdownOpen={cy.stub()}
+        actionsDropdownOpen={false}
+        addNotification={cy.stub()}
+        handleModalToggle={cy.stub()}
+        refetch={cy.stub()}
+      />
+    );
+
+    cy.mount(
+      <EnvironmentContext.Provider value={{ isDisableRecEnabled: true }}>
+        <MemoryRouter>
+          <IntlProvider messages={messages} defaultLocale="en" locale="en">
+            <Provider store={initStore()}>
+              <DetailsRulesWithoutPerm />
+            </Provider>
+          </IntlProvider>
+        </MemoryRouter>
+      </EnvironmentContext.Provider>,
+    );
+
+    cy.contains('button', 'Actions').should('be.disabled');
+  });
+});
+
+describe('Permission-based UI State', () => {
+  it('shows tooltip when permission denied', () => {
+    const DetailsRulesTooltip = () => (
+      <DetailsRules
+        rule={rulesfixtures}
+        topics={topicsfixtures}
+        permsDisableRec={false}
+        setActionsDropdownOpen={cy.stub()}
+        actionsDropdownOpen={false}
+        addNotification={cy.stub()}
+        handleModalToggle={cy.stub()}
+        refetch={cy.stub()}
+      />
+    );
+
+    cy.mount(
+      <EnvironmentContext.Provider
+        value={{
+          isDisableRecEnabled: true,
+        }}
+      >
+        <MemoryRouter>
+          <IntlProvider messages={messages} defaultLocale="en" locale="en">
+            <Provider store={initStore()}>
+              <DetailsRulesTooltip />
+            </Provider>
+          </IntlProvider>
+        </MemoryRouter>
+      </EnvironmentContext.Provider>,
+    );
+
+    cy.contains('button', 'Actions').should('be.disabled');
+    cy.contains('button', 'Actions').trigger('mouseenter');
+  });
+});
