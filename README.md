@@ -93,6 +93,49 @@ In a separate terminal, run Advisor with proxy enabled and list Inventory:
 LOCAL_APPS=inventory:8003~http npm run start:proxy
 ```
 
+## Running Advisor + Inventory together with Chrome
+
+An alternative approach to test Advisor and Inventory integration is to use Chrome as the proxy and run both apps in static mode.
+
+### Prerequisites
+
+Clone the required repositories:
+- [insights-chrome](https://github.com/RedHatInsights/insights-chrome)
+- [insights-inventory-frontend](https://github.com/RedHatInsights/insights-inventory-frontend)
+
+### Setup Steps
+
+1. **Configure insights-chrome** - Add routing for both apps in `config/webpack.config.js`:
+   ```javascript
+   '/apps/inventory': {
+     host: `http://localhost:8003`,
+   },
+   '/apps/advisor': {
+     host: `http://localhost:8004`,
+   },
+   ```
+
+2. **Start services in separate terminals:**
+
+   Terminal 1 - insights-chrome:
+   ```bash
+   cd insights-chrome
+   npm run dev
+   ```
+
+   Terminal 2 - inventory-frontend:
+   ```bash
+   cd insights-inventory-frontend
+   npm run static
+   ```
+
+   Terminal 3 - advisor-frontend:
+   ```bash
+   npm run static -- --port=8004
+   ```
+
+3. **Access the app** at https://stage.foo.redhat.com:1337/insights/advisor
+
 ## Testing
 Travis is used to test the build for this code.
 - `npm run test` will run tests.
