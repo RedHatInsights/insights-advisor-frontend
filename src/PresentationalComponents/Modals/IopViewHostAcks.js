@@ -7,7 +7,6 @@ import {
 
 import { Button, Modal } from '@patternfly/react-core';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
-import { DeleteApi } from '../../Utilities/Api';
 import { List } from 'react-content-loader';
 import { OutlinedBellIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
@@ -18,6 +17,7 @@ import { useGetHostAcksQuery } from '../../Services/Acks';
 import { useIntl } from 'react-intl';
 import { EnvironmentContext } from '../../App';
 import { getCsrfTokenHeader } from '../helper';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 
 const IopViewHostAcks = ({
   handleModalToggle = () => {},
@@ -29,6 +29,7 @@ const IopViewHostAcks = ({
   const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
   const addNotification = (data) => dispatch(notification(data));
+  const axios = useAxiosWithPlatformInterceptors();
   const columns = [
     intl.formatMessage(messages.systemName),
     intl.formatMessage(messages.justificationNote),
@@ -56,11 +57,9 @@ const IopViewHostAcks = ({
   );
   const deleteAck = async (host) => {
     try {
-      await DeleteApi(
-        `${envContext.BASE_URL}/hostack/${host.id}/`,
-        {},
-        getCsrfTokenHeader(),
-      );
+      await axios.delete(`${envContext.BASE_URL}/hostack/${host.id}/`, {
+        headers: getCsrfTokenHeader(),
+      });
       refetch();
       setUnclean(true);
     } catch (error) {

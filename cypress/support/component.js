@@ -27,6 +27,20 @@ Cypress.Commands.add('mount', mount);
 // Example use:
 // cy.mount(<MyComponent />)
 
+// Mock insights chrome for platform interceptors
+global.window.insights = {
+  chrome: {
+    auth: {
+      getUser: () =>
+        Promise.resolve({
+          identity: {
+            user: { username: 'testuser' },
+          },
+        }),
+    },
+  },
+};
+
 global.window.__scalprum__ = {
   scalprumOptions: {
     cacheTimeout: 999999,
@@ -42,7 +56,7 @@ global.window.__scalprum__ = {
       modules: {
         './RemediationButton': {
           __esModule: true,
-          // eslint-disable-next-line react/display-name
+
           default: () => 'Remediations',
         },
       },

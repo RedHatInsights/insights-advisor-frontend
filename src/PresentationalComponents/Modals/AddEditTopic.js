@@ -1,6 +1,6 @@
 import './_AddEditTopic.scss';
 
-import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import React, { useState } from 'react';
 import {
   Split,
@@ -24,6 +24,7 @@ import { useIntl } from 'react-intl';
 const AddEditTopic = ({ handleModalToggleCallback, isModalOpen, topic }) => {
   const intl = useIntl();
   const addNotification = useAddNotification();
+  const axios = useAxiosWithPlatformInterceptors();
 
   const [name, setName] = useState(topic.name || '');
   const [description, setDescription] = useState(topic.description || '');
@@ -36,11 +37,11 @@ const AddEditTopic = ({ handleModalToggleCallback, isModalOpen, topic }) => {
     try {
       const data = { name, slug, tag, description, enabled, featured };
       if (type === 'DELETE') {
-        await instance.delete(`${BASE_URL}/topic/${slug}`);
+        await axios.delete(`${BASE_URL}/topic/${slug}`);
       } else if (topic.slug) {
-        await instance.put(`${BASE_URL}/topic/${slug}/`, data);
+        await axios.put(`${BASE_URL}/topic/${slug}/`, data);
       } else {
-        await instance.post(`${BASE_URL}/topic/`, data);
+        await axios.post(`${BASE_URL}/topic/`, data);
       }
     } catch (error) {
       addNotification({

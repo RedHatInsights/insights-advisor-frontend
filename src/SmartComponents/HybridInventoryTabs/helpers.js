@@ -4,7 +4,6 @@ import {
   lastSeenColumn,
   paginatedRequestHelper,
 } from '../../PresentationalComponents/Inventory/helpers';
-import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { EDGE_DEVICE_BASE_URL } from '../../AppConstants';
 import { useCallback } from 'react';
 import { systemReducer } from '../../Store/AppReducer';
@@ -41,7 +40,7 @@ const mergeByInventoryKey = (
 };
 
 export const useGetEntities =
-  (handleRefresh, pathway, rule, RULES_FETCH_URL, SYSTEMS_FETCH_URL) =>
+  (handleRefresh, pathway, rule, RULES_FETCH_URL, SYSTEMS_FETCH_URL, axios) =>
   async (_items, config, showTags, defaultGetEntities) => {
     const {
       per_page,
@@ -72,6 +71,7 @@ export const useGetEntities =
       sort,
       RULES_FETCH_URL,
       SYSTEMS_FETCH_URL,
+      axios,
     };
     const advisorData = await paginatedRequestHelper(allDetails);
     const systemIDs = advisorData?.data?.map((system) => system.system_uuid);
@@ -89,7 +89,7 @@ export const useGetEntities =
     let edgeData = [];
     let enforceEdgeGroups = false;
     if (systemIDs?.length) {
-      const devicesData = await instance.post(
+      const devicesData = await axios.post(
         `${EDGE_DEVICE_BASE_URL}/devices/devicesview`,
         { devices_uuid: systemIDs },
       );

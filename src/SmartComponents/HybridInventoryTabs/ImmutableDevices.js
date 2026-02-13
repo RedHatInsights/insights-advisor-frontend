@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import {
   pruneFilters,
   urlBuilder,
@@ -29,6 +30,7 @@ const ImmutableDevices = ({
   const intl = useIntl();
   const navigate = useNavigate();
   const envContext = useContext(EnvironmentContext);
+  const axios = useAxiosWithPlatformInterceptors();
   const [filters, setFilters] = useState({
     limit: 20,
     offset: 0,
@@ -56,6 +58,7 @@ const ImmutableDevices = ({
     rule,
     envContext.RULES_FETCH_URL,
     envContext.SYSTEMS_FETCH_URL,
+    axios,
   );
 
   const removeFilterParam = (param) => {

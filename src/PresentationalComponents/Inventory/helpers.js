@@ -1,4 +1,3 @@
-import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
 import { createOptions, createSortParam } from '../helper';
 import LastSeenColumnHeader from '../../Utilities/LastSeenColumnHeader';
@@ -19,6 +18,7 @@ export const paginatedRequestHelper = async ({
   sort,
   RULES_FETCH_URL,
   SYSTEMS_FETCH_URL,
+  axios,
 }) => {
   let options = createOptions(
     advisorFilters,
@@ -32,10 +32,10 @@ export const paginatedRequestHelper = async ({
   );
 
   return pathway
-    ? await instance.get(`${SYSTEMS_FETCH_URL}`, {
+    ? await axios.get(`${SYSTEMS_FETCH_URL}`, {
         params: { ...options, pathway: pathway.slug },
       })
-    : await instance.get(
+    : await axios.get(
         `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/systems_detail/`,
         { params: options },
       );
@@ -87,6 +87,7 @@ export const getEntities =
       sort,
       RULES_FETCH_URL,
       SYSTEMS_FETCH_URL,
+      axios,
     };
     setFullFilters(allDetails);
     const fetchedSystems = await paginatedRequestHelper(allDetails);
@@ -96,7 +97,6 @@ export const getEntities =
         per_page,
         hasItems: true,
         fields: { system_profile: ['operating_system'] },
-        axios,
       },
       showTags,
     );

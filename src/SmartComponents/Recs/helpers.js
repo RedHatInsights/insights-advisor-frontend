@@ -1,5 +1,4 @@
 import { SYSTEM_TYPES } from '../../AppConstants';
-import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import messages from '../../Messages';
 import { getCsrfTokenHeader } from '../../PresentationalComponents/helper';
 export const ruleResolutionRisk = (rule) => {
@@ -17,9 +16,10 @@ export const enableRule = async (
   addNotification,
   handleModalToggle,
   baseUrl,
+  axios,
 ) => {
   try {
-    await instance.delete(`${baseUrl}/ack/${encodeURI(rule.rule_id)}/`, {
+    await axios.delete(`${baseUrl}/ack/${encodeURI(rule.rule_id)}/`, {
       headers: getCsrfTokenHeader(),
     });
     addNotification({
@@ -46,16 +46,17 @@ export const bulkHostActions = async ({
   intl,
   rule,
   baseUrl,
+  axios,
 }) => {
   try {
-    const hostAckResponse = await instance.get(`${baseUrl}/hostack/`, {
+    const hostAckResponse = await axios.get(`${baseUrl}/hostack/`, {
       params: { rule_id: rule.rule_id, limit: rule.hosts_acked_count },
     });
     const data = {
       systems: hostAckResponse?.map((item) => item.system_uuid),
     };
 
-    await instance.post(
+    await axios.post(
       `${baseUrl}/rule/${encodeURI(rule.rule_id)}/unack_hosts/`,
       data,
       { headers: getCsrfTokenHeader() },
@@ -102,6 +103,7 @@ export const systemsCheck = async (
   setCountsLoading,
   pathway,
   baseUrl,
+  axios,
 ) => {
   let count = 0;
   const { conventionalURL } = getSystemCheckEndpoints({
@@ -111,7 +113,7 @@ export const systemsCheck = async (
   });
 
   try {
-    await instance.get(conventionalURL).then((data) => {
+    await axios.get(conventionalURL).then((data) => {
       count = count += data.meta.count;
       setConventionalSystemsCount &&
         setConventionalSystemsCount(data.meta.count);

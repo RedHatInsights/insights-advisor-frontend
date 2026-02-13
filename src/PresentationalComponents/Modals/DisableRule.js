@@ -8,7 +8,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { Modal } from '@patternfly/react-core/deprecated';
-import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import PropTypes from 'prop-types';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import messages from '../../Messages';
@@ -28,6 +28,7 @@ const DisableRule = ({
   const intl = useIntl();
   const envContext = useContext(EnvironmentContext);
   const addNotification = useAddNotification();
+  const axios = useAxiosWithPlatformInterceptors();
   const [justification, setJustificaton] = useState('');
   const [singleSystem, setSingleSystem] = useState(
     host !== undefined || hosts.length > 0,
@@ -39,7 +40,7 @@ const DisableRule = ({
   const bulkHostActions = async () => {
     const data = { systems: hosts, justification };
     try {
-      await instance.post(
+      await axios.post(
         `${envContext.BASE_URL}/rule/${rule.rule_id}/ack_hosts/`,
         data,
         { headers: getCsrfTokenHeader() },

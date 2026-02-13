@@ -1,15 +1,8 @@
-import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { systemsCheck } from './helpers';
 
-jest.mock(
-  '@redhat-cloud-services/frontend-components-utilities/interceptors',
-  () => ({
-    __esModule: true,
-    default: {
-      get: jest.fn(),
-    },
-  }),
-);
+const mockAxios = {
+  get: jest.fn(),
+};
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -22,7 +15,7 @@ describe('systemsCheck state is getting set', () => {
   test('All state variables get called', async () => {
     const resp = { meta: { count: 1 } };
 
-    instance.get.mockImplementation(() => Promise.resolve(resp));
+    mockAxios.get.mockImplementation(() => Promise.resolve(resp));
 
     await systemsCheck(
       'test',
@@ -31,6 +24,7 @@ describe('systemsCheck state is getting set', () => {
       setCountsLoading,
       'pathway',
       '/api/insights/v1',
+      mockAxios,
     );
 
     await expect(setSystemsCount).toHaveBeenCalledWith(1);
@@ -41,7 +35,7 @@ describe('systemsCheck state is getting set', () => {
   test('should get recommendation data', async () => {
     const resp = { meta: { count: 1 } };
 
-    instance.get.mockImplementation(() => Promise.resolve(resp));
+    mockAxios.get.mockImplementation(() => Promise.resolve(resp));
 
     await systemsCheck(
       'test',
@@ -50,9 +44,10 @@ describe('systemsCheck state is getting set', () => {
       setCountsLoading,
       'pathway',
       '/api/insights/v1',
+      mockAxios,
     );
 
-    expect(instance.get).toHaveBeenCalledWith(
+    expect(mockAxios.get).toHaveBeenCalledWith(
       '/api/insights/v1/rule/test/systems_detail/?filter[system_profile]=true&limit=1',
     );
   });
@@ -60,7 +55,7 @@ describe('systemsCheck state is getting set', () => {
   test('should get pathway data', async () => {
     const resp = { meta: { count: 1 } };
 
-    instance.get.mockImplementation(() => Promise.resolve(resp));
+    mockAxios.get.mockImplementation(() => Promise.resolve(resp));
 
     await systemsCheck(
       undefined,
@@ -69,9 +64,10 @@ describe('systemsCheck state is getting set', () => {
       setCountsLoading,
       'pathway',
       '/api/insights/v1',
+      mockAxios,
     );
 
-    expect(instance.get).toHaveBeenCalledWith(
+    expect(mockAxios.get).toHaveBeenCalledWith(
       '/api/insights/v1/system/?limit=1&filter[system_profile]&pathway=pathway',
     );
   });

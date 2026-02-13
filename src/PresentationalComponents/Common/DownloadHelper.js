@@ -1,7 +1,6 @@
 import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 
 import { exportNotifications } from '../../AppConstants';
-import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { workloadQueryBuilder } from './Tables';
 import { populateExportError } from '../helper';
 
@@ -23,12 +22,13 @@ const downloadHelper = async (
   BASE_URL,
   display_name,
   addNotification,
+  axios,
 ) => {
   try {
     let options = selectedTags?.length && { tags: selectedTags };
     workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
     addNotification(exportNotifications.pending);
-    const data = await instance
+    const data = await axios
       .get(
         `${BASE_URL}/export/${exportTable}.${format === 'json' ? 'json' : 'csv'}`,
         {

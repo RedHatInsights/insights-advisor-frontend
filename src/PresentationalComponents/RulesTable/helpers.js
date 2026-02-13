@@ -2,7 +2,6 @@ import React from 'react';
 import EmptyState from './Components/EmptyState';
 import { FormattedMessage } from 'react-intl';
 import { paramParser } from '../Common/Tables';
-import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import * as AppConstants from '../../AppConstants';
 import messages from '../../Messages';
 import { FILTER_CATEGORIES as FC } from '../../AppConstants';
@@ -150,6 +149,7 @@ export const hideReports = async (
   intl,
   addNotification,
   baseUrl = BASE_URL,
+  axios,
 ) => {
   const rule = rows[rowId].rule;
 
@@ -159,7 +159,7 @@ export const hideReports = async (
       setDisableRuleOpen(true);
     } else {
       try {
-        await instance.delete(`${baseUrl}/ack/${encodeURI(rule.rule_id)}/`, {
+        await axios.delete(`${baseUrl}/ack/${encodeURI(rule.rule_id)}/`, {
           headers: getCsrfTokenHeader(),
         });
         addNotification({

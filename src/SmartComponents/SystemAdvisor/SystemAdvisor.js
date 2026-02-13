@@ -21,7 +21,7 @@ import {
 } from '@patternfly/react-table';
 import { useDispatch, useSelector } from 'react-redux';
 
-import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
@@ -57,6 +57,7 @@ const BaseSystemAdvisor = ({
   const dispatch = useDispatch();
   const addNotification = useAddNotification();
   const { id: ruleIdParam } = useParams();
+  const axios = useAxiosWithPlatformInterceptors();
 
   const [inventoryReportFetchStatus, setInventoryReportFetchStatus] =
     useState('pending');
@@ -339,7 +340,7 @@ const BaseSystemAdvisor = ({
     const kbaIds = reportsData.map(({ rule }) => rule.node_id).filter((x) => x);
     try {
       const kbaDetailsFetch = (
-        await instance.get(
+        await axios.get(
           `https://access.redhat.com/hydra/rest/search/kcs?q=id:(${kbaIds.join(
             ` OR `,
           )})&fq=documentKind:(Solution%20or%20Article)&fl=view_uri,id,publishedTitle&redhat_client=$ADVISOR`,
@@ -453,7 +454,7 @@ const BaseSystemAdvisor = ({
   useEffect(() => {
     const dataFetch = async () => {
       try {
-        const reportsFetch = await instance.get(
+        const reportsFetch = await axios.get(
           `${envContext.BASE_URL}/system/${inventoryId}/reports/`,
           {
             headers: {
@@ -492,7 +493,7 @@ const BaseSystemAdvisor = ({
         setInventoryReportFetchStatus('fulfilled');
         setActiveReports(activeRuleFirstReportsData);
 
-        const profileData = await instance.get(
+        const profileData = await axios.get(
           `${envContext.INVENTORY_BASE_URL}/hosts/${inventoryId}/system_profile`,
           {
             headers: {
@@ -510,7 +511,7 @@ const BaseSystemAdvisor = ({
       }
     };
     dataFetch();
-  }, []);
+  }, [axios]);
   // eslint-disable-next-line react/prop-types
   let display_name = entity?.display_name;
   return inventoryReportFetchStatus === 'fulfilled' &&
@@ -563,6 +564,7 @@ const BaseSystemAdvisor = ({
                   envContext.BASE_URL,
                   display_name,
                   addNotification,
+                  axios,
                 ),
               tooltipText: intl.formatMessage(messages.exportData),
             }

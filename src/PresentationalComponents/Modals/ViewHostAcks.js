@@ -7,7 +7,7 @@ import {
 
 import { BASE_URL } from '../../AppConstants';
 import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
-import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { List } from 'react-content-loader';
 import { OutlinedBellIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
@@ -28,6 +28,7 @@ const ViewHostAcks = ({
   const addNotification = useAddNotification();
   const intl = useIntl();
   const envContext = useContext(EnvironmentContext);
+  const axios = useAxiosWithPlatformInterceptors();
   const columns = [
     intl.formatMessage(messages.systemName),
     intl.formatMessage(messages.justificationNote),
@@ -55,7 +56,7 @@ const ViewHostAcks = ({
   );
   const deleteAck = async (host) => {
     try {
-      await instance.delete(`${BASE_URL}/hostack/${host.id}/`);
+      await axios.delete(`${BASE_URL}/hostack/${host.id}/`);
       refetch();
       setUnclean(true);
     } catch (error) {

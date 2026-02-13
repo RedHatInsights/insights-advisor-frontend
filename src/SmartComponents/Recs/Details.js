@@ -31,12 +31,14 @@ import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 import DetailsTitle from './DetailsTitle.js';
 import { EnvironmentContext } from '../../App';
 import { useParams } from 'react-router-dom';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 
 const OverviewDetails = (props) => {
   const intl = useIntl();
   const envContext = useContext(EnvironmentContext);
   const ruleId = useParams().id || props.ruleId;
   const addNotification = useAddNotification();
+  const axios = useAxiosWithPlatformInterceptors();
   const {
     data: rule = {},
     isFetching,
@@ -104,9 +106,10 @@ const OverviewDetails = (props) => {
         setCountsLoading,
         '',
         envContext.BASE_URL,
+        axios,
       );
     }
-  }, [ruleId, envContext.BASE_URL, recAckIsFetching, isFetching]);
+  }, [ruleId, envContext.BASE_URL, recAckIsFetching, isFetching, axios]);
 
   return (
     <React.Fragment>
@@ -215,6 +218,7 @@ const OverviewDetails = (props) => {
                           intl,
                           rule,
                           baseUrl: envContext.BASE_URL,
+                          axios,
                         })
                       }
                       ouiaId="bulkHost"
@@ -233,6 +237,7 @@ const OverviewDetails = (props) => {
                           addNotification,
                           handleModalToggle,
                           envContext.BASE_URL,
+                          axios,
                         )
                       }
                       ouiaId="rule"
@@ -262,7 +267,7 @@ const OverviewDetails = (props) => {
                   tabPathname={`/insights/advisor/recommendations/${encodeURI(
                     ruleId,
                   )}`}
-                  axios={props.axios}
+                  axios={props.axios || axios}
                 />
               </React.Fragment>
             )}

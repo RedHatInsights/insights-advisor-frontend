@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { act } from '@testing-library/react';
 import { useActionResolver, mergeAppColumns, useOnLoad } from './helpers';
-import instance from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import inventoryData from './fixtures/inventoryData.json';
 import advisorPathwayData from './fixtures/advisorPathwayData.json';
 import advisorRecommendationData from './fixtures/advisorRecommendationData.json';
@@ -10,16 +9,10 @@ import { updateReducers } from '../../Store';
 import { getEntities } from '../../PresentationalComponents/Inventory/helpers';
 import { fitContent } from '@patternfly/react-table';
 
-jest.mock(
-  '@redhat-cloud-services/frontend-components-utilities/interceptors',
-  () => ({
-    __esModule: true,
-    default: {
-      get: jest.fn(() => Promise.resolve({ data: [], meta: { count: 0 } })),
-      post: jest.fn(() => Promise.resolve({ data: {} })),
-    },
-  }),
-);
+const mockAxios = {
+  get: jest.fn(() => Promise.resolve({ data: [], meta: { count: 0 } })),
+  post: jest.fn(() => Promise.resolve({ data: {} })),
+};
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -35,7 +28,7 @@ jest.mock('../../AppConstants.js', () => ({
   EDGE_DEVICE_BASE_URL: '/api/edge/v1',
 }));
 
-instance.post.mockReturnValue(edgeData);
+mockAxios.post.mockReturnValue(edgeData);
 
 const handleRefreshMock = jest.fn();
 const setCurPageIdsMock = jest.fn();
@@ -50,7 +43,7 @@ const MOCKED_RULES_FETCH_URL = '/api/insights/v1/rule/';
 const MOCKED_SYSTEMS_FETCH_URL = '/api/insights/v1/systems/';
 
 const testGetCallArguments = (expectedGetUrl, expectedOptions) => {
-  expect(instance.get).toHaveBeenCalledWith(expectedGetUrl, {
+  expect(mockAxios.get).toHaveBeenCalledWith(expectedGetUrl, {
     params: expectedOptions,
   });
 };
@@ -71,13 +64,13 @@ const testDefaultGetEntitiesCalls = () => {
 describe('getEntities', () => {
   beforeEach(() => {
     jest.clearAllMocks(); // Clears all mocks' call history and implementations
-    instance.get.mockResolvedValue({}); // Default to a generic resolved promise
-    instance.post.mockResolvedValue(edgeData); // Default Post to return edgeData (will not be called by getEntities)
+    mockAxios.get.mockResolvedValue({}); // Default to a generic resolved promise
+    mockAxios.post.mockResolvedValue(edgeData); // Default Post to return edgeData (will not be called by getEntities)
     defaultGetEntities.mockReturnValue(inventoryData); // Default defaultGetEntities mock
   });
 
   test('Should fetch hybrid data for recommendations', async () => {
-    instance.get.mockImplementation(() =>
+    mockAxios.get.mockImplementation(() =>
       Promise.resolve(advisorRecommendationData),
     );
 
@@ -104,6 +97,7 @@ describe('getEntities', () => {
       { rule_id: 'test-rule' },
       MOCKED_RULES_FETCH_URL,
       MOCKED_SYSTEMS_FETCH_URL,
+      mockAxios,
     );
 
     let fetchedResult;
@@ -143,7 +137,7 @@ describe('getEntities', () => {
   });
 
   test('uses group info from inventory API when enforce_edge_groups set to false', async () => {
-    instance.get.mockImplementation(() =>
+    mockAxios.get.mockImplementation(() =>
       Promise.resolve(advisorRecommendationData),
     ); // Ensure GET returns data for systemIDs
 
@@ -170,6 +164,7 @@ describe('getEntities', () => {
       { rule_id: 'test-rule' },
       MOCKED_RULES_FETCH_URL,
       MOCKED_SYSTEMS_FETCH_URL,
+      mockAxios,
     );
 
     let fetchedResult;
@@ -191,10 +186,10 @@ describe('getEntities', () => {
   });
 
   test('enforces group info from edge API when enforce_edge_groups set to true', async () => {
-    instance.get.mockImplementation(() =>
+    mockAxios.get.mockImplementation(() =>
       Promise.resolve(advisorRecommendationData),
     ); // Ensure GET returns data for systemIDs
-    instance.post.mockResolvedValue({
+    mockAxios.post.mockResolvedValue({
       data: { data: { ...edgeData.data.data, enforce_edge_groups: true } },
     });
 
@@ -221,6 +216,7 @@ describe('getEntities', () => {
       { rule_id: 'test-rule' },
       MOCKED_RULES_FETCH_URL,
       MOCKED_SYSTEMS_FETCH_URL,
+      mockAxios,
     );
 
     let fetchedResult;
@@ -247,7 +243,7 @@ describe('getEntities', () => {
   });
 
   test('Should fetch hybrid data for pathways', async () => {
-    instance.get.mockImplementation(() => Promise.resolve(advisorPathwayData));
+    mockAxios.get.mockImplementation(() => Promise.resolve(advisorPathwayData));
 
     const testFetchConfig = {
       per_page: 10,
@@ -272,6 +268,7 @@ describe('getEntities', () => {
       null, // rule (falsy to hit pathway branch)
       MOCKED_RULES_FETCH_URL,
       MOCKED_SYSTEMS_FETCH_URL,
+      mockAxios,
     );
 
     let fetchedResult;
