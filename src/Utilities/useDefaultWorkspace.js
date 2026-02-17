@@ -8,12 +8,12 @@ export const useDefaultWorkspace = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchWorkspace = async () => {
+    const fetchDefaultWorkspaceId = async () => {
       try {
         setIsLoading(true);
         const data = await axios.get('/api/rbac/v2/workspaces/', {
           params: {
-            limit: 1000,
+            limit: 1,
             type: 'default',
           },
         });
@@ -30,7 +30,7 @@ export const useDefaultWorkspace = () => {
       }
     };
 
-    fetchWorkspace();
+    fetchDefaultWorkspaceId();
   }, [axios]);
 
   return { workspaceId, isLoading, error };
