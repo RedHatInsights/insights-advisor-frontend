@@ -17,19 +17,12 @@ export const useRbacV1Permissions = () => {
 export const useKesselPermissions = () => {
   const { workspaceId, isLoading: workspaceLoading } = useDefaultWorkspace();
 
-  const permissionMap = {
-    [PERMISSIONS.export]: KESSEL_RELATIONS.export,
-    [PERMISSIONS.disableRec]: KESSEL_RELATIONS.disableRec,
-    [PERMISSIONS.viewRecs]: KESSEL_RELATIONS.viewRecs,
-  };
-
   const params = workspaceId
     ? getKesselAccessCheckParams({
-        permissionMap,
         requiredPermissions: [
-          PERMISSIONS.export,
-          PERMISSIONS.disableRec,
-          PERMISSIONS.viewRecs,
+          KESSEL_RELATIONS.export,
+          KESSEL_RELATIONS.disableRec,
+          KESSEL_RELATIONS.viewRecs,
         ],
         resourceIdOrIds: workspaceId,
         options: {
