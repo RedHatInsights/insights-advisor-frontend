@@ -49,9 +49,11 @@ Clone the required repositories:
    Terminal 2 - pdf-generator containers:
    ```bash
    cd ~/RH/pdf-generator
-   echo 'MINIO_ACCESS_KEY="minioadmin"
-   MINIO_SECRET_KEY="minioadmin"
-   MAX_CONCURRENCY=2' > .env
+   cat <<EOF > .env
+MINIO_ACCESS_KEY="minioadmin"
+MINIO_SECRET_KEY="minioadmin"
+MAX_CONCURRENCY=2
+EOF
    podman-compose up
    ```
 
@@ -71,7 +73,6 @@ Clone the required repositories:
 
 4. **Access the app** at https://stage.foo.redhat.com:1337/insights/advisor
 
-For detailed setup instructions and troubleshooting, see [PDF-GENERATOR-LOCAL-SETUP.md](./PDF-GENERATOR-LOCAL-SETUP.md).
 
 ## Testing federated modules with another application
 
