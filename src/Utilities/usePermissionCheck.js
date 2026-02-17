@@ -1,4 +1,5 @@
 import { useSelfAccessCheck } from '@project-kessel/react-kessel-access-check';
+import { getKesselAccessCheckParams } from '@redhat-cloud-services/frontend-components-utilities/kesselPermissions';
 import { PERMISSIONS, KESSEL_RELATIONS } from '../AppConstants';
 import { useRbac } from './Hooks';
 import { useDefaultWorkspace } from './useDefaultWorkspace';
@@ -16,30 +17,29 @@ export const useRbacV1Permissions = () => {
 export const useKesselPermissions = () => {
   const { workspaceId, isLoading: workspaceLoading } = useDefaultWorkspace();
 
-  const resources = workspaceId
-    ? [
-        {
-          id: workspaceId,
-          type: 'workspace',
-          relation: KESSEL_RELATIONS.export,
-          reporter: { type: 'rbac' },
-        },
-        {
-          id: workspaceId,
-          type: 'workspace',
-          relation: KESSEL_RELATIONS.disableRec,
-          reporter: { type: 'rbac' },
-        },
-        {
-          id: workspaceId,
-          type: 'workspace',
-          relation: KESSEL_RELATIONS.viewRecs,
-          reporter: { type: 'rbac' },
-        },
-      ]
-    : [];
+  const permissionMap = {
+    [PERMISSIONS.export]: KESSEL_RELATIONS.export,
+    [PERMISSIONS.disableRec]: KESSEL_RELATIONS.disableRec,
+    [PERMISSIONS.viewRecs]: KESSEL_RELATIONS.viewRecs,
+  };
 
-  const { data, loading, error } = useSelfAccessCheck({ resources });
+  const params = workspaceId
+    ? getKesselAccessCheckParams({
+        permissionMap,
+        requiredPermissions: [
+          PERMISSIONS.export,
+          PERMISSIONS.disableRec,
+          PERMISSIONS.viewRecs,
+        ],
+        resourceIdOrIds: workspaceId,
+        options: {
+          resourceType: 'workspace',
+          reporter: { type: 'rbac' },
+        },
+      })
+    : { resources: [] };
+
+  const { data, loading, error } = useSelfAccessCheck(params);
 
   if (workspaceLoading) {
     return [false, false, false, true];
