@@ -32,10 +32,11 @@ Clone the required repositories:
    ```
    Your credentials will be saved persistently and you won't need to login again after reboot.
 
-2. **Configure insights-chrome** - Add routing for advisor and pdf-generator in `config/webpack.config.js`:
+2. **Configure insights-chrome** - Add routing for advisor and pdf-generator in `config/webpack.config.js` routes object that contain ...(process.env.CHROME_SERVICE && {
+
    ```javascript
-   '/apps/compliance/': { host: 'http://localhost:8003/' }
-   '/api/crc-pdf-generator/': { host: 'http://localhost:8000/' }
+   '/apps/advisor/': { host: 'http://localhost:8003/' },
+   '/api/crc-pdf-generator/': { host: 'http://localhost:8000/' },
    ```
 
 3. **Start services in separate terminals:**
@@ -71,7 +72,7 @@ EOF
    npm run static
    ```
 
-4. **Access the app** at https://stage.foo.redhat.com:1337/insights/advisor
+1. **Access the app** at https://stage.foo.redhat.com:1337/insights/advisor
 
 
 ## Testing federated modules with another application
