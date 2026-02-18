@@ -7,23 +7,33 @@ import {
   ContentVariants,
   Bullseye,
 } from '@patternfly/react-core';
+import propTypes from 'prop-types';
+import { SearchIcon } from '@patternfly/react-icons';
+import { NO_SYSTEMS_MAP, NO_SYSTEMS_REASONS } from '../../../AppConstants';
 
-const NoSystemsTable = () => (
+const NoSystemsTable = ({ reason = NO_SYSTEMS_REASONS.NO_MATCH }) => (
   <Bullseye>
     <EmptyState
-      headingLevel="h2"
-      titleText="No matching systems found"
-      variant={EmptyStateVariant.full}
+      variant={EmptyStateVariant.sm}
+      icon={NO_SYSTEMS_MAP[reason]?.icon || SearchIcon}
+      titleText={
+        NO_SYSTEMS_MAP[reason]?.titleText || 'No matching systems found'
+      }
     >
       <EmptyStateBody>
         <Content>
           <Content component={ContentVariants.p}>
-            To continue, edit your filter settings and search again.
+            {NO_SYSTEMS_MAP[reason]?.bodyText ||
+              'To continue, edit your filter settings and search again.'}
           </Content>
         </Content>
       </EmptyStateBody>
     </EmptyState>
   </Bullseye>
 );
+
+NoSystemsTable.propTypes = {
+  reason: propTypes.oneOf(Object.values(NO_SYSTEMS_REASONS)),
+};
 
 export default NoSystemsTable;

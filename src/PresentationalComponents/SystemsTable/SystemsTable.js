@@ -1,6 +1,9 @@
 import './SystemsTable.scss';
 
-import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
+import {
+  SYSTEM_FILTER_CATEGORIES as SFC,
+  NO_SYSTEMS_REASONS,
+} from '../../AppConstants';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { TableVariant } from '@patternfly/react-table';
 import {
@@ -42,6 +45,7 @@ const SystemsTable = () => {
   const setFilters = (filters) => dispatch(updateSysFilters(filters));
   const envContext = useContext(EnvironmentContext);
   const [filterBuilding, setFilterBuilding] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const addNotification = useAddNotification();
 
   const removeFilterParam = (param) => {
@@ -195,6 +199,17 @@ const SystemsTable = () => {
     return filtersWithoutTags;
   }, [filters]);
 
+  const noSystemsTable = useMemo(
+    () => (
+      <NoSystemsTable
+        reason={
+          fetchError ? NO_SYSTEMS_REASONS.ERROR : NO_SYSTEMS_REASONS.NO_MATCH
+        }
+      />
+    ),
+    [fetchError],
+  );
+
   return (
     !filterBuilding && (
       <InventoryTable
@@ -258,9 +273,29 @@ const SystemsTable = () => {
             workloads,
             true,
           );
-          const fetchedSystems = (
-            await Get(envContext.SYSTEMS_FETCH_URL, {}, options)
-          )?.data;
+
+          let fetchedSystems;
+          try {
+            fetchedSystems = (
+              await Get(envContext.SYSTEMS_FETCH_URL, {}, options)
+            )?.data;
+            setFetchError(false);
+          } catch (error) {
+            if (error.response?.status === 400) {
+              addNotification({
+                variant: 'danger',
+                title: intl.formatMessage(messages.systemTableFetchError),
+                description: error.response?.data?.message || error.message,
+              });
+              setFetchError(true);
+              // Return empty results to trigger NoSystemsTable display
+              return Promise.resolve({
+                results: [],
+                total: 0,
+              });
+            }
+            throw error;
+          }
 
           handleRefresh(options);
           const results = await defaultGetEntities(
@@ -290,7 +325,7 @@ const SystemsTable = () => {
         hasCheckbox={false}
         filterConfig={{ items: filterConfigItems }}
         activeFiltersConfig={activeFiltersConfig}
-        noSystemsTable={NoSystemsTable}
+        noSystemsTable={noSystemsTable}
         exportConfig={{
           onSelect: (_e, fileType) =>
             downloadReport(
