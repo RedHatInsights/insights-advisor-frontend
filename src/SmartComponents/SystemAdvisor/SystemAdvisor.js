@@ -21,7 +21,7 @@ import {
 } from '@patternfly/react-table';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Get } from '../../Utilities/Api';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import PrimaryToolbar from '@redhat-cloud-services/frontend-components/PrimaryToolbar';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
@@ -57,6 +57,7 @@ const BaseSystemAdvisor = ({
   const dispatch = useDispatch();
   const addNotification = useAddNotification();
   const { id: ruleIdParam } = useParams();
+  const axios = useAxiosWithPlatformInterceptors();
 
   const [inventoryReportFetchStatus, setInventoryReportFetchStatus] =
     useState('pending');
@@ -339,14 +340,13 @@ const BaseSystemAdvisor = ({
     const kbaIds = reportsData.map(({ rule }) => rule.node_id).filter((x) => x);
     try {
       const kbaDetailsFetch = (
-        await Get(
+        await axios.get(
           `https://access.redhat.com/hydra/rest/search/kcs?q=id:(${kbaIds.join(
             ` OR `,
           )})&fq=documentKind:(Solution%20or%20Article)&fl=view_uri,id,publishedTitle&redhat_client=$ADVISOR`,
-          {},
-          { credentials: 'include' },
+          { params: { credentials: 'include' } },
         )
-      ).data.response.docs;
+      ).response.docs;
 
       setKbaDetailsData(kbaDetailsFetch);
       setRows(
@@ -454,14 +454,16 @@ const BaseSystemAdvisor = ({
   useEffect(() => {
     const dataFetch = async () => {
       try {
-        const reportsFetch = await Get(
+        const reportsFetch = await axios.get(
           `${envContext.BASE_URL}/system/${inventoryId}/reports/`,
           {
-            credentials: 'include',
+            headers: {
+              credentials: 'include',
+            },
           },
         );
 
-        const activeRuleFirstReportsData = activeRuleFirst(reportsFetch.data);
+        const activeRuleFirstReportsData = activeRuleFirst(reportsFetch);
         if (envContext.loadChromeless) {
           const kbaDetailsIOP = getKbaDetailsIOP(activeRuleFirstReportsData);
           setKbaDetailsData(kbaDetailsIOP);
@@ -491,14 +493,16 @@ const BaseSystemAdvisor = ({
         setInventoryReportFetchStatus('fulfilled');
         setActiveReports(activeRuleFirstReportsData);
 
-        const profileData = await Get(
+        const profileData = await axios.get(
           `${envContext.INVENTORY_BASE_URL}/hosts/${inventoryId}/system_profile`,
           {
-            credentials: 'include',
+            headers: {
+              credentials: 'include',
+            },
           },
         );
 
-        setSystemsProfile(profileData?.data?.results[0]?.system_profile || {});
+        setSystemsProfile(profileData?.results[0]?.system_profile || {});
         setSystemsProfileLoading(false);
       } catch (error) {
         void error;
@@ -507,7 +511,7 @@ const BaseSystemAdvisor = ({
       }
     };
     dataFetch();
-  }, []);
+  }, [axios]);
   // eslint-disable-next-line react/prop-types
   let display_name = entity?.display_name;
   return inventoryReportFetchStatus === 'fulfilled' &&
@@ -560,6 +564,7 @@ const BaseSystemAdvisor = ({
                   envContext.BASE_URL,
                   display_name,
                   addNotification,
+                  axios,
                 ),
               tooltipText: intl.formatMessage(messages.exportData),
             }

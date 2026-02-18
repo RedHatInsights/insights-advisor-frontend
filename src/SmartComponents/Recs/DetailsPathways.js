@@ -34,6 +34,7 @@ import { useLocation } from 'react-router-dom';
 import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 import { systemsCheck } from './helpers';
 import { EnvironmentContext } from '../../App';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 
 const RulesTable = lazy(
   () =>
@@ -48,6 +49,7 @@ const PathwayDetails = () => {
   const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
+  const axios = useAxiosWithPlatformInterceptors();
   const workloads = useSelector(({ filters }) => filters.workloads);
   const recFilters = useSelector(({ filters }) => filters.recState);
   const sysFilters = useSelector(({ filters }) => filters.sysState);
@@ -142,9 +144,10 @@ const PathwayDetails = () => {
         setCountsLoading,
         pathwayName,
         envContext.BASE_URL,
+        axios,
       );
     }
-  }, [pathwayName, envContext.BASE_URL]);
+  }, [pathwayName, envContext.BASE_URL, axios]);
 
   return (
     <React.Fragment>
@@ -233,6 +236,7 @@ const PathwayDetails = () => {
                   tabPathname={`/insights/advisor/recommendations/pathways/${pathwayName}`}
                   conventionalSystemsCount={conventionalSystemsCount}
                   areCountsLoading={areCountsLoading}
+                  axios={axios}
                 />
               </Suspense>
             )}

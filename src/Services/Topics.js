@@ -1,13 +1,13 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { dynamicRecsBaseQuery } from '../Utilities/Api';
+import { createAdvisorBaseQuery } from '../Utilities/createAdvisorBaseQuery';
+import { BASE_URL } from '../AppConstants';
 
 export const Topics = createApi({
   reducerPath: 'topics',
-  baseQuery: dynamicRecsBaseQuery,
+  baseQuery: createAdvisorBaseQuery({ baseUrl: BASE_URL }),
   endpoints: (build) => ({
     getTopics: build.query({
       query: (options) => ({ url: `/topic/`, options }),
-      // transformResponse: (response) => response.data,
     }),
     getTopicsAdmin: build.query({
       query: (options) => ({ url: `/topic?show_disabled=true`, options }),

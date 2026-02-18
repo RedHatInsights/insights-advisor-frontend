@@ -1,9 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { dynamicRecsBaseQuery } from '../Utilities/Api';
+import { createAdvisorBaseQuery } from '../Utilities/createAdvisorBaseQuery';
+import { BASE_URL } from '../AppConstants';
 
 export const Recs = createApi({
   reducerPath: 'recs',
-  baseQuery: dynamicRecsBaseQuery,
+  baseQuery: createAdvisorBaseQuery({ baseUrl: BASE_URL }),
   keepUnusedDataFor: 5,
   endpoints: (build) => ({
     getRecs: build.query({
@@ -31,4 +32,4 @@ export const Recs = createApi({
   }),
 });
 
-export const { useGetRecsQuery, useGetRecQuery, useGetRecsystemsQuery } = Recs;
+export const { useGetRecsQuery, useGetRecQuery, useGetRecSystemsQuery } = Recs;

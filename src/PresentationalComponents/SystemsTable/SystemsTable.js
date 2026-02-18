@@ -11,7 +11,7 @@ import {
 } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 
-import { Get } from '../../Utilities/Api';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import Loading from '../Loading/Loading';
 import SystemsPdf from '../Export/SystemsPdf';
@@ -43,6 +43,7 @@ const SystemsTable = () => {
   const envContext = useContext(EnvironmentContext);
   const [filterBuilding, setFilterBuilding] = useState(true);
   const addNotification = useAddNotification();
+  const axios = useAxiosWithPlatformInterceptors();
 
   const removeFilterParam = (param) => {
     const filter = { ...filters, offset: 0 };
@@ -258,9 +259,9 @@ const SystemsTable = () => {
             workloads,
             true,
           );
-          const fetchedSystems = (
-            await Get(envContext.SYSTEMS_FETCH_URL, {}, options)
-          )?.data;
+          const fetchedSystems = await axios.get(envContext.SYSTEMS_FETCH_URL, {
+            params: options,
+          });
 
           handleRefresh(options);
           const results = await defaultGetEntities(
@@ -303,6 +304,7 @@ const SystemsTable = () => {
               envContext.BASE_URL,
               display_name,
               addNotification,
+              axios,
             ),
           extraItems: [
             <li

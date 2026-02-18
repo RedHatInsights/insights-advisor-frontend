@@ -10,7 +10,6 @@ import {
   initMocks,
   mockStore,
 } from '../../../Utilities/unitTestingUtilities.js';
-import { Get } from '../../../Utilities/Api';
 import { EnvironmentContext } from '../../../App';
 
 import useOverviewData from '../Hooks/useOverviewData/useOverviewData';
@@ -24,10 +23,15 @@ jest.mock('react-redux', () => ({
 const mockState = {};
 let store = mockStore(mockState);
 
-jest.mock('../../../Utilities/Api', () => ({
-  ...jest.requireActual('../../../Utilities/Api'),
-  Get: jest.fn(),
-}));
+jest.mock(
+  '@redhat-cloud-services/frontend-components-utilities/interceptors',
+  () => ({
+    __esModule: true,
+    default: {
+      get: jest.fn(),
+    },
+  }),
+);
 
 jest.mock('../Hooks/useOverviewData/useOverviewData.js', () => ({
   __esModule: true,
@@ -128,7 +132,6 @@ describe('OverviewDashbar', () => {
     useOverviewData.mockReturnValue({
       data: mockSuccessfulData,
     });
-    Get.mockClear();
   });
 
   it('Should render and flow (functionality check)', async () => {
