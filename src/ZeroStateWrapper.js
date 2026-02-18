@@ -44,14 +44,12 @@ export const ZeroStateWrapper = ({ children }) => {
 
   useEffect(() => {
     if (conventErrorMessage?.status) {
-      dispatch(
-        addNotification({
-          variant: 'danger',
-          dismissable: true,
-          title: intl.formatMessage(messages.error),
-          description: `${JSON.stringify(conventErrorMessage?.data)}`,
-        }),
-      );
+      addNotification({
+        variant: 'danger',
+        dismissable: true,
+        title: intl.formatMessage(messages.error),
+        description: `${JSON.stringify(conventErrorMessage?.data)}`,
+      });
     }
   }, [conventionalError]);
 
