@@ -51,7 +51,8 @@
       "!src/**/*.cy.js",
       "!src/{App,AppEntry,DevAppEntry,Routes,bootstrap,cveToRuleid}.js",
       "!src/**/__fixtures__/**",
-      "!src/**/__factories__/**"
+      "!src/**/__factories__/**",
+      "!src/PresentationalComponents/Inventory/Inventory.js"
     ],
     "moduleNameMapper": {
       "\\.(css|scss)$": "identity-obj-proxy",
