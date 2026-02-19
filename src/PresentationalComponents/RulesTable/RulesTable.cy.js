@@ -1218,3 +1218,133 @@ describe('URL parameter synchronization', () => {
     cy.location('search').should('include', 'sort=impacted_count');
   });
 });
+
+describe('Permission-based UI Controls', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+  });
+
+  describe('Export permissions', () => {
+    it('renders export button when export permission granted', () => {
+      mountComponent(
+        {},
+        {
+          isExportEnabled: true,
+        },
+      );
+      cy.get('button[aria-label="Export"]').should('exist');
+    });
+
+    it('hides export button when export permission denied', () => {
+      mountComponent(
+        {},
+        {
+          isExportEnabled: false,
+        },
+      );
+      cy.get('button[aria-label="Export"]').should('not.exist');
+    });
+
+    it('export button is functional when permission granted', () => {
+      mountComponent(
+        {},
+        {
+          isExportEnabled: true,
+        },
+      );
+      cy.get('button[aria-label="Export"]')
+        .should('exist')
+        .and('not.be.disabled');
+    });
+  });
+
+  describe('Disable recommendation permissions', () => {
+    it('renders kebab menu when disable permission granted', () => {
+      mountComponent(
+        {},
+        {
+          isDisableRecEnabled: true,
+        },
+      );
+      cy.get('button[aria-label="Kebab toggle"]').should('exist');
+    });
+
+    it('hides kebab menu when disable permission denied', () => {
+      mountComponent(
+        {},
+        {
+          isDisableRecEnabled: false,
+        },
+      );
+      cy.get('button[aria-label="Kebab toggle"]').should('not.exist');
+    });
+
+    it('disable recommendation option is available when permission granted', () => {
+      mountComponent(
+        {},
+        {
+          isDisableRecEnabled: true,
+        },
+      );
+      cy.clickOnRowKebab(
+        'Reboot fails when there is no "kernelopts" option in the grubenv',
+      );
+      cy.contains('Disable recommendation').should('be.visible');
+    });
+  });
+
+  describe('Combined permissions', () => {
+    it('shows both export and disable when all permissions granted', () => {
+      mountComponent(
+        {},
+        {
+          isExportEnabled: true,
+          isDisableRecEnabled: true,
+        },
+      );
+      cy.get('button[aria-label="Export"]').should('exist');
+      cy.get('button[aria-label="Kebab toggle"]').should('exist');
+    });
+
+    it('shows only export when only export permission granted', () => {
+      mountComponent(
+        {},
+        {
+          isExportEnabled: true,
+          isDisableRecEnabled: false,
+        },
+      );
+      cy.get('button[aria-label="Export"]').should('exist');
+      cy.get('button[aria-label="Kebab toggle"]').should('not.exist');
+    });
+
+    it('shows only disable when only disable permission granted', () => {
+      mountComponent(
+        {},
+        {
+          isExportEnabled: false,
+          isDisableRecEnabled: true,
+        },
+      );
+      cy.get('button[aria-label="Export"]').should('not.exist');
+      cy.get('button[aria-label="Kebab toggle"]').should('exist');
+    });
+
+    it('shows neither export nor disable when no permissions granted', () => {
+      mountComponent(
+        {},
+        {
+          isExportEnabled: false,
+          isDisableRecEnabled: false,
+        },
+      );
+      cy.get('button[aria-label="Export"]').should('not.exist');
+      cy.get('button[aria-label="Kebab toggle"]').should('not.exist');
+    });
+  });
+});
