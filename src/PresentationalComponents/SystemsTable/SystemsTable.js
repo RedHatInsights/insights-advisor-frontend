@@ -297,6 +297,13 @@ const SystemsTable = () => {
             throw error;
           }
 
+          // Hack to remove systems without a last_seen value from the table,
+          // because it's likely this system was deleted from Inventory, but
+          // Advisor didn't get the notification (RHINENG-24023)
+          fetchedSystems.data = fetchedSystems.data.filter(
+            (system) => system.last_seen !== null,
+          );
+
           handleRefresh(options);
           const results = await defaultGetEntities(
             // additional request to fetch hosts' operating system values
