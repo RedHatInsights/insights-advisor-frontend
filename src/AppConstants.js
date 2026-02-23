@@ -18,6 +18,7 @@ const intlSettings = { locale };
 
 export const BASE_URI = document.baseURI;
 export const BASE_URL = '/api/insights/v1';
+export const KESSEL_API_BASE_URL = '/api/kessel/v1beta2';
 export const UI_BASE = './insights';
 export const DEBOUNCE_DELAY = 600;
 export const RULES_FETCH_URL = `${BASE_URL}/rule/`;
@@ -518,6 +519,12 @@ export const PERMISSIONS = {
   export: 'advisor:exports:read',
   disableRec: 'advisor:disable-recommendations:write',
   viewRecs: 'advisor:recommendation-results:read',
+};
+
+export const KESSEL_RELATIONS = {
+  export: 'advisor_exports_view',
+  disableRec: 'advisor_disable_recommendations_edit',
+  viewRecs: 'advisor_recommendation_results_view',
 };
 
 export const IOP_ENVIRONMENT_CONTEXT = {

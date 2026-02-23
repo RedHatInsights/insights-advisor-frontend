@@ -7,8 +7,11 @@ import MessageState from './PresentationalComponents/MessageState/MessageState';
 import { AdvisorRoutes } from './Routes';
 import messages from './Messages';
 import { useIntl } from 'react-intl';
-import { useHccEnvironmentContext } from './Utilities/Hooks';
+import { useHccEnvironmentContext, useFeatureFlag } from './Utilities/Hooks';
+import { useKesselEnvironmentContext } from './Utilities/useKesselEnvironmentContext';
 import { LockIcon } from '@patternfly/react-icons';
+import { AccessCheck } from '@project-kessel/react-kessel-access-check';
+import { KESSEL_API_BASE_URL } from './AppConstants';
 
 export const EnvironmentContext = createContext({});
 
@@ -60,13 +63,38 @@ const App = () => {
   );
 };
 
-const AppWithHccContext = () => {
+const AppWithRbacV1Context = () => {
   const envContext = useHccEnvironmentContext();
-
   return (
     <EnvironmentContext.Provider value={envContext}>
       <App />
     </EnvironmentContext.Provider>
+  );
+};
+
+const AppWithKesselContext = () => {
+  const envContext = useKesselEnvironmentContext();
+  return (
+    <EnvironmentContext.Provider value={envContext}>
+      <App />
+    </EnvironmentContext.Provider>
+  );
+};
+
+const AppWithContextProviders = () => {
+  const isKesselEnabled = useFeatureFlag('advisor.kessel_enabled');
+
+  return isKesselEnabled ? <AppWithKesselContext /> : <AppWithRbacV1Context />;
+};
+
+const AppWithHccContext = () => {
+  return (
+    <AccessCheck.Provider
+      baseUrl={window.location.origin}
+      apiPath={KESSEL_API_BASE_URL}
+    >
+      <AppWithContextProviders />
+    </AccessCheck.Provider>
   );
 };
 
