@@ -120,7 +120,7 @@
     "@babel/preset-react": "^7.28.5",
     "@commitlint/cli": "^20.0.0",
     "@commitlint/config-conventional": "^20.0.0",
-    "@cypress/code-coverage": "^3.14.7",
+    "@cypress/code-coverage": "^4.0.0",
     "@formatjs/cli": "^6.7.2",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^3.0.0",
     "@redhat-cloud-services/frontend-components-config": "^6.7.1",
