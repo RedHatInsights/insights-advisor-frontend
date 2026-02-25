@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Get } from '../../Utilities/Api';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { Redirect } from 'react-router-dom';
@@ -14,6 +14,7 @@ const ClassicRedirect = () => {
   const [redirect, setRedirect] = useState();
   const intl = useIntl();
   const addNotification = useAddNotification();
+  const axios = useAxiosWithPlatformInterceptors();
 
   const getData = (pathname) => {
     const patharray = pathname.split('/');
@@ -36,8 +37,8 @@ const ClassicRedirect = () => {
       try {
         const [classicId, redirectBase] = getData(window.location.pathname);
         const inventoryId = (
-          await Get(`/api/inventory/v1/hosts?insights_id=${classicId}`)
-        ).data.results[0].id;
+          await axios.get(`/api/inventory/v1/hosts?insights_id=${classicId}`)
+        ).results[0].id;
         setRedirect(`${redirectBase}/${inventoryId}`);
         setFetchStatus('fulfilled');
       } catch (error) {

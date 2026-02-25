@@ -1,4 +1,3 @@
-import { Get } from '../../Utilities/Api';
 import { mergeArraysByDiffKeys } from '../Common/Tables';
 import { createOptions, createSortParam } from '../helper';
 import LastSeenColumnHeader from '../../Utilities/LastSeenColumnHeader';
@@ -19,6 +18,7 @@ export const paginatedRequestHelper = async ({
   sort,
   RULES_FETCH_URL,
   SYSTEMS_FETCH_URL,
+  axios,
 }) => {
   let options = createOptions(
     advisorFilters,
@@ -32,20 +32,13 @@ export const paginatedRequestHelper = async ({
   );
 
   return pathway
-    ? (
-        await Get(
-          `${SYSTEMS_FETCH_URL}`,
-          {},
-          { ...options, pathway: pathway.slug },
-        )
-      )?.data
-    : (
-        await Get(
-          `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/systems_detail/`,
-          {},
-          options,
-        )
-      )?.data;
+    ? await axios.get(`${SYSTEMS_FETCH_URL}`, {
+        params: { ...options, pathway: pathway.slug },
+      })
+    : await axios.get(
+        `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/systems_detail/`,
+        { params: options },
+      );
 };
 
 export const getEntities =
@@ -94,6 +87,7 @@ export const getEntities =
       sort,
       RULES_FETCH_URL,
       SYSTEMS_FETCH_URL,
+      axios,
     };
     setFullFilters(allDetails);
     const fetchedSystems = await paginatedRequestHelper(allDetails);
@@ -103,7 +97,6 @@ export const getEntities =
         per_page,
         hasItems: true,
         fields: { system_profile: ['operating_system'] },
-        axios,
       },
       showTags,
     );

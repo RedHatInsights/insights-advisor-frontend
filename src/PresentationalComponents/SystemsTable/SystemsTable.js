@@ -14,7 +14,7 @@ import {
 } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 
-import { Get } from '../../Utilities/Api';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import Loading from '../Loading/Loading';
 import SystemsPdf from '../Export/SystemsPdf';
@@ -47,6 +47,7 @@ const SystemsTable = () => {
   const [filterBuilding, setFilterBuilding] = useState(true);
   const [fetchError, setFetchError] = useState(false);
   const addNotification = useAddNotification();
+  const axios = useAxiosWithPlatformInterceptors();
 
   const removeFilterParam = (param) => {
     const filter = { ...filters, offset: 0 };
@@ -276,9 +277,10 @@ const SystemsTable = () => {
 
           let fetchedSystems;
           try {
-            fetchedSystems = (
-              await Get(envContext.SYSTEMS_FETCH_URL, {}, options)
-            )?.data;
+            fetchedSystems = await axios.get(
+              envContext.SYSTEMS_FETCH_URL,
+              options,
+            );
             setFetchError(false);
           } catch (error) {
             if (error.response?.status === 400) {
@@ -338,6 +340,7 @@ const SystemsTable = () => {
               envContext.BASE_URL,
               filters.display_name,
               addNotification,
+              axios,
             ),
           extraItems: [
             <li

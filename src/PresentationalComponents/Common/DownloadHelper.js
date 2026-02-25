@@ -1,7 +1,6 @@
 import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 
 import { exportNotifications } from '../../AppConstants';
-import { Get } from '../../Utilities/Api';
 import { workloadQueryBuilder } from './Tables';
 import { populateExportError } from '../helper';
 
@@ -23,29 +22,28 @@ const downloadHelper = async (
   BASE_URL,
   display_name,
   addNotification,
+  axios,
 ) => {
   try {
     let options = selectedTags?.length && { tags: selectedTags };
     workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
     addNotification(exportNotifications.pending);
-    const data = (
-      await Get(
-        `${BASE_URL}/export/${exportTable}.${
-          format === 'json' ? 'json' : 'csv'
-        }`,
-        {},
+    const data = await axios
+      .get(
+        `${BASE_URL}/export/${exportTable}.${format === 'json' ? 'json' : 'csv'}`,
         {
-          ...filters,
-          ...options,
-          ...(display_name && { display_name: display_name }),
+          params: {
+            ...filters,
+            ...options,
+            ...(display_name && { display_name: display_name }),
+          },
         },
       )
-        .then((result) => {
-          addNotification(exportNotifications.success);
-          return result;
-        })
-        .catch((error) => addNotification(populateExportError(error)))
-    ).data;
+      .then((result) => {
+        addNotification(exportNotifications.success);
+        return result;
+      })
+      .catch((error) => addNotification(populateExportError(error)));
 
     let formattedData = format === 'json' ? JSON.stringify(data) : data;
     downloadFile(formattedData, fileName(exportTable), format);

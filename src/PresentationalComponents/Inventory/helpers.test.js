@@ -8,12 +8,9 @@ import {
   lastSeenColumn,
   impactedDateColumn,
 } from './helpers';
-import { Get } from '../../Utilities/Api';
 import { createOptions, createSortParam } from '../helper';
 
-jest.mock('../../Utilities/Api', () => ({
-  Get: jest.fn(),
-}));
+const mockAxiosGet = jest.fn();
 
 jest.mock('../helper', () => ({
   createOptions: jest.fn(),
@@ -36,6 +33,10 @@ describe('Inventory helpers', () => {
   });
 
   describe('paginatedRequestHelper', () => {
+    const mockAxios = {
+      get: mockAxiosGet,
+    };
+
     const mockConfig = {
       per_page: 20,
       page: 1,
@@ -46,6 +47,7 @@ describe('Inventory helpers', () => {
       selectedTags: [],
       RULES_FETCH_URL: '/api/rules/',
       SYSTEMS_FETCH_URL: '/api/systems/',
+      axios: mockAxios,
     };
 
     it('fetches systems for pathway', async () => {
@@ -54,7 +56,7 @@ describe('Inventory helpers', () => {
       const mockData = { data: [{ id: '1' }], meta: { count: 1 } };
 
       createOptions.mockReturnValue(mockOptions);
-      Get.mockResolvedValue({ data: mockData });
+      mockAxiosGet.mockResolvedValue(mockData);
 
       const systemsData = await paginatedRequestHelper({
         ...mockConfig,
@@ -62,11 +64,9 @@ describe('Inventory helpers', () => {
       });
 
       expect(createOptions).toHaveBeenCalled();
-      expect(Get).toHaveBeenCalledWith(
-        '/api/systems/',
-        {},
-        { ...mockOptions, pathway: 'test-pathway' },
-      );
+      expect(mockAxiosGet).toHaveBeenCalledWith('/api/systems/', {
+        params: { ...mockOptions, pathway: 'test-pathway' },
+      });
       expect(systemsData).toEqual(mockData);
     });
 
@@ -76,7 +76,7 @@ describe('Inventory helpers', () => {
       const mockData = { data: [{ id: '1' }], meta: { count: 1 } };
 
       createOptions.mockReturnValue(mockOptions);
-      Get.mockResolvedValue({ data: mockData });
+      mockAxiosGet.mockResolvedValue(mockData);
 
       const systemsData = await paginatedRequestHelper({
         ...mockConfig,
@@ -84,10 +84,9 @@ describe('Inventory helpers', () => {
         pathway: null,
       });
 
-      expect(Get).toHaveBeenCalledWith(
+      expect(mockAxiosGet).toHaveBeenCalledWith(
         '/api/rules/TEST_RULE_123/systems_detail/',
-        {},
-        mockOptions,
+        { params: mockOptions },
       );
       expect(systemsData).toEqual(mockData);
     });
@@ -97,7 +96,7 @@ describe('Inventory helpers', () => {
       const mockOptions = { page: 1, per_page: 20 };
 
       createOptions.mockReturnValue(mockOptions);
-      Get.mockResolvedValue({ data: { data: [], meta: { count: 0 } } });
+      mockAxiosGet.mockResolvedValue({ data: [], meta: { count: 0 } });
 
       await paginatedRequestHelper({
         ...mockConfig,
@@ -105,10 +104,9 @@ describe('Inventory helpers', () => {
         pathway: null,
       });
 
-      expect(Get).toHaveBeenCalledWith(
+      expect(mockAxiosGet).toHaveBeenCalledWith(
         '/api/rules/TEST%20RULE%20WITH%20SPACES/systems_detail/',
-        {},
-        mockOptions,
+        { params: mockOptions },
       );
     });
   });
@@ -119,7 +117,9 @@ describe('Inventory helpers', () => {
     const mockSetTotal = jest.fn();
     const mockSetFullFilters = jest.fn();
     const mockDefaultGetEntities = jest.fn();
-    const mockAxios = jest.fn();
+    const mockAxios = {
+      get: mockAxiosGet,
+    };
 
     const rule = { rule_id: 'TEST_RULE' };
     const RULES_FETCH_URL = '/api/rules/';
@@ -158,7 +158,7 @@ describe('Inventory helpers', () => {
         ],
       };
 
-      Get.mockResolvedValue({ data: mockFetchedSystems });
+      mockAxiosGet.mockResolvedValue(mockFetchedSystems);
       mockDefaultGetEntities.mockResolvedValue(mockDefaultEntities);
 
       const fetchEntities = getEntities(
@@ -206,7 +206,7 @@ describe('Inventory helpers', () => {
         ],
       };
 
-      Get.mockResolvedValue({ data: mockFetchedSystems });
+      mockAxiosGet.mockResolvedValue(mockFetchedSystems);
       mockDefaultGetEntities.mockResolvedValue(mockDefaultEntities);
 
       const fetchEntities = getEntities(
@@ -240,7 +240,7 @@ describe('Inventory helpers', () => {
         meta: { count: 1 },
       };
 
-      Get.mockResolvedValue({ data: mockFetchedSystems });
+      mockAxiosGet.mockResolvedValue(mockFetchedSystems);
       mockDefaultGetEntities.mockResolvedValue({ results: [] });
 
       const fetchEntities = getEntities(
@@ -265,7 +265,6 @@ describe('Inventory helpers', () => {
           per_page: 20,
           hasItems: true,
           fields: { system_profile: ['operating_system'] },
-          axios: mockAxios,
         },
         true,
       );
@@ -275,12 +274,16 @@ describe('Inventory helpers', () => {
   describe('allCurrentSystemIds', () => {
     const mockSetIsLoading = jest.fn();
     const rule = { rule_id: 'TEST_RULE' };
+    const mockAxios = {
+      get: mockAxiosGet,
+    };
     const fullFilters = {
       per_page: 20,
       page: 1,
       RULES_FETCH_URL: '/api/rules/',
       SYSTEMS_FETCH_URL: '/api/systems/',
       rule,
+      axios: mockAxios,
     };
 
     beforeEach(() => {
@@ -305,9 +308,10 @@ describe('Inventory helpers', () => {
         })),
       };
 
-      Get.mockResolvedValueOnce({ data: mockPage1 })
-        .mockResolvedValueOnce({ data: mockPage2 })
-        .mockResolvedValueOnce({ data: mockPage3 });
+      mockAxiosGet
+        .mockResolvedValueOnce(mockPage1)
+        .mockResolvedValueOnce(mockPage2)
+        .mockResolvedValueOnce(mockPage3);
 
       const fetchIds = allCurrentSystemIds(
         fullFilters,
@@ -332,7 +336,7 @@ describe('Inventory helpers', () => {
         })),
       };
 
-      Get.mockResolvedValue({ data: mockData });
+      mockAxiosGet.mockResolvedValue(mockData);
 
       const fetchIds = allCurrentSystemIds(
         fullFilters,
@@ -342,14 +346,14 @@ describe('Inventory helpers', () => {
       );
       const result = await fetchIds();
 
-      expect(Get).toHaveBeenCalledTimes(1);
+      expect(mockAxiosGet).toHaveBeenCalledTimes(1);
       expect(result).toHaveLength(50);
     });
 
     it('sets loading state correctly', async () => {
       const total = 10;
-      Get.mockResolvedValue({
-        data: { data: [{ system_uuid: 'uuid-1' }] },
+      mockAxiosGet.mockResolvedValue({
+        data: [{ system_uuid: 'uuid-1' }],
       });
 
       const fetchIds = allCurrentSystemIds(

@@ -54,12 +54,14 @@ import impactingFilter from '../Filters/impactingFilter';
 import { AccountStatContext } from '../../ZeroStateWrapper';
 import { SkeletonTable } from '@patternfly/react-component-groups';
 import { EnvironmentContext } from '../../App';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 
 const RulesTable = ({ isTabActive, pathway }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
   const cols = getColumns(intl);
+  const axios = useAxiosWithPlatformInterceptors();
 
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
@@ -291,6 +293,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
                 envContext.BASE_URL,
                 '',
                 addNotification,
+                axios,
               ),
             tooltipText: intl.formatMessage(messages.exportData),
           }

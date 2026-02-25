@@ -4,7 +4,7 @@ import { Button, Icon } from '@patternfly/react-core';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import messages from '../Messages';
-import { Post } from './Api';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { EnvironmentContext } from '../App';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import { DownloadIcon } from '@patternfly/react-icons';
@@ -14,20 +14,21 @@ const DownloadPlaybookButton = ({ isDisabled, rules, systems }) => {
   const addNotification = useAddNotification();
   const envContext = useContext(EnvironmentContext);
   const brandName = envContext.isLightspeedEnabled ? 'Lightspeed' : 'Insights';
+  const axios = useAxiosWithPlatformInterceptors();
 
   const download = async (payload) => {
     try {
       const csrfToken = document
         ?.querySelector('meta[name="csrf-token"]')
         ?.getAttribute('content');
-      const response = await Post(
+      const response = await axios.post(
         `${envContext.REMEDIATIONS_BASE_URL}/playbook`,
-        { 'X-CSRF-Token': csrfToken },
         payload,
+        { headers: { 'X-CSRF-Token': csrfToken } },
       );
 
       // download the playbook in the response as a yaml file
-      const blob = new Blob([response.data], { type: 'application/x-yaml' });
+      const blob = new Blob([response], { type: 'application/x-yaml' });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;

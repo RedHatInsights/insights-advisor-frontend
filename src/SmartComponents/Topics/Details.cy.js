@@ -31,7 +31,7 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
   const currentRequestBasePath =
     finalEnvContext.customBasePath || DEFAULT_API_BASE_PATH;
 
-  cy.intercept(`${currentRequestBasePath}/topic/123/?&topicId=123`, {
+  cy.intercept(`${currentRequestBasePath}/topic/123/?topicId=123`, {
     name: 'Amazon Web Services (AWS)',
     slug: 'aws',
     description:

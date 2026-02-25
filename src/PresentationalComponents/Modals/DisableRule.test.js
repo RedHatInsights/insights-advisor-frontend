@@ -5,7 +5,8 @@ import { IntlProvider } from 'react-intl';
 import DisableRule from './DisableRule';
 import { EnvironmentContext } from '../../App';
 import * as AcksService from '../../Services/Acks';
-import * as Api from '../../Utilities/Api';
+
+const mockAxiosPost = jest.fn();
 
 // Mock dependencies
 jest.mock('@redhat-cloud-services/frontend-components-notifications', () => ({
@@ -16,9 +17,14 @@ jest.mock('../../Services/Acks', () => ({
   useSetAckMutation: jest.fn(),
 }));
 
-jest.mock('../../Utilities/Api', () => ({
-  Post: jest.fn(),
-}));
+jest.mock(
+  '@redhat-cloud-services/frontend-components-utilities/interceptors',
+  () => ({
+    useAxiosWithPlatformInterceptors: () => ({
+      post: mockAxiosPost,
+    }),
+  }),
+);
 
 jest.mock('../helper', () => ({
   getCsrfTokenHeader: () => ({ 'X-CSRF-Token': 'test-token' }),
@@ -67,7 +73,7 @@ describe('DisableRule Modal', () => {
       unwrap: jest.fn().mockResolvedValue({}),
     });
     AcksService.useSetAckMutation.mockReturnValue([mockSetAck]);
-    Api.Post.mockResolvedValue({});
+    mockAxiosPost.mockResolvedValue({});
   });
 
   describe('Component Rendering', () => {
@@ -212,10 +218,10 @@ describe('DisableRule Modal', () => {
       fireEvent.click(saveButton);
 
       await waitFor(() => {
-        expect(Api.Post).toHaveBeenCalledWith(
+        expect(mockAxiosPost).toHaveBeenCalledWith(
           `${defaultEnvContext.BASE_URL}/rule/${mockRule.rule_id}/ack_hosts/`,
-          { 'X-CSRF-Token': 'test-token' },
           { systems: hosts, justification },
+          { headers: { 'X-CSRF-Token': 'test-token' } },
         );
       });
     });
@@ -270,10 +276,10 @@ describe('DisableRule Modal', () => {
       fireEvent.click(saveButton);
 
       await waitFor(() => {
-        expect(Api.Post).toHaveBeenCalledWith(
+        expect(mockAxiosPost).toHaveBeenCalledWith(
           expect.stringContaining('/ack_hosts/'),
-          expect.any(Object),
           expect.objectContaining({ systems: hosts }),
+          expect.any(Object),
         );
       });
     });
@@ -316,9 +322,9 @@ describe('DisableRule Modal', () => {
       fireEvent.click(saveButton);
 
       await waitFor(() => {
-        expect(Api.Post).toHaveBeenCalledWith(
+        expect(mockAxiosPost).toHaveBeenCalledWith(
           expect.stringContaining('/api/insights/v1/rule/'),
-          expect.any(Object),
+          expect.objectContaining({ systems: ['host-1'] }),
           expect.any(Object),
         );
       });

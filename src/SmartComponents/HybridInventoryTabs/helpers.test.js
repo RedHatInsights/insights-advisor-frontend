@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { act } from '@testing-library/react';
 import { useActionResolver, mergeAppColumns, useOnLoad } from './helpers';
-import { Get, Post } from '../../Utilities/Api'; // Post is imported, but its mock won't be called by getEntities
 import inventoryData from './fixtures/inventoryData.json';
 import advisorPathwayData from './fixtures/advisorPathwayData.json';
 import advisorRecommendationData from './fixtures/advisorRecommendationData.json';
@@ -10,15 +9,10 @@ import { updateReducers } from '../../Store';
 import { getEntities } from '../../PresentationalComponents/Inventory/helpers';
 import { fitContent } from '@patternfly/react-table';
 
-// Mock dependencies
-jest.mock('../../Utilities/Api', () => ({
-  AxiosBaseQuery: jest.fn(() => ({})),
-  Get: jest.fn(() => Promise.resolve({ data: [], meta: { count: 0 } })), // Default mock for Get
-  Post: jest.fn(() => Promise.resolve({ data: {} })), // Default mock for Post (will not be called by getEntities)
-  Put: jest.fn(() => Promise.resolve({})), // Explicitly mock Put
-  DeleteApi: jest.fn(() => Promise.resolve({})), // Explicitly mock DeleteApi
-  fetchStatusID: jest.fn(() => Promise.resolve('mockStatusID')), // Explicitly mock fetchStatusID
-}));
+const mockAxios = {
+  get: jest.fn(() => Promise.resolve({ data: [], meta: { count: 0 } })),
+  post: jest.fn(() => Promise.resolve({ data: {} })),
+};
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -34,7 +28,7 @@ jest.mock('../../AppConstants.js', () => ({
   EDGE_DEVICE_BASE_URL: '/api/edge/v1',
 }));
 
-Post.mockReturnValue(edgeData);
+mockAxios.post.mockReturnValue(edgeData);
 
 const handleRefreshMock = jest.fn();
 const setCurPageIdsMock = jest.fn();
@@ -49,7 +43,9 @@ const MOCKED_RULES_FETCH_URL = '/api/insights/v1/rule/';
 const MOCKED_SYSTEMS_FETCH_URL = '/api/insights/v1/systems/';
 
 const testGetCallArguments = (expectedGetUrl, expectedOptions) => {
-  expect(Get).toHaveBeenCalledWith(expectedGetUrl, {}, expectedOptions);
+  expect(mockAxios.get).toHaveBeenCalledWith(expectedGetUrl, {
+    params: expectedOptions,
+  });
 };
 
 // --- Helper for common defaultGetEntities assertions (Post assertion removed) ---
@@ -68,13 +64,15 @@ const testDefaultGetEntitiesCalls = () => {
 describe('getEntities', () => {
   beforeEach(() => {
     jest.clearAllMocks(); // Clears all mocks' call history and implementations
-    Get.mockResolvedValue({}); // Default to a generic resolved promise
-    Post.mockResolvedValue(edgeData); // Default Post to return edgeData (will not be called by getEntities)
+    mockAxios.get.mockResolvedValue({}); // Default to a generic resolved promise
+    mockAxios.post.mockResolvedValue(edgeData); // Default Post to return edgeData (will not be called by getEntities)
     defaultGetEntities.mockReturnValue(inventoryData); // Default defaultGetEntities mock
   });
 
   test('Should fetch hybrid data for recommendations', async () => {
-    Get.mockImplementation(() => Promise.resolve(advisorRecommendationData));
+    mockAxios.get.mockImplementation(() =>
+      Promise.resolve(advisorRecommendationData),
+    );
 
     const testFetchConfig = {
       per_page: 10,
@@ -99,6 +97,7 @@ describe('getEntities', () => {
       { rule_id: 'test-rule' },
       MOCKED_RULES_FETCH_URL,
       MOCKED_SYSTEMS_FETCH_URL,
+      mockAxios,
     );
 
     let fetchedResult;
@@ -138,7 +137,9 @@ describe('getEntities', () => {
   });
 
   test('uses group info from inventory API when enforce_edge_groups set to false', async () => {
-    Get.mockImplementation(() => Promise.resolve(advisorRecommendationData)); // Ensure GET returns data for systemIDs
+    mockAxios.get.mockImplementation(() =>
+      Promise.resolve(advisorRecommendationData),
+    ); // Ensure GET returns data for systemIDs
 
     const testFetchConfig = {
       per_page: 10,
@@ -163,6 +164,7 @@ describe('getEntities', () => {
       { rule_id: 'test-rule' },
       MOCKED_RULES_FETCH_URL,
       MOCKED_SYSTEMS_FETCH_URL,
+      mockAxios,
     );
 
     let fetchedResult;
@@ -184,8 +186,10 @@ describe('getEntities', () => {
   });
 
   test('enforces group info from edge API when enforce_edge_groups set to true', async () => {
-    Get.mockImplementation(() => Promise.resolve(advisorRecommendationData)); // Ensure GET returns data for systemIDs
-    Post.mockResolvedValue({
+    mockAxios.get.mockImplementation(() =>
+      Promise.resolve(advisorRecommendationData),
+    ); // Ensure GET returns data for systemIDs
+    mockAxios.post.mockResolvedValue({
       data: { data: { ...edgeData.data.data, enforce_edge_groups: true } },
     });
 
@@ -212,6 +216,7 @@ describe('getEntities', () => {
       { rule_id: 'test-rule' },
       MOCKED_RULES_FETCH_URL,
       MOCKED_SYSTEMS_FETCH_URL,
+      mockAxios,
     );
 
     let fetchedResult;
@@ -238,7 +243,7 @@ describe('getEntities', () => {
   });
 
   test('Should fetch hybrid data for pathways', async () => {
-    Get.mockImplementation(() => Promise.resolve(advisorPathwayData));
+    mockAxios.get.mockImplementation(() => Promise.resolve(advisorPathwayData));
 
     const testFetchConfig = {
       per_page: 10,
@@ -263,6 +268,7 @@ describe('getEntities', () => {
       null, // rule (falsy to hit pathway branch)
       MOCKED_RULES_FETCH_URL,
       MOCKED_SYSTEMS_FETCH_URL,
+      mockAxios,
     );
 
     let fetchedResult;
