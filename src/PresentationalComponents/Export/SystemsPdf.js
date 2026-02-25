@@ -55,8 +55,8 @@ const SystemsPdf = ({ filters }) => {
   return (
     <Button
       onClick={dataFetch}
-      variant="button"
-      isDisabled={loading}
+      variant="plain"
+      isDisabled={loading || !envContext.isExportEnabled}
       className="pf-v6-c-menu__item adv-c-dropdown-systems-pdf__menu-item"
     >
       Export to PDF
