@@ -50,9 +50,14 @@ jest.mock(
   }),
 );
 
-jest.mock('../../Utilities/Api', () => ({
-  Post: jest.fn(),
-}));
+jest.mock(
+  '@redhat-cloud-services/frontend-components-utilities/interceptors',
+  () => ({
+    useAxiosWithPlatformInterceptors: () => ({
+      post: jest.fn(),
+    }),
+  }),
+);
 
 jest.mock('./helpers', () => ({
   ruleResolutionRisk: () => 2,
@@ -281,6 +286,7 @@ describe('DetailsRules Component', () => {
           addNotification,
           handleModalToggle,
           defaultEnvContext.BASE_URL,
+          expect.objectContaining({ post: expect.any(Function) }),
         );
       });
     });
