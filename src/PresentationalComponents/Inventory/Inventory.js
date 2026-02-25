@@ -70,6 +70,7 @@ const Inventory = ({
     useState(true);
   //This value comes in from the backend as 0, or 1. To be consistent it is set to -1
   const [rulesPlaybookCount, setRulesPlaybookCount] = useState(-1);
+  const [resolutions, setResolutions] = useState([]);
 
   const handleRefresh = (options) => {
     /* Rec table doesn't use the same sorting params as sys table, switching between the two results in the rec table blowing up cuz its trying to
@@ -321,7 +322,12 @@ const Inventory = ({
 
       return columnList;
     },
-    [envContext.displayGroupsTagsColumns, pathway, rule],
+    [
+      envContext.displayGroupsTagsColumns,
+      pathway,
+      rule,
+      envContext.loadChromeless,
+    ],
   );
 
   const removeFilterParam = (param) => {
@@ -365,7 +371,6 @@ const Inventory = ({
       }
     },
   };
-  const [resolutions, setResolutions] = useState([]);
 
   useEffect(() => {
     if (selectedIds?.length > 0) {
@@ -379,7 +384,7 @@ const Inventory = ({
       };
       fetchAndSetData();
     }
-  }, [selectedIds]);
+  }, [selectedIds, entities, rule]);
 
   const getActionsConfig = () => {
     const actions = [
@@ -497,7 +502,7 @@ const Inventory = ({
                   workloads,
                   dispatch,
                   envContext.BASE_URL,
-                  displayName,
+                  filters?.display_name,
                   addNotification,
                   axios,
                 ),
@@ -570,7 +575,7 @@ const Inventory = ({
                   workloads,
                   dispatch,
                   envContext.BASE_URL,
-                  display_name,
+                  filters?.display_name,
                   addNotification,
                   axios,
                 ),

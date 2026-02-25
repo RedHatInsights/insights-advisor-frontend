@@ -4,6 +4,7 @@ import { intlHelper } from '@redhat-cloud-services/frontend-components-translati
 import messages from './Messages';
 import { strong } from './Utilities/intlHelper';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
+import { SearchIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 
 const cache = createIntlCache();
 const locale = navigator.language.slice(0, 2);
@@ -17,6 +18,7 @@ const intlSettings = { locale };
 
 export const BASE_URI = document.baseURI;
 export const BASE_URL = '/api/insights/v1';
+export const KESSEL_API_BASE_URL = '/api/kessel/v1beta2';
 export const UI_BASE = './insights';
 export const DEBOUNCE_DELAY = 600;
 export const RULES_FETCH_URL = `${BASE_URL}/rule/`;
@@ -495,10 +497,34 @@ export const exportNotifications = {
   },
 };
 
+export const NO_SYSTEMS_REASONS = {
+  NO_MATCH: 'no_match',
+  ERROR: 'error',
+};
+
+export const NO_SYSTEMS_MAP = {
+  [NO_SYSTEMS_REASONS.NO_MATCH]: {
+    icon: SearchIcon,
+    titleText: 'No matching systems found',
+    bodyText: 'To continue, edit your filter settings and search again.',
+  },
+  [NO_SYSTEMS_REASONS.ERROR]: {
+    icon: ExclamationCircleIcon,
+    titleText: 'Error encountered when fetching systems.',
+    bodyText: 'To continue, try resetting the filters and search again.',
+  },
+};
+
 export const PERMISSIONS = {
   export: 'advisor:exports:read',
   disableRec: 'advisor:disable-recommendations:write',
   viewRecs: 'advisor:recommendation-results:read',
+};
+
+export const KESSEL_RELATIONS = {
+  export: 'advisor_exports_view',
+  disableRec: 'advisor_disable_recommendations_edit',
+  viewRecs: 'advisor_recommendation_results_view',
 };
 
 export const IOP_ENVIRONMENT_CONTEXT = {
