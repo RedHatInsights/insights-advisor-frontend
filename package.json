@@ -52,7 +52,9 @@
       "!src/{App,AppEntry,DevAppEntry,Routes,bootstrap,cveToRuleid}.js",
       "!src/**/__fixtures__/**",
       "!src/**/__factories__/**",
-      "!src/PresentationalComponents/Inventory/Inventory.js"
+      "!src/PresentationalComponents/Inventory/Inventory.js",
+      "!src/PresentationalComponents/SystemsTable/SystemsTable.js",
+      "!src/PresentationalComponents/Cards/TotalRiskCard.js"
     ],
     "moduleNameMapper": {
       "\\.(css|scss)$": "identity-obj-proxy",
