@@ -86,7 +86,7 @@
     "@patternfly/react-table": "^6.4.1",
     "@patternfly/react-tokens": "^6.3.1",
     "@project-kessel/react-kessel-access-check": "^0.3.1",
-    "@react-pdf/renderer": "^3.4.4",
+    "@react-pdf/renderer": "^4.3.2",
     "@redhat-cloud-services/frontend-components": "^7.0.42",
     "@redhat-cloud-services/frontend-components-advisor-components": "^3.0.53",
     "@redhat-cloud-services/frontend-components-config-utilities": "^4.7.30",
