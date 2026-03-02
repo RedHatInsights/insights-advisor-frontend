@@ -158,7 +158,7 @@
     "stylelint-config-recommended-scss": "^16.0.2",
     "stylelint-scss": "^6.12.1",
     "ts-patch": "^3.3.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   },
   "insights": {
     "appname": "advisor"
