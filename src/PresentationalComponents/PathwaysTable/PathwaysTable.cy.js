@@ -534,4 +534,138 @@ describe('Pathways table tests', () => {
       cy.get('tbody td[data-label]').should('have.length.at.least', 5);
     });
   });
+
+  describe('URL string params safety', () => {
+    const mountComponentWithUrl = (urlParams) => {
+      // Set URL parameters in browser history so paramParser() can read them
+      cy.window().then((win) => {
+        win.history.pushState({}, '', `/pathways?${urlParams}`);
+      });
+
+      cy.mount(
+        <MemoryRouter
+          initialEntries={[`/pathways?${urlParams}`]}
+          initialIndex={0}
+        >
+          <IntlProvider locale={navigator.language.slice(0, 2)}>
+            <Provider store={initStore()}>
+              <Routes>
+                <Route
+                  key={'Recommendations Pathways'}
+                  path="*"
+                  element={<PathwaysTable isTabActive={1} />}
+                />
+              </Routes>
+            </Provider>
+          </IntlProvider>
+        </MemoryRouter>,
+      );
+    };
+
+    it('loads with has_incident=true string param and verifies checkbox is selected', () => {
+      const urlParams = 'has_incident=true';
+
+      cy.intercept('GET', '**/pathways/?*', {
+        statusCode: 200,
+        body: { ...fixtures },
+      }).as('call');
+
+      mountComponentWithUrl(urlParams);
+
+      cy.get(ROOT, { timeout: 10000 }).should('exist');
+      cy.get('[aria-label="Loading"]').should('not.exist');
+
+      selectConditionalFilterOption('Incidents');
+      cy.get(CONDITIONAL_FILTER).contains('Filter by incidents').click();
+
+      // Verify checkbox is selected when loading with string URL param has_incident=true
+      cy.get(MENU_ITEM)
+        .contains('Incident')
+        .parent()
+        .find('input[type="checkbox"]')
+        .should('be.checked');
+    });
+
+    it('loads with category=2 string param and verifies checkbox is selected', () => {
+      const urlParams = 'category=2';
+
+      cy.intercept('GET', '**/pathways/?*', {
+        statusCode: 200,
+        body: { ...fixtures },
+      }).as('call');
+
+      mountComponentWithUrl(urlParams);
+
+      cy.get(ROOT, { timeout: 10000 }).should('exist');
+      cy.get('[aria-label="Loading"]').should('not.exist');
+
+      selectConditionalFilterOption('Category');
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+
+      // Verify checkbox is selected when loading with string URL param category=2
+      cy.get(MENU_ITEM)
+        .contains('Security')
+        .parent()
+        .find('input[type="checkbox"]')
+        .should('be.checked');
+    });
+
+    it('loads with reboot_required=true string param and verifies checkbox is selected', () => {
+      const urlParams = 'reboot_required=true';
+
+      cy.intercept('GET', '**/pathways/?*', {
+        statusCode: 200,
+        body: { ...fixtures },
+      }).as('call');
+
+      mountComponentWithUrl(urlParams);
+
+      cy.get(ROOT, { timeout: 10000 }).should('exist');
+      cy.get('[aria-label="Loading"]').should('not.exist');
+
+      selectConditionalFilterOption('Reboot required');
+      cy.get(CONDITIONAL_FILTER).contains('Filter by reboot required').click();
+
+      // Verify checkbox is selected when loading with string URL param reboot_required=true
+      cy.get(MENU_ITEM)
+        .contains('Required')
+        .parent()
+        .find('input[type="checkbox"]')
+        .should('be.checked');
+    });
+
+    it('loads with multiple string params from URL and displays table rows', () => {
+      const urlParams =
+        'has_incident=true&category=security&reboot_required=true';
+      mountComponentWithUrl(urlParams);
+
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get(ROOT).should('exist');
+
+      cy.get('tbody tr').should('have.length.greaterThan', 0);
+    });
+
+    it('loads with has_incident string param then applies additional Category filter', () => {
+      const urlParams = 'has_incident=true';
+      mountComponentWithUrl(urlParams);
+
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+      selectConditionalFilterOption('Category');
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+      cy.get(MENU_ITEM).contains('Security').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+
+      hasChip('Category', 'Security');
+      cy.location('search').should('include', 'category=2');
+    });
+
+    it('loads with mixed string and array params from URL', () => {
+      const urlParams = 'has_incident=true&category=1&category=2';
+      mountComponentWithUrl(urlParams);
+
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get(ROOT).should('exist');
+    });
+  });
 });

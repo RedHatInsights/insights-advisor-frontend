@@ -235,7 +235,11 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.total_risk.urlParam, values),
-        value: filters.total_risk,
+        value: Array.isArray(filters.total_risk)
+          ? filters.total_risk
+          : filters.total_risk
+            ? [String(filters.total_risk)]
+            : [],
         items: FC.total_risk.values,
       },
     },
@@ -247,7 +251,11 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.res_risk.urlParam, values),
-        value: filters.res_risk,
+        value: Array.isArray(filters.res_risk)
+          ? filters.res_risk
+          : filters.res_risk
+            ? [String(filters.res_risk)]
+            : [],
         items: FC.res_risk.values,
       },
     },
@@ -259,7 +267,11 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.impact.urlParam, values),
-        value: filters.impact,
+        value: Array.isArray(filters.impact)
+          ? filters.impact
+          : filters.impact
+            ? [String(filters.impact)]
+            : [],
         items: FC.impact.values,
       },
     },
@@ -271,7 +283,11 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.likelihood.urlParam, values),
-        value: filters.likelihood,
+        value: Array.isArray(filters.likelihood)
+          ? filters.likelihood
+          : filters.likelihood
+            ? [String(filters.likelihood)]
+            : [],
         items: FC.likelihood.values,
       },
     },
@@ -283,7 +299,11 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.category.urlParam, values),
-        value: filters.category,
+        value: Array.isArray(filters.category)
+          ? filters.category
+          : filters.category
+            ? [String(filters.category)]
+            : [],
         items: FC.category.values,
       },
     },
@@ -295,7 +315,11 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.incident.urlParam, values),
-        value: filters.incident,
+        value: Array.isArray(filters.incident)
+          ? filters.incident
+          : filters.incident
+            ? [String(filters.incident)]
+            : [],
         items: FC.incident.values,
       },
     },
@@ -307,7 +331,11 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.has_playbook.urlParam, values),
-        value: filters.has_playbook,
+        value: Array.isArray(filters.has_playbook)
+          ? filters.has_playbook
+          : filters.has_playbook
+            ? [String(filters.has_playbook)]
+            : [],
         items: FC.has_playbook.values,
       },
     },
@@ -319,7 +347,11 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.reboot.urlParam, values),
-        value: filters.reboot,
+        value: Array.isArray(filters.reboot)
+          ? filters.reboot
+          : filters.reboot
+            ? [String(filters.reboot)]
+            : [],
         items: FC.reboot.values,
       },
     },
