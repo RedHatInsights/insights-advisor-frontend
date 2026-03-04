@@ -363,6 +363,7 @@ describe('mergeAppColumns', () => {
       sortKey: 'last_seen',
       transforms: [fitContent],
       props: { width: 10 },
+      dataLabel: 'Last seen',
       renderFunc: expect.any(Function),
     });
     const impacted_date = result.find(
