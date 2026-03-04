@@ -1,15 +1,17 @@
 import { dataFetch } from './Overview';
-import * as Api from '../Utilities/Api';
 import messages from '../Messages';
 
-jest.mock('../Utilities/Api', () => ({
-  Get: jest.fn(),
-}));
-
 describe('Overview Service', () => {
+  const mockAxios = {
+    get: jest.fn(),
+  };
+
+  const mockEnvContext = {
+    STATS_OVERVIEW_FETCH_URL: '/api/insights/v1/stats/',
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
-    // Suppress console.log during tests
     jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
@@ -18,136 +20,145 @@ describe('Overview Service', () => {
   });
 
   describe('dataFetch', () => {
-    const mockEnvContext = {
-      STATS_OVERVIEW_FETCH_URL: '/api/insights/v1/stats',
-    };
-
-    it('should fetch and return overview data successfully', async () => {
-      const mockResponseData = {
-        pathways: 5,
-        incidents: 12,
-        critical: 8,
-        important: 15,
-        moderate: 20,
-        low: 30,
+    it('fetches overview data successfully', async () => {
+      const mockData = {
+        total_risk: 100,
+        recommendations: 50,
+        critical: 10,
+        important: 20,
+        moderate: 15,
+        low: 5,
       };
 
-      Api.Get.mockResolvedValue({
-        data: mockResponseData,
-      });
+      mockAxios.get.mockResolvedValue(mockData);
 
-      const result = await dataFetch(mockEnvContext);
+      const result = await dataFetch(mockEnvContext, mockAxios);
 
-      expect(Api.Get).toHaveBeenCalledWith('/api/insights/v1/stats');
+      expect(mockAxios.get).toHaveBeenCalledWith(
+        mockEnvContext.STATS_OVERVIEW_FETCH_URL,
+      );
       expect(result).toEqual({
-        ...mockResponseData,
+        ...mockData,
         loaded: true,
         isError: false,
       });
     });
 
-    it('should handle successful response with empty data', async () => {
-      const mockResponseData = {
-        pathways: 0,
-        incidents: 0,
-        critical: 0,
-        important: 0,
-        moderate: 0,
-        low: 0,
-      };
+    it('marks data as loaded on success', async () => {
+      const mockData = { total_risk: 50 };
+      mockAxios.get.mockResolvedValue(mockData);
 
-      Api.Get.mockResolvedValue({
-        data: mockResponseData,
-      });
+      const result = await dataFetch(mockEnvContext, mockAxios);
 
-      const result = await dataFetch(mockEnvContext);
+      expect(result.loaded).toBe(true);
+      expect(result.isError).toBe(false);
+    });
+
+    it('handles empty data response', async () => {
+      mockAxios.get.mockResolvedValue({});
+
+      const result = await dataFetch(mockEnvContext, mockAxios);
 
       expect(result).toEqual({
-        ...mockResponseData,
         loaded: true,
         isError: false,
       });
     });
 
-    it('should handle missing data in response', async () => {
-      Api.Get.mockResolvedValue({
-        // Missing data property
-      });
+    it('handles API errors', async () => {
+      const error = new Error('API Error');
+      mockAxios.get.mockRejectedValue(error);
 
-      const result = await dataFetch(mockEnvContext);
+      const result = await dataFetch(mockEnvContext, mockAxios);
 
       expect(result).toEqual({
         loaded: false,
         isError: true,
       });
       expect(console.log).toHaveBeenCalledWith(
-        expect.anything(),
+        error,
         messages.overviewDashbarError.defaultMessage,
       );
     });
 
-    it('should handle API errors', async () => {
-      const mockError = new Error('Network error');
-      Api.Get.mockRejectedValue(mockError);
+    it('handles network errors', async () => {
+      const error = new Error('Network error');
+      mockAxios.get.mockRejectedValue(error);
 
-      const result = await dataFetch(mockEnvContext);
+      const result = await dataFetch(mockEnvContext, mockAxios);
+
+      expect(result.loaded).toBe(false);
+      expect(result.isError).toBe(true);
+    });
+
+    it('handles 404 errors', async () => {
+      const error = new Error('Not found');
+      error.response = { status: 404 };
+      mockAxios.get.mockRejectedValue(error);
+
+      const result = await dataFetch(mockEnvContext, mockAxios);
 
       expect(result).toEqual({
         loaded: false,
         isError: true,
       });
+    });
+
+    it('handles 500 errors', async () => {
+      const error = new Error('Server error');
+      error.response = { status: 500, data: { message: 'Internal error' } };
+      mockAxios.get.mockRejectedValue(error);
+
+      const result = await dataFetch(mockEnvContext, mockAxios);
+
+      expect(result).toEqual({
+        loaded: false,
+        isError: true,
+      });
+    });
+
+    it('logs error when data fetch fails', async () => {
+      const error = new Error('Fetch failed');
+      mockAxios.get.mockRejectedValue(error);
+
+      await dataFetch(mockEnvContext, mockAxios);
+
       expect(console.log).toHaveBeenCalledWith(
-        mockError,
+        error,
         messages.overviewDashbarError.defaultMessage,
       );
     });
 
-    it('should handle 404 errors', async () => {
-      const mockError = {
-        response: {
-          status: 404,
-          data: { detail: 'Not found' },
-        },
-      };
-      Api.Get.mockRejectedValue(mockError);
-
-      const result = await dataFetch(mockEnvContext);
-
-      expect(result).toEqual({
-        loaded: false,
-        isError: true,
-      });
-    });
-
-    it('should handle 500 server errors', async () => {
-      const mockError = {
-        response: {
-          status: 500,
-          data: { detail: 'Internal server error' },
-        },
-      };
-      Api.Get.mockRejectedValue(mockError);
-
-      const result = await dataFetch(mockEnvContext);
-
-      expect(result).toEqual({
-        loaded: false,
-        isError: true,
-      });
-    });
-
-    it('should use correct URL from envContext', async () => {
+    it('uses correct URL from environment context', async () => {
       const customEnvContext = {
-        STATS_OVERVIEW_FETCH_URL: '/custom/stats/url',
+        STATS_OVERVIEW_FETCH_URL: '/custom/api/stats/',
+      };
+      mockAxios.get.mockResolvedValue({ data: {} });
+
+      await dataFetch(customEnvContext, mockAxios);
+
+      expect(mockAxios.get).toHaveBeenCalledWith('/custom/api/stats/');
+    });
+
+    it('preserves all data fields from API response', async () => {
+      const mockData = {
+        total_risk: 100,
+        recommendations: 50,
+        critical: 10,
+        important: 20,
+        moderate: 15,
+        low: 5,
+        systems_hit: 75,
+        pathways: 8,
       };
 
-      Api.Get.mockResolvedValue({
-        data: { pathways: 1 },
-      });
+      mockAxios.get.mockResolvedValue(mockData);
 
-      await dataFetch(customEnvContext);
+      const result = await dataFetch(mockEnvContext, mockAxios);
 
-      expect(Api.Get).toHaveBeenCalledWith('/custom/stats/url');
+      expect(result).toMatchObject(mockData);
+      expect(result.loaded).toBe(true);
+      expect(result.isError).toBe(false);
     });
   });
 });

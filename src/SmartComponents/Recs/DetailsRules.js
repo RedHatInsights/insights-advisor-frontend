@@ -2,7 +2,7 @@
 import './Details.scss';
 
 import { BASE_URL, RISK_OF_CHANGE_DESC } from '../../AppConstants';
-import { Post } from '../../Utilities/Api';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import {
   PageHeader,
   PageHeaderTitle,
@@ -46,13 +46,13 @@ export const DetailsRules = ({
 }) => {
   const intl = useIntl();
   const envContext = useContext(EnvironmentContext);
+  const axios = useAxiosWithPlatformInterceptors();
 
   const onVoteClick = async (ruleId, calculatedRating) => {
-    await Post(
-      `${BASE_URL}/rating/`,
-      {},
-      { rule: ruleId, rating: calculatedRating },
-    );
+    await axios.post(`${BASE_URL}/rating/`, {
+      rule: ruleId,
+      rating: calculatedRating,
+    });
   };
 
   return (
@@ -166,6 +166,7 @@ export const DetailsRules = ({
                               addNotification,
                               handleModalToggle,
                               envContext.BASE_URL,
+                              axios,
                             );
                           }}
                         >

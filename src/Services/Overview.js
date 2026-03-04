@@ -1,11 +1,9 @@
-import { Get } from '../Utilities/Api';
 import messages from '../Messages';
 
-const dataFetch = async (envContext) => {
+const dataFetch = async (envContext, axios) => {
   try {
-    const response = await Get(envContext.STATS_OVERVIEW_FETCH_URL);
-    if (response.data) {
-      const data = response.data;
+    const data = await axios.get(envContext.STATS_OVERVIEW_FETCH_URL);
+    if (data) {
       return { ...data, loaded: true, isError: false };
     }
     throw messages.overviewDashbarResponseMissingDataError.defaultMessage;

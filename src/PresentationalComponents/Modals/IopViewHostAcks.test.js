@@ -4,17 +4,23 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import IopViewHostAcks from './IopViewHostAcks';
 import { useGetHostAcksQuery } from '../../Services/Acks';
-import { DeleteApi } from '../../Utilities/Api';
 import { ComponentWithContext } from '../../Utilities/TestingUtilities';
 import { getCsrfTokenHeader } from '../helper';
+
+const mockAxios = {
+  delete: jest.fn(),
+};
 
 jest.mock('../../Services/Acks', () => ({
   useGetHostAcksQuery: jest.fn(),
 }));
 
-jest.mock('../../Utilities/Api', () => ({
-  DeleteApi: jest.fn(),
-}));
+jest.mock(
+  '@redhat-cloud-services/frontend-components-utilities/interceptors',
+  () => ({
+    useAxiosWithPlatformInterceptors: () => mockAxios,
+  }),
+);
 
 jest.mock('../helper', () => ({
   getCsrfTokenHeader: jest.fn(() => ({ 'X-CSRF-Token': 'mock-csrf-token' })),
@@ -244,7 +250,7 @@ describe('IopViewHostAcks', () => {
       refetch: mockRefetch,
     });
 
-    DeleteApi.mockResolvedValue({});
+    mockAxios.delete.mockResolvedValue({});
 
     render(
       <ComponentWithContext
@@ -264,10 +270,9 @@ describe('IopViewHostAcks', () => {
     await user.click(enableButton);
 
     await waitFor(() => {
-      expect(DeleteApi).toHaveBeenCalledWith(
+      expect(mockAxios.delete).toHaveBeenCalledWith(
         expect.stringContaining('/hostack/1/'),
-        {},
-        { 'X-CSRF-Token': 'mock-csrf-token' },
+        { headers: { 'X-CSRF-Token': 'mock-csrf-token' } },
       );
     });
     expect(mockRefetch).toHaveBeenCalled();
@@ -283,7 +288,7 @@ describe('IopViewHostAcks', () => {
       refetch: mockRefetch,
     });
 
-    DeleteApi.mockResolvedValue({});
+    mockAxios.delete.mockResolvedValue({});
 
     render(
       <ComponentWithContext
@@ -305,11 +310,9 @@ describe('IopViewHostAcks', () => {
     await waitFor(() => {
       expect(getCsrfTokenHeader).toHaveBeenCalled();
     });
-    expect(DeleteApi).toHaveBeenCalledWith(
-      expect.any(String),
-      {},
-      { 'X-CSRF-Token': 'mock-csrf-token' },
-    );
+    expect(mockAxios.delete).toHaveBeenCalledWith(expect.any(String), {
+      headers: { 'X-CSRF-Token': 'mock-csrf-token' },
+    });
   });
 
   it('should handle delete error gracefully', async () => {
@@ -323,7 +326,7 @@ describe('IopViewHostAcks', () => {
       refetch: jest.fn(),
     });
 
-    DeleteApi.mockRejectedValue(mockError);
+    mockAxios.delete.mockRejectedValue(mockError);
 
     render(
       <ComponentWithContext
@@ -343,7 +346,7 @@ describe('IopViewHostAcks', () => {
     await user.click(enableButton);
 
     await waitFor(() => {
-      expect(DeleteApi).toHaveBeenCalled();
+      expect(mockAxios.delete).toHaveBeenCalled();
     });
     expect(handleModalToggle).toHaveBeenCalledWith(false);
   });

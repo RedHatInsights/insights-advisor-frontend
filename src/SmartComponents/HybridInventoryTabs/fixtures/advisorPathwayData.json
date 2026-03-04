@@ -1,9 +1,7 @@
 {
-    "data": {
-      "data": [
-        { "system_uuid": "edge.id-1", "pathwayName": "test-pathway-1" },
-        { "system_uuid": "edge.id-2", "pathwayName": "test-pathway-2" }
-      ],
-      "meta": { "count": 2 }
-    }
+  "data": [
+    { "system_uuid": "edge.id-1", "pathwayName": "test-pathway-1" },
+    { "system_uuid": "edge.id-2", "pathwayName": "test-pathway-2" }
+  ],
+  "meta": { "count": 2 }
 }

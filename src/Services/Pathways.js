@@ -1,10 +1,10 @@
-import { AxiosBaseQuery } from '../Utilities/Api';
+import { createAdvisorBaseQuery } from '../Utilities/createAdvisorBaseQuery';
 import { BASE_URL } from '../AppConstants';
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const Pathways = createApi({
   reducerPath: 'pathways',
-  baseQuery: AxiosBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: createAdvisorBaseQuery({ baseUrl: BASE_URL }),
   keepUnusedDataFor: 5,
   endpoints: (build) => ({
     getPathways: build.query({

@@ -12,7 +12,6 @@ import {
   lastSeenColumn,
 } from './helpers';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
-import { Get } from '../../Utilities/Api';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
 import PropTypes from 'prop-types';
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
@@ -144,12 +143,11 @@ const Inventory = ({
   const rulesCheck = async () => {
     if (rulesPlaybookCount < 0) {
       const associatedRuleDetails = (
-        await Get(
+        await axios.get(
           `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
-          {},
-          { name: filters.name },
+          { params: { name: filters.name } },
         )
-      )?.data.playbook_count;
+      )?.playbook_count;
       setRulesPlaybookCount(associatedRuleDetails);
     }
   };
@@ -158,20 +156,16 @@ const Inventory = ({
     if (!hasPathwayDetails) {
       if (pathway) {
         let pathwayRules = (
-          await Get(
+          await axios.get(
             `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
-            {},
-            {},
           )
-        )?.data.data;
+        )?.data;
 
         let pathwayReport = (
-          await Get(
+          await axios.get(
             `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
-            {},
-            {},
           )
-        )?.data.rules;
+        )?.rules;
         setHasPathwayDetails(true);
         setPathwayReportList(pathwayReport);
         setPathwayRulesList(pathwayRules);
@@ -215,20 +209,16 @@ const Inventory = ({
   const remediationDataProvider = async () => {
     if (pathway) {
       const pathways = (
-        await Get(
+        await axios.get(
           `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
-          {},
-          {},
         )
-      )?.data.data;
+      )?.data;
 
       const systems = (
-        await Get(
+        await axios.get(
           `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
-          {},
-          {},
         )
-      )?.data.rules;
+      )?.rules;
 
       let issues = [];
       pathways.forEach((rec) => {
@@ -514,6 +504,7 @@ const Inventory = ({
                   envContext.BASE_URL,
                   filters?.display_name,
                   addNotification,
+                  axios,
                 ),
               isDisabled: !permsExport || entities?.rows?.length === 0,
               tooltipText: permsExport
@@ -586,6 +577,7 @@ const Inventory = ({
                   envContext.BASE_URL,
                   filters?.display_name,
                   addNotification,
+                  axios,
                 ),
               isDisabled: !permsExport || entities?.rows?.length === 0,
               tooltipText: permsExport

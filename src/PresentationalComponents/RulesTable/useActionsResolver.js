@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import messages from '../../Messages';
 import { hideReports } from './helpers';
 import { BASE_URL } from '../../AppConstants';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 
 export const useActionsResolver = (
   rows,
@@ -15,6 +16,7 @@ export const useActionsResolver = (
 ) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  const axios = useAxiosWithPlatformInterceptors();
 
   const actionResolver = useCallback(
     (rowData, { rowIndex }) => {
@@ -38,6 +40,7 @@ export const useActionsResolver = (
                   intl,
                   addNotification,
                   baseUrl,
+                  axios,
                 ),
             },
           ]
@@ -55,6 +58,7 @@ export const useActionsResolver = (
                   intl,
                   addNotification,
                   baseUrl,
+                  axios,
                 ),
             },
           ];
@@ -68,6 +72,7 @@ export const useActionsResolver = (
       intl,
       addNotification,
       baseUrl,
+      axios,
     ],
   );
 
