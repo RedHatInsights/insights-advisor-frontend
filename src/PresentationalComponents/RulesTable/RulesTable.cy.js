@@ -769,6 +769,218 @@ describe('Conditional Filter', () => {
     // check chips are reset
     hasChip('Systems impacted', '1 or more');
   });
+
+  it('loads with incident=true URL param and checkbox is selected', () => {
+    const urlParams = 'incident=true';
+    let envContext = createTestEnvironmentContext();
+
+    cy.intercept('*', {
+      statusCode: 201,
+      body: { ...fixtures },
+    }).as('call');
+
+    cy.window().then((win) => {
+      win.history.pushState({}, '', `/recommendations?${urlParams}`);
+    });
+
+    cy.mount(
+      <EnvironmentContext.Provider value={envContext}>
+        <MemoryRouter
+          initialEntries={[`/recommendations?${urlParams}`]}
+          initialIndex={0}
+        >
+          <AccountStatContext.Provider
+            value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
+          >
+            <IntlProvider
+              locale={navigator.language.slice(0, 2)}
+              messages={messages}
+            >
+              <Provider store={initStore()}>
+                <Routes>
+                  <Route
+                    key={'Recommendations'}
+                    path="*"
+                    element={<RulesTable isTabActive={true} />}
+                  />
+                </Routes>
+              </Provider>
+            </IntlProvider>
+          </AccountStatContext.Provider>
+        </MemoryRouter>
+      </EnvironmentContext.Provider>,
+    );
+
+    cy.get(ROOT, { timeout: 10000 }).should('exist');
+    cy.get('[aria-label="Loading"]').should('not.exist');
+
+    selectConditionalFilterOption('Incidents');
+    cy.get(CONDITIONAL_FILTER).contains('Filter by incidents').click();
+    cy.get(MENU_ITEM)
+      .contains('Incident')
+      .parent()
+      .find('input[type="checkbox"]')
+      .should('be.checked');
+  });
+
+  it('loads with has_playbook=true URL param and checkbox is selected', () => {
+    const urlParams = 'has_playbook=true';
+    let envContext = createTestEnvironmentContext();
+
+    cy.intercept('*', {
+      statusCode: 201,
+      body: { ...fixtures },
+    }).as('call');
+
+    cy.window().then((win) => {
+      win.history.pushState({}, '', `/recommendations?${urlParams}`);
+    });
+
+    cy.mount(
+      <EnvironmentContext.Provider value={envContext}>
+        <MemoryRouter
+          initialEntries={[`/recommendations?${urlParams}`]}
+          initialIndex={0}
+        >
+          <AccountStatContext.Provider
+            value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
+          >
+            <IntlProvider
+              locale={navigator.language.slice(0, 2)}
+              messages={messages}
+            >
+              <Provider store={initStore()}>
+                <Routes>
+                  <Route
+                    key={'Recommendations'}
+                    path="*"
+                    element={<RulesTable isTabActive={true} />}
+                  />
+                </Routes>
+              </Provider>
+            </IntlProvider>
+          </AccountStatContext.Provider>
+        </MemoryRouter>
+      </EnvironmentContext.Provider>,
+    );
+
+    cy.get(ROOT, { timeout: 10000 }).should('exist');
+    cy.get('[aria-label="Loading"]').should('not.exist');
+
+    selectConditionalFilterOption('Remediation');
+    cy.get(CONDITIONAL_FILTER).contains('Filter by remediation').click();
+    cy.get(MENU_ITEM)
+      .contains('Ansible playbook')
+      .parent()
+      .find('input[type="checkbox"]')
+      .should('be.checked');
+  });
+
+  it('loads with category=2 URL param and checkbox is selected', () => {
+    const urlParams = 'category=2';
+    let envContext = createTestEnvironmentContext();
+
+    cy.intercept('*', {
+      statusCode: 201,
+      body: { ...fixtures },
+    }).as('call');
+
+    cy.window().then((win) => {
+      win.history.pushState({}, '', `/recommendations?${urlParams}`);
+    });
+
+    cy.mount(
+      <EnvironmentContext.Provider value={envContext}>
+        <MemoryRouter
+          initialEntries={[`/recommendations?${urlParams}`]}
+          initialIndex={0}
+        >
+          <AccountStatContext.Provider
+            value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
+          >
+            <IntlProvider
+              locale={navigator.language.slice(0, 2)}
+              messages={messages}
+            >
+              <Provider store={initStore()}>
+                <Routes>
+                  <Route
+                    key={'Recommendations'}
+                    path="*"
+                    element={<RulesTable isTabActive={true} />}
+                  />
+                </Routes>
+              </Provider>
+            </IntlProvider>
+          </AccountStatContext.Provider>
+        </MemoryRouter>
+      </EnvironmentContext.Provider>,
+    );
+
+    cy.get(ROOT, { timeout: 10000 }).should('exist');
+    cy.get('[aria-label="Loading"]').should('not.exist');
+
+    selectConditionalFilterOption('Category');
+    cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+    cy.get(MENU_ITEM)
+      .contains('Security')
+      .parent()
+      .find('input[type="checkbox"]')
+      .should('be.checked');
+  });
+
+  it('loads with total_risk=4 URL param and checkbox is selected', () => {
+    const urlParams = 'total_risk=4';
+    let envContext = createTestEnvironmentContext();
+
+    cy.intercept('*', {
+      statusCode: 201,
+      body: { ...fixtures },
+    }).as('call');
+
+    cy.window().then((win) => {
+      win.history.pushState({}, '', `/recommendations?${urlParams}`);
+    });
+
+    cy.mount(
+      <EnvironmentContext.Provider value={envContext}>
+        <MemoryRouter
+          initialEntries={[`/recommendations?${urlParams}`]}
+          initialIndex={0}
+        >
+          <AccountStatContext.Provider
+            value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
+          >
+            <IntlProvider
+              locale={navigator.language.slice(0, 2)}
+              messages={messages}
+            >
+              <Provider store={initStore()}>
+                <Routes>
+                  <Route
+                    key={'Recommendations'}
+                    path="*"
+                    element={<RulesTable isTabActive={true} />}
+                  />
+                </Routes>
+              </Provider>
+            </IntlProvider>
+          </AccountStatContext.Provider>
+        </MemoryRouter>
+      </EnvironmentContext.Provider>,
+    );
+
+    cy.get(ROOT, { timeout: 10000 }).should('exist');
+    cy.get('[aria-label="Loading"]').should('not.exist');
+
+    selectConditionalFilterOption('Total risk');
+    cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
+    cy.get(MENU_ITEM)
+      .contains('Critical')
+      .parent()
+      .find('input[type="checkbox"]')
+      .should('be.checked');
+  });
 });
 
 describe('Tooltips', () => {

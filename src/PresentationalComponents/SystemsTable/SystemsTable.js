@@ -75,7 +75,11 @@ const SystemsTable = () => {
       value: `checkbox-${SFC.hits.urlParam}`,
       filterValues: {
         onChange: (_e, values) => addFilterParam(SFC.hits.urlParam, values),
-        value: filters.hits,
+        value: Array.isArray(filters.hits)
+          ? filters.hits
+          : filters.hits
+            ? [String(filters.hits)]
+            : [],
         items: SFC.hits.values,
       },
     },
@@ -88,7 +92,11 @@ const SystemsTable = () => {
         onChange: (_e, values) => {
           addFilterParam(SFC.incident.urlParam, values);
         },
-        value: filters.incident,
+        value: Array.isArray(filters.incident)
+          ? filters.incident
+          : filters.incident
+            ? [String(filters.incident)]
+            : [],
         items: SFC.incident.values,
       },
     },

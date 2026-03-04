@@ -246,7 +246,11 @@ const PathwaysTable = ({ isTabActive }) => {
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.category.urlParam, values),
-        value: filters.category,
+        value: Array.isArray(filters.category)
+          ? filters.category
+          : filters.category
+            ? [String(filters.category)]
+            : [],
         items: FC.category.values,
       },
     },
@@ -258,7 +262,11 @@ const PathwaysTable = ({ isTabActive }) => {
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(PFC.has_incident.urlParam, values),
-        value: filters.has_incident,
+        value: Array.isArray(filters.has_incident)
+          ? filters.has_incident
+          : filters.has_incident
+            ? [String(filters.has_incident)]
+            : [],
         items: PFC.has_incident.values,
       },
     },
@@ -270,7 +278,11 @@ const PathwaysTable = ({ isTabActive }) => {
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(PFC.reboot_required.urlParam, values),
-        value: filters.reboot_required,
+        value: Array.isArray(filters.reboot_required)
+          ? filters.reboot_required
+          : filters.reboot_required
+            ? [String(filters.reboot_required)]
+            : [],
         items: PFC.reboot_required.values,
       },
     },
