@@ -217,6 +217,7 @@ export const lastSeenColumn = {
   sortKey: 'last_seen',
   transforms: [fitContent],
   props: { width: 10 },
+  dataLabel: 'Last seen',
   renderFunc: (last_seen) => (
     <DateFormat date={last_seen} extraTitle={'Last Seen: '} />
   ),
