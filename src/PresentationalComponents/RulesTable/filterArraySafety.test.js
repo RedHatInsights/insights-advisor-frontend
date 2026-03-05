@@ -1,50 +1,49 @@
-const ensureArray = (value) =>
-  Array.isArray(value) ? value : value ? [String(value)] : [];
+import { normalizeFilterValue } from '../helper';
 
 describe('Filter Array Safety', () => {
   describe('Bug Scenarios', () => {
     it('should convert incident string to array with value', () => {
       const incident = 'true';
-      const safeValue = ensureArray(incident);
+      const safeValue = normalizeFilterValue(incident);
       expect(safeValue).toEqual(['true']);
     });
 
     it('should convert has_playbook boolean to array with value', () => {
       const hasPlaybook = true;
-      const safeValue = ensureArray(hasPlaybook);
+      const safeValue = normalizeFilterValue(hasPlaybook);
       expect(safeValue).toEqual(['true']);
     });
 
     it('should convert category number to array with value', () => {
       const category = 2;
-      const safeValue = ensureArray(category);
+      const safeValue = normalizeFilterValue(category);
       expect(safeValue).toEqual(['2']);
     });
   });
 
   describe('Edge Cases', () => {
     it('should handle null value', () => {
-      const safeValue = ensureArray(null);
+      const safeValue = normalizeFilterValue(null);
       expect(safeValue).toEqual([]);
     });
 
     it('should handle undefined value', () => {
-      const safeValue = ensureArray(undefined);
+      const safeValue = normalizeFilterValue(undefined);
       expect(safeValue).toEqual([]);
     });
 
     it('should handle empty string', () => {
-      const safeValue = ensureArray('');
+      const safeValue = normalizeFilterValue('');
       expect(safeValue).toEqual([]);
     });
 
     it('should handle zero', () => {
-      const safeValue = ensureArray(0);
+      const safeValue = normalizeFilterValue(0);
       expect(safeValue).toEqual([]);
     });
 
     it('should handle false', () => {
-      const safeValue = ensureArray(false);
+      const safeValue = normalizeFilterValue(false);
       expect(safeValue).toEqual([]);
     });
   });
@@ -52,19 +51,19 @@ describe('Filter Array Safety', () => {
   describe('Array Values', () => {
     it('should preserve array with single value', () => {
       const value = ['true'];
-      const safeValue = ensureArray(value);
+      const safeValue = normalizeFilterValue(value);
       expect(safeValue).toEqual(['true']);
     });
 
     it('should preserve array with multiple values', () => {
       const value = ['1', '2', '3'];
-      const safeValue = ensureArray(value);
+      const safeValue = normalizeFilterValue(value);
       expect(safeValue).toEqual(['1', '2', '3']);
     });
 
     it('should preserve empty array', () => {
       const value = [];
-      const safeValue = ensureArray(value);
+      const safeValue = normalizeFilterValue(value);
       expect(safeValue).toEqual([]);
     });
   });
@@ -72,25 +71,25 @@ describe('Filter Array Safety', () => {
   describe('URL Parameter Handling', () => {
     it('should handle incident=true from URL', () => {
       const filters = { incident: true };
-      const safeValue = ensureArray(filters.incident);
+      const safeValue = normalizeFilterValue(filters.incident);
       expect(safeValue).toEqual(['true']);
     });
 
     it('should handle has_playbook=false from URL', () => {
       const filters = { has_playbook: false };
-      const safeValue = ensureArray(filters.has_playbook);
+      const safeValue = normalizeFilterValue(filters.has_playbook);
       expect(safeValue).toEqual([]);
     });
 
     it('should handle category=2 from URL', () => {
       const filters = { category: 2 };
-      const safeValue = ensureArray(filters.category);
+      const safeValue = normalizeFilterValue(filters.category);
       expect(safeValue).toEqual(['2']);
     });
 
     it('should handle total_risk=4 from URL', () => {
       const filters = { total_risk: '4' };
-      const safeValue = ensureArray(filters.total_risk);
+      const safeValue = normalizeFilterValue(filters.total_risk);
       expect(safeValue).toEqual(['4']);
     });
   });

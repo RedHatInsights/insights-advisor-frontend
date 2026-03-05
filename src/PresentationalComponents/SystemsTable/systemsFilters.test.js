@@ -1,23 +1,22 @@
-describe('SystemsTable Filter Array Safety', () => {
-  const ensureArray = (value) =>
-    Array.isArray(value) ? value : value ? [String(value)] : [];
+import { normalizeFilterValue } from '../helper';
 
+describe('SystemsTable Filter Array Safety', () => {
   describe('Hits Filter', () => {
     it('should convert string to array', () => {
       const filters = { hits: 'yes' };
-      const value = ensureArray(filters.hits);
+      const value = normalizeFilterValue(filters.hits);
       expect(value).toEqual(['yes']);
     });
 
     it('should handle undefined', () => {
       const filters = {};
-      const value = ensureArray(filters.hits);
+      const value = normalizeFilterValue(filters.hits);
       expect(value).toEqual([]);
     });
 
     it('should preserve array', () => {
       const filters = { hits: ['yes', 'no'] };
-      const value = ensureArray(filters.hits);
+      const value = normalizeFilterValue(filters.hits);
       expect(value).toEqual(['yes', 'no']);
     });
 
@@ -35,25 +34,25 @@ describe('SystemsTable Filter Array Safety', () => {
   describe('Incident Filter', () => {
     it('should convert string to array', () => {
       const filters = { incident: 'true' };
-      const value = ensureArray(filters.incident);
+      const value = normalizeFilterValue(filters.incident);
       expect(value).toEqual(['true']);
     });
 
     it('should convert boolean to array', () => {
       const filters = { incident: true };
-      const value = ensureArray(filters.incident);
+      const value = normalizeFilterValue(filters.incident);
       expect(value).toEqual(['true']);
     });
 
     it('should handle undefined', () => {
       const filters = {};
-      const value = ensureArray(filters.incident);
+      const value = normalizeFilterValue(filters.incident);
       expect(value).toEqual([]);
     });
 
     it('should preserve array', () => {
       const filters = { incident: ['true', 'false'] };
-      const value = ensureArray(filters.incident);
+      const value = normalizeFilterValue(filters.incident);
       expect(value).toEqual(['true', 'false']);
     });
 
@@ -71,16 +70,16 @@ describe('SystemsTable Filter Array Safety', () => {
   describe('Multiple Filters', () => {
     it('should handle both hits and incident as strings', () => {
       const filters = { hits: 'yes', incident: 'true' };
-      const hitsValue = ensureArray(filters.hits);
-      const incidentValue = ensureArray(filters.incident);
+      const hitsValue = normalizeFilterValue(filters.hits);
+      const incidentValue = normalizeFilterValue(filters.incident);
       expect(hitsValue).toEqual(['yes']);
       expect(incidentValue).toEqual(['true']);
     });
 
     it('should handle mixed types', () => {
       const filters = { hits: ['yes'], incident: 'true' };
-      const hitsValue = ensureArray(filters.hits);
-      const incidentValue = ensureArray(filters.incident);
+      const hitsValue = normalizeFilterValue(filters.hits);
+      const incidentValue = normalizeFilterValue(filters.incident);
       expect(hitsValue).toEqual(['yes']);
       expect(incidentValue).toEqual(['true']);
     });
