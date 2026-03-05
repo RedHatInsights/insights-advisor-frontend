@@ -41,11 +41,14 @@ export const createAdvisorBaseQuery = ({
     const fullUrl = `${baseUrlToUse}${urlPath}${finalSearchString ? `?${finalSearchString}` : ''}`;
 
     try {
+      const isGetLikeMethod = ['get', 'delete', 'head', 'options'].includes(
+        argMethod.toLowerCase(),
+      );
       const result = await instance({
         url: fullUrl,
         method: argMethod,
-        data: data || argOptions,
-        params: params || argOptions,
+        data: data || (!isGetLikeMethod && argOptions) || undefined,
+        params: params || (isGetLikeMethod && argOptions) || undefined,
         headers: argHeaders,
         paramsSerializer: (params) =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),
