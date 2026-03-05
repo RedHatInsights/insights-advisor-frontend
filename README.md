@@ -41,24 +41,24 @@ Clone the required repositories:
 
 3. **Start services in separate terminals:**
 
-   Terminal 1 - insights-chrome:
+   **Terminal 1 - insights-chrome:**
    ```bash
    cd ~/RH/insights-chrome
    npm run dev
    ```
 
-   Terminal 2 - pdf-generator containers:
+   **Terminal 2 - pdf-generator containers:**
    ```bash
    cd ~/RH/pdf-generator
    cat <<EOF > .env
-MINIO_ACCESS_KEY="minioadmin"
-MINIO_SECRET_KEY="minioadmin"
-MAX_CONCURRENCY=2
-EOF
+   MINIO_ACCESS_KEY="minioadmin"
+   MINIO_SECRET_KEY="minioadmin"
+   MAX_CONCURRENCY=2
+   EOF
    podman-compose up
    ```
 
-   Terminal 3 - pdf-generator server:
+   **Terminal 3 - pdf-generator server:**
    ```bash
    cd ~/RH/pdf-generator
    PROXY_AGENT=http://squid.corp.redhat.com:3128/ \
@@ -67,7 +67,7 @@ EOF
    npm run start:server
    ```
 
-   Terminal 4 - advisor frontend:
+   **Terminal 4 - advisor frontend:**
    ```bash
    npm run static
    ```
