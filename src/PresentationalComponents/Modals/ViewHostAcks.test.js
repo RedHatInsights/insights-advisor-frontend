@@ -4,16 +4,22 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ViewHostAcks from './ViewHostAcks';
 import { useGetHostAcksQuery } from '../../Services/Acks';
-import { DeleteApi } from '../../Utilities/Api';
 import { ComponentWithContext } from '../../Utilities/TestingUtilities';
+
+const mockAxios = {
+  delete: jest.fn(),
+};
 
 jest.mock('../../Services/Acks', () => ({
   useGetHostAcksQuery: jest.fn(),
 }));
 
-jest.mock('../../Utilities/Api', () => ({
-  DeleteApi: jest.fn(),
-}));
+jest.mock(
+  '@redhat-cloud-services/frontend-components-utilities/interceptors',
+  () => ({
+    useAxiosWithPlatformInterceptors: () => mockAxios,
+  }),
+);
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -234,7 +240,7 @@ describe('ViewHostAcks', () => {
       refetch: mockRefetch,
     });
 
-    DeleteApi.mockResolvedValue({});
+    mockAxios.delete.mockResolvedValue({});
 
     render(
       <ComponentWithContext
@@ -254,7 +260,7 @@ describe('ViewHostAcks', () => {
     await user.click(enableButton);
 
     await waitFor(() => {
-      expect(DeleteApi).toHaveBeenCalled();
+      expect(mockAxios.delete).toHaveBeenCalled();
     });
     expect(mockRefetch).toHaveBeenCalled();
   });
@@ -270,7 +276,7 @@ describe('ViewHostAcks', () => {
       refetch: jest.fn(),
     });
 
-    DeleteApi.mockRejectedValue(mockError);
+    mockAxios.delete.mockRejectedValue(mockError);
 
     render(
       <ComponentWithContext
@@ -290,7 +296,7 @@ describe('ViewHostAcks', () => {
     await user.click(enableButton);
 
     await waitFor(() => {
-      expect(DeleteApi).toHaveBeenCalled();
+      expect(mockAxios.delete).toHaveBeenCalled();
     });
     expect(handleModalToggle).toHaveBeenCalledWith(false);
   });

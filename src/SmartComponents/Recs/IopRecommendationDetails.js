@@ -33,6 +33,7 @@ import DetailsTitle from './DetailsTitle.js';
 import { EnvironmentContext } from '../../App';
 import { useParams } from 'react-router-dom';
 import ConventionalSystems from '../HybridInventoryTabs/ConventionalSystems/RecommendationSystems';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 
 const IopRecommendationDetails = (props) => {
   const intl = useIntl();
@@ -40,6 +41,7 @@ const IopRecommendationDetails = (props) => {
   const envContext = useContext(EnvironmentContext);
   const ruleId = useParams().id || props.ruleId;
   const addNotification = (data) => dispatch(notification(data));
+  const axios = useAxiosWithPlatformInterceptors();
   const {
     data: rule = {},
     isFetching,
@@ -106,9 +108,10 @@ const IopRecommendationDetails = (props) => {
         setCountsLoading,
         '',
         envContext.BASE_URL,
+        axios,
       );
     }
-  }, [ruleId, envContext.BASE_URL, recAckIsFetching, isFetching]);
+  }, [ruleId, envContext.BASE_URL, recAckIsFetching, isFetching, axios]);
 
   return (
     <React.Fragment>
@@ -217,6 +220,7 @@ const IopRecommendationDetails = (props) => {
                           intl,
                           rule,
                           baseUrl: envContext.BASE_URL,
+                          axios,
                         })
                       }
                       ouiaId="bulkHost"
@@ -235,6 +239,7 @@ const IopRecommendationDetails = (props) => {
                           addNotification,
                           handleModalToggle,
                           envContext.BASE_URL,
+                          axios,
                         )
                       }
                       ouiaId="rule"

@@ -1,18 +1,16 @@
 {
-    "data": {
-      "data": {
-        "devices": [
-          { 
-            "DeviceUUID": "edge.id-1", 
-            "deviceName": "test-device-1",
-            "DeviceGroups": [{ "ID": "edge.group.id-1", "Name": "edge.group-1" }]
-          },
-          { 
-            "DeviceUUID": "edge.id-2", 
-            "deviceName": "test-device-2",
-            "DeviceGroups": [{ "ID": "edge.group.id-2", "Name": "edge.group-2" }] 
-          }
-        ]
+  "data": {
+    "devices": [
+      {
+        "DeviceUUID": "edge.id-1",
+        "deviceName": "test-device-1",
+        "DeviceGroups": [{ "ID": "edge.group.id-1", "Name": "edge.group-1" }]
+      },
+      {
+        "DeviceUUID": "edge.id-2",
+        "deviceName": "test-device-2",
+        "DeviceGroups": [{ "ID": "edge.group.id-2", "Name": "edge.group-2" }]
       }
-    }
+    ]
+  }
 }

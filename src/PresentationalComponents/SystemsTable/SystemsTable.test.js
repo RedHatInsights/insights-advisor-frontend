@@ -4,9 +4,10 @@ import { ComponentWithContext } from '../../Utilities/TestingUtilities';
 import SystemsTable from './SystemsTable';
 import { render, waitFor } from '@testing-library/react';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
-import { Get } from '../../Utilities/Api';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { NO_SYSTEMS_REASONS } from '../../AppConstants';
+
+const mockAxiosGet = jest.fn();
 
 jest.mock('@redhat-cloud-services/frontend-components/Inventory', () => ({
   __esModule: true,
@@ -37,10 +38,14 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn(() => ({ sysState: { page: 1, sort: '-last_seen' } })),
 }));
 
-jest.mock('../../Utilities/Api', () => ({
-  ...jest.requireActual('../../Utilities/Api'),
-  Get: jest.fn(),
-}));
+jest.mock(
+  '@redhat-cloud-services/frontend-components-utilities/interceptors',
+  () => ({
+    useAxiosWithPlatformInterceptors: () => ({
+      get: mockAxiosGet,
+    }),
+  }),
+);
 
 jest.mock('@redhat-cloud-services/frontend-components-notifications/', () => ({
   ...jest.requireActual(
@@ -86,7 +91,7 @@ describe('Systems', () => {
       const addNotification = jest.fn();
       useAddNotification.mockReturnValue(addNotification);
 
-      Get.mockRejectedValue({
+      mockAxiosGet.mockRejectedValue({
         response: {
           status: 400,
           data: { message: 'Bad request from API' },
@@ -125,7 +130,7 @@ describe('Systems', () => {
       const addNotification = jest.fn();
       useAddNotification.mockReturnValue(addNotification);
 
-      Get.mockRejectedValue({
+      mockAxiosGet.mockRejectedValue({
         response: {
           status: 400,
         },
@@ -152,7 +157,7 @@ describe('Systems', () => {
 
     it('rethrows non-400 errors from systems fetch', async () => {
       const error = new Error('Network unavailable');
-      Get.mockRejectedValue(error);
+      mockAxiosGet.mockRejectedValue(error);
 
       render(<ComponentWithContext Component={SystemsTable} />);
       const inventoryTableProps = InventoryTable.mock.calls[0][0];
@@ -175,7 +180,7 @@ describe('Systems', () => {
         },
         message: 'Server error',
       };
-      Get.mockRejectedValue(serverError);
+      mockAxiosGet.mockRejectedValue(serverError);
 
       render(<ComponentWithContext Component={SystemsTable} />);
       const inventoryTableProps = InventoryTable.mock.calls[0][0];
@@ -198,7 +203,7 @@ describe('Systems', () => {
         },
         message: 'Not found',
       };
-      Get.mockRejectedValue(notFoundError);
+      mockAxiosGet.mockRejectedValue(notFoundError);
 
       render(<ComponentWithContext Component={SystemsTable} />);
       const inventoryTableProps = InventoryTable.mock.calls[0][0];
