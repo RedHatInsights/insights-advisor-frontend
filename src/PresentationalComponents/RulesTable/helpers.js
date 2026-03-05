@@ -33,7 +33,7 @@ import { Link } from 'react-router-dom';
 import { Content } from '@patternfly/react-core';
 import RuleLabels from '../Labels/RuleLabels';
 import { BASE_URL } from '../../AppConstants';
-import { getCsrfTokenHeader } from '../helper';
+import { getCsrfTokenHeader, normalizeFilterValue } from '../helper';
 
 export const emptyRows = (filters, toggleRulesDisabled) => [
   {
@@ -235,11 +235,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.total_risk.urlParam, values),
-        value: Array.isArray(filters.total_risk)
-          ? filters.total_risk
-          : filters.total_risk
-            ? [String(filters.total_risk)]
-            : [],
+        value: normalizeFilterValue(filters.total_risk),
         items: FC.total_risk.values,
       },
     },
@@ -251,11 +247,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.res_risk.urlParam, values),
-        value: Array.isArray(filters.res_risk)
-          ? filters.res_risk
-          : filters.res_risk
-            ? [String(filters.res_risk)]
-            : [],
+        value: normalizeFilterValue(filters.res_risk),
         items: FC.res_risk.values,
       },
     },
@@ -267,11 +259,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.impact.urlParam, values),
-        value: Array.isArray(filters.impact)
-          ? filters.impact
-          : filters.impact
-            ? [String(filters.impact)]
-            : [],
+        value: normalizeFilterValue(filters.impact),
         items: FC.impact.values,
       },
     },
@@ -283,11 +271,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.likelihood.urlParam, values),
-        value: Array.isArray(filters.likelihood)
-          ? filters.likelihood
-          : filters.likelihood
-            ? [String(filters.likelihood)]
-            : [],
+        value: normalizeFilterValue(filters.likelihood),
         items: FC.likelihood.values,
       },
     },
@@ -299,11 +283,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.category.urlParam, values),
-        value: Array.isArray(filters.category)
-          ? filters.category
-          : filters.category
-            ? [String(filters.category)]
-            : [],
+        value: normalizeFilterValue(filters.category),
         items: FC.category.values,
       },
     },
@@ -315,11 +295,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.incident.urlParam, values),
-        value: Array.isArray(filters.incident)
-          ? filters.incident
-          : filters.incident
-            ? [String(filters.incident)]
-            : [],
+        value: normalizeFilterValue(filters.incident),
         items: FC.incident.values,
       },
     },
@@ -331,11 +307,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.has_playbook.urlParam, values),
-        value: Array.isArray(filters.has_playbook)
-          ? filters.has_playbook
-          : filters.has_playbook
-            ? [String(filters.has_playbook)]
-            : [],
+        value: normalizeFilterValue(filters.has_playbook),
         items: FC.has_playbook.values,
       },
     },
@@ -347,11 +319,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.reboot.urlParam, values),
-        value: Array.isArray(filters.reboot)
-          ? filters.reboot
-          : filters.reboot
-            ? [String(filters.reboot)]
-            : [],
+        value: normalizeFilterValue(filters.reboot),
         items: FC.reboot.values,
       },
     },

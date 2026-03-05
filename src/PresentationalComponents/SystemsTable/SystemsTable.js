@@ -28,7 +28,11 @@ import { useIntl } from 'react-intl';
 import { useLocation } from 'react-router-dom';
 import NoSystemsTable from './Components/NoSystemsTable';
 import { systemsTableColumns } from './SystemsTableAssets';
-import { createOptions, createSortParam } from '../helper';
+import {
+  createOptions,
+  createSortParam,
+  normalizeFilterValue,
+} from '../helper';
 import { createColumns } from './createColumns';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { EnvironmentContext } from '../../App';
@@ -82,11 +86,7 @@ const SystemsTable = () => {
       value: `checkbox-${SFC.hits.urlParam}`,
       filterValues: {
         onChange: (_e, values) => addFilterParam(SFC.hits.urlParam, values),
-        value: Array.isArray(filters.hits)
-          ? filters.hits
-          : filters.hits
-            ? [String(filters.hits)]
-            : [],
+        value: normalizeFilterValue(filters.hits),
         items: SFC.hits.values,
       },
     },
@@ -99,11 +99,7 @@ const SystemsTable = () => {
         onChange: (_e, values) => {
           addFilterParam(SFC.incident.urlParam, values);
         },
-        value: Array.isArray(filters.incident)
-          ? filters.incident
-          : filters.incident
-            ? [String(filters.incident)]
-            : [],
+        value: normalizeFilterValue(filters.incident),
         items: SFC.incident.values,
       },
     },
