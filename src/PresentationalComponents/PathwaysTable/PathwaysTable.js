@@ -37,6 +37,7 @@ import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { SkeletonTable } from '@patternfly/react-component-groups';
+import { normalizeFilterValue } from '../helper';
 
 const PathwaysTable = ({ isTabActive }) => {
   const intl = useIntl();
@@ -174,7 +175,7 @@ const PathwaysTable = ({ isTabActive }) => {
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.category.urlParam, values),
-        value: filters.category,
+        value: normalizeFilterValue(filters.category),
         items: FC.category.values,
       },
     },
@@ -186,7 +187,7 @@ const PathwaysTable = ({ isTabActive }) => {
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(PFC.has_incident.urlParam, values),
-        value: filters.has_incident,
+        value: normalizeFilterValue(filters.has_incident),
         items: PFC.has_incident.values,
       },
     },
@@ -198,7 +199,7 @@ const PathwaysTable = ({ isTabActive }) => {
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(PFC.reboot_required.urlParam, values),
-        value: filters.reboot_required,
+        value: normalizeFilterValue(filters.reboot_required),
         items: PFC.reboot_required.values,
       },
     },
