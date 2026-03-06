@@ -13,6 +13,7 @@ import {
   urlBuilder,
 } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
+import Qs from 'qs';
 
 import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
@@ -52,15 +53,15 @@ const SystemsTable = () => {
   const removeFilterParam = (param) => {
     const filter = { ...filters, offset: 0 };
     delete filter[param];
-    param === 'hits' && filter.hits === undefined && (filter.hits = ['yes']);
+    param === 'hits' && filter.hits === undefined && (filter.hits = ['all']);
     setFilters(filter);
   };
 
   const addFilterParam = (param, values) => {
-    // remove 'yes' from the hits filter if the user chooses any other filters (its always the first item)
+    // remove 'all' from the hits filter if the user chooses any other filters (its always the first item)
     param === 'hits' &&
       values.length > 1 &&
-      values.includes('yes') &&
+      values.includes('all') &&
       values.shift();
     const passValue =
       param === SFC.rhel_version.urlParam
@@ -104,7 +105,7 @@ const SystemsTable = () => {
   const buildFilterChips = () => {
     const localFilters = { ...filters };
     localFilters.hits &&
-      localFilters.hits.includes('yes') &&
+      localFilters.hits.includes('all') &&
       delete localFilters.hits;
     delete localFilters.sort;
     delete localFilters.offset;
@@ -277,10 +278,11 @@ const SystemsTable = () => {
 
           let fetchedSystems;
           try {
-            fetchedSystems = await axios.get(
-              envContext.SYSTEMS_FETCH_URL,
-              options,
-            );
+            fetchedSystems = await axios.get(envContext.SYSTEMS_FETCH_URL, {
+              params: options,
+              paramsSerializer: (params) =>
+                Qs.stringify(params, { arrayFormat: 'repeat' }),
+            });
             setFetchError(false);
           } catch (error) {
             if (error.response?.status === 400) {
