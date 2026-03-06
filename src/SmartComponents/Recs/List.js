@@ -2,7 +2,15 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
-import React, { Suspense, lazy, useContext, useEffect, useState } from 'react';
+import React, {
+  Suspense,
+  lazy,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useLocation } from 'react-router-dom';
 import useInsightsNavigate from '@redhat-cloud-services/frontend-components-utilities/useInsightsNavigate';
 
@@ -62,6 +70,14 @@ const List = () => {
       tab === PATHWAYS_TAB ? '/recommendations/pathways' : '/recommendations',
     );
   };
+
+  const overviewRefetchRef = useRef(null);
+  const handleOverviewRefetchReady = useCallback((refetchFn) => {
+    overviewRefetchRef.current = refetchFn;
+  }, []);
+  const handleRuleChange = useCallback(() => {
+    overviewRefetchRef.current?.();
+  }, []);
 
   return (
     <React.Fragment>
@@ -142,7 +158,10 @@ const List = () => {
       <section className="pf-v6-l-page__main-section pf-v6-c-page__main-section">
         <Stack hasGutter>
           <StackItem>
-            <OverviewDashbar changeTab={changeTab} />
+            <OverviewDashbar
+              changeTab={changeTab}
+              onRefetchReady={handleOverviewRefetchReady}
+            />
           </StackItem>
           <StackItem>
             {envContext.displayRecPathways ? (
@@ -159,7 +178,10 @@ const List = () => {
                     </TabTitleText>
                   }
                 >
-                  <RulesTable isTabActive={activeTab === RECOMMENDATIONS_TAB} />
+                  <RulesTable
+                    isTabActive={activeTab === RECOMMENDATIONS_TAB}
+                    onRuleChange={handleRuleChange}
+                  />
                 </Tab>
                 <Tab
                   eventKey={PATHWAYS_TAB}
@@ -186,7 +208,7 @@ const List = () => {
                 </Tab>
               </Tabs>
             ) : (
-              <RulesTable />
+              <RulesTable onRuleChange={handleRuleChange} />
             )}
           </StackItem>
         </Stack>

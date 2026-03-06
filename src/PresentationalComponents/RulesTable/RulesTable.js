@@ -4,7 +4,7 @@ import {
   Pagination,
   PaginationVariant,
 } from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import {
   Table,
@@ -56,7 +56,7 @@ import { SkeletonTable } from '@patternfly/react-component-groups';
 import { EnvironmentContext } from '../../App';
 import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 
-const RulesTable = ({ isTabActive, pathway }) => {
+const RulesTable = ({ isTabActive, pathway, onRuleChange }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
@@ -97,6 +97,11 @@ const RulesTable = ({ isTabActive, pathway }) => {
     ...options,
     customBasePath: envContext.BASE_URL,
   });
+
+  const afterRuleChange = useCallback(() => {
+    refetch();
+    onRuleChange?.();
+  }, [refetch, onRuleChange]);
 
   const debouncedSearchText = debounce(searchText, DEBOUNCE_DELAY);
   const results = rules?.meta?.count || 0;
@@ -151,7 +156,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
     rows,
     setSelectedRule,
     setDisableRuleOpen,
-    refetch,
+    afterRuleChange,
     addNotification,
     envContext.BASE_URL,
   );
@@ -253,7 +258,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
             setViewSystemsModalOpen(toggleModal)
           }
           isModalOpen={viewSystemsModalOpen}
-          afterFn={refetch}
+          afterFn={afterRuleChange}
           rule={viewSystemsModalRule}
         />
       )}
@@ -262,7 +267,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
           handleModalToggle={setDisableRuleOpen}
           isModalOpen={disableRuleOpen}
           rule={selectedRule}
-          afterFn={refetch}
+          afterFn={afterRuleChange}
         />
       )}
       <PrimaryToolbar
@@ -440,6 +445,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
 RulesTable.propTypes = {
   isTabActive: PropTypes.bool,
   pathway: PropTypes.string,
+  onRuleChange: PropTypes.func,
 };
 
 export default RulesTable;
