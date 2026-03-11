@@ -53,7 +53,7 @@ export const bulkHostActions = async ({
       params: { rule_id: rule.rule_id, limit: rule.hosts_acked_count },
     });
     const data = {
-      systems: hostAckResponse?.map((item) => item.system_uuid),
+      systems: hostAckResponse.data?.map((item) => item.system_uuid),
     };
 
     await axios.post(
