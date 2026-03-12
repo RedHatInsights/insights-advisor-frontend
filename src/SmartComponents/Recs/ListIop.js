@@ -1,5 +1,5 @@
 import './ListIop.scss';
-import React, { useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import {
   PageHeader,
   PageHeaderTitle,
@@ -31,6 +31,14 @@ const ListIop = () => {
   useEffect(() => {
     envContext.updateDocumentTitle('Recommendations - Advisor');
   }, [envContext]);
+
+  const overviewRefetchRef = useRef(null);
+  const handleOverviewRefetchReady = useCallback((refetchFn) => {
+    overviewRefetchRef.current = refetchFn;
+  }, []);
+  const handleRuleChange = useCallback(() => {
+    overviewRefetchRef.current?.();
+  }, []);
 
   return !envContext.isAllowedToViewRec ? (
     <MessageState
@@ -98,10 +106,13 @@ const ListIop = () => {
       <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
         <Stack hasGutter>
           <StackItem>
-            <IopOverviewDashbar changeTab={0} />
+            <IopOverviewDashbar
+              changeTab={0}
+              onRefetchReady={handleOverviewRefetchReady}
+            />
           </StackItem>
           <StackItem>
-            <RulesTable />
+            <RulesTable onRuleChange={handleRuleChange} />
           </StackItem>
         </Stack>
       </section>
