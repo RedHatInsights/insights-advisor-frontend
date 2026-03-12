@@ -35,6 +35,8 @@ cypress/videos
 coverage
 coverage/*
 coverage-*
+jest-coverage/*
+cypress-coverage/*
 
 # Sentry Config File
 .env.sentry-build-plugin
