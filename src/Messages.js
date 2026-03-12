@@ -207,21 +207,14 @@ export default defineMessages({
     description:
       'Recommendation table, no recommendations message for any disabled rules, body',
     defaultMessage:
-      "We haven't detected any issues with your connected systems.",
-  },
-  rulesTableNoRuleHitsDisabledRulesBodySecondLine: {
-    id: 'rulestable.norules.disabledrulesbodysecondline',
-    description:
-      'Recommendation table, no recommendations message for any disabled rules, body second line',
-    defaultMessage:
-      'None of your connected systems are affected by enabled recommendations, and you currently have no disabled recommendations.',
+      'No recommendations are disabled, or no recommendations are disabled that match the applied filter settings.',
   },
   rulesTableNoRuleHitsRedHatDisabledRulesBody: {
     id: 'rulestable.norules.redhatdisabledrulesbody',
     description:
       'Recommendation table, no recommendations message for any Red Hat disabled rules, body',
     defaultMessage:
-      'This recommendation was disabled proactively by Red Hat and has no results.',
+      'No recommendations have been disabled proactively by Red Hat, or no recommendations are disabled proactively by Red Hat that match the applied filter settings.',
   },
   rulesTableNoRuleHitsAddDisabledButton: {
     id: 'rulestable.norulehits.adddisabledbutton',
