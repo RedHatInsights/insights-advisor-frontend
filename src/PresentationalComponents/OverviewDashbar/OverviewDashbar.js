@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import propTypes from 'prop-types';
 
 import useApplyFilters from './Hooks/useApplyFilters/useApplyFilters';
@@ -24,11 +24,20 @@ import RuleLabels from '../Labels/RuleLabels';
 import { TagLabelWithTooltip } from '../Cards/OverviewDashbarCard/TagLabelWithTooltip';
 import { EnvironmentContext } from '../../App';
 
-const OverviewDashbar = ({ changeTab }) => {
+const OverviewDashbar = ({ changeTab, onRefetchReady }) => {
   const envContext = useContext(EnvironmentContext);
-  const { data } = useOverviewData(envContext);
+  const { data, refetch } = useOverviewData(envContext);
   const { pathways, incidents, critical, important, loaded, isError } = data;
   const mdSpan = envContext.displayRecPathways ? 3 : 4;
+
+  useEffect(() => {
+    if (onRefetchReady) {
+      onRefetchReady(refetch);
+    }
+    return () => {
+      onRefetchReady?.(undefined);
+    };
+  }, [onRefetchReady, refetch]);
 
   const { onClickFilterByName } = useApplyFilters(changeTab);
 
@@ -119,6 +128,7 @@ const OverviewDashbar = ({ changeTab }) => {
 
 OverviewDashbar.propTypes = {
   changeTab: propTypes.func,
+  onRefetchReady: propTypes.func,
 };
 
 export default OverviewDashbar;
