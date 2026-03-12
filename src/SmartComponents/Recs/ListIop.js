@@ -1,5 +1,5 @@
 import './ListIop.scss';
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   PageHeader,
   PageHeaderTitle,
@@ -7,6 +7,7 @@ import {
 
 import messages from '../../Messages';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
+import { useOverviewRefetchOnRuleChange } from '../../Utilities/Hooks';
 import {
   Stack,
   StackItem,
@@ -32,13 +33,8 @@ const ListIop = () => {
     envContext.updateDocumentTitle('Recommendations - Advisor');
   }, [envContext]);
 
-  const overviewRefetchRef = useRef(null);
-  const handleOverviewRefetchReady = useCallback((refetchFn) => {
-    overviewRefetchRef.current = refetchFn;
-  }, []);
-  const handleRuleChange = useCallback(() => {
-    overviewRefetchRef.current?.();
-  }, []);
+  const { handleOverviewRefetchReady, handleRuleChange } =
+    useOverviewRefetchOnRuleChange();
 
   return !envContext.isAllowedToViewRec ? (
     <MessageState

@@ -2,22 +2,16 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
-import React, {
-  Suspense,
-  lazy,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { Suspense, lazy, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import useInsightsNavigate from '@redhat-cloud-services/frontend-components-utilities/useInsightsNavigate';
+import { useIntl } from 'react-intl';
 
 import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
 import messages from '../../Messages';
 import OverviewDashbar from '../../PresentationalComponents/OverviewDashbar/OverviewDashbar';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
+import { useOverviewRefetchOnRuleChange } from '../../Utilities/Hooks';
 import {
   Tab,
   TabTitleText,
@@ -54,15 +48,14 @@ const List = () => {
   const { pathname } = useLocation();
   const navigate = useInsightsNavigate();
   const envContext = useContext(EnvironmentContext);
+  const intl = useIntl();
 
   useEffect(() => {
     envContext.updateDocumentTitle('Recommendations - Advisor');
   }, [envContext]);
 
   const [activeTab, setActiveTab] = useState(
-    pathname === '/insights/advisor/recommendations/pathways'
-      ? PATHWAYS_TAB
-      : RECOMMENDATIONS_TAB,
+    pathname.endsWith('/pathways') ? PATHWAYS_TAB : RECOMMENDATIONS_TAB,
   );
   const changeTab = (tab) => {
     setActiveTab(tab);
@@ -71,13 +64,8 @@ const List = () => {
     );
   };
 
-  const overviewRefetchRef = useRef(null);
-  const handleOverviewRefetchReady = useCallback((refetchFn) => {
-    overviewRefetchRef.current = refetchFn;
-  }, []);
-  const handleRuleChange = useCallback(() => {
-    overviewRefetchRef.current?.();
-  }, []);
+  const { handleOverviewRefetchReady, handleRuleChange } =
+    useOverviewRefetchOnRuleChange();
 
   return (
     <React.Fragment>
@@ -91,7 +79,7 @@ const List = () => {
             <PageHeaderTitle
               title={
                 <React.Fragment>
-                  {messages.recommendations.defaultMessage}
+                  {intl.formatMessage(messages.recommendations)}
                   <Popover
                     headerContent="About advisor recommendations"
                     bodyContent={
@@ -147,7 +135,7 @@ const List = () => {
             <FlexItem className="pf-v6-u-mt-xl">
               <Tooltip
                 trigger={!envContext.isExportEnabled ? 'mouseenter' : ''}
-                content={messages.permsAction.defaultMessage}
+                content={intl.formatMessage(messages.permsAction)}
               >
                 <DownloadExecReport isDisabled={!envContext.isExportEnabled} />
               </Tooltip>
@@ -174,7 +162,7 @@ const List = () => {
                   eventKey={RECOMMENDATIONS_TAB}
                   title={
                     <TabTitleText>
-                      {messages.recommendations.defaultMessage}
+                      {intl.formatMessage(messages.recommendations)}
                     </TabTitleText>
                   }
                 >
@@ -187,9 +175,9 @@ const List = () => {
                   eventKey={PATHWAYS_TAB}
                   title={
                     <TabTitleText>
-                      {messages.pathways.defaultMessage}
+                      {intl.formatMessage(messages.pathways)}
                       <QuestionTooltip
-                        text={messages.recommendedPathways.defaultMessage}
+                        text={intl.formatMessage(messages.recommendedPathways)}
                       />
                     </TabTitleText>
                   }

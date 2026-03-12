@@ -33,12 +33,7 @@ const OverviewDashbar = ({ changeTab, onRefetchReady }) => {
   const mdSpan = envContext.displayRecPathways ? 3 : 4;
 
   useEffect(() => {
-    if (onRefetchReady) {
-      onRefetchReady(refetch);
-    }
-    return () => {
-      onRefetchReady?.(undefined);
-    };
+    onRefetchReady?.(refetch);
   }, [onRefetchReady, refetch]);
 
   const { onClickFilterByName } = useApplyFilters(changeTab);
@@ -52,9 +47,9 @@ const OverviewDashbar = ({ changeTab, onRefetchReady }) => {
             isLoaded={loaded}
             title={
               <Title headingLevel="h6" size="md">
-                {messages.pathways.defaultMessage}
+                {intl.formatMessage(messages.pathways)}
                 <QuestionTooltip
-                  text={messages.recommendedPathways.defaultMessage}
+                  text={intl.formatMessage(messages.recommendedPathways)}
                 />
               </Title>
             }
@@ -72,8 +67,10 @@ const OverviewDashbar = ({ changeTab, onRefetchReady }) => {
           isLoaded={loaded}
           title={
             <Title headingLevel="h6" size="md">
-              {messages.incidents.defaultMessage}
-              <QuestionTooltip text={messages.incidentTooltip.defaultMessage} />
+              {intl.formatMessage(messages.incidents)}
+              <QuestionTooltip
+                text={intl.formatMessage(messages.incidentTooltip)}
+              />
             </Title>
           }
           badge={
@@ -123,8 +120,8 @@ const OverviewDashbar = ({ changeTab, onRefetchReady }) => {
   ) : (
     <MessageState
       icon={'none'}
-      title={messages.noOverviewAvailable.defaultMessage}
-      text={messages.overviewDashbarError.defaultMessage}
+      title={intl.formatMessage(messages.noOverviewAvailable)}
+      text={intl.formatMessage(messages.overviewDashbarError)}
     />
   );
 };

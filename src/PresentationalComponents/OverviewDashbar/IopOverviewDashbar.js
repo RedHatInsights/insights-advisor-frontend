@@ -28,12 +28,7 @@ const IopOverviewDashbar = ({ changeTab, onRefetchReady }) => {
   const mdSpan = envContext.displayRecPathways ? 3 : 4;
 
   useEffect(() => {
-    if (onRefetchReady) {
-      onRefetchReady(refetch);
-    }
-    return () => {
-      onRefetchReady?.(undefined);
-    };
+    onRefetchReady?.(refetch);
   }, [onRefetchReady, refetch]);
 
   const { onClickFilterByName } = useApplyFilters(changeTab);
