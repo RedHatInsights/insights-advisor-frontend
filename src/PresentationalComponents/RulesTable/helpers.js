@@ -70,9 +70,6 @@ export const messageMapping = () => {
           <Content component="p">
             <FormattedMessage id="rulestable.norules.disabledrulesbody" />
           </Content>
-          <Content component="p">
-            <FormattedMessage id="rulestable.norules.disabledrulesbodysecondline" />
-          </Content>
         </>
       ),
     },
