@@ -23,11 +23,7 @@ const EmptyState = ({ filters, toggleRulesDisabled }) => {
       text={message.body}
     >
       {ruleStatus === 'enabled' && (
-        <Button
-          variant="link"
-          style={{ paddingTop: 24 }}
-          onClick={() => toggleRulesDisabled('rhdisabled')}
-        >
+        <Button variant="link" onClick={() => toggleRulesDisabled('disabled')}>
           <FormattedMessage id="rulestable.norulehits.adddisabledbutton" />
         </Button>
       )}
