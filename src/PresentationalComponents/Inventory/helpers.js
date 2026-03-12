@@ -4,6 +4,7 @@ import LastSeenColumnHeader from '../../Utilities/LastSeenColumnHeader';
 import { fitContent } from '@patternfly/react-table';
 import { DateFormat } from '@redhat-cloud-services/frontend-components';
 import React from 'react';
+import Qs from 'qs';
 
 /*This functions purpose is to grab the currently set filters, and return all associated systems for it.*/
 export const paginatedRequestHelper = async ({
@@ -34,10 +35,16 @@ export const paginatedRequestHelper = async ({
   return pathway
     ? await axios.get(`${SYSTEMS_FETCH_URL}`, {
         params: { ...options, pathway: pathway.slug },
+        paramsSerializer: (params) =>
+          Qs.stringify(params, { arrayFormat: 'repeat' }),
       })
     : await axios.get(
         `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/systems_detail/`,
-        { params: options },
+        {
+          params: options,
+          paramsSerializer: (params) =>
+            Qs.stringify(params, { arrayFormat: 'repeat' }),
+        },
       );
 };
 
