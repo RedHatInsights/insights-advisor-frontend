@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import propTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 
@@ -25,12 +25,16 @@ import { TagLabelWithTooltip } from '../Cards/OverviewDashbarCard/TagLabelWithTo
 import { EnvironmentContext } from '../../App';
 import RuleLabels from '../Labels/RuleLabels';
 
-const OverviewDashbar = ({ changeTab }) => {
+const OverviewDashbar = ({ changeTab, onRefetchReady }) => {
   const intl = useIntl();
   const envContext = useContext(EnvironmentContext);
-  const { data } = useOverviewData(envContext);
+  const { data, refetch } = useOverviewData(envContext);
   const { pathways, incidents, critical, important, loaded, isError } = data;
   const mdSpan = envContext.displayRecPathways ? 3 : 4;
+
+  useEffect(() => {
+    onRefetchReady?.(refetch);
+  }, [onRefetchReady, refetch]);
 
   const { onClickFilterByName } = useApplyFilters(changeTab);
 
@@ -43,9 +47,9 @@ const OverviewDashbar = ({ changeTab }) => {
             isLoaded={loaded}
             title={
               <Title headingLevel="h6" size="md">
-                {messages.pathways.defaultMessage}
+                {intl.formatMessage(messages.pathways)}
                 <QuestionTooltip
-                  text={messages.recommendedPathways.defaultMessage}
+                  text={intl.formatMessage(messages.recommendedPathways)}
                 />
               </Title>
             }
@@ -63,8 +67,10 @@ const OverviewDashbar = ({ changeTab }) => {
           isLoaded={loaded}
           title={
             <Title headingLevel="h6" size="md">
-              {messages.incidents.defaultMessage}
-              <QuestionTooltip text={messages.incidentTooltip.defaultMessage} />
+              {intl.formatMessage(messages.incidents)}
+              <QuestionTooltip
+                text={intl.formatMessage(messages.incidentTooltip)}
+              />
             </Title>
           }
           badge={
@@ -114,14 +120,15 @@ const OverviewDashbar = ({ changeTab }) => {
   ) : (
     <MessageState
       icon={'none'}
-      title={messages.noOverviewAvailable.defaultMessage}
-      text={messages.overviewDashbarError.defaultMessage}
+      title={intl.formatMessage(messages.noOverviewAvailable)}
+      text={intl.formatMessage(messages.overviewDashbarError)}
     />
   );
 };
 
 OverviewDashbar.propTypes = {
   changeTab: propTypes.func,
+  onRefetchReady: propTypes.func,
 };
 
 export default OverviewDashbar;
