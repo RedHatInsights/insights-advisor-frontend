@@ -71,8 +71,7 @@ export const fetchData = async (createAsyncRequest, options) => {
   return { data: data[0], options };
 };
 
-const SystemsPdfBuild = ({ asyncData, additionalData }) => {
-  const isLightspeedEnabled = additionalData.isLightspeedEnabled;
+const SystemsPdfBuild = ({ asyncData }) => {
   const { data, options } = asyncData.data;
   const filters = {
     sort: '-last_seen',
@@ -89,7 +88,7 @@ const SystemsPdfBuild = ({ asyncData, additionalData }) => {
           color: t_global_text_color_status_danger_default.value,
         }}
       >
-        Red Hat {isLightspeedEnabled ? 'Lightspeed' : 'Insights'}
+        Red Hat Lightspeed
       </span>
       <br />
       <span
@@ -132,7 +131,6 @@ const SystemsPdfBuild = ({ asyncData, additionalData }) => {
 
 SystemsPdfBuild.propTypes = {
   asyncData: PropTypes.object,
-  additionalData: PropTypes.object,
 };
 
 export default SystemsPdfBuild;

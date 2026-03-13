@@ -45,15 +45,11 @@ const TestComponent = ({ envContext }) => {
                         rel="noreferrer"
                         target="_blank"
                         href={
-                          'https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html/' +
-                          'assessing_rhel_configuration_issues_using_the_red_hat_insights_advisor_service'
+                          'https://docs.redhat.com/en/documentation/red_hat_lightspeed/1-latest/html/assessing_rhel_configuration_issues_by_using_the_red_hat_lightspeed_advisor_service/index'
                         }
                       >
                         Assessing RHEL Configuration Issues Using the Red Hat
-                        {envContext.isLightspeedEnabled
-                          ? ' Lightspeed '
-                          : ' Insights '}
-                        Advisor Service
+                        Lightspeed Advisor Service
                         <Icon className="pf-v6-u-ml-xs">
                           <ExternalLinkAltIcon />
                         </Icon>
@@ -126,20 +122,6 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
 };
 
 describe('Recommendations table header', () => {
-  beforeEach(() => {
-    cy.intercept('GET', '/feature_flags*', {
-      statusCode: 200,
-      body: {
-        toggles: [
-          {
-            name: 'platform.lightspeed-rebrand',
-            enabled: true,
-          },
-        ],
-      },
-    }).as('getFeatureFlag');
-  });
-
   it('is rendered with default values', () => {
     mountComponent();
     cy.get('h1[data-ouia-component-type="RHI/Header"]').contains(
@@ -160,7 +142,7 @@ describe('Recommendations table header', () => {
     cy.get('div[class="pf-v6-c-popover__content"]')
       .find('a')
       .contains(
-        'Assessing RHEL Configuration Issues Using the Red Hat Insights Advisor Service',
+        'Assessing RHEL Configuration Issues Using the Red Hat Lightspeed Advisor Service',
       );
     cy.get('button[aria-label="Download Exec Report"]').click();
     cy.get('@requestPdfStub').should('have.been.called');
@@ -188,7 +170,7 @@ describe('Recommendations table header', () => {
     cy.get('div[class="pf-v6-c-popover__content"]')
       .find('a')
       .contains(
-        'Assessing RHEL Configuration Issues Using the Red Hat Insights Advisor Service',
+        'Assessing RHEL Configuration Issues Using the Red Hat Lightspeed Advisor Service',
       );
   });
 
@@ -214,7 +196,7 @@ describe('Recommendations table header', () => {
     cy.get('div[class="pf-v6-c-popover__content"]')
       .find('a')
       .contains(
-        'Assessing RHEL Configuration Issues Using the Red Hat Insights Advisor Service',
+        'Assessing RHEL Configuration Issues Using the Red Hat Lightspeed Advisor Service',
       );
   });
 });

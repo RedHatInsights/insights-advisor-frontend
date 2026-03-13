@@ -528,7 +528,6 @@ export const KESSEL_RELATIONS = {
 };
 
 export const IOP_ENVIRONMENT_CONTEXT = {
-  isLightspeedEnabled: false,
   isLoading: false,
   isExportEnabled: false,
   isDisableRecEnabled: false, // set later according to user permissions

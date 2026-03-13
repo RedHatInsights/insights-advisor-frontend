@@ -517,11 +517,7 @@ const BaseSystemAdvisor = ({
   return inventoryReportFetchStatus === 'fulfilled' &&
     entity?.insights_id === null ? (
     <NotConnected
-      titleText={
-        envContext.isLightspeedEnabled
-          ? intl.formatMessage(messages.notConnectedTitle)
-          : intl.formatMessage(messages.notConnectedTitleInsights)
-      }
+      titleText={intl.formatMessage(messages.notConnectedTitle)}
       bodyText={intl.formatMessage(messages.notConnectedBody)}
       buttonText={intl.formatMessage(messages.notConnectedButton)}
     />

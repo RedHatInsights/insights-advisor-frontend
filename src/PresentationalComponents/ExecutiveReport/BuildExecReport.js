@@ -57,8 +57,7 @@ export const fetchData = async (createAsyncRequest, options) => {
   return data;
 };
 
-const BuildExecReport = ({ asyncData, additionalData }) => {
-  const isLightspeedEnabled = additionalData.isLightspeedEnabled;
+const BuildExecReport = ({ asyncData }) => {
   const [statsReports, statsSystems, topActiveRec] = asyncData.data;
   const calcPercent = (value, total) =>
     Math.round(Number((value / total) * 100));
@@ -161,7 +160,7 @@ const BuildExecReport = ({ asyncData, additionalData }) => {
           color: t_global_text_color_status_danger_default.value,
         }}
       >
-        Red Hat {isLightspeedEnabled ? 'Lightspeed' : 'Insights'}
+        Red Hat Lightspeed
       </span>
       <br />
       <span
@@ -240,7 +239,6 @@ const BuildExecReport = ({ asyncData, additionalData }) => {
 
 BuildExecReport.propTypes = {
   asyncData: PropTypes.object,
-  additionalData: PropTypes.object,
 };
 
 export default BuildExecReport;

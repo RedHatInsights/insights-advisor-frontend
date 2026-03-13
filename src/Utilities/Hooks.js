@@ -65,7 +65,6 @@ export const useRbac = (requestedPerms, app = 'advisor') => {
 
 export const useHccEnvironmentContext = () => {
   const chrome = useChrome();
-  const isLightspeedEnabled = useFeatureFlag('platform.lightspeed-rebrand');
 
   const [[canExport, canDisableRec, canViewRecs], isRbacLoading] = useRbac([
     PERMISSIONS.export,
@@ -75,7 +74,6 @@ export const useHccEnvironmentContext = () => {
 
   return useMemo(
     () => ({
-      isLightspeedEnabled,
       isLoading: isRbacLoading,
       isExportEnabled: canExport,
       isDisableRecEnabled: canDisableRec,
@@ -108,7 +106,6 @@ export const useHccEnvironmentContext = () => {
       REMEDIATIONS_BASE_URL: '/api/remediations/v1',
     }),
     [
-      isLightspeedEnabled,
       isRbacLoading,
       canExport,
       canDisableRec,

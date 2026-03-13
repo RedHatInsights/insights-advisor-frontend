@@ -9,13 +9,11 @@ import { useIntl } from 'react-intl';
 import { Button } from '@patternfly/react-core';
 import { exportNotifications } from '../../AppConstants';
 import { EnvironmentContext } from '../../App';
-import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const DownloadExecReport = ({ isDisabled }) => {
   const intl = useIntl();
   const envContext = useContext(EnvironmentContext);
   const [loading, setLoading] = useState(false);
-  const isLightspeedEnabled = useFeatureFlag('platform.lightspeed-rebrand');
   const addNotification = useAddNotification();
   const dataFetch = async () => {
     setLoading(true);
@@ -34,9 +32,6 @@ const DownloadExecReport = ({ isDisabled }) => {
             limit: 3,
             sort: '-total_risk,-impacted_count',
             impacting: true,
-          },
-          additionalData: {
-            isLightspeedEnabled: isLightspeedEnabled,
           },
         },
       });
