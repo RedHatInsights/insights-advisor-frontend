@@ -898,6 +898,292 @@ describe('Conditional Filter', () => {
     // check chips are reset
     hasChip('Systems impacted', '1 or more');
   });
+
+  describe('URL string params safety', () => {
+    const mountComponentWithUrl = (urlParams) => {
+      let envContext = createTestEnvironmentContext();
+
+      // Set URL parameters in browser history so paramParser() can read them
+      cy.window().then((win) => {
+        win.history.pushState({}, '', `/recommendations?${urlParams}`);
+      });
+
+      cy.mount(
+        <EnvironmentContext.Provider value={envContext}>
+          <MemoryRouter
+            initialEntries={[`/recommendations?${urlParams}`]}
+            initialIndex={0}
+          >
+            <AccountStatContext.Provider
+              value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
+            >
+              <IntlProvider
+                locale={navigator.language.slice(0, 2)}
+                messages={messages}
+              >
+                <Provider store={initStore()}>
+                  <Routes>
+                    <Route
+                      key={'Recommendations'}
+                      path="*"
+                      element={<RulesTable isTabActive={true} />}
+                    />
+                  </Routes>
+                </Provider>
+              </IntlProvider>
+            </AccountStatContext.Provider>
+          </MemoryRouter>
+        </EnvironmentContext.Provider>,
+      );
+    };
+
+    it('loads with incident=true string param, verifies checkbox is selected when opening dropdown', () => {
+      const urlParams = 'impacting=true&rule_status=enabled&incident=true';
+
+      cy.intercept('GET', '**/rule/?*', {
+        statusCode: 201,
+        body: { ...fixtures },
+      }).as('call');
+
+      mountComponentWithUrl(urlParams);
+
+      // Wait for table to load
+      cy.get('table[data-ouia-component-id=rules-table]', {
+        timeout: 10000,
+      }).should('exist');
+      cy.get('[aria-label="Loading"]').should('not.exist');
+
+      // Open the Incidents filter dropdown
+      selectConditionalFilterOption('Incidents');
+      cy.get(CONDITIONAL_FILTER).contains('Filter by incidents').click();
+
+      // THE KEY TEST: Verify "Incident" checkbox is checked when URL has incident=true string param
+      // This is the bug we fixed: string URL params should be converted to arrays and preserve the value
+      // Before the fix, incident=true (string) would cause "value.includes is not a function" error
+      // or the checkbox wouldn't be selected because the value was lost
+      cy.get(MENU_ITEM)
+        .contains('Incident')
+        .parent()
+        .find('input[type="checkbox"]')
+        .should('be.checked');
+    });
+
+    it('loads with has_playbook=true string param, verifies checkbox is selected, unchecks it and sees table update', () => {
+      const urlParams = 'impacting=true&rule_status=enabled&has_playbook=true';
+
+      const filteredData = {
+        ...fixtures,
+        meta: { count: 8 },
+        data: fixtures.data.slice(0, 8),
+      };
+
+      const unfilteredData = {
+        ...fixtures,
+        meta: { count: 50 },
+        data: fixtures.data.slice(0, 20),
+      };
+
+      // Mock API: return filtered data when has_playbook=true, unfiltered otherwise
+      cy.intercept('GET', '**/rule/?*', (req) => {
+        if (req.url.includes('has_playbook=true')) {
+          req.reply({ statusCode: 201, body: filteredData });
+        } else {
+          req.reply({ statusCode: 201, body: unfilteredData });
+        }
+      }).as('call');
+
+      mountComponentWithUrl(urlParams);
+
+      cy.get('table[data-ouia-component-id=rules-table]', {
+        timeout: 10000,
+      }).should('exist');
+      cy.get('[aria-label="Loading"]').should('not.exist');
+
+      cy.get('.pf-v6-c-label-group').should('contain', 'Ansible');
+      cy.get('tbody tr').should('have.length', 16);
+
+      selectConditionalFilterOption('Remediation');
+      cy.get(CONDITIONAL_FILTER).contains('Filter by remediation').click();
+
+      // Verify checkbox is selected when loading with string URL param
+      cy.get(MENU_ITEM)
+        .contains('Ansible')
+        .parent()
+        .find('input[type="checkbox"]')
+        .should('be.checked');
+
+      cy.get(MENU_ITEM).contains('Ansible').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by remediation').click();
+
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+      cy.get('.pf-v6-c-label-group').should('not.contain', 'Ansible');
+      cy.get('tbody tr').should('have.length', 40);
+    });
+
+    it('loads with category=2 string param and verifies checkbox is selected', () => {
+      const urlParams = 'impacting=true&rule_status=enabled&category=2';
+
+      cy.intercept('GET', '**/rule/?*', {
+        statusCode: 201,
+        body: { ...fixtures },
+      }).as('call');
+
+      mountComponentWithUrl(urlParams);
+
+      cy.get('table[data-ouia-component-id=rules-table]', {
+        timeout: 10000,
+      }).should('exist');
+      cy.get('[aria-label="Loading"]').should('not.exist');
+
+      selectConditionalFilterOption('Category');
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+
+      // Verify checkbox is selected when loading with string URL param category=2
+      cy.get(MENU_ITEM)
+        .contains('Security')
+        .parent()
+        .find('input[type="checkbox"]')
+        .should('be.checked');
+    });
+
+    it('loads with total_risk=4 string param, verifies checkbox is selected, unchecks it and sees table update', () => {
+      const urlParams = 'impacting=true&rule_status=enabled&total_risk=4';
+
+      const filteredData = {
+        ...fixtures,
+        meta: { count: 12 },
+        data: fixtures.data.slice(0, 12).map((rule) => ({
+          ...rule,
+          total_risk: 4,
+        })),
+      };
+
+      const unfilteredData = {
+        ...fixtures,
+        meta: { count: 50 },
+        data: fixtures.data.slice(0, 20),
+      };
+
+      // Mock API: return filtered data when total_risk=4, unfiltered otherwise
+      cy.intercept('GET', '**/rule/?*', (req) => {
+        if (req.url.includes('total_risk=4')) {
+          req.reply({ statusCode: 201, body: filteredData });
+        } else {
+          req.reply({ statusCode: 201, body: unfilteredData });
+        }
+      }).as('call');
+
+      mountComponentWithUrl(urlParams);
+
+      cy.get('table[data-ouia-component-id=rules-table]', {
+        timeout: 10000,
+      }).should('exist');
+      cy.get('[aria-label="Loading"]').should('not.exist');
+
+      cy.get('.pf-v6-c-label-group').should('contain', 'Critical');
+      cy.get('tbody tr').should('have.length', 24);
+
+      selectConditionalFilterOption('Total risk');
+      cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
+
+      // Verify checkbox is selected when loading with string URL param
+      cy.get(MENU_ITEM)
+        .contains('Critical')
+        .parent()
+        .find('input[type="checkbox"]')
+        .should('be.checked');
+
+      cy.get(MENU_ITEM).contains('Critical').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
+
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+      cy.get('.pf-v6-c-label-group').should('not.contain', 'Critical');
+      cy.get('tbody tr').should('have.length', 40);
+    });
+
+    it('loads with res_risk=1 string param and opens Risk of change filter dropdown', () => {
+      const urlParams = 'impacting=true&rule_status=enabled&res_risk=1';
+      mountComponentWithUrl(urlParams);
+
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('table[data-ouia-component-id=rules-table]').should('exist');
+
+      selectConditionalFilterOption('Risk of change');
+      cy.get(CONDITIONAL_FILTER).should('exist');
+    });
+
+    it('loads with impact=3 string param and opens Impact filter dropdown', () => {
+      const urlParams = 'impacting=true&rule_status=enabled&impact=3';
+      mountComponentWithUrl(urlParams);
+
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('table[data-ouia-component-id=rules-table]').should('exist');
+
+      selectConditionalFilterOption('Impact');
+      cy.get(CONDITIONAL_FILTER).should('exist');
+    });
+
+    it('loads with likelihood=2 string param and opens Likelihood filter dropdown', () => {
+      const urlParams = 'impacting=true&rule_status=enabled&likelihood=2';
+      mountComponentWithUrl(urlParams);
+
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('table[data-ouia-component-id=rules-table]').should('exist');
+
+      selectConditionalFilterOption('Likelihood');
+      cy.get(CONDITIONAL_FILTER).should('exist');
+    });
+
+    it('loads with reboot=true string param and opens Reboot required filter dropdown', () => {
+      const urlParams = 'impacting=true&rule_status=enabled&reboot=true';
+      mountComponentWithUrl(urlParams);
+
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('table[data-ouia-component-id=rules-table]').should('exist');
+
+      selectConditionalFilterOption('Reboot required');
+      cy.get(CONDITIONAL_FILTER).should('exist');
+    });
+
+    it('loads with multiple string params from URL and displays table rows', () => {
+      const urlParams =
+        'impacting=true&rule_status=enabled&incident=true&has_playbook=true&category=security&total_risk=4';
+      mountComponentWithUrl(urlParams);
+
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('table[data-ouia-component-id=rules-table]').should('exist');
+
+      cy.get('tbody tr').should('have.length.greaterThan', 0);
+    });
+
+    it('loads with incident string param then applies additional Total risk filter', () => {
+      const urlParams = 'impacting=true&rule_status=enabled&incident=true';
+      mountComponentWithUrl(urlParams);
+
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+      selectConditionalFilterOption('Total risk');
+      cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
+      cy.get(MENU_ITEM).contains('Critical').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
+
+      hasChip('Total risk', 'Critical');
+      cy.location('search').should('include', 'total_risk=4');
+    });
+
+    it('loads with mixed string and array params from URL', () => {
+      const urlParams =
+        'impacting=true&rule_status=enabled&incident=true&total_risk=4&total_risk=3';
+      mountComponentWithUrl(urlParams);
+
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('table[data-ouia-component-id=rules-table]').should('exist');
+    });
+  });
 });
 
 describe('Tooltips', () => {

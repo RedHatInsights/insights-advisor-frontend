@@ -100,3 +100,16 @@ export const getCsrfTokenHeader = () => {
   const csrfToken = document?.querySelector('meta[name="csrf-token"]')?.content;
   return csrfToken ? { 'X-CSRF-Token': csrfToken } : {};
 };
+
+/**
+ * Normalizes filter values to arrays for checkbox filters.
+ * URL params come as strings/booleans but checkbox filters expect arrays.
+ * @param {*} value - Filter value from state (can be array, string, boolean, etc.)
+ * @returns {Array} Normalized array value
+ */
+export const normalizeFilterValue = (value) => {
+  if (Array.isArray(value)) {
+    return value;
+  }
+  return value ? [String(value)] : [];
+};
