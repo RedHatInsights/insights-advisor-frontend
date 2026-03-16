@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import {
@@ -140,4 +140,24 @@ export const useIopEnvironmentContext = () => {
     }),
     [canDisableRec, canViewRecs, isRbacLoading],
   );
+};
+
+/**
+ * Hook to coordinate overview dashboard refetching when rules change
+ * @returns {object} - { handleOverviewRefetchReady, handleRuleChange }
+ * - handleOverviewRefetchReady: callback to register the overview refetch function
+ * - handleRuleChange: callback to trigger overview refetch after a rule changes
+ */
+export const useOverviewRefetchOnRuleChange = () => {
+  const overviewRefetchRef = useRef(null);
+
+  const handleOverviewRefetchReady = useCallback((refetchFn) => {
+    overviewRefetchRef.current = refetchFn;
+  }, []);
+
+  const handleRuleChange = useCallback(() => {
+    overviewRefetchRef.current?.();
+  }, []);
+
+  return { handleOverviewRefetchReady, handleRuleChange };
 };
