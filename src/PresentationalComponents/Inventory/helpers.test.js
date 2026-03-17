@@ -9,6 +9,7 @@ import {
   impactedDateColumn,
 } from './helpers';
 import { createOptions, createSortParam } from '../helper';
+import Qs from 'qs';
 
 const mockAxiosGet = jest.fn();
 
@@ -66,6 +67,7 @@ describe('Inventory helpers', () => {
       expect(createOptions).toHaveBeenCalled();
       expect(mockAxiosGet).toHaveBeenCalledWith('/api/systems/', {
         params: { ...mockOptions, pathway: 'test-pathway' },
+        paramsSerializer: expect.any(Function),
       });
       expect(systemsData).toEqual(mockData);
     });
@@ -86,7 +88,10 @@ describe('Inventory helpers', () => {
 
       expect(mockAxiosGet).toHaveBeenCalledWith(
         '/api/rules/TEST_RULE_123/systems_detail/',
-        { params: mockOptions },
+        {
+          params: mockOptions,
+          paramsSerializer: expect.any(Function),
+        },
       );
       expect(systemsData).toEqual(mockData);
     });
@@ -106,8 +111,224 @@ describe('Inventory helpers', () => {
 
       expect(mockAxiosGet).toHaveBeenCalledWith(
         '/api/rules/TEST%20RULE%20WITH%20SPACES/systems_detail/',
-        { params: mockOptions },
+        {
+          params: mockOptions,
+          paramsSerializer: expect.any(Function),
+        },
       );
+    });
+
+    it('serializes array parameters with repeat format', async () => {
+      const pathway = { slug: 'test-pathway' };
+      const mockOptions = {
+        page: 1,
+        per_page: 20,
+        tags: ['tag1', 'tag2', 'tag3'],
+        incident: ['true', 'false'],
+      };
+
+      createOptions.mockReturnValue(mockOptions);
+      mockAxiosGet.mockResolvedValue({ data: [], meta: { count: 0 } });
+
+      await paginatedRequestHelper({
+        ...mockConfig,
+        pathway,
+      });
+
+      const call = mockAxiosGet.mock.calls[0];
+      const paramsSerializer = call[1].paramsSerializer;
+      const actualParams = call[1].params;
+      const serialized = paramsSerializer(actualParams);
+
+      expect(serialized).toBe(
+        Qs.stringify(
+          { ...mockOptions, pathway: 'test-pathway' },
+          { arrayFormat: 'repeat' },
+        ),
+      );
+    });
+
+    it('serializes array parameters for rule requests', async () => {
+      const rule = { rule_id: 'TEST_RULE' };
+      const mockOptions = {
+        page: 1,
+        per_page: 20,
+        incident: ['true', 'false'],
+        likelihood: ['1', '2', '3'],
+      };
+
+      createOptions.mockReturnValue(mockOptions);
+      mockAxiosGet.mockResolvedValue({ data: [], meta: { count: 0 } });
+
+      await paginatedRequestHelper({
+        ...mockConfig,
+        rule,
+        pathway: null,
+      });
+
+      const call = mockAxiosGet.mock.calls[0];
+      const paramsSerializer = call[1].paramsSerializer;
+      const actualParams = call[1].params;
+      const serialized = paramsSerializer(actualParams);
+
+      expect(serialized).toBe(
+        Qs.stringify(mockOptions, { arrayFormat: 'repeat' }),
+      );
+      expect(serialized).toContain('incident=true&incident=false');
+      expect(serialized).toContain('likelihood=1&likelihood=2&likelihood=3');
+    });
+
+    it('serializes mixed parameter types correctly', async () => {
+      const pathway = { slug: 'test-pathway' };
+      const mockOptions = {
+        page: 1,
+        per_page: 20,
+        name: 'system-name',
+        tags: ['tag1', 'tag2'],
+        incident: ['true'],
+        enabled: 'true',
+      };
+
+      createOptions.mockReturnValue(mockOptions);
+      mockAxiosGet.mockResolvedValue({ data: [], meta: { count: 0 } });
+
+      await paginatedRequestHelper({
+        ...mockConfig,
+        pathway,
+      });
+
+      const call = mockAxiosGet.mock.calls[0];
+      const paramsSerializer = call[1].paramsSerializer;
+      const actualParams = call[1].params;
+      const serialized = paramsSerializer(actualParams);
+
+      expect(serialized).toContain('tags=tag1&tags=tag2');
+      expect(serialized).toContain('incident=true');
+      expect(serialized).toContain('name=system-name');
+      expect(serialized).toContain('enabled=true');
+      expect(serialized).toContain('pathway=test-pathway');
+    });
+
+    it('handles empty arrays in paramsSerializer', async () => {
+      const pathway = { slug: 'test-pathway' };
+      const mockOptions = {
+        page: 1,
+        per_page: 20,
+        tags: [],
+        incident: [],
+      };
+
+      createOptions.mockReturnValue(mockOptions);
+      mockAxiosGet.mockResolvedValue({ data: [], meta: { count: 0 } });
+
+      await paginatedRequestHelper({
+        ...mockConfig,
+        pathway,
+      });
+
+      const call = mockAxiosGet.mock.calls[0];
+      const paramsSerializer = call[1].paramsSerializer;
+      const actualParams = call[1].params;
+      const serialized = paramsSerializer(actualParams);
+
+      expect(serialized).toBe(
+        Qs.stringify(
+          { ...mockOptions, pathway: 'test-pathway' },
+          { arrayFormat: 'repeat' },
+        ),
+      );
+      // Empty arrays should not appear in the serialized string
+      expect(serialized).not.toContain('tags=');
+      expect(serialized).not.toContain('incident=');
+    });
+
+    it('handles single-item arrays correctly', async () => {
+      const pathway = { slug: 'test-pathway' };
+      const mockOptions = {
+        page: 1,
+        per_page: 20,
+        impact: ['2'],
+      };
+
+      createOptions.mockReturnValue(mockOptions);
+      mockAxiosGet.mockResolvedValue({ data: [], meta: { count: 0 } });
+
+      await paginatedRequestHelper({
+        ...mockConfig,
+        pathway,
+      });
+
+      const call = mockAxiosGet.mock.calls[0];
+      const paramsSerializer = call[1].paramsSerializer;
+      const actualParams = call[1].params;
+      const serialized = paramsSerializer(actualParams);
+
+      expect(serialized).toContain('impact=2');
+      // Should use repeat format even for single items
+      expect(serialized).toBe(
+        Qs.stringify(
+          { ...mockOptions, pathway: 'test-pathway' },
+          { arrayFormat: 'repeat' },
+        ),
+      );
+    });
+
+    it('handles special characters in array values', async () => {
+      const rule = { rule_id: 'TEST_RULE' };
+      const mockOptions = {
+        page: 1,
+        per_page: 20,
+        tags: ['tag with spaces', 'tag/with/slashes', 'tag&with&ampersand'],
+      };
+
+      createOptions.mockReturnValue(mockOptions);
+      mockAxiosGet.mockResolvedValue({ data: [], meta: { count: 0 } });
+
+      await paginatedRequestHelper({
+        ...mockConfig,
+        rule,
+        pathway: null,
+      });
+
+      const call = mockAxiosGet.mock.calls[0];
+      const paramsSerializer = call[1].paramsSerializer;
+      const actualParams = call[1].params;
+      const serialized = paramsSerializer(actualParams);
+
+      // Special characters should be properly encoded
+      expect(serialized).toContain('tag%20with%20spaces');
+      expect(serialized).toContain('tag%2Fwith%2Fslashes');
+      expect(serialized).toContain('tag%26with%26ampersand');
+    });
+
+    it('paramsSerializer uses repeat format consistently', async () => {
+      const pathway = { slug: 'test-pathway' };
+      const mockOptions = {
+        page: 1,
+        per_page: 20,
+        category: ['1', '2', '3', '4'],
+      };
+
+      createOptions.mockReturnValue(mockOptions);
+      mockAxiosGet.mockResolvedValue({ data: [], meta: { count: 0 } });
+
+      await paginatedRequestHelper({
+        ...mockConfig,
+        pathway,
+      });
+
+      const call = mockAxiosGet.mock.calls[0];
+      const paramsSerializer = call[1].paramsSerializer;
+      const actualParams = call[1].params;
+      const serialized = paramsSerializer(actualParams);
+
+      // Verify it uses repeat format (category=1&category=2&category=3&category=4)
+      // not indices (category[0]=1&category[1]=2) or brackets (category[]=1&category[]=2)
+      expect(serialized).toContain(
+        'category=1&category=2&category=3&category=4',
+      );
+      expect(serialized).not.toContain('category[0]');
+      expect(serialized).not.toContain('category[]');
     });
   });
 

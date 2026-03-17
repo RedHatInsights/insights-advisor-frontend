@@ -45,6 +45,7 @@ const MOCKED_SYSTEMS_FETCH_URL = '/api/insights/v1/systems/';
 const testGetCallArguments = (expectedGetUrl, expectedOptions) => {
   expect(mockAxios.get).toHaveBeenCalledWith(expectedGetUrl, {
     params: expectedOptions,
+    paramsSerializer: expect.any(Function),
   });
 };
 
