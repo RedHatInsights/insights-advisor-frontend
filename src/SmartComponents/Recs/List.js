@@ -5,11 +5,13 @@ import {
 import React, { Suspense, lazy, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import useInsightsNavigate from '@redhat-cloud-services/frontend-components-utilities/useInsightsNavigate';
+import { useIntl } from 'react-intl';
 
 import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
 import messages from '../../Messages';
 import OverviewDashbar from '../../PresentationalComponents/OverviewDashbar/OverviewDashbar';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
+import { useOverviewRefetchOnRuleChange } from '../../Utilities/Hooks';
 import {
   Tab,
   TabTitleText,
@@ -46,15 +48,14 @@ const List = () => {
   const { pathname } = useLocation();
   const navigate = useInsightsNavigate();
   const envContext = useContext(EnvironmentContext);
+  const intl = useIntl();
 
   useEffect(() => {
     envContext.updateDocumentTitle('Recommendations - Advisor');
   }, [envContext]);
 
   const [activeTab, setActiveTab] = useState(
-    pathname === '/insights/advisor/recommendations/pathways'
-      ? PATHWAYS_TAB
-      : RECOMMENDATIONS_TAB,
+    pathname.endsWith('/pathways') ? PATHWAYS_TAB : RECOMMENDATIONS_TAB,
   );
   const changeTab = (tab) => {
     setActiveTab(tab);
@@ -62,6 +63,9 @@ const List = () => {
       tab === PATHWAYS_TAB ? '/recommendations/pathways' : '/recommendations',
     );
   };
+
+  const { handleOverviewRefetchReady, handleRuleChange } =
+    useOverviewRefetchOnRuleChange();
 
   return (
     <React.Fragment>
@@ -75,7 +79,7 @@ const List = () => {
             <PageHeaderTitle
               title={
                 <React.Fragment>
-                  {messages.recommendations.defaultMessage}
+                  {intl.formatMessage(messages.recommendations)}
                   <Popover
                     headerContent="About advisor recommendations"
                     bodyContent={
@@ -131,7 +135,7 @@ const List = () => {
             <FlexItem className="pf-v6-u-mt-xl">
               <Tooltip
                 trigger={!envContext.isExportEnabled ? 'mouseenter' : ''}
-                content={messages.permsAction.defaultMessage}
+                content={intl.formatMessage(messages.permsAction)}
               >
                 <DownloadExecReport isDisabled={!envContext.isExportEnabled} />
               </Tooltip>
@@ -142,7 +146,10 @@ const List = () => {
       <section className="pf-v6-l-page__main-section pf-v6-c-page__main-section">
         <Stack hasGutter>
           <StackItem>
-            <OverviewDashbar changeTab={changeTab} />
+            <OverviewDashbar
+              changeTab={changeTab}
+              onRefetchReady={handleOverviewRefetchReady}
+            />
           </StackItem>
           <StackItem>
             {envContext.displayRecPathways ? (
@@ -155,19 +162,22 @@ const List = () => {
                   eventKey={RECOMMENDATIONS_TAB}
                   title={
                     <TabTitleText>
-                      {messages.recommendations.defaultMessage}
+                      {intl.formatMessage(messages.recommendations)}
                     </TabTitleText>
                   }
                 >
-                  <RulesTable isTabActive={activeTab === RECOMMENDATIONS_TAB} />
+                  <RulesTable
+                    isTabActive={activeTab === RECOMMENDATIONS_TAB}
+                    onRuleChange={handleRuleChange}
+                  />
                 </Tab>
                 <Tab
                   eventKey={PATHWAYS_TAB}
                   title={
                     <TabTitleText>
-                      {messages.pathways.defaultMessage}
+                      {intl.formatMessage(messages.pathways)}
                       <QuestionTooltip
-                        text={messages.recommendedPathways.defaultMessage}
+                        text={intl.formatMessage(messages.recommendedPathways)}
                       />
                     </TabTitleText>
                   }
@@ -186,7 +196,7 @@ const List = () => {
                 </Tab>
               </Tabs>
             ) : (
-              <RulesTable />
+              <RulesTable onRuleChange={handleRuleChange} />
             )}
           </StackItem>
         </Stack>
