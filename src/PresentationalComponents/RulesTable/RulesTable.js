@@ -102,7 +102,7 @@ const RulesTable = ({ isTabActive, pathway }) => {
       urlBuilder(filters, selectedTags);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, selectedTags, workloads]);
+  }, [filters, selectedTags, workloads, filterBuilding]);
 
   const onSort = (_event, index, direction) => {
     const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;

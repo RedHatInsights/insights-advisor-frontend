@@ -35,7 +35,7 @@ import { getImpactingFilterChips } from '../Filters/impactingFilter';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 import { Link } from 'react-router-dom';
 import { BASE_URL } from '../../AppConstants';
-import { getCsrfTokenHeader } from '../helper';
+import { getCsrfTokenHeader, normalizeFilterValue } from '../helper';
 
 export const emptyRows = (filters, toggleRulesDisabled) => [
   {
@@ -238,7 +238,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.total_risk.urlParam, values),
-        value: filters.total_risk,
+        value: normalizeFilterValue(filters.total_risk),
         items: FC.total_risk.values,
       },
     },
@@ -250,7 +250,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.res_risk.urlParam, values),
-        value: filters.res_risk,
+        value: normalizeFilterValue(filters.res_risk),
         items: FC.res_risk.values,
       },
     },
@@ -262,7 +262,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.impact.urlParam, values),
-        value: filters.impact,
+        value: normalizeFilterValue(filters.impact),
         items: FC.impact.values,
       },
     },
@@ -274,7 +274,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.likelihood.urlParam, values),
-        value: filters.likelihood,
+        value: normalizeFilterValue(filters.likelihood),
         items: FC.likelihood.values,
       },
     },
@@ -286,7 +286,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.category.urlParam, values),
-        value: filters.category,
+        value: normalizeFilterValue(filters.category),
         items: FC.category.values,
       },
     },
@@ -298,7 +298,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.incident.urlParam, values),
-        value: filters.incident,
+        value: normalizeFilterValue(filters.incident),
         items: FC.incident.values,
       },
     },
@@ -310,7 +310,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.has_playbook.urlParam, values),
-        value: filters.has_playbook,
+        value: normalizeFilterValue(filters.has_playbook),
         items: FC.has_playbook.values,
       },
     },
@@ -322,7 +322,7 @@ export const filterConfigItems = (
       filterValues: {
         onChange: (_event, values) =>
           addFilterParam(FC.reboot.urlParam, values),
-        value: filters.reboot,
+        value: normalizeFilterValue(filters.reboot),
         items: FC.reboot.values,
       },
     },
@@ -607,6 +607,7 @@ export const getActiveFiltersConfig = (
         ...(filters.topic && { topic: filters.topic }),
         ...getDefaultImpactingFilter(hasEdgeDevice),
         rule_status: 'enabled',
+        sort: filters.sort,
         limit: filters.limit,
         offset: filters.offset,
         ...(filters.pathway && { pathway: filters.pathway }),

@@ -214,6 +214,135 @@ describe('Pathways table tests', () => {
       // check chips empty
       cy.get(CHIP_GROUP).should('have.length', 0);
     });
+
+    it('loads with has_incident=true URL param and checkbox is selected', () => {
+      const urlParams = 'has_incident=true';
+
+      cy.intercept('*', {
+        statusCode: 200,
+        body: { ...fixtures },
+      }).as('call');
+
+      cy.window().then((win) => {
+        win.history.pushState({}, '', `/pathways?${urlParams}`);
+      });
+
+      cy.mount(
+        <MemoryRouter
+          initialEntries={[`/pathways?${urlParams}`]}
+          initialIndex={0}
+        >
+          <IntlProvider locale={navigator.language.slice(0, 2)}>
+            <Provider store={initStore()}>
+              <Routes>
+                <Route
+                  key={'Recommendations Pathways'}
+                  path="*"
+                  element={<PathwaysTable isTabActive={1} />}
+                />
+              </Routes>
+            </Provider>
+          </IntlProvider>
+        </MemoryRouter>,
+      );
+
+      cy.get(ROOT, { timeout: 10000 }).should('exist');
+      cy.get('[aria-label="Loading"]').should('not.exist');
+
+      selectConditionalFilterOption('Incidents');
+      cy.get(CONDITIONAL_FILTER).contains('Filter by incidents').click();
+      cy.get(MENU_ITEM)
+        .contains('Incident')
+        .parent()
+        .find('input[type="checkbox"]')
+        .should('be.checked');
+    });
+
+    it('loads with category=2 URL param and checkbox is selected', () => {
+      const urlParams = 'category=2';
+
+      cy.intercept('*', {
+        statusCode: 200,
+        body: { ...fixtures },
+      }).as('call');
+
+      cy.window().then((win) => {
+        win.history.pushState({}, '', `/pathways?${urlParams}`);
+      });
+
+      cy.mount(
+        <MemoryRouter
+          initialEntries={[`/pathways?${urlParams}`]}
+          initialIndex={0}
+        >
+          <IntlProvider locale={navigator.language.slice(0, 2)}>
+            <Provider store={initStore()}>
+              <Routes>
+                <Route
+                  key={'Recommendations Pathways'}
+                  path="*"
+                  element={<PathwaysTable isTabActive={1} />}
+                />
+              </Routes>
+            </Provider>
+          </IntlProvider>
+        </MemoryRouter>,
+      );
+
+      cy.get(ROOT, { timeout: 10000 }).should('exist');
+      cy.get('[aria-label="Loading"]').should('not.exist');
+
+      selectConditionalFilterOption('Category');
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+      cy.get(MENU_ITEM)
+        .contains('Security')
+        .parent()
+        .find('input[type="checkbox"]')
+        .should('be.checked');
+    });
+
+    it('loads with reboot_required=true URL param and checkbox is selected', () => {
+      const urlParams = 'reboot_required=true';
+
+      cy.intercept('*', {
+        statusCode: 200,
+        body: { ...fixtures },
+      }).as('call');
+
+      cy.window().then((win) => {
+        win.history.pushState({}, '', `/pathways?${urlParams}`);
+      });
+
+      cy.mount(
+        <MemoryRouter
+          initialEntries={[`/pathways?${urlParams}`]}
+          initialIndex={0}
+        >
+          <IntlProvider locale={navigator.language.slice(0, 2)}>
+            <Provider store={initStore()}>
+              <Routes>
+                <Route
+                  key={'Recommendations Pathways'}
+                  path="*"
+                  element={<PathwaysTable isTabActive={1} />}
+                />
+              </Routes>
+            </Provider>
+          </IntlProvider>
+        </MemoryRouter>,
+      );
+
+      cy.get(ROOT, { timeout: 10000 }).should('exist');
+      cy.get('[aria-label="Loading"]').should('not.exist');
+
+      selectConditionalFilterOption('Reboot required');
+      cy.get(CONDITIONAL_FILTER).contains('Filter by reboot required').click();
+      cy.get(MENU_ITEM)
+        .contains('Required')
+        .parent()
+        .find('input[type="checkbox"]')
+        .should('be.checked');
+    });
   });
 
   describe('Tooltips', () => {
