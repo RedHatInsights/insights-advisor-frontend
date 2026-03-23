@@ -22,6 +22,7 @@ import { useLocation } from 'react-router-dom';
 import messages from '../../Messages';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
+import { normalizeFilterValue } from '../../PresentationalComponents/helper';
 
 export const getColumns = (intl) => [
   {
@@ -71,7 +72,7 @@ export const getFilters = (
     value: `checkbox-${FC.total_risk.urlParam}`,
     filterValues: {
       onChange: (_e, values) => onFilterChange(FC.total_risk.urlParam, values),
-      value: filters.total_risk,
+      value: normalizeFilterValue(filters.total_risk),
       items: FC.total_risk.values,
     },
   },
@@ -82,7 +83,7 @@ export const getFilters = (
     value: `checkbox-${FC.category.urlParam}`,
     filterValues: {
       onChange: (_e, values) => onFilterChange(FC.category.urlParam, values),
-      value: filters.category,
+      value: normalizeFilterValue(filters.category),
       items: FC.category.values,
     },
   },
@@ -94,7 +95,7 @@ export const getFilters = (
     filterValues: {
       onChange: (_e, values) =>
         onFilterChange(FC.has_playbook.urlParam, values),
-      value: filters.has_playbook,
+      value: normalizeFilterValue(filters.has_playbook),
       items: FC.has_playbook.values,
     },
   },
