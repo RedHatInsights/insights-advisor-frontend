@@ -34,6 +34,9 @@ const OverviewDashbar = ({ changeTab, onRefetchReady }) => {
 
   useEffect(() => {
     onRefetchReady?.(refetch);
+    return () => {
+      onRefetchReady?.(null);
+    };
   }, [onRefetchReady, refetch]);
 
   const { onClickFilterByName } = useApplyFilters(changeTab);
