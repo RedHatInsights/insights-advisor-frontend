@@ -70,7 +70,7 @@ describe('EmptyStates', () => {
       });
       expect(link).toHaveAttribute(
         'href',
-        'https://access.redhat.com/products/red-hat-insights#getstarted',
+        'https://access.redhat.com/products/red-hat-lightspeed#getstarted',
       );
       expect(link).toHaveAttribute('target', '_blank');
     });

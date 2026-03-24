@@ -55,7 +55,7 @@ export const InsightsNotEnabled = () => {
     >
       <Button
         component="a"
-        href="https://access.redhat.com/products/red-hat-insights#getstarted"
+        href="https://access.redhat.com/products/red-hat-lightspeed#getstarted"
         target="_blank"
         variant="primary"
       >
