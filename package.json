@@ -54,7 +54,9 @@
       "!src/**/__factories__/**",
       "!src/PresentationalComponents/Inventory/Inventory.js",
       "!src/PresentationalComponents/SystemsTable/SystemsTable.js",
-      "!src/PresentationalComponents/Cards/TotalRiskCard.js"
+      "!src/PresentationalComponents/Cards/TotalRiskCard.js",
+      "!src/PresentationalComponents/ExecutiveReport/BuildExecReport.js",
+      "!src/PresentationalComponents/Export/SystemsPdfBuild.js"
     ],
     "moduleNameMapper": {
       "\\.(css|scss)$": "identity-obj-proxy",

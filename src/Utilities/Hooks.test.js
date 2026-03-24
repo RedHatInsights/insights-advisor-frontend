@@ -143,7 +143,6 @@ describe('useHccEnvironmentContext', () => {
     });
 
     expect(result.current).toEqual({
-      isLightspeedEnabled: false,
       isLoading: false,
       isExportEnabled: false,
       isDisableRecEnabled: false,

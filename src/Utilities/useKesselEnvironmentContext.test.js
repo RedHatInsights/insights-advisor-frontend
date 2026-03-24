@@ -1,12 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { useKesselEnvironmentContext } from './useKesselEnvironmentContext';
-import { useFeatureFlag } from './Hooks';
 import { useKesselPermissions } from './usePermissionCheck';
-
-jest.mock('./Hooks', () => ({
-  ...jest.requireActual('./Hooks'),
-  useFeatureFlag: jest.fn(),
-}));
 
 jest.mock('./usePermissionCheck', () => ({
   useKesselPermissions: jest.fn(),
@@ -14,7 +8,6 @@ jest.mock('./usePermissionCheck', () => ({
 
 describe('useKesselEnvironmentContext', () => {
   beforeEach(() => {
-    useFeatureFlag.mockReturnValue(false);
     useKesselPermissions.mockReturnValue([true, true, true, false]);
   });
 
@@ -37,14 +30,6 @@ describe('useKesselEnvironmentContext', () => {
     const { result } = renderHook(() => useKesselEnvironmentContext());
 
     expect(result.current.isLoading).toBe(true);
-  });
-
-  it('should include feature flags', () => {
-    useFeatureFlag.mockReturnValue(true);
-
-    const { result } = renderHook(() => useKesselEnvironmentContext());
-
-    expect(result.current.isLightspeedEnabled).toBe(true);
   });
 
   it('should include chrome methods', () => {

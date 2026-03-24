@@ -1157,11 +1157,6 @@ export default defineMessages({
     defaultMessage:
       'This pathway is expected to improve <strong>{category}</strong> on <strong>{systems, plural, one {# system} other {# systems}}</strong> and resolve <strong>{incidents, plural, one {# incident} other {# incidents}}</strong>.',
   },
-  notConnectedTitleInsights: {
-    id: 'notConnectedTitleInsights',
-    description: 'Not Connected title text',
-    defaultMessage: 'This system is not yet connected to Insights',
-  },
   notConnectedTitle: {
     id: 'notConnectedTitle',
     description: 'Not Connected title text',

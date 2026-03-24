@@ -1,19 +1,16 @@
 import { useMemo } from 'react';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { BASE_URL } from '../AppConstants';
-import { useFeatureFlag } from './Hooks';
 import { useKesselPermissions } from './usePermissionCheck';
 
 export const useKesselEnvironmentContext = () => {
   const chrome = useChrome();
-  const isLightspeedEnabled = useFeatureFlag('platform.lightspeed-rebrand');
 
   const [canExport, canDisableRec, canViewRecs, isKesselLoading] =
     useKesselPermissions();
 
   return useMemo(
     () => ({
-      isLightspeedEnabled,
       isLoading: isKesselLoading,
       isExportEnabled: canExport,
       isDisableRecEnabled: canDisableRec,
@@ -46,7 +43,6 @@ export const useKesselEnvironmentContext = () => {
       REMEDIATIONS_BASE_URL: '/api/remediations/v1',
     }),
     [
-      isLightspeedEnabled,
       isKesselLoading,
       canExport,
       canDisableRec,

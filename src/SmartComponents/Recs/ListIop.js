@@ -70,10 +70,7 @@ const ListIop = () => {
                           }
                         >
                           Assessing RHEL Configuration Issues Using the Red Hat
-                          {envContext.isLightspeedEnabled
-                            ? 'Lightspeed'
-                            : 'Insights'}
-                          Advisor Service
+                          Lightspeed Advisor Service
                           <Icon className="pf-v5-u-ml-xs">
                             <ExternalLinkAltIcon />
                           </Icon>

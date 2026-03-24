@@ -13,7 +13,7 @@ const DownloadPlaybookButton = ({ isDisabled, rules, systems }) => {
   const intl = useIntl();
   const addNotification = useAddNotification();
   const envContext = useContext(EnvironmentContext);
-  const brandName = envContext.isLightspeedEnabled ? 'Lightspeed' : 'Insights';
+  const brandName = 'Lightspeed';
   const axios = useAxiosWithPlatformInterceptors();
 
   const download = async (payload) => {

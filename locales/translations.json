@@ -93,7 +93,6 @@
   "notConnectedBody": "Activate the Insights client for this system to get started.",
   "notConnectedButton": "Learn about the Insights client",
   "notConnectedTitle": "This system is not yet connected to Red Hat Lightspeed",
-  "notConnectedTitleInsights": "This system is not yet connected to Insights",
   "notRequired": "Not required",
   "numberRuleHits": "Recommendations",
   "oneOrMore": "1 or more",

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import ChartSpikeIcon from '@patternfly/react-icons/dist/esm/icons/chart-spike-icon';
 import CheckIcon from '@patternfly/react-icons/dist/esm/icons/check-icon';
 import TimesCircleIcon from '@patternfly/react-icons/dist/esm/icons/times-circle-icon';
@@ -10,7 +10,6 @@ import {
   StackItem,
 } from '@patternfly/react-core';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
-import { EnvironmentContext } from '../../App';
 import PropTypes from 'prop-types';
 
 export const NoMatchingRecommendations = () => (
@@ -34,14 +33,11 @@ export const NoRecommendations = () => (
 );
 
 export const InsightsNotEnabled = () => {
-  const envContext = useContext(EnvironmentContext);
-  const brand = envContext.isLightspeedEnabled ? ' Lightspeed ' : ' Insights ';
-
   return (
     <MessageState
       iconClass="chartSpikeIconColor"
       icon={ChartSpikeIcon}
-      title={`Get started with Red Hat ${brand}`}
+      title="Get started with Red Hat Lightspeed"
       text={
         <Bullseye>
           <Stack hasGutter>
@@ -50,7 +46,7 @@ export const InsightsNotEnabled = () => {
               <ClipboardCopy>yum install insights-client</ClipboardCopy>
             </StackItem>
             <StackItem>
-              2. Register the system to Red Hat {brand}.
+              2. Register the system to Red Hat Lightspeed.
               <ClipboardCopy>insights-client --register</ClipboardCopy>
             </StackItem>
           </Stack>
@@ -59,7 +55,7 @@ export const InsightsNotEnabled = () => {
     >
       <Button
         component="a"
-        href="https://access.redhat.com/products/red-hat-insights#getstarted"
+        href="https://access.redhat.com/products/red-hat-lightspeed#getstarted"
         target="_blank"
         variant="primary"
       >
@@ -70,9 +66,6 @@ export const InsightsNotEnabled = () => {
 };
 
 export const InventoryReportFetchFailed = ({ entity }) => {
-  const envContext = useContext(EnvironmentContext);
-  const brand = envContext.isLightspeedEnabled ? ' Lightspeed ' : ' Insights ';
-
   return (
     <Bullseye>
       <MessageState
@@ -81,7 +74,7 @@ export const InventoryReportFetchFailed = ({ entity }) => {
         text={
           entity
             ? `There was an error fetching recommendations for this entity. Refresh your page to try again.`
-            : `This entity can not be found or might no longer be registered to Red Hat ${brand}.`
+            : `This entity can not be found or might no longer be registered to Red Hat Lightspeed.`
         }
       />
     </Bullseye>

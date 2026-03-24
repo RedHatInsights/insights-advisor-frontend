@@ -101,11 +101,7 @@ const List = () => {
                               }
                             >
                               Assessing RHEL Configuration Issues Using the Red
-                              Hat
-                              {envContext.isLightspeedEnabled
-                                ? ' Lightspeed '
-                                : ' Insights '}
-                              Advisor Service
+                              Hat Lightspeed Advisor Service
                               <Icon className="pf-v6-u-ml-xs">
                                 <ExternalLinkAltIcon />
                               </Icon>

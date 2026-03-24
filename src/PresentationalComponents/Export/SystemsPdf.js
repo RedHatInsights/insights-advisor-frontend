@@ -37,9 +37,6 @@ const SystemsPdf = ({ filters }) => {
             options,
             selectedTags,
           },
-          additionalData: {
-            isLightspeedEnabled: envContext.isLightspeedEnabled,
-          },
         },
       });
 
