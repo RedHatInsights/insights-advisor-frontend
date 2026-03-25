@@ -14,13 +14,14 @@ export const paginationSerialiser = ({ perPage, page } = {}) => {
 /**
  * Converts TableToolsTable sort state to Advisor API format
  * @param {object} sortState - { index: number, direction: 'asc'|'desc' }
- * @param {object} sortIndices - Mapping of column index to API field name (e.g., { 0: 'description', 1: 'total_risk' })
+ * @param {array} columns - Table columns array with sortable property (e.g., { title: 'Name', sortable: 'description' })
  * @returns {string} - "-field_name" or "field_name"
  */
-export const sortSerialiser = ({ index, direction } = {}, sortIndices) => {
-  const field = sortIndices?.[index];
-  if (!field) return undefined;
-  return direction === 'desc' ? `-${field}` : field;
+export const sortSerialiser = ({ index, direction } = {}, columns) => {
+  return (
+    columns?.[index]?.sortable &&
+    `${direction === 'desc' ? '-' : ''}${columns[index].sortable}`
+  );
 };
 
 /**

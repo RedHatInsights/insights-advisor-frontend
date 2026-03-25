@@ -54,66 +54,76 @@ describe('paginationSerialiser', () => {
 });
 
 describe('sortSerialiser', () => {
-  const sortIndices = {
-    0: 'description',
-    1: 'total_risk',
-    2: 'publish_date',
-  };
+  const columns = [
+    { title: 'Description', sortable: 'description' },
+    { title: 'Total Risk', sortable: 'total_risk' },
+    { title: 'Publish Date', sortable: 'publish_date' },
+  ];
 
   it('handles ascending sort', () => {
-    expect(sortSerialiser({ index: 0, direction: 'asc' }, sortIndices)).toBe(
+    expect(sortSerialiser({ index: 0, direction: 'asc' }, columns)).toBe(
       'description',
     );
   });
 
   it('handles descending sort', () => {
-    expect(sortSerialiser({ index: 1, direction: 'desc' }, sortIndices)).toBe(
+    expect(sortSerialiser({ index: 1, direction: 'desc' }, columns)).toBe(
       '-total_risk',
     );
   });
 
   it('returns undefined for non-existent index', () => {
     expect(
-      sortSerialiser({ index: 99, direction: 'asc' }, sortIndices),
+      sortSerialiser({ index: 99, direction: 'asc' }, columns),
     ).toBeUndefined();
   });
 
   it('returns undefined for invalid index', () => {
     expect(
-      sortSerialiser({ index: 999, direction: 'asc' }, sortIndices),
+      sortSerialiser({ index: 999, direction: 'asc' }, columns),
     ).toBeUndefined();
   });
 
   it('returns undefined for negative index', () => {
     expect(
-      sortSerialiser({ index: -1, direction: 'asc' }, sortIndices),
+      sortSerialiser({ index: -1, direction: 'asc' }, columns),
     ).toBeUndefined();
   });
 
   it('returns undefined for undefined input', () => {
-    expect(sortSerialiser(undefined, sortIndices)).toBeUndefined();
+    expect(sortSerialiser(undefined, columns)).toBeUndefined();
   });
 
-  it('returns undefined for empty sortIndices', () => {
-    expect(sortSerialiser({ index: 0, direction: 'asc' }, {})).toBeUndefined();
+  it('returns undefined for empty columns', () => {
+    expect(sortSerialiser({ index: 0, direction: 'asc' }, [])).toBeUndefined();
   });
 
   it('handles ascending sort for second column', () => {
-    expect(sortSerialiser({ index: 1, direction: 'asc' }, sortIndices)).toBe(
+    expect(sortSerialiser({ index: 1, direction: 'asc' }, columns)).toBe(
       'total_risk',
     );
   });
 
   it('handles ascending sort for third column', () => {
-    expect(sortSerialiser({ index: 2, direction: 'asc' }, sortIndices)).toBe(
+    expect(sortSerialiser({ index: 2, direction: 'asc' }, columns)).toBe(
       'publish_date',
     );
   });
 
   it('handles descending sort for third column', () => {
-    expect(sortSerialiser({ index: 2, direction: 'desc' }, sortIndices)).toBe(
+    expect(sortSerialiser({ index: 2, direction: 'desc' }, columns)).toBe(
       '-publish_date',
     );
+  });
+
+  it('returns undefined for non-sortable column', () => {
+    const columnsWithNonSortable = [
+      { title: 'Description', sortable: 'description' },
+      { title: 'Actions' }, // No sortable property
+    ];
+    expect(
+      sortSerialiser({ index: 1, direction: 'asc' }, columnsWithNonSortable),
+    ).toBeUndefined();
   });
 });
 
