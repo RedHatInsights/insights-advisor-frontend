@@ -7,6 +7,7 @@ import {
 
 import messages from '../../Messages';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
+import { useOverviewRefetchOnRuleChange } from '../../Utilities/Hooks';
 import {
   Stack,
   StackItem,
@@ -33,6 +34,9 @@ const ListIop = () => {
   useEffect(() => {
     envContext.updateDocumentTitle('Recommendations - Advisor');
   }, [envContext]);
+
+  const { handleOverviewRefetchReady, handleRuleChange } =
+    useOverviewRefetchOnRuleChange();
 
   return !envContext.isAllowedToViewRec ? (
     <MessageState
@@ -100,10 +104,13 @@ const ListIop = () => {
       <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
         <Stack hasGutter>
           <StackItem>
-            <IopOverviewDashbar changeTab={0} />
+            <IopOverviewDashbar
+              changeTab={0}
+              onRefetchReady={handleOverviewRefetchReady}
+            />
           </StackItem>
           <StackItem>
-            <RulesTable />
+            <RulesTable onRuleChange={handleRuleChange} />
           </StackItem>
         </Stack>
       </section>
