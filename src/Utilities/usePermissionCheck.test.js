@@ -6,6 +6,7 @@ import {
 import * as Hooks from './Hooks';
 import { useSelfAccessCheck } from '@project-kessel/react-kessel-access-check';
 import * as useDefaultWorkspaceModule from './useDefaultWorkspace';
+import { useKesselWorkspaceIds } from './useKesselWorkspaceIds';
 
 jest.mock('./Hooks', () => ({
   useRbac: jest.fn(),
@@ -23,6 +24,8 @@ jest.mock('@project-kessel/react-kessel-access-check', () => ({
 jest.mock('./useDefaultWorkspace', () => ({
   useDefaultWorkspace: jest.fn(),
 }));
+
+jest.mock('./useKesselWorkspaceIds');
 
 describe('usePermissionCheck', () => {
   describe('useRbacV1Permissions', () => {
@@ -73,9 +76,19 @@ describe('usePermissionCheck', () => {
         isLoading: false,
         error: null,
       });
+      useKesselWorkspaceIds.mockReturnValue({
+        workspaceIds: ['workspace-123', 'workspace-456'],
+        isLoading: false,
+        error: null,
+      });
 
       useSelfAccessCheck.mockReturnValue({
-        data: [{ allowed: true }, { allowed: true }, { allowed: true }],
+        data: [
+          { relation: 'advisor_exports_view', allowed: true },
+          { relation: 'advisor_disable_recommendations_edit', allowed: true },
+          { relation: 'advisor_recommendation_results_view', allowed: false },
+          { relation: 'advisor_recommendation_results_view', allowed: true },
+        ],
         loading: false,
       });
 
@@ -92,7 +105,11 @@ describe('usePermissionCheck', () => {
       });
 
       useSelfAccessCheck.mockReturnValue({
-        data: [{ allowed: false }, { allowed: false }, { allowed: false }],
+        data: [
+          { relation: 'advisor_exports_view', allowed: false },
+          { relation: 'advisor_disable_recommendations_edit', allowed: false },
+          { relation: 'advisor_recommendation_results_view', allowed: false },
+        ],
         loading: false,
       });
 
@@ -109,7 +126,11 @@ describe('usePermissionCheck', () => {
       });
 
       useSelfAccessCheck.mockReturnValue({
-        data: [{ allowed: false }, { allowed: false }, { allowed: false }],
+        data: [
+          { relation: 'advisor_exports_view', allowed: false },
+          { relation: 'advisor_disable_recommendations_edit', allowed: false },
+          { relation: 'advisor_recommendation_results_view', allowed: false },
+        ],
         loading: true,
       });
 
@@ -158,9 +179,19 @@ describe('usePermissionCheck', () => {
         isLoading: false,
         error: null,
       });
+      useKesselWorkspaceIds.mockReturnValue({
+        workspaceIds: ['workspace-123', 'workspace-456'],
+        isLoading: false,
+        error: null,
+      });
 
       useSelfAccessCheck.mockReturnValue({
-        data: [{ allowed: true }, { allowed: false }, { allowed: true }],
+        data: [
+          { relation: 'advisor_exports_view', allowed: true },
+          { relation: 'advisor_disable_recommendations_edit', allowed: false },
+          { relation: 'advisor_recommendation_results_view', allowed: true },
+          { relation: 'advisor_recommendation_results_view', allowed: false },
+        ],
         loading: false,
       });
 
@@ -175,9 +206,19 @@ describe('usePermissionCheck', () => {
         isLoading: false,
         error: null,
       });
+      useKesselWorkspaceIds.mockReturnValue({
+        workspaceIds: ['workspace-123', 'workspace-456'],
+        isLoading: false,
+        error: null,
+      });
 
       useSelfAccessCheck.mockReturnValue({
-        data: [{ allowed: true }, { allowed: true }, { allowed: true }],
+        data: [
+          { relation: 'advisor_exports_view', allowed: true },
+          { relation: 'advisor_disable_recommendations_edit', allowed: true },
+          { relation: 'advisor_recommendation_results_view', allowed: true },
+          { relation: 'advisor_recommendation_results_view', allowed: false },
+        ],
         loading: false,
       });
 
@@ -199,6 +240,12 @@ describe('usePermissionCheck', () => {
           },
           {
             id: 'workspace-123',
+            type: 'workspace',
+            relation: 'advisor_recommendation_results_view',
+            reporter: { type: 'rbac' },
+          },
+          {
+            id: 'workspace-456',
             type: 'workspace',
             relation: 'advisor_recommendation_results_view',
             reporter: { type: 'rbac' },
