@@ -30,10 +30,7 @@ jest.mock('./useKesselWorkspaceIds');
 describe('usePermissionCheck', () => {
   describe('useRbacV1Permissions', () => {
     it('should return correct RBAC v1 permissions', () => {
-      Hooks.useRbac.mockReturnValue([
-        [true, false, true], // canExport, canDisableRec, canViewRecs
-        false, // isLoading
-      ]);
+      Hooks.useRbac.mockReturnValue([[true, false, true], false]);
 
       const { result } = renderHook(() => useRbacV1Permissions());
 
@@ -41,10 +38,7 @@ describe('usePermissionCheck', () => {
     });
 
     it('should handle loading state', () => {
-      Hooks.useRbac.mockReturnValue([
-        [false, false, false],
-        true, // isLoading
-      ]);
+      Hooks.useRbac.mockReturnValue([[false, false, false], true]);
 
       const { result } = renderHook(() => useRbacV1Permissions());
 
@@ -252,6 +246,266 @@ describe('usePermissionCheck', () => {
           },
         ],
       });
+    });
+
+    it('should deny all permissions when default workspace has error', () => {
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
+        workspaceId: null,
+        isLoading: false,
+        error: new Error('Failed to fetch workspace'),
+      });
+      useKesselWorkspaceIds.mockReturnValue({
+        workspaceIds: ['workspace-456'],
+        isLoading: false,
+        error: false,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [],
+        loading: false,
+      });
+
+      const { result } = renderHook(() => useKesselPermissions());
+
+      expect(result.current).toEqual([false, false, false, false]);
+    });
+
+    it('should deny all permissions when workspace IDs have error', () => {
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
+        workspaceId: 'workspace-123',
+        isLoading: false,
+        error: null,
+      });
+      useKesselWorkspaceIds.mockReturnValue({
+        workspaceIds: undefined,
+        isLoading: false,
+        error: true,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [],
+        loading: false,
+      });
+
+      const { result } = renderHook(() => useKesselPermissions());
+
+      expect(result.current).toEqual([false, false, false, false]);
+    });
+
+    it('should deny all permissions when workspace IDs list is empty', () => {
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
+        workspaceId: 'workspace-123',
+        isLoading: false,
+        error: null,
+      });
+      useKesselWorkspaceIds.mockReturnValue({
+        workspaceIds: [],
+        isLoading: false,
+        error: false,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [],
+        loading: false,
+      });
+
+      const { result } = renderHook(() => useKesselPermissions());
+
+      expect(result.current).toEqual([false, false, false, false]);
+    });
+
+    it('should show loading when workspace IDs are loading', () => {
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
+        workspaceId: 'workspace-123',
+        isLoading: false,
+        error: null,
+      });
+      useKesselWorkspaceIds.mockReturnValue({
+        workspaceIds: undefined,
+        isLoading: true,
+        error: false,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [],
+        loading: false,
+      });
+
+      const { result } = renderHook(() => useKesselPermissions());
+
+      expect(result.current).toEqual([false, false, false, true]);
+    });
+
+    it('should show loading when both workspaces are loading', () => {
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
+        workspaceId: null,
+        isLoading: true,
+        error: null,
+      });
+      useKesselWorkspaceIds.mockReturnValue({
+        workspaceIds: undefined,
+        isLoading: true,
+        error: false,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [],
+        loading: false,
+      });
+
+      const { result } = renderHook(() => useKesselPermissions());
+
+      expect(result.current).toEqual([false, false, false, true]);
+    });
+
+    it('should deny all permissions when useSelfAccessCheck returns error', () => {
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
+        workspaceId: 'workspace-123',
+        isLoading: false,
+        error: null,
+      });
+      useKesselWorkspaceIds.mockReturnValue({
+        workspaceIds: ['workspace-123'],
+        isLoading: false,
+        error: false,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [],
+        loading: false,
+        error: new Error('Kessel API error'),
+      });
+
+      const { result } = renderHook(() => useKesselPermissions());
+
+      expect(result.current).toEqual([false, false, false, false]);
+    });
+
+    it('should handle malformed data from useSelfAccessCheck', () => {
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
+        workspaceId: 'workspace-123',
+        isLoading: false,
+        error: null,
+      });
+      useKesselWorkspaceIds.mockReturnValue({
+        workspaceIds: ['workspace-123'],
+        isLoading: false,
+        error: false,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: null,
+        loading: false,
+      });
+
+      const { result } = renderHook(() => useKesselPermissions());
+
+      expect(result.current).toEqual([false, false, false, false]);
+    });
+
+    it('should handle empty data array from useSelfAccessCheck', () => {
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
+        workspaceId: 'workspace-123',
+        isLoading: false,
+        error: null,
+      });
+      useKesselWorkspaceIds.mockReturnValue({
+        workspaceIds: ['workspace-123'],
+        isLoading: false,
+        error: false,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [],
+        loading: false,
+      });
+
+      const { result } = renderHook(() => useKesselPermissions());
+
+      expect(result.current).toEqual([false, false, false, false]);
+    });
+
+    it('should handle data with missing relation fields', () => {
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
+        workspaceId: 'workspace-123',
+        isLoading: false,
+        error: null,
+      });
+      useKesselWorkspaceIds.mockReturnValue({
+        workspaceIds: ['workspace-123'],
+        isLoading: false,
+        error: false,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [
+          { allowed: true },
+          { relation: 'advisor_exports_view', allowed: true },
+          { relation: null, allowed: true },
+        ],
+        loading: false,
+      });
+
+      const { result } = renderHook(() => useKesselPermissions());
+
+      expect(result.current[0]).toBe(true);
+      expect(result.current[1]).toBe(false);
+      expect(result.current[2]).toBe(false);
+      expect(result.current[3]).toBe(false);
+    });
+
+    it('should correctly evaluate viewRecs when user has access to at least one workspace', () => {
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
+        workspaceId: 'workspace-123',
+        isLoading: false,
+        error: null,
+      });
+      useKesselWorkspaceIds.mockReturnValue({
+        workspaceIds: ['workspace-123', 'workspace-456', 'workspace-789'],
+        isLoading: false,
+        error: false,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [
+          { relation: 'advisor_exports_view', allowed: false },
+          { relation: 'advisor_disable_recommendations_edit', allowed: false },
+          { relation: 'advisor_recommendation_results_view', allowed: false },
+          { relation: 'advisor_recommendation_results_view', allowed: false },
+          { relation: 'advisor_recommendation_results_view', allowed: true },
+        ],
+        loading: false,
+      });
+
+      const { result } = renderHook(() => useKesselPermissions());
+
+      expect(result.current).toEqual([false, false, true, false]);
+    });
+
+    it('should handle single workspace in both default and IDs list', () => {
+      useDefaultWorkspaceModule.useDefaultWorkspace.mockReturnValue({
+        workspaceId: 'workspace-123',
+        isLoading: false,
+        error: null,
+      });
+      useKesselWorkspaceIds.mockReturnValue({
+        workspaceIds: ['workspace-123'],
+        isLoading: false,
+        error: false,
+      });
+
+      useSelfAccessCheck.mockReturnValue({
+        data: [
+          { relation: 'advisor_exports_view', allowed: true },
+          { relation: 'advisor_disable_recommendations_edit', allowed: true },
+          { relation: 'advisor_recommendation_results_view', allowed: true },
+        ],
+        loading: false,
+      });
+
+      const { result } = renderHook(() => useKesselPermissions());
+
+      expect(result.current).toEqual([true, true, true, false]);
     });
   });
 });
