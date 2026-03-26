@@ -3,6 +3,7 @@ on:
   push:
     branches: ['master']
   pull_request:
+    types: [opened, edited, synchronize, reopened]
     branches: ['master']
 jobs:
   test:
@@ -23,6 +24,9 @@ jobs:
       - name: Validate PR commits with commitlint
         if: github.event_name == 'pull_request'
         run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+      - name: Validate PR title
+        if: github.event_name == 'pull_request'
+        run: echo "${{ github.event.pull_request.title }}" | npx commitlint
       - run: npm run ci:verify
       - name: Upload code coverage
         uses: codecov/codecov-action@v5.3.1
