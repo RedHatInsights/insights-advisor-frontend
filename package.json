@@ -72,7 +72,7 @@
       "<rootDir>/.+fixtures.+"
     ],
     "transformIgnorePatterns": [
-      "/node_modules/(?!@redhat-cloud-services)"
+      "/node_modules/(?!(@redhat-cloud-services|bastilian-tabletools|p-all|p-map|aggregate-error|indent-string|clean-stack))"
     ],
     "setupFiles": [
       "<rootDir>/config/setupTests.js"
@@ -103,6 +103,7 @@
     "@typescript-eslint/parser": "^8.34.0",
     "@unleash/proxy-client-react": "^4.2.4",
     "babel-plugin-transform-inline-environment-variables": "^0.4.4",
+    "bastilian-tabletools": "^2.18.1",
     "package-lock-only": "^0.0.4",
     "react": "^18.3.1",
     "react-content-loader": "6.2.0",
