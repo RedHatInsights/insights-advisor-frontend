@@ -7,8 +7,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AccountStatContext } from '../../ZeroStateWrapper';
 import { EnvironmentContext } from '../../App';
 import fixtures from '../../../cypress/fixtures/recommendations.json';
-import { itExportsDataToFile } from '../../../cypress/utils/table';
-import { hasChip } from '@redhat-cloud-services/frontend-components-utilities';
+import { hasChip, itExportsDataToFile } from '../../../cypress/utils/table';
 import { createTestEnvironmentContext } from '../../../cypress/support/globals';
 import messages from '../../../locales/translations.json';
 

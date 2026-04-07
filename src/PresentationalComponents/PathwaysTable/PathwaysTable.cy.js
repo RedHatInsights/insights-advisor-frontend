@@ -7,10 +7,12 @@ import PathwaysTable from './PathwaysTable';
 import fixtures from '../../../cypress/fixtures/pathways.json';
 import { pathwaysTableColumns } from '../../../cypress/support/globals';
 import _ from 'lodash';
-import { selectConditionalFilterOption } from '../../../cypress/utils/table';
-
 import {
   hasChip,
+  selectConditionalFilterOption,
+} from '../../../cypress/utils/table';
+
+import {
   CONDITIONAL_FILTER,
   MENU_ITEM,
 } from '@redhat-cloud-services/frontend-components-utilities';
@@ -198,8 +200,7 @@ describe('Pathways table tests', () => {
       // reset
       cy.get('button').contains('Reset filters').click();
 
-      // check chips empty - use PF6 ChipGroup selector to avoid category labels
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should('not.exist');
+      cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('not.exist');
     });
 
     it(`Category filter box correctly updates chips.`, () => {
@@ -220,8 +221,7 @@ describe('Pathways table tests', () => {
       // reset
       cy.get('button').contains('Reset filters').click();
 
-      // check chips empty - use PF6 ChipGroup selector to avoid category labels
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should('not.exist');
+      cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('not.exist');
     });
 
     it(`Incidents filter box correctly updates chips.`, () => {
@@ -240,8 +240,7 @@ describe('Pathways table tests', () => {
       // reset
       cy.get('button').contains('Reset filters').click();
 
-      // check chips empty - use PF6 ChipGroup selector to avoid category labels
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should('not.exist');
+      cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('not.exist');
     });
 
     it(`Reboot required filter box correctly updates chips.`, () => {
@@ -260,8 +259,7 @@ describe('Pathways table tests', () => {
       // reset
       cy.get('button').contains('Reset filters').click();
 
-      // check chips empty - use PF6 ChipGroup selector to avoid category labels
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should('not.exist');
+      cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('not.exist');
     });
   });
 

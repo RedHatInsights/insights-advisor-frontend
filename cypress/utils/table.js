@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {
-  CHIP,
+  CHIP_GROUP,
   CONDITIONAL_FILTER_TOGGLE,
   PT_CONDITIONAL_FILTER_LIST,
 } from '@redhat-cloud-services/frontend-components-utilities';
@@ -171,16 +171,25 @@ const itExportsDataToFile = (jsonData, filenamePrefix) => {
 };
 
 const removeAllFilterChipsPf6 = () => {
-  cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-    .find(CHIP)
+  cy.get('.ins-c-chip-filters .pf-v6-c-label-group')
+    .find('.pf-v6-c-label')
     .find('button')
     .each(() => {
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .find(CHIP)
+      cy.get('.ins-c-chip-filters .pf-v6-c-label-group')
+        .find('.pf-v6-c-label')
         .find('button')
         .eq(0)
         .click();
     });
+};
+
+/**
+ * Custom hasChip implementation for PatternFly v6
+ * The FilterChips component renders Label components without OUIA attributes,
+ * so we need to use PF6 class selectors instead of data-ouia-component-type
+ */
+const hasChip = (name, value) => {
+  cy.contains(CHIP_GROUP, name).parent().contains('.pf-v6-c-label', value);
 };
 
 export {
@@ -191,4 +200,5 @@ export {
   selectConditionalFilterOption,
   itExportsDataToFile,
   removeAllFilterChipsPf6,
+  hasChip,
 };

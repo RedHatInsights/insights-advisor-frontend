@@ -339,9 +339,7 @@ describe('List Component Integration', () => {
         .find('input')
         .type('kernel{enter}');
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('exist');
     });
 
     it('can clear all filters', () => {
@@ -351,9 +349,7 @@ describe('List Component Integration', () => {
 
       cy.get('button').contains('Reset filters').click();
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('Critical')
-        .should('not.exist');
+      cy.get('.pf-v6-c-label-group').contains('Critical').should('not.exist');
     });
   });
 
@@ -379,9 +375,7 @@ describe('List Component Integration', () => {
 
       cy.wait('@getRecommendations');
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('exist');
     });
 
     it('loads pathways tab when URL has pathways route', () => {
@@ -403,18 +397,14 @@ describe('List Component Integration', () => {
 
       cy.wait('@getRecommendations');
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('1 or more')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('1 or more').should('exist');
 
       cy.contains('[role="tab"]', 'Pathways').click();
       cy.wait('@getPathways');
 
       cy.contains('[role="tab"]', 'Recommendations').click();
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('1 or more')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('1 or more').should('exist');
     });
   });
 
@@ -505,24 +495,18 @@ describe('List Component Integration', () => {
 
       cy.wait('@getRecommendations');
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('exist');
 
       cy.get('button').contains('Reset filters').click();
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('not.exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('not.exist');
 
       cy.contains('[role="tab"]', 'Pathways').click();
       cy.wait('@getPathways');
 
       cy.contains('[role="tab"]', 'Recommendations').click();
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('not.exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('not.exist');
     });
 
     it('User applies name filter in recommendations, switches to pathways, applies category filter, returns', () => {
@@ -534,9 +518,7 @@ describe('List Component Integration', () => {
         .find('input')
         .type('kernel{enter}');
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('exist');
 
       cy.contains('[role="tab"]', 'Pathways').click();
       cy.wait('@getPathways');
@@ -545,9 +527,7 @@ describe('List Component Integration', () => {
 
       cy.contains('[role="tab"]', 'Recommendations').click();
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('exist');
     });
 
     it('User sorts recommendations, switches to pathways, sorts pathways, returns to check sort persists', () => {
@@ -624,9 +604,7 @@ describe('List Component Integration', () => {
 
       cy.wait('@getRecommendations');
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('exist');
 
       cy.get('#overview-dashbar').within(() => {
         cy.contains('Incidents').closest('[data-ouia-component-type]').click();
@@ -640,9 +618,7 @@ describe('List Component Integration', () => {
 
       cy.get('button').contains('Reset filters').click();
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('not.exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('not.exist');
     });
 
     it('User switches between tabs multiple times and overview dashboard remains visible', () => {
@@ -676,12 +652,8 @@ describe('List Component Integration', () => {
 
       cy.wait('@getRecommendations');
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('exist');
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('1 or more')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('exist');
+      cy.get('.pf-v6-c-label-group').contains('1 or more').should('exist');
 
       cy.contains('[role="tab"]', 'Pathways').click();
       cy.wait('@getPathways');
@@ -690,9 +662,7 @@ describe('List Component Integration', () => {
 
       cy.get('button').contains('Reset filters').click();
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('not.exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('not.exist');
     });
 
     it('User interacts with overview, filters, tabs, and verifies consistent behavior', () => {
@@ -710,9 +680,7 @@ describe('List Component Integration', () => {
         .find('input')
         .type('kernel{enter}');
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('exist');
 
       cy.contains('[role="tab"]', 'Pathways').click();
       cy.wait('@getPathways');
@@ -724,9 +692,7 @@ describe('List Component Integration', () => {
 
       cy.contains('[role="tab"]', 'Recommendations').click();
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('exist');
     });
 
     it('User loads pathways with URL filter, switches to recommendations, applies different filter', () => {
@@ -747,17 +713,13 @@ describe('List Component Integration', () => {
         .find('input')
         .type('kernel{enter}');
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('exist');
 
       cy.contains('[role="tab"]', 'Pathways').click();
 
       cy.contains('[role="tab"]', 'Recommendations').click();
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('exist');
     });
 
     it('User experiences full workflow: load with filters, modify filters, switch tabs, reset, navigate back', () => {
@@ -770,9 +732,7 @@ describe('List Component Integration', () => {
         'aria-selected',
         'true',
       );
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('exist');
 
       cy.get('[aria-label="rules-table"]').within(() => {
         cy.get('th').contains('Name').click();
@@ -804,9 +764,7 @@ describe('List Component Integration', () => {
 
       cy.get('[aria-label="rules-table"]').should('be.visible');
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('exist');
 
       cy.get('[aria-label="rules-table"]').within(() => {
         cy.get('th')
@@ -817,9 +775,7 @@ describe('List Component Integration', () => {
 
       cy.get('button').contains('Reset filters').click();
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('kernel')
-        .should('not.exist');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('not.exist');
     });
 
     it('User verifies page header and overview persist across all navigation', () => {
@@ -851,9 +807,7 @@ describe('List Component Integration', () => {
       cy.get('[data-ouia-component-type="RHI/Header"]').should('exist');
       cy.get('#overview-dashbar').should('exist');
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('test')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('test').should('exist');
     });
 
     it('User performs rapid tab switching and verifies stability', () => {
@@ -898,36 +852,28 @@ describe('List Component Integration', () => {
 
       cy.wait('@getRecommendations');
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('1 or more')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('1 or more').should('exist');
 
       cy.get('[data-ouia-component-id="ConditionalFilter"]')
         .find('input')
         .type('test{enter}');
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('test')
-        .should('exist');
+      cy.get('.pf-v6-c-label-group').contains('test').should('exist');
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
+      cy.get('.pf-v6-c-label-group')
         .contains('test')
         .closest('.pf-v6-c-label')
         .find('button')
         .click();
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('test')
-        .should('not.exist');
+      cy.get('.pf-v6-c-label-group').contains('test').should('not.exist');
 
       cy.contains('[role="tab"]', 'Pathways').click();
       cy.wait('@getPathways');
 
       cy.contains('[role="tab"]', 'Recommendations').click();
 
-      cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-        .contains('test')
-        .should('not.exist');
+      cy.get('.pf-v6-c-label-group').contains('test').should('not.exist');
     });
   });
 });

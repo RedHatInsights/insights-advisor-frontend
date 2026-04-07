@@ -8,7 +8,6 @@ import {
   checkTableHeaders,
   CHIP_GROUP,
   CONDITIONAL_FILTER,
-  hasChip,
   MENU_ITEM,
   PT_BULK_SELECT,
   PT_BULK_SELECT_LIST,
@@ -18,6 +17,7 @@ import {
 } from '@redhat-cloud-services/frontend-components-utilities';
 import {
   checkSorting,
+  hasChip,
   selectConditionalFilterOption,
 } from '../../../cypress/utils/table';
 import Wrapper from '../../Utilities/Wrapper';
