@@ -17,12 +17,13 @@ const AdvisorTable = (props) => {
     <TableToolsTable
       {...props}
       options={{
+        ...props.options,
         serialisers: {
           pagination: paginationSerialiser,
           sort: sortSerialiser,
           filters: filtersSerialiser,
+          ...props.options?.serialisers,
         },
-        ...props.options,
       }}
     />
   );

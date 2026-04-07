@@ -92,4 +92,34 @@ describe('AdvisorTable', () => {
       expect.anything(),
     );
   });
+
+  it('deep merges custom serializers without wiping defaults', () => {
+    const customPaginationSerializer = jest.fn();
+
+    render(
+      <AdvisorTable
+        items={[]}
+        columns={[]}
+        total={0}
+        options={{
+          serialisers: {
+            pagination: customPaginationSerializer,
+          },
+        }}
+      />,
+    );
+
+    expect(TableToolsTable).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({
+          serialisers: {
+            pagination: customPaginationSerializer,
+            sort: sortSerialiser,
+            filters: filtersSerialiser,
+          },
+        }),
+      }),
+      expect.anything(),
+    );
+  });
 });
