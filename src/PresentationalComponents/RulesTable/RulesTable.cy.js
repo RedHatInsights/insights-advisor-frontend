@@ -11,6 +11,7 @@ import {
   rulesTableColumns,
 } from '../../../cypress/support/globals';
 import {
+  hasChip,
   itExportsDataToFile,
   removeAllFilterChipsPf6,
   selectConditionalFilterOption,
@@ -22,9 +23,7 @@ import {
   checkPaginationValues,
   checkRowCounts,
   checkTableHeaders,
-  CHIP,
   CONDITIONAL_FILTER,
-  hasChip,
   MENU_ITEM,
   PAGINATION_VALUES,
   TOOLBAR,
@@ -183,7 +182,7 @@ describe('defaults', () => {
     //initial call
     cy.wait('@call');
     cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should('exist');
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('exist');
   });
 
   it('name filter is a default filter', () => {
@@ -238,29 +237,29 @@ describe('filtering', () => {
   });
 
   it('can clear filters', () => {
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-      .find(CHIP)
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group')
+      .find('.pf-v6-c-label')
       .find('button')
       .each(() => {
-        cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-          .find(CHIP)
+        cy.get('.ins-c-chip-filters .pf-v6-c-label-group')
+          .find('.pf-v6-c-label')
           .find('button')
           .eq(0)
           .click();
       });
     //apply some filters
     filterApply(filterCombos[0]);
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should(
       'have.length',
       Object.keys(filterCombos[0]).length,
     );
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should('exist');
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('exist');
     //clear filters
     cy.get('button').contains('Reset filters').click();
     //check default filters
     hasChip('Systems impacted', '1 or more');
     hasChip('Status', 'Enabled');
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should(
       'have.length',
       Object.keys(DEFAULT_FILTERS).length,
     );
@@ -635,10 +634,7 @@ describe('Conditional Filter', () => {
     cy.get('button').contains('Reset filters').click();
 
     // check chips reset to defaults
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
-      'have.length',
-      2,
-    );
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('have.length', 2);
   });
 
   it(`Total risk filter box correctly updates chips.`, () => {
@@ -660,10 +656,7 @@ describe('Conditional Filter', () => {
     cy.get('button').contains('Reset filters').click();
 
     // check chips reset to defaults
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
-      'have.length',
-      2,
-    );
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('have.length', 2);
   });
 
   it(`Risk of change filter box correctly updates chips.`, () => {
@@ -685,10 +678,7 @@ describe('Conditional Filter', () => {
     cy.get('button').contains('Reset filters').click();
 
     // check chips reset to defaults
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
-      'have.length',
-      2,
-    );
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('have.length', 2);
   });
 
   it(`Impact filter box correctly updates chips.`, () => {
@@ -710,10 +700,7 @@ describe('Conditional Filter', () => {
     cy.get('button').contains('Reset filters').click();
 
     // check chips reset to defaults
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
-      'have.length',
-      2,
-    );
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('have.length', 2);
   });
 
   it(`Likelihood filter box correctly updates chips.`, () => {
@@ -735,10 +722,7 @@ describe('Conditional Filter', () => {
     cy.get('button').contains('Reset filters').click();
 
     // check chips reset to defaults
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
-      'have.length',
-      2,
-    );
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('have.length', 2);
   });
 
   it(`Category filter box correctly updates chips.`, () => {
@@ -760,10 +744,7 @@ describe('Conditional Filter', () => {
     cy.get('button').contains('Reset filters').click();
 
     // check chips reset to defaults
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
-      'have.length',
-      2,
-    );
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('have.length', 2);
   });
 
   it(`Incidents filter box correctly updates chips.`, () => {
@@ -783,10 +764,7 @@ describe('Conditional Filter', () => {
     cy.get('button').contains('Reset filters').click();
 
     // check chips reset to defaults
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
-      'have.length',
-      2,
-    );
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('have.length', 2);
   });
 
   it(`Remediation filter box correctly updates chips.`, () => {
@@ -806,10 +784,7 @@ describe('Conditional Filter', () => {
     cy.get('button').contains('Reset filters').click();
 
     // check chips reset to defaults
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
-      'have.length',
-      2,
-    );
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('have.length', 2);
   });
 
   it(`Reboot required filter box correctly updates chips.`, () => {
@@ -829,10 +804,7 @@ describe('Conditional Filter', () => {
     cy.get('button').contains('Reset filters').click();
 
     // check chips reset to defaults
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
-      'have.length',
-      2,
-    );
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('have.length', 2);
   });
 
   it(`Status filter box correctly updates chips.`, () => {
@@ -852,10 +824,7 @@ describe('Conditional Filter', () => {
     cy.get('button').contains('Reset filters').click();
 
     // check chips reset to defaults
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
-      'have.length',
-      2,
-    );
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('have.length', 2);
     hasChip('Status', 'Enabled');
   });
 
@@ -876,10 +845,7 @@ describe('Conditional Filter', () => {
     cy.get('button').contains('Reset filters').click();
 
     // check chips reset to defaults
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
-      'have.length',
-      2,
-    );
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('have.length', 2);
 
     // unselect 1 or more
     cy.get(CONDITIONAL_FILTER).contains('Filter by systems impacted').click();
@@ -887,10 +853,7 @@ describe('Conditional Filter', () => {
     cy.get(CONDITIONAL_FILTER).contains('Filter by systems impacted').click();
 
     // check chips updated
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]').should(
-      'have.length',
-      1,
-    );
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('have.length', 1);
 
     // reset
     cy.get('button').contains('Reset filters').click();
@@ -1341,9 +1304,7 @@ describe('URL parameter synchronization', () => {
     mountComponentWithUrl(urlParams);
     cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
 
-    cy.get('[data-ouia-component-type="PF6/ChipGroup"]')
-      .contains('Critical')
-      .should('exist');
+    cy.get('.pf-v6-c-label-group').contains('Critical').should('exist');
   });
 
   it('loads pagination from URL parameters', () => {
