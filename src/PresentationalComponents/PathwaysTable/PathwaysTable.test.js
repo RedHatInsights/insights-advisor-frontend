@@ -208,9 +208,9 @@ jest.mock(
   }),
 );
 
-const mockUseGetPathwaysQuery = jest.spyOn(
+const mockUseGetPathwaysBatchedQuery = jest.spyOn(
   PathwaysService,
-  'useGetPathwaysQuery',
+  'useGetPathwaysBatchedQuery',
 );
 
 AppConstants.FILTER_CATEGORIES = {
@@ -350,7 +350,7 @@ const renderComponent = (
 describe('PathwaysTable', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseGetPathwaysQuery.mockReturnValue({
+    mockUseGetPathwaysBatchedQuery.mockReturnValue({
       data: mockPathwaysData,
       isFetching: false,
       isLoading: false,
@@ -396,7 +396,7 @@ describe('PathwaysTable', () => {
   });
 
   it('should show SkeletonTable when loading', () => {
-    mockUseGetPathwaysQuery.mockReturnValue({
+    mockUseGetPathwaysBatchedQuery.mockReturnValue({
       data: { meta: { count: 0 } },
       isFetching: true,
       isLoading: true,

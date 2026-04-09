@@ -3,6 +3,8 @@ import { createOptions, createSortParam } from '../helper';
 import LastSeenColumnHeader from '../../Utilities/LastSeenColumnHeader';
 import { fitContent } from '@patternfly/react-table';
 import { DateFormat } from '@redhat-cloud-services/frontend-components';
+import { createBatchedFetch } from '../../Utilities/createBatchQueryEndpoint';
+import { PAGINATION_TYPES } from '../../Utilities/batchPaginationHelpers';
 import React from 'react';
 import Qs from 'qs';
 
@@ -122,31 +124,42 @@ export const getEntities =
     });
   };
 
-/*Takes in the current filters, and keeps sending get request until there are no pages left*/
-const fetchBatched = (fetchFunction, total, filter, batchSize = 100, rule) => {
-  const pages = Math.ceil(total / batchSize) || 1;
-  return Promise.all(
-    [...new Array(pages)].map((_, pageIdx) =>
-      fetchFunction({
-        ...filter,
-        page: pageIdx + 1,
-        per_page: batchSize,
-        rule,
-      }),
-    ),
-  );
-};
-/*Grabs all systemIds and maniupaltes the data into one large array of systems*/
+/**
+ * Grabs all systemIds using the new batching utilities
+ * Fetches all systems across pages and extracts system UUIDs
+ */
 export const allCurrentSystemIds =
   (fullFilters, total, rule, setIsLoading) => async () => {
     setIsLoading(true);
-    const results = await (
-      await fetchBatched(paginatedRequestHelper, total, fullFilters, 100, rule)
-    ).map((item) => item.data);
 
-    const merged = [].concat.apply([], results).map((item) => item.system_uuid);
-    setIsLoading(false);
-    return merged;
+    // Create a batched fetch function for the paginated request
+    const batchedFetch = createBatchedFetch(
+      (params) => paginatedRequestHelper({ ...fullFilters, ...params, rule }),
+      {
+        endpoint: 'inventory',
+        paginationType: PAGINATION_TYPES.PAGE,
+      },
+    );
+
+    try {
+      // Fetch all pages using the new batching utility
+      const result = await batchedFetch(
+        {},
+        {
+          batchSize: 100,
+          autoBatch: false,
+        },
+      );
+
+      // Extract system UUIDs from the merged result
+      const systemIds = result.data.map((item) => item.system_uuid);
+      setIsLoading(false);
+      return systemIds;
+    } catch (error) {
+      console.error('Failed to fetch batched system IDs:', error);
+      setIsLoading(false);
+      return [];
+    }
   };
 
 /**

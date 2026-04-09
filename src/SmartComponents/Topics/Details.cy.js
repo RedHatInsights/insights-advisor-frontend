@@ -49,11 +49,11 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
     },
   ).as('rules_table_call');
 
-  // Intercept for rules table initial call (specific filters)
   cy.intercept(
-    `${currentRequestBasePath}/rule/?topic=123&update_method=ostree%2Cdnfyum&impacting=true&rule_status=enabled&sort=-total_risk&limit=10&offset=0`,
+    `${currentRequestBasePath}/rule/?topic=123&update_method=ostree%2Cdnfyum&impacting=true&rule_status=enabled&sort=-total_risk&limit=50&offset=0`,
     {
       data: [],
+      meta: { count: 0 },
     },
   ).as('rules_table_initial_call');
 

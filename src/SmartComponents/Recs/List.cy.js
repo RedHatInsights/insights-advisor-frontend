@@ -132,7 +132,8 @@ describe('List Component Integration', () => {
       cy.contains('Critical recommendations').should('exist');
       cy.contains('Important recommendations').should('exist');
 
-      cy.get('[aria-label="rules-table"]').should('exist');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('[aria-label="rules-table"]', { timeout: 10000 }).should('exist');
       cy.get('th').contains('Name').should('exist');
     });
 
@@ -217,6 +218,63 @@ describe('List Component Integration', () => {
       );
       cy.wait('@getPathways');
     });
+
+    it('handles tab switching with batched data', () => {
+      const recsTotal = 150;
+      const pathwaysTotal = 120;
+      const pageSize = 20;
+      const recsIntercepted = [];
+      const pathwaysIntercepted = [];
+
+      cy.setupBatchInterceptors({
+        url: '/api/insights/v1/rule/',
+        total: recsTotal,
+        pageSize,
+        dataType: 'recommendations',
+      });
+
+      cy.setupBatchInterceptors({
+        url: '/api/insights/v1/pathway/',
+        total: pathwaysTotal,
+        pageSize,
+        dataType: 'pathways',
+      });
+
+      cy.intercept('GET', '/api/insights/v1/rule/*', (req) => {
+        recsIntercepted.push(req);
+      }).as('recsBatch');
+
+      cy.intercept('GET', '/api/insights/v1/pathway/*', (req) => {
+        pathwaysIntercepted.push(req);
+      }).as('pathwaysBatch');
+
+      mountComponent();
+
+      cy.wait('@batchPage1', { timeout: 10000 });
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+      cy.wrap(null).then(() => {
+        expect(recsIntercepted.length).to.be.greaterThan(0);
+      });
+
+      cy.contains('[role="tab"]', 'Pathways').click();
+
+      cy.wait('@batchPage1', { timeout: 10000 });
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+      cy.wrap(null).then(() => {
+        expect(pathwaysIntercepted.length).to.be.greaterThan(0);
+      });
+
+      cy.contains('[role="tab"]', 'Recommendations').click();
+
+      cy.get('[aria-label="rules-table"]', { timeout: 5000 }).should('exist');
+
+      cy.wrap(null).then(() => {
+        expect(recsIntercepted.length).to.be.greaterThan(0);
+        expect(pathwaysIntercepted.length).to.be.greaterThan(0);
+      });
+    });
   });
 
   describe('Overview Dashboard Integration', () => {
@@ -241,6 +299,44 @@ describe('List Component Integration', () => {
       cy.get('#overview-dashbar').within(() => {
         cy.contains('Incidents').closest('[data-ouia-component-type]').click();
       });
+    });
+
+    it('overview dashboard persists during pagination with batched data', () => {
+      const total = 150;
+      const pageSize = 20;
+
+      cy.setupBatchInterceptors({
+        url: '/api/insights/v1/rule/',
+        total,
+        pageSize,
+        dataType: 'recommendations',
+      });
+
+      cy.intercept('GET', '/api/insights/v1/rule/*').as('recsBatch');
+
+      mountComponent();
+
+      cy.wait('@batchPage1', { timeout: 10000 });
+      cy.wait('@getOverviewStats');
+
+      cy.get('#overview-dashbar')
+        .should('exist')
+        .within(() => {
+          cy.contains('3').should('exist');
+          cy.contains('5').should('exist');
+        });
+
+      cy.get('button[data-action="next"]').first().click();
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+      cy.get('#overview-dashbar')
+        .should('exist')
+        .within(() => {
+          cy.contains('3').should('exist');
+          cy.contains('5').should('exist');
+        });
+
+      cy.url().should('include', 'offset=20');
     });
 
     it('refetches overview data when rule is disabled', () => {
@@ -874,6 +970,263 @@ describe('List Component Integration', () => {
       cy.contains('[role="tab"]', 'Recommendations').click();
 
       cy.get('.pf-v6-c-label-group').contains('test').should('not.exist');
+    });
+  });
+
+  describe('Batch Requests', () => {
+    beforeEach(() => {
+      cy.on('uncaught:exception', (err) => {
+        if (err.message.includes('chrome.getApp is not a function')) {
+          return false;
+        }
+        return true;
+      });
+
+      cy.intercept('GET', '/feature_flags*', {
+        statusCode: 200,
+        body: { toggles: [] },
+      }).as('getFeatureFlag');
+
+      cy.intercept('GET', '/api/insights/v1/stats/overview/', {
+        statusCode: 200,
+        body: {
+          critical: 5,
+          important: 10,
+          moderate: 15,
+          low: 20,
+          incidents: 3,
+          pathways: 7,
+        },
+      }).as('getOverviewStats');
+    });
+
+    it('handles multiple pages of recommendations with batch requests', () => {
+      const totalRecs = 200;
+      const pageSize = 50;
+
+      cy.setupBatchInterceptors({
+        url: '**/api/insights/v1/rule/',
+        total: totalRecs,
+        pageSize,
+        dataType: 'recommendations',
+        paginationType: 'offset',
+      });
+
+      cy.intercept('GET', '/api/insights/v1/pathway/*', {
+        statusCode: 200,
+        body: pathways,
+      }).as('getPathways');
+
+      mountComponent();
+      cy.wait('@batchPage1');
+      cy.get('[aria-label="rules-table"]').should('exist');
+    });
+
+    it('preserves filters when switching between tabs with batch data', () => {
+      cy.setupBatchInterceptors({
+        url: '**/api/insights/v1/rule/',
+        total: 150,
+        pageSize: 50,
+        dataType: 'recommendations',
+        paginationType: 'offset',
+      });
+
+      cy.intercept('GET', '/api/insights/v1/pathway/*', {
+        statusCode: 200,
+        body: pathways,
+      }).as('getPathways');
+
+      mountComponent({ urlParams: 'text=kernel' });
+
+      cy.wait('@batchPage1');
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('exist');
+
+      cy.contains('[role="tab"]', 'Pathways').click();
+      cy.wait('@getPathways');
+
+      cy.contains('[role="tab"]', 'Recommendations').click();
+      cy.wait('@batchPage1');
+
+      cy.get('.pf-v6-c-label-group').contains('kernel').should('exist');
+    });
+
+    it('handles batch request errors gracefully', () => {
+      cy.intercept('GET', '**/api/insights/v1/rule/*offset=0*', {
+        statusCode: 200,
+        body: window.generateBatchRecommendationsData({
+          total: 100,
+          offset: 0,
+          limit: 50,
+        }),
+      }).as('page1');
+
+      cy.intercept('GET', '**/api/insights/v1/rule/*offset=50*', {
+        statusCode: 500,
+        body: { error: 'Internal Server Error' },
+      }).as('page2Error');
+
+      cy.intercept('GET', '/api/insights/v1/pathway/*', {
+        statusCode: 200,
+        body: pathways,
+      }).as('getPathways');
+
+      mountComponent();
+      cy.wait('@page1');
+      cy.get('[data-ouia-component-type="RHI/Header"]').should('exist');
+      cy.get('#overview-dashbar').should('exist');
+    });
+
+    it('handles empty batch results', () => {
+      cy.intercept('GET', '**/api/insights/v1/rule/*', {
+        statusCode: 200,
+        body: {
+          data: [],
+          meta: { count: 0, limit: 50, offset: 0 },
+        },
+      }).as('emptyResults');
+
+      cy.intercept('GET', '/api/insights/v1/pathway/*', {
+        statusCode: 200,
+        body: pathways,
+      }).as('getPathways');
+
+      mountComponent();
+      cy.wait('@emptyResults');
+      cy.get('[aria-label="rules-table"]').should('exist');
+    });
+
+    it('handles large datasets with batch pagination', () => {
+      cy.setupBatchInterceptors({
+        url: '**/api/insights/v1/rule/',
+        total: 5000,
+        pageSize: 100,
+        dataType: 'recommendations',
+        paginationType: 'offset',
+      });
+
+      cy.intercept('GET', '/api/insights/v1/pathway/*', {
+        statusCode: 200,
+        body: pathways,
+      }).as('getPathways');
+
+      mountComponent();
+      cy.wait('@batchPage1');
+      cy.get('[aria-label="rules-table"]').should('exist');
+      cy.get('#overview-dashbar').should('exist');
+    });
+
+    it('refetches with batch requests after overview card click', () => {
+      cy.setupBatchInterceptors({
+        url: '**/api/insights/v1/rule/',
+        total: 100,
+        pageSize: 50,
+        dataType: 'recommendations',
+        paginationType: 'offset',
+      });
+
+      cy.intercept('GET', '/api/insights/v1/pathway/*', {
+        statusCode: 200,
+        body: pathways,
+      }).as('getPathways');
+
+      mountComponent();
+      cy.wait('@batchPage1');
+
+      cy.get('#overview-dashbar').within(() => {
+        cy.contains('Critical recommendations')
+          .closest('[data-ouia-component-type]')
+          .click();
+      });
+
+      cy.wait('@batchPage1');
+      cy.get('[aria-label="rules-table"]').should('exist');
+    });
+
+    it('handles sequential batch operations when applying and clearing filters', () => {
+      cy.setupBatchInterceptors({
+        url: '**/api/insights/v1/rule/',
+        total: 150,
+        pageSize: 50,
+        dataType: 'recommendations',
+        paginationType: 'offset',
+      });
+
+      cy.intercept('GET', '/api/insights/v1/pathway/*', {
+        statusCode: 200,
+        body: pathways,
+      }).as('getPathways');
+
+      mountComponent();
+      cy.wait('@batchPage1');
+
+      cy.get('[data-ouia-component-id="ConditionalFilter"]')
+        .find('input')
+        .type('test{enter}');
+      cy.wait('@batchPage1');
+
+      cy.get('button').contains('Reset filters').click();
+      cy.wait('@batchPage1');
+
+      cy.get('[aria-label="rules-table"]').should('exist');
+    });
+
+    it('handles batch requests for pathways tab', () => {
+      cy.intercept('GET', '**/api/insights/v1/rule/*', {
+        statusCode: 200,
+        body: recommendations,
+      }).as('getRecommendations');
+
+      cy.setupBatchInterceptors({
+        url: '**/api/insights/v1/pathway/',
+        total: 200,
+        pageSize: 50,
+        dataType: 'pathways',
+        paginationType: 'offset',
+      });
+
+      mountComponent();
+      cy.wait('@getRecommendations');
+
+      cy.contains('[role="tab"]', 'Pathways').click();
+      cy.wait('@batchPage1');
+
+      cy.get('table[aria-label="pathways-table"]').should('exist');
+    });
+
+    it('preserves overview dashboard during batch operations', () => {
+      cy.setupBatchInterceptors({
+        url: '**/api/insights/v1/rule/',
+        total: 200,
+        pageSize: 50,
+        dataType: 'recommendations',
+        paginationType: 'offset',
+      });
+
+      cy.intercept('GET', '/api/insights/v1/pathway/*', {
+        statusCode: 200,
+        body: pathways,
+      }).as('getPathways');
+
+      mountComponent();
+      cy.wait('@batchPage1');
+
+      cy.get('#overview-dashbar').within(() => {
+        cy.contains('3').should('exist');
+        cy.contains('5').should('exist');
+      });
+
+      cy.contains('[role="tab"]', 'Pathways').click();
+      cy.wait('@getPathways');
+
+      cy.get('#overview-dashbar').within(() => {
+        cy.contains('3').should('exist');
+        cy.contains('5').should('exist');
+      });
+
+      cy.contains('[role="tab"]', 'Recommendations').click();
+
+      cy.get('[aria-label="rules-table"]', { timeout: 5000 }).should('exist');
+      cy.get('#overview-dashbar').should('exist');
     });
   });
 });

@@ -182,6 +182,50 @@ describe('Pathways table tests', () => {
 
       cy.url().should('include', 'sort=-recommendation_level');
     });
+
+    it('sorts batched pathways data by Systems and preserves sort on navigation', () => {
+      const total = 150;
+      const pageSize = 20;
+      const interceptedRequests = [];
+
+      cy.setupBatchInterceptors({
+        url: '/api/insights/v1/pathway/',
+        total,
+        pageSize,
+        dataType: 'pathways',
+      });
+
+      cy.intercept('GET', '/api/insights/v1/pathway/*', (req) => {
+        interceptedRequests.push(req);
+      }).as('batchRequests');
+
+      mountComponent();
+
+      cy.wait('@batchPage1', { timeout: 10000 });
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+      cy.get('th').contains('Systems').click();
+
+      cy.get('th')
+        .contains('Systems')
+        .closest('th')
+        .should('have.attr', 'aria-sort', 'ascending');
+
+      cy.url().should('include', 'sort=impacted_systems_count');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+      cy.wrap(null).then(() => {
+        const sortRequests = interceptedRequests.filter((req) =>
+          req.url.includes('sort=impacted_systems_count'),
+        );
+        expect(sortRequests.length).to.be.greaterThan(0);
+      });
+
+      cy.get('button[data-action="next"]').first().click();
+
+      cy.url().should('include', 'sort=impacted_systems_count');
+      cy.url().should('include', 'offset=20');
+    });
   });
 
   describe('Conditional Filter', () => {
@@ -259,6 +303,53 @@ describe('Pathways table tests', () => {
       // reset
       cy.get('button').contains('Reset filters').click();
 
+      cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('not.exist');
+    });
+
+    it('Category filter works correctly with batched data', () => {
+      const total = 180;
+      const pageSize = 20;
+      const interceptedRequests = [];
+
+      cy.setupBatchInterceptors({
+        url: '/api/insights/v1/pathway/',
+        total,
+        pageSize,
+        dataType: 'pathways',
+      });
+
+      cy.intercept('GET', '/api/insights/v1/pathway/*', (req) => {
+        interceptedRequests.push(req);
+      }).as('batchRequests');
+
+      mountComponent();
+
+      cy.wait('@batchPage1', { timeout: 10000 });
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+      let requestsBeforeFilter = 0;
+      cy.wrap(null).then(() => {
+        requestsBeforeFilter = interceptedRequests.length;
+      });
+
+      selectConditionalFilterOption('Category');
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+      cy.get(MENU_ITEM).contains('Availability').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+
+      hasChip('Category', 'Availability');
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+      cy.wrap(null).then(() => {
+        const requestsAfterFilter =
+          interceptedRequests.slice(requestsBeforeFilter);
+        const categoryRequests = requestsAfterFilter.filter((req) =>
+          req.url.includes('category=1'),
+        );
+        expect(categoryRequests.length).to.be.greaterThan(0);
+      });
+
+      cy.get('button').contains('Reset filters').click();
       cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('not.exist');
     });
   });
@@ -399,10 +490,8 @@ describe('Pathways table tests', () => {
     it('displays reboot status for all pathways', () => {
       cy.wait('@call');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
-      cy.get('td[data-label="Reboot"]').should(
-        'have.length',
-        fixtures.data.length,
-      );
+      // With batching, only first page is visible (ROWS_SHOWN = 20)
+      cy.get('td[data-label="Reboot"]').should('have.length', ROWS_SHOWN);
     });
 
     it('displays reboot required status correctly', () => {
@@ -664,6 +753,147 @@ describe('Pathways table tests', () => {
 
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
       cy.get(ROOT).should('exist');
+    });
+  });
+
+  describe('Batch Requests', () => {
+    it('handles multiple pages of pathways with batch pagination', () => {
+      const totalPathways = 150;
+      const pageSize = 50;
+
+      cy.setupBatchInterceptors({
+        url: '**/api/insights/v1/pathway/',
+        total: totalPathways,
+        pageSize,
+        dataType: 'pathways',
+        paginationType: 'offset',
+      });
+
+      mountComponent();
+      cy.wait('@batchPage1');
+      cy.get(ROOT).should('exist');
+    });
+
+    it('preserves filters across batch requests', () => {
+      const interceptedRequests = [];
+
+      cy.intercept('GET', '**/api/insights/v1/pathway/*', (req) => {
+        interceptedRequests.push(req.url);
+        const url = new URL(req.url);
+        const offset = parseInt(url.searchParams.get('offset') || '0');
+        const limit = parseInt(url.searchParams.get('limit') || '20');
+
+        req.reply({
+          statusCode: 200,
+          body: window.generateBatchPathwaysData({
+            total: 100,
+            offset,
+            limit,
+          }),
+        });
+      }).as('batchRequests');
+
+      mountComponent();
+      cy.wait('@batchRequests');
+
+      selectConditionalFilterOption('Category');
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+      cy.get(MENU_ITEM).contains('Security').click();
+      cy.get(CONDITIONAL_FILTER).contains('Filter by category').click();
+
+      cy.wait('@batchRequests');
+
+      cy.wrap(null).then(() => {
+        const requestsWithCategory = interceptedRequests.filter((url) =>
+          url.includes('category'),
+        );
+        expect(requestsWithCategory.length).to.be.greaterThan(0);
+      });
+    });
+
+    it('displays correct pagination with batched data', () => {
+      cy.setupBatchInterceptors({
+        url: '**/api/insights/v1/pathway/',
+        total: 250,
+        pageSize: 50,
+        dataType: 'pathways',
+        paginationType: 'offset',
+      });
+
+      mountComponent();
+      cy.wait('@batchPage1');
+      cy.get('.pf-v6-c-menu-toggle__text').should('contain', '1 - 20');
+    });
+
+    it('handles empty batch results', () => {
+      cy.intercept('GET', '**/api/insights/v1/pathway/*', {
+        statusCode: 200,
+        body: {
+          data: [],
+          meta: { count: 0, limit: 50, offset: 0 },
+        },
+      }).as('emptyResults');
+
+      mountComponent();
+      cy.wait('@emptyResults');
+      cy.get(ROOT).should('exist');
+    });
+
+    it('handles large datasets with batch requests', () => {
+      cy.setupBatchInterceptors({
+        url: '**/api/insights/v1/pathway/',
+        total: 3000,
+        pageSize: 100,
+        dataType: 'pathways',
+        paginationType: 'offset',
+      });
+
+      mountComponent();
+      cy.wait('@batchPage1');
+      cy.get(ROOT).should('exist');
+    });
+
+    it('includes sort parameters in batch requests', () => {
+      const interceptedRequests = [];
+
+      cy.intercept('GET', '**/api/insights/v1/pathway/*', (req) => {
+        interceptedRequests.push(req.url);
+        const url = new URL(req.url);
+        const offset = parseInt(url.searchParams.get('offset') || '0');
+        const limit = parseInt(url.searchParams.get('limit') || '20');
+
+        req.reply({
+          statusCode: 200,
+          body: window.generateBatchPathwaysData({
+            total: 100,
+            offset,
+            limit,
+          }),
+        });
+      }).as('batchRequests');
+
+      mountComponent();
+      cy.wait('@batchRequests');
+
+      cy.get('th').contains('Name').click();
+      cy.wait('@batchRequests');
+
+      cy.wrap(null).then(() => {
+        const sortedRequests = interceptedRequests.filter((url) =>
+          url.includes('sort'),
+        );
+        expect(sortedRequests.length).to.be.greaterThan(0);
+      });
+    });
+
+    it('handles 403 forbidden errors during batch requests', () => {
+      cy.intercept('GET', '**/api/insights/v1/pathway/*', {
+        statusCode: 403,
+        body: { error: 'Forbidden' },
+      }).as('forbiddenRequest');
+
+      mountComponent();
+      cy.wait('@forbiddenRequest');
     });
   });
 });

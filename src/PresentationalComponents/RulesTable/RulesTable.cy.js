@@ -223,6 +223,41 @@ describe('pagination', () => {
       });
     });
   });
+
+  it('can change page limit with batched data', () => {
+    const total = 150;
+    const pageSize = 50;
+    const interceptedRequests = [];
+
+    cy.setupBatchInterceptors({
+      url: '/api/insights/v1/rule/',
+      total,
+      pageSize,
+      dataType: 'recommendations',
+    });
+
+    cy.intercept('GET', '/api/insights/v1/rule/*', (req) => {
+      interceptedRequests.push(req);
+    }).as('batchRequests');
+
+    mountComponent(false);
+
+    cy.wait('@batchPage1', { timeout: 10000 });
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    changePagination(50);
+
+    cy.url().should('include', 'limit=50');
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    cy.wrap(null).then(() => {
+      expect(interceptedRequests.length).to.be.greaterThan(0);
+      const limitRequests = interceptedRequests.filter((req) =>
+        req.url.includes('limit=50'),
+      );
+      expect(limitRequests.length).to.be.greaterThan(0);
+    });
+  });
 });
 
 describe('filtering', () => {
@@ -274,6 +309,52 @@ describe('filtering', () => {
     checkPaginationTotal(fixtures.meta.count);
   });
 
+  it('filtering works correctly with batched data', () => {
+    const total = 200;
+    const pageSize = 20;
+    const interceptedRequests = [];
+
+    cy.setupBatchInterceptors({
+      url: '/api/insights/v1/rule/',
+      total,
+      pageSize,
+      dataType: 'recommendations',
+    });
+
+    cy.intercept('GET', '/api/insights/v1/rule/*', (req) => {
+      interceptedRequests.push(req);
+    }).as('batchRequests');
+
+    mountComponent(false);
+
+    cy.wait('@batchPage1', { timeout: 10000 });
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    let requestsBeforeFilter = 0;
+    cy.wrap(null).then(() => {
+      requestsBeforeFilter = interceptedRequests.length;
+    });
+
+    filterApply({ risk: ['Critical'] });
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    cy.wrap(null).then(() => {
+      const requestsAfterFilter =
+        interceptedRequests.slice(requestsBeforeFilter);
+      const riskRequests = requestsAfterFilter.filter(
+        (req) => req.url.includes('total_risk=4') || req.url.includes('risk=4'),
+      );
+      expect(riskRequests.length).to.be.greaterThan(0);
+    });
+
+    hasChip('Total risk', 'Critical');
+
+    cy.get('button').contains('Reset filters').click();
+
+    hasChip('Systems impacted', '1 or more');
+    hasChip('Status', 'Enabled');
+  });
+
   it('will reset filters but not pagination and sorting', () => {
     filterApply({ name: 'Lo' });
 
@@ -282,6 +363,56 @@ describe('filtering', () => {
     cy.get('th[data-label="Name"]')
       .should('have.attr', 'aria-sort')
       .and('contain', 'ascending');
+  });
+
+  it('combined sort, filter, and pagination work with batched data', () => {
+    const total = 180;
+    const pageSize = 20;
+    const interceptedRequests = [];
+
+    cy.setupBatchInterceptors({
+      url: '/api/insights/v1/rule/',
+      total,
+      pageSize,
+      dataType: 'recommendations',
+    });
+
+    cy.intercept('GET', '/api/insights/v1/rule/*', (req) => {
+      interceptedRequests.push(req);
+    }).as('batchRequests');
+
+    mountComponent(false);
+
+    cy.wait('@batchPage1', { timeout: 10000 });
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    cy.get('th').contains('Name').click();
+    cy.url().should('include', 'sort=description');
+
+    filterApply({ risk: ['Critical'] });
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+    hasChip('Total risk', 'Critical');
+
+    cy.get('button[data-action="next"]').first().click();
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    cy.url().should('include', 'sort=description');
+    cy.url().should('include', 'offset=20');
+
+    cy.wrap(null).then(() => {
+      const combinedRequests = interceptedRequests.filter(
+        (req) =>
+          req.url.includes('sort=description') &&
+          (req.url.includes('total_risk=4') || req.url.includes('risk=4')),
+      );
+      expect(combinedRequests.length).to.be.greaterThan(0);
+    });
+
+    cy.get('button[data-action="previous"]').first().click();
+
+    cy.url().should('include', 'sort=description');
+    cy.url().should('include', 'offset=0');
+    cy.url().should('include', 'total_risk=4');
   });
 });
 
@@ -521,6 +652,50 @@ describe('sorting', () => {
       .contains('Total risk')
       .closest('th')
       .should('not.have.attr', 'aria-sort');
+  });
+
+  it('sorts batched data by Name and preserves sort on navigation', () => {
+    const total = 150;
+    const pageSize = 20;
+    const interceptedRequests = [];
+
+    cy.setupBatchInterceptors({
+      url: '/api/insights/v1/rule/',
+      total,
+      pageSize,
+      dataType: 'recommendations',
+    });
+
+    cy.intercept('GET', '/api/insights/v1/rule/*', (req) => {
+      interceptedRequests.push(req);
+    }).as('batchRequests');
+
+    mountComponent(false);
+
+    cy.wait('@batchPage1', { timeout: 10000 });
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    cy.get('th').contains('Name').click();
+
+    cy.get('th')
+      .contains('Name')
+      .closest('th')
+      .should('have.attr', 'aria-sort', 'ascending');
+
+    cy.url().should('include', 'sort=description');
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+    cy.wrap(null).then(() => {
+      const sortRequests = interceptedRequests.filter((req) =>
+        req.url.includes('sort=description'),
+      );
+      expect(sortRequests.length).to.be.greaterThan(0);
+    });
+
+    cy.get('button[data-action="next"]').first().click();
+
+    cy.url().should('include', 'sort=description');
+    cy.url().should('include', 'offset=20');
   });
 });
 
@@ -1592,6 +1767,225 @@ describe('Permission-based UI Controls', () => {
       );
       cy.get('button[aria-label="Export"]').should('not.exist');
       cy.get('button[aria-label="Kebab toggle"]').should('not.exist');
+    });
+  });
+
+  describe('Batch Requests', () => {
+    it('handles multiple pages of recommendations with batch requests', () => {
+      const totalRecs = 150;
+      const pageSize = 50;
+
+      cy.setupBatchInterceptors({
+        url: '**/api/insights/v1/rule/',
+        total: totalRecs,
+        pageSize,
+        dataType: 'recommendations',
+        paginationType: 'offset',
+      });
+
+      mountComponent();
+      cy.wait('@batchPage1');
+      cy.get(ROOT).should('exist');
+
+      changePagination(100);
+      cy.wait('@batchPage1');
+      cy.get('tbody tr').should('have.length.at.least', 20);
+    });
+
+    it('preserves filters across batch requests', () => {
+      const totalRecs = 200;
+      const pageSize = 50;
+      let requestsBeforeFilter = 0;
+      const interceptedRequests = [];
+
+      cy.intercept('GET', '**/api/insights/v1/rule/*', (req) => {
+        interceptedRequests.push(req.url);
+        const url = new URL(req.url);
+        const offset = parseInt(url.searchParams.get('offset') || '0');
+
+        req.reply({
+          statusCode: 200,
+          body: window.generateBatchRecommendationsData({
+            total: totalRecs,
+            offset,
+            limit: pageSize,
+          }),
+        });
+      }).as('batchRequests');
+
+      mountComponent();
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.wrap(null).then(() => {
+        requestsBeforeFilter = interceptedRequests.length;
+      });
+
+      filterApply({ risk: ['Critical'] });
+      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+
+      cy.wrap(null).then(() => {
+        const requestsAfterFilter =
+          interceptedRequests.slice(requestsBeforeFilter);
+        expect(requestsAfterFilter.length).to.be.greaterThan(0);
+        requestsAfterFilter.forEach((url) => {
+          expect(url).to.include('total_risk=4');
+        });
+      });
+    });
+
+    it('displays correct pagination total with batched data', () => {
+      const totalRecs = 250;
+      const pageSize = 50;
+
+      cy.setupBatchInterceptors({
+        url: '**/api/insights/v1/rule/',
+        total: totalRecs,
+        pageSize,
+        dataType: 'recommendations',
+        paginationType: 'offset',
+      });
+
+      mountComponent();
+      cy.wait('@batchPage1');
+      checkPaginationTotal(totalRecs);
+    });
+
+    it('handles empty batch results', () => {
+      cy.intercept('GET', '**/api/insights/v1/rule/*', {
+        statusCode: 200,
+        body: {
+          data: [],
+          meta: { count: 0, limit: 50, offset: 0 },
+        },
+      }).as('emptyResults');
+
+      mountComponent();
+      cy.wait('@emptyResults');
+      cy.get(ROOT).should('exist');
+    });
+
+    it('handles large datasets (5000+ items)', () => {
+      const totalRecs = 5000;
+      const pageSize = 100;
+
+      cy.setupBatchInterceptors({
+        url: '**/api/insights/v1/rule/',
+        total: totalRecs,
+        pageSize,
+        dataType: 'recommendations',
+        paginationType: 'offset',
+      });
+
+      mountComponent();
+      cy.wait('@batchPage1');
+      cy.get(ROOT).should('exist');
+      checkPaginationTotal(totalRecs);
+    });
+
+    it('handles sequential batch operations', () => {
+      const totalRecs = 100;
+      const pageSize = 50;
+
+      cy.setupBatchInterceptors({
+        url: '**/api/insights/v1/rule/',
+        total: totalRecs,
+        pageSize,
+        dataType: 'recommendations',
+        paginationType: 'offset',
+      });
+
+      mountComponent();
+      cy.wait('@batchPage1');
+
+      filterApply({ risk: ['Critical'] });
+      cy.wait('@batchPage1');
+
+      removeAllFilterChipsPf6();
+      cy.wait('@batchPage1');
+
+      cy.get(ROOT).should('exist');
+    });
+
+    it('includes sort parameters in batch requests', () => {
+      const totalRecs = 150;
+      const pageSize = 50;
+      const interceptedRequests = [];
+
+      cy.intercept('GET', '**/api/insights/v1/rule/*', (req) => {
+        interceptedRequests.push(req.url);
+        const url = new URL(req.url);
+        const offset = parseInt(url.searchParams.get('offset') || '0');
+
+        req.reply({
+          statusCode: 200,
+          body: window.generateBatchRecommendationsData({
+            total: totalRecs,
+            offset,
+            limit: pageSize,
+          }),
+        });
+      }).as('batchRequests');
+
+      mountComponent();
+      cy.wait('@batchRequests');
+
+      cy.get('th').contains('Name').click();
+      cy.wait('@batchRequests');
+
+      cy.wrap(null).then(() => {
+        const sortedRequests = interceptedRequests.filter((url) =>
+          url.includes('sort'),
+        );
+        expect(sortedRequests.length).to.be.greaterThan(0);
+      });
+    });
+
+    it('handles pagination changes with batch requests', () => {
+      const totalRecs = 300;
+      const pageSize = 50;
+
+      cy.setupBatchInterceptors({
+        url: '**/api/insights/v1/rule/',
+        total: totalRecs,
+        pageSize,
+        dataType: 'recommendations',
+        paginationType: 'offset',
+      });
+
+      mountComponent();
+      cy.wait('@batchPage1');
+
+      changePagination(50);
+      cy.wait('@batchPage1');
+      checkPaginationValues(PAGINATION_VALUES);
+
+      cy.get('button[data-action="next"]').first().click();
+      cy.get(ROOT).should('exist');
+    });
+
+    it('handles batch request timeouts', () => {
+      cy.intercept('GET', '**/api/insights/v1/rule/*', {
+        statusCode: 200,
+        body: window.generateBatchRecommendationsData({
+          total: 50,
+          offset: 0,
+          limit: 50,
+        }),
+        delay: 10000,
+      }).as('slowRequest');
+
+      mountComponent();
+      cy.get('[aria-label="Loading"]', { timeout: 2000 }).should('exist');
+      cy.get(ROOT, { timeout: 15000 }).should('exist');
+    });
+
+    it('handles 403 forbidden errors during batch requests', () => {
+      cy.intercept('GET', '**/api/insights/v1/rule/*', {
+        statusCode: 403,
+        body: { error: 'Forbidden' },
+      }).as('forbiddenRequest');
+
+      mountComponent();
+      cy.wait('@forbiddenRequest');
     });
   });
 });

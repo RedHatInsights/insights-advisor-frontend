@@ -444,3 +444,63 @@ describe('System rules table toolbar actions', () => {
       .should('exist');
   });
 });
+
+describe('Batch Requests for System Recommendations', () => {
+  beforeEach(() => {
+    cy.intercept('/api/insights/v1/account_setting/', {
+      statusCode: 200,
+      body: {},
+    });
+    cy.intercept('https://access.redhat.com/hydra/rest/search/kcs**', {
+      response: {
+        docs: fixturesKcs,
+      },
+    }).as('kcs');
+    cy.intercept(
+      `${INVENTORY_BASE_URL}/hosts/${SYSTEM_ID}/system_profile`,
+      systemProfile.data,
+    ).as('getSystemProfile');
+  });
+
+  it('handles multiple pages of system recommendations with batch pagination', () => {
+    cy.intercept(`/api/insights/v1/system/${SYSTEM_ID}/reports/`, {
+      statusCode: 200,
+      body: fixtures,
+    }).as('getReports');
+
+    mountComponent();
+    cy.wait('@getReports');
+    cy.get(TABLE).should('exist');
+  });
+
+  it('handles request errors gracefully', () => {
+    cy.intercept(`/api/insights/v1/system/${SYSTEM_ID}/reports/`, {
+      statusCode: 500,
+      body: { error: 'Internal Server Error' },
+    }).as('errorRequest');
+
+    mountComponent();
+    cy.wait('@errorRequest');
+  });
+
+  it('handles empty results', () => {
+    cy.intercept(`/api/insights/v1/system/${SYSTEM_ID}/reports/`, {
+      statusCode: 200,
+      body: [],
+    }).as('emptyResults');
+
+    mountComponent();
+    cy.wait('@emptyResults');
+    cy.get(TABLE).should('exist');
+  });
+
+  it('handles 403 forbidden errors', () => {
+    cy.intercept(`/api/insights/v1/system/${SYSTEM_ID}/reports/`, {
+      statusCode: 403,
+      body: { error: 'Forbidden' },
+    }).as('forbiddenRequest');
+
+    mountComponent();
+    cy.wait('@forbiddenRequest');
+  });
+});

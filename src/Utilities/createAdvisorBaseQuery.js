@@ -16,6 +16,7 @@ export const createAdvisorBaseQuery = ({
       inventoryBasePath: argInventoryBasePath,
       data,
       params,
+      batchMetadata,
       ...remainingParams
     } = processedArgs;
 
@@ -40,6 +41,22 @@ export const createAdvisorBaseQuery = ({
     const finalSearchString = allParams.toString();
     const fullUrl = `${baseUrlToUse}${urlPath}${finalSearchString ? `?${finalSearchString}` : ''}`;
 
+    // Add batch-specific headers if this is a batch request
+    let headers = argHeaders;
+    if (batchMetadata) {
+      headers = { ...argHeaders };
+      headers['X-Batch-Request'] = 'true';
+      if (batchMetadata.index !== undefined) {
+        headers['X-Batch-Index'] = String(batchMetadata.index);
+      }
+      if (batchMetadata.total !== undefined) {
+        headers['X-Batch-Total'] = String(batchMetadata.total);
+      }
+      if (batchMetadata.batchSize !== undefined) {
+        headers['X-Batch-Size'] = String(batchMetadata.batchSize);
+      }
+    }
+
     try {
       const isGetLikeMethod = ['get', 'delete', 'head', 'options'].includes(
         argMethod.toLowerCase(),
@@ -49,7 +66,7 @@ export const createAdvisorBaseQuery = ({
         method: argMethod,
         data: data || (!isGetLikeMethod && argOptions) || undefined,
         params: params || (isGetLikeMethod && argOptions) || undefined,
-        headers: argHeaders,
+        headers,
         paramsSerializer: (params) =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),
       });

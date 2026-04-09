@@ -32,7 +32,7 @@ import { SearchIcon } from '@patternfly/react-icons';
 import debounce from '../../Utilities/Debounce';
 import messages from '../../Messages';
 import { updatePathFilters } from '../../Services/Filters';
-import { useGetPathwaysQuery } from '../../Services/Pathways';
+import { useGetPathwaysBatchedQuery } from '../../Services/Pathways';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
@@ -60,7 +60,9 @@ const PathwaysTable = ({ isTabActive }) => {
     isFetching,
     isLoading,
     isError,
-  } = useGetPathwaysQuery({
+  } = useGetPathwaysBatchedQuery({
+    batch: true,
+    autoBatch: true,
     ...filterFetchBuilder(filters),
     ...options,
   });
@@ -97,8 +99,26 @@ const PathwaysTable = ({ isTabActive }) => {
     return pruneFilters(localFilters, { ...FC, ...PFC });
   };
 
-  const buildRows = (pathways) => {
-    if (!pathways || pathways.length === 0) {
+  /**
+   * Slices batched data for current page
+   * @returns {Array} Pathways for current page
+   */
+  const getPaginatedData = () => {
+    if (!pathways?.data) return [];
+
+    const isBatchedData = pathways.data.length > filters.limit;
+
+    if (isBatchedData) {
+      const start = filters.offset || 0;
+      const end = start + filters.limit;
+      return pathways.data.slice(start, end);
+    }
+
+    return pathways.data;
+  };
+
+  const buildRows = (pathwaysData) => {
+    if (!pathwaysData || pathwaysData.length === 0) {
       return (
         <Tr>
           <Td colSpan={5}>
@@ -112,7 +132,7 @@ const PathwaysTable = ({ isTabActive }) => {
       );
     }
 
-    return pathways.map((pathway) => (
+    return pathwaysData.map((pathway) => (
       <Tr key={pathway.slug}>
         <Td dataLabel={intl.formatMessage(messages.pathwaysName)}>
           <span>
@@ -375,7 +395,7 @@ const PathwaysTable = ({ isTabActive }) => {
               </Th>
             </Tr>
           </Thead>
-          <Tbody>{buildRows(pathways?.data)}</Tbody>
+          <Tbody>{buildRows(getPaginatedData())}</Tbody>
         </Table>
       )}
       <TableToolbar isFooter>

@@ -35,7 +35,7 @@ import messages from '../../Messages';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 
 import { updateRecFilters } from '../../Services/Filters';
-import { useGetRecsQuery } from '../../Services/Recs';
+import { useGetRecsBatchedQuery } from '../../Services/Recs';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import { filtersInitialState } from '../../Services/Filters';
@@ -92,7 +92,9 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange }) => {
     isLoading,
     isError,
     refetch,
-  } = useGetRecsQuery({
+  } = useGetRecsBatchedQuery({
+    batch: true,
+    autoBatch: true,
     ...filterFetchBuilder(filters),
     ...options,
     customBasePath: envContext.BASE_URL,
@@ -132,7 +134,10 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange }) => {
     });
   };
 
-  // Build rows from the old structure
+  /**
+   * Handles client-side pagination for batched data
+   * @returns {Array} Table rows for current page
+   */
   const buildRowsFromOldFormat = () => {
     if (!rules.data) return [];
 
@@ -140,8 +145,20 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange }) => {
       return emptyRows(filters, toggleRulesDisabled);
     }
 
+    const isBatchedData = rules.data.length > filters.limit;
+    let paginatedRules = rules;
+
+    if (isBatchedData) {
+      const start = filters.offset || 0;
+      const end = start + filters.limit;
+      paginatedRules = {
+        ...rules,
+        data: rules.data.slice(start, end),
+      };
+    }
+
     return buildRows(
-      rules,
+      paginatedRules,
       areAllExpanded,
       setViewSystemsModalRule,
       setViewSystemsModalOpen,

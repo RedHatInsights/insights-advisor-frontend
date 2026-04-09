@@ -517,16 +517,19 @@ describe('Inventory helpers', () => {
         data: Array.from({ length: 100 }, (_, i) => ({
           system_uuid: `uuid-${i}`,
         })),
+        meta: { count: total, page: 1, per_page: 100 },
       };
       const mockPage2 = {
         data: Array.from({ length: 100 }, (_, i) => ({
           system_uuid: `uuid-${i + 100}`,
         })),
+        meta: { count: total, page: 2, per_page: 100 },
       };
       const mockPage3 = {
         data: Array.from({ length: 50 }, (_, i) => ({
           system_uuid: `uuid-${i + 200}`,
         })),
+        meta: { count: total, page: 3, per_page: 100 },
       };
 
       mockAxiosGet
@@ -555,6 +558,7 @@ describe('Inventory helpers', () => {
         data: Array.from({ length: 50 }, (_, i) => ({
           system_uuid: `uuid-${i}`,
         })),
+        meta: { count: total, page: 1, per_page: 100 },
       };
 
       mockAxiosGet.mockResolvedValue(mockData);
@@ -575,6 +579,7 @@ describe('Inventory helpers', () => {
       const total = 10;
       mockAxiosGet.mockResolvedValue({
         data: [{ system_uuid: 'uuid-1' }],
+        meta: { count: total, page: 1, per_page: 100 },
       });
 
       const fetchIds = allCurrentSystemIds(
