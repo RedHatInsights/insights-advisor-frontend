@@ -307,32 +307,54 @@ const SystemsTable = () => {
 
           handleRefresh(options);
 
-          // Filter systems that exist in inventory (have last_seen)
-          // Systems with last_seen: null don't exist in inventory and cause 404
+          /**
+           * Filter out systems that don't exist in Inventory.
+           * Systems with last_seen: null exist in Advisor but not in Inventory,
+           * which causes 404 errors when querying the Inventory API.
+           */
           const systemsInInventory = fetchedSystems.data.filter(
             (system) => system.last_seen !== null,
           );
 
+          /**
+           * Adjust the total count to account for filtered systems.
+           * When backend returns a count that includes systems with last_seen: null,
+           * we filter those out on the frontend to prevent 404 errors when
+           * querying the Inventory API. We subtract the number of filtered systems
+           * from this page to keep the count approximately accurate for pagination.
+           */
+          const filteredOutCount =
+            fetchedSystems.data.length - systemsInInventory.length;
+
           let results = { results: [] };
           if (systemsInInventory.length > 0) {
-            results = await defaultGetEntities(
-              // additional request to fetch hosts' operating system values
-              systemsInInventory.map((system) => system.system_uuid),
-              {
-                per_page,
-                hasItems: true,
-                fields: { system_profile: ['operating_system'] },
-              },
-              showTags,
-            );
+            try {
+              results = await defaultGetEntities(
+                // additional request to fetch hosts' operating system values
+                systemsInInventory.map((system) => system.system_uuid),
+                {
+                  per_page,
+                  hasItems: true,
+                  fields: { system_profile: ['operating_system'] },
+                },
+                showTags,
+              );
+            } catch (inventoryError) {
+              /**
+               * Handle 404 errors gracefully in case systems are missing from Inventory.
+               * This is a safety net - the filtering above should prevent most 404s.
+               */
+              if (inventoryError.response?.status === 404) {
+                results = { results: [] };
+              } else {
+                throw inventoryError;
+              }
+            }
           }
 
           return Promise.resolve({
-            results: mergeArraysByDiffKeys(
-              fetchedSystems.data,
-              results.results,
-            ),
-            total: fetchedSystems.meta.count,
+            results: mergeArraysByDiffKeys(systemsInInventory, results.results),
+            total: Math.max(0, fetchedSystems.meta.count - filteredOutCount),
           });
         }}
         tableProps={{
