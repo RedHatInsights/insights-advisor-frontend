@@ -148,7 +148,9 @@ describe('system rules table', () => {
 
   describe('Toolbar actions', () => {
     it('Should show remediation button when host is of type edge', () => {
-      cy.get('.ins-c-primary-toolbar__first-action').contains('Remediation');
+      cy.get('.ins-c-primary-toolbar__first-action').contains(
+        'Plan remediation',
+      );
     });
     it('Should hide remediation button when host is of type edge', () => {
       systemProfile.data.results[0].system_profile.host_type = 'edge';
@@ -440,7 +442,7 @@ describe('System rules table toolbar actions', () => {
     mountComponent({});
 
     cy.get('.ins-c-primary-toolbar__first-action')
-      .contains('Remediation')
+      .contains('Plan remediation')
       .should('exist');
   });
 });
