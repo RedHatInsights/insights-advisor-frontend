@@ -98,19 +98,55 @@ export const getEntities =
     };
     setFullFilters(allDetails);
     const fetchedSystems = await paginatedRequestHelper(allDetails);
-    const results = await defaultGetEntities(
-      fetchedSystems.data.map((system) => system.system_uuid),
-      {
-        per_page,
-        hasItems: true,
-        fields: { system_profile: ['operating_system'] },
-      },
-      showTags,
+
+    /**
+     * Filter out systems that don't exist in Inventory.
+     * Systems with last_seen: null exist in Advisor but not in Inventory,
+     * which causes 404 errors when querying the Inventory API.
+     */
+    const systemsInInventory = fetchedSystems.data.filter(
+      (system) => system.last_seen !== null,
     );
-    setCurPageIds(fetchedSystems.data.map((system) => system.system_uuid));
-    setTotal(fetchedSystems.meta.count);
+
+    /**
+     * Adjust the total count to account for filtered systems.
+     * The backend returns a count that includes systems with last_seen: null,
+     * but we filter those out on the frontend to prevent 404 errors when
+     * querying the Inventory API. We subtract the number of filtered systems
+     * from this page to keep the count approximately accurate for pagination.
+     */
+    const filteredOutCount =
+      fetchedSystems.data.length - systemsInInventory.length;
+
+    let results = { results: [] };
+    if (systemsInInventory.length > 0) {
+      try {
+        results = await defaultGetEntities(
+          systemsInInventory.map((system) => system.system_uuid),
+          {
+            per_page,
+            hasItems: true,
+            fields: { system_profile: ['operating_system'] },
+          },
+          showTags,
+        );
+      } catch (inventoryError) {
+        /**
+         * Handle 404 errors gracefully in case systems are missing from Inventory.
+         * This is a safety net - the filtering above should prevent most 404s.
+         */
+        if (inventoryError.response?.status === 404) {
+          results = { results: [] };
+        } else {
+          throw inventoryError;
+        }
+      }
+    }
+
+    setCurPageIds(systemsInInventory.map((system) => system.system_uuid));
+    setTotal(Math.max(0, fetchedSystems.meta.count - filteredOutCount));
     return Promise.resolve({
-      results: mergeArraysByDiffKeys(fetchedSystems.data, results.results).map(
+      results: mergeArraysByDiffKeys(systemsInInventory, results.results).map(
         (item) => {
           return {
             ...item,
@@ -118,7 +154,7 @@ export const getEntities =
           };
         },
       ),
-      total: fetchedSystems.meta.count,
+      total: Math.max(0, fetchedSystems.meta.count - filteredOutCount),
     });
   };
 

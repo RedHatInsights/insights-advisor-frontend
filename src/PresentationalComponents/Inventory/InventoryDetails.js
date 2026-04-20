@@ -6,7 +6,7 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core/dist/esm/layouts/Grid/index';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { connect, useStore } from 'react-redux';
 import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
@@ -18,8 +18,12 @@ import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import SystemAdvisor from '../../SmartComponents/SystemAdvisor';
 import { useParams } from 'react-router-dom';
-import { Skeleton } from '@patternfly/react-core';
+import { Skeleton, Bullseye } from '@patternfly/react-core';
 import { EnvironmentContext } from '../../App';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
+import MessageState from '../MessageState/MessageState';
+import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 
 const InventoryHeadFallback = () => {
   return (
@@ -39,6 +43,55 @@ const InventoryDetails = ({ entity }) => {
   const store = useStore();
   const { inventoryId } = useParams();
   const envContext = useContext(EnvironmentContext);
+  const axios = useAxiosWithPlatformInterceptors();
+  const addNotification = useAddNotification();
+  const [systemExists, setSystemExists] = useState(true);
+  const [checking, setChecking] = useState(true);
+
+  /**
+   * Check if the system exists in Advisor and has a valid last_seen value.
+   * Systems with last_seen: null don't exist in Inventory and will cause
+   * DetailWrapper to throw a 404 error. This check prevents that by validating
+   * the system before attempting to render the DetailWrapper component.
+   */
+  useEffect(() => {
+    const checkSystem = async () => {
+      try {
+        const response = await axios.get(
+          `${envContext.BASE_URL}/system/?system_uuid=${inventoryId}`,
+        );
+        const system = response.data?.data?.[0];
+        if (!system || system.last_seen === null) {
+          setSystemExists(false);
+        }
+      } catch (error) {
+        if (error.response?.status === 404) {
+          setSystemExists(false);
+        }
+      } finally {
+        setChecking(false);
+      }
+    };
+
+    checkSystem();
+  }, [inventoryId, axios, envContext.BASE_URL]);
+
+  /**
+   * Display a notification when a non-existent system is detected.
+   * This runs after the check completes to inform the user why they're
+   * seeing an empty state instead of system details.
+   */
+  useEffect(() => {
+    if (!checking && !systemExists) {
+      addNotification({
+        variant: 'warning',
+        title: 'System not available',
+        description:
+          'This system no longer exists in your inventory and cannot be displayed.',
+      });
+    }
+  }, [checking, systemExists, addNotification]);
+
   useEffect(() => {
     if (entity && (entity.display_name || entity.id)) {
       envContext.updateDocumentTitle(
@@ -46,6 +99,33 @@ const InventoryDetails = ({ entity }) => {
       );
     }
   }, [envContext, entity]);
+
+  if (checking) {
+    return (
+      <PageHeader className="pf-m-light ins-inventory-detail">
+        <InventoryHeadFallback />
+      </PageHeader>
+    );
+  }
+
+  if (!systemExists) {
+    return (
+      <>
+        <PageHeader className="pf-m-light ins-inventory-detail">
+          <Breadcrumbs current="System not found" />
+        </PageHeader>
+        <section className="pf-v6-l-page__main-section pf-v6-c-page__main-section">
+          <Bullseye>
+            <MessageState
+              icon={ExclamationCircleIcon}
+              title="System not available"
+              text="This system no longer exists in your inventory."
+            />
+          </Bullseye>
+        </section>
+      </>
+    );
+  }
 
   return (
     <DetailWrapper
