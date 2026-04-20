@@ -17,6 +17,10 @@ plugins.push(
       },
     },
   }),
+  new webpack.NormalModuleReplacementPlugin(
+    /@scalprum\/core$/,
+    resolve(__dirname, './scalprumMock.js'),
+  ),
 );
 
 // required to mock the chrome functionss

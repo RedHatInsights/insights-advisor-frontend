@@ -22,6 +22,13 @@ import '@patternfly/patternfly/patternfly.scss';
 import { mount } from 'cypress/react';
 import '@cypress/code-coverage/support';
 
+// Manually set up webpack share scopes for Cypress environment
+if (!window.__webpack_share_scopes__) {
+  window.__webpack_share_scopes__ = {
+    default: {},
+  };
+}
+
 Cypress.Commands.add('mount', mount);
 
 // Example use:
@@ -56,8 +63,10 @@ global.window.__scalprum__ = {
       modules: {
         './RemediationButton': {
           __esModule: true,
-
-          default: () => 'Remediations',
+          default: ({ children }) => {
+            const React = require('react');
+            return React.createElement('button', {}, children);
+          },
         },
       },
     },
