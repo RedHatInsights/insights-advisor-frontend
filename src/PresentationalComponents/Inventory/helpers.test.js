@@ -490,6 +490,203 @@ describe('Inventory helpers', () => {
         true,
       );
     });
+
+    describe('last_seen null filtering', () => {
+      it('filters out systems with last_seen null', async () => {
+        const mockFetchedSystems = {
+          data: [
+            { system_uuid: 'uuid-1', last_seen: '2026-04-14T10:00:00Z' },
+            { system_uuid: 'uuid-2', last_seen: null },
+            { system_uuid: 'uuid-3', last_seen: '2026-04-13T10:00:00Z' },
+          ],
+          meta: { count: 3 },
+        };
+        const mockDefaultEntities = {
+          results: [{ id: 'uuid-1' }, { id: 'uuid-3' }],
+        };
+
+        mockAxiosGet.mockResolvedValue(mockFetchedSystems);
+        mockDefaultGetEntities.mockResolvedValue(mockDefaultEntities);
+
+        const fetchEntities = getEntities(
+          mockHandleRefresh,
+          null,
+          mockSetCurPageIds,
+          mockSetTotal,
+          [],
+          mockSetFullFilters,
+          {},
+          rule,
+          RULES_FETCH_URL,
+          SYSTEMS_FETCH_URL,
+          mockAxios,
+        );
+
+        const result = await fetchEntities(
+          [],
+          config,
+          true,
+          mockDefaultGetEntities,
+        );
+
+        expect(mockDefaultGetEntities).toHaveBeenCalledWith(
+          ['uuid-1', 'uuid-3'],
+          expect.any(Object),
+          true,
+        );
+        expect(mockSetCurPageIds).toHaveBeenCalledWith(['uuid-1', 'uuid-3']);
+        expect(result.results).toHaveLength(2);
+      });
+
+      it('adjusts total count when filtering systems', async () => {
+        const mockFetchedSystems = {
+          data: [
+            { system_uuid: 'uuid-1', last_seen: '2026-04-14T10:00:00Z' },
+            { system_uuid: 'uuid-2', last_seen: null },
+            { system_uuid: 'uuid-3', last_seen: null },
+          ],
+          meta: { count: 100 },
+        };
+        const mockDefaultEntities = {
+          results: [{ id: 'uuid-1' }],
+        };
+
+        mockAxiosGet.mockResolvedValue(mockFetchedSystems);
+        mockDefaultGetEntities.mockResolvedValue(mockDefaultEntities);
+
+        const fetchEntities = getEntities(
+          mockHandleRefresh,
+          null,
+          mockSetCurPageIds,
+          mockSetTotal,
+          [],
+          mockSetFullFilters,
+          {},
+          rule,
+          RULES_FETCH_URL,
+          SYSTEMS_FETCH_URL,
+          mockAxios,
+        );
+
+        const result = await fetchEntities(
+          [],
+          config,
+          true,
+          mockDefaultGetEntities,
+        );
+
+        expect(mockSetTotal).toHaveBeenCalledWith(98);
+        expect(result.total).toBe(98);
+      });
+
+      it('skips Inventory API call when all systems have last_seen null', async () => {
+        const mockFetchedSystems = {
+          data: [
+            { system_uuid: 'uuid-1', last_seen: null },
+            { system_uuid: 'uuid-2', last_seen: null },
+          ],
+          meta: { count: 2 },
+        };
+
+        mockAxiosGet.mockResolvedValue(mockFetchedSystems);
+
+        const fetchEntities = getEntities(
+          mockHandleRefresh,
+          null,
+          mockSetCurPageIds,
+          mockSetTotal,
+          [],
+          mockSetFullFilters,
+          {},
+          rule,
+          RULES_FETCH_URL,
+          SYSTEMS_FETCH_URL,
+          mockAxios,
+        );
+
+        const result = await fetchEntities(
+          [],
+          config,
+          true,
+          mockDefaultGetEntities,
+        );
+
+        expect(mockDefaultGetEntities).not.toHaveBeenCalled();
+        expect(mockSetCurPageIds).toHaveBeenCalledWith([]);
+        expect(mockSetTotal).toHaveBeenCalledWith(0);
+        expect(result.results).toHaveLength(0);
+        expect(result.total).toBe(0);
+      });
+
+      it('handles 404 errors from Inventory API gracefully', async () => {
+        const mockFetchedSystems = {
+          data: [{ system_uuid: 'uuid-1', last_seen: '2026-04-14T10:00:00Z' }],
+          meta: { count: 1 },
+        };
+
+        mockAxiosGet.mockResolvedValue(mockFetchedSystems);
+        mockDefaultGetEntities.mockRejectedValue({
+          response: { status: 404 },
+          message: 'Not found',
+        });
+
+        const fetchEntities = getEntities(
+          mockHandleRefresh,
+          null,
+          mockSetCurPageIds,
+          mockSetTotal,
+          [],
+          mockSetFullFilters,
+          {},
+          rule,
+          RULES_FETCH_URL,
+          SYSTEMS_FETCH_URL,
+          mockAxios,
+        );
+
+        const result = await fetchEntities(
+          [],
+          config,
+          true,
+          mockDefaultGetEntities,
+        );
+
+        expect(result.results).toHaveLength(1);
+        expect(result.total).toBe(1);
+      });
+
+      it('rethrows non-404 errors from Inventory API', async () => {
+        const mockFetchedSystems = {
+          data: [{ system_uuid: 'uuid-1', last_seen: '2026-04-14T10:00:00Z' }],
+          meta: { count: 1 },
+        };
+        const serverError = {
+          response: { status: 500 },
+          message: 'Internal server error',
+        };
+
+        mockAxiosGet.mockResolvedValue(mockFetchedSystems);
+        mockDefaultGetEntities.mockRejectedValue(serverError);
+
+        const fetchEntities = getEntities(
+          mockHandleRefresh,
+          null,
+          mockSetCurPageIds,
+          mockSetTotal,
+          [],
+          mockSetFullFilters,
+          {},
+          rule,
+          RULES_FETCH_URL,
+          SYSTEMS_FETCH_URL,
+          mockAxios,
+        );
+
+        await expect(
+          fetchEntities([], config, true, mockDefaultGetEntities),
+        ).rejects.toEqual(serverError);
+      });
+    });
   });
 
   describe('allCurrentSystemIds', () => {
