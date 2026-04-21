@@ -17,20 +17,18 @@ export const useRbacV1Permissions = () => {
 export const useKesselPermissions = () => {
   const { workspaceId, isLoading: workspaceLoading } = useDefaultWorkspace();
 
-  const params = workspaceId
-    ? getKesselAccessCheckParams({
-        requiredPermissions: [
-          KESSEL_RELATIONS.export,
-          KESSEL_RELATIONS.disableRec,
-          KESSEL_RELATIONS.viewRecs,
-        ],
-        resourceIdOrIds: workspaceId,
-        options: {
-          resourceType: 'workspace',
-          reporter: { type: 'rbac' },
-        },
-      })
-    : { resources: [] };
+  const params = getKesselAccessCheckParams({
+    requiredPermissions: [
+      KESSEL_RELATIONS.export,
+      KESSEL_RELATIONS.disableRec,
+      KESSEL_RELATIONS.viewRecs,
+    ],
+    resourceIdOrIds: workspaceId,
+    options: {
+      resourceType: 'workspace',
+      reporter: { type: 'rbac' },
+    },
+  });
 
   const { data, loading, error } = useSelfAccessCheck(params);
 
@@ -42,9 +40,13 @@ export const useKesselPermissions = () => {
     return [false, false, false, false];
   }
 
-  const canExport = data?.[0]?.allowed ?? false;
-  const canDisableRec = data?.[1]?.allowed ?? false;
-  const canViewRecs = data?.[2]?.allowed ?? false;
+  const allowedByRelation = new Map(
+    (data ?? []).map((item) => [item.relation, item.allowed]),
+  );
+  const canExport = allowedByRelation.get(KESSEL_RELATIONS.export) ?? false;
+  const canDisableRec =
+    allowedByRelation.get(KESSEL_RELATIONS.disableRec) ?? false;
+  const canViewRecs = allowedByRelation.get(KESSEL_RELATIONS.viewRecs) ?? false;
 
   return [canExport, canDisableRec, canViewRecs, loading];
 };

@@ -6,6 +6,7 @@ import {
 import * as Hooks from './Hooks';
 import { useSelfAccessCheck } from '@project-kessel/react-kessel-access-check';
 import * as useDefaultWorkspaceModule from './useDefaultWorkspace';
+import { KESSEL_RELATIONS } from '../AppConstants';
 
 jest.mock('./Hooks', () => ({
   useRbac: jest.fn(),
@@ -75,7 +76,11 @@ describe('usePermissionCheck', () => {
       });
 
       useSelfAccessCheck.mockReturnValue({
-        data: [{ allowed: true }, { allowed: true }, { allowed: true }],
+        data: [
+          { allowed: true, relation: KESSEL_RELATIONS.export },
+          { allowed: true, relation: KESSEL_RELATIONS.disableRec },
+          { allowed: true, relation: KESSEL_RELATIONS.viewRecs },
+        ],
         loading: false,
       });
 
@@ -92,7 +97,11 @@ describe('usePermissionCheck', () => {
       });
 
       useSelfAccessCheck.mockReturnValue({
-        data: [{ allowed: false }, { allowed: false }, { allowed: false }],
+        data: [
+          { allowed: false, relation: KESSEL_RELATIONS.export },
+          { allowed: false, relation: KESSEL_RELATIONS.disableRec },
+          { allowed: false, relation: KESSEL_RELATIONS.viewRecs },
+        ],
         loading: false,
       });
 
@@ -109,7 +118,11 @@ describe('usePermissionCheck', () => {
       });
 
       useSelfAccessCheck.mockReturnValue({
-        data: [{ allowed: false }, { allowed: false }, { allowed: false }],
+        data: [
+          { allowed: false, relation: KESSEL_RELATIONS.export },
+          { allowed: false, relation: KESSEL_RELATIONS.disableRec },
+          { allowed: false, relation: KESSEL_RELATIONS.viewRecs },
+        ],
         loading: true,
       });
 
@@ -160,7 +173,11 @@ describe('usePermissionCheck', () => {
       });
 
       useSelfAccessCheck.mockReturnValue({
-        data: [{ allowed: true }, { allowed: false }, { allowed: true }],
+        data: [
+          { allowed: true, relation: KESSEL_RELATIONS.export },
+          { allowed: false, relation: KESSEL_RELATIONS.disableRec },
+          { allowed: true, relation: KESSEL_RELATIONS.viewRecs },
+        ],
         loading: false,
       });
 
@@ -177,7 +194,11 @@ describe('usePermissionCheck', () => {
       });
 
       useSelfAccessCheck.mockReturnValue({
-        data: [{ allowed: true }, { allowed: true }, { allowed: true }],
+        data: [
+          { allowed: true, relation: KESSEL_RELATIONS.export },
+          { allowed: true, relation: KESSEL_RELATIONS.disableRec },
+          { allowed: true, relation: KESSEL_RELATIONS.viewRecs },
+        ],
         loading: false,
       });
 
@@ -188,19 +209,19 @@ describe('usePermissionCheck', () => {
           {
             id: 'workspace-123',
             type: 'workspace',
-            relation: 'advisor_exports_view',
+            relation: KESSEL_RELATIONS.export,
             reporter: { type: 'rbac' },
           },
           {
             id: 'workspace-123',
             type: 'workspace',
-            relation: 'advisor_disable_recommendations_edit',
+            relation: KESSEL_RELATIONS.disableRec,
             reporter: { type: 'rbac' },
           },
           {
             id: 'workspace-123',
             type: 'workspace',
-            relation: 'advisor_recommendation_results_view',
+            relation: KESSEL_RELATIONS.viewRecs,
             reporter: { type: 'rbac' },
           },
         ],
