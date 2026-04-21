@@ -61,7 +61,7 @@ const Inventory = ({
 
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [curPageIds, setCurPageIds] = useState([]);
-  const [pathwayRulesList, setPathwayRulesList] = useState({});
+  const [pathwayRulesList, setPathwayRulesList] = useState([]);
   const [pathwayReportList, setPathwayReportList] = useState({});
   const [isLoading, setIsLoading] = useState();
 
@@ -128,7 +128,6 @@ const Inventory = ({
       },
     });
     checkRemediationButtonStatus();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIds]);
 
   useEffect(() => {
@@ -155,20 +154,18 @@ const Inventory = ({
   const pathwayCheck = async () => {
     if (!hasPathwayDetails) {
       if (pathway) {
-        let pathwayRules = (
-          await axios.get(
-            `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
-          )
-        )?.data;
-
-        let pathwayReport = (
-          await axios.get(
-            `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
-          )
-        )?.rules;
+        const rulesRes = await axios.get(
+          `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
+        );
+        const reportsRes = await axios.get(
+          `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
+        );
+        const pathwayRulesFromApi = rulesRes?.data ?? [];
+        const pathwayReportRules =
+          reportsRes?.data?.rules ?? reportsRes?.rules ?? {};
         setHasPathwayDetails(true);
-        setPathwayReportList(pathwayReport);
-        setPathwayRulesList(pathwayRules);
+        setPathwayReportList(pathwayReportRules);
+        setPathwayRulesList(pathwayRulesFromApi);
       }
     }
   };
@@ -184,18 +181,20 @@ const Inventory = ({
         if (playbookFound) {
           break;
         }
-        ruleKeys.forEach((rule) => {
-          //Grab the rule assosciated with that system
-          if (pathwayReportList[rule].includes(system)) {
-            let assosciatedRule = pathwayReportList[rule];
-            //find that associated rule in the pathwayRules endpoint, check for playbook
-            let item = pathwayRulesList.find(
-              (report) => (report.rule_id = assosciatedRule),
-            );
-            if (item.resolution_set[0].has_playbook) {
-              playbookFound = true;
-              return setIsRemediationButtonDisabled(false);
-            }
+        ruleKeys.forEach((ruleKey) => {
+          const systemsForRule = pathwayReportList[ruleKey];
+          if (
+            !Array.isArray(systemsForRule) ||
+            !systemsForRule.includes(system)
+          ) {
+            return;
+          }
+          const item = pathwayRulesList.find(
+            (report) => report.rule_id === ruleKey,
+          );
+          if (item?.resolution_set?.[0]?.has_playbook) {
+            playbookFound = true;
+            setIsRemediationButtonDisabled(false);
           }
         });
       }
@@ -208,27 +207,26 @@ const Inventory = ({
 
   const remediationDataProvider = async () => {
     if (pathway) {
-      const pathways = (
-        await axios.get(
-          `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
-        )
-      )?.data;
+      const pathwaysResponse = await axios.get(
+        `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
+      );
+      const pathwayRules = pathwaysResponse?.data ?? [];
 
-      const systems = (
-        await axios.get(
-          `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
-        )
-      )?.rules;
+      const reportsResponse = await axios.get(
+        `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
+      );
+      const systems =
+        reportsResponse?.data?.rules ?? reportsResponse?.rules ?? {};
 
       let issues = [];
-      pathways.forEach((rec) => {
-        let filteredSystems = [];
-
-        systems[rec.rule_id].forEach((system) => {
-          if (selectedIds.includes(system)) {
-            filteredSystems.push(system);
-          }
-        });
+      pathwayRules.forEach((rec) => {
+        const systemsForRule = systems[rec.rule_id];
+        if (!Array.isArray(systemsForRule)) {
+          return;
+        }
+        const filteredSystems = systemsForRule.filter((system) =>
+          selectedIds.includes(system),
+        );
 
         if (filteredSystems.length) {
           issues.push({
@@ -373,18 +371,23 @@ const Inventory = ({
   };
 
   useEffect(() => {
-    if (selectedIds?.length > 0) {
-      const fetchAndSetData = async () => {
-        const resolutionsData = await iopResolutionsMapper(
-          entities,
-          rule,
-          selectedIds,
-        );
-        setResolutions(resolutionsData);
-      };
-      fetchAndSetData();
+    if (!IopRemediationModal) {
+      return;
     }
-  }, [selectedIds, entities, rule]);
+    if (!selectedIds?.length) {
+      setResolutions([]);
+      return;
+    }
+    const fetchAndSetData = async () => {
+      const resolutionsData = await iopResolutionsMapper(
+        entities,
+        rule,
+        selectedIds,
+      );
+      setResolutions(resolutionsData);
+    };
+    fetchAndSetData();
+  }, [selectedIds, entities, rule, IopRemediationModal]);
 
   const getActionsConfig = () => {
     const actions = [

@@ -1,5 +1,5 @@
 import { mergeArraysByDiffKeys } from '../Common/Tables';
-import { createOptions, createSortParam } from '../helper';
+import { createOptions, createSortParam, getCsrfTokenHeader } from '../helper';
 import LastSeenColumnHeader from '../../Utilities/LastSeenColumnHeader';
 import { fitContent } from '@patternfly/react-table';
 import { DateFormat } from '@redhat-cloud-services/frontend-components';
@@ -198,7 +198,7 @@ export const allCurrentSystemIds =
  * array if the fetch fails or if an error occurs.
  */
 export const iopResolutionsMapper = async (entitites, rule, selectedIds) => {
-  const formattedIssue = `advisor:${rule.rule_id}`;
+  const formattedIssue = `advisor:${rule?.rule_id}`;
 
   try {
     const response = await fetch(
@@ -207,9 +207,7 @@ export const iopResolutionsMapper = async (entitites, rule, selectedIds) => {
         method: 'POST',
         headers: {
           'content-type': 'application/json; charset=utf-8',
-          'X-CSRF-Token': document
-            .querySelector('meta[name="csrf-token"]')
-            .getAttribute('content'),
+          ...getCsrfTokenHeader(),
         },
         body: JSON.stringify({ issues: [formattedIssue] }),
       },
