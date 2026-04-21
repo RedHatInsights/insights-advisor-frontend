@@ -16,6 +16,7 @@ const mockAxiosGet = jest.fn();
 jest.mock('../helper', () => ({
   createOptions: jest.fn(),
   createSortParam: jest.fn(),
+  getCsrfTokenHeader: jest.fn(() => ({ 'X-CSRF-Token': 'test-csrf-token' })),
 }));
 
 jest.mock('../Common/Tables', () => ({
@@ -797,9 +798,6 @@ describe('Inventory helpers', () => {
 
     beforeEach(() => {
       global.fetch = jest.fn();
-      document.querySelector = jest.fn().mockReturnValue({
-        getAttribute: jest.fn().mockReturnValue('test-csrf-token'),
-      });
     });
 
     afterEach(() => {
