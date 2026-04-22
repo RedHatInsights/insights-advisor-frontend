@@ -57,16 +57,15 @@ const InventoryDetails = ({ entity }) => {
   useEffect(() => {
     const checkSystem = async () => {
       try {
-        const response = await axios.get(
-          `${envContext.BASE_URL}/system/?system_uuid=${inventoryId}`,
+        await axios.get(
+          `${envContext.BASE_URL}/system/${inventoryId}/reports/`,
         );
-        const system = response.data?.data?.[0];
-        if (!system || system.last_seen === null) {
-          setSystemExists(false);
-        }
+        setSystemExists(true);
       } catch (error) {
         if (error.response?.status === 404) {
           setSystemExists(false);
+        } else {
+          setSystemExists(true);
         }
       } finally {
         setChecking(false);
