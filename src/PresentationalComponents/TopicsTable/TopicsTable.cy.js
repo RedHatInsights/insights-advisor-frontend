@@ -237,11 +237,24 @@ describe('sorting (with tabletools)', () => {
   }) {
     const header = `th[data-label="${label}"]`;
 
-    if (order === 'ascending') {
-      cy.get(header).find('button').click();
+    if (label === 'Featured') {
+      if (order === 'ascending') {
+        cy.get(header).find('button').click();
+      }
+    } else if (label === 'Name') {
+      if (order === 'ascending') {
+        cy.get(header).find('button').click();
+        cy.get(header).find('button').click();
+      } else {
+        cy.get(header).find('button').click();
+      }
     } else {
-      cy.get(header).find('button').click();
-      cy.get(header).find('button').click();
+      if (order === 'ascending') {
+        cy.get(header).find('button').click();
+      } else {
+        cy.get(header).find('button').click();
+        cy.get(header).find('button').click();
+      }
     }
 
     let sortedValues = _.map(
@@ -260,6 +273,7 @@ describe('sorting (with tabletools)', () => {
       .then((actualValues) => {
         console.log('Expected:', sortedValues);
         console.log('Actual:', actualValues);
+        console.log('Sorting by:', sortingField, order);
         expect(actualValues).to.deep.equal(sortedValues);
       });
   }
