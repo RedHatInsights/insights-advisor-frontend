@@ -55,6 +55,7 @@
       "!src/PresentationalComponents/Inventory/Inventory.js",
       "!src/PresentationalComponents/SystemsTable/SystemsTable.js",
       "!src/PresentationalComponents/Cards/TotalRiskCard.js",
+      "!src/PresentationalComponents/Cards/OverviewDashbarCard/IopOverviewDashbarCard.js",
       "!src/PresentationalComponents/ExecutiveReport/BuildExecReport.js",
       "!src/PresentationalComponents/Export/SystemsPdfBuild.js",
       "!src/PresentationalComponents/Export/TablePage.js"
