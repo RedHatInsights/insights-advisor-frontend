@@ -128,7 +128,14 @@ const Inventory = ({
       },
     });
     checkRemediationButtonStatus();
-  }, [selectedIds]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    selectedIds,
+    pathwayReportList,
+    pathwayRulesList,
+    pathway,
+    rulesPlaybookCount,
+  ]);
 
   useEffect(() => {
     if (pathway) {
@@ -139,18 +146,25 @@ const Inventory = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /**
+   * Fetches playbook count for a single rule from the API.
+   * Only fetches if rulesPlaybookCount is -1 (not yet fetched).
+   * Updates rulesPlaybookCount state with the fetched value.
+   */
   const rulesCheck = async () => {
     if (rulesPlaybookCount < 0) {
-      const associatedRuleDetails = (
-        await axios.get(
-          `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
-          { params: { name: filters.name } },
-        )
-      )?.playbook_count;
+      const url = `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`;
+      const response = await axios.get(url, { params: { name: filters.name } });
+      const associatedRuleDetails = response?.playbook_count ?? 0;
       setRulesPlaybookCount(associatedRuleDetails);
     }
   };
 
+  /**
+   * Fetches pathway rules and reports from the API.
+   * Only fetches if hasPathwayDetails is false (not yet fetched).
+   * Updates pathwayRulesList and pathwayReportList state with the fetched data.
+   */
   const pathwayCheck = async () => {
     if (!hasPathwayDetails) {
       if (pathway) {
@@ -170,6 +184,12 @@ const Inventory = ({
     }
   };
 
+  /**
+   * Determines whether the remediation button should be enabled or disabled.
+   * For pathways: Button enabled if any selected system has a rule with a playbook.
+   * For single rules: Button enabled if rulesPlaybookCount > 0 and systems are selected.
+   * Button is always disabled if no systems are selected.
+   */
   const checkRemediationButtonStatus = () => {
     let playbookFound = false;
     let ruleKeys = Object.keys(pathwayReportList);
@@ -198,25 +218,28 @@ const Inventory = ({
           }
         });
       }
+      if (!playbookFound) {
+        setIsRemediationButtonDisabled(true);
+      }
     } else {
       if (rulesPlaybookCount > 0 && selectedIds?.length > 0) {
         setIsRemediationButtonDisabled(false);
+      } else {
+        setIsRemediationButtonDisabled(true);
       }
     }
   };
 
+  /**
+   * Provides remediation data for creating a remediation plan.
+   * For pathways: Returns issues array with rule IDs and their affected systems.
+   * For single rules: Returns a single issue with the rule ID and all selected systems.
+   * @returns {Promise<Object>} Remediation data object with issues and systems
+   */
   const remediationDataProvider = async () => {
     if (pathway) {
-      const pathwaysResponse = await axios.get(
-        `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
-      );
-      const pathwayRules = pathwaysResponse?.data ?? [];
-
-      const reportsResponse = await axios.get(
-        `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
-      );
-      const systems =
-        reportsResponse?.data?.rules ?? reportsResponse?.rules ?? {};
+      const pathwayRules = pathwayRulesList;
+      const systems = pathwayReportList;
 
       let issues = [];
       pathwayRules.forEach((rec) => {
