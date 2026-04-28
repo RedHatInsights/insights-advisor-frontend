@@ -153,9 +153,12 @@ const Inventory = ({
    */
   const rulesCheck = async () => {
     if (rulesPlaybookCount < 0) {
-      const url = `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`;
-      const response = await axios.get(url, { params: { name: filters.name } });
-      const associatedRuleDetails = response?.playbook_count ?? 0;
+      const associatedRuleDetails = (
+        await axios.get(
+          `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
+          { params: { name: filters.name } },
+        )
+      )?.playbook_count;
       setRulesPlaybookCount(associatedRuleDetails);
     }
   };
@@ -394,7 +397,7 @@ const Inventory = ({
   };
 
   useEffect(() => {
-    if (!IopRemediationModal) {
+    if (!IopRemediationModal || pathway) {
       return;
     }
     if (!selectedIds?.length) {
@@ -410,7 +413,7 @@ const Inventory = ({
       setResolutions(resolutionsData);
     };
     fetchAndSetData();
-  }, [selectedIds, entities, rule, IopRemediationModal]);
+  }, [selectedIds, entities, rule, IopRemediationModal, pathway]);
 
   const getActionsConfig = () => {
     const actions = [
