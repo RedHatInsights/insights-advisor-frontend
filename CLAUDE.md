@@ -755,33 +755,75 @@ useEffect(() => {
 
 ---
 
-### 3. Playbook Count Fallback
+### 3. API Error Handling with User Notifications
 
-**Problem**: Using `?? 0` fallback when fetching playbook count
+**Approach**: Use try-catch with user notification for API failures
 
-**Issue**:
+Both `rulesCheck()` and `pathwayCheck()` have error handling to inform users when API calls fail.
+
+**Single Rule Implementation** (`rulesCheck`):
 ```javascript
-// WRONG:
-const playbook_count = response?.playbook_count ?? 0;
-
-// If API returns undefined (error/timeout):
-// - Sets playbook_count to 0
-// - Button thinks "no playbooks available"
-// - Should actually show "not yet fetched" state
+const rulesCheck = async () => {
+  if (rulesPlaybookCount < 0) {
+    try {
+      const associatedRuleDetails = (
+        await axios.get(
+          `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
+          { params: { name: filters.name } },
+        )
+      )?.playbook_count;
+      setRulesPlaybookCount(associatedRuleDetails);
+    } catch {
+      addNotification({
+        variant: 'danger',
+        title: 'Failed to fetch playbook information',
+        description: `Unable to load remediation details for this recommendation.`,
+      });
+      setRulesPlaybookCount(0);
+    }
+  }
+};
 ```
-**Correct**:
+
+**Pathway Implementation** (`pathwayCheck`):
 ```javascript
-// RIGHT:
-const playbook_count = response?.playbook_count;
-
-// If API returns undefined:
-// - playbook_count stays undefined
-// - Can distinguish between "0 playbooks" vs "unknown"
+const pathwayCheck = async () => {
+  if (!hasPathwayDetails) {
+    if (pathway) {
+      try {
+        const rulesRes = await axios.get(
+          `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
+        );
+        const reportsRes = await axios.get(
+          `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
+        );
+        // ... set state
+      } catch {
+        addNotification({
+          variant: 'danger',
+          title: 'Failed to fetch pathway information',
+          description: `Unable to load remediation details for this pathway.`,
+        });
+        setHasPathwayDetails(true);
+        setPathwayReportList({});
+        setPathwayRulesList([]);
+      }
+    }
+  }
+};
 ```
-**State meanings**:
+
+**Why this approach**:
+- API failures (network errors, 500, 404) trigger user-visible notification
+- Remediation button is disabled when fetch fails
+- User is informed about the problem instead of silent failure
+- Follows the same error handling pattern as InventoryDetails.js
+- Consistent error handling across both single rule and pathway pages
+
+**State meanings for rulesPlaybookCount**:
 - `-1` = Not yet fetched (initial state)
-- `undefined` = Fetch failed
-- `0` = No playbooks available
+- `undefined` = Successful response but missing playbook_count field (edge case)
+- `0` = No playbooks available OR fetch failed (with notification)
 - `> 0` = Playbooks available
 
 ---

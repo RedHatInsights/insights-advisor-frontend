@@ -153,13 +153,22 @@ const Inventory = ({
    */
   const rulesCheck = async () => {
     if (rulesPlaybookCount < 0) {
-      const associatedRuleDetails = (
-        await axios.get(
-          `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
-          { params: { name: filters.name } },
-        )
-      )?.playbook_count;
-      setRulesPlaybookCount(associatedRuleDetails);
+      try {
+        const associatedRuleDetails = (
+          await axios.get(
+            `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
+            { params: { name: filters.name } },
+          )
+        )?.playbook_count;
+        setRulesPlaybookCount(associatedRuleDetails);
+      } catch {
+        addNotification({
+          variant: 'danger',
+          title: 'Failed to fetch playbook information',
+          description: `Unable to load remediation details for this recommendation.`,
+        });
+        setRulesPlaybookCount(0);
+      }
     }
   };
 
@@ -171,18 +180,29 @@ const Inventory = ({
   const pathwayCheck = async () => {
     if (!hasPathwayDetails) {
       if (pathway) {
-        const rulesRes = await axios.get(
-          `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
-        );
-        const reportsRes = await axios.get(
-          `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
-        );
-        const pathwayRulesFromApi = rulesRes?.data ?? [];
-        const pathwayReportRules =
-          reportsRes?.data?.rules ?? reportsRes?.rules ?? {};
-        setHasPathwayDetails(true);
-        setPathwayReportList(pathwayReportRules);
-        setPathwayRulesList(pathwayRulesFromApi);
+        try {
+          const rulesRes = await axios.get(
+            `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
+          );
+          const reportsRes = await axios.get(
+            `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
+          );
+          const pathwayRulesFromApi = rulesRes?.data ?? [];
+          const pathwayReportRules =
+            reportsRes?.data?.rules ?? reportsRes?.rules ?? {};
+          setHasPathwayDetails(true);
+          setPathwayReportList(pathwayReportRules);
+          setPathwayRulesList(pathwayRulesFromApi);
+        } catch {
+          addNotification({
+            variant: 'danger',
+            title: 'Failed to fetch pathway information',
+            description: `Unable to load remediation details for this pathway.`,
+          });
+          setHasPathwayDetails(true);
+          setPathwayReportList({});
+          setPathwayRulesList([]);
+        }
       }
     }
   };
@@ -631,7 +651,7 @@ Inventory.propTypes = {
   exportTable: PropTypes.string,
   showTags: PropTypes.bool,
   IopRemediationModal: PropTypes.element,
-  axios: PropTypes.func,
+  axios: PropTypes.object,
 };
 
 export default Inventory;
