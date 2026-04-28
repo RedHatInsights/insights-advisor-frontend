@@ -1,12 +1,31 @@
 import { mergeArraysByDiffKeys } from '../Common/Tables';
-import { createOptions, createSortParam } from '../helper';
+import { createOptions, createSortParam, getCsrfTokenHeader } from '../helper';
 import LastSeenColumnHeader from '../../Utilities/LastSeenColumnHeader';
 import { fitContent } from '@patternfly/react-table';
 import { DateFormat } from '@redhat-cloud-services/frontend-components';
 import React from 'react';
 import Qs from 'qs';
 
-/*This functions purpose is to grab the currently set filters, and return all associated systems for it.*/
+/**
+ * Fetches systems data based on the currently set filters.
+ * For pathways: Fetches from SYSTEMS_FETCH_URL with pathway slug.
+ * For rules: Fetches from RULES_FETCH_URL with rule ID.
+ *
+ * @param {Object} params Configuration object
+ * @param {number} params.per_page Number of items per page
+ * @param {number} params.page Current page number
+ * @param {Object} params.advisorFilters Advisor-specific filters
+ * @param {Object} params.filters General filters
+ * @param {Array} params.workloads Workload filters
+ * @param {Object} params.pathway Pathway object with slug property (optional)
+ * @param {Object} params.rule Rule object with rule_id property (optional)
+ * @param {Array} params.selectedTags Selected tag filters
+ * @param {string} params.sort Sort parameter
+ * @param {string} params.RULES_FETCH_URL Base URL for rules API
+ * @param {string} params.SYSTEMS_FETCH_URL Base URL for systems API
+ * @param {Object} params.axios Axios instance for making requests
+ * @returns {Promise<Object>} API response with systems data
+ */
 export const paginatedRequestHelper = async ({
   per_page,
   page,
@@ -48,6 +67,24 @@ export const paginatedRequestHelper = async ({
       );
 };
 
+/**
+ * Factory function that creates an entity fetcher for the Inventory table.
+ * Fetches systems from Advisor API, filters out systems not in Inventory (last_seen: null),
+ * then enriches the data with Inventory API details.
+ *
+ * @param {Function} handleRefresh Callback to refresh the UI with new options
+ * @param {Object} pathway Pathway object (optional)
+ * @param {Function} setCurPageIds Callback to set current page system IDs
+ * @param {Function} setTotal Callback to set total count
+ * @param {Array<string>} selectedIds Array of selected system IDs
+ * @param {Function} setFullFilters Callback to store full filter configuration
+ * @param {Object} fullFilters Current full filter configuration
+ * @param {Object} rule Rule object with rule_id (optional)
+ * @param {string} RULES_FETCH_URL Base URL for rules API
+ * @param {string} SYSTEMS_FETCH_URL Base URL for systems API
+ * @param {Object} axios Axios instance for making requests
+ * @returns {Function} Async function that fetches and processes entities
+ */
 export const getEntities =
   (
     handleRefresh,
@@ -158,7 +195,18 @@ export const getEntities =
     });
   };
 
-/*Takes in the current filters, and keeps sending get request until there are no pages left*/
+/**
+ * Fetches data in batches across all pages.
+ * Calculates the number of pages needed based on total and batchSize,
+ * then makes parallel requests for all pages.
+ *
+ * @param {Function} fetchFunction Function to fetch a single page
+ * @param {number} total Total number of items
+ * @param {Object} filter Filter configuration
+ * @param {number} batchSize Number of items per page (default: 100)
+ * @param {Object} rule Rule object (optional)
+ * @returns {Promise<Array>} Array of promises for all page requests
+ */
 const fetchBatched = (fetchFunction, total, filter, batchSize = 100, rule) => {
   const pages = Math.ceil(total / batchSize) || 1;
   return Promise.all(
@@ -172,7 +220,18 @@ const fetchBatched = (fetchFunction, total, filter, batchSize = 100, rule) => {
     ),
   );
 };
-/*Grabs all systemIds and maniupaltes the data into one large array of systems*/
+
+/**
+ * Factory function that creates a system ID fetcher for bulk operations.
+ * Fetches all system IDs across all pages and returns them as a single array.
+ * Sets loading state during the fetch operation.
+ *
+ * @param {Object} fullFilters Complete filter configuration
+ * @param {number} total Total number of systems
+ * @param {Object} rule Rule object
+ * @param {Function} setIsLoading Callback to set loading state
+ * @returns {Function} Async function that fetches all system IDs
+ */
 export const allCurrentSystemIds =
   (fullFilters, total, rule, setIsLoading) => async () => {
     setIsLoading(true);
@@ -191,13 +250,18 @@ export const allCurrentSystemIds =
  * host and includes its name, ID, and the relevant resolutions.
  *
  * @param {object} entitites An object containing a `rows` property, which is an array of system objects. Each system object must have an `id` and `display_name`.
- * @param {object} rule An object representing the rule, containing a `rule_id` property.
+ * @param {object} rule An object representing the rule, containing a `rule_id` property. If rule or rule_id is missing, returns empty array.
  * @param {string[]} selectedIds An array of strings representing the IDs of the selected systems.
  * @returns {Promise<object[]>} A promise that resolves to an array of objects. Each object contains
- * `hostid`, `host_name`, `resolutions`, `rulename`, and `description`. Returns an empty
- * array if the fetch fails or if an error occurs.
+ * `hostid`, `host_name`, `resolutions`, `rulename`, `description`, and `rebootable`. Returns an empty
+ * array if rule_id is missing, the fetch fails, or if an error occurs.
  */
 export const iopResolutionsMapper = async (entitites, rule, selectedIds) => {
+  if (!rule?.rule_id) {
+    console.error('Rule ID is missing, cannot fetch remediation resolutions');
+    return [];
+  }
+
   const formattedIssue = `advisor:${rule.rule_id}`;
 
   try {
@@ -207,9 +271,7 @@ export const iopResolutionsMapper = async (entitites, rule, selectedIds) => {
         method: 'POST',
         headers: {
           'content-type': 'application/json; charset=utf-8',
-          'X-CSRF-Token': document
-            .querySelector('meta[name="csrf-token"]')
-            .getAttribute('content'),
+          ...getCsrfTokenHeader(),
         },
         body: JSON.stringify({ issues: [formattedIssue] }),
       },

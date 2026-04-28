@@ -1,3 +1,5 @@
+import { getCsrfTokenHeader } from '../../PresentationalComponents/helper';
+
 export const fetchResolutionsData = async (selectedRules, hostId, hostName) => {
   const formattedIssues = selectedRules.map(
     (rule) => 'advisor:' + rule.rule.rule_id,
@@ -10,9 +12,7 @@ export const fetchResolutionsData = async (selectedRules, hostId, hostName) => {
         method: 'POST',
         headers: {
           'content-type': 'application/json; charset=utf-8',
-          'X-CSRF-Token': document
-            .querySelector('meta[name="csrf-token"]')
-            .getAttribute('content'),
+          ...getCsrfTokenHeader(),
         },
         body: JSON.stringify({ issues: formattedIssues }),
       },
