@@ -144,7 +144,7 @@ const Inventory = ({
       rulesCheck();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [rule?.rule_id, pathway?.slug]);
 
   /**
    * Fetches playbook count for a single rule from the API.
@@ -153,6 +153,7 @@ const Inventory = ({
    */
   const rulesCheck = async () => {
     if (rulesPlaybookCount < 0) {
+      if (!rule?.rule_id) return;
       try {
         const associatedRuleDetails = (
           await axios.get(

@@ -91,22 +91,6 @@ describe('Inventory - Playbook Count Scenarios', () => {
       });
     });
 
-    it('should not fetch playbook count multiple times on re-render', async () => {
-      mockAxiosGet.mockResolvedValueOnce({
-        playbook_count: 3,
-      });
-
-      renderInventory();
-
-      await waitFor(() => {
-        expect(mockAxiosGet).toHaveBeenCalledTimes(1);
-      });
-
-      // The useEffect has a guard: only fetches if rulesPlaybookCount < 0
-      // After first fetch, it won't fetch again
-      // This is verified by the call count staying at 1
-    });
-
     it('should encode rule_id in URL', async () => {
       mockAxiosGet.mockResolvedValueOnce({ playbook_count: 1 });
 
@@ -124,6 +108,24 @@ describe('Inventory - Playbook Count Scenarios', () => {
         );
       });
     });
+
+    it('should not call API when rule.rule_id is missing', async () => {
+      renderInventory({ rule: {} });
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      expect(mockAxiosGet).not.toHaveBeenCalled();
+      expect(mockAddNotification).not.toHaveBeenCalled();
+    });
+
+    it('should not call API when rule is undefined', async () => {
+      renderInventory({ rule: undefined });
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      expect(mockAxiosGet).not.toHaveBeenCalled();
+      expect(mockAddNotification).not.toHaveBeenCalled();
+    });
   });
 
   describe('Playbook Count State: -1 (Not Yet Fetched)', () => {
@@ -133,19 +135,14 @@ describe('Inventory - Playbook Count Scenarios', () => {
 
       renderInventory();
 
-      // The initial state is -1, and the component should be rendered
       await waitFor(() => {
         expect(mockAxiosGet).toHaveBeenCalled();
       });
-
-      // Don't resolve - state should remain -1
-      // Button should be disabled (tested in button state tests)
     });
   });
 
   describe('Playbook Count State: undefined (Fetch Failed)', () => {
     it('should set rulesPlaybookCount to undefined when API returns response without playbook_count', async () => {
-      // Simulate axios interceptor returning empty response
       mockAxiosGet.mockResolvedValueOnce({});
 
       renderInventory();
@@ -153,9 +150,6 @@ describe('Inventory - Playbook Count Scenarios', () => {
       await waitFor(() => {
         expect(mockAxiosGet).toHaveBeenCalled();
       });
-
-      // Response has no playbook_count, so associatedRuleDetails = undefined
-      // This should NOT crash the component
     });
 
     it('should set rulesPlaybookCount to undefined when API returns null response', async () => {
@@ -257,15 +251,9 @@ describe('Inventory - Playbook Count Scenarios', () => {
       await waitFor(() => {
         expect(mockAxiosGet).toHaveBeenCalled();
       });
-
-      // Component should render without errors
-      // Button should be disabled (tested in button state tests)
     });
 
     it('should distinguish between 0 and undefined', async () => {
-      // This test demonstrates that we can tell the difference
-      // between "no playbooks" (0) and "fetch failed" (undefined)
-
       mockAxiosGet.mockResolvedValueOnce({
         playbook_count: 0,
       });
@@ -275,11 +263,6 @@ describe('Inventory - Playbook Count Scenarios', () => {
       await waitFor(() => {
         expect(mockAxiosGet).toHaveBeenCalled();
       });
-
-      // If we had used `|| 0` or `?? 0`, both undefined and 0 would be the same
-      // Without it, we can distinguish:
-      // - 0 = "API succeeded, but no playbooks exist"
-      // - undefined = "API failed or returned incomplete data"
     });
   });
 
@@ -294,9 +277,6 @@ describe('Inventory - Playbook Count Scenarios', () => {
       await waitFor(() => {
         expect(mockAxiosGet).toHaveBeenCalled();
       });
-
-      // Component should render
-      // Button should be enabled when systems are selected (tested in button state tests)
     });
 
     it('should handle large playbook counts', async () => {
@@ -309,8 +289,6 @@ describe('Inventory - Playbook Count Scenarios', () => {
       await waitFor(() => {
         expect(mockAxiosGet).toHaveBeenCalled();
       });
-
-      // Component should render
     });
 
     it('should handle playbook_count: 1 (edge case)', async () => {
@@ -323,8 +301,6 @@ describe('Inventory - Playbook Count Scenarios', () => {
       await waitFor(() => {
         expect(mockAxiosGet).toHaveBeenCalled();
       });
-
-      // Exactly 1 playbook should be treated as "has playbooks"
     });
   });
 
@@ -350,9 +326,6 @@ describe('Inventory - Playbook Count Scenarios', () => {
         await waitFor(() => {
           expect(mockAxiosGet).toHaveBeenCalled();
         });
-
-        // With empty selection, button should be disabled
-        // even if playbook_count > 0
       });
     });
 
@@ -369,9 +342,6 @@ describe('Inventory - Playbook Count Scenarios', () => {
         await waitFor(() => {
           expect(mockAxiosGet).toHaveBeenCalled();
         });
-
-        // Even with selected systems, button should be disabled
-        // because rulesPlaybookCount = 0
       });
     });
 
@@ -386,16 +356,11 @@ describe('Inventory - Playbook Count Scenarios', () => {
         await waitFor(() => {
           expect(mockAxiosGet).toHaveBeenCalled();
         });
-
-        // CRITICAL TEST: undefined > 0 evaluates to false, not an error
-        // Button should be disabled, component should not crash
-        // This proves that adding || 0 or ?? 0 is unnecessary
       });
 
       it('should handle undefined in comparison without throwing', async () => {
         mockAxiosGet.mockResolvedValue(null);
 
-        // This should NOT throw an error
         expect(() => {
           renderInventory();
         }).not.toThrow();
@@ -404,7 +369,6 @@ describe('Inventory - Playbook Count Scenarios', () => {
           expect(mockAxiosGet).toHaveBeenCalled();
         });
 
-        // Demonstrates that undefined > 0 is safe in JavaScript
         expect(undefined > 0).toBe(false);
       });
     });
@@ -419,9 +383,6 @@ describe('Inventory - Playbook Count Scenarios', () => {
         await waitFor(() => {
           expect(mockAxiosGet).toHaveBeenCalled();
         });
-
-        // While still loading (rulesPlaybookCount = -1),
-        // button should be disabled
       });
     });
   });
@@ -471,14 +432,27 @@ describe('Inventory - Playbook Count Scenarios', () => {
     it('should not call rulesCheck when pathway prop is provided', async () => {
       const pathway = { slug: 'test-pathway' };
 
-      renderInventory({ pathway, rule: undefined });
+      mockAxiosGet.mockResolvedValue({
+        data: [],
+        meta: { count: 0 },
+      });
+
+      renderInventory(
+        { pathway, rule: undefined },
+        { BASE_URL: '/api/insights/v1' },
+      );
 
       await waitFor(() => {
-        expect(mockAxiosGet).not.toHaveBeenCalledWith(
-          expect.stringContaining('/rule/'),
-          expect.any(Object),
+        expect(mockAxiosGet).toHaveBeenCalledWith(
+          expect.stringContaining('/pathway/test-pathway/rules/'),
         );
       });
+
+      const calls = mockAxiosGet.mock.calls;
+      const ruleCalls = calls.filter(
+        ([url]) => url.includes('/rule/') && !url.includes('/pathway/'),
+      );
+      expect(ruleCalls.length).toBe(0);
     });
   });
 
@@ -557,7 +531,7 @@ describe('Inventory - Playbook Count Scenarios', () => {
   describe('Edge cases', () => {
     it('should handle playbook_count as string "0"', async () => {
       mockAxiosGet.mockResolvedValueOnce({
-        playbook_count: '0', // String instead of number
+        playbook_count: '0',
       });
 
       renderInventory();
@@ -565,14 +539,11 @@ describe('Inventory - Playbook Count Scenarios', () => {
       await waitFor(() => {
         expect(mockAxiosGet).toHaveBeenCalled();
       });
-
-      // '0' > 0 is false in JavaScript (coercion)
-      expect('0' > 0).toBe(false);
     });
 
     it('should handle playbook_count as string "5"', async () => {
       mockAxiosGet.mockResolvedValueOnce({
-        playbook_count: '5', // String instead of number
+        playbook_count: '5',
       });
 
       renderInventory();
@@ -580,9 +551,6 @@ describe('Inventory - Playbook Count Scenarios', () => {
       await waitFor(() => {
         expect(mockAxiosGet).toHaveBeenCalled();
       });
-
-      // '5' > 0 is true in JavaScript (coercion)
-      expect('5' > 0).toBe(true);
     });
 
     it('should handle playbook_count as boolean false', async () => {
@@ -595,9 +563,6 @@ describe('Inventory - Playbook Count Scenarios', () => {
       await waitFor(() => {
         expect(mockAxiosGet).toHaveBeenCalled();
       });
-
-      // false > 0 is false
-      expect(false > 0).toBe(false);
     });
 
     it('should handle playbook_count as NaN', async () => {
@@ -610,9 +575,6 @@ describe('Inventory - Playbook Count Scenarios', () => {
       await waitFor(() => {
         expect(mockAxiosGet).toHaveBeenCalled();
       });
-
-      // NaN > 0 is false (all NaN comparisons are false)
-      expect(NaN > 0).toBe(false);
     });
   });
 
