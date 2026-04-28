@@ -304,6 +304,12 @@ const Inventory = ({
                 );
               },
             }
+          : envContext.loadChromeless && pathway
+          ? {
+              renderFunc: (name) => (
+                <Link to={`/new/hosts/${name}/#Overview`}>{name}</Link>
+              ),
+            }
           : {}),
       };
       let systemProfile = defaultColumns.filter(
@@ -392,6 +398,9 @@ const Inventory = ({
   }, [selectedIds]);
 
   const getActionsConfig = () => {
+    if (envContext.loadChromeless) {
+      return { actions: [] };
+    }
     const actions = [
       <Flex key="inventory-actions">
         {IopRemediationModal ? (

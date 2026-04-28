@@ -1,5 +1,5 @@
 import './ListIop.scss';
-import React, { useContext, useEffect } from 'react';
+import React, { Suspense, lazy, useContext, useEffect, useState } from 'react';
 import {
   PageHeader,
   PageHeaderTitle,
@@ -17,6 +17,11 @@ import {
   Text,
   TextVariants,
   Icon,
+  Tab,
+  TabTitleText,
+  Tabs,
+  Spinner,
+  Bullseye,
 } from '@patternfly/react-core';
 
 import {
@@ -27,6 +32,15 @@ import {
 import { EnvironmentContext } from '../../App';
 import IopOverviewDashbar from '../../PresentationalComponents/OverviewDashbar/IopOverviewDashbar';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
+import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
+import { RECOMMENDATIONS_TAB, PATHWAYS_TAB } from '../../AppConstants';
+
+const PathwaysTable = lazy(
+  () =>
+    import(
+      /* webpackChunkName: 'PathwaysTable' */ '../../PresentationalComponents/PathwaysTable/PathwaysTable'
+    ),
+);
 
 const ListIop = () => {
   const envContext = useContext(EnvironmentContext);
@@ -34,6 +48,9 @@ const ListIop = () => {
   useEffect(() => {
     envContext.updateDocumentTitle('Recommendations - Advisor');
   }, [envContext]);
+
+  const [activeTab, setActiveTab] = useState(RECOMMENDATIONS_TAB);
+  const changeTab = (tab) => setActiveTab(tab);
 
   const { handleOverviewRefetchReady, handleRuleChange } =
     useOverviewRefetchOnRuleChange();
@@ -105,12 +122,53 @@ const ListIop = () => {
         <Stack hasGutter>
           <StackItem>
             <IopOverviewDashbar
-              changeTab={0}
+              changeTab={changeTab}
               onRefetchReady={handleOverviewRefetchReady}
             />
           </StackItem>
           <StackItem>
-            <RulesTable onRuleChange={handleRuleChange} />
+            <Tabs
+              className="adv__background--global-100"
+              activeKey={activeTab}
+              onSelect={(_e, tab) => changeTab(tab)}
+            >
+              <Tab
+                eventKey={RECOMMENDATIONS_TAB}
+                title={
+                  <TabTitleText>
+                    {messages.recommendations.defaultMessage}
+                  </TabTitleText>
+                }
+              >
+                <RulesTable
+                  isTabActive={activeTab === RECOMMENDATIONS_TAB}
+                  onRuleChange={handleRuleChange}
+                />
+              </Tab>
+              <Tab
+                eventKey={PATHWAYS_TAB}
+                title={
+                  <TabTitleText>
+                    {messages.pathways.defaultMessage}
+                    <QuestionTooltip
+                      text={messages.recommendedPathways.defaultMessage}
+                    />
+                  </TabTitleText>
+                }
+              >
+                {activeTab === PATHWAYS_TAB && (
+                  <Suspense
+                    fallback={
+                      <Bullseye>
+                        <Spinner size="xl" />
+                      </Bullseye>
+                    }
+                  >
+                    <PathwaysTable isTabActive={activeTab === PATHWAYS_TAB} />
+                  </Suspense>
+                )}
+              </Tab>
+            </Tabs>
           </StackItem>
         </Stack>
       </section>

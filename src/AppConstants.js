@@ -509,7 +509,8 @@ export const IOP_ENVIRONMENT_CONTEXT = {
   isAllowedToViewRec: false, // set later according to user permissions
   displayGroupsTagsColumns: false,
   displayRuleRatings: false,
-  displayRecPathways: false,
+  displayRecPathways: true,
+  pathwayDetailBasePath: '/foreman_rh_cloud/recommendations/pathways',
   displayExecReportLink: false,
   displayDownloadPlaybookButton: true,
   changeRemediationButtonForIop: true,

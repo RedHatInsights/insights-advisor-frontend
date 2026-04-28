@@ -126,19 +126,14 @@ export const useHccEnvironmentContext = () => {
 };
 
 export const useIopEnvironmentContext = () => {
-  const [[canDisableRec, canViewRecs], isRbacLoading] = useRbac([
-    PERMISSIONS.disableRec,
-    PERMISSIONS.viewRecs,
-  ]);
-
   return useMemo(
     () => ({
       ...IOP_ENVIRONMENT_CONTEXT,
-      isLoading: isRbacLoading,
-      isDisableRecEnabled: canDisableRec,
-      isAllowedToViewRec: canViewRecs,
+      isLoading: false,
+      isDisableRecEnabled: true,
+      isAllowedToViewRec: true,
     }),
-    [canDisableRec, canViewRecs, isRbacLoading],
+    [],
   );
 };
 

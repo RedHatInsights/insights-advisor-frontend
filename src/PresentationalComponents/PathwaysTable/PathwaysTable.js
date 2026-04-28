@@ -4,13 +4,13 @@ import {
   PATHWAYS_FILTER_CATEGORIES as PFC,
 } from '../../AppConstants';
 import { useLocation } from 'react-router-dom';
-import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
+import { Link } from 'react-router-dom';
 
 import {
   Pagination,
   PaginationVariant,
 } from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   TableVariant,
   cellWidth,
@@ -49,10 +49,12 @@ import PropTypes from 'prop-types';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { SkeletonTable } from '@patternfly/react-component-groups';
 import { normalizeFilterValue } from '../helper';
+import { EnvironmentContext } from '../../App';
 
 const PathwaysTable = ({ isTabActive }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  const envContext = useContext(EnvironmentContext);
   const { search } = useLocation();
 
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
@@ -71,7 +73,11 @@ const PathwaysTable = ({ isTabActive }) => {
     isFetching,
     isLoading,
     isError,
-  } = useGetPathwaysQuery({ ...filterFetchBuilder(filters), ...options });
+  } = useGetPathwaysQuery({
+    ...filterFetchBuilder(filters),
+    ...options,
+    customBasePath: envContext.BASE_URL,
+  });
 
   const cols = [
     {
@@ -155,19 +161,24 @@ const PathwaysTable = ({ isTabActive }) => {
             ],
           },
         ]
-      : pathways.flatMap((pathway, key) => [
+      : pathways.flatMap((pathway, key) => {
+          const detailPath = envContext.pathwayDetailBasePath
+            ? `${envContext.pathwayDetailBasePath}/${pathway.slug}`
+            : null;
+          return [
           {
             cells: [
               {
                 title: (
                   <span key={key}>
-                    <Link
-                      key={key}
-                      to={`/recommendations/pathways/${pathway.slug}`}
-                    >
-                      {' '}
-                      {pathway.name}{' '}
-                    </Link>
+                    {detailPath ? (
+                      <Link key={key} to={detailPath}>
+                        {' '}
+                        {pathway.name}{' '}
+                      </Link>
+                    ) : (
+                      ` ${pathway.name} `
+                    )}
                     {pathway.has_incident && (
                       <RuleLabels rule={{ tags: 'incident' }} isCompact />
                     )}
@@ -184,13 +195,12 @@ const PathwaysTable = ({ isTabActive }) => {
                 ),
               },
               {
-                title: (
-                  <Link
-                    key={key}
-                    to={`/recommendations/pathways/${pathway.slug}`}
-                  >
+                title: detailPath ? (
+                  <Link key={key} to={detailPath}>
                     {`${pathway.impacted_systems_count.toLocaleString()}`}
                   </Link>
+                ) : (
+                  `${pathway.impacted_systems_count.toLocaleString()}`
                 ),
               },
               {
@@ -214,7 +224,8 @@ const PathwaysTable = ({ isTabActive }) => {
               },
             ],
           },
-        ]);
+        ];
+        });
 
   const removeFilterParam = (param) => {
     const filter = { ...filters, offset: 0 };
@@ -386,9 +397,7 @@ const PathwaysTable = ({ isTabActive }) => {
       {isFetching ? (
         <SkeletonTable columns={cols.map((c) => c.title)} variant="compact" />
       ) : isError ? (
-        <Table>
-          <ErrorState />
-        </Table>
+        <ErrorState />
       ) : (
         <Table
           aria-label={'pathways-table'}

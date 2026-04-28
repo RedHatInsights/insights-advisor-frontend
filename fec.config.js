@@ -78,6 +78,10 @@ module.exports = {
         __dirname,
         './src/SmartComponents/Recs/RecommendationDetailsWrapped.js',
       ),
+      './PathwayDetailsWrapped': resolve(
+        __dirname,
+        './src/SmartComponents/Recs/PathwayDetailsWrapped.js',
+      ),
       './ListWrapped': resolve(
         __dirname,
         './src/SmartComponents/Recs/ListWrapped.js',
