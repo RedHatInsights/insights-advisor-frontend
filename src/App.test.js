@@ -18,6 +18,10 @@ jest.mock('./Utilities/useKesselEnvironmentContext', () => ({
   useKesselEnvironmentContext: jest.fn(),
 }));
 
+jest.mock('@unleash/proxy-client-react', () => ({
+  useFlagsStatus: jest.fn(),
+}));
+
 jest.mock('@project-kessel/react-kessel-access-check', () => ({
   AccessCheck: {
     // eslint-disable-next-line react/prop-types
@@ -28,6 +32,7 @@ jest.mock('@project-kessel/react-kessel-access-check', () => ({
 import AppWithHccContext from './App';
 import { useHccEnvironmentContext, useFeatureFlag } from './Utilities/Hooks';
 import { useKesselEnvironmentContext } from './Utilities/useKesselEnvironmentContext';
+import { useFlagsStatus } from '@unleash/proxy-client-react';
 
 const mockStore = configureStore([]);
 
@@ -65,7 +70,8 @@ describe('App tag processing logic', () => {
 
     useHccEnvironmentContext.mockReturnValue(mockEnvContext);
     useKesselEnvironmentContext.mockReturnValue(mockEnvContext);
-    useFeatureFlag.mockReturnValue(false); // Default to RBAC v1
+    useFeatureFlag.mockReturnValue(false);
+    useFlagsStatus.mockReturnValue({ flagsReady: true });
   });
 
   afterEach(() => {
@@ -431,7 +437,40 @@ describe('App tag processing logic', () => {
     });
   });
 
-  describe('Kessel Loading States', () => {
+  describe('Feature flag loading states', () => {
+    it('shows loading spinner while waiting for feature flags', () => {
+      useFlagsStatus.mockReturnValue({ flagsReady: false });
+      useFeatureFlag.mockReturnValue(false);
+
+      renderWithProviders(<AppWithHccContext />);
+
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+      expect(useHccEnvironmentContext).not.toHaveBeenCalled();
+      expect(useKesselEnvironmentContext).not.toHaveBeenCalled();
+    });
+
+    it('renders RBAC v1 context after flags load with Kessel disabled', () => {
+      useFlagsStatus.mockReturnValue({ flagsReady: true });
+      useFeatureFlag.mockReturnValue(false);
+
+      renderWithProviders(<AppWithHccContext />);
+
+      expect(useHccEnvironmentContext).toHaveBeenCalled();
+      expect(useKesselEnvironmentContext).not.toHaveBeenCalled();
+    });
+
+    it('renders Kessel context after flags load with Kessel enabled', () => {
+      useFlagsStatus.mockReturnValue({ flagsReady: true });
+      useFeatureFlag.mockReturnValue(true);
+
+      renderWithProviders(<AppWithHccContext />);
+
+      expect(useKesselEnvironmentContext).toHaveBeenCalled();
+      expect(useHccEnvironmentContext).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Kessel loading states', () => {
     it('does not render content while Kessel permissions are loading', () => {
       useFeatureFlag.mockReturnValue(true);
       useKesselEnvironmentContext.mockReturnValue({
