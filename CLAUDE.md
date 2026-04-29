@@ -1,966 +1,345 @@
-# Insights Advisor Frontend - Codebase Documentation
+# Insights Advisor Frontend
 
-This document provides architectural guidance and implementation details for the Insights Advisor Frontend application.
+React-based frontend for Red Hat Insights Advisor, providing system recommendations, pathways, and remediation capabilities.
+
+**Stack**: React 18, Redux Toolkit (RTK Query), PatternFly 5, Module Federation  
+**Testing**: Jest + React Testing Library, Cypress
+
+---
+
+## Quick Links
+
+- **[Testing Guide](docs/TESTING.md)** - Testing patterns, principles, and pitfalls
+- **[Remediation Button Details](docs/remediation-button-details.md)** - Detailed implementation flows
+- **[Kessel Permissions](docs/kessel-permissions.md)** - RBAC v1 vs Kessel migration guide
+- **External**: [Tabletools Migration](file:///home/avoznese/Documents/Red%20hat%20important/Advisor%20tabletools%20migration/)
 
 ---
 
 ## Remediation Button Architecture
 
-The remediation button allows users to create Ansible playbooks to fix issues identified by Advisor. The implementation varies based on context and feature flags.
+### Two Implementations Exist
 
-### Table of Contents
-- [Overview](#overview)
-- [Feature Flags](#feature-flags)
-- [Implementation by Page](#implementation-by-page)
-  - [Recommendation Details Page (Single Rule)](#1-recommendation-details-page-single-rule)
-  - [Pathway Details Page (Multiple Rules)](#2-pathway-details-page-multiple-rules)
-  - [System Details Page (System-Specific Recommendations)](#3-system-details-page-system-specific-recommendations)
-- [Key Components](#key-components)
-- [Data Flow Diagrams](#data-flow-diagrams)
-- [Common Pitfalls](#common-pitfalls)
-
----
-
-## Overview
-
-There are **two different remediation button implementations** in the codebase:
-
-| Implementation | When Used | Component | Data Source |
-|---------------|-----------|-----------|-------------|
-| **IOP Remediation Modal** | Single rule contexts when feature flag is ON | `IopRemediationModal.WrappedComponent` | `iopResolutionsMapper()` API + `/resolutions` endpoint |
-| **Standard Remediation Button** | All other cases (default) | `RemediationButton` from `@redhat-cloud-services/frontend-components-remediations` | `remediationDataProvider()` or `processRemediation()` |
+| Implementation | When Used | Component | Feature Flag |
+|---------------|-----------|-----------|--------------|
+| **IOP Remediation** | Single rule contexts | `IopRemediationModal.WrappedComponent` | `changeRemediationButtonForIop: true` |
+| **Standard Remediation** | Pathways + feature flag OFF | `RemediationButton` (from remediations package) | Default |
 
 ### Why Two Implementations?
 
-- **IOP (Insights Orchestration Platform)**: Newer remediation system with enhanced resolution selection capabilities
-- **Standard**: Traditional remediation system, still default for pathways and when feature flag is OFF
-- **Feature Flag**: `changeRemediationButtonForIop` controls which implementation is used in single-rule contexts
+- **IOP (Insights Orchestration Platform)**: Newer system with enhanced resolution selection per system
+- **Standard**: Traditional system, still used for pathways (multiple rules per system)
+- **Pathways can't use IOP**: Data structure incompatibility (pathways = many rules/system, IOP = one rule/many systems)
 
----
+### Feature Flag: `changeRemediationButtonForIop`
 
-## Feature Flags
-
-### `changeRemediationButtonForIop`
-
-**Location**: `src/AppConstants.js` (line 540) and `src/Utilities/useKesselEnvironmentContext.js`
+**Location**: `src/AppConstants.js` (line 540), overridden by `src/Utilities/useKesselEnvironmentContext.js`
 
 ```javascript
-// Default in AppConstants.js
+// Default
 changeRemediationButtonForIop: true
 
-// Kessel environments override to false
+// Kessel environments
 changeRemediationButtonForIop: false
 ```
-**Effect**:
-- `true` → `IopRemediationModal` component is passed to pages, enables IOP flow
-- `false` → `IopRemediationModal` is undefined, uses standard `RemediationButton`
 
----
+**Effect**: When `true`, `IopRemediationModal` component is passed to pages for single-rule contexts
 
-## Implementation by Page
+### Quick Decision Matrix
 
-### 1. Recommendation Details Page (Single Rule)
+**IOP Modal appears when ALL of:**
+1. ✅ Feature flag `changeRemediationButtonForIop: true`
+2. ✅ Single-rule page (Recommendation Details OR System Details)
+3. ✅ NOT a pathway page
+4. ✅ At least one system/rule selected with playbook
 
-**Route**: `/recommendations/:rule_id`
+**Otherwise** → Standard RemediationButton
 
-**File**: `src/SmartComponents/Recs/Details.js` → `HybridInventory` → `RecommendationSystems.js` → `Inventory.js`
+### Context Breakdown
 
-#### Flow Diagram
+| Page | Rule/Pathway | Modal Passed? | Used Implementation |
+|------|--------------|---------------|---------------------|
+| Recommendation Details | `rule` (single) | Yes (if flag ON) | IOP or Standard |
+| Pathway Details | `pathway` (multiple rules) | No | Standard only |
+| System Details | Multiple rules for 1 system | Yes (if flag ON) | IOP or Standard |
 
+**Component Prop Flow**:
 ```text
-User on Recommendation Details
-        ↓
-[HybridInventory component]
-        ↓
-ConventionalSystems tab (RecommendationSystems.js)
-        ↓
-<Inventory 
-  rule={rule}
-  IopRemediationModal={IopRemediationModal} ← Passed from feature flag
-  pathway={undefined} />
+Recommendation: IopRemediationModal → Inventory.js → Conditional render
+Pathway:        undefined → Inventory.js → Standard only
+System:         IopRemediationModal → SystemAdvisor.js → Conditional render
 ```
-#### Component Props
-
-```javascript
-// src/SmartComponents/HybridInventoryTabs/ConventionalSystems/RecommendationSystems.js
-<Inventory
-  rule={rule}                                    // Single rule object
-  IopRemediationModal={props.IopRemediationModal} // Conditional: from feature flag
-  pathway={undefined}                            // NOT a pathway
-  selectedTags={selectedTags}
-  workloads={workloads}
-  axios={axios}
-/>
-```
-#### Remediation Button Logic (Inventory.js:421)
-
-```text
-{IopRemediationModal ? (
-  // IOP FLOW (when feature flag ON)
-  <IopRemediationModal.WrappedComponent
-    selectedIds={selectedIds}
-    iopData={resolutions}  // ← From useEffect with iopResolutionsMapper
-    isDisabled={isRemediationButtonDisabled}
-  />
-) : (
-  // STANDARD FLOW (when feature flag OFF)
-  <RemediationButton
-    isDisabled={isRemediationButtonDisabled}
-    dataProvider={remediationDataProvider}  // ← Inline function
-  >
-    Plan remediation
-  </RemediationButton>
-)}
-```
-#### Data Fetching
-
-**IOP Flow** (useEffect on lines 399-416):
-```javascript
-useEffect(() => {
-  if (!IopRemediationModal || pathway) {
-    return;  // Guard: Skip if no modal OR in pathway mode
-  }
-  
-  if (!selectedIds?.length) {
-    setResolutions([]);
-    return;  // Guard: Clear data if no selection
-  }
-  
-  // Fetch resolutions from IOP API
-  const fetchAndSetData = async () => {
-    const resolutionsData = await iopResolutionsMapper(
-      entities,
-      rule,        // Single rule
-      selectedIds, // Selected systems
-    );
-    setResolutions(resolutionsData);
-  };
-  fetchAndSetData();
-}, [selectedIds, entities, rule, IopRemediationModal, pathway]);
-```
-**What `iopResolutionsMapper` does** (helpers.js:259):
-1. Makes POST request to `/insights_cloud/api/remediations/v1/resolutions`
-2. Sends issue: `advisor:${rule.rule_id}`
-3. Returns array of resolution options for each selected system
-4. Format: `[{ hostid, host_name, resolutions, rulename, description, rebootable }, ...]`
-
-**Standard Flow**:
-```javascript
-const remediationDataProvider = async () => {
-  // For single rule (not pathway)
-  return {
-    issues: [{
-      id: `advisor:${rule.rule_id}`,
-      description: rule.description,
-    }],
-    systems: selectedIds,  // All selected system IDs
-  };
-};
-```
-#### Button Enabled/Disabled Logic
-
-**Function**: `checkRemediationButtonStatus()` (lines 193-231)
-
-```javascript
-// For single rules (NOT pathway):
-if (rulesPlaybookCount > 0 && selectedIds?.length > 0) {
-  setIsRemediationButtonDisabled(false);
-} else {
-  setIsRemediationButtonDisabled(true);
-}
-```
-**Playbook count fetched on mount** (`rulesCheck()` lines 154-161):
-```javascript
-const rulesCheck = async () => {
-  if (rulesPlaybookCount < 0) {
-    const associatedRuleDetails = (
-      await axios.get(
-        `${RULES_FETCH_URL}${rule.rule_id}/`,
-        { params: { name: filters.name } }
-      )
-    )?.playbook_count;  // ← Note: axios response auto-unwrapped by interceptor
-    setRulesPlaybookCount(associatedRuleDetails);
-  }
-};
-```
----
-
-### 2. Pathway Details Page (Multiple Rules)
-
-**Route**: `/pathways/:pathway_slug`
-
-**File**: `src/SmartComponents/Recs/DetailsPathways.js` → `HybridInventory` → `PathwaySystems.js` → `Inventory.js`
-
-#### Flow Diagram
-
-```text
-User on Pathway Details
-        ↓
-[HybridInventory component]
-        ↓
-PathwaySystemsTab (PathwaySystems.js)
-        ↓
-<Inventory 
-  pathway={pathway}
-  rule={undefined}
-  IopRemediationModal={undefined} ← Never passed for pathways
-/>
-```
-#### Component Props
-
-```javascript
-// src/SmartComponents/HybridInventoryTabs/ConventionalSystems/PathwaySystems.js
-<Inventory
-  pathway={pathway}           // Pathway object with slug
-  selectedTags={selectedTags}
-  workloads={workloads}
-  axios={axios}
-  // NOTE: No rule prop
-  // NOTE: No IopRemediationModal prop
-/>
-```
-#### Remediation Button Logic (Inventory.js:421)
-
-```javascript
-{IopRemediationModal ? (
-  // NEVER RENDERED - IopRemediationModal is undefined for pathways
-  <IopRemediationModal.WrappedComponent ... />
-) : (
-  // ALWAYS RENDERED FOR PATHWAYS
-  <RemediationButton
-    isDisabled={isRemediationButtonDisabled}
-    dataProvider={remediationDataProvider}
-  >
-    Plan remediation
-  </RemediationButton>
-)}
-```
-#### Data Fetching
-
-**Pathway data fetched ONCE on mount** (`pathwayCheck()` lines 168-185):
-
-```javascript
-const pathwayCheck = async () => {
-  if (!hasPathwayDetails) {
-    if (pathway) {
-      // Fetch all rules in pathway
-      const rulesRes = await axios.get(
-        `${BASE_URL}/pathway/${pathway.slug}/rules/`
-      );
-      
-      // Fetch system-rule mapping
-      const reportsRes = await axios.get(
-        `${BASE_URL}/pathway/${pathway.slug}/reports/`
-      );
-      
-      const pathwayRulesFromApi = rulesRes?.data ?? [];
-      const pathwayReportRules = reportsRes?.data?.rules ?? {};
-      
-      setHasPathwayDetails(true);
-      setPathwayReportList(pathwayReportRules);  // { rule_id: [system_ids] }
-      setPathwayRulesList(pathwayRulesFromApi);  // [{ rule_id, description, ... }]
-    }
-  }
-};
-```
-**IOP effect DOES NOT RUN** (lines 399-416):
-```javascript
-useEffect(() => {
-  if (!IopRemediationModal || pathway) {
-    return;  // ← EXITS HERE for pathways
-  }
-  // ... rest never executes
-}, [selectedIds, entities, rule, IopRemediationModal, pathway]);
-```
-**Why the guard?**
-- Prevents calling `iopResolutionsMapper()` which expects a single `rule` (undefined in pathway mode)
-- Pathway remediation uses different data structure (multiple rules per system)
-
-**Remediation data provider for pathways**:
-
-```javascript
-const remediationDataProvider = async () => {
-  if (pathway) {
-    const pathwayRules = pathwayRulesList;
-    const systems = pathwayReportList;  // { rule_id: [system_ids] }
-
-    let issues = [];
-    pathwayRules.forEach((rec) => {
-      const systemsForRule = systems[rec.rule_id];
-      if (!Array.isArray(systemsForRule)) return;
-      
-      // Filter to only selected systems
-      const filteredSystems = systemsForRule.filter((system) =>
-        selectedIds.includes(system)
-      );
-
-      if (filteredSystems.length) {
-        issues.push({
-          id: `advisor:${rec.rule_id}`,
-          description: rec.description,
-          systems: filteredSystems,  // ← Systems per rule
-        });
-      }
-    });
-
-    return { issues };  // Array of issues, each with own systems list
-  }
-};
-```
-#### Button Enabled/Disabled Logic
-
-**For pathways** (lines 198-224):
-```javascript
-// For each selected system...
-for (let i = 0; i < selectedIds?.length; i++) {
-  let system = selectedIds[i];
-  
-  // Check all rules to see if any have playbooks for this system
-  ruleKeys.forEach((ruleKey) => {
-    const systemsForRule = pathwayReportList[ruleKey];
-    
-    // Skip if this rule doesn't affect this system
-    if (!Array.isArray(systemsForRule) || !systemsForRule.includes(system)) {
-      return;
-    }
-    
-    // Find the rule details
-    const item = pathwayRulesList.find(
-      (report) => report.rule_id === ruleKey
-    );
-    
-    // Check if it has a playbook
-    if (item?.resolution_set?.[0]?.has_playbook) {
-      playbookFound = true;
-      setIsRemediationButtonDisabled(false);
-    }
-  });
-}
-
-if (!playbookFound) {
-  setIsRemediationButtonDisabled(true);
-}
-```
-**Logic**: Button enabled if ANY selected system has ANY rule with a playbook
 
 ---
 
-### 3. System Details Page (System-Specific Recommendations)
+## Critical Gotchas (Top 5)
 
-**Route**: `/systems/:inventory_id`
+### 1. Axios Response Auto-Unwrapping
 
-**File**: `src/Modules/SystemDetail.js` → `SystemAdvisor.js`
-
-#### Flow Diagram
-
-```text
-User on System Details
-        ↓
-SystemDetail.js (Module entry point)
-        ↓
-<SystemAdvisor 
-  IopRemediationModal={IopRemediationModal} ← From props
-  inventoryId={inventoryId} />
-```
-#### Component Props
+**Reality**: `useAxiosWithPlatformInterceptors` hook has `responseDataInterceptor` that unwraps `response.data`
 
 ```javascript
-// src/Modules/SystemDetail.js
-const SystemDetail = ({
-  IopRemediationModal,  // ← Passed from federated module
-  ...props
-}) => {
-  return (
-    <SystemAdvisor {...props} IopRemediationModal={IopRemediationModal} />
-  );
-};
-```
-#### Remediation Button Logic (SystemAdvisor.js:146)
-
-```javascript
-const actions = systemProfile?.host_type !== 'edge' ? [
-  <Flex key="inventory-actions">
-    {IopRemediationModal ? (
-      // IOP FLOW
-      <IopRemediationModal.WrappedComponent
-        selectedIds={selectedAnsibleRules}  // ← Array of rule objects
-        iopData={resolutions}               // ← From fetchResolutionsData
-        isDisabled={selectedAnsibleRules.length === 0}
-      />
-    ) : (
-      // STANDARD FLOW
-      <RemediationButton
-        isDisabled={selectedAnsibleRules.length === 0}
-        dataProvider={() => processRemediation(selectedAnsibleRules)}
-        onRemediationCreated={(result) => onRemediationCreated(result)}
-      >
-        Plan remediation
-      </RemediationButton>
-    )}
-  </Flex>
-] : [];
-```
-#### Selected Rules (SystemAdvisor.js:80)
-
-```javascript
-const selectedAnsibleRules = useMemo(() => {
-  return rows
-    .filter((row) => row.selected)  // Only checked rows
-    .map((row) => ({
-      rule: row.rule,           // Rule object
-      resolution: row.resolution, // Resolution object
-    }))
-    .filter((row) => row.resolution?.has_playbook);  // Only rules with playbooks
-}, [rows]);
-```
-#### Data Fetching
-
-**IOP Flow** (useEffect on lines 91-104):
-```javascript
-useEffect(() => {
-  if (selectedAnsibleRules.length > 0) {
-    const dataFetch = async () => {
-      const resolutionsData = await fetchResolutionsData(
-        selectedAnsibleRules,
-        inventoryId
-      );
-      setResolutions(resolutionsData);
-    };
-    dataFetch();
-  }
-}, [selectedAnsibleRules, inventoryId]);
-```
-**`fetchResolutionsData` function** (helpers.js):
-```javascript
-export const fetchResolutionsData = async (selectedRules, inventoryId) => {
-  const issues = selectedRules.map((r) => `advisor:${r.rule.rule_id}`);
-  
-  const response = await fetch(
-    '/insights_cloud/api/remediations/v1/resolutions',
-    {
-      method: 'POST',
-      body: JSON.stringify({ issues }),
-      headers: { 'content-type': 'application/json', ...getCsrfTokenHeader() },
-    }
-  );
-  
-  const data = await response.json();
-  
-  // Format for IOP modal
-  return selectedRules.map((r) => {
-    const ruleKey = `advisor:${r.rule.rule_id}`;
-    return {
-      hostid: inventoryId,
-      host_name: 'Current System',
-      resolutions: data[ruleKey]?.resolutions || [],
-      rulename: r.rule.rule_id,
-      description: r.rule.description,
-      rebootable: r.rule.reboot_required,
-    };
-  });
-};
-```
-**Standard Flow** (`useProcessRemediation` in SystemAdvisorAssets.js:104):
-```javascript
-export const useProcessRemediation = (inventoryId) =>
-  useCallback(
-    (selectedAnsibleRules) => {
-      const playbookRows = selectedAnsibleRules.filter(
-        (r) => r.resolution?.has_playbook
-      );
-      
-      const issues = playbookRows.map((r) => ({
-        id: `advisor:${r.rule.rule_id}`,
-        description: r.rule.description,
-      }));
-      
-      return issues.length 
-        ? { issues, systems: [inventoryId] }  // All issues for one system
-        : false;
-    },
-    [inventoryId]
-  );
-```
-#### Button Enabled/Disabled Logic
-
-**Simple**: Button disabled when `selectedAnsibleRules.length === 0`
-
-The `selectedAnsibleRules` array is already filtered to only include rules with playbooks (see lines 80-92), so if the array has items, they're all remediable.
-
----
-
-## Key Components
-
-### `Inventory.js`
-
-**Location**: `src/PresentationalComponents/Inventory/Inventory.js`
-
-**Purpose**: Reusable inventory table component used in both recommendation and pathway details pages
-
-**Key Props**:
-- `rule` - Single rule object (for recommendation pages)
-- `pathway` - Pathway object (for pathway pages)
-- `IopRemediationModal` - Conditional modal component (from feature flag)
-- `selectedTags`, `workloads` - Filters
-- `axios` - Axios instance with platform interceptors
-
-**Key State**:
-- `selectedIds` - Array of selected system UUIDs
-- `resolutions` - IOP resolution data (only for IOP modal)
-- `rulesPlaybookCount` - Playbook count for single rule (-1 = not fetched, 0 = none, >0 = count)
-- `pathwayRulesList` - All rules in pathway
-- `pathwayReportList` - System-to-rules mapping `{ rule_id: [system_ids] }`
-- `isRemediationButtonDisabled` - Button state
-
-**Key Functions**:
-- `rulesCheck()` - Fetches playbook count for single rule (mount)
-- `pathwayCheck()` - Fetches pathway rules and reports (mount)
-- `checkRemediationButtonStatus()` - Determines button enabled/disabled state
-- `remediationDataProvider()` - Provides data to standard RemediationButton
-- `iopResolutionsMapper()` - Fetches IOP resolution data (via useEffect)
-
----
-
-### `SystemAdvisor.js`
-
-**Location**: `src/SmartComponents/SystemAdvisor/SystemAdvisor.js`
-
-**Purpose**: System details page showing all recommendations for a specific system
-
-**Key Props**:
-- `IopRemediationModal` - Conditional modal component
-- `inventoryId` - System UUID (from route params)
-
-**Key State**:
-- `rows` - Table rows with recommendations
-- `selectedAnsibleRules` - Derived from selected rows with playbooks
-- `resolutions` - IOP resolution data
-
-**Key Functions**:
-- `processRemediation()` - Provides data to standard RemediationButton
-- `fetchResolutionsData()` - Fetches IOP resolution data
-
----
-
-### `iopResolutionsMapper()`
-
-**Location**: `src/PresentationalComponents/Inventory/helpers.js:259`
-
-**Purpose**: Fetch resolution options from IOP API for selected systems
-
-**Parameters**:
-- `entities` - Redux entities object with system rows
-- `rule` - Single rule object
-- `selectedIds` - Array of selected system UUIDs
-
-**Returns**: 
-```javascript
-[
-  {
-    hostid: "system-uuid",
-    host_name: "system-name",
-    resolutions: [{ id: "fix-1", description: "...", ... }],
-    rulename: "rule_id",
-    description: "rule description",
-    rebootable: true/false
-  },
-  // ... one per selected system
-]
-```
-**API Call**:
-```javascript
-POST /insights_cloud/api/remediations/v1/resolutions
-Body: { issues: ["advisor:RULE_ID"] }
-```
-**Guard**: Returns `[]` if `rule.rule_id` is missing (prevents errors in pathway mode)
-
----
-
-### `remediationDataProvider()`
-
-**Location**: `src/PresentationalComponents/Inventory/Inventory.js:242`
-
-**Purpose**: Provide remediation data for standard RemediationButton
-
-**Logic**:
-```javascript
-if (pathway) {
-  // Multiple issues, each with their own systems list
-  return {
-    issues: [
-      { id: "advisor:RULE_1", description: "...", systems: ["sys-1", "sys-2"] },
-      { id: "advisor:RULE_2", description: "...", systems: ["sys-3"] },
-    ]
-  };
-} else {
-  // Single issue with all selected systems
-  return {
-    issues: [{ id: "advisor:RULE_ID", description: "..." }],
-    systems: ["sys-1", "sys-2", "sys-3"]
-  };
-}
-```
----
-
-## Data Flow Diagrams
-
-### IOP Flow (Single Rule, Feature Flag ON)
-
-```text
-1. Component Mount
-   ↓
-2. rulesCheck() - Fetch playbook count
-   ↓
-3. User selects systems
-   ↓
-4. useEffect triggers (selectedIds changed)
-   ↓
-5. iopResolutionsMapper(entities, rule, selectedIds)
-   ↓
-6. POST /api/remediations/v1/resolutions
-   ↓
-7. setResolutions(data)
-   ↓
-8. IopRemediationModal.WrappedComponent receives resolutions
-   ↓
-9. User clicks modal, selects resolution options
-   ↓
-10. Modal creates remediation plan
-```
-### Standard Flow (Single Rule, Feature Flag OFF)
-
-```text
-1. Component Mount
-   ↓
-2. rulesCheck() - Fetch playbook count
-   ↓
-3. User selects systems
-   ↓
-4. checkRemediationButtonStatus() - Enable/disable button
-   ↓
-5. User clicks "Plan remediation"
-   ↓
-6. remediationDataProvider() called
-   ↓
-7. Returns { issues: [...], systems: [...] }
-   ↓
-8. RemediationButton creates remediation plan
-```
-### Pathway Flow (Always Standard)
-
-```text
-1. Component Mount
-   ↓
-2. pathwayCheck() - Fetch pathway rules & reports ONCE
-   ↓
-3. setPathwayRulesList([...]) + setPathwayReportList({...})
-   ↓
-4. User selects systems
-   ↓
-5. checkRemediationButtonStatus() - Check if any rule has playbook
-   ↓
-6. User clicks "Plan remediation"
-   ↓
-7. remediationDataProvider() called
-   ↓
-8. Filters pathwayRulesList by selected systems
-   ↓
-9. Returns { issues: [{ id, description, systems: [...] }, ...] }
-   ↓
-10. RemediationButton creates remediation plan
-```
-### System Details IOP Flow
-
-```text
-1. Component Mount
-   ↓
-2. Fetch system recommendations
-   ↓
-3. User checks rule checkboxes
-   ↓
-4. selectedAnsibleRules derived (only rules with playbooks)
-   ↓
-5. useEffect triggers (selectedAnsibleRules changed)
-   ↓
-6. fetchResolutionsData(selectedAnsibleRules, inventoryId)
-   ↓
-7. POST /api/remediations/v1/resolutions (multiple issues)
-   ↓
-8. setResolutions(formattedData)
-   ↓
-9. IopRemediationModal.WrappedComponent receives resolutions
-   ↓
-10. User selects resolution options
-   ↓
-11. Modal creates remediation plan
-```
----
-
-## Common Pitfalls
-
-### 1. Axios Response Structure
-
-**Problem**: Assuming standard axios response structure `response.data`
-
-**Reality**: The `useAxiosWithPlatformInterceptors` hook has a `responseDataInterceptor` that automatically unwraps `response.data`:
-
-```javascript
-// interceptors.js:102
-function responseDataInterceptor(response) {
-  if (response.data) {
-    return response.data;  // ← Automatically unwraps
-  }
-  return response;
-}
-```
-**Correct Usage**:
-```javascript
+// ✅ CORRECT
 const response = await axios.get(url);
-const data = response?.playbook_count;  // ✅ Correct - already unwrapped
+const count = response?.playbook_count;
 
-// NOT:
-const data = response?.data?.playbook_count;  // ❌ Wrong - double unwrap
+// ❌ WRONG - Double unwrap
+const count = response?.data?.playbook_count;
 ```
-**Where this matters**:
-- `rulesCheck()` in Inventory.js:158
-- `pathwayCheck()` in Inventory.js:177-179
+
+**Where it matters**: All `axios.get/post` calls in components
+**Files**: `Inventory.js` (rulesCheck, pathwayCheck), anywhere using the custom axios instance
 
 ---
 
 ### 2. Pathway Guard in IOP useEffect
 
-**Problem**: Calling `iopResolutionsMapper()` in pathway mode
+**Problem**: IOP flow expects single `rule` prop, pathways have none
 
-**Issue**: 
-- Pathway mode has no single `rule` prop
-- `rule` is `undefined`
-- `iopResolutionsMapper()` expects `rule.rule_id`
-- Would cause: API call with undefined rule_id, returns empty array
-- Modal would be enabled but with no data
-
-**Solution**: Guard clause exits early for pathways
+**Solution**: Guard clause prevents execution
 
 ```javascript
 useEffect(() => {
   if (!IopRemediationModal || pathway) {
-    return;  // ← CRITICAL: Prevents error in pathway mode
+    return;  // ← CRITICAL: Exits for pathways
   }
-  // ... fetch resolutions
+  // ... iopResolutionsMapper logic
 }, [selectedIds, entities, rule, IopRemediationModal, pathway]);
 ```
-**Why the guard works**:
-- Pathways never pass `IopRemediationModal` prop (always undefined)
-- Even if they did, `pathway` guard prevents execution
-- Pathways use `remediationDataProvider()` instead
+
+**Why it works**: Pathways never pass `IopRemediationModal` AND have explicit `pathway` guard  
+**File**: `src/PresentationalComponents/Inventory/Inventory.js:399-416`
 
 ---
 
-### 3. API Error Handling with User Notifications
+### 3. URL Parameter Parsing (Cypress Testing)
 
-**Approach**: Use try-catch with user notification for API failures
+**Problem**: `paramParser()` uses `window.location.search`, NOT React Router state
 
-Both `rulesCheck()` and `pathwayCheck()` have error handling to inform users when API calls fail.
-
-**Single Rule Implementation** (`rulesCheck`):
+**Cypress Fix**:
 ```javascript
-const rulesCheck = async () => {
-  if (rulesPlaybookCount < 0) {
-    try {
-      const associatedRuleDetails = (
-        await axios.get(
-          `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
-          { params: { name: filters.name } },
-        )
-      )?.playbook_count;
-      setRulesPlaybookCount(associatedRuleDetails);
-    } catch {
-      addNotification({
-        variant: 'danger',
-        title: 'Failed to fetch playbook information',
-        description: `Unable to load remediation details for this recommendation.`,
-      });
-      setRulesPlaybookCount(0);
-    }
-  }
-};
+// ❌ BAD: MemoryRouter alone doesn't work
+mount(
+  <MemoryRouter initialEntries={['/recs?incident=true']}>
+    <RulesTable />
+  </MemoryRouter>
+);
+
+// ✅ GOOD: Set browser URL first
+cy.window().then((win) => {
+  win.history.pushState({}, '', '/recs?incident=true');
+});
+mount(<RulesTable />);
 ```
 
-**Pathway Implementation** (`pathwayCheck`):
-```javascript
-const pathwayCheck = async () => {
-  if (!hasPathwayDetails) {
-    if (pathway) {
-      try {
-        const rulesRes = await axios.get(
-          `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
-        );
-        const reportsRes = await axios.get(
-          `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
-        );
-        // ... set state
-      } catch {
-        addNotification({
-          variant: 'danger',
-          title: 'Failed to fetch pathway information',
-          description: `Unable to load remediation details for this pathway.`,
-        });
-        setHasPathwayDetails(true);
-        setPathwayReportList({});
-        setPathwayRulesList([]);
-      }
-    }
-  }
-};
-```
-
-**Why this approach**:
-- API failures (network errors, 500, 404) trigger user-visible notification
-- Remediation button is disabled when fetch fails
-- User is informed about the problem instead of silent failure
-- Follows the same error handling pattern as InventoryDetails.js
-- Consistent error handling across both single rule and pathway pages
-
-**State meanings for rulesPlaybookCount**:
-- `-1` = Not yet fetched (initial state)
-- `undefined` = Successful response but missing playbook_count field (edge case)
-- `0` = No playbooks available OR fetch failed (with notification)
-- `> 0` = Playbooks available
+**Why**: `paramParser()` in `Common/Tables.js` reads `window.location.search` directly  
+**Affects**: All Cypress tests with URL parameters
 
 ---
 
-### 4. Early Returns in useEffect
+### 4. Filter Array Safety
 
-**Why use early returns?**
+**Problem**: URL params parsed as strings/booleans, filters expect arrays
+
+**Fix Pattern**:
+```javascript
+value: Array.isArray(filters.incident)
+  ? filters.incident
+  : filters.incident
+    ? [String(filters.incident)]
+    : []
+```
+
+**Where applied**: All CheckboxFilter configurations in:
+- `RulesTable/helpers.js` (8 filters)
+- `PathwaysTable.js` (3 filters)
+- `SystemsTable.js` (2 filters)
+- `SystemAdvisorAssets.js` (3 filters)
+
+**Bug prevented**: `TypeError: value.includes is not a function` when clicking filter dropdowns
+
+---
+
+### 5. API Error Handling Pattern
+
+**Approach**: Always use try-catch with user notifications for API failures
 
 ```javascript
-// ❌ BAD: Deep nesting
-useEffect(() => {
-  if (IopRemediationModal && !pathway) {
-    if (selectedIds?.length) {
-      fetchData();
-    } else {
-      clearData();
-    }
-  }
-}, [...]);
-
-// ✅ GOOD: Guard clauses
-useEffect(() => {
-  if (!IopRemediationModal || pathway) return;  // Skip wrong context
-  if (!selectedIds?.length) {                   // Skip no selection
-    setResolutions([]);
-    return;
-  }
-  fetchData();  // Main logic at top level
-}, [...]);
+try {
+  const data = await axios.get(url);
+  setState(data);
+} catch {
+  addNotification({
+    variant: 'danger',
+    title: 'Failed to fetch ...',
+    description: 'Unable to load ...',
+  });
+  setState(fallbackValue);
+}
 ```
-**Benefits**:
-- Avoids deep nesting
-- Makes conditions explicit
-- Prevents unnecessary work
-- Easier to read and maintain
+
+**Applied in**: `rulesCheck()`, `pathwayCheck()` in Inventory.js  
+**Why**: Informs users of failures instead of silent breakage, disables remediation button gracefully
 
 ---
 
-### 5. Feature Flag Propagation
+## Testing Philosophy
 
-**Problem**: IopRemediationModal not being passed through component chain
+**Core Principle**: Test like a user, not like a developer
 
-**Chain**:
-```text
-App/Router
-  ↓ (via federated module)
-SystemDetail module (receives IopRemediationModal prop)
-  ↓ (passes via props)
-SystemAdvisor component
-  ↓ (renders conditionally)
-IopRemediationModal.WrappedComponent
+### Good Tests
+✅ Mock at system edges (HTTP, user input)  
+✅ Test user-visible behavior  
+✅ Survive refactoring  
+✅ Use `screen.getByRole()` queries (accessibility)
+
+### Bad Tests
+❌ Mock internal components  
+❌ Test implementation details (internal state, props)  
+❌ Use snapshots for behavior verification  
+❌ Break on non-behavioral refactors
+
+**See**: [docs/TESTING.md](docs/TESTING.md) for comprehensive testing guide
+
+### Quick Commands
+
+```bash
+# Run tests with coverage
+npm run test:coverage
+
+# Cypress UI
+npm run cypress
+
+# Specific test
+npm test -- Inventory.test.js
 ```
-**For Recommendation/Pathway pages**:
-```text
-App/Router
-  ↓ (via federated module)
-Details component (receives IopRemediationModal)
-  ↓
-HybridInventory
-  ↓
-RecommendationSystems (passes props.IopRemediationModal)
-  ↓
-Inventory component
-```
-**Key**: The `IopRemediationModal` component is passed from the **federated module host**, not defined in this app. Feature flag in host determines if it's passed.
+
+**Coverage Target**: 70% combined (Jest + Cypress)  
+**Current**: ~67-68%
 
 ---
 
-## Testing Considerations
-
-### Testing IOP Flow
-1. Mock `IopRemediationModal` component
-2. Mock `iopResolutionsMapper` API call
-3. Test that useEffect calls mapper when:
-   - Modal exists
-   - Not in pathway mode
-   - Systems are selected
-4. Test that useEffect doesn't call mapper when:
-   - Modal doesn't exist
-   - In pathway mode
-   - No systems selected
-
-### Testing Pathway Flow
-1. Mock `axios.get` for `/pathway/{slug}/rules/` and `/pathway/{slug}/reports/`
-2. Test `remediationDataProvider()` returns correct format
-3. Test button enabled state with various system-rule combinations
-4. Verify IOP effect doesn't run (no `iopResolutionsMapper` call)
-
-### Testing Standard Flow
-1. Mock `axios.get` for `${RULES_FETCH_URL}${rule_id}/`
-2. Test `remediationDataProvider()` returns correct single-rule format
-3. Test button enabled based on `rulesPlaybookCount`
-
----
-
-## File Reference
-
-| File | Purpose | Key Exports/Components |
-|------|---------|----------------------|
-| `src/PresentationalComponents/Inventory/Inventory.js` | Reusable inventory table with remediation | `Inventory` component |
-| `src/PresentationalComponents/Inventory/helpers.js` | Inventory helper functions | `iopResolutionsMapper`, `getEntities`, `allCurrentSystemIds` |
-| `src/SmartComponents/SystemAdvisor/SystemAdvisor.js` | System details page | `SystemAdvisor` component |
-| `src/SmartComponents/SystemAdvisor/SystemAdvisorAssets.js` | System advisor helpers | `useProcessRemediation`, `useBuildRows` |
-| `src/SmartComponents/SystemAdvisor/helpers.js` | System advisor utilities | `fetchResolutionsData` |
-| `src/SmartComponents/HybridInventoryTabs/ConventionalSystems/RecommendationSystems.js` | Recommendation systems tab | `ConventionalSystems` component |
-| `src/SmartComponents/HybridInventoryTabs/ConventionalSystems/PathwaySystems.js` | Pathway systems tab | `PathwaySystems` component |
-| `src/Modules/SystemDetail.js` | System detail module entry | `SystemDetail` component |
-| `src/AppConstants.js` | Application constants | `changeRemediationButtonForIop` flag |
-
----
-
-## Additional Notes
+## Additional Architecture Notes
 
 ### Why Pathways Don't Use IOP
 
-Pathways involve **multiple rules** with **different systems** per rule:
-- System A might have Rule 1 + Rule 2
-- System B might have Rule 2 + Rule 3
-- Need to create remediation with different rules per system
+**Pathway data structure**:
+- System A: Rule 1 + Rule 2
+- System B: Rule 2 + Rule 3
+- Remediation needs: Different rules per system
 
-IOP modal is designed for **single rule** with **multiple systems**:
-- All systems get the same rule
-- Just picking resolution variant
+**IOP data structure**:
+- Rule 1: System A + System B
+- Remediation needs: Same rule, different resolution per system
 
-The data structures are incompatible, so pathways always use standard RemediationButton.
+**Incompatible** → Pathways always use Standard RemediationButton
 
-### When Will IOP Modal Appear?
+### Early Returns in useEffect
 
-User must meet ALL conditions:
-1. ✅ Feature flag `changeRemediationButtonForIop: true` (in environment)
-2. ✅ On a single-rule page (Recommendation Details OR System Details)
-3. ✅ NOT on a pathway page
-4. ✅ Selected at least one system/rule with playbook
+**Pattern**: Use guard clauses to avoid deep nesting
 
-If ANY condition fails → Standard RemediationButton is used.
+```javascript
+// ✅ GOOD
+useEffect(() => {
+  if (!condition) return;  // Guard
+  if (!data?.length) {
+    clearData();
+    return;
+  }
+  processData();  // Main logic at top level
+}, [deps]);
+```
+
+**Benefits**: Explicit conditions, prevents unnecessary work, easier to read
 
 ---
 
-**Last Updated**: 2026-04-28  
+## Common Patterns
+
+### React Hook Pattern (Tabletools Migration)
+
+```javascript
+// ✅ GOOD: Memoized hook
+export const useMyColumns = () => {
+  return useMemo(() => [
+    { key: 'name', label: 'Name' },
+    // ...
+  ], []);
+};
+
+// ❌ BAD: Plain function
+export const getMyColumns = () => [
+  { key: 'name', label: 'Name' },
+];
+```
+
+**Why**: Hooks with memoization prevent unnecessary re-renders  
+**See**: Memory entry `tabletools_hook_pattern.md`
+
+### Feature Flag Pattern
+
+```javascript
+import { useFeatureFlag } from 'Utilities/useFeatureFlag';
+
+const MyComponent = () => {
+  const isNewFeatureEnabled = useFeatureFlag('my-new-feature');
+  
+  return isNewFeatureEnabled ? <NewImplementation /> : <OldImplementation />;
+};
+```
+
+**Example**: TopicsTable new/original toggle (RHINENG-25233)
+
+---
+
+## Project Structure
+
+```
+src/
+├── PresentationalComponents/  # UI components (tables, filters, cards)
+├── SmartComponents/           # Container components with business logic
+├── Services/                  # RTK Query API slices
+├── Utilities/                 # Shared utilities, hooks
+├── Modules/                   # Federated module entry points
+└── Store/                     # Redux store configuration
+
+docs/
+├── TESTING.md                 # Comprehensive testing guide
+└── remediation-button-details.md  # Detailed implementation flows
+```
+
+---
+
+## Key Technologies
+
+### RTK Query
+- API layer with automatic caching
+- Endpoints defined in `src/Services/*.js`
+- Testing: Mock at API slice level, not individual endpoints
+
+### Module Federation
+- App loaded as federated module into chrome (platform host)
+- Props like `IopRemediationModal` passed from host
+- Entry: `src/Modules/*.js`
+
+### PatternFly 5
+- Component library for UI
+- Charts cause Jest issues → Test with Cypress instead
+- Excluded from coverage: `TotalRiskCard.js`
+
+---
+
+## Documentation Maintenance
+
+**When to update**:
+- Architecture changes → This file
+- Testing patterns → `docs/TESTING.md`
+- Implementation details → `docs/remediation-button-details.md`
+- Tabletools migration → External docs directory
+
+**External Docs**: `/home/avoznese/Documents/Red hat important/Advisor tabletools migration/`
+
+---
+
+**Last Updated**: 2026-04-29  
 **Maintainer**: Development Team
