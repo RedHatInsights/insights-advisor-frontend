@@ -25,6 +25,11 @@ jest.mock('@project-kessel/react-kessel-access-check', () => ({
   },
 }));
 
+jest.mock('@unleash/proxy-client-react', () => ({
+  ...jest.requireActual('@unleash/proxy-client-react'),
+  useFlagsStatus: () => ({ flagsReady: true }),
+}));
+
 import AppWithHccContext from './App';
 import { useHccEnvironmentContext, useFeatureFlag } from './Utilities/Hooks';
 import { useKesselEnvironmentContext } from './Utilities/useKesselEnvironmentContext';
