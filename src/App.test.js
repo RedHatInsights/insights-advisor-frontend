@@ -438,12 +438,13 @@ describe('App tag processing logic', () => {
   });
 
   describe('Feature flag loading states', () => {
-    it('waits for feature flags to load before rendering any context', () => {
+    it('shows loading spinner while waiting for feature flags', () => {
       useFlagsStatus.mockReturnValue({ flagsReady: false });
       useFeatureFlag.mockReturnValue(false);
 
       renderWithProviders(<AppWithHccContext />);
 
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
       expect(useHccEnvironmentContext).not.toHaveBeenCalled();
       expect(useKesselEnvironmentContext).not.toHaveBeenCalled();
     });
@@ -465,15 +466,6 @@ describe('App tag processing logic', () => {
       renderWithProviders(<AppWithHccContext />);
 
       expect(useKesselEnvironmentContext).toHaveBeenCalled();
-      expect(useHccEnvironmentContext).not.toHaveBeenCalled();
-    });
-
-    it('avoids RBAC v1 call during flag loading phase', () => {
-      useFlagsStatus.mockReturnValue({ flagsReady: false });
-      useFeatureFlag.mockReturnValue(false);
-
-      renderWithProviders(<AppWithHccContext />);
-
       expect(useHccEnvironmentContext).not.toHaveBeenCalled();
     });
   });

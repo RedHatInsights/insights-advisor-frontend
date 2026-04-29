@@ -7,7 +7,7 @@ import SystemAdvisor from '../SmartComponents/SystemAdvisor/SystemAdvisor';
 import { EnvironmentContext } from '../App';
 import { useHccEnvironmentContext, useFeatureFlag } from '../Utilities/Hooks';
 import { useKesselEnvironmentContext } from '../Utilities/useKesselEnvironmentContext';
-import { Spinner } from '@patternfly/react-core';
+import { Bullseye, Spinner } from '@patternfly/react-core';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
 
 const SystemDetailContent = ({
@@ -30,7 +30,7 @@ const SystemDetailContent = ({
           ...intlProps,
         })}
       >
-        <ReduxProvider store={store}>
+        <ReduxProvider {...(store && { store })}>
           <SystemAdvisor {...props} IopRemediationModal={IopRemediationModal} />
         </ReduxProvider>
       </Wrapper>
@@ -42,7 +42,7 @@ SystemDetailContent.propTypes = {
   customItnl: PropTypes.bool,
   intlProps: PropTypes.shape({
     locale: PropTypes.string,
-    messages: PropTypes.array,
+    messages: PropTypes.objectOf(PropTypes.string),
   }),
   store: PropTypes.object,
   IopRemediationModal: PropTypes.elementType,
@@ -65,9 +65,9 @@ const SystemDetail = (props) => {
 
   if (!flagsReady) {
     return (
-      <div style={{ textAlign: 'center', padding: '2rem' }}>
+      <Bullseye>
         <Spinner size="lg" />
-      </div>
+      </Bullseye>
     );
   }
 
@@ -82,7 +82,7 @@ SystemDetail.propTypes = {
   customItnl: PropTypes.bool,
   intlProps: PropTypes.shape({
     locale: PropTypes.string,
-    messages: PropTypes.array,
+    messages: PropTypes.objectOf(PropTypes.string),
   }),
   store: PropTypes.object,
   IopRemediationModal: PropTypes.elementType,
