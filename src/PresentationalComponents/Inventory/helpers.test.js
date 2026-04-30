@@ -2,6 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import {
   paginatedRequestHelper,
+  fetchAllPathwayRules,
   getEntities,
   allCurrentSystemIds,
   iopResolutionsMapper,
@@ -330,6 +331,96 @@ describe('Inventory helpers', () => {
       );
       expect(serialized).not.toContain('category[0]');
       expect(serialized).not.toContain('category[]');
+    });
+  });
+
+  describe('fetchAllPathwayRules', () => {
+    const mockAxios = {
+      get: mockAxiosGet,
+    };
+
+    it('returns the first page when the pathway fits in one response', async () => {
+      mockAxiosGet.mockResolvedValueOnce({
+        data: [{ rule_id: 'rule-1' }],
+        meta: { count: 1 },
+      });
+
+      const result = await fetchAllPathwayRules(
+        mockAxios,
+        '/api/insights/v1',
+        'test-pathway',
+      );
+
+      expect(mockAxiosGet).toHaveBeenCalledTimes(1);
+      expect(mockAxiosGet).toHaveBeenCalledWith('/api/insights/v1/rule/', {
+        params: {
+          pathway: 'test-pathway',
+          impacting: true,
+        },
+      });
+      expect(result).toEqual([{ rule_id: 'rule-1' }]);
+    });
+
+    it('fetches the remaining rule pages when a pathway spans multiple pages', async () => {
+      mockAxiosGet
+        .mockResolvedValueOnce({
+          data: [{ rule_id: 'rule-1' }, { rule_id: 'rule-2' }],
+          meta: { count: 5 },
+        })
+        .mockResolvedValueOnce({
+          data: [{ rule_id: 'rule-3' }, { rule_id: 'rule-4' }],
+        })
+        .mockResolvedValueOnce({
+          data: [{ rule_id: 'rule-5' }],
+        });
+
+      const result = await fetchAllPathwayRules(
+        mockAxios,
+        '/api/insights/v1',
+        'test-pathway',
+      );
+
+      expect(mockAxiosGet).toHaveBeenNthCalledWith(
+        1,
+        '/api/insights/v1/rule/',
+        {
+          params: {
+            pathway: 'test-pathway',
+            impacting: true,
+          },
+        },
+      );
+      expect(mockAxiosGet).toHaveBeenNthCalledWith(
+        2,
+        '/api/insights/v1/rule/',
+        {
+          params: {
+            pathway: 'test-pathway',
+            impacting: true,
+            limit: 2,
+            offset: 2,
+          },
+        },
+      );
+      expect(mockAxiosGet).toHaveBeenNthCalledWith(
+        3,
+        '/api/insights/v1/rule/',
+        {
+          params: {
+            pathway: 'test-pathway',
+            impacting: true,
+            limit: 2,
+            offset: 4,
+          },
+        },
+      );
+      expect(result).toEqual([
+        { rule_id: 'rule-1' },
+        { rule_id: 'rule-2' },
+        { rule_id: 'rule-3' },
+        { rule_id: 'rule-4' },
+        { rule_id: 'rule-5' },
+      ]);
     });
   });
 
