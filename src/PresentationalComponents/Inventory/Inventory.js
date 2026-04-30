@@ -7,6 +7,7 @@ import { useDispatch, useSelector, useStore } from 'react-redux';
 import {
   getEntities,
   allCurrentSystemIds,
+  fetchAllPathwayRules,
   iopResolutionsMapper,
   impactedDateColumn,
   lastSeenColumn,
@@ -182,13 +183,14 @@ const Inventory = ({
     if (!hasPathwayDetails) {
       if (pathway) {
         try {
-          const rulesRes = await axios.get(
-            `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
+          const pathwayRulesFromApi = await fetchAllPathwayRules(
+            axios,
+            envContext.BASE_URL,
+            pathway.slug,
           );
           const reportsRes = await axios.get(
             `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
           );
-          const pathwayRulesFromApi = rulesRes?.data ?? [];
           const pathwayReportRules =
             reportsRes?.data?.rules ?? reportsRes?.rules ?? {};
           setHasPathwayDetails(true);

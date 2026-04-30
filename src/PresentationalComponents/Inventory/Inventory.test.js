@@ -443,14 +443,17 @@ describe('Inventory - Playbook Count Scenarios', () => {
       );
 
       await waitFor(() => {
-        expect(mockAxiosGet).toHaveBeenCalledWith(
-          expect.stringContaining('/pathway/test-pathway/rules/'),
-        );
+        expect(mockAxiosGet).toHaveBeenCalledWith('/api/insights/v1/rule/', {
+          params: {
+            pathway: 'test-pathway',
+            impacting: true,
+          },
+        });
       });
 
       const calls = mockAxiosGet.mock.calls;
       const ruleCalls = calls.filter(
-        ([url]) => url.includes('/rule/') && !url.includes('/pathway/'),
+        ([url]) => url.includes('/rule/') && url.includes('/test-rule-123/'),
       );
       expect(ruleCalls.length).toBe(0);
     });
@@ -468,9 +471,12 @@ describe('Inventory - Playbook Count Scenarios', () => {
       );
 
       await waitFor(() => {
-        expect(mockAxiosGet).toHaveBeenCalledWith(
-          expect.stringContaining('/pathway/test-pathway/rules/'),
-        );
+        expect(mockAxiosGet).toHaveBeenCalledWith('/api/insights/v1/rule/', {
+          params: {
+            pathway: 'test-pathway',
+            impacting: true,
+          },
+        });
       });
 
       await waitFor(() => {
@@ -494,9 +500,12 @@ describe('Inventory - Playbook Count Scenarios', () => {
       );
 
       await waitFor(() => {
-        expect(mockAxiosGet).toHaveBeenCalledWith(
-          expect.stringContaining('/pathway/test-pathway/rules/'),
-        );
+        expect(mockAxiosGet).toHaveBeenCalledWith('/api/insights/v1/rule/', {
+          params: {
+            pathway: 'test-pathway',
+            impacting: true,
+          },
+        });
       });
 
       await waitFor(() => {
@@ -517,9 +526,12 @@ describe('Inventory - Playbook Count Scenarios', () => {
       );
 
       await waitFor(() => {
-        expect(mockAxiosGet).toHaveBeenCalledWith(
-          expect.stringContaining('/pathway/test-pathway/rules/'),
-        );
+        expect(mockAxiosGet).toHaveBeenCalledWith('/api/insights/v1/rule/', {
+          params: {
+            pathway: 'test-pathway',
+            impacting: true,
+          },
+        });
       });
 
       await waitFor(() => {
