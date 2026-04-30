@@ -7,3 +7,36 @@ export const pdfReportInterceptors = {
       })
       .as('generateReport'),
 };
+
+export const featureFlagInterceptors = {
+  kesselEnabled: () =>
+    cy
+      .intercept('POST', '/api/featureflags/**', {
+        statusCode: 200,
+        body: {
+          toggles: [
+            {
+              name: 'advisor.kessel_enabled',
+              enabled: true,
+              variant: { name: 'disabled', enabled: false },
+            },
+          ],
+        },
+      })
+      .as('featureFlags'),
+  kesselDisabled: () =>
+    cy
+      .intercept('POST', '/api/featureflags/**', {
+        statusCode: 200,
+        body: {
+          toggles: [
+            {
+              name: 'advisor.kessel_enabled',
+              enabled: false,
+              variant: { name: 'disabled', enabled: false },
+            },
+          ],
+        },
+      })
+      .as('featureFlags'),
+};

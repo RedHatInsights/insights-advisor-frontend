@@ -2,6 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SystemDetail from './SystemDetail';
+import { useFeatureFlag, useHccEnvironmentContext } from '../Utilities/Hooks';
+import { useKesselEnvironmentContext } from '../Utilities/useKesselEnvironmentContext';
+import { useFlagsStatus } from '@unleash/proxy-client-react';
 
 // Mock the SystemAdvisor component
 jest.mock('../SmartComponents/SystemAdvisor/SystemAdvisor', () => {
@@ -16,20 +19,63 @@ jest.mock('../SmartComponents/SystemAdvisor/SystemAdvisor', () => {
   };
 });
 
-// Mock useHccEnvironmentContext hook
-jest.mock('../Utilities/Hooks', () => ({
-  useHccEnvironmentContext: jest.fn(() => ({
-    displayRecPathways: true,
-    STATS_OVERVIEW_FETCH_URL: '/api/insights/v1/stats',
-  })),
-}));
+jest.mock('../Utilities/Hooks');
+jest.mock('../Utilities/useKesselEnvironmentContext');
+jest.mock('@unleash/proxy-client-react');
 
 describe('SystemDetail', () => {
-  it('should render SystemAdvisor component', () => {
-    render(<SystemDetail />);
+  const mockRbacContext = {
+    isLoading: false,
+    displayRecPathways: true,
+    STATS_OVERVIEW_FETCH_URL: '/api/insights/v1/stats',
+  };
 
-    expect(screen.getByTestId('system-advisor-mock')).toBeInTheDocument();
-    expect(screen.getByText('System Advisor Component')).toBeInTheDocument();
+  const mockKesselContext = {
+    isLoading: false,
+    displayRecPathways: true,
+    STATS_OVERVIEW_FETCH_URL: '/api/insights/v1/stats',
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    useHccEnvironmentContext.mockReturnValue(mockRbacContext);
+    useKesselEnvironmentContext.mockReturnValue(mockKesselContext);
+    useFlagsStatus.mockReturnValue({ flagsReady: true });
+    useFeatureFlag.mockReturnValue(false);
+  });
+
+  describe('Feature Flag Loading', () => {
+    it('should show spinner while feature flags are loading', () => {
+      useFlagsStatus.mockReturnValue({ flagsReady: false });
+
+      render(<SystemDetail />);
+
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('system-advisor-mock'),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  describe('RBAC v1 Mode (Kessel Disabled)', () => {
+    beforeEach(() => {
+      useFlagsStatus.mockReturnValue({ flagsReady: true });
+      useFeatureFlag.mockReturnValue(false);
+    });
+
+    it('should render SystemAdvisor component', () => {
+      render(<SystemDetail />);
+
+      expect(screen.getByTestId('system-advisor-mock')).toBeInTheDocument();
+      expect(screen.getByText('System Advisor Component')).toBeInTheDocument();
+    });
+
+    it('should use RBAC v1 context when Kessel flag is disabled', () => {
+      render(<SystemDetail />);
+
+      expect(useHccEnvironmentContext).toHaveBeenCalled();
+      expect(useKesselEnvironmentContext).not.toHaveBeenCalled();
+    });
   });
 
   it('should pass props to SystemAdvisor', () => {
@@ -130,5 +176,63 @@ describe('SystemDetail', () => {
 
     expect(screen.getByTestId('system-advisor-mock')).toBeInTheDocument();
     expect(screen.getByText('IopRemediationModal Present')).toBeInTheDocument();
+  });
+
+  describe('Kessel Mode (Kessel Enabled)', () => {
+    beforeEach(() => {
+      useFlagsStatus.mockReturnValue({ flagsReady: true });
+      useFeatureFlag.mockReturnValue(true);
+    });
+
+    it('should use Kessel context when Kessel flag is enabled', () => {
+      render(<SystemDetail />);
+
+      expect(useKesselEnvironmentContext).toHaveBeenCalled();
+      expect(useHccEnvironmentContext).not.toHaveBeenCalled();
+    });
+
+    it('should render SystemAdvisor with Kessel context', () => {
+      render(<SystemDetail />);
+
+      expect(screen.getByTestId('system-advisor-mock')).toBeInTheDocument();
+    });
+
+    it('should pass IopRemediationModal in Kessel mode', () => {
+      const MockModal = () => <div>Modal</div>;
+
+      render(<SystemDetail IopRemediationModal={MockModal} />);
+
+      expect(
+        screen.getByText('IopRemediationModal Present'),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Kessel and RBAC v1 integration', () => {
+    it('avoids calling RBAC v1 when Kessel is enabled', () => {
+      useFlagsStatus.mockReturnValue({ flagsReady: true });
+      useFeatureFlag.mockReturnValue(true);
+
+      render(<SystemDetail />);
+
+      expect(useHccEnvironmentContext).not.toHaveBeenCalled();
+      expect(useKesselEnvironmentContext).toHaveBeenCalled();
+    });
+
+    it('switches between context providers when feature flag changes', () => {
+      const { rerender } = render(<SystemDetail />);
+
+      useFlagsStatus.mockReturnValue({ flagsReady: true });
+      useFeatureFlag.mockReturnValue(false);
+      rerender(<SystemDetail />);
+      expect(useHccEnvironmentContext).toHaveBeenCalled();
+
+      jest.clearAllMocks();
+
+      useFeatureFlag.mockReturnValue(true);
+      rerender(<SystemDetail />);
+      expect(useKesselEnvironmentContext).toHaveBeenCalled();
+      expect(useHccEnvironmentContext).not.toHaveBeenCalled();
+    });
   });
 });

@@ -68,6 +68,51 @@ export const paginatedRequestHelper = async ({
 };
 
 /**
+ * Fetches all impacting rules for a pathway from the rules endpoint.
+ * Uses the same `/rule/` API filtering as the Pathway Recommendations table
+ * and fetches all pages so remediation logic can work with the full rule set.
+ *
+ * @param {Object} axios Axios instance for making requests
+ * @param {string} baseUrl Base URL for Advisor API
+ * @param {string} pathwaySlug Pathway slug used for filtering rules
+ * @returns {Promise<Array>} Array of all impacting rules for the pathway
+ */
+export const fetchAllPathwayRules = async (axios, baseUrl, pathwaySlug) => {
+  const rulesFetchUrl = `${baseUrl}/rule/`;
+  const options = {
+    pathway: pathwaySlug,
+    impacting: true,
+  };
+  const firstPageResponse = await axios.get(rulesFetchUrl, {
+    params: options,
+  });
+  const pathwayRules = firstPageResponse?.data ?? [];
+  const totalRules = firstPageResponse?.meta?.count ?? pathwayRules.length;
+  const pageLimit = pathwayRules.length;
+
+  if (pageLimit === 0 || totalRules <= pageLimit) {
+    return pathwayRules;
+  }
+
+  const remainingPageRequests = Array.from(
+    { length: Math.ceil((totalRules - pageLimit) / pageLimit) },
+    (_, pageIndex) =>
+      axios.get(rulesFetchUrl, {
+        params: {
+          ...options,
+          limit: pageLimit,
+          offset: pageLimit * (pageIndex + 1),
+        },
+      }),
+  );
+  const remainingPathwayRules = (
+    await Promise.all(remainingPageRequests)
+  ).flatMap((response) => response?.data ?? []);
+
+  return [...pathwayRules, ...remainingPathwayRules];
+};
+
+/**
  * Factory function that creates an entity fetcher for the Inventory table.
  * Fetches systems from Advisor API, filters out systems not in Inventory (last_seen: null),
  * then enriches the data with Inventory API details.

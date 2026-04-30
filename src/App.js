@@ -11,7 +11,9 @@ import { useHccEnvironmentContext, useFeatureFlag } from './Utilities/Hooks';
 import { useKesselEnvironmentContext } from './Utilities/useKesselEnvironmentContext';
 import { LockIcon } from '@patternfly/react-icons';
 import { AccessCheck } from '@project-kessel/react-kessel-access-check';
+import { Bullseye, Spinner } from '@patternfly/react-core';
 import { KESSEL_API_BASE_URL } from './AppConstants';
+import { useFlagsStatus } from '@unleash/proxy-client-react';
 
 export const EnvironmentContext = createContext({});
 
@@ -82,7 +84,16 @@ const AppWithKesselContext = () => {
 };
 
 const AppWithContextProviders = () => {
+  const { flagsReady } = useFlagsStatus();
   const isKesselEnabled = useFeatureFlag('advisor.kessel_enabled');
+
+  if (!flagsReady) {
+    return (
+      <Bullseye>
+        <Spinner size="xl" />
+      </Bullseye>
+    );
+  }
 
   return isKesselEnabled ? <AppWithKesselContext /> : <AppWithRbacV1Context />;
 };
