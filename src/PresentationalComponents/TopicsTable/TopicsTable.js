@@ -21,11 +21,12 @@ const TopicsTable = ({ props }) => {
 };
 
 TopicsTable.propTypes = {
-  props: PropTypes.object,
-  data: PropTypes.array,
-  isLoading: PropTypes.bool,
-  isFetching: PropTypes.bool,
-  isError: PropTypes.bool,
+  props: PropTypes.shape({
+    data: PropTypes.array.isRequired,
+    isLoading: PropTypes.bool.isRequired,
+    isFetching: PropTypes.bool.isRequired,
+    isError: PropTypes.bool.isRequired,
+  }).isRequired,
 };
 
 export default TopicsTable;

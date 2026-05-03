@@ -18,7 +18,7 @@ import { sortTopics } from '../helper';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { SkeletonTable } from '@patternfly/react-component-groups';
 
-const TopicsTable = ({ props }) => {
+const TopicsTable = ({ props = {} }) => {
   const intl = useIntl();
   const [searchText, setSearchText] = useState('');
   const { data: topics, isLoading, isFetching, isError } = props;
@@ -100,7 +100,7 @@ const TopicsTable = ({ props }) => {
     filters: searchText.length
       ? [
           {
-            category: 'Description',
+            category: intl.formatMessage(messages.name),
             chips: [{ name: searchText, value: searchText }],
           },
         ]
@@ -112,11 +112,39 @@ const TopicsTable = ({ props }) => {
   };
 
   useEffect(() => {
-    sort.index
+    typeof sort.index === 'number'
       ? onSort(null, sort.index, sort.direction)
-      : setRows(buildRows(topics));
+      : setRows(buildRows(topics || []));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [topics, searchText]);
+
+  /**
+   * Displays "no results" message when user actively filters and no topics match.
+   * Only triggers when searchText is not empty to prevent showing message on initial mount.
+   * Replaces the unsafe render-phase state update pattern with proper useEffect.
+   */
+  useEffect(() => {
+    if (rows.length === 0 && !isFetching && searchText.length > 0) {
+      setRows([
+        {
+          cells: [
+            {
+              title: (
+                <MessageState
+                  icon={SearchIcon}
+                  title={intl.formatMessage(messages.noHitsTitle, {
+                    item: intl.formatMessage(messages.topics).toLowerCase(),
+                  })}
+                  text={intl.formatMessage(messages.topicsListNoHitsBody)}
+                />
+              ),
+              props: { colSpan: 4 },
+            },
+          ],
+        },
+      ]);
+    }
+  }, [rows.length, isFetching, searchText, intl]);
 
   const filterConfigItems = [
     {
@@ -142,7 +170,7 @@ const TopicsTable = ({ props }) => {
           />
           <SkeletonTable columns={cols.map((c) => c.title)} />
         </>
-      ) : !isFetching && topics.length > 0 ? (
+      ) : !isFetching && topics?.length > 0 ? (
         <React.Fragment>
           <PrimaryToolbar
             filterConfig={{ items: filterConfigItems }}
@@ -159,30 +187,6 @@ const TopicsTable = ({ props }) => {
           >
             <TableHeader />
             <TableBody />
-            {rows.length === 0 &&
-              !isFetching &&
-              setRows([
-                {
-                  cells: [
-                    {
-                      title: (
-                        <MessageState
-                          icon={SearchIcon}
-                          title={intl.formatMessage(messages.noHitsTitle, {
-                            item: intl
-                              .formatMessage(messages.topics)
-                              .toLowerCase(),
-                          })}
-                          text={intl.formatMessage(
-                            messages.topicsListNoHitsBody,
-                          )}
-                        />
-                      ),
-                      props: { colSpan: 4 },
-                    },
-                  ],
-                },
-              ])}
           </Table>
         </React.Fragment>
       ) : (
