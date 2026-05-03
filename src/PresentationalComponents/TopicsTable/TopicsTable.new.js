@@ -9,11 +9,20 @@ import messages from '../../Messages';
 import { useTopicsColumns, useTopicsFilters } from './TopicsTableAssets';
 
 /**
- * Topics table using bastilian-tabletools with client-side sorting and filtering.
+ * Topics table component using bastilian-tabletools with client-side sorting and filtering.
  * Displays list of topics with name, featured status, and affected systems count.
+ *
+ * @param {object} props - Component props
+ * @param {object} props.props - Nested props object containing table data and state
+ * @param {Array} props.props.data - Array of topic objects
+ * @param {boolean} props.props.isLoading - Whether initial data is loading
+ * @param {boolean} props.props.isFetching - Whether data is being refetched
+ * @param {boolean} props.props.isError - Whether an error occurred loading data
+ * @returns {JSX.Element} Topics table component
  */
 const TopicsTableNew = ({ props }) => {
   const intl = useIntl();
+  // eslint-disable-next-line react/prop-types
   const { data: topics = [], isLoading, isFetching, isError } = props;
 
   const columns = useTopicsColumns();
@@ -40,7 +49,7 @@ const TopicsTableNew = ({ props }) => {
       filters={{ filterConfig: filters }}
       options={{
         pagination: false,
-        defaultSort: {
+        sortBy: {
           index: 1,
           direction: 'desc',
         },
@@ -50,11 +59,12 @@ const TopicsTableNew = ({ props }) => {
 };
 
 TopicsTableNew.propTypes = {
-  props: PropTypes.object,
-  data: PropTypes.array,
-  isLoading: PropTypes.bool,
-  isFetching: PropTypes.bool,
-  isError: PropTypes.bool,
+  props: PropTypes.shape({
+    data: PropTypes.array.isRequired,
+    isLoading: PropTypes.bool.isRequired,
+    isFetching: PropTypes.bool.isRequired,
+    isError: PropTypes.bool.isRequired,
+  }).isRequired,
 };
 
 export default TopicsTableNew;
