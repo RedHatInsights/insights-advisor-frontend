@@ -5,18 +5,22 @@ import { Provider } from 'react-redux';
 import messages from '../Messages';
 import SystemAdvisor from '../SmartComponents/SystemAdvisor/SystemAdvisor';
 import { EnvironmentContext } from '../App';
-import { useHccEnvironmentContext } from '../Utilities/Hooks';
+import { useHccEnvironmentContext, useFeatureFlag } from '../Utilities/Hooks';
+import { useKesselEnvironmentContext } from '../Utilities/useKesselEnvironmentContext';
+import { Bullseye, Spinner } from '@patternfly/react-core';
+import { useFlagsStatus } from '@unleash/proxy-client-react';
 
-const SystemDetail = ({
+const SystemDetailContent = ({
   customItnl,
   intlProps,
   store,
   IopRemediationModal,
+  envContext,
   ...props
 }) => {
   const Wrapper = customItnl ? IntlProvider : Fragment;
   const ReduxProvider = store ? Provider : Fragment;
-  const envContext = useHccEnvironmentContext();
+
   return (
     <EnvironmentContext.Provider value={envContext}>
       <Wrapper
@@ -26,7 +30,7 @@ const SystemDetail = ({
           ...intlProps,
         })}
       >
-        <ReduxProvider store={store}>
+        <ReduxProvider {...(store && { store })}>
           <SystemAdvisor {...props} IopRemediationModal={IopRemediationModal} />
         </ReduxProvider>
       </Wrapper>
@@ -34,11 +38,51 @@ const SystemDetail = ({
   );
 };
 
+SystemDetailContent.propTypes = {
+  customItnl: PropTypes.bool,
+  intlProps: PropTypes.shape({
+    locale: PropTypes.string,
+    messages: PropTypes.objectOf(PropTypes.string),
+  }),
+  store: PropTypes.object,
+  IopRemediationModal: PropTypes.elementType,
+  envContext: PropTypes.object.isRequired,
+};
+
+const SystemDetailWithRbacV1 = (props) => {
+  const envContext = useHccEnvironmentContext();
+  return <SystemDetailContent envContext={envContext} {...props} />;
+};
+
+const SystemDetailWithKessel = (props) => {
+  const envContext = useKesselEnvironmentContext();
+  return <SystemDetailContent envContext={envContext} {...props} />;
+};
+
+const SystemDetail = (props) => {
+  const { flagsReady } = useFlagsStatus();
+  const isKesselEnabled = useFeatureFlag('advisor.kessel_enabled');
+
+  if (!flagsReady) {
+    return (
+      <Bullseye>
+        <Spinner size="lg" />
+      </Bullseye>
+    );
+  }
+
+  return isKesselEnabled ? (
+    <SystemDetailWithKessel {...props} />
+  ) : (
+    <SystemDetailWithRbacV1 {...props} />
+  );
+};
+
 SystemDetail.propTypes = {
   customItnl: PropTypes.bool,
   intlProps: PropTypes.shape({
     locale: PropTypes.string,
-    messages: PropTypes.array,
+    messages: PropTypes.objectOf(PropTypes.string),
   }),
   store: PropTypes.object,
   IopRemediationModal: PropTypes.elementType,

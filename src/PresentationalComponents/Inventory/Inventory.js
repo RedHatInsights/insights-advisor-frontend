@@ -7,6 +7,7 @@ import { useDispatch, useSelector, useStore } from 'react-redux';
 import {
   getEntities,
   allCurrentSystemIds,
+  fetchAllPathwayRules,
   iopResolutionsMapper,
   impactedDateColumn,
   lastSeenColumn,
@@ -61,7 +62,7 @@ const Inventory = ({
 
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [curPageIds, setCurPageIds] = useState([]);
-  const [pathwayRulesList, setPathwayRulesList] = useState({});
+  const [pathwayRulesList, setPathwayRulesList] = useState([]);
   const [pathwayReportList, setPathwayReportList] = useState({});
   const [isLoading, setIsLoading] = useState();
 
@@ -129,7 +130,13 @@ const Inventory = ({
     });
     checkRemediationButtonStatus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedIds]);
+  }, [
+    selectedIds,
+    pathwayReportList,
+    pathwayRulesList,
+    pathway,
+    rulesPlaybookCount,
+  ]);
 
   useEffect(() => {
     if (pathway) {
@@ -138,41 +145,77 @@ const Inventory = ({
       rulesCheck();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [rule?.rule_id, pathway?.slug]);
 
+  /**
+   * Fetches playbook count for a single rule from the API.
+   * Only fetches if rulesPlaybookCount is -1 (not yet fetched).
+   * Updates rulesPlaybookCount state with the fetched value.
+   */
   const rulesCheck = async () => {
     if (rulesPlaybookCount < 0) {
-      const associatedRuleDetails = (
-        await axios.get(
-          `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
-          { params: { name: filters.name } },
-        )
-      )?.playbook_count;
-      setRulesPlaybookCount(associatedRuleDetails);
-    }
-  };
-
-  const pathwayCheck = async () => {
-    if (!hasPathwayDetails) {
-      if (pathway) {
-        let pathwayRules = (
+      if (!rule?.rule_id) return;
+      try {
+        const associatedRuleDetails = (
           await axios.get(
-            `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
+            `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
+            { params: { name: filters.name } },
           )
-        )?.data;
-
-        let pathwayReport = (
-          await axios.get(
-            `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
-          )
-        )?.rules;
-        setHasPathwayDetails(true);
-        setPathwayReportList(pathwayReport);
-        setPathwayRulesList(pathwayRules);
+        )?.playbook_count;
+        setRulesPlaybookCount(associatedRuleDetails);
+      } catch {
+        addNotification({
+          variant: 'danger',
+          title: 'Failed to fetch playbook information',
+          description: `Unable to load remediation details for this recommendation.`,
+        });
+        setRulesPlaybookCount(0);
       }
     }
   };
 
+  /**
+   * Fetches pathway rules and reports from the API.
+   * Only fetches if hasPathwayDetails is false (not yet fetched).
+   * Updates pathwayRulesList and pathwayReportList state with the fetched data.
+   */
+  const pathwayCheck = async () => {
+    if (!hasPathwayDetails) {
+      if (pathway) {
+        try {
+          const pathwayRulesFromApi = await fetchAllPathwayRules(
+            axios,
+            envContext.BASE_URL,
+            pathway.slug,
+          );
+          const reportsRes = await axios.get(
+            `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
+          );
+          const pathwayReportRules =
+            reportsRes?.data?.rules ?? reportsRes?.rules ?? {};
+          setHasPathwayDetails(true);
+          setPathwayReportList(pathwayReportRules);
+          setPathwayRulesList(pathwayRulesFromApi);
+        } catch {
+          addNotification({
+            variant: 'danger',
+            title: 'Failed to fetch pathway information',
+            description: `Unable to load remediation details for this pathway.`,
+          });
+          setHasPathwayDetails(true);
+          setPathwayReportList({});
+          setPathwayRulesList([]);
+        }
+      }
+    }
+  };
+
+  /**
+   * Determines whether the remediation button should be enabled or disabled.
+   * For pathways: Button enabled if any selected system has a rule with a playbook.
+   * For single rules: Button enabled if rulesPlaybookCount > 0 and systems are selected.
+   * Button is always disabled if no systems are selected.
+   */
   const checkRemediationButtonStatus = () => {
     let playbookFound = false;
     let ruleKeys = Object.keys(pathwayReportList);
@@ -184,51 +227,55 @@ const Inventory = ({
         if (playbookFound) {
           break;
         }
-        ruleKeys.forEach((rule) => {
-          //Grab the rule assosciated with that system
-          if (pathwayReportList[rule].includes(system)) {
-            let assosciatedRule = pathwayReportList[rule];
-            //find that associated rule in the pathwayRules endpoint, check for playbook
-            let item = pathwayRulesList.find(
-              (report) => (report.rule_id = assosciatedRule),
-            );
-            if (item.resolution_set[0].has_playbook) {
-              playbookFound = true;
-              return setIsRemediationButtonDisabled(false);
-            }
+        ruleKeys.forEach((ruleKey) => {
+          const systemsForRule = pathwayReportList[ruleKey];
+          if (
+            !Array.isArray(systemsForRule) ||
+            !systemsForRule.includes(system)
+          ) {
+            return;
+          }
+          const item = pathwayRulesList.find(
+            (report) => report.rule_id === ruleKey,
+          );
+          if (item?.resolution_set?.[0]?.has_playbook) {
+            playbookFound = true;
+            setIsRemediationButtonDisabled(false);
           }
         });
+      }
+      if (!playbookFound) {
+        setIsRemediationButtonDisabled(true);
       }
     } else {
       if (rulesPlaybookCount > 0 && selectedIds?.length > 0) {
         setIsRemediationButtonDisabled(false);
+      } else {
+        setIsRemediationButtonDisabled(true);
       }
     }
   };
 
+  /**
+   * Provides remediation data for creating a remediation plan.
+   * For pathways: Returns issues array with rule IDs and their affected systems.
+   * For single rules: Returns a single issue with the rule ID and all selected systems.
+   * @returns {Promise<Object>} Remediation data object with issues and systems
+   */
   const remediationDataProvider = async () => {
     if (pathway) {
-      const pathways = (
-        await axios.get(
-          `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
-        )
-      )?.data;
-
-      const systems = (
-        await axios.get(
-          `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
-        )
-      )?.rules;
+      const pathwayRules = pathwayRulesList;
+      const systems = pathwayReportList;
 
       let issues = [];
-      pathways.forEach((rec) => {
-        let filteredSystems = [];
-
-        systems[rec.rule_id].forEach((system) => {
-          if (selectedIds.includes(system)) {
-            filteredSystems.push(system);
-          }
-        });
+      pathwayRules.forEach((rec) => {
+        const systemsForRule = systems[rec.rule_id];
+        if (!Array.isArray(systemsForRule)) {
+          return;
+        }
+        const filteredSystems = systemsForRule.filter((system) =>
+          selectedIds.includes(system),
+        );
 
         if (filteredSystems.length) {
           issues.push({
@@ -373,18 +420,23 @@ const Inventory = ({
   };
 
   useEffect(() => {
-    if (selectedIds?.length > 0) {
-      const fetchAndSetData = async () => {
-        const resolutionsData = await iopResolutionsMapper(
-          entities,
-          rule,
-          selectedIds,
-        );
-        setResolutions(resolutionsData);
-      };
-      fetchAndSetData();
+    if (!IopRemediationModal || pathway) {
+      return;
     }
-  }, [selectedIds, entities, rule]);
+    if (!selectedIds?.length) {
+      setResolutions([]);
+      return;
+    }
+    const fetchAndSetData = async () => {
+      const resolutionsData = await iopResolutionsMapper(
+        entities,
+        rule,
+        selectedIds,
+      );
+      setResolutions(resolutionsData);
+    };
+    fetchAndSetData();
+  }, [selectedIds, entities, rule, IopRemediationModal, pathway]);
 
   const getActionsConfig = () => {
     const actions = [
@@ -602,7 +654,7 @@ Inventory.propTypes = {
   exportTable: PropTypes.string,
   showTags: PropTypes.bool,
   IopRemediationModal: PropTypes.element,
-  axios: PropTypes.func,
+  axios: PropTypes.object,
 };
 
 export default Inventory;

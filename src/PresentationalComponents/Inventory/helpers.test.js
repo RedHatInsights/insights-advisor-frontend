@@ -2,6 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import {
   paginatedRequestHelper,
+  fetchAllPathwayRules,
   getEntities,
   allCurrentSystemIds,
   iopResolutionsMapper,
@@ -16,6 +17,7 @@ const mockAxiosGet = jest.fn();
 jest.mock('../helper', () => ({
   createOptions: jest.fn(),
   createSortParam: jest.fn(),
+  getCsrfTokenHeader: jest.fn(() => ({ 'X-CSRF-Token': 'test-csrf-token' })),
 }));
 
 jest.mock('../Common/Tables', () => ({
@@ -329,6 +331,96 @@ describe('Inventory helpers', () => {
       );
       expect(serialized).not.toContain('category[0]');
       expect(serialized).not.toContain('category[]');
+    });
+  });
+
+  describe('fetchAllPathwayRules', () => {
+    const mockAxios = {
+      get: mockAxiosGet,
+    };
+
+    it('returns the first page when the pathway fits in one response', async () => {
+      mockAxiosGet.mockResolvedValueOnce({
+        data: [{ rule_id: 'rule-1' }],
+        meta: { count: 1 },
+      });
+
+      const result = await fetchAllPathwayRules(
+        mockAxios,
+        '/api/insights/v1',
+        'test-pathway',
+      );
+
+      expect(mockAxiosGet).toHaveBeenCalledTimes(1);
+      expect(mockAxiosGet).toHaveBeenCalledWith('/api/insights/v1/rule/', {
+        params: {
+          pathway: 'test-pathway',
+          impacting: true,
+        },
+      });
+      expect(result).toEqual([{ rule_id: 'rule-1' }]);
+    });
+
+    it('fetches the remaining rule pages when a pathway spans multiple pages', async () => {
+      mockAxiosGet
+        .mockResolvedValueOnce({
+          data: [{ rule_id: 'rule-1' }, { rule_id: 'rule-2' }],
+          meta: { count: 5 },
+        })
+        .mockResolvedValueOnce({
+          data: [{ rule_id: 'rule-3' }, { rule_id: 'rule-4' }],
+        })
+        .mockResolvedValueOnce({
+          data: [{ rule_id: 'rule-5' }],
+        });
+
+      const result = await fetchAllPathwayRules(
+        mockAxios,
+        '/api/insights/v1',
+        'test-pathway',
+      );
+
+      expect(mockAxiosGet).toHaveBeenNthCalledWith(
+        1,
+        '/api/insights/v1/rule/',
+        {
+          params: {
+            pathway: 'test-pathway',
+            impacting: true,
+          },
+        },
+      );
+      expect(mockAxiosGet).toHaveBeenNthCalledWith(
+        2,
+        '/api/insights/v1/rule/',
+        {
+          params: {
+            pathway: 'test-pathway',
+            impacting: true,
+            limit: 2,
+            offset: 2,
+          },
+        },
+      );
+      expect(mockAxiosGet).toHaveBeenNthCalledWith(
+        3,
+        '/api/insights/v1/rule/',
+        {
+          params: {
+            pathway: 'test-pathway',
+            impacting: true,
+            limit: 2,
+            offset: 4,
+          },
+        },
+      );
+      expect(result).toEqual([
+        { rule_id: 'rule-1' },
+        { rule_id: 'rule-2' },
+        { rule_id: 'rule-3' },
+        { rule_id: 'rule-4' },
+        { rule_id: 'rule-5' },
+      ]);
     });
   });
 
@@ -797,9 +889,6 @@ describe('Inventory helpers', () => {
 
     beforeEach(() => {
       global.fetch = jest.fn();
-      document.querySelector = jest.fn().mockReturnValue({
-        getAttribute: jest.fn().mockReturnValue('test-csrf-token'),
-      });
     });
 
     afterEach(() => {
@@ -962,6 +1051,386 @@ describe('Inventory helpers', () => {
       expect(consoleErrorSpy).toHaveBeenCalled();
 
       consoleErrorSpy.mockRestore();
+    });
+
+    it('returns empty array when rule is undefined', async () => {
+      const entities = { rows: [] };
+      const selectedIds = ['uuid-1'];
+      const consoleErrorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      const resolutionsData = await iopResolutionsMapper(
+        entities,
+        undefined,
+        selectedIds,
+      );
+
+      expect(resolutionsData).toEqual([]);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Rule ID is missing, cannot fetch remediation resolutions',
+      );
+      expect(global.fetch).not.toHaveBeenCalled();
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('returns empty array when rule is null', async () => {
+      const entities = { rows: [] };
+      const selectedIds = ['uuid-1'];
+      const consoleErrorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      const resolutionsData = await iopResolutionsMapper(
+        entities,
+        null,
+        selectedIds,
+      );
+
+      expect(resolutionsData).toEqual([]);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Rule ID is missing, cannot fetch remediation resolutions',
+      );
+      expect(global.fetch).not.toHaveBeenCalled();
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('returns empty array when rule_id is missing', async () => {
+      const entities = { rows: [] };
+      const selectedIds = ['uuid-1'];
+      const ruleWithoutId = {
+        description: 'Test rule',
+        reboot_required: false,
+      };
+      const consoleErrorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      const resolutionsData = await iopResolutionsMapper(
+        entities,
+        ruleWithoutId,
+        selectedIds,
+      );
+
+      expect(resolutionsData).toEqual([]);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Rule ID is missing, cannot fetch remediation resolutions',
+      );
+      expect(global.fetch).not.toHaveBeenCalled();
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('returns empty array when rule_id is empty string', async () => {
+      const entities = { rows: [] };
+      const selectedIds = ['uuid-1'];
+      const ruleWithEmptyId = {
+        rule_id: '',
+        description: 'Test rule',
+        reboot_required: false,
+      };
+      const consoleErrorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      const resolutionsData = await iopResolutionsMapper(
+        entities,
+        ruleWithEmptyId,
+        selectedIds,
+      );
+
+      expect(resolutionsData).toEqual([]);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Rule ID is missing, cannot fetch remediation resolutions',
+      );
+      expect(global.fetch).not.toHaveBeenCalled();
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('handles empty selectedIds array', async () => {
+      const entities = { rows: [] };
+      const selectedIds = [];
+
+      global.fetch.mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          'advisor:TEST_RULE': { resolutions: [] },
+        }),
+      });
+
+      const resolutionsData = await iopResolutionsMapper(
+        entities,
+        mockRule,
+        selectedIds,
+      );
+
+      expect(resolutionsData).toEqual([]);
+      expect(global.fetch).toHaveBeenCalled();
+    });
+
+    it('handles missing entities.rows', async () => {
+      const entities = {};
+      const selectedIds = ['uuid-1', 'uuid-2'];
+
+      global.fetch.mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          'advisor:TEST_RULE': { resolutions: [] },
+        }),
+      });
+
+      const resolutionsData = await iopResolutionsMapper(
+        entities,
+        mockRule,
+        selectedIds,
+      );
+
+      expect(resolutionsData).toHaveLength(2);
+      expect(resolutionsData[0].host_name).toBe('uuid-1');
+      expect(resolutionsData[1].host_name).toBe('uuid-2');
+    });
+
+    it('handles reboot_required false', async () => {
+      const entities = {
+        rows: [{ id: 'uuid-1', display_name: 'System 1' }],
+      };
+      const selectedIds = ['uuid-1'];
+      const ruleNoReboot = {
+        rule_id: 'NO_REBOOT_RULE',
+        description: 'No reboot needed',
+        reboot_required: false,
+      };
+
+      global.fetch.mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          'advisor:NO_REBOOT_RULE': { resolutions: [] },
+        }),
+      });
+
+      const resolutionsData = await iopResolutionsMapper(
+        entities,
+        ruleNoReboot,
+        selectedIds,
+      );
+
+      expect(resolutionsData[0].rebootable).toBe(false);
+    });
+
+    it('handles missing description', async () => {
+      const entities = {
+        rows: [{ id: 'uuid-1', display_name: 'System 1' }],
+      };
+      const selectedIds = ['uuid-1'];
+      const ruleNoDescription = {
+        rule_id: 'NO_DESC_RULE',
+        reboot_required: true,
+      };
+
+      global.fetch.mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          'advisor:NO_DESC_RULE': { resolutions: [] },
+        }),
+      });
+
+      const resolutionsData = await iopResolutionsMapper(
+        entities,
+        ruleNoDescription,
+        selectedIds,
+      );
+
+      expect(resolutionsData[0].description).toBeUndefined();
+    });
+
+    it('handles large number of selected systems', async () => {
+      const entities = {
+        rows: Array.from({ length: 100 }, (_, i) => ({
+          id: `uuid-${i}`,
+          display_name: `System ${i}`,
+        })),
+      };
+      const selectedIds = Array.from({ length: 100 }, (_, i) => `uuid-${i}`);
+      const mockResolutions = [{ id: 'resolution-1', description: 'Fix' }];
+
+      global.fetch.mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          'advisor:TEST_RULE': { resolutions: mockResolutions },
+        }),
+      });
+
+      const resolutionsData = await iopResolutionsMapper(
+        entities,
+        mockRule,
+        selectedIds,
+      );
+
+      expect(resolutionsData).toHaveLength(100);
+      expect(resolutionsData[0].hostid).toBe('uuid-0');
+      expect(resolutionsData[99].hostid).toBe('uuid-99');
+      expect(
+        resolutionsData.every((item) => item.resolutions === mockResolutions),
+      ).toBe(true);
+    });
+
+    it('handles response with empty resolutions array', async () => {
+      const entities = {
+        rows: [{ id: 'uuid-1', display_name: 'System 1' }],
+      };
+      const selectedIds = ['uuid-1'];
+
+      global.fetch.mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          'advisor:TEST_RULE': { resolutions: [] },
+        }),
+      });
+
+      const resolutionsData = await iopResolutionsMapper(
+        entities,
+        mockRule,
+        selectedIds,
+      );
+
+      expect(resolutionsData[0].resolutions).toEqual([]);
+    });
+
+    it('formats rule ID with advisor prefix correctly', async () => {
+      const entities = { rows: [] };
+      const selectedIds = ['uuid-1'];
+      const specialRule = {
+        rule_id: 'SPECIAL|RULE_WITH_CHARS',
+        description: 'Special rule',
+        reboot_required: false,
+      };
+
+      global.fetch.mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          'advisor:SPECIAL|RULE_WITH_CHARS': { resolutions: [] },
+        }),
+      });
+
+      await iopResolutionsMapper(entities, specialRule, selectedIds);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/insights_cloud/api/remediations/v1/resolutions',
+        expect.objectContaining({
+          body: JSON.stringify({ issues: ['advisor:SPECIAL|RULE_WITH_CHARS'] }),
+        }),
+      );
+    });
+
+    it('includes CSRF token in headers', async () => {
+      const entities = { rows: [] };
+      const selectedIds = ['uuid-1'];
+
+      global.fetch.mockResolvedValue({
+        ok: true,
+        json: async () => ({ 'advisor:TEST_RULE': { resolutions: [] } }),
+      });
+
+      await iopResolutionsMapper(entities, mockRule, selectedIds);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            'X-CSRF-Token': 'test-csrf-token',
+          }),
+        }),
+      );
+    });
+
+    it('handles HTTP 404 error specifically', async () => {
+      const entities = { rows: [] };
+      const selectedIds = ['uuid-1'];
+      const consoleErrorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      global.fetch.mockResolvedValue({
+        ok: false,
+        status: 404,
+        text: async () => 'Not found',
+      });
+
+      const resolutionsData = await iopResolutionsMapper(
+        entities,
+        mockRule,
+        selectedIds,
+      );
+
+      expect(resolutionsData).toEqual([]);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'An error occurred during fetch:',
+        expect.any(Error),
+      );
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('handles HTTP 403 forbidden error', async () => {
+      const entities = { rows: [] };
+      const selectedIds = ['uuid-1'];
+      const consoleErrorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      global.fetch.mockResolvedValue({
+        ok: false,
+        status: 403,
+        text: async () => 'Forbidden',
+      });
+
+      const resolutionsData = await iopResolutionsMapper(
+        entities,
+        mockRule,
+        selectedIds,
+      );
+
+      expect(resolutionsData).toEqual([]);
+      expect(consoleErrorSpy).toHaveBeenCalled();
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('preserves all rule properties in mapped data', async () => {
+      const entities = {
+        rows: [{ id: 'uuid-1', display_name: 'System 1' }],
+      };
+      const selectedIds = ['uuid-1'];
+      const detailedRule = {
+        rule_id: 'DETAILED_RULE',
+        description: 'Detailed description',
+        reboot_required: true,
+      };
+
+      global.fetch.mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          'advisor:DETAILED_RULE': { resolutions: [] },
+        }),
+      });
+
+      const resolutionsData = await iopResolutionsMapper(
+        entities,
+        detailedRule,
+        selectedIds,
+      );
+
+      expect(resolutionsData[0]).toEqual({
+        hostid: 'uuid-1',
+        host_name: 'System 1',
+        resolutions: [],
+        rulename: 'DETAILED_RULE',
+        description: 'Detailed description',
+        rebootable: true,
+      });
     });
   });
 
