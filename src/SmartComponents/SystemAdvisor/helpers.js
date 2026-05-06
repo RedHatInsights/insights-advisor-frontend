@@ -1,6 +1,28 @@
 import { getCsrfTokenHeader } from '../../PresentationalComponents/helper';
 
-export const fetchResolutionsData = async (selectedRules, hostId, hostName) => {
+/**
+ * Check if error is an abort/cancellation error
+ * @param {Error} error - Error object to check
+ * @returns {boolean} True if error is AbortError or CanceledError
+ */
+export const isAbortError = (error) =>
+  error?.name === 'AbortError' || error?.name === 'CanceledError';
+
+/**
+ * Fetches remediation resolution options for selected rules
+ * @param {Array<{rule: Object}>} selectedRules - Array of rule objects with rule details
+ * @param {string} hostId - System host ID
+ * @param {string} hostName - System host name
+ * @param {AbortSignal} signal - Abort signal for request cancellation
+ * @returns {Promise<Array>} Array of resolution objects for IOP modal
+ * @throws {Error} Re-throws AbortError and CanceledError, returns [] for other errors
+ */
+export const fetchResolutionsData = async (
+  selectedRules,
+  hostId,
+  hostName,
+  signal,
+) => {
   const formattedIssues = selectedRules.map(
     (rule) => 'advisor:' + rule.rule.rule_id,
   );
@@ -15,6 +37,7 @@ export const fetchResolutionsData = async (selectedRules, hostId, hostName) => {
           ...getCsrfTokenHeader(),
         },
         body: JSON.stringify({ issues: formattedIssues }),
+        signal,
       },
     );
 
@@ -46,6 +69,9 @@ export const fetchResolutionsData = async (selectedRules, hostId, hostName) => {
 
     return resolutionsData;
   } catch (err) {
+    if (isAbortError(err)) {
+      throw err;
+    }
     console.error('An error occurred during fetch:', err);
     return [];
   }
