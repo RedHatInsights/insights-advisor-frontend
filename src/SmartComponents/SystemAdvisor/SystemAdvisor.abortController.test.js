@@ -22,9 +22,9 @@ describe('isAbortError', () => {
     expect(isAbortError(error)).toBe(true);
   });
 
-  test('returns true for CanceledError', () => {
+  test('returns true for CancelledError', () => {
     const error = new Error('Request cancelled');
-    error.name = 'CanceledError';
+    error.name = 'CancelledError';
     expect(isAbortError(error)).toBe(true);
   });
 
@@ -93,10 +93,10 @@ describe('fetchResolutionsData - Signal Propagation', () => {
     ).rejects.toThrow('The user aborted a request.');
   });
 
-  test('re-throws CanceledError', async () => {
+  test('re-throws CancelledError', async () => {
     const mockSignal = new AbortController().signal;
     const cancelError = new Error('Request cancelled');
-    cancelError.name = 'CanceledError';
+    cancelError.name = 'CancelledError';
 
     global.fetch.mockRejectedValue(cancelError);
 

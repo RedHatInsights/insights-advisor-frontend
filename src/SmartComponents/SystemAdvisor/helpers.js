@@ -3,10 +3,10 @@ import { getCsrfTokenHeader } from '../../PresentationalComponents/helper';
 /**
  * Check if error is an abort/cancellation error
  * @param {Error} error - Error object to check
- * @returns {boolean} True if error is AbortError or CanceledError
+ * @returns {boolean} True if error is AbortError or CancelledError
  */
 export const isAbortError = (error) =>
-  error?.name === 'AbortError' || error?.name === 'CanceledError';
+  error?.name === 'AbortError' || error?.name === 'CancelledError';
 
 /**
  * Fetches remediation resolution options for selected rules
@@ -15,7 +15,7 @@ export const isAbortError = (error) =>
  * @param {string} hostName - System host name
  * @param {AbortSignal} signal - Abort signal for request cancellation
  * @returns {Promise<Array>} Array of resolution objects for IOP modal
- * @throws {Error} Re-throws AbortError and CanceledError, returns [] for other errors
+ * @throws {Error} Re-throws AbortError and CancelledError, returns [] for other errors
  */
 export const fetchResolutionsData = async (
   selectedRules,
