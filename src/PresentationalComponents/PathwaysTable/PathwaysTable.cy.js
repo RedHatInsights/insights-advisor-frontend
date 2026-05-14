@@ -11,6 +11,8 @@ import {
   hasChip,
   selectConditionalFilterOption,
 } from '../../../cypress/utils/table';
+import { featureFlagInterceptor } from '../../../cypress/support/interceptors';
+import FlagProvider from '@unleash/proxy-client-react';
 
 import {
   CONDITIONAL_FILTER,
@@ -32,22 +34,36 @@ const CATEGORY_VALUES = [
   'Security',
 ];
 
-const mountComponent = () => {
+const mountComponent = (enableTableTools = false) => {
+  if (enableTableTools) {
+    featureFlagInterceptor(['advisor-tabletools-migration']);
+  } else {
+    featureFlagInterceptor([]);
+  }
+
   let activeTab = 1;
   cy.mount(
-    <MemoryRouter>
-      <IntlProvider locale={navigator.language.slice(0, 2)}>
-        <Provider store={initStore()}>
-          <Routes>
-            <Route
-              key={'Recommendations Pathways'}
-              path="*"
-              element={<PathwaysTable isTabActive={activeTab} />}
-            />
-          </Routes>
-        </Provider>
-      </IntlProvider>
-    </MemoryRouter>,
+    <FlagProvider
+      config={{
+        url: 'http://localhost:8002/feature_flags',
+        clientKey: 'abc',
+        appName: 'abc',
+      }}
+    >
+      <MemoryRouter>
+        <IntlProvider locale={navigator.language.slice(0, 2)}>
+          <Provider store={initStore()}>
+            <Routes>
+              <Route
+                key={'Recommendations Pathways'}
+                path="*"
+                element={<PathwaysTable isTabActive={activeTab} />}
+              />
+            </Routes>
+          </Provider>
+        </IntlProvider>
+      </MemoryRouter>
+    </FlagProvider>,
   );
 };
 
@@ -534,29 +550,43 @@ describe('Pathways table tests', () => {
   });
 
   describe('URL string params safety', () => {
-    const mountComponentWithUrl = (urlParams) => {
+    const mountComponentWithUrl = (urlParams, enableTableTools = false) => {
+      if (enableTableTools) {
+        featureFlagInterceptor(['advisor-tabletools-migration']);
+      } else {
+        featureFlagInterceptor([]);
+      }
+
       // Set URL parameters in browser history so paramParser() can read them
       cy.window().then((win) => {
         win.history.pushState({}, '', `/pathways?${urlParams}`);
       });
 
       cy.mount(
-        <MemoryRouter
-          initialEntries={[`/pathways?${urlParams}`]}
-          initialIndex={0}
+        <FlagProvider
+          config={{
+            url: 'http://localhost:8002/feature_flags',
+            clientKey: 'abc',
+            appName: 'abc',
+          }}
         >
-          <IntlProvider locale={navigator.language.slice(0, 2)}>
-            <Provider store={initStore()}>
-              <Routes>
-                <Route
-                  key={'Recommendations Pathways'}
-                  path="*"
-                  element={<PathwaysTable isTabActive={1} />}
-                />
-              </Routes>
-            </Provider>
-          </IntlProvider>
-        </MemoryRouter>,
+          <MemoryRouter
+            initialEntries={[`/pathways?${urlParams}`]}
+            initialIndex={0}
+          >
+            <IntlProvider locale={navigator.language.slice(0, 2)}>
+              <Provider store={initStore()}>
+                <Routes>
+                  <Route
+                    key={'Recommendations Pathways'}
+                    path="*"
+                    element={<PathwaysTable isTabActive={1} />}
+                  />
+                </Routes>
+              </Provider>
+            </IntlProvider>
+          </MemoryRouter>
+        </FlagProvider>,
       );
     };
 
@@ -665,5 +695,32 @@ describe('Pathways table tests', () => {
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
       cy.get(ROOT).should('exist');
     });
+  });
+});
+
+describe('feature flag toggle', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 200,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+  });
+
+  it('renders with tabletools when feature flag is enabled', () => {
+    mountComponent(true);
+    cy.wait('@call');
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+    cy.get(ROOT).should('have.length', 1);
+    cy.contains(fixtures.data[0].name).should('be.visible');
+  });
+
+  it('renders original implementation when feature flag is disabled', () => {
+    mountComponent(false);
+    cy.wait('@call');
+    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+    cy.get(ROOT).should('have.length', 1);
+    cy.contains(fixtures.data[0].name).should('be.visible');
   });
 });

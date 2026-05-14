@@ -144,7 +144,7 @@ describe('filtersSerialiser', () => {
       { total_risk: ['1', '2', '3'] },
       filterConfig,
     );
-    expect(result).toEqual({ total_risk: '1,2,3' });
+    expect(result).toEqual({ total_risk: ['1', '2', '3'] });
   });
 
   it('handles radio filter', () => {
@@ -163,7 +163,7 @@ describe('filtersSerialiser', () => {
     );
     expect(result).toEqual({
       text: 'test',
-      total_risk: '1,2',
+      total_risk: ['1', '2'],
       category: 'security',
     });
   });
@@ -190,12 +190,12 @@ describe('filtersSerialiser', () => {
 
   it('handles checkbox filter with non-array value', () => {
     const result = filtersSerialiser({ total_risk: 'single' }, filterConfig);
-    expect(result).toEqual({ total_risk: 'single' });
+    expect(result).toEqual({ total_risk: ['single'] });
   });
 
   it('handles empty array for checkbox filter', () => {
     const result = filtersSerialiser({ total_risk: [] }, filterConfig);
-    expect(result).toEqual({ total_risk: '' });
+    expect(result).toEqual({ total_risk: [] });
   });
 
   it('handles radio filter with non-array value', () => {
