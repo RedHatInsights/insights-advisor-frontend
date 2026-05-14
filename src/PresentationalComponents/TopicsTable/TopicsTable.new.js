@@ -6,7 +6,8 @@ import { StaticTableToolsTable } from 'bastilian-tabletools';
 import { SkeletonTable } from '@patternfly/react-component-groups';
 import { useIntl } from 'react-intl';
 import messages from '../../Messages';
-import { useTopicsColumns, useTopicsFilters } from './TopicsTableAssets';
+import columns from './Columns';
+import filters from './Filters';
 
 /**
  * Topics table component using bastilian-tabletools with client-side sorting and filtering.
@@ -25,8 +26,8 @@ const TopicsTableNew = ({ props }) => {
   // eslint-disable-next-line react/prop-types
   const { data: topics = [], isLoading, isFetching, isError } = props;
 
-  const columns = useTopicsColumns();
-  const filters = useTopicsFilters();
+  const tableColumns = columns(intl);
+  const tableFilters = filters(intl);
 
   if (isError) {
     return (
@@ -39,14 +40,14 @@ const TopicsTableNew = ({ props }) => {
   }
 
   if (isLoading || isFetching) {
-    return <SkeletonTable columns={columns.map((c) => c.title)} />;
+    return <SkeletonTable columns={tableColumns.map((c) => c.title)} />;
   }
 
   return (
     <StaticTableToolsTable
       items={topics}
-      columns={columns}
-      filters={{ filterConfig: filters }}
+      columns={tableColumns}
+      filters={{ filterConfig: tableFilters }}
       options={{
         pagination: false,
         sortBy: {

@@ -55,7 +55,7 @@ const List = () => {
   }, [envContext]);
 
   const [activeTab, setActiveTab] = useState(
-    pathname.endsWith('/pathways') ? PATHWAYS_TAB : RECOMMENDATIONS_TAB,
+    pathname.includes('/pathways') ? PATHWAYS_TAB : RECOMMENDATIONS_TAB,
   );
   const changeTab = (tab) => {
     setActiveTab(tab);
