@@ -99,6 +99,66 @@ jest.mock('@redhat-cloud-services/frontend-components/InsightsLink', () => ({
   ),
 }));
 
+jest.mock('@unleash/proxy-client-react', () => ({
+  useFlag: jest.fn(() => false),
+  useFlagsStatus: jest.fn(() => ({ flagsReady: true })),
+  FlagProvider: ({ children }) => children,
+}));
+
+jest.mock('bastilian-tabletools', () => {
+  const React = require('react');
+  const PropTypes = require('prop-types');
+
+  const TableToolsTable = ({ items, columns, loading }) => {
+    if (loading) {
+      return <div role="grid" aria-label="Loading" />;
+    }
+    return (
+      <table role="grid" aria-label="pathways-table">
+        <thead>
+          <tr>
+            {columns?.map((col, idx) => (
+              <th key={idx} role="columnheader">
+                {col.title}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {items?.map((item, idx) => (
+            <tr key={idx}>
+              <td>{item.name}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  };
+
+  TableToolsTable.propTypes = {
+    items: PropTypes.array,
+    columns: PropTypes.array,
+    loading: PropTypes.bool,
+  };
+
+  const StaticTableToolsTable = () => <div>Static Table</div>;
+
+  const TableStateProvider = ({ children }) => children;
+  TableStateProvider.propTypes = {
+    children: PropTypes.node,
+  };
+
+  return {
+    TableToolsTable,
+    StaticTableToolsTable,
+    TableStateProvider,
+  };
+});
+
+jest.mock('bastilian-tabletools/dist/hooks', () => ({
+  useFullTableState: () => ({ tableState: null }),
+}));
+
 jest.mock('../../Utilities/Debounce', () => (fn) => {
   return (value) => fn(value);
 });
@@ -332,9 +392,13 @@ const renderComponent = (
   storeState = initialStoreState,
   isTabActive = true,
   search = '',
+  featureFlagEnabled = false,
 ) => {
   const store = mockStore(storeState);
   reactRouterDom.useLocation.mockReturnValue({ search });
+
+  const { useFlag } = require('@unleash/proxy-client-react');
+  useFlag.mockReturnValue(featureFlagEnabled);
 
   return render(
     <MemoryRouter>
@@ -347,7 +411,7 @@ const renderComponent = (
   );
 };
 
-describe('PathwaysTable', () => {
+describe('PathwaysTable - Original Implementation', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseGetPathwaysQuery.mockReturnValue({
@@ -592,5 +656,64 @@ describe('PathwaysTable', () => {
       messages.filterBy.defaultMessage,
     );
     expect(filterInput.value).toBe('');
+  });
+});
+
+describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockUseGetPathwaysQuery.mockReturnValue({
+      data: mockPathwaysData,
+      isFetching: false,
+      isLoading: false,
+      isError: false,
+    });
+  });
+
+  it('should render TableToolsTable when feature flag is enabled', async () => {
+    renderComponent(initialStoreState, true, '', true);
+
+    await waitFor(() => {
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Pathway Two')).toBeInTheDocument();
+  });
+
+  it('should handle URL parameters on initial load with feature flag enabled', async () => {
+    const search = '?limit=5&category=Cloud&sort=-recommendation_level';
+    Tables.paramParser.mockImplementation(() => ({
+      limit: ['5'],
+      category: ['Cloud'],
+      sort: ['-recommendation_level'],
+      offset: ['0'],
+    }));
+
+    renderComponent(initialStoreState, true, search, true);
+
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            limit: 5,
+            category: ['Cloud'],
+            sort: '-recommendation_level',
+            offset: 0,
+          }),
+        }),
+      );
+    });
+  });
+
+  it('should show SkeletonTable when loading with feature flag enabled', () => {
+    mockUseGetPathwaysQuery.mockReturnValue({
+      data: { meta: { count: 0 } },
+      isFetching: true,
+      isLoading: true,
+      isError: false,
+    });
+    renderComponent(initialStoreState, true, '', true);
+
+    expect(screen.getByRole('grid', { name: 'Loading' })).toBeInTheDocument();
   });
 });

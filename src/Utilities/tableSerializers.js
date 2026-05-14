@@ -26,25 +26,42 @@ export const sortSerialiser = ({ index, direction } = {}, columns) => {
 
 /**
  * Converts TableToolsTable filter state to Advisor API format
- * @param {object} state - Filter state from table
- * @param {array} filters - Filter configuration
+ *
+ * TableToolsTable converts filter labels to IDs using lowercase and kebab-case:
+ * - "Name" -> "name"
+ * - "reboot required" -> "reboot-required"
+ *
+ * Our filter configs use snake_case IDs (e.g., "reboot_required"), so we normalize
+ * kebab-case to snake_case for matching.
+ *
+ * @param {object} state - Filter state from table (e.g., { "reboot-required": ["true"] })
+ * @param {array} filters - Filter configuration with snake_case IDs
  * @returns {object} - API-compatible filter params
  */
 export const filtersSerialiser = (state, filters) => {
   const params = {};
 
   Object.entries(state || {}).forEach(([filterId, value]) => {
-    const filterConfig = filters.find((f) => f.id === filterId);
+    const normalizedFilterId = filterId.replace(/-/g, '_');
+
+    const filterConfig = filters.find(
+      (f) =>
+        f.id === filterId ||
+        f.id === normalizedFilterId ||
+        f.label?.toLowerCase() === filterId ||
+        f.filterAttribute === filterId ||
+        f.filterAttribute === normalizedFilterId,
+    );
+
     if (!filterConfig) return;
 
     switch (filterConfig.type) {
       case 'text':
-        params.text = value;
+        // Text filters come as arrays from TableToolsTable, extract the string
+        params[filterConfig.urlParam] = Array.isArray(value) ? value[0] : value;
         break;
       case 'checkbox':
-        params[filterConfig.urlParam] = Array.isArray(value)
-          ? value.join(',')
-          : value;
+        params[filterConfig.urlParam] = Array.isArray(value) ? value : [value];
         break;
       case 'radio':
         params[filterConfig.urlParam] = Array.isArray(value) ? value[0] : value;
