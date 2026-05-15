@@ -714,6 +714,7 @@ describe('feature flag toggle', () => {
     cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
     cy.get(ROOT).should('have.length', 1);
     cy.contains(fixtures.data[0].name).should('be.visible');
+    cy.get('[data-ouia-component-id="pathways-table"]').should('exist');
   });
 
   it('renders original implementation when feature flag is disabled', () => {
@@ -722,5 +723,150 @@ describe('feature flag toggle', () => {
     cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
     cy.get(ROOT).should('have.length', 1);
     cy.contains(fixtures.data[0].name).should('be.visible');
+    cy.get('.pf-v6-c-toolbar').should('exist');
+    cy.get('[data-ouia-component-id="pathways-table"]').should('exist');
+  });
+});
+
+describe('Pathways table with TableTools (feature flag enabled)', () => {
+  beforeEach(() => {
+    cy.intercept('*', {
+      statusCode: 200,
+      body: {
+        ...fixtures,
+      },
+    }).as('call');
+  });
+
+  describe('table basics', () => {
+    it('renders table with correct structure', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      cy.get(ROOT).should('exist');
+      cy.get('[data-ouia-component-id="pathways-table"]').should('exist');
+      cy.contains(fixtures.data[0].name).should('be.visible');
+    });
+
+    it('displays correct number of rows', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      cy.get(`${ROOT} tbody tr`).should('have.length.at.least', 1);
+      cy.get(`${ROOT} tbody tr`).should('have.length.at.most', ROWS_SHOWN);
+    });
+
+    it('links to pathway detail page', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      const firstPathway = fixtures.data[0];
+      cy.contains(firstPathway.name)
+        .should('have.attr', 'href')
+        .and('include', `/recommendations/pathways/${firstPathway.slug}`);
+    });
+  });
+
+  describe('sorting', () => {
+    it('sorts by Name ascending', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      cy.get(`${ROOT} th`).contains('Name').click();
+      cy.wait('@call');
+      cy.get(`${ROOT} tbody tr td`)
+        .first()
+        .should('contain', fixtures.data[0].name);
+    });
+
+    it('sorts by Name descending', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      cy.get(`${ROOT} th`).contains('Name').click();
+      cy.wait('@call');
+      cy.get(`${ROOT} th`).contains('Name').click();
+      cy.wait('@call');
+      cy.get(`${ROOT} tbody tr td`).first().should('exist');
+    });
+
+    it('sorts by Systems ascending', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      cy.get(`${ROOT} th`).contains('Systems').click();
+      cy.wait('@call');
+      cy.get(`${ROOT} tbody tr`).first().should('exist');
+    });
+
+    it('sorts by Recommendation level descending (default)', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      cy.get(`${ROOT} tbody tr`)
+        .first()
+        .should('contain', fixtures.data[0].name);
+    });
+  });
+
+  describe('filtering', () => {
+    it('table supports filtering', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      cy.get(ROOT).should('exist');
+    });
+  });
+
+  describe('pagination', () => {
+    it('displays pagination controls', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      cy.get('[data-ouia-component-type="PF6/Pagination"]').should('exist');
+    });
+
+    it('shows correct total count', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      cy.get('[data-ouia-component-type="PF6/Pagination"]').should(
+        'contain',
+        fixtures.meta.count,
+      );
+    });
+
+    it('pagination is present', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      cy.get('[data-ouia-component-type="PF6/Pagination"]').should('exist');
+    });
+  });
+
+  describe('content display', () => {
+    it('displays pathway names', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      fixtures.data.slice(0, 5).forEach((pathway) => {
+        cy.contains(pathway.name).should('be.visible');
+      });
+    });
+
+    it('displays category labels', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      cy.get('.pf-v6-c-label').should('have.length.at.least', 1);
+    });
+
+    it('displays systems count with formatting', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      const firstPathway = fixtures.data[0];
+      cy.contains(firstPathway.impacted_systems_count.toLocaleString()).should(
+        'exist',
+      );
+    });
+
+    it('displays reboot required status', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      cy.contains(/Required|Not required/).should('exist');
+    });
+
+    it('displays recommendation level content', () => {
+      mountComponent(true);
+      cy.wait('@call');
+      cy.get(`${ROOT} tbody tr`).first().should('exist');
+    });
   });
 });

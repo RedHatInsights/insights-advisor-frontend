@@ -139,6 +139,14 @@ describe('filtersSerialiser', () => {
     expect(result).toEqual({ text: 'security' });
   });
 
+  it('handles text filter with array by extracting first element', () => {
+    const result = filtersSerialiser(
+      { text: ['security', 'other'] },
+      filterConfig,
+    );
+    expect(result).toEqual({ text: 'security' });
+  });
+
   it('handles checkbox filter with array', () => {
     const result = filtersSerialiser(
       { total_risk: ['1', '2', '3'] },
@@ -196,6 +204,14 @@ describe('filtersSerialiser', () => {
   it('handles empty array for checkbox filter', () => {
     const result = filtersSerialiser({ total_risk: [] }, filterConfig);
     expect(result).toEqual({ total_risk: [] });
+  });
+
+  it('normalizes kebab-case filter IDs to snake_case', () => {
+    const kebabConfig = [
+      { id: 'total-risk', type: 'checkbox', urlParam: 'total_risk' },
+    ];
+    const result = filtersSerialiser({ 'total-risk': ['1', '2'] }, kebabConfig);
+    expect(result).toEqual({ total_risk: ['1', '2'] });
   });
 
   it('handles radio filter with non-array value', () => {

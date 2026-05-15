@@ -276,13 +276,14 @@ const PathwaysTable = ({ isTabActive }) => {
   useEffect(() => {
     if (filters.sort !== undefined && sortIndices) {
       let sortInput = filters.sort;
-      const sortIndex = Number(
-        Object.entries(sortIndices).find(
-          (item) => item[1] === sortInput || `-${item[1]}` === sortInput,
-        )[0],
+      const foundEntry = Object.entries(sortIndices).find(
+        (item) => item[1] === sortInput || `-${item[1]}` === sortInput,
       );
-      const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
-      setSortBy({ index: sortIndex, direction: sortDirection });
+      if (foundEntry) {
+        const sortIndex = Number(foundEntry[0]);
+        const sortDirection = filters.sort[0] === '-' ? 'desc' : 'asc';
+        setSortBy({ index: sortIndex, direction: sortDirection });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.sort]);

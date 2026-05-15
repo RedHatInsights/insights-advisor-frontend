@@ -85,7 +85,7 @@ const PathwaysTableInner = ({ isTabActive }) => {
         !tableColumns.some(
           (col) => col.sortable === paramsObject?.sort[0]?.replace(/^-/, ''),
         )
-          ? '-recommendation_level'
+          ? '-impacted_systems_count'
           : paramsObject.sort[0];
       paramsObject.offset =
         paramsObject.offset === undefined ? 0 : Number(paramsObject.offset[0]);
@@ -108,9 +108,7 @@ const PathwaysTableInner = ({ isTabActive }) => {
         paramsObject.category !== undefined &&
         !Array.isArray(paramsObject.category)
       ) {
-        paramsObject.category = Array.isArray(paramsObject.category)
-          ? paramsObject.category
-          : [paramsObject.category];
+        paramsObject.category = [paramsObject.category];
       }
 
       setFilters({ ...reduxFilters, ...paramsObject });
@@ -245,7 +243,7 @@ const PathwaysTableInner = ({ isTabActive }) => {
   const initialPage = Math.floor(reduxFilters.offset / reduxFilters.limit) + 1;
   const initialPerPage = reduxFilters.limit;
 
-  let initialSortIndex = 4; // Default: recommendation_level desc
+  let initialSortIndex = 2; // Default: impacted_systems_count desc
   let initialSortDirection = 'desc';
   if (reduxFilters.sort) {
     const sortField = reduxFilters.sort.replace(/^-/, '');
@@ -263,7 +261,7 @@ const PathwaysTableInner = ({ isTabActive }) => {
   // TableToolsTable converts filter labels to kebab-case IDs: "Reboot required" → "reboot-required"
   const activeFilters = {};
   if (reduxFilters.text) {
-    activeFilters.name = [reduxFilters.text];
+    activeFilters.text = [reduxFilters.text];
   }
   if (reduxFilters.category && reduxFilters.category.length > 0) {
     activeFilters.category = reduxFilters.category;
