@@ -39,7 +39,7 @@ import downloadReport from '../../PresentationalComponents/Common/DownloadHelper
 import { useParams } from 'react-router-dom';
 import { SkeletonTable } from '@patternfly/react-component-groups';
 import { EnvironmentContext } from '../../App';
-import { fetchResolutionsData } from './helpers';
+import { fetchResolutionsData, isAbortError } from './helpers';
 import DownloadPlaybookButton from '../../Utilities/DownloadPlaybookButton';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 
@@ -58,6 +58,7 @@ const BaseSystemAdvisor = ({
   const addNotification = useAddNotification();
   const { id: ruleIdParam } = useParams();
   const axios = useAxiosWithPlatformInterceptors();
+  const abortControllerRef = useRef(new AbortController());
 
   const [inventoryReportFetchStatus, setInventoryReportFetchStatus] =
     useState('pending');
@@ -91,12 +92,24 @@ const BaseSystemAdvisor = ({
   useEffect(() => {
     if (selectedAnsibleRules.length > 0) {
       const fetchAndSetData = async () => {
-        const resolutionsData = await fetchResolutionsData(
-          selectedAnsibleRules,
-          props?.response?.insights_attributes?.uuid,
-          props?.hostName,
-        );
-        setResolutions(resolutionsData);
+        try {
+          const resolutionsData = await fetchResolutionsData(
+            selectedAnsibleRules,
+            props?.response?.insights_attributes?.uuid,
+            props?.hostName,
+            abortControllerRef.current.signal,
+          );
+          setResolutions(resolutionsData);
+        } catch (error) {
+          if (isAbortError(error)) {
+            return;
+          }
+          addNotification({
+            variant: 'danger',
+            title: 'Failed to fetch resolution data',
+            description: 'Unable to load remediation options.',
+          });
+        }
       };
       fetchAndSetData();
     }
@@ -104,6 +117,7 @@ const BaseSystemAdvisor = ({
     selectedAnsibleRules,
     props?.hostName,
     props?.response?.insights_attributes?.uuid,
+    addNotification,
   ]);
 
   const cols = getColumns(intl);
@@ -336,7 +350,12 @@ const BaseSystemAdvisor = ({
     }));
   };
 
-  const fetchKbaDetails = async (reportsData) => {
+  /**
+   * Fetches knowledge base article details from Red Hat Access
+   * @param {Array} reportsData - Array of report objects containing rule.node_id
+   * @param {AbortSignal} signal - Abort signal for request cancellation
+   */
+  const fetchKbaDetails = async (reportsData, signal) => {
     const kbaIds = reportsData.map(({ rule }) => rule.node_id).filter((x) => x);
     try {
       const kbaDetailsFetch = (
@@ -344,7 +363,10 @@ const BaseSystemAdvisor = ({
           `https://access.redhat.com/hydra/rest/search/kcs?q=id:(${kbaIds.join(
             ` OR `,
           )})&fq=documentKind:(Solution%20or%20Article)&fl=view_uri,id,publishedTitle&redhat_client=$ADVISOR`,
-          { params: { credentials: 'include' } },
+          {
+            params: { credentials: 'include' },
+            signal,
+          },
         )
       ).response.docs;
 
@@ -361,6 +383,9 @@ const BaseSystemAdvisor = ({
         ),
       );
     } catch (error) {
+      if (isAbortError(error)) {
+        return;
+      }
       console.error(error, 'KBA fetch failed.');
     }
   };
@@ -460,6 +485,7 @@ const BaseSystemAdvisor = ({
             headers: {
               credentials: 'include',
             },
+            signal: abortControllerRef.current.signal,
           },
         );
 
@@ -478,16 +504,9 @@ const BaseSystemAdvisor = ({
             ),
           );
         } else {
-          fetchKbaDetails(activeRuleFirstReportsData);
-          setRows(
-            buildRows(
-              activeRuleFirstReportsData,
-              {},
-              filters,
-              rows,
-              searchValue,
-              true,
-            ),
+          await fetchKbaDetails(
+            activeRuleFirstReportsData,
+            abortControllerRef.current.signal,
           );
         }
         setInventoryReportFetchStatus('fulfilled');
@@ -499,19 +518,46 @@ const BaseSystemAdvisor = ({
             headers: {
               credentials: 'include',
             },
+            signal: abortControllerRef.current.signal,
           },
         );
 
         setSystemsProfile(profileData?.results[0]?.system_profile || {});
         setSystemsProfileLoading(false);
       } catch (error) {
-        void error;
+        if (isAbortError(error)) {
+          return;
+        }
+
+        if (error.response?.status === 401) {
+          addNotification({
+            variant: 'warning',
+            title: 'Session expired',
+            description:
+              'Your session has expired. Please refresh the page to continue.',
+          });
+        } else {
+          addNotification({
+            variant: 'danger',
+            title: 'Failed to load recommendations',
+            description:
+              'Unable to load system recommendations. Please try again.',
+          });
+        }
+
         setInventoryReportFetchStatus('failed');
         setSystemsProfileLoading(false);
       }
     };
+
     dataFetch();
-  }, [axios]);
+
+    return () => {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = new AbortController();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [axios, inventoryId, envContext, addNotification]);
   // eslint-disable-next-line react/prop-types
   let display_name = entity?.display_name;
   return inventoryReportFetchStatus === 'fulfilled' &&
