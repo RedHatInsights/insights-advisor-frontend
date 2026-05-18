@@ -19,6 +19,7 @@
     "server:ctr": "node src/server/generateServerKey.js",
     "start": "fec dev",
     "start:proxy": "PROXY=true fec dev",
+    "start:proxy:iop": "PROXY=true IOP=true FEC_IOP_CUSTOM_ROUTES_PATH=absolute/path/to/custom_routes.json fec dev-proxy --iop",
     "static": "fec static",
     "test": "jest --passWithNoTests",
     "test:coverage": "curl -sSL 'https://raw.githubusercontent.com/RedHatInsights/insights-interact-tools/refs/heads/main/scripts/coverage.sh' | bash",

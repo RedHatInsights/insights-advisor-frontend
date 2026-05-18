@@ -1,0 +1,8 @@
+// {
+//     "/assets/apps/vulnerability/": { "url": "http://host.docker.internal:8003" },
+//     "/apps/advisor": { "url": "http://host.docker.internal:8004" },
+//     "/assets/apps/advisor*": { "url": "http://host.docker.internal:8004" },
+//     "/api/advisor/": { "url": "http://host.docker.internal:8000" },
+//     "/assets/apps/inventory": { "url": "http://host.docker.internal:8003" }
+//   }
+  
