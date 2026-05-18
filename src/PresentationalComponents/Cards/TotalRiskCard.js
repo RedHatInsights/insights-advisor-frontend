@@ -18,10 +18,12 @@ import {
   GridItem,
 } from '@patternfly/react-core/dist/esm/layouts/Grid/index';
 import {
-  t_global_icon_color_severity_critical_default,
-  t_global_icon_color_severity_important_default,
-  t_global_icon_color_severity_moderate_default,
-  t_global_background_color_200,
+  t_chart_global_danger_color_100,
+  t_chart_global_warning_color_100,
+  t_chart_global_warning_color_200,
+  t_chart_color_black_300,
+  t_global_text_color_regular,
+  t_global_border_color_default,
 } from '@patternfly/react-tokens';
 
 import React from 'react';
@@ -77,8 +79,21 @@ export const TotalRiskCard = (props) => {
                   top: 10,
                 }}
               >
-                <ChartAxis />
-                <ChartAxis dependentAxis showGrid />
+                <ChartAxis
+                  style={{
+                    tickLabels: { fill: t_global_text_color_regular.var },
+                    axis: { stroke: t_global_border_color_default.var },
+                  }}
+                />
+                <ChartAxis
+                  dependentAxis
+                  showGrid
+                  style={{
+                    tickLabels: { fill: t_global_text_color_regular.var },
+                    axis: { stroke: t_global_border_color_default.var },
+                    grid: { stroke: t_global_border_color_default.var },
+                  }}
+                />
                 <ChartGroup>
                   <ChartBar
                     barWidth={16}
@@ -92,25 +107,25 @@ export const TotalRiskCard = (props) => {
                         name: 'Critical',
                         x: 'Critical',
                         y: critical_risk_count,
-                        fill: t_global_icon_color_severity_critical_default.value,
+                        fill: t_chart_global_danger_color_100.var,
                       },
                       {
                         name: 'Important',
                         x: 'Important',
                         y: high_risk_count,
-                        fill: t_global_icon_color_severity_important_default.value,
+                        fill: t_chart_global_warning_color_100.var,
                       },
                       {
                         name: 'Moderate',
                         x: 'Moderate',
                         y: medium_risk_count,
-                        fill: t_global_icon_color_severity_moderate_default.value,
+                        fill: t_chart_global_warning_color_200.var,
                       },
                       {
                         name: 'Low',
                         x: 'Low',
                         y: low_risk_count,
-                        fill: t_global_background_color_200.value,
+                        fill: t_chart_color_black_300.var,
                       },
                     ]}
                   />

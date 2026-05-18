@@ -36,7 +36,7 @@ const RebootRequired = (reboot_required) => (
           : 'adv-c-icon-no-reboot-required'
       }
     />
-    <Content className="adv-c-text-system-reboot-message pf-v6-u-font-size-sm">
+    <Content className="adv-c-text-system-reboot-message pf-v6-u-font-size-sm pf-v6-u-ml-sm">
       <Content component={ContentVariants.p}>
         {intl.formatMessage(messages.systemReboot, {
           strong: (str) => strong(str),
