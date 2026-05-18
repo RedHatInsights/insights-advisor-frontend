@@ -1,3 +1,6 @@
+// PatternFly charts - required for chart dark theme support
+@import '@patternfly/patternfly/patternfly-charts.css';
+
 // Style overrides
 .adv__background--global-100 {
   background-color: var(--pf-v6-global--BackgroundColor--100);
