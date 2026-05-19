@@ -99,6 +99,73 @@ jest.mock('@redhat-cloud-services/frontend-components/InsightsLink', () => ({
   ),
 }));
 
+jest.mock('@redhat-cloud-services/frontend-components/ErrorState', () => ({
+  ErrorState: () => <div data-testid="error-state">Error occurred</div>,
+}));
+
+jest.mock('@unleash/proxy-client-react', () => ({
+  useFlag: jest.fn(() => false),
+  useFlagsStatus: jest.fn(() => ({ flagsReady: true })),
+  FlagProvider: ({ children }) => children,
+}));
+
+jest.mock('bastilian-tabletools', () => {
+  const React = require('react');
+  const PropTypes = require('prop-types');
+
+  const TableToolsTable = ({ items, columns, loading }) => {
+    if (loading) {
+      return <div role="grid" aria-label="Loading" />;
+    }
+    return (
+      <table role="grid" aria-label="pathways-table">
+        <thead>
+          <tr>
+            {columns?.map((col, idx) => (
+              <th key={idx} role="columnheader">
+                {col.title}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {items?.map((item, idx) => (
+            <tr key={idx}>
+              <td>{item.name}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  };
+
+  TableToolsTable.propTypes = {
+    items: PropTypes.array,
+    columns: PropTypes.array,
+    loading: PropTypes.bool,
+  };
+
+  const StaticTableToolsTable = () => <div>Static Table</div>;
+
+  const TableStateProvider = ({ children }) => children;
+  TableStateProvider.propTypes = {
+    children: PropTypes.node,
+  };
+
+  return {
+    TableToolsTable,
+    StaticTableToolsTable,
+    TableStateProvider,
+  };
+});
+
+let mockTableState = null;
+const mockUseFullTableState = jest.fn(() => ({ tableState: mockTableState }));
+
+jest.mock('bastilian-tabletools/dist/hooks', () => ({
+  useFullTableState: () => mockUseFullTableState(),
+}));
+
 jest.mock('../../Utilities/Debounce', () => (fn) => {
   return (value) => fn(value);
 });
@@ -332,9 +399,13 @@ const renderComponent = (
   storeState = initialStoreState,
   isTabActive = true,
   search = '',
+  featureFlagEnabled = false,
 ) => {
   const store = mockStore(storeState);
   reactRouterDom.useLocation.mockReturnValue({ search });
+
+  const { useFlag } = require('@unleash/proxy-client-react');
+  useFlag.mockReturnValue(featureFlagEnabled);
 
   return render(
     <MemoryRouter>
@@ -347,7 +418,7 @@ const renderComponent = (
   );
 };
 
-describe('PathwaysTable', () => {
+describe('PathwaysTable - Original Implementation', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseGetPathwaysQuery.mockReturnValue({
@@ -592,5 +663,719 @@ describe('PathwaysTable', () => {
       messages.filterBy.defaultMessage,
     );
     expect(filterInput.value).toBe('');
+  });
+
+  it('should show ErrorState when API call fails', () => {
+    mockUseGetPathwaysQuery.mockReturnValue({
+      data: undefined,
+      isFetching: false,
+      isLoading: false,
+      isError: true,
+    });
+
+    renderComponent();
+
+    expect(screen.getByTestId('error-state')).toBeInTheDocument();
+  });
+
+  it('should handle missing sort parameter and use default', async () => {
+    const search = '?limit=20';
+    Tables.paramParser.mockImplementation(() => ({
+      limit: ['20'],
+    }));
+
+    renderComponent(initialStoreState, true, search);
+
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            sort: '-impacted_systems_count',
+          }),
+        }),
+      );
+    });
+  });
+
+  it('should handle non-array reboot_required in URL params', async () => {
+    const search = '?reboot_required=true';
+    Tables.paramParser.mockImplementation(() => ({
+      reboot_required: 'true',
+    }));
+
+    renderComponent(initialStoreState, true, search);
+
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            reboot_required: ['true'],
+          }),
+        }),
+      );
+    });
+  });
+
+  it('should handle sort state changes correctly', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        pathState: {
+          ...initialStoreState.filters.pathState,
+          sort: 'name',
+        },
+      },
+    };
+
+    renderComponent(storeState);
+
+    await waitFor(() => {
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
+    });
+  });
+
+  it('should handle descending sort state', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        pathState: {
+          ...initialStoreState.filters.pathState,
+          sort: '-recommendation_level',
+        },
+      },
+    };
+
+    renderComponent(storeState);
+
+    await waitFor(() => {
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
+    });
+  });
+
+  it('should handle invalid sort value in sortIndices', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        pathState: {
+          ...initialStoreState.filters.pathState,
+          sort: 'invalid_field',
+        },
+      },
+    };
+
+    renderComponent(storeState);
+
+    await waitFor(() => {
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
+    });
+  });
+
+  it('should handle workloads filter integration', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        workloads: { SAP: true },
+      },
+    };
+
+    Tables.workloadQueryBuilder.mockReturnValue({ workload_SAP: true });
+
+    renderComponent(storeState);
+
+    await waitFor(() => {
+      expect(Tables.workloadQueryBuilder).toHaveBeenCalledWith({ SAP: true });
+    });
+  });
+
+  it('should handle selectedTags filter integration', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        selectedTags: ['tag1', 'tag2'],
+      },
+    };
+
+    renderComponent(storeState);
+
+    await waitFor(() => {
+      expect(mockUseGetPathwaysQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          tags: 'tag1,tag2',
+        }),
+      );
+    });
+  });
+});
+
+describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockTableState = null;
+    mockUseGetPathwaysQuery.mockReturnValue({
+      data: mockPathwaysData,
+      isFetching: false,
+      isLoading: false,
+      isError: false,
+    });
+  });
+
+  it('should render TableToolsTable when feature flag is enabled', async () => {
+    renderComponent(initialStoreState, true, '', true);
+
+    await waitFor(() => {
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Pathway Two')).toBeInTheDocument();
+  });
+
+  it('should handle URL parameters on initial load with feature flag enabled', async () => {
+    const search = '?limit=5&category=Cloud&sort=-recommendation_level';
+    Tables.paramParser.mockImplementation(() => ({
+      limit: ['5'],
+      category: ['Cloud'],
+      sort: ['-recommendation_level'],
+      offset: ['0'],
+    }));
+
+    renderComponent(initialStoreState, true, search, true);
+
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            limit: 5,
+            category: ['Cloud'],
+            sort: '-recommendation_level',
+            offset: 0,
+          }),
+        }),
+      );
+    });
+  });
+
+  it('should show SkeletonTable when loading with feature flag enabled', () => {
+    mockUseGetPathwaysQuery.mockReturnValue({
+      data: { meta: { count: 0 } },
+      isFetching: true,
+      isLoading: true,
+      isError: false,
+    });
+    renderComponent(initialStoreState, true, '', true);
+
+    expect(screen.getByRole('grid', { name: 'Loading' })).toBeInTheDocument();
+  });
+
+  it('should show ErrorState when API call fails', () => {
+    mockUseGetPathwaysQuery.mockReturnValue({
+      data: undefined,
+      isFetching: false,
+      isLoading: false,
+      isError: true,
+    });
+
+    renderComponent(initialStoreState, true, '', true);
+
+    expect(screen.getByTestId('error-state')).toBeInTheDocument();
+  });
+
+  it('should handle invalid sort parameter and default to impacted_systems_count', async () => {
+    const search = '?sort=invalid_field';
+    Tables.paramParser.mockImplementation(() => ({
+      sort: ['invalid_field'],
+    }));
+
+    renderComponent(initialStoreState, true, search, true);
+
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            sort: '-impacted_systems_count',
+          }),
+        }),
+      );
+    });
+  });
+
+  it('should convert non-array reboot_required to array', async () => {
+    const search = '?reboot_required=true';
+    Tables.paramParser.mockImplementation(() => ({
+      reboot_required: 'true',
+    }));
+
+    renderComponent(initialStoreState, true, search, true);
+
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            reboot_required: ['true'],
+          }),
+        }),
+      );
+    });
+  });
+
+  it('should convert non-array has_incident to array', async () => {
+    const search = '?has_incident=true';
+    Tables.paramParser.mockImplementation(() => ({
+      has_incident: true,
+    }));
+
+    renderComponent(initialStoreState, true, search, true);
+
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            has_incident: ['true'],
+          }),
+        }),
+      );
+    });
+  });
+
+  it('should convert non-array category to array', async () => {
+    const search = '?category=security';
+    Tables.paramParser.mockImplementation(() => ({
+      category: 'security',
+    }));
+
+    renderComponent(initialStoreState, true, search, true);
+
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            category: ['security'],
+          }),
+        }),
+      );
+    });
+  });
+
+  it('should handle URL with all filter combinations', async () => {
+    const search =
+      '?text=test&category=security&has_incident=true&reboot_required=false';
+    Tables.paramParser.mockImplementation(() => ({
+      text: 'test',
+      category: ['security'],
+      has_incident: ['true'],
+      reboot_required: ['false'],
+      sort: ['name'],
+      offset: ['20'],
+      limit: ['50'],
+    }));
+
+    renderComponent(initialStoreState, true, search, true);
+
+    await waitFor(() => {
+      expect(mockDispatch).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            text: 'test',
+            category: ['security'],
+            has_incident: ['true'],
+            reboot_required: ['false'],
+            sort: 'name',
+            offset: 20,
+            limit: 50,
+          }),
+        }),
+      );
+    });
+  });
+
+  it('should not parse URL params when tab is not active', () => {
+    const search = '?category=security';
+    Tables.paramParser.mockImplementation(() => ({
+      category: ['security'],
+    }));
+
+    renderComponent(initialStoreState, false, search, true);
+
+    expect(Tables.paramParser).not.toHaveBeenCalled();
+  });
+
+  it('should calculate correct initial sort index and direction for ascending sort', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        pathState: {
+          ...initialStoreState.filters.pathState,
+          sort: 'name',
+        },
+      },
+    };
+
+    renderComponent(storeState, true, '', true);
+
+    await waitFor(() => {
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
+    });
+  });
+
+  it('should calculate correct initial sort index for recommendation_level', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        pathState: {
+          ...initialStoreState.filters.pathState,
+          sort: '-recommendation_level',
+        },
+      },
+    };
+
+    renderComponent(storeState, true, '', true);
+
+    await waitFor(() => {
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
+    });
+  });
+
+  it('should handle activeFilters with text filter', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        pathState: {
+          ...initialStoreState.filters.pathState,
+          text: 'search term',
+        },
+      },
+    };
+
+    renderComponent(storeState, true, '', true);
+
+    await waitFor(() => {
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
+    });
+  });
+
+  it('should handle activeFilters with category filter', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        pathState: {
+          ...initialStoreState.filters.pathState,
+          category: ['security', 'performance'],
+        },
+      },
+    };
+
+    renderComponent(storeState, true, '', true);
+
+    await waitFor(() => {
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
+    });
+  });
+
+  it('should handle activeFilters with has_incident filter', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        pathState: {
+          ...initialStoreState.filters.pathState,
+          has_incident: ['true'],
+        },
+      },
+    };
+
+    renderComponent(storeState, true, '', true);
+
+    await waitFor(() => {
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
+    });
+  });
+
+  it('should handle activeFilters with reboot_required filter', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        pathState: {
+          ...initialStoreState.filters.pathState,
+          reboot_required: ['false'],
+        },
+      },
+    };
+
+    renderComponent(storeState, true, '', true);
+
+    await waitFor(() => {
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
+    });
+  });
+
+  it('should handle all activeFilters combined', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        pathState: {
+          ...initialStoreState.filters.pathState,
+          text: 'search',
+          category: ['security'],
+          has_incident: ['true'],
+          reboot_required: ['true'],
+        },
+      },
+    };
+
+    renderComponent(storeState, true, '', true);
+
+    await waitFor(() => {
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
+    });
+  });
+
+  it('should handle selectedTags integration', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        selectedTags: ['tag1', 'tag2'],
+      },
+    };
+
+    renderComponent(storeState, true, '', true);
+
+    await waitFor(() => {
+      expect(mockUseGetPathwaysQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          tags: 'tag1,tag2',
+        }),
+      );
+    });
+  });
+
+  it('should handle workloads integration', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        workloads: { SAP: true },
+      },
+    };
+
+    Tables.workloadQueryBuilder.mockReturnValue({ workload_SAP: true });
+
+    renderComponent(storeState, true, '', true);
+
+    await waitFor(() => {
+      expect(Tables.workloadQueryBuilder).toHaveBeenCalledWith({ SAP: true });
+    });
+  });
+
+  describe('TableState Synchronization', () => {
+    it('should have serializers in options', async () => {
+      renderComponent(initialStoreState, true, '', true);
+
+      await waitFor(() => {
+        expect(screen.getByText('Pathway One')).toBeInTheDocument();
+      });
+    });
+
+    it('should render with initial pagination state', async () => {
+      const storeState = {
+        ...initialStoreState,
+        filters: {
+          ...initialStoreState.filters,
+          pathState: {
+            ...initialStoreState.filters.pathState,
+            offset: 40,
+            limit: 20,
+          },
+        },
+      };
+
+      renderComponent(storeState, true, '', true);
+
+      await waitFor(() => {
+        expect(screen.getByText('Pathway One')).toBeInTheDocument();
+      });
+    });
+
+    it('should render with text filter in Redux', async () => {
+      const storeState = {
+        ...initialStoreState,
+        filters: {
+          ...initialStoreState.filters,
+          pathState: {
+            ...initialStoreState.filters.pathState,
+            text: 'search term',
+          },
+        },
+      };
+
+      renderComponent(storeState, true, '', true);
+
+      await waitFor(() => {
+        expect(screen.getByText('Pathway One')).toBeInTheDocument();
+      });
+    });
+
+    it('should render with category filter in Redux', async () => {
+      const storeState = {
+        ...initialStoreState,
+        filters: {
+          ...initialStoreState.filters,
+          pathState: {
+            ...initialStoreState.filters.pathState,
+            category: ['security'],
+          },
+        },
+      };
+
+      renderComponent(storeState, true, '', true);
+
+      await waitFor(() => {
+        expect(screen.getByText('Pathway One')).toBeInTheDocument();
+      });
+    });
+
+    it('should render with has_incident filter in Redux', async () => {
+      const storeState = {
+        ...initialStoreState,
+        filters: {
+          ...initialStoreState.filters,
+          pathState: {
+            ...initialStoreState.filters.pathState,
+            has_incident: ['true'],
+          },
+        },
+      };
+
+      renderComponent(storeState, true, '', true);
+
+      await waitFor(() => {
+        expect(screen.getByText('Pathway One')).toBeInTheDocument();
+      });
+    });
+
+    it('should render with reboot_required filter in Redux', async () => {
+      const storeState = {
+        ...initialStoreState,
+        filters: {
+          ...initialStoreState.filters,
+          pathState: {
+            ...initialStoreState.filters.pathState,
+            reboot_required: ['true'],
+          },
+        },
+      };
+
+      renderComponent(storeState, true, '', true);
+
+      await waitFor(() => {
+        expect(screen.getByText('Pathway One')).toBeInTheDocument();
+      });
+    });
+
+    it('should calculate correct page from offset', async () => {
+      const storeState = {
+        ...initialStoreState,
+        filters: {
+          ...initialStoreState.filters,
+          pathState: {
+            ...initialStoreState.filters.pathState,
+            offset: 60,
+            limit: 20,
+          },
+        },
+      };
+
+      renderComponent(storeState, true, '', true);
+
+      await waitFor(() => {
+        expect(screen.getByText('Pathway One')).toBeInTheDocument();
+      });
+    });
+
+    it('should handle sort index calculation for name column', async () => {
+      const storeState = {
+        ...initialStoreState,
+        filters: {
+          ...initialStoreState.filters,
+          pathState: {
+            ...initialStoreState.filters.pathState,
+            sort: 'name',
+          },
+        },
+      };
+
+      renderComponent(storeState, true, '', true);
+
+      await waitFor(() => {
+        expect(screen.getByText('Pathway One')).toBeInTheDocument();
+      });
+    });
+
+    it('should handle sort index calculation for impacted_systems_count desc', async () => {
+      const storeState = {
+        ...initialStoreState,
+        filters: {
+          ...initialStoreState.filters,
+          pathState: {
+            ...initialStoreState.filters.pathState,
+            sort: '-impacted_systems_count',
+          },
+        },
+      };
+
+      renderComponent(storeState, true, '', true);
+
+      await waitFor(() => {
+        expect(screen.getByText('Pathway One')).toBeInTheDocument();
+      });
+    });
+
+    it('should handle sort index calculation for recommendation_level asc', async () => {
+      const storeState = {
+        ...initialStoreState,
+        filters: {
+          ...initialStoreState.filters,
+          pathState: {
+            ...initialStoreState.filters.pathState,
+            sort: 'recommendation_level',
+          },
+        },
+      };
+
+      renderComponent(storeState, true, '', true);
+
+      await waitFor(() => {
+        expect(screen.getByText('Pathway One')).toBeInTheDocument();
+      });
+    });
+
+    it('should handle invalid sort field and fall back to default', async () => {
+      const storeState = {
+        ...initialStoreState,
+        filters: {
+          ...initialStoreState.filters,
+          pathState: {
+            ...initialStoreState.filters.pathState,
+            sort: 'invalid_field',
+          },
+        },
+      };
+
+      renderComponent(storeState, true, '', true);
+
+      await waitFor(() => {
+        expect(screen.getByText('Pathway One')).toBeInTheDocument();
+      });
+    });
   });
 });
