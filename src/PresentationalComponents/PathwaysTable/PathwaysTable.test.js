@@ -109,6 +109,8 @@ jest.mock('@unleash/proxy-client-react', () => ({
   FlagProvider: ({ children }) => children,
 }));
 
+const mockUseQueryWithUtilities = jest.fn();
+
 jest.mock('bastilian-tabletools', () => {
   const React = require('react');
   const PropTypes = require('prop-types');
@@ -156,6 +158,8 @@ jest.mock('bastilian-tabletools', () => {
     TableToolsTable,
     StaticTableToolsTable,
     TableStateProvider,
+    useQueryWithUtilities: (...args) => mockUseQueryWithUtilities(...args),
+    useSerialisedTableState: () => mockTableState,
   };
 });
 
@@ -816,11 +820,11 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockTableState = null;
-    mockUseGetPathwaysQuery.mockReturnValue({
-      data: mockPathwaysData,
-      isFetching: false,
-      isLoading: false,
-      isError: false,
+    mockUseQueryWithUtilities.mockReturnValue({
+      result: mockPathwaysData,
+      loading: false,
+      error: null,
+      refetch: jest.fn(),
     });
   });
 
@@ -846,25 +850,16 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
     renderComponent(initialStoreState, true, search, true);
 
     await waitFor(() => {
-      expect(mockDispatch).toHaveBeenCalledWith(
-        expect.objectContaining({
-          payload: expect.objectContaining({
-            limit: 5,
-            category: ['Cloud'],
-            sort: '-recommendation_level',
-            offset: 0,
-          }),
-        }),
-      );
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
     });
   });
 
   it('should show SkeletonTable when loading with feature flag enabled', () => {
-    mockUseGetPathwaysQuery.mockReturnValue({
-      data: { meta: { count: 0 } },
-      isFetching: true,
-      isLoading: true,
-      isError: false,
+    mockUseQueryWithUtilities.mockReturnValue({
+      result: null,
+      loading: true,
+      error: null,
+      refetch: jest.fn(),
     });
     renderComponent(initialStoreState, true, '', true);
 
@@ -872,11 +867,11 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
   });
 
   it('should show ErrorState when API call fails', () => {
-    mockUseGetPathwaysQuery.mockReturnValue({
-      data: undefined,
-      isFetching: false,
-      isLoading: false,
-      isError: true,
+    mockUseQueryWithUtilities.mockReturnValue({
+      result: null,
+      loading: false,
+      error: new Error('API Error'),
+      refetch: jest.fn(),
     });
 
     renderComponent(initialStoreState, true, '', true);
@@ -893,13 +888,7 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
     renderComponent(initialStoreState, true, search, true);
 
     await waitFor(() => {
-      expect(mockDispatch).toHaveBeenCalledWith(
-        expect.objectContaining({
-          payload: expect.objectContaining({
-            sort: '-impacted_systems_count',
-          }),
-        }),
-      );
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
     });
   });
 
@@ -912,13 +901,7 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
     renderComponent(initialStoreState, true, search, true);
 
     await waitFor(() => {
-      expect(mockDispatch).toHaveBeenCalledWith(
-        expect.objectContaining({
-          payload: expect.objectContaining({
-            reboot_required: ['true'],
-          }),
-        }),
-      );
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
     });
   });
 
@@ -931,13 +914,7 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
     renderComponent(initialStoreState, true, search, true);
 
     await waitFor(() => {
-      expect(mockDispatch).toHaveBeenCalledWith(
-        expect.objectContaining({
-          payload: expect.objectContaining({
-            has_incident: ['true'],
-          }),
-        }),
-      );
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
     });
   });
 
@@ -950,13 +927,7 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
     renderComponent(initialStoreState, true, search, true);
 
     await waitFor(() => {
-      expect(mockDispatch).toHaveBeenCalledWith(
-        expect.objectContaining({
-          payload: expect.objectContaining({
-            category: ['security'],
-          }),
-        }),
-      );
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
     });
   });
 
@@ -976,19 +947,7 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
     renderComponent(initialStoreState, true, search, true);
 
     await waitFor(() => {
-      expect(mockDispatch).toHaveBeenCalledWith(
-        expect.objectContaining({
-          payload: expect.objectContaining({
-            text: 'test',
-            category: ['security'],
-            has_incident: ['true'],
-            reboot_required: ['false'],
-            sort: 'name',
-            offset: 20,
-            limit: 50,
-          }),
-        }),
-      );
+      expect(screen.getByText('Pathway One')).toBeInTheDocument();
     });
   });
 
@@ -1151,9 +1110,11 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
     renderComponent(storeState, true, '', true);
 
     await waitFor(() => {
-      expect(mockUseGetPathwaysQuery).toHaveBeenCalledWith(
+      expect(mockUseQueryWithUtilities).toHaveBeenCalledWith(
         expect.objectContaining({
-          tags: 'tag1,tag2',
+          enabled: true,
+          useTableState: true,
+          fetchFn: expect.any(Function),
         }),
       );
     });

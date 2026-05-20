@@ -34,31 +34,12 @@ jest.mock('../Labels/RuleLabels', () => ({
   default: ({ rule }) => <span data-testid="rule-labels">{rule.tags}</span>,
 }));
 
-const createMessageDescriptor = (id, defaultMessage) => ({
-  id,
-  defaultMessage: defaultMessage || id,
-});
-
-jest.mock('../../Messages', () => ({
-  required: createMessageDescriptor('required', 'Required'),
-  notRequired: createMessageDescriptor('notRequired', 'Not Required'),
-}));
-
-const mockIntl = {
-  formatMessage: (msg) => msg.defaultMessage,
-};
-
 describe('Cells', () => {
   describe('Name', () => {
     it('renders pathway name as link', () => {
       render(
         <MemoryRouter>
-          <Name
-            name="Test Pathway"
-            slug="test-pathway"
-            has_incident={false}
-            intl={mockIntl}
-          />
+          <Name name="Test Pathway" slug="test-pathway" has_incident={false} />
         </MemoryRouter>,
       );
 
@@ -77,7 +58,6 @@ describe('Cells', () => {
             name="Incident Pathway"
             slug="incident-pathway"
             has_incident={true}
-            intl={mockIntl}
           />
         </MemoryRouter>,
       );
@@ -93,7 +73,6 @@ describe('Cells', () => {
             name="Normal Pathway"
             slug="normal-pathway"
             has_incident={false}
-            intl={mockIntl}
           />
         </MemoryRouter>,
       );
@@ -171,19 +150,15 @@ describe('Cells', () => {
 
   describe('Reboot', () => {
     it('renders "Required" when reboot_required is true', () => {
-      const { container } = render(
-        <Reboot reboot_required={true} intl={mockIntl} />,
-      );
+      const { container } = render(<Reboot reboot_required={true} />);
 
       expect(container).toHaveTextContent('Required');
     });
 
-    it('renders "Not Required" when reboot_required is false', () => {
-      const { container } = render(
-        <Reboot reboot_required={false} intl={mockIntl} />,
-      );
+    it('renders "Not required" when reboot_required is false', () => {
+      const { container } = render(<Reboot reboot_required={false} />);
 
-      expect(container).toHaveTextContent('Not Required');
+      expect(container).toHaveTextContent('Not required');
     });
   });
 

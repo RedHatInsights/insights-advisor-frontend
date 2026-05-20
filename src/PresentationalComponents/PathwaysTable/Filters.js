@@ -1,74 +1,74 @@
-/**
- * Filter configurations for PathwaysTable using bastilian-tabletools.
- * Each filter defines type, label, filterAttribute, and other properties needed by TableToolsTable.
- */
 import {
   FILTER_CATEGORIES as FC,
   PATHWAYS_FILTER_CATEGORIES as PFC,
 } from '../../AppConstants';
-import messages from '../../Messages';
 
 /**
  * Text filter for pathway name search
- * @param {object} intl - react-intl intl object
- * @returns {object} Filter configuration
  */
-export const nameFilter = (intl) => ({
+export const nameFilter = {
   type: 'text',
-  label: intl.formatMessage(messages.name),
+  label: 'Name',
   filterAttribute: 'text',
   id: 'text',
   urlParam: 'text',
-  placeholder: intl.formatMessage(messages.filterBy),
-});
+  placeholder: 'Filter by name',
+  filterSerialiser: (value) => {
+    // Text filters come as arrays from TableToolsTable
+    const textValue = Array.isArray(value) ? value[0] : value;
+    return textValue ? { text: textValue } : {};
+  },
+};
 
 /**
  * Checkbox filter for pathway categories (Availability, Performance, Security, Stability)
- * @returns {object} Filter configuration
  */
-export const categoryFilter = () => ({
+export const categoryFilter = {
   type: 'checkbox',
   label: 'Category',
   filterAttribute: FC.category.urlParam,
   id: FC.category.urlParam,
   urlParam: FC.category.urlParam,
   items: FC.category.values,
-});
+  filterSerialiser: (value) => {
+    const categories = Array.isArray(value) ? value : [];
+    return categories.length > 0 ? { category: categories } : {};
+  },
+};
 
 /**
  * Checkbox filter for pathways with incident associations
- * @returns {object} Filter configuration
  */
-export const incidentFilter = () => ({
+export const incidentFilter = {
   type: 'checkbox',
   label: 'Has incident',
   filterAttribute: PFC.has_incident.urlParam,
   id: PFC.has_incident.urlParam,
   urlParam: PFC.has_incident.urlParam,
   items: PFC.has_incident.values,
-});
+  filterSerialiser: (value) => {
+    const incidents = Array.isArray(value) ? value : [];
+    return incidents.length > 0 ? { has_incident: incidents } : {};
+  },
+};
 
 /**
  * Checkbox filter for pathways requiring system reboot
- * @returns {object} Filter configuration
  */
-export const rebootFilter = () => ({
+export const rebootFilter = {
   type: 'checkbox',
   label: 'Reboot required',
   filterAttribute: PFC.reboot_required.urlParam,
   id: PFC.reboot_required.urlParam,
   urlParam: PFC.reboot_required.urlParam,
   items: PFC.reboot_required.values,
-});
+  filterSerialiser: (value) => {
+    const reboots = Array.isArray(value) ? value : [];
+    return reboots.length > 0 ? { reboot_required: reboots } : {};
+  },
+};
 
 /**
  * Returns array of all filter configurations for PathwaysTable.
- * @param {object} intl - react-intl intl object for internationalization
- * @returns {Array} Array of filter configuration objects
  */
-export default (intl) => [
-  nameFilter(intl),
-  categoryFilter(),
-  incidentFilter(),
-  rebootFilter(),
-];
+export default [nameFilter, categoryFilter, incidentFilter, rebootFilter];

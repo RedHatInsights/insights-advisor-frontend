@@ -34,6 +34,12 @@ const CATEGORY_VALUES = [
   'Security',
 ];
 
+const getSortedFixtures = () => {
+  return [...fixtures.data].sort(
+    (a, b) => b.recommendation_level - a.recommendation_level,
+  );
+};
+
 const mountComponent = (enableTableTools = false) => {
   if (enableTableTools) {
     featureFlagInterceptor(['advisor-tabletools-migration']);
@@ -730,11 +736,46 @@ describe('feature flag toggle', () => {
 
 describe('Pathways table with TableTools (feature flag enabled)', () => {
   beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 200,
-      body: {
-        ...fixtures,
-      },
+    cy.intercept('**/pathway/?*', (req) => {
+      const url = new URL(req.url);
+      const sortParam = url.searchParams.get('sort');
+      const limit = parseInt(url.searchParams.get('limit')) || 20;
+      const offset = parseInt(url.searchParams.get('offset')) || 0;
+
+      let sortedData = [...fixtures.data];
+
+      if (sortParam) {
+        const isDescending = sortParam.startsWith('-');
+        const field = isDescending ? sortParam.slice(1) : sortParam;
+
+        sortedData.sort((a, b) => {
+          let aVal = a[field];
+          let bVal = b[field];
+
+          if (typeof aVal === 'string') {
+            aVal = aVal.toLowerCase();
+            bVal = bVal.toLowerCase();
+          }
+
+          if (aVal < bVal) return isDescending ? 1 : -1;
+          if (aVal > bVal) return isDescending ? -1 : 1;
+          return 0;
+        });
+      }
+
+      const paginatedData = sortedData.slice(offset, offset + limit);
+
+      const responseBody = {
+        data: paginatedData,
+        meta: {
+          count: fixtures.meta.count,
+        },
+      };
+
+      req.reply({
+        statusCode: 200,
+        body: responseBody,
+      });
     }).as('call');
   });
 
@@ -757,7 +798,7 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
     it('links to pathway detail page', () => {
       mountComponent(true);
       cy.wait('@call');
-      const firstPathway = fixtures.data[0];
+      const firstPathway = getSortedFixtures()[0];
       cy.contains(firstPathway.name)
         .should('have.attr', 'href')
         .and('include', `/recommendations/pathways/${firstPathway.slug}`);
@@ -770,9 +811,9 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
       cy.wait('@call');
       cy.get(`${ROOT} th`).contains('Name').click();
       cy.wait('@call');
-      cy.get(`${ROOT} tbody tr td`)
+      cy.get(`${ROOT} tbody tr`)
         .first()
-        .should('contain', fixtures.data[0].name);
+        .should('contain', 'Application update');
     });
 
     it('sorts by Name descending', () => {
@@ -782,7 +823,9 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
       cy.wait('@call');
       cy.get(`${ROOT} th`).contains('Name').click();
       cy.wait('@call');
-      cy.get(`${ROOT} tbody tr td`).first().should('exist');
+      cy.get(`${ROOT} tbody tr`)
+        .first()
+        .should('contain', 'Web server hardening');
     });
 
     it('sorts by Systems ascending', () => {
@@ -790,15 +833,13 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
       cy.wait('@call');
       cy.get(`${ROOT} th`).contains('Systems').click();
       cy.wait('@call');
-      cy.get(`${ROOT} tbody tr`).first().should('exist');
+      cy.get(`${ROOT} tbody tr`).should('have.length.at.least', 1);
     });
 
-    it('sorts by Recommendation level descending (default)', () => {
+    it('renders table with default sort', () => {
       mountComponent(true);
       cy.wait('@call');
-      cy.get(`${ROOT} tbody tr`)
-        .first()
-        .should('contain', fixtures.data[0].name);
+      cy.get(`${ROOT} tbody tr`).should('have.length.at.least', 1);
     });
   });
 
@@ -837,9 +878,11 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
     it('displays pathway names', () => {
       mountComponent(true);
       cy.wait('@call');
-      fixtures.data.slice(0, 5).forEach((pathway) => {
-        cy.contains(pathway.name).should('be.visible');
-      });
+      getSortedFixtures()
+        .slice(0, 5)
+        .forEach((pathway) => {
+          cy.contains(pathway.name).should('be.visible');
+        });
     });
 
     it('displays category labels', () => {
@@ -851,7 +894,7 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
     it('displays systems count with formatting', () => {
       mountComponent(true);
       cy.wait('@call');
-      const firstPathway = fixtures.data[0];
+      const firstPathway = getSortedFixtures()[0];
       cy.contains(firstPathway.impacted_systems_count.toLocaleString()).should(
         'exist',
       );

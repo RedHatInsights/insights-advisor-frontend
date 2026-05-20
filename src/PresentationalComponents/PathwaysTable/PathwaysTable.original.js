@@ -48,6 +48,7 @@ const PathwaysTable = ({ isTabActive }) => {
   const workloads = useSelector(({ filters }) => filters.workloads);
   const filters = useSelector(({ filters }) => filters.pathState);
   const setFilters = (filters) => dispatch(updatePathFilters(filters));
+
   let options = {};
   selectedTags?.length &&
     (options = {
@@ -55,6 +56,7 @@ const PathwaysTable = ({ isTabActive }) => {
       ...{ tags: selectedTags.join(',') },
     });
   workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
+
   const {
     data: pathways = [],
     isFetching,

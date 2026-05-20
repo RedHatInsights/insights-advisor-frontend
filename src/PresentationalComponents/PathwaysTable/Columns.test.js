@@ -34,7 +34,7 @@ jest.mock('./Cells', () => {
   };
 
   const MockReboot = ({ reboot_required }) => (
-    <div>{String(reboot_required)}</div>
+    <div>{reboot_required ? 'Required' : 'Not required'}</div>
   );
   MockReboot.propTypes = {
     reboot_required: PropTypes.bool,
@@ -56,42 +56,18 @@ jest.mock('./Cells', () => {
   };
 });
 
-const createMessageDescriptor = (id, defaultMessage) => ({
-  id,
-  defaultMessage: defaultMessage || id,
-});
-
-jest.mock('../../Messages', () => ({
-  pathwaysName: createMessageDescriptor('pathwaysName', 'Pathway Name'),
-  category: createMessageDescriptor('category', 'Category'),
-  systems: createMessageDescriptor('systems', 'Systems'),
-  reboot: createMessageDescriptor('reboot', 'Reboot'),
-  reclvl: createMessageDescriptor('reclvl', 'Recommendation Level'),
-  reclvldetails: createMessageDescriptor(
-    'reclvldetails',
-    'Recommendation Level Details',
-  ),
-}));
-
-const mockIntl = {
-  formatMessage: (msg) => msg.defaultMessage,
-};
-
 describe('Columns', () => {
   describe('Name column', () => {
     it('returns correct column configuration', () => {
-      const column = Name(mockIntl);
-
-      expect(column.title).toBe('Pathway Name');
-      expect(column.sortable).toBe('name');
-      expect(column.props.width).toBe(45);
+      expect(Name.title).toBe('Name');
+      expect(Name.sortable).toBe('name');
+      expect(Name.props.width).toBe(45);
     });
 
-    it('renders component with intl prop', () => {
-      const column = Name(mockIntl);
+    it('renders component correctly', () => {
       const { container } = render(
         <MemoryRouter>
-          <column.Component name="Test" slug="test" />
+          <Name.Component name="Test" slug="test" />
         </MemoryRouter>,
       );
 
@@ -101,19 +77,16 @@ describe('Columns', () => {
 
   describe('Category column', () => {
     it('returns correct column configuration', () => {
-      const column = Category(mockIntl);
-
-      expect(column.title).toBe('Category');
-      expect(column.sortable).toBeUndefined();
-      expect(column.props).toBeUndefined();
+      expect(Category.title).toBe('Category');
+      expect(Category.sortable).toBeUndefined();
+      expect(Category.props).toBeUndefined();
     });
 
     it('renders component correctly', () => {
-      const column = Category(mockIntl);
       const categories = [{ id: 1, name: 'Security' }];
       const { container } = render(
         <MemoryRouter>
-          <column.Component categories={categories} />
+          <Category.Component categories={categories} />
         </MemoryRouter>,
       );
 
@@ -123,18 +96,15 @@ describe('Columns', () => {
 
   describe('Systems column', () => {
     it('returns correct column configuration', () => {
-      const column = Systems(mockIntl);
-
-      expect(column.title).toBe('Systems');
-      expect(column.sortable).toBe('impacted_systems_count');
-      expect(column.props.width).toBe(10);
+      expect(Systems.title).toBe('Systems');
+      expect(Systems.sortable).toBe('impacted_systems_count');
+      expect(Systems.props.width).toBe(10);
     });
 
     it('renders component correctly', () => {
-      const column = Systems(mockIntl);
       const { container } = render(
         <MemoryRouter>
-          <column.Component impacted_systems_count={42} slug="test" />
+          <Systems.Component impacted_systems_count={42} slug="test" />
         </MemoryRouter>,
       );
 
@@ -144,41 +114,39 @@ describe('Columns', () => {
 
   describe('Reboot column', () => {
     it('returns correct column configuration', () => {
-      const column = Reboot(mockIntl);
-
-      expect(column.title).toBe('Reboot');
-      expect(column.sortable).toBeUndefined();
-      expect(column.props).toBeUndefined();
+      expect(Reboot.title).toBe('Reboot');
+      expect(Reboot.sortable).toBeUndefined();
+      expect(Reboot.props).toBeUndefined();
     });
 
-    it('renders component with intl prop', () => {
-      const column = Reboot(mockIntl);
+    it('renders component correctly', () => {
       const { container } = render(
         <MemoryRouter>
-          <column.Component reboot_required={true} />
+          <Reboot.Component reboot_required={true} />
         </MemoryRouter>,
       );
 
-      expect(container).toHaveTextContent('true');
+      expect(container).toHaveTextContent('Required');
     });
   });
 
   describe('RecommendationLevel column', () => {
     it('returns correct column configuration', () => {
-      const column = RecommendationLevel(mockIntl);
-
-      expect(column.title).toBe('Recommendation Level');
-      expect(column.sortable).toBe('recommendation_level');
-      expect(column.props.width).toBe(20);
-      expect(column.props.info.tooltip).toBe('Recommendation Level Details');
-      expect(column.props.info.tooltipProps.isContentLeftAligned).toBe(true);
+      expect(RecommendationLevel.title).toBe('Recommendation level');
+      expect(RecommendationLevel.sortable).toBe('recommendation_level');
+      expect(RecommendationLevel.props.width).toBe(20);
+      expect(RecommendationLevel.props.info.tooltip).toContain(
+        "Indicates a recommendation's urgency",
+      );
+      expect(
+        RecommendationLevel.props.info.tooltipProps.isContentLeftAligned,
+      ).toBe(true);
     });
 
     it('renders component correctly', () => {
-      const column = RecommendationLevel(mockIntl);
       const { container } = render(
         <MemoryRouter>
-          <column.Component recommendation_level={4} />
+          <RecommendationLevel.Component recommendation_level={4} />
         </MemoryRouter>,
       );
 
@@ -188,32 +156,26 @@ describe('Columns', () => {
 
   describe('default export (all columns)', () => {
     it('returns array of all column configurations', () => {
-      const allColumns = columns(mockIntl);
-
-      expect(allColumns).toHaveLength(5);
-      expect(allColumns[0].title).toBe('Pathway Name');
-      expect(allColumns[1].title).toBe('Category');
-      expect(allColumns[2].title).toBe('Systems');
-      expect(allColumns[3].title).toBe('Reboot');
-      expect(allColumns[4].title).toBe('Recommendation Level');
+      expect(columns).toHaveLength(5);
+      expect(columns[0].title).toBe('Name');
+      expect(columns[1].title).toBe('Category');
+      expect(columns[2].title).toBe('Systems');
+      expect(columns[3].title).toBe('Reboot');
+      expect(columns[4].title).toBe('Recommendation level');
     });
 
     it('all columns have Component property', () => {
-      const allColumns = columns(mockIntl);
-
-      allColumns.forEach((column) => {
+      columns.forEach((column) => {
         expect(column.Component).toBeDefined();
       });
     });
 
     it('sortable columns are in correct positions', () => {
-      const allColumns = columns(mockIntl);
-
-      expect(allColumns[0].sortable).toBe('name');
-      expect(allColumns[1].sortable).toBeUndefined();
-      expect(allColumns[2].sortable).toBe('impacted_systems_count');
-      expect(allColumns[3].sortable).toBeUndefined();
-      expect(allColumns[4].sortable).toBe('recommendation_level');
+      expect(columns[0].sortable).toBe('name');
+      expect(columns[1].sortable).toBeUndefined();
+      expect(columns[2].sortable).toBe('impacted_systems_count');
+      expect(columns[3].sortable).toBeUndefined();
+      expect(columns[4].sortable).toBe('recommendation_level');
     });
   });
 });

@@ -1,8 +1,3 @@
-/**
- * Column definitions for PathwaysTable using bastilian-tabletools.
- * Each column factory function returns a configuration object with title, Component, and optional sortable/props.
- */
-import React from 'react';
 import {
   Name as NameCell,
   Category as CategoryCell,
@@ -10,56 +5,44 @@ import {
   Reboot as RebootCell,
   RecommendationLevelCell,
 } from './Cells';
-import messages from '../../Messages';
 
-export const Name = (intl) => ({
-  title: intl.formatMessage(messages.pathwaysName),
-  Component: (props) => <NameCell {...props} intl={intl} />,
+export const Name = {
+  title: 'Name',
+  Component: NameCell,
   sortable: 'name',
   props: { width: 45 },
-});
+};
 
-export const Category = (intl) => ({
-  title: intl.formatMessage(messages.category),
+export const Category = {
+  title: 'Category',
   Component: CategoryCell,
-});
+};
 
-export const Systems = (intl) => ({
-  title: intl.formatMessage(messages.systems),
+export const Systems = {
+  title: 'Systems',
   Component: SystemsCell,
   sortable: 'impacted_systems_count',
   props: { width: 10 },
-});
+};
 
-export const Reboot = (intl) => ({
-  title: intl.formatMessage(messages.reboot),
-  Component: (props) => <RebootCell {...props} intl={intl} />,
-});
+export const Reboot = {
+  title: 'Reboot',
+  Component: RebootCell,
+};
 
-export const RecommendationLevel = (intl) => ({
-  title: intl.formatMessage(messages.reclvl),
+export const RecommendationLevel = {
+  title: 'Recommendation level',
   Component: RecommendationLevelCell,
   sortable: 'recommendation_level',
   props: {
     width: 20,
     info: {
-      tooltip: intl.formatMessage(messages.reclvldetails),
+      tooltip: `Indicates a recommendation's urgency on a scale of high (fix immediately) to low (fix when convenient). Recommendations levels are constantly re-calculated based on your infrastructure's number of applicable recommendations, associated risks and total number of impacted systems.`,
       tooltipProps: {
         isContentLeftAligned: true,
       },
     },
   },
-});
+};
 
-/**
- * Returns array of all column configurations for PathwaysTable.
- * @param {object} intl - react-intl intl object for internationalization
- * @returns {Array} Array of column configuration objects
- */
-export default (intl) => [
-  Name(intl),
-  Category(intl),
-  Systems(intl),
-  Reboot(intl),
-  RecommendationLevel(intl),
-];
+export default [Name, Category, Systems, Reboot, RecommendationLevel];

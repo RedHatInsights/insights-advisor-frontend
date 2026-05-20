@@ -25,7 +25,7 @@ export const sortSerialiser = ({ index, direction } = {}, columns) => {
 };
 
 /**
- * Converts TableToolsTable filter state to Advisor API format
+ * Converts TableToolsTable filter state to Advisor API format using per-filter serializers.
  *
  * TableToolsTable converts filter labels to IDs using lowercase and kebab-case:
  * - "Name" -> "name"
@@ -35,13 +35,11 @@ export const sortSerialiser = ({ index, direction } = {}, columns) => {
  * kebab-case to snake_case for matching.
  *
  * @param {object} state - Filter state from table (e.g., { "reboot-required": ["true"] })
- * @param {array} filters - Filter configuration with snake_case IDs
+ * @param {array} filters - Filter configurations with optional filterSerialiser functions
  * @returns {object} - API-compatible filter params
  */
 export const filtersSerialiser = (state, filters) => {
-  const params = {};
-
-  Object.entries(state || {}).forEach(([filterId, value]) => {
+  return Object.entries(state || {}).reduce((params, [filterId, value]) => {
     const normalizedFilterId = filterId.replace(/-/g, '_');
 
     const filterConfig = filters.find(
@@ -53,11 +51,19 @@ export const filtersSerialiser = (state, filters) => {
         f.filterAttribute === normalizedFilterId,
     );
 
-    if (!filterConfig) return;
+    if (!filterConfig) return params;
 
+    // Use per-filter serializer if available
+    if (filterConfig.filterSerialiser) {
+      return {
+        ...params,
+        ...filterConfig.filterSerialiser(value, filterConfig, params),
+      };
+    }
+
+    // Fallback to generic serialization
     switch (filterConfig.type) {
       case 'text':
-        // Text filters come as arrays from TableToolsTable, extract the string
         params[filterConfig.urlParam] = Array.isArray(value) ? value[0] : value;
         break;
       case 'checkbox':
@@ -69,7 +75,7 @@ export const filtersSerialiser = (state, filters) => {
       default:
         params[filterConfig.urlParam] = value;
     }
-  });
 
-  return params;
+    return params;
+  }, {});
 };
