@@ -10,7 +10,6 @@ import filters from './Filters';
 import { usePathwaysQuery } from '../../Services/Pathways/usePathwaysQuery';
 import { workloadQueryBuilder } from '../Common/Tables';
 import useAdvisorTableDefaults from '../../Utilities/useAdvisorTableDefaults';
-import { useSyncTableStateToUrl } from '../../Utilities/useTableStateUrlSync';
 
 const PathwaysTableInner = ({ isTabActive, selectedTags, workloads }) => {
   const advisorTableDefaults = useAdvisorTableDefaults();
@@ -30,8 +29,6 @@ const PathwaysTableInner = ({ isTabActive, selectedTags, workloads }) => {
     }
     return params;
   }, [selectedTags, workloads]);
-
-  useSyncTableStateToUrl(additionalParams, isTabActive);
 
   const { items, total, loading, error } = usePathwaysQuery({
     useTableState: true,
