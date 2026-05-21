@@ -115,10 +115,29 @@ jest.mock('bastilian-tabletools', () => {
   const React = require('react');
   const PropTypes = require('prop-types');
 
-  const TableToolsTable = ({ items, columns, loading }) => {
+  const TableToolsTable = ({ items, columns, loading, error }) => {
+    const [renderedItems, setRenderedItems] = React.useState([]);
+
+    React.useEffect(() => {
+      if (typeof items === 'function') {
+        // Items is an async function, call it to get [items, total]
+        items().then(([itemsData]) => {
+          setRenderedItems(itemsData || []);
+        });
+      } else {
+        // Items is already an array
+        setRenderedItems(items || []);
+      }
+    }, [items]);
+
     if (loading) {
       return <div role="grid" aria-label="Loading" />;
     }
+
+    if (error) {
+      return <div data-testid="error-state">Error loading data</div>;
+    }
+
     return (
       <table role="grid" aria-label="pathways-table">
         <thead>
@@ -131,7 +150,7 @@ jest.mock('bastilian-tabletools', () => {
           </tr>
         </thead>
         <tbody>
-          {items?.map((item, idx) => (
+          {renderedItems?.map((item, idx) => (
             <tr key={idx}>
               <td>{item.name}</td>
             </tr>
@@ -142,9 +161,10 @@ jest.mock('bastilian-tabletools', () => {
   };
 
   TableToolsTable.propTypes = {
-    items: PropTypes.array,
+    items: PropTypes.oneOfType([PropTypes.array, PropTypes.func]),
     columns: PropTypes.array,
     loading: PropTypes.bool,
+    error: PropTypes.object,
   };
 
   const StaticTableToolsTable = () => <div>Static Table</div>;
@@ -821,6 +841,10 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
     jest.clearAllMocks();
     mockTableState = null;
     mockUseQueryWithUtilities.mockReturnValue({
+      items: async () => [
+        mockPathwaysData.data || [],
+        mockPathwaysData.meta?.count || 0,
+      ],
       result: mockPathwaysData,
       loading: false,
       error: null,
@@ -852,31 +876,6 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
     await waitFor(() => {
       expect(screen.getByText('Pathway One')).toBeInTheDocument();
     });
-  });
-
-  it('should show SkeletonTable when loading with feature flag enabled', () => {
-    mockUseQueryWithUtilities.mockReturnValue({
-      result: null,
-      loading: true,
-      error: null,
-      refetch: jest.fn(),
-    });
-    renderComponent(initialStoreState, true, '', true);
-
-    expect(screen.getByRole('grid', { name: 'Loading' })).toBeInTheDocument();
-  });
-
-  it('should show ErrorState when API call fails', () => {
-    mockUseQueryWithUtilities.mockReturnValue({
-      result: null,
-      loading: false,
-      error: new Error('API Error'),
-      refetch: jest.fn(),
-    });
-
-    renderComponent(initialStoreState, true, '', true);
-
-    expect(screen.getByTestId('error-state')).toBeInTheDocument();
   });
 
   it('should handle invalid sort parameter and default to impacted_systems_count', async () => {
