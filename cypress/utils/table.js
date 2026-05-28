@@ -184,6 +184,22 @@ const removeAllFilterChipsPf6 = () => {
 };
 
 /**
+ * Remove all filter chips for tabletools tables (no .ins-c-chip-filters wrapper)
+ */
+const removeAllFilterChipsPf6Tabletools = () => {
+  cy.get('.pf-v6-c-label-group')
+    .find('.pf-v6-c-label')
+    .find('button')
+    .each(() => {
+      cy.get('.pf-v6-c-label-group')
+        .find('.pf-v6-c-label')
+        .find('button')
+        .eq(0)
+        .click();
+    });
+};
+
+/**
  * Custom hasChip implementation for PatternFly v6
  * The FilterChips component renders Label components without OUIA attributes,
  * so we need to use PF6 class selectors instead of data-ouia-component-type
@@ -196,6 +212,7 @@ export {
   checkSorting,
   cypressApplyFilters,
   cumulativeCombinations,
+  removeAllFilterChipsPf6Tabletools,
   selectRandomEnabledRows,
   selectConditionalFilterOption,
   itExportsDataToFile,
