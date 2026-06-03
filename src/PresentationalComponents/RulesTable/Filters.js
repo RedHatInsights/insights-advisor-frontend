@@ -99,7 +99,7 @@ export const categoryFilter = {
 };
 
 /**
- * Incident checkbox filter
+ * Incident checkbox filter (boolean: true/false, single-select)
  */
 export const incidentFilter = {
   type: 'checkbox',
@@ -115,7 +115,7 @@ export const incidentFilter = {
 };
 
 /**
- * Has Playbook checkbox filter
+ * Has Playbook checkbox filter (boolean: true/false, single-select)
  */
 export const playbookFilter = {
   type: 'checkbox',
@@ -131,7 +131,7 @@ export const playbookFilter = {
 };
 
 /**
- * Reboot Required checkbox filter
+ * Reboot Required checkbox filter (boolean: true/false, single-select)
  */
 export const rebootFilter = {
   type: 'checkbox',

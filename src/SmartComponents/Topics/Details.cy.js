@@ -6,11 +6,11 @@ import { initStore } from '../../Store';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AccountStatContext } from '../../ZeroStateWrapper';
 import { EnvironmentContext } from '../../App';
+import { FlagProvider } from '@unleash/proxy-client-react';
 import fixtures from '../../../cypress/fixtures/recommendations.json';
 import { hasChip, itExportsDataToFile } from '../../../cypress/utils/table';
 import { createTestEnvironmentContext } from '../../../cypress/support/globals';
 import messages from '../../../locales/translations.json';
-import FlagProvider from '@unleash/proxy-client-react';
 
 const DEFAULT_API_BASE_PATH = '/api/insights/v1';
 
@@ -31,12 +31,14 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
   const currentRequestBasePath =
     finalEnvContext.customBasePath || DEFAULT_API_BASE_PATH;
 
+  cy.intercept('POST', '/feature_flags/client/metrics', { statusCode: 200 });
+
   cy.intercept('GET', '/feature_flags*', {
     statusCode: 200,
     body: { toggles: [] },
-  }).as('getFeatureFlag');
+  }).as('getFeatureFlags');
 
-  cy.intercept(`${currentRequestBasePath}/topic/123/`, {
+  cy.intercept(`${currentRequestBasePath}/topic/123/?topicId=123`, {
     name: 'Amazon Web Services (AWS)',
     slug: 'aws',
     description:

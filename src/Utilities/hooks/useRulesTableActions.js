@@ -16,9 +16,10 @@ import useEnableRule from './useEnableRule';
  *
  * @param {Object} options
  * @param {Function} options.onDisableClick - Callback to open disable modal
+ * @param {Function} options.onRuleChange - Callback invoked after successful rule changes
  * @returns {Object} { actionResolver } - Function for table options
  */
-const useRulesTableActions = ({ onDisableClick }) => {
+const useRulesTableActions = ({ onDisableClick, onRuleChange }) => {
   const intl = useIntl();
   const {
     current: { reload },
@@ -29,10 +30,11 @@ const useRulesTableActions = ({ onDisableClick }) => {
     async ({ rule_id }) => {
       const result = await enableRule(rule_id);
       if (result.success) {
-        reload(); // Use tabletools reload mechanism
+        reload();
+        onRuleChange?.();
       }
     },
-    [enableRule, reload],
+    [enableRule, reload, onRuleChange],
   );
 
   const actionResolver = useCallback(

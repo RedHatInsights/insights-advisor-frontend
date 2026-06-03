@@ -37,16 +37,20 @@ import DisableRule from '../Modals/DisableRule';
  * @param {string} props.pathway - Pathway filter
  * @param {Function} props.onRuleChange - Callback when rule changes
  */
-const RulesTableInner = ({ isTabActive, selectedTags, workloads, pathway }) => {
+const RulesTableInner = ({
+  isTabActive,
+  selectedTags,
+  workloads,
+  pathway,
+  onRuleChange,
+}) => {
   const advisorTableDefaults = useAdvisorTableDefaults();
   const filterConfig = useMemo(() => ({ filterConfig: filters }), []);
 
-  // Get reload function from tabletools
   const {
     current: { reload },
   } = useStateCallbacks();
 
-  // Modal state management
   const [disableRuleModal, setDisableRuleModal] = useState({
     isOpen: false,
     rule: null,
@@ -75,7 +79,6 @@ const RulesTableInner = ({ isTabActive, selectedTags, workloads, pathway }) => {
     additionalParams,
   });
 
-  // Callback for disable action (opens modal)
   const handleDisableClick = useCallback(({ rule_id, rule_status }) => {
     setDisableRuleModal({
       isOpen: true,
@@ -83,9 +86,9 @@ const RulesTableInner = ({ isTabActive, selectedTags, workloads, pathway }) => {
     });
   }, []);
 
-  // Get actionResolver from hook
   const { actionResolver } = useRulesTableActions({
     onDisableClick: handleDisableClick,
+    onRuleChange,
   });
 
   const tableOptions = useMemo(
@@ -117,7 +120,8 @@ const RulesTableInner = ({ isTabActive, selectedTags, workloads, pathway }) => {
           isModalOpen={disableRuleModal.isOpen}
           rule={disableRuleModal.rule}
           afterFn={() => {
-            reload(); // Use tabletools reload
+            reload();
+            onRuleChange?.();
             setDisableRuleModal({ isOpen: false, rule: null });
           }}
         />

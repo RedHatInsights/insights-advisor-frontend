@@ -92,11 +92,11 @@ export const rulesTableApiInterceptor = (fixtures) => {
 
       if (url.searchParams.has('res_risk')) {
         const resRisks = url.searchParams.getAll('res_risk');
-        filteredData = filteredData.filter((item) =>
-          resRisks.includes(
-            String(item.resolution_set[0].resolution_risk.risk),
-          ),
-        );
+        filteredData = filteredData.filter((item) => {
+          const resolution = item.resolution_set?.[0];
+          if (!resolution) return false;
+          return resRisks.includes(String(resolution.resolution_risk.risk));
+        });
       }
 
       if (url.searchParams.has('impact')) {
@@ -121,6 +121,24 @@ export const rulesTableApiInterceptor = (fixtures) => {
         );
       }
 
+      // rule_status filter
+      if (url.searchParams.has('rule_status')) {
+        const status = url.searchParams.get('rule_status');
+        filteredData = filteredData.filter(
+          (item) => item.rule_status === status,
+        );
+      }
+
+      // impacting filter (systems with issues)
+      if (url.searchParams.has('impacting')) {
+        const impacting = url.searchParams.get('impacting') === 'true';
+        if (impacting) {
+          filteredData = filteredData.filter(
+            (item) => item.impacted_systems_count > 0,
+          );
+        }
+      }
+
       // Boolean filters - incident, has_playbook, reboot
       if (url.searchParams.has('incident')) {
         const incident = url.searchParams.get('incident') === 'true';
@@ -131,9 +149,10 @@ export const rulesTableApiInterceptor = (fixtures) => {
 
       if (url.searchParams.has('has_playbook')) {
         const hasPlaybook = url.searchParams.get('has_playbook') === 'true';
-        filteredData = filteredData.filter(
-          (item) => item.resolution_set[0].has_playbook === hasPlaybook,
-        );
+        filteredData = filteredData.filter((item) => {
+          const resolution = item.resolution_set?.[0];
+          return resolution ? resolution.has_playbook === hasPlaybook : false;
+        });
       }
 
       if (url.searchParams.has('reboot')) {
@@ -143,12 +162,32 @@ export const rulesTableApiInterceptor = (fixtures) => {
         );
       }
 
+      // Handle pagination - if only default filters applied, use original meta count
+      // Default filters: rule_status, impacting, sort, limit, offset
+      const totalCount = filteredData.length;
+      const defaultParams = [
+        'limit',
+        'offset',
+        'sort',
+        'rule_status',
+        'impacting',
+      ];
+      const hasExtraFilters = Array.from(url.searchParams.keys()).some(
+        (key) => !defaultParams.includes(key),
+      );
+
+      // Use original meta count if only defaults, otherwise use filtered count
+      const metaCount = hasExtraFilters ? totalCount : fixtures.meta.count;
+
       req.reply({
-        statusCode: 201,
+        statusCode: 200,
         body: {
           ...fixtures,
           data: filteredData,
-          meta: { count: filteredData.length },
+          meta: {
+            ...fixtures.meta,
+            count: metaCount,
+          },
         },
       });
     })

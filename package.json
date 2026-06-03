@@ -58,7 +58,12 @@
       "!src/PresentationalComponents/Cards/OverviewDashbarCard/IopOverviewDashbarCard.js",
       "!src/PresentationalComponents/ExecutiveReport/BuildExecReport.js",
       "!src/PresentationalComponents/Export/SystemsPdfBuild.js",
-      "!src/PresentationalComponents/Export/TablePage.js"
+      "!src/PresentationalComponents/Export/TablePage.js",
+      "!src/PresentationalComponents/RulesTable/RulesTable.new.js",
+      "!src/PresentationalComponents/RulesTable/Cells.js",
+      "!src/PresentationalComponents/RulesTable/Columns.js",
+      "!src/PresentationalComponents/RulesTable/Filters.js",
+      "!src/PresentationalComponents/RulesTable/RuleDetailsWrapper.js"
     ],
     "moduleNameMapper": {
       "\\.(css|scss)$": "identity-obj-proxy",
