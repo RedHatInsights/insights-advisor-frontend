@@ -147,6 +147,41 @@ export const rebootFilter = {
 };
 
 /**
+ * Status filter (checkbox: enabled/disabled/rhdisabled, single-select)
+ */
+export const ruleStatusFilter = {
+  type: 'checkbox',
+  label: capitalize(FC.rule_status.title),
+  filterAttribute: FC.rule_status.urlParam,
+  id: FC.rule_status.urlParam,
+  urlParam: FC.rule_status.urlParam,
+  items: FC.rule_status.values,
+  filterSerialiser: (value) => {
+    const values = Array.isArray(value) ? value : [];
+    return values.length > 0 ? { rule_status: values[0] } : {};
+  },
+};
+
+/**
+ * Systems impacted filter (checkbox: true/false, single-select)
+ */
+export const impactingFilter = {
+  type: 'checkbox',
+  label: 'Systems impacted',
+  filterAttribute: 'impacting',
+  id: 'impacting',
+  urlParam: 'impacting',
+  items: [
+    { label: '1 or more', value: 'true' },
+    { label: 'None', value: 'false' },
+  ],
+  filterSerialiser: (value) => {
+    const values = Array.isArray(value) ? value : [];
+    return values.length > 0 ? { impacting: values[0] } : {};
+  },
+};
+
+/**
  * Returns array of all filter configurations for RulesTable
  */
 export default [
@@ -156,6 +191,8 @@ export default [
   impactFilter,
   likelihoodFilter,
   categoryFilter,
+  ruleStatusFilter,
+  impactingFilter,
   incidentFilter,
   playbookFilter,
   rebootFilter,

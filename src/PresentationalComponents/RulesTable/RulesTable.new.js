@@ -14,6 +14,7 @@ import useAdvisorTableDefaults from '../../Utilities/useAdvisorTableDefaults';
 import RuleDetailsWrapper from './RuleDetailsWrapper';
 import useRulesTableActions from '../../Utilities/hooks/useRulesTableActions';
 import DisableRule from '../Modals/DisableRule';
+import { filtersSerialiser } from '../../Utilities/tableSerializers';
 
 /**
  * RulesTable implementation using bastilian-tabletools (TableToolsTable - dynamic)
@@ -45,7 +46,19 @@ const RulesTableInner = ({
   onRuleChange,
 }) => {
   const advisorTableDefaults = useAdvisorTableDefaults();
-  const filterConfig = useMemo(() => ({ filterConfig: filters }), []);
+  const filterConfig = useMemo(
+    () => ({
+      filterConfig: filters,
+      activeFilters: {
+        status: ['enabled'],
+        'systems-impacted': ['true'],
+      },
+      serialisers: {
+        filters: filtersSerialiser,
+      },
+    }),
+    [],
+  );
 
   const {
     current: { reload },
