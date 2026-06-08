@@ -37,10 +37,7 @@ export const buildTagFilter = (tagFilters) => {
     ? {
         tags: tagFilters.flatMap((tagFilter) =>
           tagFilter.values.map(
-            (tag) =>
-              `${encodeURIComponent(tagFilter.key)}/${encodeURIComponent(
-                tag.tagKey,
-              )}=${encodeURIComponent(tag.value)}`,
+            (tag) => `${tagFilter.key}/${tag.tagKey}=${tag.value}`,
           ),
         ),
       }
