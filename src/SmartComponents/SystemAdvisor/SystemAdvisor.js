@@ -42,6 +42,8 @@ import { EnvironmentContext } from '../../App';
 import { fetchResolutionsData, isAbortError } from './helpers';
 import DownloadPlaybookButton from '../../Utilities/DownloadPlaybookButton';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
+import useAdvisorReports from './useAdvisorReports';
+import { InventoryReportFetchFailed } from './EmptyStates';
 
 const BaseSystemAdvisor = ({
   entity,
@@ -76,6 +78,12 @@ const BaseSystemAdvisor = ({
   const selectedTags = useSelector(({ filters }) => filters?.selectedTags);
   const workloads = useSelector(({ filters }) => filters?.workloads);
   const envContext = useContext(EnvironmentContext);
+
+  const {
+    reportsData,
+    loading: reportsLoading,
+    error: reportsError,
+  } = useAdvisorReports(inventoryId, envContext, { skip: false });
 
   const getSelectedItems = (rows) => rows.filter((row) => row.selected);
   const selectedAnsibleRules = useMemo(() => {
@@ -358,17 +366,18 @@ const BaseSystemAdvisor = ({
   const fetchKbaDetails = async (reportsData, signal) => {
     const kbaIds = reportsData.map(({ rule }) => rule.node_id).filter((x) => x);
     try {
-      const kbaDetailsFetch = (
-        await axios.get(
-          `https://access.redhat.com/hydra/rest/search/kcs?q=id:(${kbaIds.join(
-            ` OR `,
-          )})&fq=documentKind:(Solution%20or%20Article)&fl=view_uri,id,publishedTitle&redhat_client=$ADVISOR`,
-          {
-            params: { credentials: 'include' },
-            signal,
-          },
-        )
-      ).response.docs;
+      const kbaDetailsFetch =
+        (
+          await axios.get(
+            `https://access.redhat.com/hydra/rest/search/kcs?q=id:(${kbaIds.join(
+              ` OR `,
+            )})&fq=documentKind:(Solution%20or%20Article)&fl=view_uri,id,publishedTitle&redhat_client=$ADVISOR`,
+            {
+              params: { credentials: 'include' },
+              signal,
+            },
+          )
+        )?.response?.docs || [];
 
       setKbaDetailsData(kbaDetailsFetch);
       setRows(
@@ -478,18 +487,20 @@ const BaseSystemAdvisor = ({
 
   useEffect(() => {
     const dataFetch = async () => {
-      try {
-        const reportsFetch = await axios.get(
-          `${envContext.BASE_URL}/system/${inventoryId}/reports/`,
-          {
-            headers: {
-              credentials: 'include',
-            },
-            signal: abortControllerRef.current.signal,
-          },
-        );
+      if (reportsLoading) {
+        setInventoryReportFetchStatus('pending');
+        return;
+      }
 
-        const activeRuleFirstReportsData = activeRuleFirst(reportsFetch);
+      if (reportsError) {
+        setInventoryReportFetchStatus('failed');
+        setSystemsProfileLoading(false);
+        return;
+      }
+
+      try {
+        const activeRuleFirstReportsData = activeRuleFirst(reportsData);
+
         if (envContext.loadChromeless) {
           const kbaDetailsIOP = getKbaDetailsIOP(activeRuleFirstReportsData);
           setKbaDetailsData(kbaDetailsIOP);
@@ -509,8 +520,8 @@ const BaseSystemAdvisor = ({
             abortControllerRef.current.signal,
           );
         }
-        setInventoryReportFetchStatus('fulfilled');
         setActiveReports(activeRuleFirstReportsData);
+        setInventoryReportFetchStatus('fulfilled');
 
         const profileData = await axios.get(
           `${envContext.INVENTORY_BASE_URL}/hosts/${inventoryId}/system_profile`,
@@ -557,7 +568,7 @@ const BaseSystemAdvisor = ({
       abortControllerRef.current = new AbortController();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [axios, inventoryId, envContext, addNotification]);
+  }, [reportsData, reportsLoading, reportsError, inventoryId]);
   // eslint-disable-next-line react/prop-types
   let display_name = entity?.display_name;
   return inventoryReportFetchStatus === 'fulfilled' &&
@@ -615,6 +626,9 @@ const BaseSystemAdvisor = ({
       )}
       {inventoryReportFetchStatus === 'pending' && (
         <SkeletonTable columns={cols.map((c) => c.title)} variant="compact" />
+      )}
+      {inventoryReportFetchStatus === 'failed' && (
+        <InventoryReportFetchFailed entity={entity} />
       )}
       {inventoryReportFetchStatus === 'fulfilled' && (
         <Fragment>

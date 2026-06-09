@@ -101,4 +101,14 @@ const SystemDetail = (props) => {
   );
 };
 
+SystemDetail.propTypes = {
+  customItnl: PropTypes.bool,
+  intlProps: PropTypes.shape({
+    locale: PropTypes.string,
+    messages: PropTypes.objectOf(PropTypes.string),
+  }),
+  store: PropTypes.object,
+  IopRemediationModal: PropTypes.elementType,
+};
+
 export default SystemDetail;
