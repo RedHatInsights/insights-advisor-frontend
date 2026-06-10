@@ -32,7 +32,7 @@ const useAdvisorReports = (inventoryId, envContext, { skip = false } = {}) => {
 
         const reportsFetch = Array.isArray(reportsResponse)
           ? reportsResponse
-          : reportsResponse?.data || [];
+          : reportsResponse.data || [];
 
         setReportsData(reportsFetch);
         setLoading(false);

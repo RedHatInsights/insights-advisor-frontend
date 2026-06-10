@@ -80,16 +80,6 @@ const SystemDetailWithContextProviders = (props) => {
   );
 };
 
-SystemDetailWithContextProviders.propTypes = {
-  customItnl: PropTypes.bool,
-  intlProps: PropTypes.shape({
-    locale: PropTypes.string,
-    messages: PropTypes.objectOf(PropTypes.string),
-  }),
-  store: PropTypes.object,
-  IopRemediationModal: PropTypes.elementType,
-};
-
 const SystemDetail = (props) => {
   return (
     <AccessCheck.Provider
