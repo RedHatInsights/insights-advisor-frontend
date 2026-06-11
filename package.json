@@ -175,6 +175,7 @@
     "@react-pdf/pdfkit": "3.0.4",
     "@react-pdf/layout": "3.6.4",
     "axios": "^1.15.0",
-    "ajv": ">=8.20.0"
+    "ajv": ">=8.20.0",
+    "minimatch": ">=10.2.5"
   }
 }
