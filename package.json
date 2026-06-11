@@ -174,7 +174,6 @@
     "@react-pdf/image": "2.2.3",
     "@react-pdf/pdfkit": "3.0.4",
     "@react-pdf/layout": "3.6.4",
-    "axios": "^1.16.1",
     "ajv": ">=8.20.0",
     "ajv-keywords": ">=5.1.0",
     "schema-utils": ">=4.3.3",
