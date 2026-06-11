@@ -9,6 +9,8 @@ import { useHccEnvironmentContext, useFeatureFlag } from '../Utilities/Hooks';
 import { useKesselEnvironmentContext } from '../Utilities/useKesselEnvironmentContext';
 import { Bullseye, Spinner } from '@patternfly/react-core';
 import { useFlagsStatus } from '@unleash/proxy-client-react';
+import { AccessCheck } from '@project-kessel/react-kessel-access-check';
+import { KESSEL_API_BASE_URL } from '../AppConstants';
 
 const SystemDetailContent = ({
   customItnl,
@@ -59,7 +61,7 @@ const SystemDetailWithKessel = (props) => {
   return <SystemDetailContent envContext={envContext} {...props} />;
 };
 
-const SystemDetail = (props) => {
+const SystemDetailWithContextProviders = (props) => {
   const { flagsReady } = useFlagsStatus();
   const isKesselEnabled = useFeatureFlag('advisor.kessel_enabled');
 
@@ -75,6 +77,17 @@ const SystemDetail = (props) => {
     <SystemDetailWithKessel {...props} />
   ) : (
     <SystemDetailWithRbacV1 {...props} />
+  );
+};
+
+const SystemDetail = (props) => {
+  return (
+    <AccessCheck.Provider
+      baseUrl={window.location.origin}
+      apiPath={KESSEL_API_BASE_URL}
+    >
+      <SystemDetailWithContextProviders {...props} />
+    </AccessCheck.Provider>
   );
 };
 

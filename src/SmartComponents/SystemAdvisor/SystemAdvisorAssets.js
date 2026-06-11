@@ -161,9 +161,12 @@ export const useBuildRows = (
       const builtRows = newActiveReportsList.flatMap((value, key) => {
         const rule = value.rule;
         const resolution = value.resolution;
-        const kbaDetail = Object.keys(kbaDetails).length
-          ? kbaDetails.filter((article) => article.id === value.rule.node_id)[0]
-          : {};
+        const kbaDetail =
+          kbaDetails && Array.isArray(kbaDetails) && kbaDetails.length
+            ? kbaDetails.filter(
+                (article) => article.id === value.rule.node_id,
+              )[0]
+            : {};
         const match = rows.find((row) => row?.rule?.rule_id === rule.rule_id);
         const selected = match?.selected;
         const isOpen =
