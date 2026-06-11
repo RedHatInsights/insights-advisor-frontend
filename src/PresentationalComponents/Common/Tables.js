@@ -37,7 +37,8 @@ export const buildTagFilter = (tagFilters) => {
     ? {
         tags: tagFilters.flatMap((tagFilter) =>
           tagFilter.values.map(
-            (tag) => `${tagFilter.key}/${tag.tagKey}=${tag.value}`,
+            (tag) =>
+              `${tagFilter.key}/${tag.tagKey}=${tag.value != null && tag.value !== '' ? `${tag.value}` : ''}`,
           ),
         ),
       }
