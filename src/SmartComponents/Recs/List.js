@@ -36,6 +36,7 @@ import {
 } from '@patternfly/react-icons';
 import DownloadExecReport from '../../PresentationalComponents/ExecutiveReport/Download';
 import { EnvironmentContext } from '../../App';
+import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const PathwaysTable = lazy(
   () =>
@@ -44,9 +45,17 @@ const PathwaysTable = lazy(
     ),
 );
 
+const PathwaysTableNew = lazy(
+  () =>
+    import(
+      /* webpackChunkName: 'PathwaysTableNew' */ '../../PresentationalComponents/PathwaysTable/PathwaysTable.new'
+    ),
+);
+
 const List = () => {
   const { pathname } = useLocation();
   const navigate = useInsightsNavigate();
+  const useNewPathwaysTable = useFeatureFlag('advisor-tabletools-migration');
   const envContext = useContext(EnvironmentContext);
   const intl = useIntl();
 
@@ -186,7 +195,15 @@ const List = () => {
                         </Bullseye>
                       }
                     >
-                      <PathwaysTable isTabActive={activeTab === PATHWAYS_TAB} />
+                      {useNewPathwaysTable ? (
+                        <PathwaysTableNew
+                          isTabActive={activeTab === PATHWAYS_TAB}
+                        />
+                      ) : (
+                        <PathwaysTable
+                          isTabActive={activeTab === PATHWAYS_TAB}
+                        />
+                      )}
                     </Suspense>
                   )}
                 </Tab>

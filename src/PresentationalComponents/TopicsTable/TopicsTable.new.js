@@ -4,8 +4,6 @@ import { TimesCircleIcon } from '@patternfly/react-icons';
 import MessageState from '../MessageState/MessageState';
 import { StaticTableToolsTable } from 'bastilian-tabletools';
 import { SkeletonTable } from '@patternfly/react-component-groups';
-import { useIntl } from 'react-intl';
-import messages from '../../Messages';
 import columns from './Columns';
 import filters from './Filters';
 
@@ -22,32 +20,28 @@ import filters from './Filters';
  * @returns {JSX.Element} Topics table component
  */
 const TopicsTableNew = ({ props }) => {
-  const intl = useIntl();
   // eslint-disable-next-line react/prop-types
   const { data: topics = [], isLoading, isFetching, isError } = props;
-
-  const tableColumns = columns(intl);
-  const tableFilters = filters(intl);
 
   if (isError) {
     return (
       <MessageState
         icon={TimesCircleIcon}
-        title={intl.formatMessage(messages.topicsListNotopicsTitle)}
-        text={intl.formatMessage(messages.topicsListNotopicsBody)}
+        title="No topics"
+        text="This is a list of topics. Topics are a grouping construct that help users view and manage recommendations at a higher, aggregated level than individual recommendations."
       />
     );
   }
 
   if (isLoading || isFetching) {
-    return <SkeletonTable columns={tableColumns.map((c) => c.title)} />;
+    return <SkeletonTable columns={columns.map((c) => c.title)} />;
   }
 
   return (
     <StaticTableToolsTable
       items={topics}
-      columns={tableColumns}
-      filters={{ filterConfig: tableFilters }}
+      columns={columns}
+      filters={{ filterConfig: filters }}
       options={{
         pagination: false,
         sortBy: {

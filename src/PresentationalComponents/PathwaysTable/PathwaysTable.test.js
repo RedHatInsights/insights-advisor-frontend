@@ -10,6 +10,7 @@ import * as AppConstants from '../../AppConstants';
 import * as Filters from '../../Services/Filters';
 import * as PathwaysService from '../../Services/Pathways';
 import PathwaysTable from './PathwaysTable';
+import PathwaysTableNew from './PathwaysTable.new';
 import * as Tables from '../Common/Tables';
 
 const mockStore = configureStore([]);
@@ -423,13 +424,9 @@ const renderComponent = (
   storeState = initialStoreState,
   isTabActive = true,
   search = '',
-  featureFlagEnabled = false,
 ) => {
   const store = mockStore(storeState);
   reactRouterDom.useLocation.mockReturnValue({ search });
-
-  const { useFlag } = require('@unleash/proxy-client-react');
-  useFlag.mockReturnValue(featureFlagEnabled);
 
   return render(
     <MemoryRouter>
@@ -837,6 +834,23 @@ describe('PathwaysTable - Original Implementation', () => {
 });
 
 describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
+  const renderComponent = (
+    storeState = initialStoreState,
+    isTabActive = true,
+  ) => {
+    const store = mockStore(storeState);
+
+    return render(
+      <MemoryRouter>
+        <Provider store={store}>
+          <IntlProvider locale="en">
+            <PathwaysTableNew isTabActive={isTabActive} />
+          </IntlProvider>
+        </Provider>
+      </MemoryRouter>,
+    );
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockTableState = null;
@@ -853,7 +867,7 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
   });
 
   it('should render TableToolsTable when feature flag is enabled', async () => {
-    renderComponent(initialStoreState, true, '', true);
+    renderComponent(initialStoreState, true);
 
     await waitFor(() => {
       expect(screen.getByText('Pathway One')).toBeInTheDocument();
@@ -863,7 +877,6 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
   });
 
   it('should handle URL parameters on initial load with feature flag enabled', async () => {
-    const search = '?limit=5&category=Cloud&sort=-recommendation_level';
     Tables.paramParser.mockImplementation(() => ({
       limit: ['5'],
       category: ['Cloud'],
@@ -871,7 +884,7 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
       offset: ['0'],
     }));
 
-    renderComponent(initialStoreState, true, search, true);
+    renderComponent(initialStoreState, true);
 
     await waitFor(() => {
       expect(screen.getByText('Pathway One')).toBeInTheDocument();
@@ -879,12 +892,11 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
   });
 
   it('should handle invalid sort parameter and default to impacted_systems_count', async () => {
-    const search = '?sort=invalid_field';
     Tables.paramParser.mockImplementation(() => ({
       sort: ['invalid_field'],
     }));
 
-    renderComponent(initialStoreState, true, search, true);
+    renderComponent(initialStoreState, true);
 
     await waitFor(() => {
       expect(screen.getByText('Pathway One')).toBeInTheDocument();
@@ -892,12 +904,11 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
   });
 
   it('should convert non-array reboot_required to array', async () => {
-    const search = '?reboot_required=true';
     Tables.paramParser.mockImplementation(() => ({
       reboot_required: 'true',
     }));
 
-    renderComponent(initialStoreState, true, search, true);
+    renderComponent(initialStoreState, true);
 
     await waitFor(() => {
       expect(screen.getByText('Pathway One')).toBeInTheDocument();
@@ -905,12 +916,11 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
   });
 
   it('should convert non-array has_incident to array', async () => {
-    const search = '?has_incident=true';
     Tables.paramParser.mockImplementation(() => ({
       has_incident: true,
     }));
 
-    renderComponent(initialStoreState, true, search, true);
+    renderComponent(initialStoreState, true);
 
     await waitFor(() => {
       expect(screen.getByText('Pathway One')).toBeInTheDocument();
@@ -918,12 +928,11 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
   });
 
   it('should convert non-array category to array', async () => {
-    const search = '?category=security';
     Tables.paramParser.mockImplementation(() => ({
       category: 'security',
     }));
 
-    renderComponent(initialStoreState, true, search, true);
+    renderComponent(initialStoreState, true);
 
     await waitFor(() => {
       expect(screen.getByText('Pathway One')).toBeInTheDocument();
@@ -931,8 +940,6 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
   });
 
   it('should handle URL with all filter combinations', async () => {
-    const search =
-      '?text=test&category=security&has_incident=true&reboot_required=false';
     Tables.paramParser.mockImplementation(() => ({
       text: 'test',
       category: ['security'],
@@ -943,7 +950,7 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
       limit: ['50'],
     }));
 
-    renderComponent(initialStoreState, true, search, true);
+    renderComponent(initialStoreState, true);
 
     await waitFor(() => {
       expect(screen.getByText('Pathway One')).toBeInTheDocument();
@@ -951,12 +958,9 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
   });
 
   it('should not parse URL params when tab is not active', () => {
-    const search = '?category=security';
-    Tables.paramParser.mockImplementation(() => ({
-      category: ['security'],
-    }));
+    Tables.paramParser.mockImplementation(() => ({}));
 
-    renderComponent(initialStoreState, false, search, true);
+    renderComponent(initialStoreState, false);
 
     expect(Tables.paramParser).not.toHaveBeenCalled();
   });
@@ -1139,7 +1143,7 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
 
   describe('TableState Synchronization', () => {
     it('should have serializers in options', async () => {
-      renderComponent(initialStoreState, true, '', true);
+      renderComponent(initialStoreState, true);
 
       await waitFor(() => {
         expect(screen.getByText('Pathway One')).toBeInTheDocument();

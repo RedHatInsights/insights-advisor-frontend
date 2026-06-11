@@ -1,28 +1,26 @@
-import React from 'react';
 import {
   Name as NameCell,
   Featured as FeaturedCell,
   AffectedSystems as AffectedSystemsCell,
 } from './Cells';
-import messages from '../../Messages';
 
-export const Name = (intl) => ({
-  title: intl.formatMessage(messages.name),
+export const Name = {
+  title: 'Name',
   Component: NameCell,
   sortable: 'name',
   props: { colSpan: 2 },
-});
+};
 
-export const Featured = (intl) => ({
-  title: intl.formatMessage(messages.featured),
-  Component: (props) => <FeaturedCell {...props} intl={intl} />,
+export const Featured = {
+  title: 'Featured',
+  Component: FeaturedCell,
   sortable: 'featured',
-});
+};
 
-export const AffectedSystems = (intl) => ({
-  title: intl.formatMessage(messages.affectedSystems),
+export const AffectedSystems = {
+  title: 'Affected systems',
   Component: AffectedSystemsCell,
   sortable: 'impacted_systems_count',
-});
+};
 
-export default (intl) => [Name(intl), Featured(intl), AffectedSystems(intl)];
+export default [Name, Featured, AffectedSystems];

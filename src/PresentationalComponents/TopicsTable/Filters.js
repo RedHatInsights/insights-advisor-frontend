@@ -1,9 +1,7 @@
-import messages from '../../Messages';
-
-export const nameFilter = (intl) => ({
+export const nameFilter = {
   type: 'text',
-  label: intl.formatMessage(messages.name).toLowerCase(),
+  label: 'name',
   filterAttribute: 'name',
-});
+};
 
-export default (intl) => [nameFilter(intl)];
+export default [nameFilter];

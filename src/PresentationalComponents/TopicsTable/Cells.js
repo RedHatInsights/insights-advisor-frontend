@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Label } from '@patternfly/react-core/dist/esm/components/Label/Label';
 import { StarIcon } from '@patternfly/react-icons';
 import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
-import messages from '../../Messages';
 
 /**
  * Renders topic name as a clickable link to the topic detail page
@@ -20,17 +19,16 @@ Name.propTypes = {
 /**
  * Renders a featured badge if the topic is marked as featured
  */
-export const Featured = ({ featured, intl }) => {
+export const Featured = ({ featured }) => {
   return featured ? (
     <Label className="pf-m-compact" color="blue" icon={<StarIcon />}>
-      {intl.formatMessage(messages.featured)}
+      Featured
     </Label>
   ) : null;
 };
 
 Featured.propTypes = {
   featured: PropTypes.bool,
-  intl: PropTypes.object,
 };
 
 /**
