@@ -206,6 +206,71 @@ describe('buildTagFilter', () => {
     expect(result.tags[0]).not.toContain('%20');
   });
 
+  test('omits value but keeps = when tag value is empty string', () => {
+    const tagFilters = [
+      {
+        key: 'insights-client',
+        values: [{ tagKey: 'group', value: '' }],
+      },
+    ];
+
+    expect(buildTagFilter(tagFilters)).toEqual({
+      tags: ['insights-client/group='],
+    });
+  });
+
+  test('omits value but keeps = when tag value is null', () => {
+    const tagFilters = [
+      {
+        key: 'insights-client',
+        values: [{ tagKey: 'group', value: null }],
+      },
+    ];
+
+    expect(buildTagFilter(tagFilters)).toEqual({
+      tags: ['insights-client/group='],
+    });
+  });
+
+  test('omits value but keeps = when tag value is undefined', () => {
+    const tagFilters = [
+      {
+        key: 'insights-client',
+        values: [{ tagKey: 'group' }],
+      },
+    ];
+
+    expect(buildTagFilter(tagFilters)).toEqual({
+      tags: ['insights-client/group='],
+    });
+  });
+
+  test('preserves tag value when it is 0', () => {
+    const tagFilters = [
+      {
+        key: 'insights-client',
+        values: [{ tagKey: 'priority', value: 0 }],
+      },
+    ];
+
+    expect(buildTagFilter(tagFilters)).toEqual({
+      tags: ['insights-client/priority=0'],
+    });
+  });
+
+  test('preserves tag value when it is false', () => {
+    const tagFilters = [
+      {
+        key: 'insights-client',
+        values: [{ tagKey: 'enabled', value: false }],
+      },
+    ];
+
+    expect(buildTagFilter(tagFilters)).toEqual({
+      tags: ['insights-client/enabled=false'],
+    });
+  });
+
   test('does not URI-encode equals signs in tag values', () => {
     const tagFilters = [
       {
