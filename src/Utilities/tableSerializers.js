@@ -64,13 +64,19 @@ export const filtersSerialiser = (state, filters) => {
     // Fallback to generic serialization
     switch (filterConfig.type) {
       case 'text':
-        params[filterConfig.filterAttribute] = Array.isArray(value) ? value[0] : value;
+        params[filterConfig.filterAttribute] = Array.isArray(value)
+          ? value[0]
+          : value;
         break;
       case 'checkbox':
-        params[filterConfig.filterAttribute] = Array.isArray(value) ? value : [value];
+        params[filterConfig.filterAttribute] = Array.isArray(value)
+          ? value
+          : [value];
         break;
       case 'radio':
-        params[filterConfig.filterAttribute] = Array.isArray(value) ? value[0] : value;
+        params[filterConfig.filterAttribute] = Array.isArray(value)
+          ? value[0]
+          : value;
         break;
       default:
         params[filterConfig.filterAttribute] = value;

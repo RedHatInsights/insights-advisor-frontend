@@ -1,6 +1,6 @@
 import './_Details.scss';
 
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Content,
   ContentVariants,
@@ -20,7 +20,7 @@ import { Truncate } from '@redhat-cloud-services/frontend-components/Truncate';
 import messages from '../../Messages';
 import { updateRecFilters } from '../../Services/Filters';
 import { useDispatch } from 'react-redux';
-import { useGetTopicQuery } from '../../Services/Topics';
+import { useFetchTopic } from '../../Services/apiClient';
 import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -40,13 +40,29 @@ const Details = () => {
   let options = selectedTags?.length && { tags: selectedTags };
   workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
   const hasEdgeDevices = useContext(AccountStatContext);
+  const fetchTopic = useFetchTopic();
 
-  const {
-    data: topic = {},
-    isLoading,
-    isFetching,
-    isError,
-  } = useGetTopicQuery({ ...options, ...{ topicId } });
+  const [topic, setTopic] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    const loadTopic = async () => {
+      setIsFetching(true);
+      try {
+        const data = await fetchTopic(topicId, options);
+        setTopic(data);
+        setIsError(false);
+      } catch (error) {
+        setIsError(error);
+      } finally {
+        setIsLoading(false);
+        setIsFetching(false);
+      }
+    };
+    loadTopic();
+  }, [fetchTopic, topicId, JSON.stringify(options)]);
 
   useEffect(() => {
     const initiaRecFilters = { ...recFilters };

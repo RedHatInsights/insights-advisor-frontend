@@ -46,14 +46,14 @@ describe('PathwaysTable Filters', () => {
   });
 
   describe('incidentFilter', () => {
-    it('should serialize incident array with true', () => {
+    it('should serialize incident array with true (camelCase for insights-client)', () => {
       const result = incidentFilter.filterSerialiser(['true']);
-      expect(result).toEqual({ has_incident: ['true'] });
+      expect(result).toEqual({ hasIncident: 'true' });
     });
 
-    it('should serialize incident array with false', () => {
+    it('should serialize incident array with false (camelCase for insights-client)', () => {
       const result = incidentFilter.filterSerialiser(['false']);
-      expect(result).toEqual({ has_incident: ['false'] });
+      expect(result).toEqual({ hasIncident: 'false' });
     });
 
     it('should return empty object for empty array', () => {
@@ -65,17 +65,22 @@ describe('PathwaysTable Filters', () => {
       const result = incidentFilter.filterSerialiser('true');
       expect(result).toEqual({});
     });
+
+    it('should extract first element from array', () => {
+      const result = incidentFilter.filterSerialiser(['true', 'false']);
+      expect(result).toEqual({ hasIncident: 'true' });
+    });
   });
 
   describe('rebootFilter', () => {
-    it('should serialize reboot array with true', () => {
+    it('should serialize reboot array with true (camelCase for insights-client)', () => {
       const result = rebootFilter.filterSerialiser(['true']);
-      expect(result).toEqual({ reboot_required: ['true'] });
+      expect(result).toEqual({ rebootRequired: 'true' });
     });
 
-    it('should serialize reboot array with false', () => {
+    it('should serialize reboot array with false (camelCase for insights-client)', () => {
       const result = rebootFilter.filterSerialiser(['false']);
-      expect(result).toEqual({ reboot_required: ['false'] });
+      expect(result).toEqual({ rebootRequired: 'false' });
     });
 
     it('should return empty object for empty array', () => {
@@ -86,6 +91,11 @@ describe('PathwaysTable Filters', () => {
     it('should handle non-array values', () => {
       const result = rebootFilter.filterSerialiser('true');
       expect(result).toEqual({});
+    });
+
+    it('should extract first element from array', () => {
+      const result = rebootFilter.filterSerialiser(['false', 'true']);
+      expect(result).toEqual({ rebootRequired: 'false' });
     });
   });
 });

@@ -49,7 +49,8 @@ export const combineParamsWithTableState = (
   additionalParams,
 ) => {
   const { filters: tableFilters, ...restTableParams } = tableStateParams || {};
-  const { filters: optionFilters, ...restAdditionalParams } = additionalParams || {};
+  const { filters: optionFilters, ...restAdditionalParams } =
+    additionalParams || {};
 
   // Flatten filters to root level for Advisor API
   return {

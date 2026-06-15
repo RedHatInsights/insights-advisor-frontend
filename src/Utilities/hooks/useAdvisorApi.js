@@ -3,8 +3,6 @@ import { APIFactory } from '@redhat-cloud-services/javascript-clients-shared';
 import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import * as insightsApi from '@redhat-cloud-services/insights-client';
 
-const API_BASE_URL = '/api/insights/v1';
-
 /**
  * Hook to get an Advisor javascript-client or specific endpoint function
  *
@@ -33,7 +31,9 @@ const useAdvisorApi = (endpoint) => {
     // BaseAPI concatenates: (this.basePath || basePath) + path
     // We need basePath to resolve to empty string in concatenation
     // Passing window.location.origin as a hack since paths are absolute
-    const apiInstance = APIFactory(window.location.origin, insightsApi, { axios });
+    const apiInstance = APIFactory(window.location.origin, insightsApi, {
+      axios,
+    });
     return endpoint ? apiInstance[endpoint] : apiInstance;
   }, [axios, endpoint]);
 

@@ -146,7 +146,7 @@ describe('useTableToolsQuery helpers', () => {
       const mockCompileResult = jest.fn((result) => result);
       const params = { offset: 0, limit: 20, hasIncident: 'true' };
 
-      const result = await fetchResult(
+      await fetchResult(
         mockApiCall,
         params,
         mockConvertToArray,

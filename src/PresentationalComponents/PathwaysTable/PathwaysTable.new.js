@@ -4,7 +4,7 @@ import { TableToolsTable, TableStateProvider } from 'bastilian-tabletools';
 import { useSelector } from 'react-redux';
 import columns from './Columns';
 import filters from './Filters';
-import { usePathwaysQuery } from '../../Services/Pathways/usePathwaysQuery';
+import usePathwaysQuery from '../../Services/hooks/usePathwaysQuery';
 import { workloadQueryBuilder } from '../Common/Tables';
 import useAdvisorTableDefaults from '../../Utilities/useAdvisorTableDefaults';
 
@@ -20,7 +20,7 @@ import useAdvisorTableDefaults from '../../Utilities/useAdvisorTableDefaults';
  * @returns {React.Element} TableToolsTable component with pathways data
  */
 const PathwaysTableInner = ({ isTabActive, selectedTags, workloads }) => {
-  const advisorTableDefaults = useAdvisorTableDefaults();
+  const advisorTableDefaults = useAdvisorTableDefaults({ columns, filters });
   const filterConfig = useMemo(() => ({ filterConfig: filters }), []);
 
   /**
@@ -43,11 +43,14 @@ const PathwaysTableInner = ({ isTabActive, selectedTags, workloads }) => {
     return params;
   }, [selectedTags, workloads]);
 
-  const { items, loading } = usePathwaysQuery({
+  const { data, loading } = usePathwaysQuery({
     useTableState: true,
-    enabled: isTabActive,
-    additionalParams,
+    skip: !isTabActive,
+    params: additionalParams,
   });
+
+  const items = data?.data || [];
+  const total = data?.meta?.total;
 
   const tableOptions = useMemo(
     () => ({
@@ -60,6 +63,7 @@ const PathwaysTableInner = ({ isTabActive, selectedTags, workloads }) => {
   return (
     <TableToolsTable
       items={items}
+      total={total}
       columns={columns}
       filters={filterConfig}
       options={tableOptions}

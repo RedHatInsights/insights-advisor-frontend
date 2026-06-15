@@ -1,6 +1,6 @@
 export const nameFilter = {
   type: 'text',
-  label: 'name',
+  label: 'Name',
   filterAttribute: 'name',
 };
 
