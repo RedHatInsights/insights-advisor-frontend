@@ -30,15 +30,17 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
   const currentRequestBasePath =
     finalEnvContext.customBasePath || DEFAULT_API_BASE_PATH;
 
-  cy.intercept(`${currentRequestBasePath}/topic/123/?topicId=123`, {
-    name: 'Amazon Web Services (AWS)',
-    slug: 'aws',
-    description:
-      'Increase stability of your RHEL workloads running on Amazon Web Services by applying these recommendations.',
-    tag: 'aws',
-    featured: true,
-    enabled: true,
-    impacted_systems_count: 0,
+  cy.intercept(`${currentRequestBasePath}/topic/123/`, {
+    data: {
+      name: 'Amazon Web Services (AWS)',
+      slug: 'aws',
+      description:
+        'Increase stability of your RHEL workloads running on Amazon Web Services by applying these recommendations.',
+      tag: 'aws',
+      featured: true,
+      enabled: true,
+      impacted_systems_count: 0,
+    },
   }).as('topic_details_call');
 
   // Intercept for rules table call (general)
