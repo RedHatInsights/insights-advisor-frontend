@@ -5,20 +5,20 @@ import {
   filtersSerialiser,
 } from './tableSerializers';
 
-const useAdvisorTableDefaults = (sortBy) => {
+const useAdvisorTableDefaults = ({ sortBy, columns, filters } = {}) => {
   const defaults = useMemo(
     () => ({
       serialisers: {
         pagination: paginationSerialiser,
-        sort: sortSerialiser,
-        filters: filtersSerialiser,
+        sort: (sortState) => sortSerialiser(sortState, columns),
+        filters: (filterState) => filtersSerialiser(filterState, filters),
       },
       variant: 'compact',
       isStickyHeader: true,
       perPage: 20,
       ...(sortBy ? { sortBy } : {}),
     }),
-    [sortBy],
+    [sortBy, columns, filters],
   );
 
   return defaults;
