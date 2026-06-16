@@ -60,9 +60,7 @@ export const createOptions = (
       rhel_version: osFilter.join(','),
     }),
     ...(filters?.hostGroupFilter?.length && {
-      groups: filters.hostGroupFilter.map((group) =>
-        typeof group === 'object' ? group.name : group,
-      ),
+      groups: filters.hostGroupFilter.join(','),
     }),
     ...(filters.tagFilters?.length && buildTagFilter(filters.tagFilters)),
     ...(workloads ? workloadQueryBuilder(workloads) : {}),
