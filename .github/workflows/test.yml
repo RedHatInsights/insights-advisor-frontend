@@ -23,8 +23,11 @@ jobs:
       - name: Validate PR commits with commitlint
         if: github.event_name == 'pull_request'
         run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
-      - name: Run tests with coverage
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: npm run ci:verify
+      - run: npm run ci:verify
+      - name: Upload code coverage
+        uses: codecov/codecov-action@v6.0.1
+        with:
+          fail_ci_if_error: true
+          files: ./coverage/coverage-final.json,./coverage-jest/coverage-final.json,./coverage-cypress/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }}
       - run: npm run build
