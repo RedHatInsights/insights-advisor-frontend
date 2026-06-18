@@ -173,18 +173,22 @@ describe('systemsApiMock', () => {
         display_name: 'prod-web-1',
         critical_hits: 2,
         important_hits: 1,
+        group_name: 'production',
       }),
       createMockSystem({
         display_name: 'prod-db-1',
         important_hits: 3,
+        group_name: 'production',
       }),
       createMockSystem({
         display_name: 'test-app-1',
         low_hits: 2,
+        group_name: 'staging',
       }),
       createMockSystem({
         display_name: 'test-app-2',
         incident_hits: 1,
+        group_name: 'development',
       }),
     ];
 
@@ -223,6 +227,35 @@ describe('systemsApiMock', () => {
       filtered.forEach((sys) => {
         expect(sys.incident_hits).toBe(0);
       });
+    });
+
+    it('filters by single group name', () => {
+      const filtered = filterSystems(systems, { groups: ['production'] });
+      expect(filtered).toHaveLength(2);
+      filtered.forEach((sys) => {
+        expect(sys.group_name).toBe('production');
+      });
+    });
+
+    it('filters by multiple group names', () => {
+      const filtered = filterSystems(systems, {
+        groups: ['production', 'staging'],
+      });
+      expect(filtered).toHaveLength(3);
+      const groupNames = filtered.map((sys) => sys.group_name);
+      expect(groupNames).toContain('production');
+      expect(groupNames).toContain('staging');
+      expect(groupNames).not.toContain('development');
+    });
+
+    it('returns empty array when no systems match group filter', () => {
+      const filtered = filterSystems(systems, { groups: ['nonexistent'] });
+      expect(filtered).toHaveLength(0);
+    });
+
+    it('does not filter when groups array is empty', () => {
+      const filtered = filterSystems(systems, { groups: [] });
+      expect(filtered).toHaveLength(systems.length);
     });
   });
 

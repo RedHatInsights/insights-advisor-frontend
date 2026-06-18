@@ -122,7 +122,7 @@ describe('createOptions', () => {
     ).toEqual('9.0,9.1,9.5,9.3,9.4,9.2,8.0,8.2');
   });
 
-  it('returns a groups prop in the API options when hostGroupFilter is in filters', () => {
+  it('returns a groups prop as comma-separated string when hostGroupFilter contains strings', () => {
     const hostGroupFilter = ['group1', 'group2'];
 
     expect(
@@ -139,6 +139,63 @@ describe('createOptions', () => {
         systemsPage,
       ).groups,
     ).toEqual('group1,group2');
+  });
+
+  it('returns a groups prop with names when hostGroupFilter contains strings', () => {
+    const hostGroupFilter = ['production', 'staging'];
+
+    expect(
+      createOptions(
+        advisorFilters,
+        page,
+        per_page,
+        sort,
+        pathway,
+        { hostGroupFilter },
+        selectedTags,
+        workloads,
+        SID,
+        systemsPage,
+      ).groups,
+    ).toEqual('production,staging');
+  });
+
+  it('returns a groups prop with multiple group names in hostGroupFilter', () => {
+    const hostGroupFilter = ['development', 'production'];
+
+    expect(
+      createOptions(
+        advisorFilters,
+        page,
+        per_page,
+        sort,
+        pathway,
+        { hostGroupFilter },
+        selectedTags,
+        workloads,
+        SID,
+        systemsPage,
+      ).groups,
+    ).toEqual('development,production');
+  });
+
+  it('does not include groups prop when hostGroupFilter is empty', () => {
+    const hostGroupFilter = [];
+
+    const options = createOptions(
+      advisorFilters,
+      page,
+      per_page,
+      sort,
+      pathway,
+      { hostGroupFilter },
+      selectedTags,
+      workloads,
+      SID,
+      systemsPage,
+    );
+
+    expect(options.groups).toBeUndefined();
   });
 
   it('returns a tags prop in the API options when tagFilters is in filters', () => {

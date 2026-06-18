@@ -296,6 +296,66 @@ describe('Systems', () => {
       });
     });
 
+    it('applies workspace group filter when hostGroupFilter is provided', async () => {
+      const mockSystemsData = mockScenarios.allSystems();
+      mockAxiosGet.mockResolvedValue(mockSystemsData);
+
+      render(<ComponentWithContext Component={SystemsTable} />);
+
+      const inventoryTableProps = InventoryTable.mock.calls[0][0];
+      const mockDefaultGetEntities = jest.fn().mockResolvedValue({
+        results: [],
+        total: 0,
+      });
+
+      const configWithGroupFilter = {
+        ...mockGetEntitiesConfig,
+        filters: {
+          hostGroupFilter: ['production', 'staging'],
+        },
+      };
+
+      await inventoryTableProps.getEntities(
+        [],
+        configWithGroupFilter,
+        true,
+        mockDefaultGetEntities,
+      );
+
+      const callParams = mockAxiosGet.mock.calls[0][1].params;
+      expect(callParams.groups).toBe('production,staging');
+    });
+
+    it('handles group names as strings in hostGroupFilter', async () => {
+      const mockSystemsData = mockScenarios.allSystems();
+      mockAxiosGet.mockResolvedValue(mockSystemsData);
+
+      render(<ComponentWithContext Component={SystemsTable} />);
+
+      const inventoryTableProps = InventoryTable.mock.calls[0][0];
+      const mockDefaultGetEntities = jest.fn().mockResolvedValue({
+        results: [],
+        total: 0,
+      });
+
+      const configWithGroupStrings = {
+        ...mockGetEntitiesConfig,
+        filters: {
+          hostGroupFilter: ['production', 'staging'],
+        },
+      };
+
+      await inventoryTableProps.getEntities(
+        [],
+        configWithGroupStrings,
+        true,
+        mockDefaultGetEntities,
+      );
+
+      const callParams = mockAxiosGet.mock.calls[0][1].params;
+      expect(callParams.groups).toBe('production,staging');
+    });
+
     it('returns low-risk systems when filtered', async () => {
       const mockLowRiskSystems = mockScenarios.lowRiskOnly();
       mockAxiosGet.mockResolvedValue(mockLowRiskSystems);
