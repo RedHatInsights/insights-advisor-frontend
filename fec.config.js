@@ -9,6 +9,7 @@ module.exports = {
   debug: true,
   useProxy: process.env.PROXY === 'true',
   proxyVerbose: true,
+  SPAFallback: process.env.IOP !== 'true',
   devtool: 'hidden-source-map',
   plugins: [
     // Put the Sentry Webpack plugin after all other plugins
