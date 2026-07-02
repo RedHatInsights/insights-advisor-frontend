@@ -58,7 +58,12 @@
       "!src/PresentationalComponents/Cards/OverviewDashbarCard/IopOverviewDashbarCard.js",
       "!src/PresentationalComponents/ExecutiveReport/BuildExecReport.js",
       "!src/PresentationalComponents/Export/SystemsPdfBuild.js",
-      "!src/PresentationalComponents/Export/TablePage.js"
+      "!src/PresentationalComponents/Export/TablePage.js",
+      "!src/PresentationalComponents/RulesTable/RulesTable.new.js",
+      "!src/PresentationalComponents/RulesTable/Cells.js",
+      "!src/PresentationalComponents/RulesTable/Columns.js",
+      "!src/PresentationalComponents/RulesTable/Filters.js",
+      "!src/PresentationalComponents/RulesTable/RuleDetailsWrapper.js"
     ],
     "moduleNameMapper": {
       "\\.(css|scss)$": "identity-obj-proxy",
@@ -102,6 +107,7 @@
     "@scalprum/react-core": "^0.11.1",
     "@sentry/cli": "^2.32.1",
     "@sentry/webpack-plugin": "^2.17.0",
+    "@tanstack/react-query": "^5.100.14",
     "@typescript-eslint/parser": "^8.34.0",
     "@unleash/proxy-client-react": "^4.2.4",
     "babel-plugin-transform-inline-environment-variables": "^0.4.4",

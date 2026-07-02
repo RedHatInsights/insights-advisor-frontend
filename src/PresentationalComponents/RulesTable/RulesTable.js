@@ -55,8 +55,10 @@ import { AccountStatContext } from '../../ZeroStateWrapper';
 import { SkeletonTable } from '@patternfly/react-component-groups';
 import { EnvironmentContext } from '../../App';
 import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
+import { useFeatureFlag } from '../../Utilities/Hooks';
+import RulesTableNew from './RulesTable.new';
 
-const RulesTable = ({ isTabActive, pathway, onRuleChange }) => {
+const RulesTableOriginal = ({ isTabActive, pathway, onRuleChange }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
@@ -439,6 +441,34 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange }) => {
         />
       </TableToolbar>
     </React.Fragment>
+  );
+};
+
+RulesTableOriginal.propTypes = {
+  isTabActive: PropTypes.bool,
+  pathway: PropTypes.string,
+  onRuleChange: PropTypes.func,
+};
+
+const RulesTable = ({ isTabActive, pathway, onRuleChange }) => {
+  const tabletoolsEnabled = useFeatureFlag('advisor-tabletools-migration');
+
+  if (tabletoolsEnabled) {
+    return (
+      <RulesTableNew
+        isTabActive={isTabActive}
+        pathway={pathway}
+        onRuleChange={onRuleChange}
+      />
+    );
+  }
+
+  return (
+    <RulesTableOriginal
+      isTabActive={isTabActive}
+      pathway={pathway}
+      onRuleChange={onRuleChange}
+    />
   );
 };
 
