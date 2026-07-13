@@ -3,8 +3,8 @@ import {
   FILTER_CATEGORIES as FC,
   PATHWAYS_FILTER_CATEGORIES as PFC,
 } from '../../AppConstants';
-import { useLocation } from 'react-router-dom';
-import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
+import { useLocation, Link } from 'react-router-dom';
+import { EnvironmentContext } from '../../App';
 
 import {
   Pagination,
@@ -54,6 +54,7 @@ const PathwaysTable = ({ isTabActive }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const { search } = useLocation();
+  const envContext = React.useContext(EnvironmentContext);
 
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
@@ -66,6 +67,8 @@ const PathwaysTable = ({ isTabActive }) => {
       ...{ tags: selectedTags.join(',') },
     });
   workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
+  const customBasePath = envContext?.BASE_URL;
+  customBasePath && (options = { ...options, customBasePath });
   const {
     data: pathways = [],
     isFetching,
@@ -163,7 +166,7 @@ const PathwaysTable = ({ isTabActive }) => {
                   <span key={key}>
                     <Link
                       key={key}
-                      to={`/recommendations/pathways/${pathway.slug}`}
+                      to={`${envContext?.pathwayDetailBasePath || '/insights/advisor/recommendations/pathways'}/${pathway.slug}`}
                     >
                       {' '}
                       {pathway.name}{' '}
@@ -187,7 +190,7 @@ const PathwaysTable = ({ isTabActive }) => {
                 title: (
                   <Link
                     key={key}
-                    to={`/recommendations/pathways/${pathway.slug}`}
+                    to={`${envContext?.pathwayDetailBasePath || '/insights/advisor/recommendations/pathways'}/${pathway.slug}`}
                   >
                     {`${pathway.impacted_systems_count.toLocaleString()}`}
                   </Link>

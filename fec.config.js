@@ -82,6 +82,10 @@ module.exports = {
         __dirname,
         './src/SmartComponents/Recs/ListWrapped.js',
       ),
+      './PathwayDetailsWrapped': resolve(
+        __dirname,
+        './src/SmartComponents/Recs/PathwayDetailsWrapped.js',
+      ),
     },
   },
   _unstableSpdy: true,

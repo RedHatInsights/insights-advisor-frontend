@@ -35,6 +35,13 @@ import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 import { systemsCheck } from './helpers';
 import { EnvironmentContext } from '../../App';
 
+const PathwaySystems = lazy(
+  () =>
+    import(
+      /* webpackChunkName: 'PathwaySystems' */ '../HybridInventoryTabs/ConventionalSystems/PathwaySystems'
+    ),
+);
+
 const RulesTable = lazy(
   () =>
     import(
@@ -42,11 +49,13 @@ const RulesTable = lazy(
     ),
 );
 
-const PathwayDetails = () => {
+const PathwayDetails = (props) => {
   const intl = useIntl();
-  const pathwayName = useParams().id;
+  const params = useParams();
+  const pathwayName = props.pathwayId || params.id;
   const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
+  const loadChromeless = envContext.loadChromeless;
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const recFilters = useSelector(({ filters }) => filters.recState);
@@ -62,6 +71,8 @@ const PathwayDetails = () => {
       ...{ tags: selectedTags.join(',') },
     });
   workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
+  const customBasePath = envContext?.BASE_URL;
+  customBasePath && (options = { ...options, customBasePath });
   const { data: pathway = {}, isFetching } = useGetPathwayQuery({
     ...options,
     slug: pathwayName,
@@ -222,19 +233,30 @@ const PathwayDetails = () => {
               </TabTitleText>
             }
           >
-            {isFetching ? (
-              <Loading />
-            ) : (
-              <Suspense fallback={<Loading />}>
-                <HybridInventory
-                  pathway={pathway}
-                  selectedTags={selectedTags}
-                  workloads={workloads}
-                  tabPathname={`/insights/advisor/recommendations/pathways/${pathwayName}`}
-                  conventionalSystemsCount={conventionalSystemsCount}
-                  areCountsLoading={areCountsLoading}
-                />
-              </Suspense>
+            {activeTab === 1 && (
+              isFetching ? (
+                <Loading />
+              ) : (
+                <Suspense fallback={<Loading />}>
+                  {loadChromeless ? (
+                    <PathwaySystems
+                      pathway={pathway}
+                      selectedTags={selectedTags}
+                      workloads={workloads}
+                      axios={props.axios}
+                    />
+                  ) : (
+                    <HybridInventory
+                      pathway={pathway}
+                      selectedTags={selectedTags}
+                      workloads={workloads}
+                      tabPathname={`/insights/advisor/recommendations/pathways/${pathwayName}`}
+                      conventionalSystemsCount={conventionalSystemsCount}
+                      areCountsLoading={areCountsLoading}
+                    />
+                  )}
+                </Suspense>
+              )
             )}
           </Tab>
         </Tabs>
@@ -245,5 +267,7 @@ const PathwayDetails = () => {
 
 PathwayDetails.propTypes = {
   isImmutableTabOpen: PropTypes.bool,
+  pathwayId: PropTypes.string,
+  axios: PropTypes.object,
 };
 export default PathwayDetails;

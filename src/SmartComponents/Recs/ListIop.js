@@ -1,5 +1,5 @@
 import './ListIop.scss';
-import React, { useContext, useEffect } from 'react';
+import React, { lazy, Suspense, useContext, useEffect, useState } from 'react';
 import {
   PageHeader,
   PageHeaderTitle,
@@ -17,6 +17,9 @@ import {
   Text,
   TextVariants,
   Icon,
+  Tab,
+  TabTitleText,
+  Tabs,
 } from '@patternfly/react-core';
 
 import {
@@ -27,9 +30,18 @@ import {
 import { EnvironmentContext } from '../../App';
 import IopOverviewDashbar from '../../PresentationalComponents/OverviewDashbar/IopOverviewDashbar';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
+import Loading from '../../PresentationalComponents/Loading/Loading';
+
+const PathwaysTable = lazy(
+  () =>
+    import(
+      /* webpackChunkName: 'PathwaysTable' */ '../../PresentationalComponents/PathwaysTable/PathwaysTable'
+    ),
+);
 
 const ListIop = () => {
   const envContext = useContext(EnvironmentContext);
+  const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
     envContext.updateDocumentTitle('Recommendations - Advisor');
@@ -72,10 +84,7 @@ const ListIop = () => {
                           }
                         >
                           Assessing RHEL Configuration Issues Using the Red Hat
-                          {envContext.isLightspeedEnabled
-                            ? 'Lightspeed'
-                            : 'Insights'}
-                          Advisor Service
+                          Insights Advisor Service
                           <Icon className="pf-v5-u-ml-xs">
                             <ExternalLinkAltIcon />
                           </Icon>
@@ -102,17 +111,52 @@ const ListIop = () => {
         />
       </PageHeader>
       <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
-        <Stack hasGutter>
-          <StackItem>
-            <IopOverviewDashbar
-              changeTab={0}
-              onRefetchReady={handleOverviewRefetchReady}
-            />
-          </StackItem>
-          <StackItem>
-            <RulesTable onRuleChange={handleRuleChange} />
-          </StackItem>
-        </Stack>
+        {envContext.displayRecPathways ? (
+          <Tabs
+            className="adv__background--global-100"
+            activeKey={activeTab}
+            onSelect={(_e, tab) => setActiveTab(tab)}
+          >
+            <Tab
+              eventKey={0}
+              title={<TabTitleText>Recommendations</TabTitleText>}
+            >
+              <Stack hasGutter>
+                <StackItem>
+                  <IopOverviewDashbar
+                    changeTab={0}
+                    onRefetchReady={handleOverviewRefetchReady}
+                  />
+                </StackItem>
+                <StackItem>
+                  <RulesTable onRuleChange={handleRuleChange} />
+                </StackItem>
+              </Stack>
+            </Tab>
+            <Tab
+              eventKey={1}
+              title={<TabTitleText>Pathways</TabTitleText>}
+            >
+              {activeTab === 1 && (
+                <Suspense fallback={<Loading />}>
+                  <PathwaysTable isTabActive={activeTab === 1} />
+                </Suspense>
+              )}
+            </Tab>
+          </Tabs>
+        ) : (
+          <Stack hasGutter>
+            <StackItem>
+              <IopOverviewDashbar
+                changeTab={0}
+                onRefetchReady={handleOverviewRefetchReady}
+              />
+            </StackItem>
+            <StackItem>
+              <RulesTable onRuleChange={handleRuleChange} />
+            </StackItem>
+          </Stack>
+        )}
       </section>
     </React.Fragment>
   );

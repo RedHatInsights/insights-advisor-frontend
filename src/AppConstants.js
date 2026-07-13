@@ -509,7 +509,7 @@ export const IOP_ENVIRONMENT_CONTEXT = {
   isAllowedToViewRec: false, // set later according to user permissions
   displayGroupsTagsColumns: false,
   displayRuleRatings: false,
-  displayRecPathways: false,
+  displayRecPathways: true,
   displayExecReportLink: false,
   displayDownloadPlaybookButton: true,
   changeRemediationButtonForIop: true,
@@ -533,4 +533,5 @@ export const IOP_ENVIRONMENT_CONTEXT = {
   EDGE_DEVICE_BASE_URL: '/insights_cloud/api/edge/v1',
   INVENTORY_BASE_URL: '/insights_cloud/api/inventory/v1',
   REMEDIATIONS_BASE_URL: '/insights_cloud/api/remediations/v1',
+  pathwayDetailBasePath: '/foreman_rh_cloud/recommendations/pathways',
 };
