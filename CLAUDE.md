@@ -24,9 +24,18 @@ npm start              # Start dev server
 npm run build          # Production build
 npm test               # Run Jest tests
 npm run test:ct        # Run Cypress component tests
+npm run test:openct    # Run Cypress component tests (interactive)
 npm run test:coverage  # Generate coverage report
+npm run lint           # Run all linters (JS + SASS)
 ```
 
+### Development
+
+```bash
+npm install            # Install dependencies (runs ts-patch install via postinstall)
+npm run start:proxy    # Dev server with proxy to stage environment
+npm run static         # Static build (for use with insights-chrome)
+```
 
 ## Architecture Overview
 
