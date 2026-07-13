@@ -5,6 +5,7 @@ import {
 } from '../../AppConstants';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 
 import {
   Pagination,
@@ -162,69 +163,83 @@ const PathwaysTable = ({ isTabActive }) => {
           },
         ]
       : pathways.flatMap((pathway, key) => {
-          const detailPath = envContext.pathwayDetailBasePath
-            ? `${envContext.pathwayDetailBasePath}/${pathway.slug}`
-            : null;
           return [
-          {
-            cells: [
-              {
-                title: (
-                  <span key={key}>
-                    {detailPath ? (
-                      <Link key={key} to={detailPath}>
-                        {' '}
-                        {pathway.name}{' '}
-                      </Link>
-                    ) : (
-                      ` ${pathway.name} `
-                    )}
-                    {pathway.has_incident && (
-                      <RuleLabels rule={{ tags: 'incident' }} isCompact />
-                    )}
-                  </span>
-                ),
-              },
-              {
-                title: (
-                  <CategoryLabel
-                    key={key}
-                    labelList={pathway.categories}
-                    isCompact
-                  />
-                ),
-              },
-              {
-                title: detailPath ? (
-                  <Link key={key} to={detailPath}>
-                    {`${pathway.impacted_systems_count.toLocaleString()}`}
-                  </Link>
-                ) : (
-                  `${pathway.impacted_systems_count.toLocaleString()}`
-                ),
-              },
-              {
-                title: (
-                  <span key={key}>
-                    {intl.formatMessage(
-                      pathway.reboot_required
-                        ? messages.required
-                        : messages.notRequired,
-                    )}
-                  </span>
-                ),
-              },
-              {
-                title: (
-                  <RecommendationLevel
-                    key={key}
-                    recLvl={pathway.recommendation_level}
-                  />
-                ),
-              },
-            ],
-          },
-        ];
+            {
+              cells: [
+                {
+                  title: (
+                    <span key={key}>
+                      {envContext.loadChromeless ? (
+                        <Link
+                          key={key}
+                          to={`/foreman_rh_cloud/recommendations/pathways/${pathway.slug}`}
+                        >
+                          {' '}
+                          {pathway.name}{' '}
+                        </Link>
+                      ) : (
+                        <InsightsLink
+                          key={key}
+                          to={`/recommendations/pathways/${pathway.slug}`}
+                        >
+                          {' '}
+                          {pathway.name}{' '}
+                        </InsightsLink>
+                      )}
+                      {pathway.has_incident && (
+                        <RuleLabels rule={{ tags: 'incident' }} isCompact />
+                      )}
+                    </span>
+                  ),
+                },
+                {
+                  title: (
+                    <CategoryLabel
+                      key={key}
+                      labelList={pathway.categories}
+                      isCompact
+                    />
+                  ),
+                },
+                {
+                  title: envContext.loadChromeless ? (
+                    <Link
+                      key={key}
+                      to={`/foreman_rh_cloud/recommendations/pathways/${pathway.slug}`}
+                    >
+                      {`${pathway.impacted_systems_count.toLocaleString()}`}
+                    </Link>
+                  ) : (
+                    <InsightsLink
+                      key={key}
+                      to={`/recommendations/pathways/${pathway.slug}`}
+                    >
+                      {`${pathway.impacted_systems_count.toLocaleString()}`}
+                    </InsightsLink>
+                  ),
+                },
+                {
+                  title: (
+                    <span key={key}>
+                      {intl.formatMessage(
+                        pathway.reboot_required
+                          ? messages.required
+                          : messages.notRequired,
+                      )}
+                    </span>
+                  ),
+                },
+                {
+                  title: (
+                    <RecommendationLevel
+                      key={key}
+                      recLvl={pathway.recommendation_level}
+                    />
+                  ),
+                },
+              ],
+            },
+          ];
         });
 
   const removeFilterParam = (param) => {
