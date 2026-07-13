@@ -10,9 +10,12 @@ This guide documents the development and testing process for enabling the Pathwa
 
 - [Branch Information](#branch-information)
 - [Feature Overview](#feature-overview)
-- [Code Changes](#code-changes)
 - [Local Development Setup](#local-development-setup)
+  - [Quick Start](#quick-start)
+    - [Option A: Local Foreman VM](#option-a-local-foreman-vm)
+    - [Option B: Remote Satellite Environment](#option-b-remote-satellite-environment)
 - [Testing](#testing)
+  - [Registering Test Clients](#registering-test-clients)
 - [Architecture Notes](#architecture-notes)
 - [Troubleshooting](#troubleshooting)
 
@@ -51,37 +54,6 @@ The same codebase runs in two environments:
 This requires conditional routing and component usage.
 
 ---
-
-## Code Changes
-
-### 1. PathwaysTable Component
-
-**File**: `src/PresentationalComponents/PathwaysTable/PathwaysTable.js`
-
-**Key Change**: Conditional link rendering based on environment
-
-```javascript
-import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
-import { Link } from 'react-router-dom';
-
-// In render:
-{envContext.loadChromeless ? (
-  // IoP/Foreman/Satellite
-  <Link to={`/foreman_rh_cloud/recommendations/pathways/${pathway.slug}`}>
-    {pathway.name}
-  </Link>
-) : (
-  // HCC (Hybrid Cloud Console)
-  <InsightsLink to={`/recommendations/pathways/${pathway.slug}`}>
-    {pathway.name}
-  </InsightsLink>
-)}
-```
-
-**Why This Matters**:
-- `InsightsLink`: Provides Chrome integration, analytics, cross-app routing for HCC
-- `Link`: Standard React Router for standalone IoP installations
-- Pattern matches `RulesTable` implementation for consistency
 
 ### 2. Environment Configuration
 
@@ -123,7 +95,7 @@ export const IOP_ENVIRONMENT_CONTEXT = {
 
 ### 5. foreman_rh_cloud Plugin Changes
 
-**Repository**: https://github.com/theforeman/foreman_rh_cloud  
+**Repository**: https://github.com/theforeman/foreman_rh_cloud
 **PR**: #1219
 
 **Changes Required**:
@@ -156,7 +128,7 @@ export const IOP_ENVIRONMENT_CONTEXT = {
 ```
 ┌─────────────────────┐         ┌──────────────────────┐
 │  Foreman VM         │         │   Dev Machine        │
-│  192.168.56.10      │◄────────┤   127.0.0.1          │
+│  <foreman-ip>       │◄────────┤   127.0.0.1          │
 │                     │         │                      │
 │  - IoP Services     │         │  - Frontend (8004)   │
 │  - Advisor Backend  │         │  - Proxy (1337)      │
@@ -166,9 +138,11 @@ export const IOP_ENVIRONMENT_CONTEXT = {
 
 ### Quick Start
 
+#### Option A: Local Foreman VM
+
 1. **Start Foreman VM**:
    ```bash
-   cd /path/to/iop-dev
+   cd <iop-dev-directory>
    iop local foreman up
    # First time: ~50-60 minutes
    # Subsequent: ~2-3 minutes
@@ -183,21 +157,21 @@ export const IOP_ENVIRONMENT_CONTEXT = {
 3. **Set Up Frontend Dev Environment**:
    ```bash
    iop frontend setup
-   # Point to: 192.168.56.10 (Foreman VM)
-   
-   cd /path/to/insights-advisor-frontend
+   # Point to: <foreman-ip> (default: 192.168.56.10)
+
+   cd <insights-advisor-frontend-directory>
    git checkout foreman-pathways-dev
    npm install
    ```
 
-4. **Add /etc/hosts Entry**:
+4. **Add /etc/hosts Entry** (if not already present):
    ```bash
    echo "127.0.0.1 iop.foo.redhat.com" | sudo tee -a /etc/hosts
    ```
 
 5. **Start Frontend Development**:
    ```bash
-   cd /path/to/iop-dev
+   cd <iop-dev-directory>
    iop frontend up --app advisor
    ```
 
@@ -207,6 +181,62 @@ export const IOP_ENVIRONMENT_CONTEXT = {
    ```
    - Accept self-signed certificate
    - Login: `admin` / `changeme`
+
+#### Option B: Remote Satellite Environment
+
+If you have access to a provisioned satellite environment (e.g., via broker):
+
+1. **Set Up Frontend Dev Environment** (one-time):
+   ```bash
+   cd <iop-dev-directory>
+   iop frontend setup
+   # When prompted, you can configure default host or override later
+
+   cd <insights-advisor-frontend-directory>
+   git checkout foreman-pathways-dev
+   npm install
+   ```
+
+2. **Add /etc/hosts Entry** (if not already present):
+   ```bash
+   echo "127.0.0.1 iop.foo.redhat.com" | sudo tee -a /etc/hosts
+   ```
+
+3. **Start Frontend Development with Satellite Host**:
+   ```bash
+   cd <iop-dev-directory>
+   iop frontend up --app advisor --host <satellite-hostname>
+   ```
+
+   Example (replace with your actual satellite host):
+   ```bash
+   iop frontend up --app advisor --host ip-10-0-XXX-XXX.rhos-01.prod.psi.rdu2.redhat.com
+   ```
+
+   This command:
+   - Configures `HCC_ENV_URL` to point to your satellite host
+   - Starts the advisor dev server with live reload on port 8004
+   - Starts the frontend-development-proxy with IoP-specific configuration
+   - Handles TLS certificate skip-verify and location rewrites automatically
+
+4. **Access the UI**:
+   ```
+   https://iop.foo.redhat.com:1337/foreman_rh_cloud/recommendations
+   ```
+   - Accept self-signed certificate
+   - Login: `admin` / `changeme`
+
+5. **Check Status**:
+   ```bash
+   iop frontend status
+   # Shows target host, running processes, and access URL
+   ```
+
+**Benefits of Satellite Environment**:
+- No local VM resource requirements (RAM, disk, CPU)
+- Faster startup (no VM provisioning time)
+- Access to pre-configured test data and registrations
+- Can switch between environments with `--host` flag
 
 ---
 
@@ -241,7 +271,7 @@ export const IOP_ENVIRONMENT_CONTEXT = {
 With `iop frontend up` running:
 
 ```bash
-cd /path/to/insights-advisor-frontend
+cd <insights-advisor-frontend-directory>
 # Edit PathwaysTable.js
 nano src/PresentationalComponents/PathwaysTable/PathwaysTable.js
 
@@ -253,14 +283,65 @@ console.log('Pathways data:', pathways);
 
 ### Registering Test Clients
 
-To test with real data, you need a RHEL-based system with insights-client:
+To test with real data, you need RHEL-based systems registered to your Foreman/Satellite instance.
 
-1. **Install insights-client** (on RHEL/CentOS Stream):
+#### Recommended: Using Foreman UI Registration
+
+The easiest and most reliable method is to use Foreman's built-in host registration:
+
+1. **Generate Registration Command**:
+   - Log into Foreman UI: `https://<foreman-host>`
+   - Navigate to **Hosts** → **Register Host**
+   - Configure registration options:
+     - Select the appropriate **Organization** and **Location**
+     - Under the **Advanced** tab, enable **Insights** to automatically set up insights-client
+     - (Optional) Configure activation key, lifecycle environment, etc.
+   - Click **Generate** to create the registration command
+
+2. **Run Command on Target Host**:
+   - Copy the generated `curl` command
+   - Run it on your RHEL host as root:
+     ```bash
+     curl -sS '<registration-url>' | bash
+     ```
+
+3. **Verify**:
+   - Host should appear in **Hosts** → **All Hosts**
+   - Insights data should appear after the first check-in (~5-10 minutes)
+   - View recommendations/pathways in the Advisor UI
+
+**Why This Method?**
+- Handles all registration aspects automatically (subscription, insights, katello agent)
+- Generates proper certificates and configurations
+- Ensures the host appears correctly in the Foreman UI
+- No manual `insights-client` configuration needed
+
+#### Alternative: Manual insights-client Configuration
+
+If you need to manually configure insights-client (e.g., for troubleshooting or custom setups):
+
+> ⚠️ **Important**: You must first register the host to Foreman using one of these methods:
+> - Foreman UI registration (recommended, see above)
+> - `subscription-manager` or activation key
+> - Foreman's Global Registration API
+>
+> **The host will not appear in the UI** if you only configure insights-client without completing Foreman registration first.
+
+1. **Register Host to Foreman** (if not already done):
+   ```bash
+   # Using subscription-manager
+   sudo subscription-manager register \
+     --org=<org-id> \
+     --activationkey=<key-name> \
+     --serverurl=<foreman-host>
+   ```
+
+2. **Install insights-client**:
    ```bash
    sudo dnf install -y insights-client
    ```
 
-2. **Configure for Local Foreman**:
+3. **Configure for Foreman**:
    ```bash
    sudo mkdir -p /etc/insights-client
    sudo cat > /etc/insights-client/insights-client.conf <<EOF
@@ -271,13 +352,13 @@ To test with real data, you need a RHEL-based system with insights-client:
    EOF
    ```
 
-3. **Register**:
+4. **Register insights-client**:
    ```bash
    sudo insights-client --register
    sudo insights-client --check-results
    ```
 
-4. **View in UI**: Host should appear with recommendations/pathways
+5. **View in UI**: Host should now show insights data with recommendations/pathways
 
 ---
 
@@ -370,10 +451,10 @@ vagrant ssh foreman -c "sudo systemctl status iop-service-advisor-backend-api"
 
 **Solution**:
 ```bash
-cd /path/to/insights-advisor-frontend
+cd <insights-advisor-frontend-directory>
 rm -rf node_modules package-lock.json
 npm install
-cd /path/to/iop-dev
+cd <iop-dev-directory>
 iop frontend up --app advisor
 ```
 
@@ -481,6 +562,6 @@ webpack/
 
 ---
 
-**Last Updated**: 2026-07-07  
-**Branch**: foreman-pathways-dev  
+**Last Updated**: 2026-07-08  
+**Branch**: `foreman-pathways-dev`  
 **Environment**: Local IoP via iop-dev
