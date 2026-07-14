@@ -142,38 +142,46 @@ const Inventory = ({
 
   const rulesCheck = async () => {
     if (rulesPlaybookCount < 0) {
-      const associatedRuleDetails = (
-        await Get(
-          `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
-          {},
-          { name: filters.name },
-        )
-      )?.data.playbook_count;
-      setRulesPlaybookCount(associatedRuleDetails);
+      try {
+        const associatedRuleDetails = (
+          await Get(
+            `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
+            {},
+            { name: filters.name },
+          )
+        )?.data.playbook_count;
+        setRulesPlaybookCount(associatedRuleDetails);
+      } catch (error) {
+        console.error('Failed to fetch rule details:', error);
+      }
     }
   };
 
   const pathwayCheck = async () => {
     if (!hasPathwayDetails) {
       if (pathway) {
-        let pathwayRules = (
-          await Get(
-            `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
-            {},
-            {},
-          )
-        )?.data.data;
+        try {
+          let pathwayRules = (
+            await Get(
+              `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
+              {},
+              {},
+            )
+          )?.data.data;
 
-        let pathwayReport = (
-          await Get(
-            `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
-            {},
-            {},
-          )
-        )?.data.rules;
-        setHasPathwayDetails(true);
-        setPathwayReportList(pathwayReport);
-        setPathwayRulesList(pathwayRules);
+          let pathwayReport = (
+            await Get(
+              `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/reports/`,
+              {},
+              {},
+            )
+          )?.data.rules;
+          setHasPathwayDetails(true);
+          setPathwayReportList(pathwayReport || {});
+          setPathwayRulesList(pathwayRules || []);
+        } catch (error) {
+          console.error('Failed to fetch pathway details:', error);
+        }
       }
     }
   };
@@ -282,6 +290,10 @@ const Inventory = ({
 
   const createColumns = useCallback(
     (defaultColumns) => {
+      if (!defaultColumns) {
+        return [lastSeenColumn];
+      }
+
       let displayName = defaultColumns.filter(
         ({ key }) => key === 'display_name',
       );
