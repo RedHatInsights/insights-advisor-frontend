@@ -127,14 +127,15 @@ export const getEntities =
     setCurPageIds(systemIds);
     setTotal(totalCount);
     return Promise.resolve({
-      results: mergeArraysByDiffKeys(fetchedSystems.data, results.results).map(
-        (item) => {
-          return {
-            ...item,
-            selected: selectedIds?.includes(item.id),
-          };
-        },
-      ),
+      results: mergeArraysByDiffKeys(
+        fetchedSystems.data,
+        results.results,
+      ).map((item) => {
+        return {
+          ...item,
+          selected: selectedIds?.includes(item.id),
+        };
+      }),
       total: totalCount,
     });
   };

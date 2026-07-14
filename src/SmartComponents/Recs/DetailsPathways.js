@@ -35,10 +35,10 @@ import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 import { systemsCheck } from './helpers';
 import { EnvironmentContext } from '../../App';
 
-const PathwaySystems = lazy(
+const IopPathwaySystems = lazy(
   () =>
     import(
-      /* webpackChunkName: 'PathwaySystems' */ '../HybridInventoryTabs/ConventionalSystems/PathwaySystems'
+      /* webpackChunkName: 'IopPathwaySystems' */ '../HybridInventoryTabs/ConventionalSystems/IopPathwaySystems'
     ),
 );
 
@@ -239,7 +239,7 @@ const PathwayDetails = (props) => {
               ) : (
                 <Suspense fallback={<Loading />}>
                   {loadChromeless ? (
-                    <PathwaySystems
+                    <IopPathwaySystems
                       pathway={pathway}
                       selectedTags={selectedTags}
                       workloads={workloads}
