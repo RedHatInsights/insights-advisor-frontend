@@ -18,6 +18,7 @@ const PathwayDetailsWrapped = (props) => {
   window.insights = window.insights || {};
   window.insights.chrome = window.insights.chrome || {
     auth: { getUser: () => Promise.resolve({}) },
+    getUserPermissions: () => Promise.resolve([]),
     isBeta: () => false,
     getApp: () => 'advisor',
     getBundle: () => 'insights',

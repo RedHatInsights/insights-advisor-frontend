@@ -42,6 +42,7 @@ const PathwaysTable = lazy(
 const ListIop = () => {
   const envContext = useContext(EnvironmentContext);
   const [activeTab, setActiveTab] = useState(0);
+  const changeTab = (tab) => setActiveTab(tab);
 
   useEffect(() => {
     envContext.updateDocumentTitle('Recommendations - Advisor');
@@ -111,52 +112,42 @@ const ListIop = () => {
         />
       </PageHeader>
       <section className="pf-v5-l-page__main-section pf-v5-c-page__main-section">
-        {envContext.displayRecPathways ? (
-          <Tabs
-            className="adv__background--global-100"
-            activeKey={activeTab}
-            onSelect={(_e, tab) => setActiveTab(tab)}
-          >
-            <Tab
-              eventKey={0}
-              title={<TabTitleText>Recommendations</TabTitleText>}
-            >
-              <Stack hasGutter>
-                <StackItem>
-                  <IopOverviewDashbar
-                    changeTab={0}
-                    onRefetchReady={handleOverviewRefetchReady}
-                  />
-                </StackItem>
-                <StackItem>
+        <Stack hasGutter>
+          <StackItem>
+            <IopOverviewDashbar
+              changeTab={changeTab}
+              onRefetchReady={handleOverviewRefetchReady}
+            />
+          </StackItem>
+          <StackItem>
+            {envContext.displayRecPathways ? (
+              <Tabs
+                className="adv__background--global-100"
+                activeKey={activeTab}
+                onSelect={(_e, tab) => changeTab(tab)}
+              >
+                <Tab
+                  eventKey={0}
+                  title={<TabTitleText>Recommendations</TabTitleText>}
+                >
                   <RulesTable onRuleChange={handleRuleChange} />
-                </StackItem>
-              </Stack>
-            </Tab>
-            <Tab
-              eventKey={1}
-              title={<TabTitleText>Pathways</TabTitleText>}
-            >
-              {activeTab === 1 && (
-                <Suspense fallback={<Loading />}>
-                  <PathwaysTable isTabActive={activeTab === 1} />
-                </Suspense>
-              )}
-            </Tab>
-          </Tabs>
-        ) : (
-          <Stack hasGutter>
-            <StackItem>
-              <IopOverviewDashbar
-                changeTab={0}
-                onRefetchReady={handleOverviewRefetchReady}
-              />
-            </StackItem>
-            <StackItem>
+                </Tab>
+                <Tab
+                  eventKey={1}
+                  title={<TabTitleText>Pathways</TabTitleText>}
+                >
+                  {activeTab === 1 && (
+                    <Suspense fallback={<Loading />}>
+                      <PathwaysTable isTabActive={activeTab === 1} />
+                    </Suspense>
+                  )}
+                </Tab>
+              </Tabs>
+            ) : (
               <RulesTable onRuleChange={handleRuleChange} />
-            </StackItem>
-          </Stack>
-        )}
+            )}
+          </StackItem>
+        </Stack>
       </section>
     </React.Fragment>
   );
