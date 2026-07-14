@@ -412,7 +412,7 @@ const Inventory = ({
             iopData={resolutions}
             isDisabled={isRemediationButtonDisabled}
           />
-        ) : (
+        ) : !envContext.loadChromeless ? (
           <RemediationButton
             key="remediation-button"
             fallback={<Spinner size="md" />}
@@ -423,7 +423,7 @@ const Inventory = ({
           >
             Plan remediation
           </RemediationButton>
-        )}
+        ) : null}
         {envContext.displayDownloadPlaybookButton && (
           <DownloadPlaybookButton
             isDisabled={isRemediationButtonDisabled}
