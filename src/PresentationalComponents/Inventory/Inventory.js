@@ -1,9 +1,9 @@
 import './_Inventory.scss';
 
-import React, { useEffect, useState, useCallback, useContext } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useContext, useMemo } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import { pruneFilters, urlBuilder } from '../Common/Tables';
-import { useDispatch, useSelector, useStore } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector, useStore } from 'react-redux';
 import {
   getEntities,
   allCurrentSystemIds,
@@ -25,11 +25,20 @@ import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
-import { Flex, Spinner } from '@patternfly/react-core';
+import { Bullseye, Flex, Spinner } from '@patternfly/react-core';
 import { EnvironmentContext } from '../../App';
 import { AsyncComponent } from '@redhat-cloud-services/frontend-components';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 import { Link } from 'react-router-dom';
+
+const ASYNC_COMPONENT_FALLBACK = <Bullseye><Spinner size="xl" /></Bullseye>;
+
+const CHROMELESS_HIDE_FILTERS = {
+  all: true, name: false, tags: true, operatingSystem: false, hostGroupFilter: true,
+};
+const STANDARD_HIDE_FILTERS = {
+  all: true, name: false, tags: false, operatingSystem: false, hostGroupFilter: false,
+};
 
 const Inventory = ({
   tableProps,
@@ -44,6 +53,7 @@ const Inventory = ({
   axios,
   IopRemediationModal,
 }) => {
+
   const store = useStore();
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -56,13 +66,14 @@ const Inventory = ({
   });
   const [fullFilters, setFullFilters] = useState();
   const [total, setTotal] = useState(0);
-  const entities = useSelector(({ entities }) => entities || {});
+  const entities = useSelector(({ entities }) => entities || {}, shallowEqual);
   const envContext = useContext(EnvironmentContext);
+
 
   const addNotification = (data) => dispatch(notification(data));
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [curPageIds, setCurPageIds] = useState([]);
-  const [pathwayRulesList, setPathwayRulesList] = useState({});
+  const [pathwayRulesList, setPathwayRulesList] = useState([]);
   const [pathwayReportList, setPathwayReportList] = useState({});
   const [isLoading, setIsLoading] = useState();
 
@@ -104,32 +115,37 @@ const Inventory = ({
     identitfier: 'system_uuid',
     isLoading,
   });
+  const safeSelectedIds = useMemo(() => selectedIds || [], [selectedIds]);
+  const selectedIdsRef = useRef(safeSelectedIds);
+  selectedIdsRef.current = safeSelectedIds;
 
-  const fetchSystems = getEntities(
+
+  const fetchSystems = useMemo(() => getEntities(
     handleRefresh,
     pathway,
     setCurPageIds,
     setTotal,
-    selectedIds,
+    selectedIdsRef,
     setFullFilters,
     fullFilters,
     rule,
     envContext.RULES_FETCH_URL,
     envContext.SYSTEMS_FETCH_URL,
     axios,
-  );
+  ), [pathway, rule, envContext.RULES_FETCH_URL, envContext.SYSTEMS_FETCH_URL, axios]);
 
   // Ensures rows are marked as selected, runs the check on remediation Status
   useEffect(() => {
+
     dispatch({
       type: 'SELECT_ENTITIES',
       payload: {
-        selected: selectedIds,
+        selected: safeSelectedIds,
       },
     });
     checkRemediationButtonStatus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedIds]);
+  }, [safeSelectedIds]);
 
   useEffect(() => {
     if (pathway) {
@@ -188,32 +204,22 @@ const Inventory = ({
 
   const checkRemediationButtonStatus = () => {
     let playbookFound = false;
-    let ruleKeys = Object.keys(pathwayReportList);
-    if (selectedIds?.length <= 0 || selectedIds === undefined) {
+    if (safeSelectedIds.length === 0) {
       setIsRemediationButtonDisabled(true);
-    } else if (pathway) {
-      for (let i = 0; i < selectedIds?.length; i++) {
-        let system = selectedIds[i];
-        if (playbookFound) {
-          break;
+    } else if (pathway && Array.isArray(pathwayRulesList)) {
+      for (const rule of pathwayRulesList) {
+        if (playbookFound) break;
+        const affectedSystems = pathwayReportList[rule.rule_id];
+        if (
+          affectedSystems?.some((s) => safeSelectedIds.includes(s)) &&
+          rule.resolution_set?.some((r) => r.has_playbook)
+        ) {
+          playbookFound = true;
+          setIsRemediationButtonDisabled(false);
         }
-        ruleKeys.forEach((rule) => {
-          //Grab the rule assosciated with that system
-          if (pathwayReportList[rule].includes(system)) {
-            let assosciatedRule = pathwayReportList[rule];
-            //find that associated rule in the pathwayRules endpoint, check for playbook
-            let item = pathwayRulesList.find(
-              (report) => (report.rule_id = assosciatedRule),
-            );
-            if (item.resolution_set[0].has_playbook) {
-              playbookFound = true;
-              return setIsRemediationButtonDisabled(false);
-            }
-          }
-        });
       }
     } else {
-      if (rulesPlaybookCount > 0 && selectedIds?.length > 0) {
+      if (rulesPlaybookCount > 0 && safeSelectedIds.length > 0) {
         setIsRemediationButtonDisabled(false);
       }
     }
@@ -242,7 +248,7 @@ const Inventory = ({
         let filteredSystems = [];
 
         systems[rec.rule_id].forEach((system) => {
-          if (selectedIds.includes(system)) {
+          if (safeSelectedIds.includes(system)) {
             filteredSystems.push(system);
           }
         });
@@ -265,7 +271,7 @@ const Inventory = ({
             description: rule.description,
           },
         ],
-        systems: selectedIds,
+        systems: safeSelectedIds,
       };
     }
   };
@@ -361,7 +367,7 @@ const Inventory = ({
     return pruneFilters(localFilters, SFC);
   };
 
-  const activeFiltersConfig = {
+  const activeFiltersConfig = useMemo(() => ({
     deleteTitle: intl.formatMessage(messages.resetFilters),
     filters: buildFilterChips(),
     onDelete: (_e, itemsToRemove, isAll) => {
@@ -386,29 +392,61 @@ const Inventory = ({
         });
       }
     },
-  };
+  }), [filters]);
   const [resolutions, setResolutions] = useState([]);
 
   useEffect(() => {
-    if (selectedIds?.length > 0) {
-      const fetchAndSetData = async () => {
-        const resolutionsData = await iopResolutionsMapper(
-          entities,
-          rule,
-          selectedIds,
-        );
-        setResolutions(resolutionsData);
-      };
-      fetchAndSetData();
-    }
-  }, [selectedIds]);
 
-  const getActionsConfig = () => {
+    if (safeSelectedIds.length > 0) {
+      if (rule) {
+        const fetchAndSetData = async () => {
+          const resolutionsData = await iopResolutionsMapper(
+            entities,
+            rule,
+            safeSelectedIds,
+          );
+          setResolutions(resolutionsData);
+        };
+        fetchAndSetData();
+      } else if (pathway && Array.isArray(pathwayRulesList)) {
+        const buildAndSetData = async () => {
+          const data = [];
+          for (const r of pathwayRulesList) {
+            const affected = pathwayReportList[r.rule_id];
+            if (!affected) continue;
+            for (const id of safeSelectedIds) {
+              if (!affected.includes(id)) continue;
+              const row = entities?.rows?.find((e) => e.id === id);
+              data.push({
+                hostid: id,
+                host_name: row ? row.display_name : id,
+                resolutions: (r.resolution_set || []).map((res) => ({
+                  description: res.resolution,
+                  id: res.system_type?.toString() || 'fix',
+                  needs_reboot: !!r.reboot_required,
+                  resolution_risk: res.resolution_risk?.risk || 1,
+                })),
+                rulename: r.rule_id,
+                description: r.description,
+                rebootable: !!r.reboot_required,
+              });
+            }
+          }
+          setResolutions(data);
+        };
+        buildAndSetData();
+      }
+    } else {
+      setResolutions([]);
+    }
+  }, [safeSelectedIds]);
+
+  const actionsConfig = useMemo(() => {
     const actions = [
       <Flex key="inventory-actions">
         {IopRemediationModal ? (
           <IopRemediationModal.WrappedComponent
-            selectedIds={selectedIds}
+            selectedIds={safeSelectedIds}
             iopData={resolutions}
             isDisabled={isRemediationButtonDisabled}
           />
@@ -419,7 +457,7 @@ const Inventory = ({
             isDisabled={isRemediationButtonDisabled}
             dataProvider={remediationDataProvider}
             onRemediationCreated={(result) => onRemediationCreated(result)}
-            hasSelected={selectedIds?.length > 0}
+            hasSelected={safeSelectedIds.length > 0}
           >
             Plan remediation
           </RemediationButton>
@@ -427,23 +465,103 @@ const Inventory = ({
         {envContext.displayDownloadPlaybookButton && (
           <DownloadPlaybookButton
             isDisabled={isRemediationButtonDisabled}
-            rules={[rule]}
-            systems={selectedIds}
+            rules={pathway ? pathwayRulesList : [rule]}
+            systems={safeSelectedIds}
+            ruleSystemsMap={pathway ? pathwayReportList : null}
           />
         )}
       </Flex>,
     ];
-    envContext.isDisableRecEnabled &&
-      !pathway &&
+    if (envContext.isDisableRecEnabled && !pathway) {
       actions.push({
         label: intl.formatMessage(messages.disableRuleForSystems),
         props: {
-          isDisabled: (selectedIds || []).length === 0,
+          isDisabled: safeSelectedIds.length === 0,
         },
         onClick: () => handleModalToggle(true),
       });
+    }
     return { actions };
-  };
+  }, [safeSelectedIds, isRemediationButtonDisabled, resolutions, pathway, pathwayRulesList, pathwayReportList, rule]);
+
+  const onLoadHandler = useCallback(({
+    mergeWithEntities,
+    INVENTORY_ACTION_TYPES,
+    mergeWithDetail,
+  }) => {
+    store.replaceReducer(
+      updateReducers({
+        ...mergeWithEntities(
+          systemReducer([], INVENTORY_ACTION_TYPES),
+          {
+            page: Number(filters.offset / filters.limit + 1 || 1),
+            perPage: Number(filters.limit || 20),
+          },
+        ),
+        ...mergeWithDetail(),
+      }),
+    );
+  }, [filters.offset, filters.limit]);
+
+  const chromelessTableProps = useMemo(() => ({
+    variant: TableVariant.compact,
+    ...tableProps,
+    ...bulkSelectTableProps,
+    envContext: envContext,
+  }), [tableProps, bulkSelectTableProps, envContext]);
+
+  const standardTableProps = useMemo(() => ({
+    variant: TableVariant.compact,
+    ...tableProps,
+    ...bulkSelectTableProps,
+  }), [tableProps, bulkSelectTableProps]);
+
+  const chromelessCustomFilters = useMemo(() => ({
+    advisorFilters: filters,
+  }), [filters]);
+
+  const standardCustomFilters = useMemo(() => ({
+    advisorFilters: filters,
+    selectedTags,
+    workloads,
+  }), [filters, selectedTags, workloads]);
+
+  const chromelessExportConfig = useMemo(() => permsExport && {
+    label: intl.formatMessage(messages.exportJson),
+    onSelect: (_e, fileType) =>
+      downloadReport(
+        exportTable,
+        fileType,
+        { rule_id: rule.rule_id, ...filters },
+        selectedTags,
+        workloads,
+        dispatch,
+        envContext.BASE_URL,
+      ),
+    isDisabled: !permsExport || entities?.rows?.length === 0,
+    tooltipText: permsExport
+      ? intl.formatMessage(messages.exportData)
+      : intl.formatMessage(messages.permsAction),
+  }, [permsExport, filters, rule, selectedTags, workloads, entities?.rows?.length, envContext.BASE_URL]);
+
+  const standardExportConfig = useMemo(() => permsExport && {
+    label: intl.formatMessage(messages.exportJson),
+    onSelect: (_e, fileType) =>
+      downloadReport(
+        exportTable,
+        fileType,
+        { rule_id: rule.rule_id, ...filters },
+        selectedTags,
+        workloads,
+        dispatch,
+        envContext.BASE_URL,
+      ),
+    isDisabled: !permsExport || entities?.rows?.length === 0,
+    tooltipText: permsExport
+      ? intl.formatMessage(messages.exportData)
+      : intl.formatMessage(messages.permsAction),
+  }, [permsExport, filters, rule, selectedTags, workloads, entities?.rows?.length, envContext.BASE_URL]);
+
 
   return (
     <React.Fragment>
@@ -453,11 +571,12 @@ const Inventory = ({
           isModalOpen={disableRuleModalOpen}
           rule={rule}
           afterFn={afterDisableFn}
-          hosts={selectedIds}
+          hosts={safeSelectedIds}
         />
       )}
       {envContext.loadChromeless ? (
         <AsyncComponent
+          fallback={ASYNC_COMPONENT_FALLBACK}
           scope="inventory"
           module="./IOPInventoryTable"
           store={store}
@@ -466,66 +585,17 @@ const Inventory = ({
           hasCheckbox
           initialLoading
           autoRefresh
-          hideFilters={{
-            all: true,
-            name: false,
-            tags: true,
-            operatingSystem: false,
-            hostGroupFilter: true,
-          }}
+          hideFilters={CHROMELESS_HIDE_FILTERS}
           activeFiltersConfig={activeFiltersConfig}
-          columns={(defaultColumns) => createColumns(defaultColumns)}
-          tableProps={{
-            variant: TableVariant.compact,
-            ...tableProps,
-            ...bulkSelectTableProps,
-            envContext: envContext,
-          }}
-          customFilters={{
-            advisorFilters: filters,
-          }}
-          showTags={envContext.loadChromeless ? false : showTags}
+          columns={createColumns}
+          tableProps={chromelessTableProps}
+          customFilters={chromelessCustomFilters}
+          showTags={false}
           getEntities={fetchSystems}
-          actionsConfig={getActionsConfig()}
+          actionsConfig={actionsConfig}
           {...toolbarProps}
-          onLoad={({
-            mergeWithEntities,
-            INVENTORY_ACTION_TYPES,
-            mergeWithDetail,
-          }) => {
-            store.replaceReducer(
-              updateReducers({
-                ...mergeWithEntities(
-                  systemReducer([], INVENTORY_ACTION_TYPES),
-                  {
-                    page: Number(filters.offset / filters.limit + 1 || 1),
-                    perPage: Number(filters.limit || 20),
-                  },
-                ),
-                ...mergeWithDetail(),
-              }),
-            );
-          }}
-          exportConfig={
-            permsExport && {
-              label: intl.formatMessage(messages.exportCsv),
-              label: intl.formatMessage(messages.exportJson),
-              onSelect: (_e, fileType) =>
-                downloadReport(
-                  exportTable,
-                  fileType,
-                  { rule_id: rule.rule_id, ...filters },
-                  selectedTags,
-                  workloads,
-                  dispatch,
-                  envContext.BASE_URL,
-                ),
-              isDisabled: !permsExport || entities?.rows?.length === 0,
-              tooltipText: permsExport
-                ? intl.formatMessage(messages.exportData)
-                : intl.formatMessage(messages.permsAction),
-            }
-          }
+          onLoad={onLoadHandler}
+          exportConfig={chromelessExportConfig}
           axios={axios}
         />
       ) : (
@@ -535,67 +605,17 @@ const Inventory = ({
           hasCheckbox
           initialLoading
           autoRefresh
-          hideFilters={{
-            all: true,
-            name: false,
-            tags: false,
-            operatingSystem: false,
-            hostGroupFilter: false,
-          }}
+          hideFilters={STANDARD_HIDE_FILTERS}
           activeFiltersConfig={activeFiltersConfig}
-          columns={(defaultColumns) => createColumns(defaultColumns)}
-          tableProps={{
-            variant: TableVariant.compact,
-            ...tableProps,
-            ...bulkSelectTableProps,
-          }}
-          customFilters={{
-            advisorFilters: filters,
-            selectedTags,
-            workloads,
-          }}
-          showTags={envContext.loadChromeless ? false : showTags}
+          columns={createColumns}
+          tableProps={standardTableProps}
+          customFilters={standardCustomFilters}
+          showTags={showTags}
           getEntities={fetchSystems}
-          actionsConfig={getActionsConfig()}
+          actionsConfig={actionsConfig}
           {...toolbarProps}
-          onLoad={({
-            mergeWithEntities,
-            INVENTORY_ACTION_TYPES,
-            mergeWithDetail,
-          }) => {
-            store.replaceReducer(
-              updateReducers({
-                ...mergeWithEntities(
-                  systemReducer([], INVENTORY_ACTION_TYPES),
-                  {
-                    page: Number(filters.offset / filters.limit + 1 || 1),
-                    perPage: Number(filters.limit || 20),
-                  },
-                ),
-                ...mergeWithDetail(),
-              }),
-            );
-          }}
-          exportConfig={
-            permsExport && {
-              label: intl.formatMessage(messages.exportCsv),
-              label: intl.formatMessage(messages.exportJson),
-              onSelect: (_e, fileType) =>
-                downloadReport(
-                  exportTable,
-                  fileType,
-                  { rule_id: rule.rule_id, ...filters },
-                  selectedTags,
-                  workloads,
-                  dispatch,
-                  envContext.BASE_URL,
-                ),
-              isDisabled: !permsExport || entities?.rows?.length === 0,
-              tooltipText: permsExport
-                ? intl.formatMessage(messages.exportData)
-                : intl.formatMessage(messages.permsAction),
-            }
-          }
+          onLoad={onLoadHandler}
+          exportConfig={standardExportConfig}
         />
       )}
     </React.Fragment>

@@ -43,8 +43,9 @@ const useBulkSelect = ({
   const mergeArraysUniqly = (arrayA, arrayB) =>
     Array.from(new Set([...arrayA, ...arrayB]));
 
-  const selectOne = (_, selected, _key, row) =>
-    selected ? select(row[identifier]) : deselect(row[identifier]);
+  const selectOne = (_, selected, _key, row) => {
+    return selected ? select(row[identifier]) : deselect(row[identifier]);
+  };
 
   const selectPage = () => {
     let selectedItems =

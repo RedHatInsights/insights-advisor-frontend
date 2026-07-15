@@ -59,7 +59,7 @@ export const getEntities =
     pathway,
     setCurPageIds,
     setTotal,
-    selectedIds,
+    selectedIdsRef,
     setFullFilters,
     fullFilters,
     rule,
@@ -68,6 +68,8 @@ export const getEntities =
     axios,
   ) =>
   async (_items, config, showTags, defaultGetEntities) => {
+    const selectedIds = selectedIdsRef.current || [];
+    console.log('[Inventory] fetchSystems called');
     const {
       per_page,
       page,
