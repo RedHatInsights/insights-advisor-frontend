@@ -11,6 +11,7 @@ import {
   paramParser,
   pruneFilters,
   urlBuilder,
+  workloadArrayQueryBuilder,
 } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import Qs from 'qs';
@@ -38,6 +39,7 @@ import { createColumns } from './createColumns';
 import { conditionalFilterType } from '@redhat-cloud-services/frontend-components/ConditionalFilter';
 import { EnvironmentContext } from '../../App';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
+import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const SystemsTable = () => {
   const intl = useIntl();
@@ -49,6 +51,7 @@ const SystemsTable = () => {
   const filters = useSelector(({ filters }) => filters.sysState);
   const setFilters = (filters) => dispatch(updateSysFilters(filters));
   const envContext = useContext(EnvironmentContext);
+  const isWorkloadFilterEnabled = useFeatureFlag('advisor.workloads');
   const [filterBuilding, setFilterBuilding] = useState(true);
   const [fetchError, setFetchError] = useState(false);
   const addNotification = useAddNotification();
@@ -227,6 +230,7 @@ const SystemsTable = () => {
           operatingSystem: false,
           systemTypeFilter: false,
           systemType: false,
+          ...(isWorkloadFilterEnabled && { workloadFilter: false }),
         }}
         initialLoading
         autoRefresh
@@ -279,6 +283,16 @@ const SystemsTable = () => {
             workloads,
             true,
           );
+
+          // Local table Workload filter;
+          // separate from the global Chrome tag/workload filter handled by createOptions above
+          const localWorkloadFilter = filters?.workloadFilter;
+          if (isWorkloadFilterEnabled && localWorkloadFilter?.length) {
+            Object.assign(
+              options,
+              workloadArrayQueryBuilder(localWorkloadFilter),
+            );
+          }
 
           let fetchedSystems;
           try {

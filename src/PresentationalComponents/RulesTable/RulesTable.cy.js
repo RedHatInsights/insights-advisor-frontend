@@ -38,6 +38,7 @@ import {
 } from '../../../cypress/utils/table';
 import { filtersConf } from '../../../cypress/rulestablesconsts';
 import { EnvironmentContext } from '../../App';
+import FlagProvider from '@unleash/proxy-client-react';
 
 /**
  * Mounts the RulesTable component with a configurable environment context.
@@ -48,6 +49,12 @@ import { EnvironmentContext } from '../../App';
  * @param {object} envContextOverrides - Optional overrides for the default EnvironmentContext values.
  * Use this to mock specific behaviors or permissions.
  */
+const flagProviderConfig = {
+  url: 'http://localhost:8002/feature_flags',
+  clientKey: 'abc',
+  appName: 'abc',
+};
+
 const mountComponent = (
   { hasEdgeDevices = false } = {},
   envContextOverrides = {},
@@ -58,27 +65,34 @@ const mountComponent = (
     ...envContextOverrides,
   };
 
+  cy.intercept('GET', '/feature_flags*', {
+    statusCode: 200,
+    body: { toggles: [] },
+  }).as('getFeatureFlag');
+
   cy.mount(
-    <EnvironmentContext.Provider value={finalEnvContext}>
-      <MemoryRouter>
-        <AccountStatContext.Provider value={{ hasEdgeDevices }}>
-          <IntlProvider
-            locale={navigator.language.slice(0, 2)}
-            messages={messages}
-          >
-            <Provider store={initStore()}>
-              <Routes>
-                <Route
-                  key={'Recommendations'}
-                  path="*"
-                  element={<RulesTable />}
-                />
-              </Routes>
-            </Provider>
-          </IntlProvider>
-        </AccountStatContext.Provider>
-      </MemoryRouter>
-    </EnvironmentContext.Provider>,
+    <FlagProvider config={flagProviderConfig}>
+      <EnvironmentContext.Provider value={finalEnvContext}>
+        <MemoryRouter>
+          <AccountStatContext.Provider value={{ hasEdgeDevices }}>
+            <IntlProvider
+              locale={navigator.language.slice(0, 2)}
+              messages={messages}
+            >
+              <Provider store={initStore()}>
+                <Routes>
+                  <Route
+                    key={'Recommendations'}
+                    path="*"
+                    element={<RulesTable />}
+                  />
+                </Routes>
+              </Provider>
+            </IntlProvider>
+          </AccountStatContext.Provider>
+        </MemoryRouter>
+      </EnvironmentContext.Provider>
+    </FlagProvider>,
   );
 };
 
@@ -536,20 +550,27 @@ describe('pre-filled url search parameters', () => {
       },
     }).as('call');
 
+    cy.intercept('GET', '/feature_flags*', {
+      statusCode: 200,
+      body: { toggles: [] },
+    }).as('getFeatureFlag');
+
     cy.mount(
-      <MemoryRouter
-        initialEntries={[`/recommendations?${urlParams}`]}
-        initialIndex={0}
-      >
-        <IntlProvider
-          locale={navigator.language.slice(0, 2)}
-          messages={messages}
+      <FlagProvider config={flagProviderConfig}>
+        <MemoryRouter
+          initialEntries={[`/recommendations?${urlParams}`]}
+          initialIndex={0}
         >
-          <Provider store={initStore()}>
-            <RulesTable />
-          </Provider>
-        </IntlProvider>
-      </MemoryRouter>,
+          <IntlProvider
+            locale={navigator.language.slice(0, 2)}
+            messages={messages}
+          >
+            <Provider store={initStore()}>
+              <RulesTable />
+            </Provider>
+          </IntlProvider>
+        </MemoryRouter>
+      </FlagProvider>,
     );
 
     cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
@@ -871,32 +892,39 @@ describe('Conditional Filter', () => {
         win.history.pushState({}, '', `/recommendations?${urlParams}`);
       });
 
+      cy.intercept('GET', '/feature_flags*', {
+        statusCode: 200,
+        body: { toggles: [] },
+      }).as('getFeatureFlag');
+
       cy.mount(
-        <EnvironmentContext.Provider value={envContext}>
-          <MemoryRouter
-            initialEntries={[`/recommendations?${urlParams}`]}
-            initialIndex={0}
-          >
-            <AccountStatContext.Provider
-              value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
+        <FlagProvider config={flagProviderConfig}>
+          <EnvironmentContext.Provider value={envContext}>
+            <MemoryRouter
+              initialEntries={[`/recommendations?${urlParams}`]}
+              initialIndex={0}
             >
-              <IntlProvider
-                locale={navigator.language.slice(0, 2)}
-                messages={messages}
+              <AccountStatContext.Provider
+                value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
               >
-                <Provider store={initStore()}>
-                  <Routes>
-                    <Route
-                      key={'Recommendations'}
-                      path="*"
-                      element={<RulesTable isTabActive={true} />}
-                    />
-                  </Routes>
-                </Provider>
-              </IntlProvider>
-            </AccountStatContext.Provider>
-          </MemoryRouter>
-        </EnvironmentContext.Provider>,
+                <IntlProvider
+                  locale={navigator.language.slice(0, 2)}
+                  messages={messages}
+                >
+                  <Provider store={initStore()}>
+                    <Routes>
+                      <Route
+                        key={'Recommendations'}
+                        path="*"
+                        element={<RulesTable isTabActive={true} />}
+                      />
+                    </Routes>
+                  </Provider>
+                </IntlProvider>
+              </AccountStatContext.Provider>
+            </MemoryRouter>
+          </EnvironmentContext.Provider>
+        </FlagProvider>,
       );
     };
 
@@ -1265,37 +1293,44 @@ describe('URL parameter synchronization', () => {
       },
     }).as('call');
 
+    cy.intercept('GET', '/feature_flags*', {
+      statusCode: 200,
+      body: { toggles: [] },
+    }).as('getFeatureFlag');
+
     // Set URL parameters in browser history so paramParser() can read them
     cy.window().then((win) => {
       win.history.pushState({}, '', `/recommendations?${urlParams}`);
     });
 
     cy.mount(
-      <EnvironmentContext.Provider value={envContext}>
-        <MemoryRouter
-          initialEntries={[`/recommendations?${urlParams}`]}
-          initialIndex={0}
-        >
-          <AccountStatContext.Provider
-            value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
+      <FlagProvider config={flagProviderConfig}>
+        <EnvironmentContext.Provider value={envContext}>
+          <MemoryRouter
+            initialEntries={[`/recommendations?${urlParams}`]}
+            initialIndex={0}
           >
-            <IntlProvider
-              locale={navigator.language.slice(0, 2)}
-              messages={messages}
+            <AccountStatContext.Provider
+              value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
             >
-              <Provider store={initStore()}>
-                <Routes>
-                  <Route
-                    key={'Recommendations'}
-                    path="*"
-                    element={<RulesTable isTabActive={true} />}
-                  />
-                </Routes>
-              </Provider>
-            </IntlProvider>
-          </AccountStatContext.Provider>
-        </MemoryRouter>
-      </EnvironmentContext.Provider>,
+              <IntlProvider
+                locale={navigator.language.slice(0, 2)}
+                messages={messages}
+              >
+                <Provider store={initStore()}>
+                  <Routes>
+                    <Route
+                      key={'Recommendations'}
+                      path="*"
+                      element={<RulesTable isTabActive={true} />}
+                    />
+                  </Routes>
+                </Provider>
+              </IntlProvider>
+            </AccountStatContext.Provider>
+          </MemoryRouter>
+        </EnvironmentContext.Provider>
+      </FlagProvider>,
     );
   };
 

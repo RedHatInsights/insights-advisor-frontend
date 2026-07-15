@@ -30,6 +30,10 @@ jest.mock('@redhat-cloud-services/frontend-components-notifications/', () => ({
   useAddNotification: () => mockAddNotification,
 }));
 
+jest.mock('../../Utilities/Hooks', () => ({
+  useFeatureFlag: jest.fn(() => false),
+}));
+
 const mockStore = configureStore([]);
 
 const defaultRule = {

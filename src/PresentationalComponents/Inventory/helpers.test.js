@@ -28,6 +28,9 @@ jest.mock('../Common/Tables', () => ({
       return match ? { ...item1, ...match } : item1;
     });
   }),
+  workloadArrayQueryBuilder: jest.fn((filter) =>
+    filter?.length ? { workload: filter } : {},
+  ),
 }));
 
 describe('Inventory helpers', () => {
@@ -331,6 +334,100 @@ describe('Inventory helpers', () => {
       );
       expect(serialized).not.toContain('category[0]');
       expect(serialized).not.toContain('category[]');
+    });
+
+    describe('workloadFilter handling', () => {
+      it('includes workload params in the axios call when workloadFilter is non-empty', async () => {
+        const pathway = { slug: 'test-pathway' };
+        const mockOptions = { page: 1, per_page: 20 };
+
+        createOptions.mockReturnValue(mockOptions);
+        mockAxiosGet.mockResolvedValue({ data: [], meta: { count: 0 } });
+
+        await paginatedRequestHelper({
+          ...mockConfig,
+          pathway,
+          filters: { workloadFilter: ['sap', 'ansible'] },
+        });
+
+        const call = mockAxiosGet.mock.calls[0];
+        expect(call[1].params).toMatchObject({ workload: ['sap', 'ansible'] });
+      });
+
+      it('does not include workload param when workloadFilter is undefined', async () => {
+        const pathway = { slug: 'test-pathway' };
+        const mockOptions = { page: 1, per_page: 20 };
+
+        createOptions.mockReturnValue(mockOptions);
+        mockAxiosGet.mockResolvedValue({ data: [], meta: { count: 0 } });
+
+        await paginatedRequestHelper({
+          ...mockConfig,
+          pathway,
+          filters: {},
+        });
+
+        const call = mockAxiosGet.mock.calls[0];
+        expect(call[1].params).not.toHaveProperty('workload');
+      });
+
+      it('does not include workload param when workloadFilter is an empty array', async () => {
+        const pathway = { slug: 'test-pathway' };
+        const mockOptions = { page: 1, per_page: 20 };
+
+        createOptions.mockReturnValue(mockOptions);
+        mockAxiosGet.mockResolvedValue({ data: [], meta: { count: 0 } });
+
+        await paginatedRequestHelper({
+          ...mockConfig,
+          pathway,
+          filters: { workloadFilter: [] },
+        });
+
+        const call = mockAxiosGet.mock.calls[0];
+        expect(call[1].params).not.toHaveProperty('workload');
+      });
+
+      it('merges workload params with existing options without replacing them', async () => {
+        const pathway = { slug: 'test-pathway' };
+        const mockOptions = { page: 2, per_page: 50, sort: '-name' };
+
+        createOptions.mockReturnValue(mockOptions);
+        mockAxiosGet.mockResolvedValue({ data: [], meta: { count: 0 } });
+
+        await paginatedRequestHelper({
+          ...mockConfig,
+          pathway,
+          filters: { workloadFilter: ['sap'] },
+        });
+
+        const call = mockAxiosGet.mock.calls[0];
+        expect(call[1].params).toMatchObject({
+          page: 2,
+          per_page: 50,
+          sort: '-name',
+          workload: ['sap'],
+          pathway: 'test-pathway',
+        });
+      });
+
+      it('also applies workload params for rule (non-pathway) requests', async () => {
+        const rule = { rule_id: 'TEST_WORKLOAD_RULE' };
+        const mockOptions = { page: 1, per_page: 20 };
+
+        createOptions.mockReturnValue(mockOptions);
+        mockAxiosGet.mockResolvedValue({ data: [], meta: { count: 0 } });
+
+        await paginatedRequestHelper({
+          ...mockConfig,
+          rule,
+          pathway: null,
+          filters: { workloadFilter: ['mssql'] },
+        });
+
+        const call = mockAxiosGet.mock.calls[0];
+        expect(call[1].params).toMatchObject({ workload: ['mssql'] });
+      });
     });
   });
 

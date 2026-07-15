@@ -207,6 +207,7 @@ export const filterConfigItems = (
   setSearchText,
   toggleRulesDisabled,
   intl,
+  isWorkloadFilterEnabled = false,
 ) => {
   const addFilterParam = (param, values) => {
     values.length > 0
@@ -331,6 +332,22 @@ export const filterConfigItems = (
         items: FC.rule_status.values,
       },
     },
+    ...(isWorkloadFilterEnabled
+      ? [
+          {
+            label: FC.workload.title,
+            type: conditionalFilterType.checkbox,
+            id: FC.workload.urlParam,
+            value: `checkbox-${FC.workload.urlParam}`,
+            filterValues: {
+              onChange: (_event, values) =>
+                addFilterParam(FC.workload.urlParam, values),
+              value: normalizeFilterValue(filters.workload),
+              items: FC.workload.values,
+            },
+          },
+        ]
+      : []),
   ];
 };
 

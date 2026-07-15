@@ -30,6 +30,7 @@ import { AsyncComponent } from '@redhat-cloud-services/frontend-components';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 import { Link } from 'react-router-dom';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
+import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const Inventory = ({
   tableProps,
@@ -59,6 +60,7 @@ const Inventory = ({
   const entities = useSelector(({ entities }) => entities || {});
   const envContext = useContext(EnvironmentContext);
   const addNotification = useAddNotification();
+  const isWorkloadFilterEnabled = useFeatureFlag('advisor.workloads');
 
   const [disableRuleModalOpen, setDisableRuleModalOpen] = useState(false);
   const [curPageIds, setCurPageIds] = useState([]);
@@ -507,6 +509,7 @@ const Inventory = ({
             tags: true,
             operatingSystem: false,
             hostGroupFilter: true,
+            ...(isWorkloadFilterEnabled && { workloadFilter: false }),
           }}
           activeFiltersConfig={activeFiltersConfig}
           columns={(defaultColumns) => createColumns(defaultColumns)}
@@ -579,6 +582,7 @@ const Inventory = ({
             tags: false,
             operatingSystem: false,
             hostGroupFilter: false,
+            ...(isWorkloadFilterEnabled && { workloadFilter: false }),
           }}
           activeFiltersConfig={activeFiltersConfig}
           columns={(defaultColumns) => createColumns(defaultColumns)}
