@@ -1,6 +1,13 @@
 import './_Inventory.scss';
 
-import React, { useEffect, useRef, useState, useCallback, useContext, useMemo } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useContext,
+  useMemo,
+} from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import { pruneFilters, urlBuilder } from '../Common/Tables';
 import { shallowEqual, useDispatch, useSelector, useStore } from 'react-redux';
@@ -24,20 +31,38 @@ import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
-import { Bullseye, Flex, FlexItem, Spinner, Tooltip } from '@patternfly/react-core';
+import {
+  Bullseye,
+  Flex,
+  FlexItem,
+  Spinner,
+  Tooltip,
+} from '@patternfly/react-core';
 import { EnvironmentContext } from '../../App';
 import { AsyncComponent } from '@redhat-cloud-services/frontend-components';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 import { Link } from 'react-router-dom';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 
-const ASYNC_COMPONENT_FALLBACK = <Bullseye><Spinner size="xl" /></Bullseye>;
+const ASYNC_COMPONENT_FALLBACK = (
+  <Bullseye>
+    <Spinner size="xl" />
+  </Bullseye>
+);
 
 const CHROMELESS_HIDE_FILTERS = {
-  all: true, name: false, tags: true, operatingSystem: false, hostGroupFilter: true,
+  all: true,
+  name: false,
+  tags: true,
+  operatingSystem: false,
+  hostGroupFilter: true,
 };
 const STANDARD_HIDE_FILTERS = {
-  all: true, name: false, tags: false, operatingSystem: false, hostGroupFilter: false,
+  all: true,
+  name: false,
+  tags: false,
+  operatingSystem: false,
+  hostGroupFilter: false,
 };
 
 const Inventory = ({
@@ -118,19 +143,29 @@ const Inventory = ({
   const selectedIdsRef = useRef(safeSelectedIds);
   selectedIdsRef.current = safeSelectedIds;
 
-  const fetchSystems = useMemo(() => getEntities(
-    handleRefresh,
-    pathway,
-    setCurPageIds,
-    setTotal,
-    selectedIdsRef,
-    setFullFilters,
-    fullFilters,
-    rule,
-    envContext.RULES_FETCH_URL,
-    envContext.SYSTEMS_FETCH_URL,
-    axios,
-  ), [pathway, rule, envContext.RULES_FETCH_URL, envContext.SYSTEMS_FETCH_URL, axios]);
+  const fetchSystems = useMemo(
+    () =>
+      getEntities(
+        handleRefresh,
+        pathway,
+        setCurPageIds,
+        setTotal,
+        selectedIdsRef,
+        setFullFilters,
+        fullFilters,
+        rule,
+        envContext.RULES_FETCH_URL,
+        envContext.SYSTEMS_FETCH_URL,
+        axios,
+      ),
+    [
+      pathway,
+      rule,
+      envContext.RULES_FETCH_URL,
+      envContext.SYSTEMS_FETCH_URL,
+      axios,
+    ],
+  );
 
   // Ensures rows are marked as selected, runs the check on remediation Status
   useEffect(() => {
@@ -142,7 +177,13 @@ const Inventory = ({
     });
     checkRemediationButtonStatus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [safeSelectedIds]);
+  }, [
+    safeSelectedIds,
+    pathwayReportList,
+    pathwayRulesList,
+    pathway,
+    rulesPlaybookCount,
+  ]);
 
   useEffect(() => {
     if (pathway) {
@@ -388,32 +429,35 @@ const Inventory = ({
     return pruneFilters(localFilters, SFC);
   };
 
-  const activeFiltersConfig = useMemo(() => ({
-    deleteTitle: intl.formatMessage(messages.resetFilters),
-    filters: buildFilterChips(),
-    onDelete: (_e, itemsToRemove, isAll) => {
-      if (isAll) {
-        setFilters({
-          sort: filters.sort,
-          limit: filters.limit,
-          offset: filters.offset,
-        });
-      } else {
-        itemsToRemove.map((item) => {
-          const newFilter = {
-            [item.urlParam]: Array.isArray(filters[item.urlParam])
-              ? filters[item.urlParam].filter(
-                  (value) => String(value) !== String(item.chips[0].value),
-                )
-              : '',
-          };
-          newFilter[item.urlParam].length > 0
-            ? setFilters({ ...filters, ...newFilter })
-            : removeFilterParam(item.urlParam);
-        });
-      }
-    },
-  }), [filters]);
+  const activeFiltersConfig = useMemo(
+    () => ({
+      deleteTitle: intl.formatMessage(messages.resetFilters),
+      filters: buildFilterChips(),
+      onDelete: (_e, itemsToRemove, isAll) => {
+        if (isAll) {
+          setFilters({
+            sort: filters.sort,
+            limit: filters.limit,
+            offset: filters.offset,
+          });
+        } else {
+          itemsToRemove.map((item) => {
+            const newFilter = {
+              [item.urlParam]: Array.isArray(filters[item.urlParam])
+                ? filters[item.urlParam].filter(
+                    (value) => String(value) !== String(item.chips[0].value),
+                  )
+                : '',
+            };
+            newFilter[item.urlParam].length > 0
+              ? setFilters({ ...filters, ...newFilter })
+              : removeFilterParam(item.urlParam);
+          });
+        }
+      },
+    }),
+    [filters],
+  );
 
   useEffect(() => {
     if (!IopRemediationModal) return;
@@ -456,7 +500,15 @@ const Inventory = ({
       }
       setResolutions(data);
     }
-  }, [safeSelectedIds, entities, rule, IopRemediationModal, pathway, pathwayRulesList, pathwayReportList]);
+  }, [
+    safeSelectedIds,
+    entities,
+    rule,
+    IopRemediationModal,
+    pathway,
+    pathwayRulesList,
+    pathwayReportList,
+  ]);
 
   const actionsConfig = useMemo(() => {
     const noPlaybookTooltip =
@@ -492,7 +544,9 @@ const Inventory = ({
                   fallback={<Spinner size="md" />}
                   isDisabled={isRemediationButtonDisabled}
                   dataProvider={remediationDataProvider}
-                  onRemediationCreated={(result) => onRemediationCreated(result)}
+                  onRemediationCreated={(result) =>
+                    onRemediationCreated(result)
+                  }
                   hasSelected={safeSelectedIds.length > 0}
                 >
                   Plan remediation
@@ -529,91 +583,135 @@ const Inventory = ({
       });
     }
     return { actions };
-  }, [safeSelectedIds, isRemediationButtonDisabled, resolutions, pathway, pathwayRulesList, pathwayReportList, rule, rulesPlaybookCount, hasPathwayDetails]);
+  }, [
+    safeSelectedIds,
+    isRemediationButtonDisabled,
+    resolutions,
+    pathway,
+    pathwayRulesList,
+    pathwayReportList,
+    rule,
+    rulesPlaybookCount,
+    hasPathwayDetails,
+  ]);
 
-  const onLoadHandler = useCallback(({
-    mergeWithEntities,
-    INVENTORY_ACTION_TYPES,
-    mergeWithDetail,
-  }) => {
-    store.replaceReducer(
-      updateReducers({
-        ...mergeWithEntities(
-          systemReducer([], INVENTORY_ACTION_TYPES),
-          {
+  const onLoadHandler = useCallback(
+    ({ mergeWithEntities, INVENTORY_ACTION_TYPES, mergeWithDetail }) => {
+      store.replaceReducer(
+        updateReducers({
+          ...mergeWithEntities(systemReducer([], INVENTORY_ACTION_TYPES), {
             page: Number(filters.offset / filters.limit + 1 || 1),
             perPage: Number(filters.limit || 20),
-          },
-        ),
-        ...mergeWithDetail(),
-      }),
-    );
-  }, [filters.offset, filters.limit]);
+          }),
+          ...mergeWithDetail(),
+        }),
+      );
+    },
+    [filters.offset, filters.limit],
+  );
 
-  const chromelessTableProps = useMemo(() => ({
-    variant: TableVariant.compact,
-    ...tableProps,
-    ...bulkSelectTableProps,
-    envContext: envContext,
-  }), [tableProps, bulkSelectTableProps, envContext]);
+  const chromelessTableProps = useMemo(
+    () => ({
+      variant: TableVariant.compact,
+      ...tableProps,
+      ...bulkSelectTableProps,
+      envContext: envContext,
+    }),
+    [tableProps, bulkSelectTableProps, envContext],
+  );
 
-  const standardTableProps = useMemo(() => ({
-    variant: TableVariant.compact,
-    ...tableProps,
-    ...bulkSelectTableProps,
-  }), [tableProps, bulkSelectTableProps]);
+  const standardTableProps = useMemo(
+    () => ({
+      variant: TableVariant.compact,
+      ...tableProps,
+      ...bulkSelectTableProps,
+    }),
+    [tableProps, bulkSelectTableProps],
+  );
 
-  const chromelessCustomFilters = useMemo(() => ({
-    advisorFilters: filters,
-  }), [filters]);
+  const chromelessCustomFilters = useMemo(
+    () => ({
+      advisorFilters: filters,
+    }),
+    [filters],
+  );
 
-  const standardCustomFilters = useMemo(() => ({
-    advisorFilters: filters,
-    selectedTags,
-    workloads,
-  }), [filters, selectedTags, workloads]);
+  const standardCustomFilters = useMemo(
+    () => ({
+      advisorFilters: filters,
+      selectedTags,
+      workloads,
+    }),
+    [filters, selectedTags, workloads],
+  );
 
-  const chromelessExportConfig = useMemo(() => permsExport && {
-    label: intl.formatMessage(messages.exportJson),
-    onSelect: (_e, fileType) =>
-      downloadReport(
-        exportTable,
-        fileType,
-        { rule_id: rule.rule_id, ...filters },
-        selectedTags,
-        workloads,
-        dispatch,
-        envContext.BASE_URL,
-        filters?.display_name,
-        addNotification,
-        axios,
-      ),
-    isDisabled: !permsExport || entities?.rows?.length === 0,
-    tooltipText: permsExport
-      ? intl.formatMessage(messages.exportData)
-      : intl.formatMessage(messages.permsAction),
-  }, [permsExport, filters, rule, selectedTags, workloads, entities?.rows?.length, envContext.BASE_URL, axios]);
+  const chromelessExportConfig = useMemo(
+    () =>
+      permsExport && {
+        label: intl.formatMessage(messages.exportJson),
+        onSelect: (_e, fileType) =>
+          downloadReport(
+            exportTable,
+            fileType,
+            { rule_id: rule.rule_id, ...filters },
+            selectedTags,
+            workloads,
+            dispatch,
+            envContext.BASE_URL,
+            filters?.display_name,
+            addNotification,
+            axios,
+          ),
+        isDisabled: !permsExport || entities?.rows?.length === 0,
+        tooltipText: permsExport
+          ? intl.formatMessage(messages.exportData)
+          : intl.formatMessage(messages.permsAction),
+      },
+    [
+      permsExport,
+      filters,
+      rule,
+      selectedTags,
+      workloads,
+      entities?.rows?.length,
+      envContext.BASE_URL,
+      axios,
+    ],
+  );
 
-  const standardExportConfig = useMemo(() => permsExport && {
-    label: intl.formatMessage(messages.exportJson),
-    onSelect: (_e, fileType) =>
-      downloadReport(
-        exportTable,
-        fileType,
-        { rule_id: rule.rule_id, ...filters },
-        selectedTags,
-        workloads,
-        dispatch,
-        envContext.BASE_URL,
-        filters?.display_name,
-        addNotification,
-        axios,
-      ),
-    isDisabled: !permsExport || entities?.rows?.length === 0,
-    tooltipText: permsExport
-      ? intl.formatMessage(messages.exportData)
-      : intl.formatMessage(messages.permsAction),
-  }, [permsExport, filters, rule, selectedTags, workloads, entities?.rows?.length, envContext.BASE_URL, axios]);
+  const standardExportConfig = useMemo(
+    () =>
+      permsExport && {
+        label: intl.formatMessage(messages.exportJson),
+        onSelect: (_e, fileType) =>
+          downloadReport(
+            exportTable,
+            fileType,
+            { rule_id: rule.rule_id, ...filters },
+            selectedTags,
+            workloads,
+            dispatch,
+            envContext.BASE_URL,
+            filters?.display_name,
+            addNotification,
+            axios,
+          ),
+        isDisabled: !permsExport || entities?.rows?.length === 0,
+        tooltipText: permsExport
+          ? intl.formatMessage(messages.exportData)
+          : intl.formatMessage(messages.permsAction),
+      },
+    [
+      permsExport,
+      filters,
+      rule,
+      selectedTags,
+      workloads,
+      entities?.rows?.length,
+      envContext.BASE_URL,
+      axios,
+    ],
+  );
 
   return (
     <React.Fragment>
