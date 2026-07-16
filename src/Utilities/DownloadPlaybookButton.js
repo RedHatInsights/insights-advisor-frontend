@@ -57,15 +57,19 @@ const DownloadPlaybookButton = ({ isDisabled, rules, systems, ruleSystemsMap }) 
       r.resolution_set.some((r2) => r2.has_playbook),
     );
     const autoReboot = playbookRules.some((r) => r.reboot_required);
-    const issues = playbookRules.map((r) => {
-      const ruleSystems = ruleSystemsMap
-        ? systems.filter((s) => ruleSystemsMap[r.rule_id]?.includes(s))
-        : systems;
-      return {
-        id: `advisor:${r.rule_id}`,
-        systems: ruleSystems,
-      };
-    }).filter((issue) => issue.systems.length > 0);
+    const issues = ruleSystemsMap
+      ? playbookRules.reduce((acc, r) => {
+          const ruleSystems = ruleSystemsMap[r.rule_id] || [];
+          const filtered = ruleSystems.filter((s) => systems.includes(s));
+          if (filtered.length) {
+            acc.push({ id: `advisor:${r.rule_id}`, systems: filtered });
+          }
+          return acc;
+        }, [])
+      : playbookRules.map((r) => ({
+          id: `advisor:${r.rule_id}`,
+          systems,
+        }));
 
     return {
       auto_reboot: autoReboot,
