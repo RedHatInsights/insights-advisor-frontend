@@ -25,7 +25,7 @@ import { updateReducers } from '../../Store';
 import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
-import { Bullseye, Flex, Spinner } from '@patternfly/react-core';
+import { Bullseye, Flex, FlexItem, Spinner, Tooltip } from '@patternfly/react-core';
 import { EnvironmentContext } from '../../App';
 import { AsyncComponent } from '@redhat-cloud-services/frontend-components';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
@@ -215,9 +215,9 @@ const Inventory = ({
           rule.resolution_set?.some((r) => r.has_playbook)
         ) {
           playbookFound = true;
-          setIsRemediationButtonDisabled(false);
         }
       }
+      setIsRemediationButtonDisabled(!playbookFound);
     } else {
       if (rulesPlaybookCount > 0 && safeSelectedIds.length > 0) {
         setIsRemediationButtonDisabled(false);
@@ -442,33 +442,64 @@ const Inventory = ({
   }, [safeSelectedIds]);
 
   const actionsConfig = useMemo(() => {
+    const noPlaybookTooltip =
+      safeSelectedIds.length > 0 &&
+      isRemediationButtonDisabled &&
+      (pathway ? hasPathwayDetails : rulesPlaybookCount >= 0);
     const actions = [
       <Flex key="inventory-actions">
         {IopRemediationModal ? (
-          <IopRemediationModal.WrappedComponent
-            selectedIds={safeSelectedIds}
-            iopData={resolutions}
-            isDisabled={isRemediationButtonDisabled}
-          />
+          <FlexItem>
+            <Tooltip
+              content="Remediation is not available for the selected systems."
+              trigger={noPlaybookTooltip ? 'mouseenter focus' : 'manual'}
+            >
+              <div>
+                <IopRemediationModal.WrappedComponent
+                  selectedIds={safeSelectedIds}
+                  iopData={resolutions}
+                  isDisabled={isRemediationButtonDisabled}
+                />
+              </div>
+            </Tooltip>
+          </FlexItem>
         ) : !envContext.loadChromeless ? (
-          <RemediationButton
-            key="remediation-button"
-            fallback={<Spinner size="md" />}
-            isDisabled={isRemediationButtonDisabled}
-            dataProvider={remediationDataProvider}
-            onRemediationCreated={(result) => onRemediationCreated(result)}
-            hasSelected={safeSelectedIds.length > 0}
-          >
-            Plan remediation
-          </RemediationButton>
+          <FlexItem>
+            <Tooltip
+              content="Remediation is not available for the selected systems."
+              trigger={noPlaybookTooltip ? 'mouseenter focus' : 'manual'}
+            >
+              <div>
+                <RemediationButton
+                  key="remediation-button"
+                  fallback={<Spinner size="md" />}
+                  isDisabled={isRemediationButtonDisabled}
+                  dataProvider={remediationDataProvider}
+                  onRemediationCreated={(result) => onRemediationCreated(result)}
+                  hasSelected={safeSelectedIds.length > 0}
+                >
+                  Plan remediation
+                </RemediationButton>
+              </div>
+            </Tooltip>
+          </FlexItem>
         ) : null}
         {envContext.displayDownloadPlaybookButton && (
-          <DownloadPlaybookButton
-            isDisabled={isRemediationButtonDisabled}
-            rules={pathway ? pathwayRulesList : [rule]}
-            systems={safeSelectedIds}
-            ruleSystemsMap={pathway ? pathwayReportList : null}
-          />
+          <FlexItem>
+            <Tooltip
+              content="No playbook available for the selected systems."
+              trigger={noPlaybookTooltip ? 'mouseenter focus' : 'manual'}
+            >
+              <div>
+                <DownloadPlaybookButton
+                  isDisabled={isRemediationButtonDisabled}
+                  rules={pathway ? pathwayRulesList : [rule]}
+                  systems={safeSelectedIds}
+                  ruleSystemsMap={pathway ? pathwayReportList : null}
+                />
+              </div>
+            </Tooltip>
+          </FlexItem>
         )}
       </Flex>,
     ];
@@ -482,7 +513,7 @@ const Inventory = ({
       });
     }
     return { actions };
-  }, [safeSelectedIds, isRemediationButtonDisabled, resolutions, pathway, pathwayRulesList, pathwayReportList, rule]);
+  }, [safeSelectedIds, isRemediationButtonDisabled, resolutions, pathway, pathwayRulesList, pathwayReportList, rule, hasPathwayDetails, rulesPlaybookCount]);
 
   const onLoadHandler = useCallback(({
     mergeWithEntities,
