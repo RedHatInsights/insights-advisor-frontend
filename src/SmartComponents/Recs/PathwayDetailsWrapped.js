@@ -10,7 +10,15 @@ import { useIopEnvironmentContext } from '../../Utilities/Hooks';
 
 const dbStore = initStore();
 
+function responseDataInterceptor(response) {
+  if (response.data) {
+    return response.data;
+  }
+  return response;
+}
+
 const iopAxios = axios.create({ baseURL: '/insights_cloud/' });
+iopAxios.interceptors.response.use(responseDataInterceptor);
 
 const PathwayDetailsWrapped = (props) => {
   const envContext = useIopEnvironmentContext();
