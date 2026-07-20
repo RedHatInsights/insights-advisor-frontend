@@ -31,21 +31,26 @@ export const paginatedRequestHelper = async ({
     workloads,
   );
 
-  return pathway
-    ? (
-        await Get(
-          `${SYSTEMS_FETCH_URL}`,
-          {},
-          { ...options, pathway: pathway.slug },
-        )
-      )?.data
-    : (
-        await Get(
-          `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/systems_detail/`,
-          {},
-          options,
-        )
-      )?.data;
+  try {
+    return pathway
+      ? (
+          await Get(
+            `${SYSTEMS_FETCH_URL}`,
+            {},
+            { ...options, pathway: pathway.slug },
+          )
+        )?.data
+      : (
+          await Get(
+            `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/systems_detail/`,
+            {},
+            options,
+          )
+        )?.data;
+  } catch (error) {
+    console.error('Failed to fetch systems:', error);
+    return { data: [], meta: { count: 0 } };
+  }
 };
 
 export const getEntities =
@@ -54,7 +59,7 @@ export const getEntities =
     pathway,
     setCurPageIds,
     setTotal,
-    selectedIds,
+    selectedIdsRef,
     setFullFilters,
     fullFilters,
     rule,
@@ -63,6 +68,7 @@ export const getEntities =
     axios,
   ) =>
   async (_items, config, showTags, defaultGetEntities) => {
+    const selectedIds = selectedIdsRef.current || [];
     const {
       per_page,
       page,
@@ -97,8 +103,19 @@ export const getEntities =
     };
     setFullFilters(allDetails);
     const fetchedSystems = await paginatedRequestHelper(allDetails);
+    const systemIds = fetchedSystems?.data?.map(
+      (system) => system.system_uuid,
+    ) || [];
+    const totalCount = fetchedSystems?.meta?.count || 0;
+
+    if (systemIds.length === 0) {
+      setCurPageIds([]);
+      setTotal(totalCount);
+      return Promise.resolve({ results: [], total: totalCount });
+    }
+
     const results = await defaultGetEntities(
-      fetchedSystems.data.map((system) => system.system_uuid),
+      systemIds,
       {
         per_page,
         hasItems: true,
@@ -107,8 +124,8 @@ export const getEntities =
       },
       showTags,
     );
-    setCurPageIds(fetchedSystems.data.map((system) => system.system_uuid));
-    setTotal(fetchedSystems.meta.count);
+    setCurPageIds(systemIds);
+    setTotal(totalCount);
     return Promise.resolve({
       results: mergeArraysByDiffKeys(fetchedSystems.data, results.results).map(
         (item) => {
@@ -118,7 +135,7 @@ export const getEntities =
           };
         },
       ),
-      total: fetchedSystems.meta.count,
+      total: totalCount,
     });
   };
 

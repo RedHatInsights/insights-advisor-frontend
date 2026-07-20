@@ -10,7 +10,7 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import { EnvironmentContext } from '../App';
 import { DownloadIcon } from '@patternfly/react-icons';
 
-const DownloadPlaybookButton = ({ isDisabled, rules, systems }) => {
+const DownloadPlaybookButton = ({ isDisabled, rules, systems, ruleSystemsMap }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const notification = (data) => dispatch(addNotification(data));
@@ -57,10 +57,15 @@ const DownloadPlaybookButton = ({ isDisabled, rules, systems }) => {
       r.resolution_set.some((r2) => r2.has_playbook),
     );
     const autoReboot = playbookRules.some((r) => r.reboot_required);
-    const issues = playbookRules.map((r) => ({
-      id: `advisor:${r.rule_id}`,
-      systems,
-    }));
+    const issues = playbookRules.map((r) => {
+      const ruleSystems = ruleSystemsMap
+        ? systems.filter((s) => ruleSystemsMap[r.rule_id]?.includes(s))
+        : systems;
+      return {
+        id: `advisor:${r.rule_id}`,
+        systems: ruleSystems,
+      };
+    }).filter((issue) => issue.systems.length > 0);
 
     return {
       auto_reboot: autoReboot,
@@ -91,6 +96,7 @@ DownloadPlaybookButton.propTypes = {
   isDisabled: PropTypes.bool,
   rules: PropTypes.arrayOf(PropTypes.shape({})),
   systems: PropTypes.arrayOf(PropTypes.string),
+  ruleSystemsMap: PropTypes.object,
 };
 
 export default DownloadPlaybookButton;
