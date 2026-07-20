@@ -119,7 +119,6 @@ const Inventory = ({
   const selectedIdsRef = useRef(safeSelectedIds);
   selectedIdsRef.current = safeSelectedIds;
 
-
   const fetchSystems = useMemo(() => getEntities(
     handleRefresh,
     pathway,
@@ -396,7 +395,6 @@ const Inventory = ({
   const [resolutions, setResolutions] = useState([]);
 
   useEffect(() => {
-
     if (safeSelectedIds.length > 0) {
       if (rule) {
         const fetchAndSetData = async () => {
@@ -440,7 +438,6 @@ const Inventory = ({
       setResolutions([]);
     }
   }, [safeSelectedIds]);
-
   const actionsConfig = useMemo(() => {
     const noPlaybookTooltip =
       safeSelectedIds.length > 0 &&
@@ -592,7 +589,6 @@ const Inventory = ({
       ? intl.formatMessage(messages.exportData)
       : intl.formatMessage(messages.permsAction),
   }, [permsExport, filters, rule, selectedTags, workloads, entities?.rows?.length, envContext.BASE_URL]);
-
 
   return (
     <React.Fragment>

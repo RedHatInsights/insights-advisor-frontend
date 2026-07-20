@@ -69,7 +69,6 @@ export const getEntities =
   ) =>
   async (_items, config, showTags, defaultGetEntities) => {
     const selectedIds = selectedIdsRef.current || [];
-    console.log('[Inventory] fetchSystems called');
     const {
       per_page,
       page,
@@ -128,15 +127,14 @@ export const getEntities =
     setCurPageIds(systemIds);
     setTotal(totalCount);
     return Promise.resolve({
-      results: mergeArraysByDiffKeys(
-        fetchedSystems.data,
-        results.results,
-      ).map((item) => {
-        return {
-          ...item,
-          selected: selectedIds?.includes(item.id),
-        };
-      }),
+      results: mergeArraysByDiffKeys(fetchedSystems.data, results.results).map(
+        (item) => {
+          return {
+            ...item,
+            selected: selectedIds?.includes(item.id),
+          };
+        },
+      ),
       total: totalCount,
     });
   };
