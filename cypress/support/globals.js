@@ -35,6 +35,29 @@ export const rulesTableColumns = [
   },
 ];
 
+// New RulesTable columns (tabletools implementation - no expansion column)
+// All titles hardcoded in Columns.js, not using intl messages
+export const rulesTableColumnsNew = [
+  {
+    title: 'Name',
+  },
+  {
+    title: 'Modified',
+  },
+  {
+    title: 'Category',
+  },
+  {
+    title: 'Total risk',
+  },
+  {
+    title: 'Systems',
+  },
+  {
+    title: 'Remediation type',
+  },
+];
+
 export const CATEGORIES = {
   Security: ['security'],
   Availability: ['availability'],

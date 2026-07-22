@@ -25,6 +25,14 @@ export const sortSerialiser = ({ index, direction } = {}, columns) => {
 };
 
 /**
+ * Converts label to kebab-case ID (matches tabletools stringToId)
+ * @param {string} string - Label string
+ * @returns {string} - Kebab-case ID
+ */
+const stringToId = (string) =>
+  string ? string.split(/\s+/).join('-').toLowerCase() : '';
+
+/**
  * Converts TableToolsTable filter state to Advisor API format
  * @param {object} state - Filter state from table
  * @param {array} filters - Filter configuration
@@ -34,7 +42,10 @@ export const filtersSerialiser = (state, filters) => {
   const params = {};
 
   Object.entries(state || {}).forEach(([filterId, value]) => {
-    const filterConfig = filters.find((f) => f.id === filterId);
+    // Try to find filter by ID first, then by stringToId(label)
+    const filterConfig = filters.find(
+      (f) => f.id === filterId || stringToId(f.label) === filterId,
+    );
     if (!filterConfig) return;
 
     switch (filterConfig.type) {
