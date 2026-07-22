@@ -1,6 +1,6 @@
 import './_TopicsAdminTable.scss';
 
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { sortable } from '@patternfly/react-table';
 import {
   Table,
@@ -22,23 +22,37 @@ import StarIcon from '@patternfly/react-icons/dist/esm/icons/star-icon';
 import { TableToolbar } from '@redhat-cloud-services/frontend-components/TableToolbar';
 import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import messages from '../../Messages';
-import { useGetTopicsAdminQuery } from '../../Services/Topics';
+import { useFetchTopics } from '../../Services/apiClient';
 import { useIntl } from 'react-intl';
-import { EnvironmentContext } from '../../App';
 
 const TopicsAdminTable = () => {
   const intl = useIntl();
-  const envContext = useContext(EnvironmentContext);
+  const fetchTopics = useFetchTopics();
 
-  const {
-    data: topics = [],
-    isLoading,
-    isFetching,
-    isError,
-    refetch,
-  } = useGetTopicsAdminQuery({
-    customBasePath: envContext.BASE_URL,
-  });
+  const [topics, setTopics] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
+  const [isError, setIsError] = useState(false);
+
+  const loadTopics = useCallback(async () => {
+    setIsFetching(true);
+    try {
+      const data = await fetchTopics({ show_disabled: true });
+      setTopics(data);
+      setIsError(false);
+    } catch (error) {
+      setIsError(error);
+    } finally {
+      setIsLoading(false);
+      setIsFetching(false);
+    }
+  }, [fetchTopics]);
+
+  useEffect(() => {
+    loadTopics();
+  }, [loadTopics]);
+
+  const refetch = loadTopics;
 
   const [cols] = useState([
     { title: intl.formatMessage(messages.title), transforms: [sortable] },

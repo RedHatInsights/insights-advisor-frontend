@@ -3,10 +3,10 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components/PageHeader';
 
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import TopicsTable from '../../PresentationalComponents/TopicsTable/TopicsTable';
 import messages from '../../Messages';
-import { useGetTopicsQuery } from '../../Services/Topics';
+import useTopicsQuery from '../../Services/hooks/useTopicsQuery';
 import { useSelector } from 'react-redux';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
 import { EnvironmentContext } from '../../App';
@@ -20,15 +20,23 @@ const List = () => {
     envContext.updateDocumentTitle('Topics - Advisor');
   }, [envContext]);
 
-  let options = selectedTags?.length && { tags: selectedTags };
-  workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
-  options = { ...options, customBasePath: envContext.BASE_URL };
-  const {
-    data = [],
-    isLoading,
-    isFetching,
-    isError,
-  } = useGetTopicsQuery(options);
+  const params = useMemo(() => {
+    let options = {};
+    if (selectedTags?.length) {
+      options.tags = selectedTags.join(',');
+    }
+    if (workloads) {
+      options = { ...options, ...workloadQueryBuilder(workloads) };
+    }
+    return options;
+  }, [selectedTags, workloads]);
+
+  const { data, loading, error } = useTopicsQuery({ params });
+
+  const topics = data?.data || [];
+  const isLoading = loading;
+  const isFetching = loading;
+  const isError = !!error;
 
   return (
     <React.Fragment>
@@ -36,7 +44,7 @@ const List = () => {
         <PageHeaderTitle title={`${messages.topics.defaultMessage}`} />
       </PageHeader>
       <section className="pf-v6-l-page__main-section pf-v6-c-page__main-section">
-        <TopicsTable props={{ data, isLoading, isFetching, isError }} />
+        <TopicsTable props={{ data: topics, isLoading, isFetching, isError }} />
       </section>
     </React.Fragment>
   );

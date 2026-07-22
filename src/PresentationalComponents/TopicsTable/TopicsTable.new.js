@@ -4,9 +4,8 @@ import { TimesCircleIcon } from '@patternfly/react-icons';
 import MessageState from '../MessageState/MessageState';
 import { StaticTableToolsTable } from 'bastilian-tabletools';
 import { SkeletonTable } from '@patternfly/react-component-groups';
-import { useIntl } from 'react-intl';
-import messages from '../../Messages';
-import { useTopicsColumns, useTopicsFilters } from './TopicsTableAssets';
+import columns from './Columns';
+import filters from './Filters';
 
 /**
  * Topics table component using bastilian-tabletools with client-side sorting and filtering.
@@ -21,19 +20,15 @@ import { useTopicsColumns, useTopicsFilters } from './TopicsTableAssets';
  * @returns {JSX.Element} Topics table component
  */
 const TopicsTableNew = ({ props }) => {
-  const intl = useIntl();
   // eslint-disable-next-line react/prop-types
   const { data: topics = [], isLoading, isFetching, isError } = props;
-
-  const columns = useTopicsColumns();
-  const filters = useTopicsFilters();
 
   if (isError) {
     return (
       <MessageState
         icon={TimesCircleIcon}
-        title={intl.formatMessage(messages.topicsListNotopicsTitle)}
-        text={intl.formatMessage(messages.topicsListNotopicsBody)}
+        title="No topics"
+        text="This is a list of topics. Topics are a grouping construct that help users view and manage recommendations at a higher, aggregated level than individual recommendations."
       />
     );
   }
