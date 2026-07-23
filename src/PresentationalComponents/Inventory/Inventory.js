@@ -307,17 +307,19 @@ const Inventory = ({
         ...displayName[0],
         transforms: [sortable, wrappable],
         props: { isStatic: true },
-        ...(rule
+        ...(rule || pathway
           ? {
               renderFunc: (name, id) => {
                 return envContext.loadChromeless ? (
                   <Link to={`/new/hosts/${name}/#Overview`}>{name}</Link>
-                ) : (
+                ) : rule ? (
                   <InsightsLink
                     to={`/recommendations/${rule.rule_id}/${id}?activeRule=true`}
                   >
                     {name}
                   </InsightsLink>
+                ) : (
+                  name
                 );
               },
             }
