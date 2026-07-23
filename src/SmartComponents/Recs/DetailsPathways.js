@@ -73,10 +73,11 @@ const PathwayDetails = (props) => {
   workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
   const customBasePath = envContext?.BASE_URL;
   customBasePath && (options = { ...options, customBasePath });
-  const { data: pathway = {}, isFetching } = useGetPathwayQuery({
+  const { data: pathway = {}, isFetching, isLoading } = useGetPathwayQuery({
     ...options,
     slug: pathwayName,
   });
+  const loading = isFetching || isLoading || Object.keys(pathway).length === 0;
   const { pathname } = useLocation();
 
   const [activeTab, setActiveTab] = useState(
@@ -84,11 +85,11 @@ const PathwayDetails = (props) => {
   );
   useEffect(() => {
     pathway &&
-      !isFetching &&
+      !loading &&
       envContext.updateDocumentTitle(
         `${pathway.name} - ${messages.pathways.defaultMessage} - Advisor`,
       );
-  }, [envContext, pathway, pathname, isFetching]);
+  }, [envContext, pathway, pathname, loading]);
 
   const waitForElm = (selector) => {
     return new Promise((resolve) => {
@@ -159,7 +160,7 @@ const PathwayDetails = (props) => {
 
   return (
     <React.Fragment>
-      {isFetching ? (
+      {loading ? (
         <Loading />
       ) : (
         <React.Fragment>
@@ -202,7 +203,7 @@ const PathwayDetails = (props) => {
           </section>
         </React.Fragment>
       )}
-      {isFetching && <Loading />}
+      {loading && <Loading />}
       <section className="pf-v5-u-px-lg pf-v5-u-pb-lg">
         <Tabs
           className="adv__background--global-100"
@@ -217,7 +218,7 @@ const PathwayDetails = (props) => {
               </TabTitleText>
             }
           >
-            {isFetching ? (
+            {loading ? (
               <Loading />
             ) : (
               <Suspense fallback={<Loading />}>
@@ -234,7 +235,7 @@ const PathwayDetails = (props) => {
             }
           >
             {activeTab === 1 &&
-              (isFetching ? (
+              (loading ? (
                 <Loading />
               ) : (
                 <Suspense fallback={<Loading />}>

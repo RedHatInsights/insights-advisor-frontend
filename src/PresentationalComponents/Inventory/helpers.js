@@ -69,7 +69,6 @@ export const getEntities =
   ) =>
   async (_items, config, showTags, defaultGetEntities) => {
     const selectedIds = selectedIdsRef.current || [];
-    console.log('[Inventory] fetchSystems called');
     const {
       per_page,
       page,
