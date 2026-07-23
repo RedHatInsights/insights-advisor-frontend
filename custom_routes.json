@@ -1,0 +1,9 @@
+{
+  "/assets/apps/advisor/*": {
+    "url": "http://host.docker.internal:8004",
+    "strip_prefix": "/assets"
+  },
+  "/apps/advisor/*": {
+    "url": "http://host.docker.internal:8004"
+  }
+}
