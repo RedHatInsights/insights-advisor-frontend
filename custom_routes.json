@@ -1,0 +1,8 @@
+{
+  "/assets/apps/advisor/*": {
+    "url": "http://host.docker.internal:8003"
+  },
+  "/api/insights/v1/advisor/*": {
+    "url": "http://host.docker.internal:8000"
+  }
+}

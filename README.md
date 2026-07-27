@@ -33,6 +33,10 @@ In a separate terminal, run Advisor with proxy enabled and list Inventory:
 ```
 LOCAL_APPS=inventory:8003~http npm run start:proxy
 ```
+## IOP mode
+To run Advisor in IOP mode, follow the [IOP mode instructions](https://github.com/RedHatInsights/frontend-development-proxy#iop-mode) in the frontend-development-proxy repository.
+
+You can start the local IOP proxy with `npm run start:proxy:iop` (requires `IOP_URL` to be set).
 
 ## Testing
 Travis is used to test the build for this code.
