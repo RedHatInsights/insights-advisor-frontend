@@ -6,6 +6,7 @@ import { initStore } from '../../Store';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AccountStatContext } from '../../ZeroStateWrapper';
 import { EnvironmentContext } from '../../App';
+import { FlagProvider } from '@unleash/proxy-client-react';
 import fixtures from '../../../cypress/fixtures/recommendations.json';
 import { hasChip, itExportsDataToFile } from '../../../cypress/utils/table';
 import { createTestEnvironmentContext } from '../../../cypress/support/globals';
@@ -29,6 +30,13 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
 
   const currentRequestBasePath =
     finalEnvContext.customBasePath || DEFAULT_API_BASE_PATH;
+
+  cy.intercept('POST', '/feature_flags/client/metrics', { statusCode: 200 });
+
+  cy.intercept('GET', '/feature_flags*', {
+    statusCode: 200,
+    body: { toggles: [] },
+  }).as('getFeatureFlags');
 
   cy.intercept(`${currentRequestBasePath}/topic/123/?topicId=123`, {
     name: 'Amazon Web Services (AWS)',
@@ -58,19 +66,27 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
   ).as('rules_table_initial_call');
 
   cy.mount(
-    <EnvironmentContext.Provider value={finalEnvContext}>
-      <MemoryRouter initialEntries={['/topics/123']}>
-        <AccountStatContext.Provider value={{ hasEdgeDevices }}>
-          <IntlProvider messages={messages} defaultLocale="en" locale="en">
-            <Provider store={initStore()}>
-              <Routes>
-                <Route path="topics/:id" element={<Details />}></Route>
-              </Routes>
-            </Provider>
-          </IntlProvider>
-        </AccountStatContext.Provider>
-      </MemoryRouter>
-    </EnvironmentContext.Provider>,
+    <FlagProvider
+      config={{
+        url: 'http://localhost:8002/feature_flags',
+        clientKey: 'abc',
+        appName: 'abc',
+      }}
+    >
+      <EnvironmentContext.Provider value={finalEnvContext}>
+        <MemoryRouter initialEntries={['/topics/123']}>
+          <AccountStatContext.Provider value={{ hasEdgeDevices }}>
+            <IntlProvider messages={messages} defaultLocale="en" locale="en">
+              <Provider store={initStore()}>
+                <Routes>
+                  <Route path="topics/:id" element={<Details />}></Route>
+                </Routes>
+              </Provider>
+            </IntlProvider>
+          </AccountStatContext.Provider>
+        </MemoryRouter>
+      </EnvironmentContext.Provider>
+    </FlagProvider>,
   );
 };
 

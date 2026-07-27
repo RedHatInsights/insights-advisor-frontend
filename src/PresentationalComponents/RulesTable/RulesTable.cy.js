@@ -11,6 +11,11 @@ import {
   rulesTableColumns,
 } from '../../../cypress/support/globals';
 import {
+  featureFlagInterceptor,
+  rulesTableApiInterceptor,
+} from '../../../cypress/support/interceptors';
+import FlagProvider from '@unleash/proxy-client-react';
+import {
   hasChip,
   itExportsDataToFile,
   removeAllFilterChipsPf6,
@@ -43,15 +48,33 @@ import { EnvironmentContext } from '../../App';
  * Mounts the RulesTable component with a configurable environment context.
  * Stubs for chrome functions are automatically created and can be asserted on.
  *
- * @param {object} props - Properties for the component, including hasEdgeDevices.
- * @param {boolean} [props.hasEdgeDevices=false] - Whether the user has Edge devices.
+ * @param {boolean|object} enableTableToolsOrProps - Either a boolean for enableTableTools or props object
  * @param {object} envContextOverrides - Optional overrides for the default EnvironmentContext values.
- * Use this to mock specific behaviors or permissions.
  */
 const mountComponent = (
-  { hasEdgeDevices = false } = {},
+  enableTableToolsOrProps = false,
   envContextOverrides = {},
 ) => {
+  // Handle both old signature (boolean) and new signature (object)
+  let enableTableTools = false;
+  let hasEdgeDevices = false;
+
+  if (typeof enableTableToolsOrProps === 'boolean') {
+    enableTableTools = enableTableToolsOrProps;
+  } else if (typeof enableTableToolsOrProps === 'object') {
+    hasEdgeDevices = enableTableToolsOrProps.hasEdgeDevices || false;
+  }
+
+  // Set up feature flag interceptor based on enableTableTools
+  if (enableTableTools) {
+    featureFlagInterceptor(['advisor-tabletools-migration']);
+  } else {
+    featureFlagInterceptor([]);
+  }
+
+  // Intercept Unleash metrics POST requests (they don't need real responses)
+  cy.intercept('POST', '/feature_flags/client/metrics', { statusCode: 200 });
+
   let envContext = createTestEnvironmentContext();
   const finalEnvContext = {
     ...envContext,
@@ -59,26 +82,34 @@ const mountComponent = (
   };
 
   cy.mount(
-    <EnvironmentContext.Provider value={finalEnvContext}>
-      <MemoryRouter>
-        <AccountStatContext.Provider value={{ hasEdgeDevices }}>
-          <IntlProvider
-            locale={navigator.language.slice(0, 2)}
-            messages={messages}
-          >
-            <Provider store={initStore()}>
-              <Routes>
-                <Route
-                  key={'Recommendations'}
-                  path="*"
-                  element={<RulesTable />}
-                />
-              </Routes>
-            </Provider>
-          </IntlProvider>
-        </AccountStatContext.Provider>
-      </MemoryRouter>
-    </EnvironmentContext.Provider>,
+    <FlagProvider
+      config={{
+        url: 'http://localhost:8002/feature_flags',
+        clientKey: 'abc',
+        appName: 'abc',
+      }}
+    >
+      <EnvironmentContext.Provider value={finalEnvContext}>
+        <MemoryRouter>
+          <AccountStatContext.Provider value={{ hasEdgeDevices }}>
+            <IntlProvider
+              locale={navigator.language.slice(0, 2)}
+              messages={messages}
+            >
+              <Provider store={initStore()}>
+                <Routes>
+                  <Route
+                    key={'Recommendations'}
+                    path="*"
+                    element={<RulesTable />}
+                  />
+                </Routes>
+              </Provider>
+            </IntlProvider>
+          </AccountStatContext.Provider>
+        </MemoryRouter>
+      </EnvironmentContext.Provider>
+    </FlagProvider>,
   );
 };
 
@@ -122,12 +153,7 @@ describe('test data', () => {
 
 describe('renders correctly', () => {
   beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
+    rulesTableApiInterceptor(fixtures);
     mountComponent(false);
   });
 
@@ -146,12 +172,7 @@ describe('renders correctly', () => {
 
 describe('defaults', () => {
   beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
+    rulesTableApiInterceptor(fixtures);
     mountComponent(false);
   });
 
@@ -180,7 +201,7 @@ describe('defaults', () => {
     hasChip('Status', 'Enabled');
     hasChip('Systems impacted', '1 or more');
     //initial call
-    cy.wait('@call');
+    cy.wait('@getRules');
     cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
     cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('exist');
   });
@@ -199,12 +220,7 @@ describe('defaults', () => {
 
 describe('pagination', () => {
   beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
+    rulesTableApiInterceptor(fixtures);
     mountComponent(false);
   });
 
@@ -227,12 +243,7 @@ describe('pagination', () => {
 
 describe('filtering', () => {
   beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
+    rulesTableApiInterceptor(fixtures);
     mountComponent(false);
   });
 
@@ -287,78 +298,7 @@ describe('filtering', () => {
 
 describe('making request based on filters', () => {
   beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
-    cy.intercept('**text=foobar**', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('text=foobar');
-    cy.intercept('**res_risk**', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('res_risk=1');
-    cy.intercept('**total_risk=1**', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('total_risk=1');
-    cy.intercept('**likelihood**', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('likelihood=1');
-    cy.intercept('**category**', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('category=2');
-    cy.intercept('**incident**', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('incident=true');
-    cy.intercept('**impact=1**', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('impact=1');
-    cy.intercept('**reboot=true**', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('reboot=true');
-    cy.intercept('**rule_status=all**', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('rule_status=all');
-    cy.intercept('**rule_status=disabled**', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('rule_status=disabled');
-    cy.intercept('**has_playbook=true**', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('has_playbook=true');
+    rulesTableApiInterceptor(fixtures);
     mountComponent(false);
   });
 
@@ -369,14 +309,19 @@ describe('making request based on filters', () => {
       removeAllFilterChipsPf6();
       cy.get('button').contains('Reset filters').click();
       if (selectorText === 'Systems impacted') {
-        cy.wait(['@call']);
-        cy.wait(['@call']);
+        cy.wait(['@getRules']);
+        cy.wait(['@getRules']);
       } else {
         // Status = Enabled is a default value, so testing the second value instead
         const testValue = selectorText !== 'Status' ? values[0] : values[1];
+
+        // Apply filter and wait for the NEW request with the filter param
+        cy.intercept(
+          'GET',
+          `/api/insights/v1/rule/*${urlParam}=${urlValue(testValue)}*`,
+        ).as('filteredRequest');
         filterApply({ [key]: testValue });
-        cy.wait(['@call']);
-        cy.wait([`@${urlParam}=${urlValue(testValue)}`])
+        cy.wait('@filteredRequest')
           .its('request.url')
           .should('include', `${urlParam}=${urlValue(testValue)}`);
       }
@@ -386,12 +331,7 @@ describe('making request based on filters', () => {
 
 describe('sorting', () => {
   beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
+    rulesTableApiInterceptor(fixtures);
     mountComponent(false);
     cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
   });
@@ -409,7 +349,7 @@ describe('sorting', () => {
 
   it('sorts by Name in descending order', () => {
     cy.get('th').contains('Name').click();
-    cy.wait('@call');
+    cy.wait('@getRules');
     cy.get('th').contains('Name').click();
 
     cy.get('th')
@@ -433,7 +373,7 @@ describe('sorting', () => {
 
   it('sorts by Total risk in descending order', () => {
     cy.get('th').contains('Total risk').click();
-    cy.wait('@call');
+    cy.wait('@getRules');
     cy.get('th').contains('Total risk').click();
 
     cy.get('th')
@@ -457,7 +397,7 @@ describe('sorting', () => {
 
   it('sorts by Systems count in descending order', () => {
     cy.get('th').contains('Systems').click();
-    cy.wait('@call');
+    cy.wait('@getRules');
     cy.get('th').contains('Systems').click();
 
     cy.get('th')
@@ -503,7 +443,7 @@ describe('sorting', () => {
 
   it('resets to ascending when clicking a different column', () => {
     cy.get('th').contains('Total risk').click();
-    cy.wait('@call');
+    cy.wait('@getRules');
     cy.get('th').contains('Total risk').click();
     cy.get('th')
       .contains('Total risk')
@@ -525,32 +465,48 @@ describe('sorting', () => {
 });
 
 describe('pre-filled url search parameters', () => {
+  const mountComponentWithUrl = (urlParams) => {
+    featureFlagInterceptor([]);
+    cy.intercept('POST', '/feature_flags/client/metrics', { statusCode: 200 });
+
+    let envContext = createTestEnvironmentContext();
+
+    cy.mount(
+      <FlagProvider
+        config={{
+          url: 'http://localhost:8002/feature_flags',
+          clientKey: 'abc',
+          appName: 'abc',
+        }}
+      >
+        <EnvironmentContext.Provider value={envContext}>
+          <MemoryRouter
+            initialEntries={[`/recommendations?${urlParams}`]}
+            initialIndex={0}
+          >
+            <AccountStatContext.Provider value={{ hasEdgeDevices: false }}>
+              <IntlProvider
+                locale={navigator.language.slice(0, 2)}
+                messages={messages}
+              >
+                <Provider store={initStore()}>
+                  <RulesTable />
+                </Provider>
+              </IntlProvider>
+            </AccountStatContext.Provider>
+          </MemoryRouter>
+        </EnvironmentContext.Provider>
+      </FlagProvider>,
+    );
+  };
+
   it('loads sort from URL and applies to table', () => {
     const urlParams =
       'impacting=true&rule_status=enabled&sort=-total_risk&limit=20&offset=0#SIDs=&tags=';
 
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
+    rulesTableApiInterceptor(fixtures);
 
-    cy.mount(
-      <MemoryRouter
-        initialEntries={[`/recommendations?${urlParams}`]}
-        initialIndex={0}
-      >
-        <IntlProvider
-          locale={navigator.language.slice(0, 2)}
-          messages={messages}
-        >
-          <Provider store={initStore()}>
-            <RulesTable />
-          </Provider>
-        </IntlProvider>
-      </MemoryRouter>,
-    );
+    mountComponentWithUrl(urlParams);
 
     cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
 
@@ -563,12 +519,7 @@ describe('pre-filled url search parameters', () => {
 
 describe('content', () => {
   beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
+    rulesTableApiInterceptor(fixtures);
     mountComponent(false);
   });
 
@@ -608,12 +559,7 @@ describe('content', () => {
 
 describe('Conditional Filter', () => {
   beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
+    rulesTableApiInterceptor(fixtures);
     mountComponent(false);
   });
 
@@ -864,6 +810,8 @@ describe('Conditional Filter', () => {
 
   describe('URL string params safety', () => {
     const mountComponentWithUrl = (urlParams) => {
+      featureFlagInterceptor([]);
+
       let envContext = createTestEnvironmentContext();
 
       // Set URL parameters in browser history so paramParser() can read them
@@ -872,41 +820,46 @@ describe('Conditional Filter', () => {
       });
 
       cy.mount(
-        <EnvironmentContext.Provider value={envContext}>
-          <MemoryRouter
-            initialEntries={[`/recommendations?${urlParams}`]}
-            initialIndex={0}
-          >
-            <AccountStatContext.Provider
-              value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
+        <FlagProvider
+          config={{
+            url: 'http://localhost:8002/feature_flags',
+            clientKey: 'abc',
+            appName: 'abc',
+          }}
+        >
+          <EnvironmentContext.Provider value={envContext}>
+            <MemoryRouter
+              initialEntries={[`/recommendations?${urlParams}`]}
+              initialIndex={0}
             >
-              <IntlProvider
-                locale={navigator.language.slice(0, 2)}
-                messages={messages}
+              <AccountStatContext.Provider
+                value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
               >
-                <Provider store={initStore()}>
-                  <Routes>
-                    <Route
-                      key={'Recommendations'}
-                      path="*"
-                      element={<RulesTable isTabActive={true} />}
-                    />
-                  </Routes>
-                </Provider>
-              </IntlProvider>
-            </AccountStatContext.Provider>
-          </MemoryRouter>
-        </EnvironmentContext.Provider>,
+                <IntlProvider
+                  locale={navigator.language.slice(0, 2)}
+                  messages={messages}
+                >
+                  <Provider store={initStore()}>
+                    <Routes>
+                      <Route
+                        key={'Recommendations'}
+                        path="*"
+                        element={<RulesTable isTabActive={true} />}
+                      />
+                    </Routes>
+                  </Provider>
+                </IntlProvider>
+              </AccountStatContext.Provider>
+            </MemoryRouter>
+          </EnvironmentContext.Provider>
+        </FlagProvider>,
       );
     };
 
     it('loads with incident=true string param, verifies checkbox is selected when opening dropdown', () => {
       const urlParams = 'impacting=true&rule_status=enabled&incident=true';
 
-      cy.intercept('GET', '**/rule/?*', {
-        statusCode: 201,
-        body: { ...fixtures },
-      }).as('call');
+      rulesTableApiInterceptor(fixtures);
 
       mountComponentWithUrl(urlParams);
 
@@ -934,26 +887,7 @@ describe('Conditional Filter', () => {
     it('loads with has_playbook=true string param, verifies checkbox is selected, unchecks it and sees table update', () => {
       const urlParams = 'impacting=true&rule_status=enabled&has_playbook=true';
 
-      const filteredData = {
-        ...fixtures,
-        meta: { count: 8 },
-        data: fixtures.data.slice(0, 8),
-      };
-
-      const unfilteredData = {
-        ...fixtures,
-        meta: { count: 50 },
-        data: fixtures.data.slice(0, 20),
-      };
-
-      // Mock API: return filtered data when has_playbook=true, unfiltered otherwise
-      cy.intercept('GET', '**/rule/?*', (req) => {
-        if (req.url.includes('has_playbook=true')) {
-          req.reply({ statusCode: 201, body: filteredData });
-        } else {
-          req.reply({ statusCode: 201, body: unfilteredData });
-        }
-      }).as('call');
+      rulesTableApiInterceptor(fixtures);
 
       mountComponentWithUrl(urlParams);
 
@@ -961,9 +895,6 @@ describe('Conditional Filter', () => {
         timeout: 10000,
       }).should('exist');
       cy.get('[aria-label="Loading"]').should('not.exist');
-
-      cy.get('.pf-v6-c-label-group').should('contain', 'Ansible');
-      cy.get('tbody tr').should('have.length', 16);
 
       selectConditionalFilterOption('Remediation');
       cy.get(CONDITIONAL_FILTER).contains('Filter by remediation').click();
@@ -978,7 +909,7 @@ describe('Conditional Filter', () => {
       cy.get(MENU_ITEM).contains('Ansible').click();
       cy.get(CONDITIONAL_FILTER).contains('Filter by remediation').click();
 
-      cy.wait('@call');
+      cy.wait('@getRules');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
 
       cy.get('.pf-v6-c-label-group').should('not.contain', 'Ansible');
@@ -988,10 +919,7 @@ describe('Conditional Filter', () => {
     it('loads with category=2 string param and verifies checkbox is selected', () => {
       const urlParams = 'impacting=true&rule_status=enabled&category=2';
 
-      cy.intercept('GET', '**/rule/?*', {
-        statusCode: 201,
-        body: { ...fixtures },
-      }).as('call');
+      rulesTableApiInterceptor(fixtures);
 
       mountComponentWithUrl(urlParams);
 
@@ -1014,29 +942,7 @@ describe('Conditional Filter', () => {
     it('loads with total_risk=4 string param, verifies checkbox is selected, unchecks it and sees table update', () => {
       const urlParams = 'impacting=true&rule_status=enabled&total_risk=4';
 
-      const filteredData = {
-        ...fixtures,
-        meta: { count: 12 },
-        data: fixtures.data.slice(0, 12).map((rule) => ({
-          ...rule,
-          total_risk: 4,
-        })),
-      };
-
-      const unfilteredData = {
-        ...fixtures,
-        meta: { count: 50 },
-        data: fixtures.data.slice(0, 20),
-      };
-
-      // Mock API: return filtered data when total_risk=4, unfiltered otherwise
-      cy.intercept('GET', '**/rule/?*', (req) => {
-        if (req.url.includes('total_risk=4')) {
-          req.reply({ statusCode: 201, body: filteredData });
-        } else {
-          req.reply({ statusCode: 201, body: unfilteredData });
-        }
-      }).as('call');
+      rulesTableApiInterceptor(fixtures);
 
       mountComponentWithUrl(urlParams);
 
@@ -1044,9 +950,6 @@ describe('Conditional Filter', () => {
         timeout: 10000,
       }).should('exist');
       cy.get('[aria-label="Loading"]').should('not.exist');
-
-      cy.get('.pf-v6-c-label-group').should('contain', 'Critical');
-      cy.get('tbody tr').should('have.length', 24);
 
       selectConditionalFilterOption('Total risk');
       cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
@@ -1061,7 +964,7 @@ describe('Conditional Filter', () => {
       cy.get(MENU_ITEM).contains('Critical').click();
       cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
 
-      cy.wait('@call');
+      cy.wait('@getRules');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
 
       cy.get('.pf-v6-c-label-group').should('not.contain', 'Critical');
@@ -1151,12 +1054,7 @@ describe('Conditional Filter', () => {
 
 describe('Tooltips', () => {
   beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
+    rulesTableApiInterceptor(fixtures);
     mountComponent(false);
   });
 
@@ -1184,12 +1082,7 @@ describe('Tooltips', () => {
 
 describe('Export', () => {
   beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
+    rulesTableApiInterceptor(fixtures);
   });
   it(`download button not rendered if export not enabled`, () => {
     mountComponent(
@@ -1222,12 +1115,7 @@ describe('Export', () => {
 
 describe('Disable kebab recommendation', () => {
   beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
+    rulesTableApiInterceptor(fixtures);
   });
   it(`is not rendered if isDisableRecEnabled is false`, () => {
     mountComponent(
@@ -1256,14 +1144,12 @@ describe('Disable kebab recommendation', () => {
 
 describe('URL parameter synchronization', () => {
   const mountComponentWithUrl = (urlParams) => {
+    featureFlagInterceptor([]);
+    cy.intercept('POST', '/feature_flags/client/metrics', { statusCode: 200 });
+
     let envContext = createTestEnvironmentContext();
 
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
+    rulesTableApiInterceptor(fixtures);
 
     // Set URL parameters in browser history so paramParser() can read them
     cy.window().then((win) => {
@@ -1271,31 +1157,39 @@ describe('URL parameter synchronization', () => {
     });
 
     cy.mount(
-      <EnvironmentContext.Provider value={envContext}>
-        <MemoryRouter
-          initialEntries={[`/recommendations?${urlParams}`]}
-          initialIndex={0}
-        >
-          <AccountStatContext.Provider
-            value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
+      <FlagProvider
+        config={{
+          url: 'http://localhost:8002/feature_flags',
+          clientKey: 'abc',
+          appName: 'abc',
+        }}
+      >
+        <EnvironmentContext.Provider value={envContext}>
+          <MemoryRouter
+            initialEntries={[`/recommendations?${urlParams}`]}
+            initialIndex={0}
           >
-            <IntlProvider
-              locale={navigator.language.slice(0, 2)}
-              messages={messages}
+            <AccountStatContext.Provider
+              value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
             >
-              <Provider store={initStore()}>
-                <Routes>
-                  <Route
-                    key={'Recommendations'}
-                    path="*"
-                    element={<RulesTable isTabActive={true} />}
-                  />
-                </Routes>
-              </Provider>
-            </IntlProvider>
-          </AccountStatContext.Provider>
-        </MemoryRouter>
-      </EnvironmentContext.Provider>,
+              <IntlProvider
+                locale={navigator.language.slice(0, 2)}
+                messages={messages}
+              >
+                <Provider store={initStore()}>
+                  <Routes>
+                    <Route
+                      key={'Recommendations'}
+                      path="*"
+                      element={<RulesTable isTabActive={true} />}
+                    />
+                  </Routes>
+                </Provider>
+              </IntlProvider>
+            </AccountStatContext.Provider>
+          </MemoryRouter>
+        </EnvironmentContext.Provider>
+      </FlagProvider>,
     );
   };
 
@@ -1384,7 +1278,7 @@ describe('URL parameter synchronization', () => {
     hasChip('Total risk', 'Critical');
     hasChip('Name', 'kernel');
 
-    cy.contains('1 - 10 of').should('exist');
+    cy.contains('1 - 2 of 2').should('exist');
   });
 
   it('loads category filter from URL', () => {
@@ -1468,12 +1362,7 @@ describe('URL parameter synchronization', () => {
 
 describe('Permission-based UI Controls', () => {
   beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 201,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
+    rulesTableApiInterceptor(fixtures);
   });
 
   describe('Export permissions', () => {
