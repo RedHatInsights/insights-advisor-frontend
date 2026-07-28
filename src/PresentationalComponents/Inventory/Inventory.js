@@ -119,7 +119,6 @@ const Inventory = ({
   const selectedIdsRef = useRef(safeSelectedIds);
   selectedIdsRef.current = safeSelectedIds;
 
-
   const fetchSystems = useMemo(() => getEntities(
     handleRefresh,
     pathway,
@@ -308,17 +307,19 @@ const Inventory = ({
         ...displayName[0],
         transforms: [sortable, wrappable],
         props: { isStatic: true },
-        ...(rule
+        ...(rule || pathway
           ? {
               renderFunc: (name, id) => {
                 return envContext.loadChromeless ? (
                   <Link to={`/new/hosts/${name}/#Overview`}>{name}</Link>
-                ) : (
+                ) : rule ? (
                   <InsightsLink
                     to={`/recommendations/${rule.rule_id}/${id}?activeRule=true`}
                   >
                     {name}
                   </InsightsLink>
+                ) : (
+                  name
                 );
               },
             }
@@ -396,7 +397,6 @@ const Inventory = ({
   const [resolutions, setResolutions] = useState([]);
 
   useEffect(() => {
-
     if (safeSelectedIds.length > 0) {
       if (rule) {
         const fetchAndSetData = async () => {
@@ -440,7 +440,6 @@ const Inventory = ({
       setResolutions([]);
     }
   }, [safeSelectedIds]);
-
   const actionsConfig = useMemo(() => {
     const noPlaybookTooltip =
       safeSelectedIds.length > 0 &&
@@ -592,7 +591,6 @@ const Inventory = ({
       ? intl.formatMessage(messages.exportData)
       : intl.formatMessage(messages.permsAction),
   }, [permsExport, filters, rule, selectedTags, workloads, entities?.rows?.length, envContext.BASE_URL]);
-
 
   return (
     <React.Fragment>
