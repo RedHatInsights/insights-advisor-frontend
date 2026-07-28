@@ -66,9 +66,9 @@ describe('PathwaysTable Filters', () => {
       expect(result).toEqual({});
     });
 
-    it('should extract first element from array', () => {
+    it('should return empty object when both true and false are selected', () => {
       const result = incidentFilter.filterSerialiser(['true', 'false']);
-      expect(result).toEqual({ hasIncident: 'true' });
+      expect(result).toEqual({});
     });
   });
 
@@ -93,9 +93,9 @@ describe('PathwaysTable Filters', () => {
       expect(result).toEqual({});
     });
 
-    it('should extract first element from array', () => {
+    it('should return empty object when both true and false are selected', () => {
       const result = rebootFilter.filterSerialiser(['false', 'true']);
-      expect(result).toEqual({ rebootRequired: 'false' });
+      expect(result).toEqual({});
     });
   });
 });

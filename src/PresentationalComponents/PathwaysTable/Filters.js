@@ -45,8 +45,10 @@ export const incidentFilter = {
   items: PFC.has_incident.values,
   filterSerialiser: (value) => {
     const incidents = Array.isArray(value) ? value : [];
-    // insights-client expects camelCase: hasIncident
-    return incidents.length > 0 ? { hasIncident: incidents[0] } : {};
+    if (incidents.length === 1) {
+      return { hasIncident: incidents[0] };
+    }
+    return {};
   },
 };
 
@@ -61,8 +63,10 @@ export const rebootFilter = {
   items: PFC.reboot_required.values,
   filterSerialiser: (value) => {
     const reboots = Array.isArray(value) ? value : [];
-    // insights-client expects camelCase: rebootRequired
-    return reboots.length > 0 ? { rebootRequired: reboots[0] } : {};
+    if (reboots.length === 1) {
+      return { rebootRequired: reboots[0] };
+    }
+    return {};
   },
 };
 
