@@ -129,7 +129,10 @@ describe('Recommendations table header', () => {
     );
     cy.get('button[aria-label="Download Exec Report"]');
 
-    cy.get('h1[data-ouia-component-type="RHI/Header"]').find('svg').click();
+    cy.get('h1[data-ouia-component-type="RHI/Header"]')
+      .find('svg')
+      .first()
+      .click();
     cy.get('div[class="pf-v6-c-popover__content"]')
       .find('h6')
       .contains('About advisor recommendations');
@@ -157,7 +160,10 @@ describe('Recommendations table header', () => {
     );
     cy.get('button[aria-label="Download Exec Report"]').should('not.exist');
 
-    cy.get('h1[data-ouia-component-type="RHI/Header"]').find('svg').click();
+    cy.get('h1[data-ouia-component-type="RHI/Header"]')
+      .find('svg')
+      .first()
+      .click();
     cy.get('div[class="pf-v6-c-popover__content"]')
       .find('h6')
       .contains('About advisor recommendations');
@@ -183,7 +189,10 @@ describe('Recommendations table header', () => {
     );
     cy.get('button[aria-label="Download Exec Report"]').should('exist');
 
-    cy.get('h1[data-ouia-component-type="RHI/Header"]').find('svg').click();
+    cy.get('h1[data-ouia-component-type="RHI/Header"]')
+      .find('svg')
+      .first()
+      .click();
     cy.get('div[class="pf-v6-c-popover__content"]')
       .find('h6')
       .contains('About advisor recommendations');
