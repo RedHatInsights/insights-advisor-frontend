@@ -1,11 +1,16 @@
 const { resolve } = require('path');
 const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 
+if (process.env.IOP === 'true') {
+  require('./config/patchFederationForIop');
+}
+
 module.exports = {
   appUrl: '/insights/advisor',
   ...(process.env.IOP === 'true'
     ? { deployment: 'assets/apps' }
     : { publicPath: 'auto' }),
+  SPAFallback: process.env.IOP !== 'true',
   debug: true,
   useProxy: process.env.PROXY === 'true',
   proxyVerbose: true,
@@ -30,9 +35,6 @@ module.exports = {
         ]
       : []),
   ],
-  output: {
-    publicPath: 'auto',
-  },
   moduleFederation: {
     exclude: ['@unleash/proxy-client-react'],
     shared: [
