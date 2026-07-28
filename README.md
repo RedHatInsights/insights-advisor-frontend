@@ -32,24 +32,26 @@ Clone the required repositories:
    ```
    Your credentials will be saved persistently and you won't need to login again after reboot.
 
-2. **Configure insights-chrome** - Add routing for advisor and pdf-generator in `config/webpack.config.js` routes object that contain ...(process.env.CHROME_SERVICE && {
-
+2. **Configure insights-chrome** - Add routing for `/apps/advisor/` and `/api/crc-pdf-generator/`
+     in the insights-chrome `config/webpack.config.js` routes object:
    ```javascript
-   '/apps/advisor/': { host: 'http://localhost:8003/' },
-   '/api/crc-pdf-generator/': { host: 'http://localhost:8000/' },
+   routes: {
+     '/apps/advisor/': { host: 'http://localhost:8003' },
+     '/api/crc-pdf-generator/': { host: 'http://localhost:8000' },
+     ...(process.env.CHROME_SERVICE && { ...
    ```
 
 3. **Start services in separate terminals:**
 
    **Terminal 1 - insights-chrome:**
    ```bash
-   cd ~/RH/insights-chrome
+   cd ../insights-chrome
    npm run dev
    ```
 
    **Terminal 2 - pdf-generator containers:**
    ```bash
-   cd ~/RH/pdf-generator
+   cd ../pdf-generator
    cat <<EOF > .env
    MINIO_ACCESS_KEY="minioadmin"
    MINIO_SECRET_KEY="minioadmin"
@@ -60,7 +62,7 @@ Clone the required repositories:
 
    **Terminal 3 - pdf-generator server:**
    ```bash
-   cd ~/RH/pdf-generator
+   cd ../pdf-generator
    PROXY_AGENT=http://squid.corp.redhat.com:3128/ \
    ASSETS_HOST=https://localhost:1337/ \
    API_HOST=https://console.stage.redhat.com/ \

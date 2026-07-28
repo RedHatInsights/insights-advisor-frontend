@@ -51,20 +51,20 @@ module.exports = {
     exposes: {
       './RootApp': resolve(
         __dirname,
-        `/src/${process.env.NODE_ENV !== 'production' ? 'Dev' : ''}AppEntry`,
+        `./src/${process.env.NODE_ENV !== 'production' ? 'Dev' : ''}AppEntry`,
       ),
-      './SystemDetail': resolve(__dirname, 'src/Modules/SystemDetail'),
+      './SystemDetail': resolve(__dirname, './src/Modules/SystemDetail'),
       './SystemDetailWrapped': resolve(
         __dirname,
-        'src/Modules/SystemDetailWrapped',
+        './src/Modules/SystemDetailWrapped',
       ),
       './BuildExecReport': resolve(
         __dirname,
-        '/src/PresentationalComponents/ExecutiveReport/BuildExecReport',
+        './src/PresentationalComponents/ExecutiveReport/BuildExecReport',
       ),
       './SystemsPdfBuild': resolve(
         __dirname,
-        '/src/PresentationalComponents/Export/SystemsPdfBuild',
+        './src/PresentationalComponents/Export/SystemsPdfBuild',
       ),
       './OverviewDetails': resolve(
         __dirname,
