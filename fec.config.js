@@ -1,15 +1,16 @@
 const { resolve } = require('path');
 const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 
+require('./config/patchFederationForIop');
+
 module.exports = {
   appUrl: '/insights/advisor',
-  ...(process.env.IOP === 'true'
-    ? { deployment: 'assets/apps' }
-    : { publicPath: 'auto' }),
   debug: true,
   useProxy: process.env.PROXY === 'true',
   proxyVerbose: true,
+  SPAFallback: process.env.IOP !== 'true',
   devtool: 'hidden-source-map',
+  ...(process.env.IOP === 'true' ? { deployment: 'assets/apps' } : { publicPath: 'auto' }),
   plugins: [
     // Put the Sentry Webpack plugin after all other plugins
     ...(process.env.ENABLE_SENTRY
@@ -30,9 +31,6 @@ module.exports = {
         ]
       : []),
   ],
-  output: {
-    publicPath: 'auto',
-  },
   moduleFederation: {
     exclude: ['@unleash/proxy-client-react'],
     shared: [
@@ -81,6 +79,14 @@ module.exports = {
       './ListWrapped': resolve(
         __dirname,
         './src/SmartComponents/Recs/ListWrapped.js',
+      ),
+      './ListIop': resolve(
+        __dirname,
+        './src/SmartComponents/Recs/ListIop.js',
+      ),
+      './IopRecommendationDetails': resolve(
+        __dirname,
+        './src/SmartComponents/Recs/IopRecommendationDetails.js',
       ),
     },
   },
