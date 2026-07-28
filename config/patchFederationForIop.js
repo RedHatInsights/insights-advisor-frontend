@@ -14,9 +14,11 @@ const federatedModulesPath = require.resolve(
 const federatedModulesUtil = require(federatedModulesPath);
 const originalCreateIncludes = federatedModulesUtil.createIncludes;
 
-federatedModulesUtil.createIncludes = () => {
-    const includes = originalCreateIncludes();
-    delete includes.chromeProvided['react/jsx-runtime'];
-    delete includes.chromeProvided['react-intl'];
+federatedModulesUtil.createIncludes = (...args) => {
+    const includes = originalCreateIncludes(...args);
+    if (includes.chromeProvided) {
+        delete includes.chromeProvided['react/jsx-runtime'];
+        delete includes.chromeProvided['react-intl'];
+    }
     return includes;
 };

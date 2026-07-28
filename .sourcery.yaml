@@ -1,0 +1,11 @@
+rules:
+  - id: license-check
+    pattern: FSL-1.1-MIT
+    severity: ignore
+    description: FSL-1.1-MIT (Functional Source License) transitions to MIT after 2 years and is acceptable
+
+# Disable license security warnings for known acceptable licenses
+checks:
+  license:
+    ignore:
+      - FSL-1.1-MIT
