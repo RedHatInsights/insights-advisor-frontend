@@ -53,7 +53,7 @@ const Inventory = ({
     offset: 0,
     sort: '-last_seen',
     name: '',
-    'filter[system_profile][host_type][nil]': true,
+    'filter[system_profile]': true,
   });
   const [fullFilters, setFullFilters] = useState();
   const [total, setTotal] = useState(0);

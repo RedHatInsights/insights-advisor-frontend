@@ -84,16 +84,16 @@ const getSystemCheckEndpoints = ({ ruleId, pathway, baseUrl }) => {
     return {
       conventionalURL: `${baseUrl}/rule/${encodeURI(
         ruleId,
-      )}/systems_detail/?filter[system_profile][host_type][nil]=true&limit=1`,
+      )}/systems_detail/?filter[system_profile]=true&limit=1`,
       edgeURL: `${baseUrl}/rule/${encodeURI(
         ruleId,
-      )}/systems_detail/?filter[system_profile][host_type]=edge&limit=1`,
+      )}/systems_detail/?filter[system_profile]&limit=1`,
     };
   }
 
   return {
-    conventionalURL: `${baseUrl}/system/?limit=1&filter[system_profile][host_type][nil]=true&pathway=${pathway}`,
-    edgeURL: `${baseUrl}/system/?limit=1&filter[system_profile][host_type]=edge&pathway=${pathway}`,
+    conventionalURL: `${baseUrl}/system/?limit=1&filter[system_profile]&pathway=${pathway}`,
+    edgeURL: `${baseUrl}/system/?limit=1&filter[system_profile]&pathway=${pathway}`,
   };
 };
 
