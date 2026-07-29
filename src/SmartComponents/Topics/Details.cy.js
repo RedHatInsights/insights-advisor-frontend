@@ -36,7 +36,7 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
     body: { toggles: [] },
   }).as('getFeatureFlag');
 
-  cy.intercept(`${currentRequestBasePath}/topic/123/?topicId=123`, {
+  cy.intercept(`${currentRequestBasePath}/topic/123/`, {
     name: 'Amazon Web Services (AWS)',
     slug: 'aws',
     description:
