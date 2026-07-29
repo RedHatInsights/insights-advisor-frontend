@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9/nodejs-22:latest as builder
+FROM registry.access.redhat.com/ubi9/nodejs-22:latest AS builder
 
 USER root
 
@@ -12,6 +12,7 @@ RUN mkdir -p /opt/app-root/bin/
 COPY  ./build-tools/universal_build.sh /opt/app-root/bin/universal_build.sh
 COPY ./build-tools/build_app_info.sh /opt/app-root/bin/build_app_info.sh
 COPY ./build-tools/server_config_gen.sh /opt/app-root/bin/server_config_gen.sh
+COPY ./build-tools/dependency_helpers.sh /opt/app-root/bin/dependency_helpers.sh
 
 COPY --chown=default . .
 
