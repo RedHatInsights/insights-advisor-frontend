@@ -1,5 +1,5 @@
 import { buildTagFilter, workloadQueryBuilder } from './Common/Tables';
-import { orderBy } from 'lodash';
+import orderBy from 'lodash/orderBy';
 import { exportNotifications } from '../AppConstants';
 
 export const buildOsFilter = (osFilter = {}) => {

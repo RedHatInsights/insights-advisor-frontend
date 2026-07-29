@@ -19,8 +19,9 @@ jest.mock('@redhat-cloud-services/frontend-components/InsightsLink', () => {
   return ({ children, ...props }) => <a {...props}>{children}</a>;
 });
 
-jest.mock('@redhat-cloud-services/frontend-components/DateFormat', () => ({
-  DateFormat: () => <span>2024-01-01</span>,
+jest.mock('@patternfly/react-core', () => ({
+  ...jest.requireActual('@patternfly/react-core'),
+  Timestamp: ({ children }) => <span>{children || '2024-01-01'}</span>,
 }));
 
 jest.mock('../../PresentationalComponents/Breadcrumbs/Breadcrumbs', () => {

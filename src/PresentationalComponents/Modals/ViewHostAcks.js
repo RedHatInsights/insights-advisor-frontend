@@ -6,7 +6,7 @@ import {
 } from '@patternfly/react-table/deprecated';
 
 import { BASE_URL } from '../../AppConstants';
-import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
+import { Timestamp } from '@patternfly/react-core';
 import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { List } from 'react-content-loader';
 import { OutlinedBellIcon } from '@patternfly/react-icons';
@@ -83,7 +83,11 @@ const ViewHostAcks = ({
         },
         {
           title: (
-            <DateFormat date={new Date(item.updated_at)} type="onlyDate" />
+            <Timestamp
+              date={new Date(item.updated_at)}
+              dateFormat="long"
+              style={{ fontSize: 'inherit', fontWeight: 'inherit' }}
+            />
           ),
         },
         {

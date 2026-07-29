@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Breadcrumbs from '../../PresentationalComponents/Breadcrumbs/Breadcrumbs';
 import CategoryLabel from '../../PresentationalComponents/Labels/CategoryLabel';
-import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
+import { Timestamp } from '@patternfly/react-core';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import messages from '../../Messages';
@@ -170,9 +170,10 @@ const PathwayDetails = () => {
             <p className="pf-v6-u-mb-lg">
               {intl.formatMessage(messages.pathwaysDetailsModifieddate, {
                 date: (
-                  <DateFormat
+                  <Timestamp
                     date={new Date(pathway.publish_date)}
-                    type="onlyDate"
+                    dateFormat="long"
+                    style={{ fontSize: 'inherit', fontWeight: 'inherit' }}
                   />
                 ),
               })}

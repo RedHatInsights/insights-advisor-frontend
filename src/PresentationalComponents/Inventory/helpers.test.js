@@ -1451,12 +1451,12 @@ describe('Inventory helpers', () => {
         expect(typeof lastSeenColumn.renderFunc).toBe('function');
       });
 
-      it('renderFunc returns DateFormat component', () => {
+      it('renderFunc returns RelativeTimeWithTooltip', () => {
         const date = '2024-01-15T10:30:00Z';
         const view = lastSeenColumn.renderFunc(date);
         expect(React.isValidElement(view)).toBe(true);
         expect(view.props.date).toBe(date);
-        expect(view.props.extraTitle).toBe('Last Seen: ');
+        expect(view.props.label).toBe('Last Seen: ');
       });
     });
 
@@ -1473,12 +1473,12 @@ describe('Inventory helpers', () => {
         expect(typeof impactedDateColumn.renderFunc).toBe('function');
       });
 
-      it('renderFunc returns DateFormat component', () => {
+      it('renderFunc returns RelativeTimeWithTooltip', () => {
         const date = '2024-01-10T08:00:00Z';
         const view = impactedDateColumn.renderFunc(date);
         expect(React.isValidElement(view)).toBe(true);
         expect(view.props.date).toBe(date);
-        expect(view.props.extraTitle).toBe('First impacted: ');
+        expect(view.props.label).toBe('First impacted: ');
       });
     });
   });
