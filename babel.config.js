@@ -21,7 +21,6 @@ module.exports = {
         ast: true,
       },
     ],
-    'lodash',
   ],
   env: {
     componentTest: {

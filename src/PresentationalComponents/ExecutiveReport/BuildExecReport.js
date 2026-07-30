@@ -20,7 +20,7 @@ import {
   TOTAL_RISK_CONSTANTS,
   TOTAL_RISK_LABEL,
 } from '../../AppConstants';
-import { truncate } from 'lodash';
+import truncate from 'lodash/truncate';
 import { Text } from '@react-pdf/renderer';
 import { Content, Flex, FlexItem } from '@patternfly/react-core';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';

@@ -9,7 +9,7 @@ import {
 } from '@redhat-cloud-services/frontend-components/PageHeader';
 import React, { useContext } from 'react';
 import Link from '@redhat-cloud-services/frontend-components/InsightsLink';
-import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
+import { Timestamp } from '@patternfly/react-core';
 import { Flex } from '@patternfly/react-core/dist/esm/layouts/Flex/Flex';
 import { FlexItem } from '@patternfly/react-core/dist/esm/layouts/Flex/FlexItem';
 import { Tooltip } from '@patternfly/react-core/dist/esm/components/Tooltip/Tooltip';
@@ -99,9 +99,10 @@ export const DetailsRules = ({
                 <span className="pf-v6-u-mr-md">
                   {intl.formatMessage(messages.rulesDetailsModifieddate, {
                     date: (
-                      <DateFormat
+                      <Timestamp
                         date={new Date(rule.publish_date)}
-                        type="onlyDate"
+                        dateFormat="long"
+                        style={{ fontSize: 'inherit', fontWeight: 'inherit' }}
                       />
                     ),
                   })}

@@ -2,8 +2,8 @@ import { mergeArraysByDiffKeys } from '../Common/Tables';
 import { createOptions, createSortParam, getCsrfTokenHeader } from '../helper';
 import LastSeenColumnHeader from '../../Utilities/LastSeenColumnHeader';
 import { fitContent } from '@patternfly/react-table';
-import { DateFormat } from '@redhat-cloud-services/frontend-components';
 import React from 'react';
+import { RelativeTimeWithTooltip } from '../../Utilities/dateHelpers';
 import Qs from 'qs';
 
 /**
@@ -362,7 +362,7 @@ export const lastSeenColumn = {
   props: { width: 10 },
   dataLabel: 'Last seen',
   renderFunc: (last_seen) => (
-    <DateFormat date={last_seen} extraTitle={'Last Seen: '} />
+    <RelativeTimeWithTooltip date={last_seen} label="Last Seen: " />
   ),
 };
 export const impactedDateColumn = {
@@ -372,6 +372,6 @@ export const impactedDateColumn = {
   transforms: [fitContent],
   props: { width: 15 },
   renderFunc: (impacted_date) => (
-    <DateFormat date={impacted_date} extraTitle={'First impacted: '} />
+    <RelativeTimeWithTooltip date={impacted_date} label="First impacted: " />
   ),
 };
