@@ -51,20 +51,25 @@ export const paginatedRequestHelper = async ({
     workloads,
   );
 
-  return pathway
-    ? await axios.get(`${SYSTEMS_FETCH_URL}`, {
-        params: { ...options, pathway: pathway.slug },
-        paramsSerializer: (params) =>
-          Qs.stringify(params, { arrayFormat: 'repeat' }),
-      })
-    : await axios.get(
-        `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/systems_detail/`,
-        {
-          params: options,
+  try {
+    return pathway
+      ? await axios.get(`${SYSTEMS_FETCH_URL}`, {
+          params: { ...options, pathway: pathway.slug },
           paramsSerializer: (params) =>
             Qs.stringify(params, { arrayFormat: 'repeat' }),
-        },
-      );
+        })
+      : await axios.get(
+          `${RULES_FETCH_URL}${encodeURI(rule.rule_id)}/systems_detail/`,
+          {
+            params: options,
+            paramsSerializer: (params) =>
+              Qs.stringify(params, { arrayFormat: 'repeat' }),
+          },
+        );
+  } catch (error) {
+    console.error('Failed to fetch systems:', error);
+    return { data: [], meta: { count: 0 } };
+  }
 };
 
 /**
@@ -121,7 +126,7 @@ export const fetchAllPathwayRules = async (axios, baseUrl, pathwaySlug) => {
  * @param {Object} pathway Pathway object (optional)
  * @param {Function} setCurPageIds Callback to set current page system IDs
  * @param {Function} setTotal Callback to set total count
- * @param {Array<string>} selectedIds Array of selected system IDs
+ * @param {Object} selectedIdsRef React ref containing array of selected system IDs
  * @param {Function} setFullFilters Callback to store full filter configuration
  * @param {Object} fullFilters Current full filter configuration
  * @param {Object} rule Rule object with rule_id (optional)
@@ -136,7 +141,7 @@ export const getEntities =
     pathway,
     setCurPageIds,
     setTotal,
-    selectedIds,
+    selectedIdsRef,
     setFullFilters,
     fullFilters,
     rule,
@@ -145,6 +150,7 @@ export const getEntities =
     axios,
   ) =>
   async (_items, config, showTags, defaultGetEntities) => {
+    const selectedIds = selectedIdsRef.current || [];
     const {
       per_page,
       page,
@@ -186,7 +192,7 @@ export const getEntities =
      * Systems with last_seen: null exist in Advisor but not in Inventory,
      * which causes 404 errors when querying the Inventory API.
      */
-    const systemsInInventory = fetchedSystems.data.filter(
+    const systemsInInventory = (fetchedSystems?.data || []).filter(
       (system) => system.last_seen !== null,
     );
 
@@ -197,8 +203,9 @@ export const getEntities =
      * querying the Inventory API. We subtract the number of filtered systems
      * from this page to keep the count approximately accurate for pagination.
      */
+    const totalCount = fetchedSystems?.meta?.count || 0;
     const filteredOutCount =
-      fetchedSystems.data.length - systemsInInventory.length;
+      (fetchedSystems?.data || []).length - systemsInInventory.length;
 
     let results = { results: [] };
     if (systemsInInventory.length > 0) {
@@ -226,7 +233,7 @@ export const getEntities =
     }
 
     setCurPageIds(systemsInInventory.map((system) => system.system_uuid));
-    setTotal(Math.max(0, fetchedSystems.meta.count - filteredOutCount));
+    setTotal(Math.max(0, totalCount - filteredOutCount));
     return Promise.resolve({
       results: mergeArraysByDiffKeys(systemsInInventory, results.results).map(
         (item) => {
@@ -236,7 +243,7 @@ export const getEntities =
           };
         },
       ),
-      total: Math.max(0, fetchedSystems.meta.count - filteredOutCount),
+      total: Math.max(0, totalCount - filteredOutCount),
     });
   };
 
