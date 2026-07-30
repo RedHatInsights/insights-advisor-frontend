@@ -5,8 +5,7 @@ import {
   TableHeader,
 } from '@patternfly/react-table/deprecated';
 
-import { Button, Modal } from '@patternfly/react-core';
-import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
+import { Button, Modal, Timestamp } from '@patternfly/react-core';
 import { List } from 'react-content-loader';
 import { OutlinedBellIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
@@ -86,7 +85,11 @@ const IopViewHostAcks = ({
         },
         {
           title: (
-            <DateFormat date={new Date(item.updated_at)} type="onlyDate" />
+            <Timestamp
+              date={new Date(item.updated_at)}
+              dateFormat="long"
+              style={{ fontSize: 'inherit', fontWeight: 'inherit' }}
+            />
           ),
         },
         {

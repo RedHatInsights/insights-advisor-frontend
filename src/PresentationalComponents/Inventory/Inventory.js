@@ -26,7 +26,7 @@ import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
 import { Flex, Spinner } from '@patternfly/react-core';
 import { EnvironmentContext } from '../../App';
-import { AsyncComponent } from '@redhat-cloud-services/frontend-components';
+import AsyncComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
 import { Link } from 'react-router-dom';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';

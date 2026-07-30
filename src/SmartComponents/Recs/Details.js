@@ -11,10 +11,10 @@ import {
   CardFooter,
   CardHeader,
   Button,
+  Timestamp,
   Title,
 } from '@patternfly/react-core';
 import BellSlashIcon from '@patternfly/react-icons/dist/esm/icons/bell-slash-icon';
-import { DateFormat } from '@redhat-cloud-services/frontend-components/DateFormat';
 import { InvalidObject } from '@redhat-cloud-services/frontend-components/InvalidObject';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
@@ -195,9 +195,13 @@ const OverviewDetails = (props) => {
                         {recAck.updated_at && (
                           <span>
                             &nbsp;on&nbsp;
-                            <DateFormat
+                            <Timestamp
                               date={new Date(recAck.updated_at)}
-                              type="onlyDate"
+                              dateFormat="long"
+                              style={{
+                                fontSize: 'inherit',
+                                fontWeight: 'inherit',
+                              }}
                             />
                           </span>
                         )}

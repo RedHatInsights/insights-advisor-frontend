@@ -1,8 +1,8 @@
 import './SystemAdvisor.scss';
 import React, { useCallback } from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { RelativeTimeWithTooltip } from '../../Utilities/dateHelpers';
 import InsightsLabel from '@redhat-cloud-services/frontend-components/InsightsLabel';
-import DateFormat from '@redhat-cloud-services/frontend-components/DateFormat';
 import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import { ReportDetails } from '@redhat-cloud-services/frontend-components-advisor-components/ReportDetails';
 import {
@@ -202,26 +202,10 @@ export const useBuildRows = (
                 ),
               },
               {
-                title: (
-                  <span>
-                    <DateFormat
-                      date={rule.publish_date}
-                      type="relative"
-                      tooltipProps={{ position: TooltipPosition.bottom }}
-                    />
-                  </span>
-                ),
+                title: <RelativeTimeWithTooltip date={rule.publish_date} />,
               },
               {
-                title: (
-                  <div key={key}>
-                    <DateFormat
-                      date={value.impacted_date}
-                      type="relative"
-                      tooltipProps={{ position: TooltipPosition.bottom }}
-                    />
-                  </div>
-                ),
+                title: <RelativeTimeWithTooltip date={value.impacted_date} />,
               },
               {
                 title: (
