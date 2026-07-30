@@ -12,6 +12,9 @@ const year = day * 365;
 const formatTime = (number, unit) =>
   `${number} ${number > 1 ? `${unit}s` : unit} ago`;
 
+const formatUtcDate = (dateObj) =>
+  dateObj.toUTCString().split(',')[1].slice(0, -7).trim() + ' UTC';
+
 const relativeTimeTable = [
   {
     rightBound: Infinity,
@@ -48,7 +51,7 @@ export const toRelativeTime = (date) => {
   return relativeTimeTable.reduce(
     (acc, { rightBound, description }) =>
       rightBound > diff ? description(diff) : acc,
-    dateObj.toUTCString().split(',')[1].slice(0, -7).trim() + ' UTC',
+    formatUtcDate(dateObj),
   );
 };
 
@@ -59,7 +62,7 @@ export const RelativeTimeWithTooltip = ({ date, label = '' }) => {
       content={
         <span>
           {label}
-          {dateObj.toUTCString()}
+          {formatUtcDate(dateObj)}
         </span>
       }
     >
