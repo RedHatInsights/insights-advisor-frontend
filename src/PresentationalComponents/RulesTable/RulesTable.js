@@ -21,6 +21,7 @@ import TableToolbar from '@redhat-cloud-services/frontend-components/TableToolba
 import {
   filterFetchBuilder,
   urlBuilder,
+  workloadArrayQueryBuilder,
   workloadQueryBuilder,
 } from '../Common/Tables';
 import { useDispatch, useSelector } from 'react-redux';
@@ -55,6 +56,7 @@ import { AccountStatContext } from '../../ZeroStateWrapper';
 import { SkeletonTable } from '@patternfly/react-component-groups';
 import { EnvironmentContext } from '../../App';
 import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
+import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const RulesTable = ({ isTabActive, pathway, onRuleChange }) => {
   const intl = useIntl();
@@ -79,12 +81,20 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange }) => {
   const setFilters = (filters) => dispatch(updateRecFilters(filters));
   const { hasEdgeDevices, edgeQuerySuccess } = useContext(AccountStatContext);
   const addNotification = useAddNotification();
+  const isWorkloadFilterEnabled = useFeatureFlag('advisor.workloads');
+
+  // Strip workload before filterFetchBuilder — it must be sent as repeated params, not comma-joined
+  const { workload: workloadFilter, ...filtersWithoutWorkload } = filters;
 
   const options = {
     ...(selectedTags?.length ? { tags: selectedTags.join(',') } : {}),
     ...(workloads ? workloadQueryBuilder(workloads) : {}),
     ...(pathway ? { pathway } : {}),
   };
+
+  const workloadParams = isWorkloadFilterEnabled
+    ? workloadArrayQueryBuilder(workloadFilter || [])
+    : {};
 
   const {
     data: rules = [],
@@ -93,8 +103,9 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange }) => {
     isError,
     refetch,
   } = useGetRecsQuery({
-    ...filterFetchBuilder(filters),
+    ...filterFetchBuilder(filtersWithoutWorkload),
     ...options,
+    ...(Object.keys(workloadParams).length ? { params: workloadParams } : {}),
     customBasePath: envContext.BASE_URL,
   });
 
@@ -312,6 +323,7 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange }) => {
               setSearchText,
               toggleRulesDisabled,
               intl,
+              isWorkloadFilterEnabled,
             ),
             impactingFilterDef,
           ],

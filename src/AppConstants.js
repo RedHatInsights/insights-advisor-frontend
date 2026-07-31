@@ -403,6 +403,21 @@ export const FILTER_CATEGORIES = {
       },
     ],
   },
+  workload: {
+    type: conditionalFilterType.checkbox,
+    title: 'workload',
+    urlParam: 'workload',
+    values: [
+      { label: 'Ansible Automation Platform', value: 'ansible' },
+      { label: 'CrowdStrike', value: 'crowdstrike' },
+      { label: 'IBM DB2', value: 'ibm_db2' },
+      { label: 'InterSystems', value: 'intersystems' },
+      { label: 'Microsoft SQL', value: 'mssql' },
+      { label: 'Oracle DB', value: 'oracle_db' },
+      { label: 'RHEL AI', value: 'rhel_ai' },
+      { label: 'SAP', value: 'sap' },
+    ],
+  },
 };
 
 export const getImpactingFitlerItems = (hasEdgeDevices) =>

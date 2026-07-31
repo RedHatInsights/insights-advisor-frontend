@@ -10,6 +10,7 @@ import fixtures from '../../../cypress/fixtures/recommendations.json';
 import { hasChip, itExportsDataToFile } from '../../../cypress/utils/table';
 import { createTestEnvironmentContext } from '../../../cypress/support/globals';
 import messages from '../../../locales/translations.json';
+import FlagProvider from '@unleash/proxy-client-react';
 
 const DEFAULT_API_BASE_PATH = '/api/insights/v1';
 
@@ -30,17 +31,20 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
   const currentRequestBasePath =
     finalEnvContext.customBasePath || DEFAULT_API_BASE_PATH;
 
+  cy.intercept('GET', '/feature_flags*', {
+    statusCode: 200,
+    body: { toggles: [] },
+  }).as('getFeatureFlag');
+
   cy.intercept(`${currentRequestBasePath}/topic/123/`, {
-    data: {
-      name: 'Amazon Web Services (AWS)',
-      slug: 'aws',
-      description:
-        'Increase stability of your RHEL workloads running on Amazon Web Services by applying these recommendations.',
-      tag: 'aws',
-      featured: true,
-      enabled: true,
-      impacted_systems_count: 0,
-    },
+    name: 'Amazon Web Services (AWS)',
+    slug: 'aws',
+    description:
+      'Increase stability of your RHEL workloads running on Amazon Web Services by applying these recommendations.',
+    tag: 'aws',
+    featured: true,
+    enabled: true,
+    impacted_systems_count: 0,
   }).as('topic_details_call');
 
   // Intercept for rules table call (general)
@@ -60,19 +64,27 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
   ).as('rules_table_initial_call');
 
   cy.mount(
-    <EnvironmentContext.Provider value={finalEnvContext}>
-      <MemoryRouter initialEntries={['/topics/123']}>
-        <AccountStatContext.Provider value={{ hasEdgeDevices }}>
-          <IntlProvider messages={messages} defaultLocale="en" locale="en">
-            <Provider store={initStore()}>
-              <Routes>
-                <Route path="topics/:id" element={<Details />}></Route>
-              </Routes>
-            </Provider>
-          </IntlProvider>
-        </AccountStatContext.Provider>
-      </MemoryRouter>
-    </EnvironmentContext.Provider>,
+    <FlagProvider
+      config={{
+        url: 'http://localhost:8002/feature_flags',
+        clientKey: 'abc',
+        appName: 'abc',
+      }}
+    >
+      <EnvironmentContext.Provider value={finalEnvContext}>
+        <MemoryRouter initialEntries={['/topics/123']}>
+          <AccountStatContext.Provider value={{ hasEdgeDevices }}>
+            <IntlProvider messages={messages} defaultLocale="en" locale="en">
+              <Provider store={initStore()}>
+                <Routes>
+                  <Route path="topics/:id" element={<Details />}></Route>
+                </Routes>
+              </Provider>
+            </IntlProvider>
+          </AccountStatContext.Provider>
+        </MemoryRouter>
+      </EnvironmentContext.Provider>
+    </FlagProvider>,
   );
 };
 

@@ -186,7 +186,7 @@ export const pruneFilters = (localFilters, filterCategories) => {
     : [];
 };
 
-// builds workload query filter
+// builds workload query filter (Global tag filter)
 export const workloadQueryBuilder = (workloads) =>
   generateFilter(
     {
@@ -207,6 +207,11 @@ export const workloadQueryBuilder = (workloads) =>
     undefined,
     { arrayEnhancer: 'contains' },
   );
+
+export const workloadArrayQueryBuilder = (workloadFilter = []) => {
+  if (!workloadFilter.length) return {};
+  return { workload: workloadFilter };
+};
 
 // merges two array objects by different key names
 export const mergeArraysByDiffKeys = (advSystems, invSystems) =>

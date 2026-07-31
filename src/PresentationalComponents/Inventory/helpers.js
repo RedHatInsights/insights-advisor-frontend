@@ -1,4 +1,7 @@
-import { mergeArraysByDiffKeys } from '../Common/Tables';
+import {
+  mergeArraysByDiffKeys,
+  workloadArrayQueryBuilder,
+} from '../Common/Tables';
 import { createOptions, createSortParam, getCsrfTokenHeader } from '../helper';
 import LastSeenColumnHeader from '../../Utilities/LastSeenColumnHeader';
 import { fitContent } from '@patternfly/react-table';
@@ -50,6 +53,12 @@ export const paginatedRequestHelper = async ({
     selectedTags,
     workloads,
   );
+
+  // Local workload filter (separate from the global Chrome workload filter handled by createOptions above)
+  const localWorkloadFilter = filters?.workloadFilter;
+  if (localWorkloadFilter?.length) {
+    Object.assign(options, workloadArrayQueryBuilder(localWorkloadFilter));
+  }
 
   return pathway
     ? await axios.get(`${SYSTEMS_FETCH_URL}`, {
