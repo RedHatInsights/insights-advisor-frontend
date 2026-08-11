@@ -2,6 +2,7 @@ import './SystemsTable.scss';
 
 import {
   SYSTEM_FILTER_CATEGORIES as SFC,
+  FILTER_CATEGORIES as FC,
   NO_SYSTEMS_REASONS,
 } from '../../AppConstants';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
@@ -40,8 +41,9 @@ import { conditionalFilterType } from '@redhat-cloud-services/frontend-component
 import { EnvironmentContext } from '../../App';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import { useFeatureFlag } from '../../Utilities/Hooks';
+import PropTypes from 'prop-types';
 
-const SystemsTable = () => {
+const SystemsTable = ({ defaultFilters }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const store = useStore();
@@ -118,7 +120,11 @@ const SystemsTable = () => {
     delete localFilters.offset;
     delete localFilters.limit;
 
-    return pruneFilters(localFilters, SFC);
+    const filterCategories = localFilters.workload
+      ? { ...SFC, workload: FC.workload }
+      : SFC;
+
+    return pruneFilters(localFilters, filterCategories);
   };
 
   const activeFiltersConfig = {
@@ -132,6 +138,7 @@ const SystemsTable = () => {
           offset: filters.offset,
           hits: ['all'],
           tags: selectedTags,
+          ...(defaultFilters || {}),
         });
       } else {
         itemsToRemove.map((item) => {
@@ -166,7 +173,7 @@ const SystemsTable = () => {
 
   useEffect(() => {
     let combinedFilters;
-    if (search) {
+    if (search || window.location.search) {
       const paramsObject = paramParser();
       paramsObject.tags = selectedTags;
       paramsObject.sort !== undefined &&
@@ -196,6 +203,7 @@ const SystemsTable = () => {
         limit: 20,
         hits: ['all'],
         tags: selectedTags,
+        ...(defaultFilters || {}),
       };
       setFilters(combinedFilters);
     }
@@ -230,7 +238,9 @@ const SystemsTable = () => {
           operatingSystem: false,
           systemTypeFilter: false,
           systemType: false,
-          ...(isWorkloadFilterEnabled && { workloadFilter: false }),
+          ...((isWorkloadFilterEnabled || defaultFilters?.workload) && {
+            workloadFilter: false,
+          }),
         }}
         initialLoading
         autoRefresh
@@ -284,14 +294,13 @@ const SystemsTable = () => {
             true,
           );
 
-          // Local table Workload filter;
-          // separate from the global Chrome tag/workload filter handled by createOptions above
           const localWorkloadFilter = filters?.workloadFilter;
-          if (isWorkloadFilterEnabled && localWorkloadFilter?.length) {
-            Object.assign(
-              options,
-              workloadArrayQueryBuilder(localWorkloadFilter),
-            );
+          const workloadValues =
+            isWorkloadFilterEnabled && localWorkloadFilter?.length
+              ? localWorkloadFilter
+              : advisorFilters?.workload;
+          if (workloadValues?.length) {
+            Object.assign(options, workloadArrayQueryBuilder(workloadValues));
           }
 
           let fetchedSystems;
@@ -413,6 +422,10 @@ const SystemsTable = () => {
       />
     )
   );
+};
+
+SystemsTable.propTypes = {
+  defaultFilters: PropTypes.object,
 };
 
 export default SystemsTable;
