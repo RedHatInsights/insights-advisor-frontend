@@ -12,7 +12,9 @@ describe('sortTopics test', () => {
   test('the function is called with the Name column parameter and direction desc', () => {
     let sortResult = sortTopics(fixtures, indexes[0], directions[0]);
 
-    expect(sortResult[0].description).toBe('TEST');
+    expect(sortResult[0].description).toBe(
+      'Amazon Web Services recommendations',
+    );
   });
   test('the function is called with the Featured column parameter and direction asc', () => {
     let sortResult = sortTopics(fixtures, indexes[1], directions[1]);
