@@ -296,8 +296,6 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange }) => {
         }}
         exportConfig={
           envContext.isExportEnabled && {
-            label: intl.formatMessage(messages.exportCsv),
-            label: intl.formatMessage(messages.exportJson),
             onSelect: (_e, fileType) =>
               downloadReport(
                 'hits',
