@@ -117,6 +117,12 @@ const SystemsTable = () => {
     delete localFilters.sort;
     delete localFilters.offset;
     delete localFilters.limit;
+    delete localFilters.rhel_version;
+
+    if (!isWorkloadFilterEnabled) {
+      const { workload: _, ...filterCategories } = SFC;
+      return pruneFilters(localFilters, filterCategories);
+    }
 
     return pruneFilters(localFilters, SFC);
   };
@@ -151,15 +157,24 @@ const SystemsTable = () => {
   };
 
   const handleRefresh = (options) => {
-    const { display_name, hits } = options;
-    const refreshedFilters = {
-      ...options,
-      ...(display_name && {
-        display_name,
-      }),
-      ...(hits && { hits }),
-    };
-    urlBuilder(refreshedFilters, selectedTags);
+    const urlParams = {};
+    const urlKeys = [
+      'hits',
+      'incident',
+      'display_name',
+      'rhel_version',
+      'workload',
+      'sort',
+      'limit',
+      'offset',
+      'tags',
+    ];
+    urlKeys.forEach((key) => {
+      if (options[key] !== undefined) {
+        urlParams[key] = options[key];
+      }
+    });
+    urlBuilder(urlParams);
   };
 
   const columns = systemsTableColumns(intl, envContext);
@@ -180,10 +195,10 @@ const SystemsTable = () => {
       paramsObject.limit === undefined || isNaN(paramsObject.limit)
         ? (paramsObject.limit = 20)
         : (paramsObject.limit = Number(paramsObject.limit[0]));
-      combinedFilters = { ...filters, ...paramsObject };
       paramsObject.incident !== undefined &&
         !Array.isArray(paramsObject.incident) &&
         (paramsObject.incident = [`${paramsObject.incident}`]);
+      combinedFilters = { ...filters, ...paramsObject };
       setFilters(combinedFilters);
     } else if (
       filters.limit === undefined ||
