@@ -416,6 +416,7 @@ export const FILTER_CATEGORIES = {
       { label: 'Oracle DB', value: 'oracle_db' },
       { label: 'RHEL AI', value: 'rhel_ai' },
       { label: 'SAP', value: 'sap' },
+      { label: 'Satellite', value: 'satellite' },
     ],
   },
 };
