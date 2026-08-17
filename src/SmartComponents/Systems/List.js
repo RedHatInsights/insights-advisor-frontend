@@ -10,15 +10,11 @@ import { useAnsibleWorkloadDefault } from '../../Utilities/hooks/useAnsibleWorkl
 
 const List = () => {
   const envContext = useContext(EnvironmentContext);
-  const { isReady, defaultFilters } = useAnsibleWorkloadDefault();
+  const { defaultFilters } = useAnsibleWorkloadDefault();
 
   useEffect(() => {
     envContext.updateDocumentTitle('Systems - Advisor');
   }, [envContext]);
-
-  if (!isReady) {
-    return null;
-  }
 
   return (
     <React.Fragment>

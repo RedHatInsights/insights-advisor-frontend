@@ -173,7 +173,7 @@ const SystemsTable = ({ defaultFilters }) => {
 
   useEffect(() => {
     let combinedFilters;
-    if (search || window.location.search) {
+    if (search) {
       const paramsObject = paramParser();
       paramsObject.tags = selectedTags;
       paramsObject.sort !== undefined &&

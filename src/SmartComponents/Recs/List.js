@@ -59,7 +59,7 @@ const List = () => {
   const useNewPathwaysTable = useFeatureFlag('advisor-tabletools-migration');
   const envContext = useContext(EnvironmentContext);
   const intl = useIntl();
-  const { isReady, defaultFilters } = useAnsibleWorkloadDefault();
+  const { defaultFilters } = useAnsibleWorkloadDefault();
 
   useEffect(() => {
     envContext.updateDocumentTitle('Recommendations - Advisor');
@@ -77,10 +77,6 @@ const List = () => {
 
   const { handleOverviewRefetchReady, handleRuleChange } =
     useOverviewRefetchOnRuleChange();
-
-  if (!isReady) {
-    return null;
-  }
 
   return (
     <React.Fragment>
