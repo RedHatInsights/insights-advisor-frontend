@@ -15,6 +15,7 @@ import RuleDetailsWrapper from './RuleDetailsWrapper';
 import useRulesTableActions from '../../Utilities/hooks/useRulesTableActions';
 import useDisableRuleModal from '../../Utilities/hooks/useDisableRuleModal';
 import DisableRule from '../Modals/DisableRule';
+import { useFeatureFlag } from '../../Utilities/Hooks';
 
 /**
  * RulesTable implementation using bastilian-tabletools (TableToolsTable - dynamic)
@@ -45,16 +46,27 @@ const RulesTableInner = ({
   pathway,
   onRuleChange,
 }) => {
-  const advisorTableDefaults = useAdvisorTableDefaults({ columns, filters });
+  const isWorkloadFilterEnabled = useFeatureFlag('advisor.workloads');
+
+  // Filter out workload filter if feature flag is disabled
+  const activeFilters = isWorkloadFilterEnabled
+    ? filters
+    : filters.filter((f) => f.id !== 'workload');
+
+  const advisorTableDefaults = useAdvisorTableDefaults({
+    columns,
+    filters: activeFilters,
+  });
+
   const filterConfig = useMemo(
     () => ({
-      filterConfig: filters,
+      filterConfig: activeFilters,
       activeFilters: {
         rule_status: ['enabled'],
         impacting: ['true'],
       },
     }),
-    [],
+    [activeFilters],
   );
 
   const {

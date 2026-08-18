@@ -1,4 +1,5 @@
-import { FILTER_CATEGORIES as FC } from '../../AppConstants';
+import { FILTER_CATEGORIES } from '../../AppConstants';
+import { workloadArrayQueryBuilder } from '../Common/Tables';
 
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -55,44 +56,56 @@ export const textFilter = {
 
 /** Total Risk checkbox filter */
 export const totalRiskFilter = createMultiValueFilter(
-  FC.total_risk,
+  FILTER_CATEGORIES.total_risk,
   'total_risk',
 );
 /** Resolution Risk checkbox filter */
 export const resolutionRiskFilter = createMultiValueFilter(
-  FC.res_risk,
+  FILTER_CATEGORIES.res_risk,
   'res_risk',
 );
 /** Impact checkbox filter */
-export const impactFilter = createMultiValueFilter(FC.impact, 'impact');
+export const impactFilter = createMultiValueFilter(
+  FILTER_CATEGORIES.impact,
+  'impact',
+);
 /** Likelihood checkbox filter */
 export const likelihoodFilter = createMultiValueFilter(
-  FC.likelihood,
+  FILTER_CATEGORIES.likelihood,
   'likelihood',
 );
 /** Category checkbox filter */
-export const categoryFilter = createMultiValueFilter(FC.category, 'category');
+export const categoryFilter = createMultiValueFilter(
+  FILTER_CATEGORIES.category,
+  'category',
+);
 
 /** Incident checkbox filter (boolean: both selected = no filter) */
-export const incidentFilter = createBooleanFilter(FC.incident, 'incident');
+export const incidentFilter = createBooleanFilter(
+  FILTER_CATEGORIES.incident,
+  'incident',
+);
 /** Has Playbook checkbox filter (boolean: both selected = no filter) */
 export const playbookFilter = createBooleanFilter(
-  FC.has_playbook,
+  FILTER_CATEGORIES.has_playbook,
   'has_playbook',
 );
 /** Reboot Required checkbox filter (boolean: both selected = no filter) */
-export const rebootFilter = createBooleanFilter(FC.reboot, 'reboot');
+export const rebootFilter = createBooleanFilter(
+  FILTER_CATEGORIES.reboot,
+  'reboot',
+);
 
 /**
  * Status filter (checkbox: enabled/disabled/rhdisabled, single-select)
  */
 export const ruleStatusFilter = {
   type: 'checkbox',
-  label: capitalize(FC.rule_status.title),
-  filterAttribute: FC.rule_status.urlParam,
-  id: FC.rule_status.urlParam,
-  urlParam: FC.rule_status.urlParam,
-  items: FC.rule_status.values,
+  label: capitalize(FILTER_CATEGORIES.rule_status.title),
+  filterAttribute: FILTER_CATEGORIES.rule_status.urlParam,
+  id: FILTER_CATEGORIES.rule_status.urlParam,
+  urlParam: FILTER_CATEGORIES.rule_status.urlParam,
+  items: FILTER_CATEGORIES.rule_status.values,
   filterSerialiser: (value) => {
     const values = Array.isArray(value) ? value : [];
     return values.length > 0 ? { rule_status: values[0] } : {};
@@ -119,6 +132,23 @@ export const impactingFilter = {
 };
 
 /**
+ * Workload filter (checkbox: multi-select)
+ * Uses workloadArrayQueryBuilder to convert array to repeated params
+ */
+export const workloadFilter = {
+  type: 'checkbox',
+  label: capitalize(FILTER_CATEGORIES.workload.title),
+  filterAttribute: FILTER_CATEGORIES.workload.urlParam,
+  id: FILTER_CATEGORIES.workload.urlParam,
+  urlParam: FILTER_CATEGORIES.workload.urlParam,
+  items: FILTER_CATEGORIES.workload.values,
+  filterSerialiser: (value) => {
+    const values = Array.isArray(value) ? value : [];
+    return workloadArrayQueryBuilder(values);
+  },
+};
+
+/**
  * Returns array of all filter configurations for RulesTable
  */
 export default [
@@ -130,6 +160,7 @@ export default [
   categoryFilter,
   ruleStatusFilter,
   impactingFilter,
+  workloadFilter,
   incidentFilter,
   playbookFilter,
   rebootFilter,
