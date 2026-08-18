@@ -12,6 +12,7 @@ import messages from '../../Messages';
 import OverviewDashbar from '../../PresentationalComponents/OverviewDashbar/OverviewDashbar';
 import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 import { useOverviewRefetchOnRuleChange } from '../../Utilities/Hooks';
+import { useAnsibleWorkloadDefault } from '../../Utilities/hooks/useAnsibleWorkloadDefault';
 import {
   Tab,
   TabTitleText,
@@ -58,6 +59,7 @@ const List = () => {
   const useNewPathwaysTable = useFeatureFlag('advisor-tabletools-migration');
   const envContext = useContext(EnvironmentContext);
   const intl = useIntl();
+  const { defaultFilters } = useAnsibleWorkloadDefault();
 
   useEffect(() => {
     envContext.updateDocumentTitle('Recommendations - Advisor');
@@ -174,6 +176,7 @@ const List = () => {
                   <RulesTable
                     isTabActive={activeTab === RECOMMENDATIONS_TAB}
                     onRuleChange={handleRuleChange}
+                    defaultFilters={defaultFilters}
                   />
                 </Tab>
                 <Tab
@@ -209,7 +212,10 @@ const List = () => {
                 </Tab>
               </Tabs>
             ) : (
-              <RulesTable onRuleChange={handleRuleChange} />
+              <RulesTable
+                onRuleChange={handleRuleChange}
+                defaultFilters={defaultFilters}
+              />
             )}
           </StackItem>
         </Stack>
