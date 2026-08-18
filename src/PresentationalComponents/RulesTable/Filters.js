@@ -3,6 +3,41 @@ import { FILTER_CATEGORIES as FC } from '../../AppConstants';
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 /**
+ * Factory for multi-value checkbox filters (total_risk, res_risk, impact, likelihood, category)
+ * Sends array of selected values as the API param when non-empty.
+ */
+const createMultiValueFilter = (fc, apiParam) => ({
+  type: 'checkbox',
+  label: capitalize(fc.title),
+  filterAttribute: fc.urlParam,
+  id: fc.urlParam,
+  urlParam: fc.urlParam,
+  items: fc.values,
+  filterSerialiser: (value) => {
+    const values = Array.isArray(value) ? value : [];
+    return values.length > 0 ? { [apiParam]: values } : {};
+  },
+});
+
+/**
+ * Factory for boolean checkbox filters (incident, has_playbook, reboot)
+ * When exactly one option is selected, sends it as the API param.
+ * When both are selected (or none), sends no filter — "both selected = no filter".
+ */
+const createBooleanFilter = (fc, apiParam) => ({
+  type: 'checkbox',
+  label: capitalize(fc.title),
+  filterAttribute: fc.urlParam,
+  id: fc.urlParam,
+  urlParam: fc.urlParam,
+  items: fc.values,
+  filterSerialiser: (value) => {
+    const values = Array.isArray(value) ? value : [];
+    return values.length === 1 ? { [apiParam]: values[0] } : {};
+  },
+});
+
+/**
  * Text search filter
  */
 export const textFilter = {
@@ -18,133 +53,35 @@ export const textFilter = {
   },
 };
 
-/**
- * Total Risk checkbox filter
- */
-export const totalRiskFilter = {
-  type: 'checkbox',
-  label: capitalize(FC.total_risk.title),
-  filterAttribute: FC.total_risk.urlParam,
-  id: FC.total_risk.urlParam,
-  urlParam: FC.total_risk.urlParam,
-  items: FC.total_risk.values,
-  filterSerialiser: (value) => {
-    const values = Array.isArray(value) ? value : [];
-    return values.length > 0 ? { total_risk: values } : {};
-  },
-};
+/** Total Risk checkbox filter */
+export const totalRiskFilter = createMultiValueFilter(
+  FC.total_risk,
+  'total_risk',
+);
+/** Resolution Risk checkbox filter */
+export const resolutionRiskFilter = createMultiValueFilter(
+  FC.res_risk,
+  'res_risk',
+);
+/** Impact checkbox filter */
+export const impactFilter = createMultiValueFilter(FC.impact, 'impact');
+/** Likelihood checkbox filter */
+export const likelihoodFilter = createMultiValueFilter(
+  FC.likelihood,
+  'likelihood',
+);
+/** Category checkbox filter */
+export const categoryFilter = createMultiValueFilter(FC.category, 'category');
 
-/**
- * Resolution Risk checkbox filter
- */
-export const resolutionRiskFilter = {
-  type: 'checkbox',
-  label: capitalize(FC.res_risk.title),
-  filterAttribute: FC.res_risk.urlParam,
-  id: FC.res_risk.urlParam,
-  urlParam: FC.res_risk.urlParam,
-  items: FC.res_risk.values,
-  filterSerialiser: (value) => {
-    const values = Array.isArray(value) ? value : [];
-    return values.length > 0 ? { res_risk: values } : {};
-  },
-};
-
-/**
- * Impact checkbox filter
- */
-export const impactFilter = {
-  type: 'checkbox',
-  label: capitalize(FC.impact.title),
-  filterAttribute: FC.impact.urlParam,
-  id: FC.impact.urlParam,
-  urlParam: FC.impact.urlParam,
-  items: FC.impact.values,
-  filterSerialiser: (value) => {
-    const values = Array.isArray(value) ? value : [];
-    return values.length > 0 ? { impact: values } : {};
-  },
-};
-
-/**
- * Likelihood checkbox filter
- */
-export const likelihoodFilter = {
-  type: 'checkbox',
-  label: capitalize(FC.likelihood.title),
-  filterAttribute: FC.likelihood.urlParam,
-  id: FC.likelihood.urlParam,
-  urlParam: FC.likelihood.urlParam,
-  items: FC.likelihood.values,
-  filterSerialiser: (value) => {
-    const values = Array.isArray(value) ? value : [];
-    return values.length > 0 ? { likelihood: values } : {};
-  },
-};
-
-/**
- * Category checkbox filter
- */
-export const categoryFilter = {
-  type: 'checkbox',
-  label: capitalize(FC.category.title),
-  filterAttribute: FC.category.urlParam,
-  id: FC.category.urlParam,
-  urlParam: FC.category.urlParam,
-  items: FC.category.values,
-  filterSerialiser: (value) => {
-    const values = Array.isArray(value) ? value : [];
-    return values.length > 0 ? { category: values } : {};
-  },
-};
-
-/**
- * Incident checkbox filter (boolean: true/false, single-select)
- */
-export const incidentFilter = {
-  type: 'checkbox',
-  label: capitalize(FC.incident.title),
-  filterAttribute: FC.incident.urlParam,
-  id: FC.incident.urlParam,
-  urlParam: FC.incident.urlParam,
-  items: FC.incident.values,
-  filterSerialiser: (value) => {
-    const values = Array.isArray(value) ? value : [];
-    return values.length > 0 ? { incident: values[0] } : {};
-  },
-};
-
-/**
- * Has Playbook checkbox filter (boolean: true/false, single-select)
- */
-export const playbookFilter = {
-  type: 'checkbox',
-  label: capitalize(FC.has_playbook.title),
-  filterAttribute: FC.has_playbook.urlParam,
-  id: FC.has_playbook.urlParam,
-  urlParam: FC.has_playbook.urlParam,
-  items: FC.has_playbook.values,
-  filterSerialiser: (value) => {
-    const values = Array.isArray(value) ? value : [];
-    return values.length > 0 ? { has_playbook: values[0] } : {};
-  },
-};
-
-/**
- * Reboot Required checkbox filter (boolean: true/false, single-select)
- */
-export const rebootFilter = {
-  type: 'checkbox',
-  label: capitalize(FC.reboot.title),
-  filterAttribute: FC.reboot.urlParam,
-  id: FC.reboot.urlParam,
-  urlParam: FC.reboot.urlParam,
-  items: FC.reboot.values,
-  filterSerialiser: (value) => {
-    const values = Array.isArray(value) ? value : [];
-    return values.length > 0 ? { reboot: values[0] } : {};
-  },
-};
+/** Incident checkbox filter (boolean: both selected = no filter) */
+export const incidentFilter = createBooleanFilter(FC.incident, 'incident');
+/** Has Playbook checkbox filter (boolean: both selected = no filter) */
+export const playbookFilter = createBooleanFilter(
+  FC.has_playbook,
+  'has_playbook',
+);
+/** Reboot Required checkbox filter (boolean: both selected = no filter) */
+export const rebootFilter = createBooleanFilter(FC.reboot, 'reboot');
 
 /**
  * Status filter (checkbox: enabled/disabled/rhdisabled, single-select)

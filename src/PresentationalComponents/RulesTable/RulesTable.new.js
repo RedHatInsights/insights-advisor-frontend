@@ -8,13 +8,12 @@ import {
 import { useSelector } from 'react-redux';
 import columns from './Columns';
 import filters from './Filters';
-import { useRecsQuery } from '../../Services/Recs/useRecsQuery';
+import useRecsQuery from '../../Services/hooks/useRecsQuery';
 import { workloadQueryBuilder } from '../Common/Tables';
 import useAdvisorTableDefaults from '../../Utilities/useAdvisorTableDefaults';
 import RuleDetailsWrapper from './RuleDetailsWrapper';
 import useRulesTableActions from '../../Utilities/hooks/useRulesTableActions';
 import DisableRule from '../Modals/DisableRule';
-import { filtersSerialiser } from '../../Utilities/tableSerializers';
 
 /**
  * RulesTable implementation using bastilian-tabletools (TableToolsTable - dynamic)
@@ -45,16 +44,13 @@ const RulesTableInner = ({
   pathway,
   onRuleChange,
 }) => {
-  const advisorTableDefaults = useAdvisorTableDefaults();
+  const advisorTableDefaults = useAdvisorTableDefaults({ columns, filters });
   const filterConfig = useMemo(
     () => ({
       filterConfig: filters,
       activeFilters: {
         status: ['enabled'],
         'systems-impacted': ['true'],
-      },
-      serialisers: {
-        filters: filtersSerialiser,
       },
     }),
     [],
@@ -86,11 +82,17 @@ const RulesTableInner = ({
     return params;
   }, [selectedTags, workloads, pathway]);
 
-  const { items, loading } = useRecsQuery({
+  const { data, loading } = useRecsQuery({
     useTableState: true,
-    enabled: isTabActive,
-    additionalParams,
+    skip: !isTabActive,
+    params: additionalParams,
   });
+
+  const items = useMemo(
+    () => (data?.data || []).map((item) => ({ ...item, itemId: item.rule_id })),
+    [data?.data],
+  );
+  const total = data?.meta?.total;
 
   const handleDisableClick = useCallback(({ rule_id, rule_status }) => {
     setDisableRuleModal({
@@ -118,6 +120,7 @@ const RulesTableInner = ({
     <>
       <TableToolsTable
         items={items}
+        total={total}
         columns={columns}
         filters={filterConfig}
         options={tableOptions}

@@ -92,12 +92,12 @@ export const SystemsCell = ({
   impacted_systems_count,
 }) => {
   if (rule_status !== 'enabled') {
-    return <span>{impacted_systems_count}</span>;
+    return <span>{(impacted_systems_count ?? 0).toLocaleString()}</span>;
   }
 
   return (
     <InsightsLink to={`/recommendations/${rule_id}`}>
-      {impacted_systems_count.toLocaleString()}
+      {(impacted_systems_count ?? 0).toLocaleString()}
     </InsightsLink>
   );
 };
