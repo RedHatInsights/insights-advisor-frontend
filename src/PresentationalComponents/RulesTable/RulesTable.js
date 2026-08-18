@@ -58,7 +58,7 @@ import { EnvironmentContext } from '../../App';
 import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { useFeatureFlag } from '../../Utilities/Hooks';
 
-const RulesTable = ({ isTabActive, pathway, onRuleChange }) => {
+const RulesTable = ({ isTabActive, pathway, onRuleChange, defaultFilters }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
@@ -92,9 +92,7 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange }) => {
     ...(pathway ? { pathway } : {}),
   };
 
-  const workloadParams = isWorkloadFilterEnabled
-    ? workloadArrayQueryBuilder(workloadFilter || [])
-    : {};
+  const workloadParams = workloadArrayQueryBuilder(workloadFilter || []);
 
   const {
     data: rules = [],
@@ -219,6 +217,7 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange }) => {
     setSearchText,
     setFilters,
     hasEdgeDevices,
+    defaultFilters,
   );
 
   const isRowExpanded = (rowIndex) => expandedRows.has(rowIndex);
@@ -458,6 +457,7 @@ RulesTable.propTypes = {
   isTabActive: PropTypes.bool,
   pathway: PropTypes.string,
   onRuleChange: PropTypes.func,
+  defaultFilters: PropTypes.object,
 };
 
 export default RulesTable;
