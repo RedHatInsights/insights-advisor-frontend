@@ -29,6 +29,7 @@ jest.mock('../../AppConstants', () => ({
         { label: 'SAP', value: 'sap' },
         { label: 'Ansible Automation Platform', value: 'ansible' },
         { label: 'Microsoft SQL', value: 'mssql' },
+        { label: 'Satellite', value: 'satellite' },
       ],
     },
   },
@@ -228,6 +229,7 @@ describe('filterConfigItems – workload filter', () => {
       { label: 'SAP', value: 'sap' },
       { label: 'Ansible Automation Platform', value: 'ansible' },
       { label: 'Microsoft SQL', value: 'mssql' },
+      { label: 'Satellite', value: 'satellite' },
     ]);
   });
 });
