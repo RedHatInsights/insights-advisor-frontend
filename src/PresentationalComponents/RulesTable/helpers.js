@@ -601,6 +601,7 @@ export const getActiveFiltersConfig = (
   setSearchText,
   setFilters,
   hasEdgeDevice,
+  defaultFilters,
 ) => ({
   deleteTitle: intl.formatMessage(messages.resetFilters),
   filters: buildFilterChips(filters, hasEdgeDevice),
@@ -615,6 +616,7 @@ export const getActiveFiltersConfig = (
         limit: filters.limit,
         offset: filters.offset,
         ...(filters.pathway && { pathway: filters.pathway }),
+        ...(defaultFilters || {}),
       });
     } else {
       itemsToRemove.map((item) => {
