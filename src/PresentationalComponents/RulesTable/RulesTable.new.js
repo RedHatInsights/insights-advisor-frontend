@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import {
   TableToolsTable,
@@ -13,6 +13,7 @@ import { workloadQueryBuilder } from '../Common/Tables';
 import useAdvisorTableDefaults from '../../Utilities/useAdvisorTableDefaults';
 import RuleDetailsWrapper from './RuleDetailsWrapper';
 import useRulesTableActions from '../../Utilities/hooks/useRulesTableActions';
+import useDisableRuleModal from '../../Utilities/hooks/useDisableRuleModal';
 import DisableRule from '../Modals/DisableRule';
 
 /**
@@ -49,8 +50,8 @@ const RulesTableInner = ({
     () => ({
       filterConfig: filters,
       activeFilters: {
-        status: ['enabled'],
-        'systems-impacted': ['true'],
+        rule_status: ['enabled'],
+        impacting: ['true'],
       },
     }),
     [],
@@ -59,11 +60,6 @@ const RulesTableInner = ({
   const {
     current: { reload },
   } = useStateCallbacks();
-
-  const [disableRuleModal, setDisableRuleModal] = useState({
-    isOpen: false,
-    rule: null,
-  });
 
   const additionalParams = useMemo(() => {
     let params = {};
@@ -94,12 +90,12 @@ const RulesTableInner = ({
   );
   const total = data?.meta?.total;
 
-  const handleDisableClick = useCallback(({ rule_id, rule_status }) => {
-    setDisableRuleModal({
-      isOpen: true,
-      rule: { rule_id, rule_status },
-    });
-  }, []);
+  const {
+    disableRuleModal,
+    handleDisableClick,
+    handleModalToggle,
+    handleAfterDisable,
+  } = useDisableRuleModal(reload, onRuleChange);
 
   const { actionResolver } = useRulesTableActions({
     onDisableClick: handleDisableClick,
@@ -130,16 +126,10 @@ const RulesTableInner = ({
       />
       {disableRuleModal.isOpen && (
         <DisableRule
-          handleModalToggle={(isOpen) =>
-            setDisableRuleModal((prev) => ({ ...prev, isOpen }))
-          }
+          handleModalToggle={handleModalToggle}
           isModalOpen={disableRuleModal.isOpen}
           rule={disableRuleModal.rule}
-          afterFn={() => {
-            reload();
-            onRuleChange?.();
-            setDisableRuleModal({ isOpen: false, rule: null });
-          }}
+          afterFn={handleAfterDisable}
         />
       )}
     </>
