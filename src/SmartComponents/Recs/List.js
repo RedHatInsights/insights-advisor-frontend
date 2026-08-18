@@ -10,7 +10,6 @@ import { useIntl } from 'react-intl';
 import { QuestionTooltip } from '../../PresentationalComponents/Common/Common';
 import messages from '../../Messages';
 import OverviewDashbar from '../../PresentationalComponents/OverviewDashbar/OverviewDashbar';
-import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 import { useOverviewRefetchOnRuleChange } from '../../Utilities/Hooks';
 import { useAnsibleWorkloadDefault } from '../../Utilities/hooks/useAnsibleWorkloadDefault';
 import {
@@ -50,6 +49,20 @@ const PathwaysTableNew = lazy(
   () =>
     import(
       /* webpackChunkName: 'PathwaysTableNew' */ '../../PresentationalComponents/PathwaysTable/PathwaysTable.new'
+    ),
+);
+
+const RulesTable = lazy(
+  () =>
+    import(
+      /* webpackChunkName: 'RulesTable' */ '../../PresentationalComponents/RulesTable/RulesTable'
+    ),
+);
+
+const RulesTableNew = lazy(
+  () =>
+    import(
+      /* webpackChunkName: 'RulesTableNew' */ '../../PresentationalComponents/RulesTable/RulesTable.new'
     ),
 );
 
@@ -173,11 +186,29 @@ const List = () => {
                     </TabTitleText>
                   }
                 >
-                  <RulesTable
-                    isTabActive={activeTab === RECOMMENDATIONS_TAB}
-                    onRuleChange={handleRuleChange}
-                    defaultFilters={defaultFilters}
-                  />
+                  {activeTab === RECOMMENDATIONS_TAB && (
+                    <Suspense
+                      fallback={
+                        <Bullseye>
+                          <Spinner size="xl" />
+                        </Bullseye>
+                      }
+                    >
+                      {useNewPathwaysTable ? (
+                        <RulesTableNew
+                          isTabActive={activeTab === RECOMMENDATIONS_TAB}
+                          onRuleChange={handleRuleChange}
+                          defaultFilters={defaultFilters}
+                        />
+                      ) : (
+                        <RulesTable
+                          isTabActive={activeTab === RECOMMENDATIONS_TAB}
+                          onRuleChange={handleRuleChange}
+                          defaultFilters={defaultFilters}
+                        />
+                      )}
+                    </Suspense>
+                  )}
                 </Tab>
                 <Tab
                   eventKey={PATHWAYS_TAB}
@@ -212,10 +243,25 @@ const List = () => {
                 </Tab>
               </Tabs>
             ) : (
-              <RulesTable
-                onRuleChange={handleRuleChange}
-                defaultFilters={defaultFilters}
-              />
+              <Suspense
+                fallback={
+                  <Bullseye>
+                    <Spinner size="xl" />
+                  </Bullseye>
+                }
+              >
+                {useNewPathwaysTable ? (
+                  <RulesTableNew
+                    onRuleChange={handleRuleChange}
+                    defaultFilters={defaultFilters}
+                  />
+                ) : (
+                  <RulesTable
+                    onRuleChange={handleRuleChange}
+                    defaultFilters={defaultFilters}
+                  />
+                )}
+              </Suspense>
             )}
           </StackItem>
         </Stack>

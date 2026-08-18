@@ -42,11 +42,14 @@ export const filtersSerialiser = (state, filters) => {
   return Object.entries(state || {}).reduce((params, [filterId, value]) => {
     const normalizedFilterId = filterId.replace(/-/g, '_');
 
+    const labelToId = (label) => label?.toLowerCase().replace(/\s+/g, '-');
+
     const filterConfig = filters.find(
       (f) =>
         f.id === filterId ||
         f.id === normalizedFilterId ||
         f.label?.toLowerCase() === filterId ||
+        labelToId(f.label) === filterId ||
         f.filterAttribute === filterId ||
         f.filterAttribute === normalizedFilterId,
     );

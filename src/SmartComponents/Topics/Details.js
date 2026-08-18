@@ -11,35 +11,28 @@ import { Label } from '@patternfly/react-core/dist/esm/components/Label/Label';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
-import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
+import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable.new';
 import StarIcon from '@patternfly/react-icons/dist/esm/icons/star-icon';
 
 import TimesCircleIcon from '@patternfly/react-icons/dist/esm/icons/times-circle-icon';
 import { Title } from '@patternfly/react-core/dist/esm/components/Title/Title';
 import { Truncate } from '@redhat-cloud-services/frontend-components/Truncate';
 import messages from '../../Messages';
-import { updateRecFilters } from '../../Services/Filters';
-import { useDispatch } from 'react-redux';
 import { useFetchTopic } from '../../Services/apiClient';
 import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
-import { getDefaultImpactingFilter } from '../../PresentationalComponents/RulesTable/helpers';
-import { AccountStatContext } from '../../ZeroStateWrapper';
 import { EnvironmentContext } from '../../App';
 
 const Details = () => {
   const intl = useIntl();
-  const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
-  const recFilters = useSelector(({ filters }) => filters.recState);
   const topicId = useParams().id;
   let options = selectedTags?.length && { tags: selectedTags };
   workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
-  const hasEdgeDevices = useContext(AccountStatContext);
   const fetchTopic = useFetchTopic();
 
   const [topic, setTopic] = useState({});
@@ -63,23 +56,6 @@ const Details = () => {
     };
     loadTopic();
   }, [fetchTopic, topicId, JSON.stringify(options)]);
-
-  useEffect(() => {
-    const initiaRecFilters = { ...recFilters };
-    dispatch(
-      updateRecFilters({
-        topic: topicId,
-        ...getDefaultImpactingFilter(hasEdgeDevices),
-        rule_status: 'enabled',
-        sort: `-total_risk`,
-        limit: 10,
-        offset: 0,
-      }),
-    );
-
-    return () => dispatch(updateRecFilters(initiaRecFilters));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     if (topic && topic.name) {
@@ -127,7 +103,7 @@ const Details = () => {
               <Title headingLevel="h3" size="2xl" className="pf-v6-u-mb-lg">
                 {intl.formatMessage(messages.recommendations)}
               </Title>
-              <RulesTable />
+              <RulesTable isTabActive={true} topic={topicId} />
             </React.Fragment>
           ) : (
             <MessageState

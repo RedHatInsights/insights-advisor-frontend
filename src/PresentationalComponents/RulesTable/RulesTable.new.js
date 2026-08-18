@@ -1,0 +1,193 @@
+import React, { useMemo } from 'react';
+import PropTypes from 'prop-types';
+import {
+  TableToolsTable,
+  TableStateProvider,
+  useStateCallbacks,
+} from 'bastilian-tabletools';
+import { useSelector } from 'react-redux';
+import columns from './Columns';
+import filters from './Filters';
+import useRecsQuery from '../../Services/hooks/useRecsQuery';
+import { workloadQueryBuilder } from '../Common/Tables';
+import useAdvisorTableDefaults from '../../Utilities/useAdvisorTableDefaults';
+import RuleDetailsWrapper from './RuleDetailsWrapper';
+import useRulesTableActions from '../../Utilities/hooks/useRulesTableActions';
+import useDisableRuleModal from '../../Utilities/hooks/useDisableRuleModal';
+import DisableRule from '../Modals/DisableRule';
+import { useFeatureFlag } from '../../Utilities/Hooks';
+
+/**
+ * RulesTable implementation using bastilian-tabletools (TableToolsTable - dynamic)
+ *
+ * Uses dynamic TableToolsTable with useRecsQuery + useTableState for:
+ * - Server-side filtering via API query params
+ * - Server-side sorting via API query params
+ * - Server-side pagination via API offset/limit
+ *
+ * Features:
+ * - Dynamic filtering via tabletools filter system
+ * - Sorting with default: Total Risk (descending)
+ * - Expandable rows with RuleDetails
+ * - Enable/Disable actions via row kebab
+ * - Pagination (10/20/50/100)
+ *
+ * @param {Object} props
+ * @param {boolean} props.isTabActive - Whether tab is currently active
+ * @param {Array} props.selectedTags - Selected inventory tags filter
+ * @param {Object} props.workloads - Workloads filter (SAP, MSSQL, Ansible)
+ * @param {string} props.pathway - Pathway filter
+ * @param {string} props.topic - Topic filter (for topic details page)
+ * @param {Function} props.onRuleChange - Callback when rule changes
+ */
+const RulesTableInner = ({
+  isTabActive,
+  selectedTags,
+  workloads,
+  pathway,
+  topic,
+  onRuleChange,
+}) => {
+  const isWorkloadFilterEnabled = useFeatureFlag('advisor.workloads');
+
+  // Filter out workload filter if feature flag is disabled
+  const activeFilters = isWorkloadFilterEnabled
+    ? filters
+    : filters.filter((f) => f.id !== 'workload');
+
+  const advisorTableDefaults = useAdvisorTableDefaults({
+    columns,
+    filters: activeFilters,
+  });
+
+  const filterConfig = useMemo(
+    () => ({
+      filterConfig: activeFilters,
+      activeFilters: {
+        status: ['enabled'],
+        'systems-impacted': ['true'],
+      },
+      useReset: true,
+    }),
+    [activeFilters],
+  );
+
+  const {
+    current: { reload },
+  } = useStateCallbacks();
+
+  const additionalParams = useMemo(() => {
+    let params = {};
+
+    if (selectedTags?.length) {
+      params.tags = selectedTags.join(',');
+    }
+    if (workloads) {
+      params = {
+        ...params,
+        ...workloadQueryBuilder(workloads),
+      };
+    }
+    if (pathway) {
+      params.pathway = pathway;
+    }
+    if (topic) {
+      params.topic = topic;
+    }
+    return params;
+  }, [selectedTags, workloads, pathway, topic]);
+
+  const { data, loading } = useRecsQuery({
+    useTableState: true,
+    skip: !isTabActive,
+    params: additionalParams,
+  });
+
+  const items = useMemo(
+    () => (data?.data || []).map((item) => ({ ...item, itemId: item.rule_id })),
+    [data?.data],
+  );
+  const total = data?.meta?.total;
+
+  const {
+    disableRuleModal,
+    handleDisableClick,
+    handleModalToggle,
+    handleAfterDisable,
+  } = useDisableRuleModal(reload, onRuleChange);
+
+  const { actionResolver } = useRulesTableActions({
+    onDisableClick: handleDisableClick,
+    onRuleChange,
+  });
+
+  const tableOptions = useMemo(
+    () => ({
+      ...advisorTableDefaults,
+      sortBy: { index: 3, direction: 'desc' },
+      detailsComponent: RuleDetailsWrapper,
+      actionResolver,
+    }),
+    [advisorTableDefaults, actionResolver],
+  );
+
+  return (
+    <>
+      <TableToolsTable
+        items={items}
+        total={total}
+        columns={columns}
+        filters={filterConfig}
+        options={tableOptions}
+        aria-label="rules-table"
+        ouiaId="rules-table"
+        data-ouia-safe={!loading}
+      />
+      {disableRuleModal.isOpen && (
+        <DisableRule
+          handleModalToggle={handleModalToggle}
+          isModalOpen={disableRuleModal.isOpen}
+          rule={disableRuleModal.rule}
+          afterFn={handleAfterDisable}
+        />
+      )}
+    </>
+  );
+};
+
+RulesTableInner.propTypes = {
+  isTabActive: PropTypes.bool,
+  selectedTags: PropTypes.array,
+  workloads: PropTypes.object,
+  pathway: PropTypes.string,
+  topic: PropTypes.string,
+  onRuleChange: PropTypes.func,
+};
+
+const RulesTableNew = ({ isTabActive, pathway, topic, onRuleChange }) => {
+  const selectedTags = useSelector(({ filters }) => filters.selectedTags);
+  const workloads = useSelector(({ filters }) => filters.workloads);
+
+  return (
+    <TableStateProvider>
+      <RulesTableInner
+        isTabActive={isTabActive}
+        selectedTags={selectedTags}
+        workloads={workloads}
+        pathway={pathway}
+        topic={topic}
+        onRuleChange={onRuleChange}
+      />
+    </TableStateProvider>
+  );
+};
+
+RulesTableNew.propTypes = {
+  isTabActive: PropTypes.bool,
+  pathway: PropTypes.string,
+  topic: PropTypes.string,
+  onRuleChange: PropTypes.func,
+  defaultFilters: PropTypes.object,
+};
+
+export default RulesTableNew;

@@ -41,7 +41,8 @@ export const fetchResult = async (
   compileResult,
 ) => {
   const convertedParams = convertToArray(params);
-  return compileResult(await fn(...convertedParams), params);
+  const result = await fn(...convertedParams);
+  return compileResult(result, params);
 };
 
 export const combineParamsWithTableState = (
@@ -53,10 +54,22 @@ export const combineParamsWithTableState = (
     additionalParams || {};
 
   // Flatten filters to root level for Advisor API
-  return {
+  const combinedParams = {
     ...restTableParams,
     ...restAdditionalParams,
     ...(tableFilters || {}),
     ...(optionFilters || {}),
   };
+
+  // Extract workload array params (not in insights-client TypeScript defs)
+  // and pass through options.params so axios includes them in URL
+  //THIS IS HOTFIX UNTIL INSIGHTS CLIENT WOULD HAVE WORKLOAD PARAM
+  const { workload, ...typedParams } = combinedParams;
+
+  const result = {
+    ...typedParams,
+    ...(workload ? { options: { params: { workload } } } : {}),
+  };
+
+  return result;
 };

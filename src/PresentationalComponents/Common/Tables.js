@@ -223,9 +223,10 @@ export const mergeArraysByDiffKeys = (advSystems, invSystems) =>
   }));
 
 export const ruleResolutionRisk = (rule) => {
-  const resolution = rule.resolution_set.find(
+  const resolution = rule.resolution_set?.find(
     (resolution) =>
-      resolution.system_type === SYSTEM_TYPES.rhel || SYSTEM_TYPES.ocp,
+      resolution.system_type === SYSTEM_TYPES.rhel ||
+      resolution.system_type === SYSTEM_TYPES.ocp,
   );
   return resolution ? resolution.resolution_risk.risk : undefined;
 };

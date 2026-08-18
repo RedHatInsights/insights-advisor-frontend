@@ -27,6 +27,12 @@ const useAdvisorApi = (endpoint) => {
   const axios = useAxiosWithPlatformInterceptors();
 
   const apiEndpoint = useMemo(() => {
+    // Configure axios to serialize array params with repeat format
+    // workload=['ansible', 'sap'] → workload=ansible&workload=sap
+    const Qs = require('qs');
+    axios.defaults.paramsSerializer = (params) =>
+      Qs.stringify(params, { arrayFormat: 'repeat' });
+
     // insights-client has full paths hardcoded (e.g., "/api/insights/v1/pathway/")
     // BaseAPI concatenates: (this.basePath || basePath) + path
     // We need basePath to resolve to empty string in concatenation
