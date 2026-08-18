@@ -410,22 +410,50 @@ const Inventory = ({
         fetchAndSetData();
       } else if (pathway && Array.isArray(pathwayRulesList)) {
         const buildAndSetData = async () => {
-          const data = [];
-          for (const r of pathwayRulesList) {
+          const affectedRules = pathwayRulesList.filter((r) => {
             const affected = pathwayReportList[r.rule_id];
-            if (!affected) continue;
+            return affected?.some((id) => safeSelectedIds.includes(id));
+          });
+
+          let resolutionsByIssue = {};
+          if (affectedRules.length > 0) {
+            try {
+              const issues = affectedRules.map((r) => `advisor:${r.rule_id}`);
+              const response = await fetch(
+                '/insights_cloud/api/remediations/v1/resolutions',
+                {
+                  method: 'POST',
+                  headers: {
+                    'content-type': 'application/json; charset=utf-8',
+                    'X-CSRF-Token': document
+                      .querySelector('meta[name="csrf-token"]')
+                      .getAttribute('content'),
+                  },
+                  body: JSON.stringify({ issues }),
+                },
+              );
+              if (response.ok) {
+                resolutionsByIssue = await response.json();
+              }
+            } catch (err) {
+              console.error('Failed to fetch pathway resolutions:', err);
+            }
+          }
+
+          const data = [];
+          for (const r of affectedRules) {
+            const affected = pathwayReportList[r.rule_id];
+            const issueKey = `advisor:${r.rule_id}`;
+            const apiResolutions =
+              resolutionsByIssue[issueKey]?.resolutions || [];
+
             for (const id of safeSelectedIds) {
               if (!affected.includes(id)) continue;
               const row = entities?.rows?.find((e) => e.id === id);
               data.push({
                 hostid: id,
                 host_name: row ? row.display_name : id,
-                resolutions: (r.resolution_set || []).map((res) => ({
-                  description: res.resolution,
-                  id: res.system_type?.toString() || 'fix',
-                  needs_reboot: !!r.reboot_required,
-                  resolution_risk: res.resolution_risk?.risk || 1,
-                })),
+                resolutions: apiResolutions,
                 rulename: r.rule_id,
                 description: r.description,
                 rebootable: !!r.reboot_required,
