@@ -1,5 +1,4 @@
 import { FILTER_CATEGORIES } from '../../AppConstants';
-import { workloadArrayQueryBuilder } from '../Common/Tables';
 
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -144,7 +143,7 @@ export const workloadFilter = {
   items: FILTER_CATEGORIES.workload.values,
   filterSerialiser: (value) => {
     const values = Array.isArray(value) ? value : [];
-    return workloadArrayQueryBuilder(values);
+    return values.length > 0 ? { workload: values } : {};
   },
 };
 
