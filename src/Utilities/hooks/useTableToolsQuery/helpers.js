@@ -41,7 +41,8 @@ export const fetchResult = async (
   compileResult,
 ) => {
   const convertedParams = convertToArray(params);
-  return compileResult(await fn(...convertedParams), params);
+  const result = await fn(...convertedParams);
+  return compileResult(result, params);
 };
 
 export const combineParamsWithTableState = (
@@ -53,10 +54,12 @@ export const combineParamsWithTableState = (
     additionalParams || {};
 
   // Flatten filters to root level for Advisor API
-  return {
+  const result = {
     ...restTableParams,
     ...restAdditionalParams,
     ...(tableFilters || {}),
     ...(optionFilters || {}),
   };
+
+  return result;
 };

@@ -37,6 +37,7 @@ import { useFeatureFlag } from '../../Utilities/Hooks';
  * @param {Array} props.selectedTags - Selected inventory tags filter
  * @param {Object} props.workloads - Workloads filter (SAP, MSSQL, Ansible)
  * @param {string} props.pathway - Pathway filter
+ * @param {string} props.topic - Topic filter (for topic details page)
  * @param {Function} props.onRuleChange - Callback when rule changes
  */
 const RulesTableInner = ({
@@ -44,6 +45,7 @@ const RulesTableInner = ({
   selectedTags,
   workloads,
   pathway,
+  topic,
   onRuleChange,
 }) => {
   const isWorkloadFilterEnabled = useFeatureFlag('advisor.workloads');
@@ -62,9 +64,10 @@ const RulesTableInner = ({
     () => ({
       filterConfig: activeFilters,
       activeFilters: {
-        rule_status: ['enabled'],
-        impacting: ['true'],
+        status: ['enabled'],
+        'systems-impacted': ['true'],
       },
+      useReset: true,
     }),
     [activeFilters],
   );
@@ -75,6 +78,7 @@ const RulesTableInner = ({
 
   const additionalParams = useMemo(() => {
     let params = {};
+
     if (selectedTags?.length) {
       params.tags = selectedTags.join(',');
     }
@@ -87,8 +91,11 @@ const RulesTableInner = ({
     if (pathway) {
       params.pathway = pathway;
     }
+    if (topic) {
+      params.topic = topic;
+    }
     return params;
-  }, [selectedTags, workloads, pathway]);
+  }, [selectedTags, workloads, pathway, topic]);
 
   const { data, loading } = useRecsQuery({
     useTableState: true,
@@ -153,10 +160,11 @@ RulesTableInner.propTypes = {
   selectedTags: PropTypes.array,
   workloads: PropTypes.object,
   pathway: PropTypes.string,
+  topic: PropTypes.string,
   onRuleChange: PropTypes.func,
 };
 
-const RulesTableNew = ({ isTabActive, pathway, onRuleChange }) => {
+const RulesTableNew = ({ isTabActive, pathway, topic, onRuleChange }) => {
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
 
@@ -167,6 +175,7 @@ const RulesTableNew = ({ isTabActive, pathway, onRuleChange }) => {
         selectedTags={selectedTags}
         workloads={workloads}
         pathway={pathway}
+        topic={topic}
         onRuleChange={onRuleChange}
       />
     </TableStateProvider>
@@ -176,7 +185,9 @@ const RulesTableNew = ({ isTabActive, pathway, onRuleChange }) => {
 RulesTableNew.propTypes = {
   isTabActive: PropTypes.bool,
   pathway: PropTypes.string,
+  topic: PropTypes.string,
   onRuleChange: PropTypes.func,
+  defaultFilters: PropTypes.object,
 };
 
 export default RulesTableNew;
