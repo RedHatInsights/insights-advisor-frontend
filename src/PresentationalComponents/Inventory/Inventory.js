@@ -322,6 +322,9 @@ const Inventory = ({
 
   const createColumns = useCallback(
     (defaultColumns) => {
+      if (!defaultColumns) {
+        return [lastSeenColumn];
+      }
       let displayName = defaultColumns.filter(
         ({ key }) => key === 'display_name',
       );
