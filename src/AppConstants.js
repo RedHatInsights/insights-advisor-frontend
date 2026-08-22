@@ -462,7 +462,7 @@ export const getImpactingFitlerItems = (hasEdgeDevices) =>
 export const SYSTEM_FILTER_CATEGORIES = {
   hits: {
     type: conditionalFilterType.checkbox,
-    title: 'Total Risk',
+    title: 'total risk',
     urlParam: 'hits',
     values: [
       { label: 'All systems', text: 'All systems', value: 'all' },
@@ -495,6 +495,7 @@ export const SYSTEM_FILTER_CATEGORIES = {
     title: 'Operating system',
     urlParam: 'rhel_version',
   },
+  workload: FILTER_CATEGORIES.workload,
 };
 
 export const exportNotifications = {
