@@ -338,6 +338,44 @@ describe('filtering (with tabletools)', () => {
   it('renders filter input', () => {
     cy.get('input[placeholder="Filter by name"]').should('exist');
   });
+
+  it('returns results when search term contains parentheses', () => {
+    cy.get('input[placeholder="Filter by name"]').type(
+      'Amazon Web Services (AWS)',
+    );
+    cy.contains('Amazon Web Services (AWS)').should('be.visible');
+    cy.get('tbody tr').should('have.length', 1);
+  });
+
+  it('returns results when searching partial name without parentheses', () => {
+    cy.get('input[placeholder="Filter by name"]').type('Amazon');
+    cy.contains('Amazon Web Services (AWS)').should('be.visible');
+  });
+
+  it('handles dots in search terms', () => {
+    cy.get('input[placeholder="Filter by name"]').type('nginx');
+    cy.contains('nginx').should('be.visible');
+  });
+
+  it('handles square brackets in search terms without crashing', () => {
+    cy.get('input[placeholder="Filter by name"]').type('test[0]');
+    cy.contains('No matching results found').should('be.visible');
+  });
+
+  it('handles plus signs in search terms without crashing', () => {
+    cy.get('input[placeholder="Filter by name"]').type('C++');
+    cy.contains('No matching results found').should('be.visible');
+  });
+
+  it('handles asterisks in search terms without crashing', () => {
+    cy.get('input[placeholder="Filter by name"]').type('test*');
+    cy.contains('No matching results found').should('be.visible');
+  });
+
+  it('handles pipe characters in search terms without crashing', () => {
+    cy.get('input[placeholder="Filter by name"]').type('foo|bar');
+    cy.contains('No matching results found').should('be.visible');
+  });
 });
 
 describe('sorting (with tabletools)', () => {
