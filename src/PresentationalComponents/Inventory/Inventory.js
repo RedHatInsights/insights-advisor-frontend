@@ -176,11 +176,19 @@ const Inventory = ({
     if (!hasPathwayDetails) {
       if (pathway) {
         try {
+          // Fetch the pathway's impacting rules via the shared /rule/ endpoint
+          // (matches hosted/master to limit branch divergence; same
+          // RuleForAccountSerializer as /pathway/<slug>/rules/, so the
+          // resolution_set/has_playbook fields the button check reads are
+          // identical). The backend default_limit is 10, so an explicit limit
+          // is required or the impacting rule that carries a playbook can be
+          // paginated out, leaving the Remediate button permanently disabled.
+          // max_limit=1000 covers the largest pathway.
           let pathwayRules = (
             await Get(
-              `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
+              `${envContext.RULES_FETCH_URL}`,
               {},
-              {},
+              { pathway: pathway.slug, impacting: true, limit: 1000 },
             )
           )?.data.data;
 
@@ -228,9 +236,9 @@ const Inventory = ({
     if (pathway) {
       const pathways = (
         await Get(
-          `${envContext.BASE_URL}/pathway/${encodeURI(pathway.slug)}/rules/`,
+          `${envContext.RULES_FETCH_URL}`,
           {},
-          {},
+          { pathway: pathway.slug, impacting: true, limit: 1000 },
         )
       )?.data.data;
 
@@ -246,7 +254,9 @@ const Inventory = ({
       pathways.forEach((rec) => {
         let filteredSystems = [];
 
-        systems[rec.rule_id].forEach((system) => {
+        // reports (systems) only keys impacting rules; guard so a rule without
+        // a matching report entry doesn't throw.
+        (systems[rec.rule_id] || []).forEach((system) => {
           if (safeSelectedIds.includes(system)) {
             filteredSystems.push(system);
           }
