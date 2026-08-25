@@ -107,6 +107,7 @@ jest.mock('@redhat-cloud-services/frontend-components/ErrorState', () => ({
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn(() => false),
   useFlagsStatus: jest.fn(() => ({ flagsReady: true })),
+  useVariant: jest.fn(() => ({ enabled: false, payload: undefined })),
   FlagProvider: ({ children }) => children,
 }));
 
