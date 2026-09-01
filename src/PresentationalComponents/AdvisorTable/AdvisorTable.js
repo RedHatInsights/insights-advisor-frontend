@@ -68,6 +68,7 @@ AdvisorTable.propTypes = {
   total: PropTypes.number,
   filters: PropTypes.object,
   options: PropTypes.object,
+  toolbarProps: PropTypes.object,
   defaults: PropTypes.shape({
     columns: PropTypes.array,
     filters: PropTypes.object,
