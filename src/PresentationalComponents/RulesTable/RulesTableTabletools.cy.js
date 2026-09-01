@@ -159,6 +159,8 @@ describe('defaults', () => {
   });
 
   it('sorting using Total risk', () => {
+    cy.wait('@getRules');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
     const column = 'Total risk';
     cy.tableIsSortedBy(column);
   });
@@ -299,11 +301,14 @@ describe('sorting', () => {
   beforeEach(() => {
     rulesTableApiInterceptor(fixtures);
     mountComponent();
-    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+    cy.wait('@getRules');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
   });
 
   it('sorts by Name in ascending order', () => {
     cy.get('th').contains('Name').click();
+    cy.wait('@getRules');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
 
     cy.get('th')
       .contains('Name')
@@ -314,7 +319,10 @@ describe('sorting', () => {
   it('sorts by Name in descending order', () => {
     cy.get('th').contains('Name').click();
     cy.wait('@getRules');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
     cy.get('th').contains('Name').click();
+    cy.wait('@getRules');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
 
     cy.get('th')
       .contains('Name')
@@ -324,6 +332,8 @@ describe('sorting', () => {
 
   it('sorts by Total risk in ascending order', () => {
     cy.get('th').contains('Total risk').click();
+    cy.wait('@getRules');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
 
     cy.get('th')
       .contains('Total risk')
@@ -334,6 +344,7 @@ describe('sorting', () => {
   it('sorts by Total risk in descending order', () => {
     cy.get('th').contains('Total risk').click();
     cy.wait('@getRules');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
     cy.get('th').contains('Total risk').click();
 
     cy.get('th')
@@ -344,6 +355,8 @@ describe('sorting', () => {
 
   it('sorts by Systems count in ascending order', () => {
     cy.get('th').contains('Systems').click();
+    cy.wait('@getRules');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
 
     cy.get('th')
       .contains('Systems')
@@ -354,7 +367,10 @@ describe('sorting', () => {
   it('sorts by Systems count in descending order', () => {
     cy.get('th').contains('Systems').click();
     cy.wait('@getRules');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
     cy.get('th').contains('Systems').click();
+    cy.wait('@getRules');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
 
     cy.get('th')
       .contains('Systems')
@@ -364,6 +380,8 @@ describe('sorting', () => {
 
   it('sorts by Category in ascending order', () => {
     cy.get('th').contains('Category').click();
+    cy.wait('@getRules');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
 
     cy.get('th')
       .contains('Category')
@@ -373,6 +391,8 @@ describe('sorting', () => {
 
   it('sorts by Modified in ascending order', () => {
     cy.get('th').contains('Modified').click();
+    cy.wait('@getRules');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
 
     cy.get('th')
       .contains('Modified')
@@ -382,6 +402,8 @@ describe('sorting', () => {
 
   it('sorts by Remediation type in ascending order', () => {
     cy.get('th').contains('Remediation type').click();
+    cy.wait('@getRules');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
 
     cy.get('th')
       .contains('Remediation type')
@@ -392,6 +414,7 @@ describe('sorting', () => {
   it('resets to ascending when clicking a different column', () => {
     cy.get('th').contains('Total risk').click();
     cy.wait('@getRules');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
     cy.get('th').contains('Total risk').click();
     cy.get('th')
       .contains('Total risk')
@@ -399,6 +422,8 @@ describe('sorting', () => {
       .should('have.attr', 'aria-sort', 'descending');
 
     cy.get('th').contains('Name').click();
+    cy.wait('@getRules');
+    cy.get('[data-ouia-component-id=loading-skeleton]').should('not.exist');
 
     cy.get('th')
       .contains('Name')
