@@ -8,11 +8,7 @@ import {
 } from '@redhat-cloud-services/frontend-components-advisor-components';
 import { Link } from 'react-router-dom';
 import InsightsLink from '@redhat-cloud-services/frontend-components/InsightsLink';
-import {
-  AdvisorProduct,
-  RISK_OF_CHANGE_DESC,
-  SYSTEM_TYPES,
-} from '../../AppConstants';
+import { RISK_OF_CHANGE_DESC, SYSTEM_TYPES } from '../../AppConstants';
 import { EnvironmentContext } from '../../App';
 import messages from '../../Messages';
 import ViewHostAcks from '../Modals/ViewHostAcks';
