@@ -1,6 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { TableStateProvider, useStateCallbacks } from 'bastilian-tabletools';
+import {
+  TableStateProvider,
+  useStateCallbacks,
+  useFullTableState,
+} from 'bastilian-tabletools';
+import { useDispatch } from 'react-redux';
+import { useIntl } from 'react-intl';
+import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import AdvisorTable from '../AdvisorTable/AdvisorTable';
 import columns from './Columns';
 import filters from './Filters';
@@ -11,12 +19,21 @@ import useRulesTableActions from '../../Utilities/hooks/useRulesTableActions';
 import useDisableRuleModal from '../../Utilities/hooks/useDisableRuleModal';
 import DisableRule from '../Modals/DisableRule';
 import { useFeatureFlag } from '../../Utilities/Hooks';
+import { EnvironmentContext } from '../../App';
+import downloadReport from '../Common/DownloadHelper';
+import messages from '../../Messages';
+import { toExportParams } from '../../Utilities/tableSerializers';
 
 /**
  * Inner component that renders the Rules table with BaseTableToolsTable
  * Handles data fetching, expandable rows, and enable/disable actions
  */
 const RulesTableInner = ({ isTabActive, pathway, topic, onRuleChange }) => {
+  const envContext = useContext(EnvironmentContext);
+  const intl = useIntl();
+  const dispatch = useDispatch();
+  const addNotification = useAddNotification();
+  const axios = useAxiosWithPlatformInterceptors();
   const isWorkloadFilterEnabled = useFeatureFlag('advisor.workloads');
 
   // Filter out workload filter if feature flag is disabled
@@ -25,12 +42,17 @@ const RulesTableInner = ({ isTabActive, pathway, topic, onRuleChange }) => {
     : filters.filter((f) => f.id !== 'workload');
 
   // Get Redux global filters merged with table-specific params
-  const { additionalParams } = useAdvisorReduxFilters({ pathway, topic });
+  const { additionalParams, selectedTags, workloads } = useAdvisorReduxFilters({
+    pathway,
+    topic,
+  });
 
   // Get table state callbacks for reload
   const {
     current: { reload },
   } = useStateCallbacks();
+
+  const { serialisedTableState } = useFullTableState() || {};
 
   // Fetch recommendations data with table state integration
   const { data, loading, refetch } = useRecsQuery({
@@ -58,6 +80,54 @@ const RulesTableInner = ({ isTabActive, pathway, topic, onRuleChange }) => {
     onRuleChange,
     refetch,
   });
+
+  const onExport = useCallback(
+    (_e, fileType) => {
+      const exportFilters = {
+        ...toExportParams(serialisedTableState?.filters),
+        ...(pathway && { pathway }),
+        ...(topic && { topic }),
+      };
+
+      downloadReport(
+        'hits',
+        fileType,
+        exportFilters,
+        selectedTags,
+        workloads,
+        dispatch,
+        envContext.BASE_URL,
+        '',
+        addNotification,
+        axios,
+      );
+    },
+    [
+      serialisedTableState?.filters,
+      pathway,
+      topic,
+      selectedTags,
+      workloads,
+      dispatch,
+      envContext.BASE_URL,
+      addNotification,
+      axios,
+    ],
+  );
+
+  const toolbarProps = useMemo(
+    () => ({
+      ...(envContext.isExportEnabled
+        ? {
+            exportConfig: {
+              tooltipText: intl.formatMessage(messages.exportData),
+              onSelect: onExport,
+            },
+          }
+        : {}),
+    }),
+    [envContext.isExportEnabled, intl, onExport],
+  );
 
   // Table defaults with BaseTableToolsTable pattern
   const rulesDefaults = useMemo(
@@ -87,6 +157,7 @@ const RulesTableInner = ({ isTabActive, pathway, topic, onRuleChange }) => {
         items={items}
         total={data?.meta?.total}
         defaults={rulesDefaults}
+        toolbarProps={toolbarProps}
         aria-label="rules-table"
         ouiaId="rules-table"
         data-ouia-safe={!loading}
