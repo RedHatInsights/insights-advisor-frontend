@@ -53,10 +53,18 @@ const PathwaysTableNew = lazy(
     ),
 );
 
+const RulesTableNew = lazy(
+  () =>
+    import(
+      /* webpackChunkName: 'RulesTableNew' */ '../../PresentationalComponents/RulesTable/RulesTable.new'
+    ),
+);
+
 const List = () => {
   const { pathname } = useLocation();
   const navigate = useInsightsNavigate();
   const useNewPathwaysTable = useFeatureFlag('advisor-tabletools-migration');
+  const useNewRulesTable = useFeatureFlag('advisor-tabletools-migration');
   const envContext = useContext(EnvironmentContext);
   const intl = useIntl();
   const { defaultFilters } = useAnsibleWorkloadDefault();
@@ -173,11 +181,26 @@ const List = () => {
                     </TabTitleText>
                   }
                 >
-                  <RulesTable
-                    isTabActive={activeTab === RECOMMENDATIONS_TAB}
-                    onRuleChange={handleRuleChange}
-                    defaultFilters={defaultFilters}
-                  />
+                  <Suspense
+                    fallback={
+                      <Bullseye>
+                        <Spinner size="xl" />
+                      </Bullseye>
+                    }
+                  >
+                    {useNewRulesTable ? (
+                      <RulesTableNew
+                        isTabActive={activeTab === RECOMMENDATIONS_TAB}
+                        onRuleChange={handleRuleChange}
+                      />
+                    ) : (
+                      <RulesTable
+                        isTabActive={activeTab === RECOMMENDATIONS_TAB}
+                        onRuleChange={handleRuleChange}
+                        defaultFilters={defaultFilters}
+                      />
+                    )}
+                  </Suspense>
                 </Tab>
                 <Tab
                   eventKey={PATHWAYS_TAB}
@@ -212,10 +235,22 @@ const List = () => {
                 </Tab>
               </Tabs>
             ) : (
-              <RulesTable
-                onRuleChange={handleRuleChange}
-                defaultFilters={defaultFilters}
-              />
+              <Suspense
+                fallback={
+                  <Bullseye>
+                    <Spinner size="xl" />
+                  </Bullseye>
+                }
+              >
+                {useNewRulesTable ? (
+                  <RulesTableNew onRuleChange={handleRuleChange} />
+                ) : (
+                  <RulesTable
+                    onRuleChange={handleRuleChange}
+                    defaultFilters={defaultFilters}
+                  />
+                )}
+              </Suspense>
             )}
           </StackItem>
         </Stack>
