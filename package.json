@@ -184,6 +184,7 @@
     "marked": ">=18.0.4",
     "@swc/helpers": "0.5.21",
     "sanitize-html": "2.17.6",
-    "postcss": ">=8.5.18"
+    "postcss": ">=8.5.18",
+    "js-yaml": ">=4.3.1"
   }
 }
