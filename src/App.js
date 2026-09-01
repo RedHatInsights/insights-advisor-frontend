@@ -4,6 +4,7 @@ import React, { useEffect, useContext, createContext } from 'react';
 import { batch, useDispatch } from 'react-redux';
 import { updateTags, updateWorkloads } from './Services/Filters';
 import MessageState from './PresentationalComponents/MessageState/MessageState';
+import OutageAlert from './PresentationalComponents/OutageAlert/OutageAlert';
 import { AdvisorRoutes } from './Routes';
 import messages from './Messages';
 import { useIntl } from 'react-intl';
@@ -53,14 +54,20 @@ const App = () => {
   return (
     !envContext?.isLoading &&
     (envContext?.isAllowedToViewRec ? (
-      <AdvisorRoutes />
+      <React.Fragment>
+        <OutageAlert />
+        <AdvisorRoutes />
+      </React.Fragment>
     ) : (
-      <MessageState
-        variant="large"
-        icon={LockIcon}
-        title={intl.formatMessage(messages.permsTitle)}
-        text={intl.formatMessage(messages.permsBody)}
-      />
+      <React.Fragment>
+        <OutageAlert />
+        <MessageState
+          variant="large"
+          icon={LockIcon}
+          title={intl.formatMessage(messages.permsTitle)}
+          text={intl.formatMessage(messages.permsBody)}
+        />
+      </React.Fragment>
     ))
   );
 };

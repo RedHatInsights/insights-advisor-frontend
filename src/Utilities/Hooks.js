@@ -1,5 +1,9 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from 'react';
-import { useFlag, useFlagsStatus } from '@unleash/proxy-client-react';
+import {
+  useFlag,
+  useFlagsStatus,
+  useVariant,
+} from '@unleash/proxy-client-react';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import {
   BASE_URL,
@@ -11,6 +15,29 @@ export const useFeatureFlag = (flag) => {
   const { flagsReady } = useFlagsStatus();
   const isFlagEnabled = useFlag(flag);
   return flagsReady ? isFlagEnabled : false;
+};
+
+export const useFeatureVariant = (flag) => {
+  const { flagsReady } = useFlagsStatus();
+  const variant = useVariant(flag);
+
+  const isEnabled = flagsReady ? variant.enabled : false;
+
+  let payload;
+  if (flagsReady && variant.payload) {
+    try {
+      payload = JSON.parse(variant.payload.value);
+    } catch {
+      payload = undefined;
+    }
+  }
+
+  return {
+    isEnabled,
+    body: payload?.body,
+    variant: payload?.variant,
+    title: payload?.title,
+  };
 };
 
 export const matchPermissions = (permissionA, permissionB) => {
