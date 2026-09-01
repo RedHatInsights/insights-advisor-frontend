@@ -179,7 +179,7 @@
     "ajv-keywords": ">=5.1.0",
     "schema-utils": ">=4.3.3",
     "minimatch": ">=10.2.5",
-    "fast-uri": "3.1.4",
+    "fast-uri": ">=3.1.6",
     "brace-expansion": "5.0.8",
     "marked": ">=18.0.4",
     "@swc/helpers": "0.5.21",
