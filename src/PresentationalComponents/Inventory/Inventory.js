@@ -546,8 +546,6 @@ const Inventory = ({
           }}
           exportConfig={
             permsExport && {
-              label: intl.formatMessage(messages.exportCsv),
-              label: intl.formatMessage(messages.exportJson),
               onSelect: (_e, fileType) =>
                 downloadReport(
                   exportTable,
@@ -620,8 +618,6 @@ const Inventory = ({
           }}
           exportConfig={
             permsExport && {
-              label: intl.formatMessage(messages.exportCsv),
-              label: intl.formatMessage(messages.exportJson),
               onSelect: (_e, fileType) =>
                 downloadReport(
                   exportTable,
