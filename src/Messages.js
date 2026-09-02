@@ -247,18 +247,6 @@ export default defineMessages({
     description: 'Describes function of export icon',
     defaultMessage: 'Export data',
   },
-  exportJson: {
-    id: 'exportJson',
-    description:
-      'Button text to export/download recommendation table data as json',
-    defaultMessage: 'Export to JSON',
-  },
-  exportCsv: {
-    id: 'exportCsv',
-    description:
-      'Button text to export/download recommendation table data as csv',
-    defaultMessage: 'Export to CSV',
-  },
   exportPdf: {
     id: 'exportPdf',
     description: 'Button text to export/download data as pdf',
