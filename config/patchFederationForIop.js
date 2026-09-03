@@ -16,9 +16,7 @@ const originalCreateIncludes = federatedModulesUtil.createIncludes;
 
 federatedModulesUtil.createIncludes = (...args) => {
     const includes = originalCreateIncludes(...args);
-    if (includes.chromeProvided) {
-        delete includes.chromeProvided['react/jsx-runtime'];
-        delete includes.chromeProvided['react-intl'];
-    }
+    delete includes.chromeProvided['react/jsx-runtime'];
+    delete includes.chromeProvided['react-intl'];
     return includes;
 };
