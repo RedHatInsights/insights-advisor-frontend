@@ -336,6 +336,50 @@ describe('Inventory helpers', () => {
       expect(serialized).not.toContain('category[]');
     });
 
+    it('returns fallback object on network error', async () => {
+      const consoleErrorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      mockAxiosGet.mockRejectedValue(new Error('Network error'));
+      createOptions.mockReturnValue({ page: 1, per_page: 20 });
+
+      const result = await paginatedRequestHelper({
+        ...mockConfig,
+        rule: { rule_id: 'TEST_RULE' },
+        pathway: null,
+      });
+
+      expect(result).toEqual({ data: [], meta: { count: 0 } });
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Failed to fetch paginated systems data:',
+        expect.any(Error),
+      );
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('returns fallback object on server error', async () => {
+      const consoleErrorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+      const serverError = new Error('Internal Server Error');
+      serverError.response = { status: 500 };
+
+      mockAxiosGet.mockRejectedValue(serverError);
+      createOptions.mockReturnValue({ page: 1, per_page: 20 });
+
+      const result = await paginatedRequestHelper({
+        ...mockConfig,
+        pathway: { slug: 'test-pathway' },
+      });
+
+      expect(result).toEqual({ data: [], meta: { count: 0 } });
+      expect(consoleErrorSpy).toHaveBeenCalled();
+
+      consoleErrorSpy.mockRestore();
+    });
+
     describe('workloadFilter handling', () => {
       it('includes workload params in the axios call when workloadFilter is non-empty', async () => {
         const pathway = { slug: 'test-pathway' };
@@ -678,6 +722,105 @@ describe('Inventory helpers', () => {
         },
         true,
       );
+    });
+
+    it('handles paginatedRequestHelper returning fallback data on network error', async () => {
+      const consoleErrorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      mockAxiosGet.mockRejectedValue(new Error('Network error'));
+
+      const fetchEntities = getEntities(
+        mockHandleRefresh,
+        null,
+        mockSetCurPageIds,
+        mockSetTotal,
+        [],
+        mockSetFullFilters,
+        {},
+        rule,
+        RULES_FETCH_URL,
+        SYSTEMS_FETCH_URL,
+        mockAxios,
+      );
+
+      const result = await fetchEntities(
+        [],
+        config,
+        true,
+        mockDefaultGetEntities,
+      );
+
+      expect(mockDefaultGetEntities).not.toHaveBeenCalled();
+      expect(mockSetCurPageIds).toHaveBeenCalledWith([]);
+      expect(mockSetTotal).toHaveBeenCalledWith(0);
+      expect(result.results).toHaveLength(0);
+      expect(result.total).toBe(0);
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('does not crash when API returns null data or meta', async () => {
+      mockAxiosGet.mockResolvedValue({ data: null, meta: null });
+
+      const fetchEntities = getEntities(
+        mockHandleRefresh,
+        null,
+        mockSetCurPageIds,
+        mockSetTotal,
+        [],
+        mockSetFullFilters,
+        {},
+        rule,
+        RULES_FETCH_URL,
+        SYSTEMS_FETCH_URL,
+        mockAxios,
+      );
+
+      const result = await fetchEntities(
+        [],
+        config,
+        true,
+        mockDefaultGetEntities,
+      );
+
+      expect(mockDefaultGetEntities).not.toHaveBeenCalled();
+      expect(mockSetCurPageIds).toHaveBeenCalledWith([]);
+      expect(mockSetTotal).toHaveBeenCalledWith(0);
+      expect(result.results).toHaveLength(0);
+      expect(result.total).toBe(0);
+    });
+
+    it('does not crash when API returns empty object', async () => {
+      mockAxiosGet.mockResolvedValue({});
+
+      const fetchEntities = getEntities(
+        mockHandleRefresh,
+        null,
+        mockSetCurPageIds,
+        mockSetTotal,
+        [],
+        mockSetFullFilters,
+        {},
+        rule,
+        RULES_FETCH_URL,
+        SYSTEMS_FETCH_URL,
+        mockAxios,
+      );
+
+      const result = await fetchEntities(
+        [],
+        config,
+        true,
+        mockDefaultGetEntities,
+      );
+
+      expect(mockDefaultGetEntities).not.toHaveBeenCalled();
+      expect(mockSetCurPageIds).toHaveBeenCalledWith([]);
+      expect(mockSetTotal).toHaveBeenCalledWith(0);
+      expect(result.results).toHaveLength(0);
+      expect(result.total).toBe(0);
     });
 
     describe('last_seen null filtering', () => {
