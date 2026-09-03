@@ -322,6 +322,9 @@ const Inventory = ({
 
   const createColumns = useCallback(
     (defaultColumns) => {
+      if (!defaultColumns) {
+        return [lastSeenColumn];
+      }
       let displayName = defaultColumns.filter(
         ({ key }) => key === 'display_name',
       );
@@ -546,8 +549,6 @@ const Inventory = ({
           }}
           exportConfig={
             permsExport && {
-              label: intl.formatMessage(messages.exportCsv),
-              label: intl.formatMessage(messages.exportJson),
               onSelect: (_e, fileType) =>
                 downloadReport(
                   exportTable,
@@ -620,8 +621,6 @@ const Inventory = ({
           }}
           exportConfig={
             permsExport && {
-              label: intl.formatMessage(messages.exportCsv),
-              label: intl.formatMessage(messages.exportJson),
               onSelect: (_e, fileType) =>
                 downloadReport(
                   exportTable,

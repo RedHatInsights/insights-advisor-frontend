@@ -194,7 +194,7 @@ describe('AddEditTopic', () => {
 
       await waitFor(() => {
         expect(mockAxios.post).toHaveBeenCalledWith(
-          '/api/insights/v1/topic/',
+          '/api/insights/v1/ruletopic/',
           expect.objectContaining({
             name: 'New Topic',
             slug: 'newtopic',
@@ -223,14 +223,17 @@ describe('AddEditTopic', () => {
       fireEvent.click(saveButton);
 
       await waitFor(() => {
-        expect(mockAxios.post).toHaveBeenCalledWith('/api/insights/v1/topic/', {
-          name: 'Test Topic',
-          slug: 'testtopic',
-          tag: 'test-tag',
-          description: 'Test Description',
-          enabled: true,
-          featured: true,
-        });
+        expect(mockAxios.post).toHaveBeenCalledWith(
+          '/api/insights/v1/ruletopic/',
+          {
+            name: 'Test Topic',
+            slug: 'testtopic',
+            tag: 'test-tag',
+            description: 'Test Description',
+            enabled: true,
+            featured: true,
+          },
+        );
       });
     });
   });
@@ -257,7 +260,7 @@ describe('AddEditTopic', () => {
 
       await waitFor(() => {
         expect(mockAxios.put).toHaveBeenCalledWith(
-          '/api/insights/v1/topic/original-slug/',
+          '/api/insights/v1/ruletopic/original-slug/',
           expect.objectContaining({
             name: 'Updated Name',
             slug: 'original-slug',
@@ -282,7 +285,7 @@ describe('AddEditTopic', () => {
 
       await waitFor(() => {
         expect(mockAxios.delete).toHaveBeenCalledWith(
-          '/api/insights/v1/topic/topic-to-delete',
+          '/api/insights/v1/ruletopic/topic-to-delete',
         );
       });
     });

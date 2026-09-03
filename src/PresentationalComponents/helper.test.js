@@ -12,7 +12,9 @@ describe('sortTopics test', () => {
   test('the function is called with the Name column parameter and direction desc', () => {
     let sortResult = sortTopics(fixtures, indexes[0], directions[0]);
 
-    expect(sortResult[0].description).toBe('TEST');
+    expect(sortResult[0].description).toBe(
+      'Amazon Web Services recommendations',
+    );
   });
   test('the function is called with the Featured column parameter and direction asc', () => {
     let sortResult = sortTopics(fixtures, indexes[1], directions[1]);
@@ -120,6 +122,96 @@ describe('createOptions', () => {
         systemsPage,
       ).rhel_version,
     ).toEqual('9.0,9.1,9.5,9.3,9.4,9.2,8.0,8.2');
+  });
+
+  it('joins advisorFilters.rhel_version array to comma-separated string', () => {
+    const advisorFiltersWithRhel = {
+      rhel_version: ['9.7', '9.4'],
+    };
+
+    expect(
+      createOptions(
+        advisorFiltersWithRhel,
+        page,
+        per_page,
+        sort,
+        pathway,
+        filters,
+        selectedTags,
+        workloads,
+        SID,
+        systemsPage,
+      ).rhel_version,
+    ).toEqual('9.7,9.4');
+  });
+
+  it('passes through advisorFilters.rhel_version when already a string', () => {
+    const advisorFiltersWithRhel = {
+      rhel_version: '9.7,9.4',
+    };
+
+    expect(
+      createOptions(
+        advisorFiltersWithRhel,
+        page,
+        per_page,
+        sort,
+        pathway,
+        filters,
+        selectedTags,
+        workloads,
+        SID,
+        systemsPage,
+      ).rhel_version,
+    ).toEqual('9.7,9.4');
+  });
+
+  it('osFilter overrides advisorFilters.rhel_version', () => {
+    const advisorFiltersWithRhel = {
+      rhel_version: ['8.0'],
+    };
+    const osFilter = {
+      'RHEL-9': {
+        'RHEL-9': null,
+        'RHEL-9-9.7': true,
+      },
+    };
+
+    expect(
+      createOptions(
+        advisorFiltersWithRhel,
+        page,
+        per_page,
+        sort,
+        pathway,
+        { osFilter },
+        selectedTags,
+        workloads,
+        SID,
+        systemsPage,
+      ).rhel_version,
+    ).toEqual('9.7');
+  });
+
+  it('omits rhel_version when advisorFilters.rhel_version is empty array and no osFilter', () => {
+    const advisorFiltersWithRhel = {
+      rhel_version: [],
+    };
+
+    expect(
+      createOptions(
+        advisorFiltersWithRhel,
+        page,
+        per_page,
+        sort,
+        pathway,
+        filters,
+        selectedTags,
+        workloads,
+        SID,
+        systemsPage,
+      ).rhel_version,
+    ).toBeUndefined();
   });
 
   it('returns a groups prop as comma-separated string when hostGroupFilter contains strings', () => {

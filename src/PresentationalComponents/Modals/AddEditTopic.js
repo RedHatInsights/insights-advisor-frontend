@@ -37,11 +37,11 @@ const AddEditTopic = ({ handleModalToggleCallback, isModalOpen, topic }) => {
     try {
       const data = { name, slug, tag, description, enabled, featured };
       if (type === 'DELETE') {
-        await axios.delete(`${BASE_URL}/topic/${slug}`);
+        await axios.delete(`${BASE_URL}/ruletopic/${slug}`);
       } else if (topic.slug) {
-        await axios.put(`${BASE_URL}/topic/${slug}/`, data);
+        await axios.put(`${BASE_URL}/ruletopic/${slug}/`, data);
       } else {
-        await axios.post(`${BASE_URL}/topic/`, data);
+        await axios.post(`${BASE_URL}/ruletopic/`, data);
       }
     } catch (error) {
       addNotification({
