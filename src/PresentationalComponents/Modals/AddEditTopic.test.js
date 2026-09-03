@@ -285,7 +285,7 @@ describe('AddEditTopic', () => {
 
       await waitFor(() => {
         expect(mockAxios.delete).toHaveBeenCalledWith(
-          '/api/insights/v1/ruletopic/topic-to-delete',
+          '/api/insights/v1/ruletopic/topic-to-delete/',
         );
       });
     });
