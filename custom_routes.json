@@ -1,8 +1,9 @@
 {
-  "/assets/apps/advisor/*": {
-    "url": "http://host.docker.internal:8003"
+  "/assets/apps/advisor*": {
+    "url": "http://host.docker.internal:8003",
+    "strip_prefix": "/assets"
   },
-  "/api/insights/v1/advisor/*": {
+  "/api/insights/*": {
     "url": "http://host.docker.internal:8000"
   }
 }
