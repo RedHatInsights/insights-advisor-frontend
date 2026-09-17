@@ -37,6 +37,9 @@ spec:
     value: '{"type": "npm", "path": "."}'
   - name: prefetch-dev-package-managers
     value: "true"
+  - name: build-args
+    value:
+      - IOP=true
   - name: labels
     value:
       - 'url="https://www.redhat.com"'
