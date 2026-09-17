@@ -34,5 +34,14 @@
         "featured": false,
         "enabled": true,
         "impacted_systems_count": 694
+    },
+    {
+        "name": "Amazon Web Services (AWS)",
+        "slug": "amazon-web-services",
+        "description": "Amazon Web Services recommendations",
+        "tag": "aws",
+        "featured": false,
+        "enabled": true,
+        "impacted_systems_count": 15
     }
   ]

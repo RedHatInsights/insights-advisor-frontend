@@ -156,9 +156,10 @@ export const pruneFilters = (localFilters, filterCategories) => {
               })
             : [
                 {
-                  name: category.values.find(
-                    (values) => values.value === String(item[1]),
-                  ).label,
+                  name:
+                    category.values?.find(
+                      (values) => values.value === String(item[1]),
+                    )?.label ?? String(item[1]),
                   value: item[1],
                 },
               ];
