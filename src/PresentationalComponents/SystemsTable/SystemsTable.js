@@ -22,7 +22,6 @@ import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inven
 import Loading from '../Loading/Loading';
 import SystemsPdf from '../Export/SystemsPdf';
 import downloadReport from '../Common/DownloadHelper';
-import { mergeArraysByDiffKeys } from '../Common/Tables';
 import messages from '../../Messages';
 import { systemReducer } from '../../Store/AppReducer';
 import { updateReducers } from '../../Store';
@@ -285,7 +284,7 @@ const SystemsTable = ({ defaultFilters }) => {
             }),
           );
         }}
-        getEntities={async (_items, config, showTags, defaultGetEntities) => {
+        getEntities={async (_items, config) => {
           const {
             per_page,
             page,
@@ -334,7 +333,6 @@ const SystemsTable = ({ defaultFilters }) => {
                 description: error.response?.data?.message || error.message,
               });
               setFetchError(true);
-              // Return empty results to trigger NoSystemsTable display
               return Promise.resolve({
                 results: [],
                 total: 0,
@@ -345,54 +343,18 @@ const SystemsTable = ({ defaultFilters }) => {
 
           handleRefresh(options);
 
-          /**
-           * Filter out systems that don't exist in Inventory.
-           * Systems with last_seen: null exist in Advisor but not in Inventory,
-           * which causes 404 errors when querying the Inventory API.
-           */
-          const systemsInInventory = fetchedSystems.data.filter(
-            (system) => system.last_seen !== null,
-          );
-
-          /**
-           * Adjust the total count to account for filtered systems.
-           * When backend returns a count that includes systems with last_seen: null,
-           * we filter those out on the frontend to prevent 404 errors when
-           * querying the Inventory API. We subtract the number of filtered systems
-           * from this page to keep the count approximately accurate for pagination.
-           */
-          const filteredOutCount =
-            fetchedSystems.data.length - systemsInInventory.length;
-
-          let results = { results: [] };
-          if (systemsInInventory.length > 0) {
-            try {
-              results = await defaultGetEntities(
-                // additional request to fetch hosts' operating system values
-                systemsInInventory.map((system) => system.system_uuid),
-                {
-                  per_page,
-                  hasItems: true,
-                  fields: { system_profile: ['operating_system'] },
-                },
-                showTags,
-              );
-            } catch (inventoryError) {
-              /**
-               * Handle 404 errors gracefully in case systems are missing from Inventory.
-               * This is a safety net - the filtering above should prevent most 404s.
-               */
-              if (inventoryError.response?.status === 404) {
-                results = { results: [] };
-              } else {
-                throw inventoryError;
-              }
-            }
-          }
+          const results = fetchedSystems.data.map((system) => ({
+            ...system,
+            id: system.id || system.system_uuid,
+            groups: system.workspaces,
+            system_profile: {
+              operating_system: system.operating_system,
+            },
+          }));
 
           return Promise.resolve({
-            results: mergeArraysByDiffKeys(systemsInInventory, results.results),
-            total: Math.max(0, fetchedSystems.meta.count - filteredOutCount),
+            results,
+            total: fetchedSystems.meta.count,
           });
         }}
         tableProps={{

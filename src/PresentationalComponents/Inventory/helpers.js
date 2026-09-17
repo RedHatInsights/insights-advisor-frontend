@@ -1,7 +1,4 @@
-import {
-  mergeArraysByDiffKeys,
-  workloadArrayQueryBuilder,
-} from '../Common/Tables';
+import { workloadArrayQueryBuilder } from '../Common/Tables';
 import { createOptions, createSortParam, getCsrfTokenHeader } from '../helper';
 import LastSeenColumnHeader from '../../Utilities/LastSeenColumnHeader';
 import { fitContent } from '@patternfly/react-table';
@@ -158,7 +155,7 @@ export const getEntities =
     SYSTEMS_FETCH_URL,
     axios,
   ) =>
-  async (_items, config, showTags, defaultGetEntities) => {
+  async (_items, config) => {
     const {
       per_page,
       page,
@@ -195,63 +192,25 @@ export const getEntities =
     setFullFilters(allDetails);
     const fetchedSystems = await paginatedRequestHelper(allDetails);
 
-    /**
-     * Filter out systems that don't exist in Inventory.
-     * Systems with last_seen: null exist in Advisor but not in Inventory,
-     * which causes 404 errors when querying the Inventory API.
-     */
-    const systemsInInventory = (fetchedSystems?.data || []).filter(
-      (system) => system.last_seen !== null,
-    );
+    const systems = (fetchedSystems?.data || []).map((system) => ({
+      ...system,
+      id: system.id || system.system_uuid,
+      groups: system.workspaces,
+      system_profile: {
+        operating_system: system.operating_system,
+      },
+    }));
 
-    /**
-     * Adjust the total count to account for filtered systems.
-     * The backend returns a count that includes systems with last_seen: null,
-     * but we filter those out on the frontend to prevent 404 errors when
-     * querying the Inventory API. We subtract the number of filtered systems
-     * from this page to keep the count approximately accurate for pagination.
-     */
     const totalCount = fetchedSystems?.meta?.count || 0;
-    const filteredOutCount =
-      (fetchedSystems?.data || []).length - systemsInInventory.length;
 
-    let results = { results: [] };
-    if (systemsInInventory.length > 0) {
-      try {
-        results = await defaultGetEntities(
-          systemsInInventory.map((system) => system.system_uuid),
-          {
-            per_page,
-            hasItems: true,
-            fields: { system_profile: ['operating_system'] },
-          },
-          showTags,
-        );
-      } catch (inventoryError) {
-        /**
-         * Handle 404 errors gracefully in case systems are missing from Inventory.
-         * This is a safety net - the filtering above should prevent most 404s.
-         */
-        if (inventoryError.response?.status === 404) {
-          results = { results: [] };
-        } else {
-          throw inventoryError;
-        }
-      }
-    }
-
-    setCurPageIds(systemsInInventory.map((system) => system.system_uuid));
-    setTotal(Math.max(0, totalCount - filteredOutCount));
+    setCurPageIds(systems.map((system) => system.system_uuid));
+    setTotal(totalCount);
     return Promise.resolve({
-      results: mergeArraysByDiffKeys(systemsInInventory, results.results).map(
-        (item) => {
-          return {
-            ...item,
-            selected: selectedIds?.includes(item.id),
-          };
-        },
-      ),
-      total: Math.max(0, totalCount - filteredOutCount),
+      results: systems.map((item) => ({
+        ...item,
+        selected: selectedIds?.includes(item.id),
+      })),
+      total: totalCount,
     });
   };
 
@@ -376,9 +335,12 @@ export const lastSeenColumn = {
   transforms: [fitContent],
   props: { width: 10 },
   dataLabel: 'Last seen',
-  renderFunc: (last_seen) => (
-    <RelativeTimeWithTooltip date={last_seen} label="Last Seen: " />
-  ),
+  renderFunc: (last_seen) =>
+    last_seen ? (
+      <RelativeTimeWithTooltip date={last_seen} label="Last Seen: " />
+    ) : (
+      'Unknown'
+    ),
 };
 export const impactedDateColumn = {
   key: 'impacted_date',
