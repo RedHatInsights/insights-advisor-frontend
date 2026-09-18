@@ -8,10 +8,12 @@ import { ComponentWithContext } from '../../Utilities/TestingUtilities';
 const mockAxiosGet = jest.fn();
 const mockAddNotification = jest.fn();
 
+const MockInventoryTable = jest.fn(({ children }) => (
+  <div data-testid="inventory-table">{children}</div>
+));
+
 jest.mock('@redhat-cloud-services/frontend-components/Inventory', () => ({
-  InventoryTable: jest.fn(({ children }) => (
-    <div data-testid="inventory-table">{children}</div>
-  )),
+  InventoryTable: (...args) => MockInventoryTable(...args),
 }));
 
 jest.mock(
@@ -591,6 +593,79 @@ describe('Inventory - Playbook Count Scenarios', () => {
       await waitFor(() => {
         expect(mockAxiosGet).toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('createColumns null guard', () => {
+    it('returns fallback columns when defaultColumns is undefined', async () => {
+      mockAxiosGet.mockResolvedValueOnce({ playbook_count: 1 });
+
+      renderInventory();
+
+      await waitFor(() => {
+        expect(MockInventoryTable).toHaveBeenCalled();
+      });
+
+      const lastCall =
+        MockInventoryTable.mock.calls[MockInventoryTable.mock.calls.length - 1];
+      const columnsCallback = lastCall[0].columns;
+
+      const result = columnsCallback(undefined);
+      expect(result).toHaveLength(1);
+      expect(result[0].key).toBe('last_seen');
+    });
+
+    it('returns fallback columns when defaultColumns is null', async () => {
+      mockAxiosGet.mockResolvedValueOnce({ playbook_count: 1 });
+
+      renderInventory();
+
+      await waitFor(() => {
+        expect(MockInventoryTable).toHaveBeenCalled();
+      });
+
+      const lastCall =
+        MockInventoryTable.mock.calls[MockInventoryTable.mock.calls.length - 1];
+      const columnsCallback = lastCall[0].columns;
+
+      const result = columnsCallback(null);
+      expect(result).toHaveLength(1);
+      expect(result[0].key).toBe('last_seen');
+    });
+
+    it('processes columns normally when defaultColumns is provided', async () => {
+      mockAxiosGet.mockResolvedValueOnce({ playbook_count: 1 });
+
+      renderInventory();
+
+      await waitFor(() => {
+        expect(MockInventoryTable).toHaveBeenCalled();
+      });
+
+      const lastCall =
+        MockInventoryTable.mock.calls[MockInventoryTable.mock.calls.length - 1];
+      const columnsCallback = lastCall[0].columns;
+
+      const mockDefaultColumns = [
+        { key: 'display_name', title: 'Name', sortKey: 'display_name' },
+        {
+          key: 'system_profile',
+          title: 'Operating system',
+          sortKey: 'operating_system',
+          dataLabel: 'OS',
+        },
+        { key: 'tags', title: 'Tags', props: { width: 10, isStatic: true } },
+        {
+          key: 'groups',
+          title: 'Workspace',
+          sortKey: 'group_name',
+          props: { width: 10 },
+        },
+      ];
+
+      const result = columnsCallback(mockDefaultColumns);
+      expect(result.length).toBeGreaterThan(1);
+      expect(result.find((col) => col.key === 'last_seen')).toBeTruthy();
     });
   });
 

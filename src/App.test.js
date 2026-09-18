@@ -12,6 +12,12 @@ jest.mock('./Routes', () => ({
 jest.mock('./Utilities/Hooks', () => ({
   useHccEnvironmentContext: jest.fn(),
   useFeatureFlag: jest.fn(),
+  useFeatureVariant: jest.fn(() => ({
+    isEnabled: false,
+    body: undefined,
+    variant: undefined,
+    title: undefined,
+  })),
 }));
 
 jest.mock('./Utilities/useKesselEnvironmentContext', () => ({
@@ -20,6 +26,7 @@ jest.mock('./Utilities/useKesselEnvironmentContext', () => ({
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useFlagsStatus: jest.fn(),
+  useVariant: jest.fn(() => ({ enabled: false, payload: undefined })),
 }));
 
 jest.mock('@project-kessel/react-kessel-access-check', () => ({
