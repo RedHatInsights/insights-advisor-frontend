@@ -1,0 +1,35 @@
+name: Cleanup PR cache
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Cleanup PR branch cache
+        run: |
+          echo "Cleaning up cache for PR #${{ github.event.pull_request.number }}"
+          echo "Branch: ${{ github.head_ref }}"
+
+          for ref in "refs/pull/${{ github.event.pull_request.number }}/merge" "refs/heads/${{ github.head_ref }}"; do
+            echo "Trying ref: $ref"
+            gh cache list --ref "$ref" --json id,ref --jq '.[] | "\(.id) \(.ref)"' | while read cache_id cache_ref; do
+              echo "Deleting cache ID: $cache_id (ref: $cache_ref)"
+              gh cache delete "$cache_id" || echo "Failed to delete cache $cache_id, continuing..."
+            done
+          done
+
+          echo "Deleting caches with exact scope match: ${{ github.head_ref }}"
+          gh cache list --json id,key --jq --arg SCOPE "scope=${{ github.head_ref }}" '.[] | select(.key | test("^" + $SCOPE + "(,|$)")) | .id' | while read cache_id; do
+            echo "Deleting scoped cache ID: $cache_id"
+            gh cache delete "$cache_id" || echo "Failed to delete cache $cache_id, continuing..."
+          done
+
+          echo "Cache cleanup completed."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
