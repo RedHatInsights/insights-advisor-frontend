@@ -141,7 +141,7 @@ export const pruneFilters = (localFilters, filterCategories) => {
                     value,
                   };
                 } else {
-                  const selectedCategoryValue = category.values.find(
+                  const selectedCategoryValue = category.values?.find(
                     (values) => values.value === String(value),
                   );
                   return selectedCategoryValue
@@ -212,6 +212,40 @@ export const workloadQueryBuilder = (workloads) =>
 export const workloadArrayQueryBuilder = (workloadFilter = []) => {
   if (!workloadFilter.length) return {};
   return { workload: workloadFilter };
+};
+
+/**
+ * Formats platform global filter state (tags, workspaces/groups, workloads) into API query parameters.
+ *
+ * @param {Object} [filters] - Global filter selections from Redux.
+ * @param {string[]|string} [filters.selectedTags] - Selected tags.
+ * @param {string[]|string} [filters.selectedGroups] - Selected workspaces / host groups.
+ * @param {Object} [filters.workloads] - Selected workloads configuration.
+ * @returns {Object} Serialized query parameters for Advisor API requests.
+ */
+export const buildGlobalFilterParams = ({
+  selectedTags,
+  selectedGroups,
+  workloads,
+} = {}) => {
+  let params = {};
+  if (selectedTags?.length) {
+    params.tags = Array.isArray(selectedTags)
+      ? selectedTags.join(',')
+      : selectedTags;
+  }
+  if (selectedGroups?.length) {
+    params.groups = Array.isArray(selectedGroups)
+      ? selectedGroups.join(',')
+      : selectedGroups;
+  }
+  if (workloads) {
+    params = {
+      ...params,
+      ...workloadQueryBuilder(workloads),
+    };
+  }
+  return params;
 };
 
 // merges two array objects by different key names

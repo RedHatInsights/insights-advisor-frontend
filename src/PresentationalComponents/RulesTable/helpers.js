@@ -92,6 +92,14 @@ export const messageMapping = () => {
   };
 };
 
+/**
+ * Parses query parameters from URL and updates recommendation filter state.
+ *
+ * @param {Object} sortIndices - Mapping of table column indices to sort field names.
+ * @param {Function} setSearchText - State setter for search input text.
+ * @param {Function} setFilters - Redux/State dispatcher for table filters.
+ * @param {Object} filters - Current active filter state.
+ */
 export const urlFilterBuilder = (
   sortIndices,
   setSearchText,
@@ -133,6 +141,9 @@ export const urlFilterBuilder = (
   paramsObject.impacting !== undefined &&
     !Array.isArray(paramsObject.impacting) &&
     (paramsObject.impacting = [`${paramsObject.impacting}`]);
+  paramsObject.groups !== undefined &&
+    !Array.isArray(paramsObject.groups) &&
+    (paramsObject.groups = [`${paramsObject.groups}`]);
   setFilters({ ...filters, ...paramsObject });
 };
 
@@ -200,6 +211,21 @@ export const removeFilterParam = (
   setFilters(filter);
 };
 
+/**
+ * Builds the conditional filter items array for the Recommendations table toolbar.
+ *
+ * @param {Object} filters - Active filter state.
+ * @param {Function} setFilters - Function to update active filter state.
+ * @param {string} searchText - Current search box text value.
+ * @param {Function} setSearchText - Function to update search box text value.
+ * @param {Function} toggleRulesDisabled - Handler for toggling enabled/disabled rule status.
+ * @param {Object} intl - React-intl instance for string localization.
+ * @param {boolean} [isWorkloadFilterEnabled=false] - Whether workload filtering is enabled.
+ * @param {Array<Object>} [workspaces=[]] - List of available workspaces from Host Inventory.
+ * @param {string} [workspaceSearch=''] - Current search text in the workspace filter dropdown.
+ * @param {Function} [setWorkspaceSearch=() => {}] - State setter for workspace search text.
+ * @returns {Array<Object>} ConditionalFilter configuration items for PrimaryToolbar.
+ */
 export const filterConfigItems = (
   filters,
   setFilters,
@@ -208,12 +234,36 @@ export const filterConfigItems = (
   toggleRulesDisabled,
   intl,
   isWorkloadFilterEnabled = false,
+  workspaces = [],
+  workspaceSearch = '',
+  setWorkspaceSearch = () => {},
 ) => {
   const addFilterParam = (param, values) => {
     values.length > 0
       ? setFilters({ ...filters, offset: 0, ...{ [param]: values } })
       : removeFilterParam(param, filters, setFilters, setSearchText);
   };
+
+  const activeGroups = Array.isArray(filters.groups)
+    ? filters.groups
+    : filters.groups
+      ? [filters.groups]
+      : [];
+
+  const filteredWorkspaces = workspaceSearch
+    ? workspaces.filter((ws) =>
+        (ws.label || ws.name || ws.value || '')
+          .toLowerCase()
+          .includes(workspaceSearch.toLowerCase()),
+      )
+    : workspaces;
+
+  const workspaceGroupItems = filteredWorkspaces.map((ws) => ({
+    id: ws.id || ws.value || ws.name,
+    label: ws.label || ws.name,
+    value: ws.value || ws.name,
+    type: 'checkbox',
+  }));
 
   return [
     {
@@ -330,6 +380,46 @@ export const filterConfigItems = (
         onChange: (_event, value) => toggleRulesDisabled(value),
         value: `${filters.rule_status}`,
         items: FC.rule_status.values,
+      },
+    },
+    {
+      label: FC.groups.title,
+      type: conditionalFilterType.group,
+      id: FC.groups.urlParam,
+      value: `group-${FC.groups.urlParam}`,
+      filterValues: {
+        isFilterable: true,
+        filterBy: workspaceSearch,
+        onFilter: (value) => setWorkspaceSearch(value),
+        placeholder: intl.formatMessage(messages.filterByWorkspace),
+        groups: [
+          {
+            type: 'checkbox',
+            label: intl.formatMessage(messages.workspace),
+            value: 'workspaces',
+            items: workspaceGroupItems,
+          },
+        ],
+        selected: {
+          workspaces: activeGroups.reduce(
+            (acc, name) => ({ ...acc, [name]: true }),
+            {},
+          ),
+        },
+        onChange: (_event, selectedValues) => {
+          const selectedNames = Object.entries(selectedValues?.workspaces || {})
+            .filter(([, isChecked]) => Boolean(isChecked))
+            .map(([name]) => name);
+
+          selectedNames.length > 0
+            ? addFilterParam(FC.groups.urlParam, selectedNames)
+            : removeFilterParam(
+                FC.groups.urlParam,
+                filters,
+                setFilters,
+                setSearchText,
+              );
+        },
       },
     },
     ...(isWorkloadFilterEnabled

@@ -46,6 +46,7 @@ const mockStore = configureStore([]);
 describe('App tag processing logic', () => {
   let store;
   let mockEnvContext;
+  let dispatchSpy;
 
   const renderWithProviders = (component) => {
     return render(
@@ -59,6 +60,7 @@ describe('App tag processing logic', () => {
     store = mockStore({
       filters: {
         selectedTags: [],
+        selectedGroups: [],
         workloads: {},
         recState: {},
         pathState: {},
@@ -233,6 +235,66 @@ describe('App tag processing logic', () => {
       expect(mockEnvContext.on).toHaveBeenCalledWith(
         'GLOBAL_FILTER_UPDATE',
         expect.any(Function),
+      );
+    });
+
+    it('dispatches updateWorkloads, updateTags, and updateGroups on GLOBAL_FILTER_UPDATE', () => {
+      let globalFilterCallback;
+      mockEnvContext.on.mockImplementation((event, cb) => {
+        if (event === 'GLOBAL_FILTER_UPDATE') {
+          globalFilterCallback = cb;
+        }
+      });
+      mockEnvContext.mapGlobalFilter.mockReturnValue([
+        { SAP: { isSelected: true } },
+        ['group-1', 'group-2'],
+        ['insights-client/env%3Dprod'],
+      ]);
+
+      renderWithProviders(<AppWithHccContext />);
+
+      expect(globalFilterCallback).toBeDefined();
+
+      globalFilterCallback({ data: {} });
+
+      expect(dispatchSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'filters/updateWorkloads',
+          payload: { SAP: { isSelected: true } },
+        }),
+      );
+      expect(dispatchSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'filters/updateTags',
+          payload: ['insights-client/env=prod'],
+        }),
+      );
+      expect(dispatchSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'filters/updateGroups',
+          payload: ['group-1', 'group-2'],
+        }),
+      );
+    });
+
+    it('handles missing groups in GLOBAL_FILTER_UPDATE by defaulting to empty array', () => {
+      let globalFilterCallback;
+      mockEnvContext.on.mockImplementation((event, cb) => {
+        if (event === 'GLOBAL_FILTER_UPDATE') {
+          globalFilterCallback = cb;
+        }
+      });
+      mockEnvContext.mapGlobalFilter.mockReturnValue([null, null, []]);
+
+      renderWithProviders(<AppWithHccContext />);
+
+      globalFilterCallback({ data: {} });
+
+      expect(dispatchSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'filters/updateGroups',
+          payload: [],
+        }),
       );
     });
   });

@@ -38,6 +38,7 @@ export const paginatedRequestHelper = async ({
   pathway,
   rule,
   selectedTags,
+  selectedGroups,
   sort,
   RULES_FETCH_URL,
   SYSTEMS_FETCH_URL,
@@ -52,6 +53,8 @@ export const paginatedRequestHelper = async ({
     filters,
     selectedTags,
     workloads,
+    false,
+    selectedGroups,
   );
 
   // Local workload filter (separate from the global Chrome workload filter handled by createOptions above)
@@ -168,6 +171,7 @@ export const getEntities =
       filters,
       workloads,
       selectedTags,
+      selectedGroups,
     } = config;
     const sort = createSortParam(orderBy, orderDirection);
 
@@ -180,6 +184,8 @@ export const getEntities =
       filters,
       selectedTags,
       workloads,
+      false,
+      selectedGroups,
     );
     handleRefresh(options);
     const allDetails = {

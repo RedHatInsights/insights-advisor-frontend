@@ -36,6 +36,7 @@ describe('Overview Service', () => {
 
       expect(mockAxios.get).toHaveBeenCalledWith(
         mockEnvContext.STATS_OVERVIEW_FETCH_URL,
+        { params: {} },
       );
       expect(result).toEqual({
         ...mockData,
@@ -137,7 +138,21 @@ describe('Overview Service', () => {
 
       await dataFetch(customEnvContext, mockAxios);
 
-      expect(mockAxios.get).toHaveBeenCalledWith('/custom/api/stats/');
+      expect(mockAxios.get).toHaveBeenCalledWith('/custom/api/stats/', {
+        params: {},
+      });
+    });
+
+    it('passes options as query params to axios', async () => {
+      mockAxios.get.mockResolvedValue({ data: {} });
+      const options = { groups: 'workspace-1', tags: 'env=prod' };
+
+      await dataFetch(mockEnvContext, mockAxios, options);
+
+      expect(mockAxios.get).toHaveBeenCalledWith(
+        mockEnvContext.STATS_OVERVIEW_FETCH_URL,
+        { params: options },
+      );
     });
 
     it('preserves all data fields from API response', async () => {

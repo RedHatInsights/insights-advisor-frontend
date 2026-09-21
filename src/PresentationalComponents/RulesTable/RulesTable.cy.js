@@ -39,6 +39,16 @@ import {
 import { filtersConf } from '../../../cypress/rulestablesconsts';
 import { EnvironmentContext } from '../../App';
 import FlagProvider from '@unleash/proxy-client-react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const createTestQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
 
 /**
  * Mounts the RulesTable component with a configurable environment context.
@@ -56,7 +66,7 @@ const flagProviderConfig = {
 };
 
 const mountComponent = (
-  { hasEdgeDevices = false } = {},
+  { hasEdgeDevices = false, customStore } = {},
   envContextOverrides = {},
 ) => {
   let envContext = createTestEnvironmentContext();
@@ -70,29 +80,42 @@ const mountComponent = (
     body: { toggles: [] },
   }).as('getFeatureFlag');
 
+  cy.intercept('GET', '**/api/inventory/v1/groups*', {
+    statusCode: 200,
+    body: {
+      results: [
+        { id: 'ws-1', name: 'Production', host_count: 10 },
+        { id: 'ws-2', name: 'Staging', host_count: 5 },
+      ],
+      total: 2,
+    },
+  }).as('getInventoryGroups');
+
   cy.mount(
-    <FlagProvider config={flagProviderConfig}>
-      <EnvironmentContext.Provider value={finalEnvContext}>
-        <MemoryRouter>
-          <AccountStatContext.Provider value={{ hasEdgeDevices }}>
-            <IntlProvider
-              locale={navigator.language.slice(0, 2)}
-              messages={messages}
-            >
-              <Provider store={initStore()}>
-                <Routes>
-                  <Route
-                    key={'Recommendations'}
-                    path="*"
-                    element={<RulesTable />}
-                  />
-                </Routes>
-              </Provider>
-            </IntlProvider>
-          </AccountStatContext.Provider>
-        </MemoryRouter>
-      </EnvironmentContext.Provider>
-    </FlagProvider>,
+    <QueryClientProvider client={createTestQueryClient()}>
+      <FlagProvider config={flagProviderConfig}>
+        <EnvironmentContext.Provider value={finalEnvContext}>
+          <MemoryRouter>
+            <AccountStatContext.Provider value={{ hasEdgeDevices }}>
+              <IntlProvider
+                locale={navigator.language.slice(0, 2)}
+                messages={messages}
+              >
+                <Provider store={customStore || initStore()}>
+                  <Routes>
+                    <Route
+                      key={'Recommendations'}
+                      path="*"
+                      element={<RulesTable />}
+                    />
+                  </Routes>
+                </Provider>
+              </IntlProvider>
+            </AccountStatContext.Provider>
+          </MemoryRouter>
+        </EnvironmentContext.Provider>
+      </FlagProvider>
+    </QueryClientProvider>,
   );
 };
 
@@ -270,6 +293,7 @@ describe('filtering', () => {
     cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('exist');
     //clear filters
     cy.get('button').contains('Reset filters').click();
+    cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
     //check default filters
     hasChip('Systems impacted', '1 or more');
     hasChip('Status', 'Enabled');
@@ -284,6 +308,7 @@ describe('filtering', () => {
 
   it('no filters show all recommendations', () => {
     removeAllFilterChipsPf6();
+    cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
     checkRowCounts(DEFAULT_ROW_COUNT * 2);
     checkPaginationTotal(fixtures.meta.count);
   });
@@ -293,6 +318,7 @@ describe('filtering', () => {
 
     cy.get('th[data-label="Name"]').find('button').click();
     cy.get(TOOLBAR).find('button').contains('Reset filters').click();
+    cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
     cy.get('th[data-label="Name"]')
       .should('have.attr', 'aria-sort')
       .and('contain', 'ascending');
@@ -373,6 +399,12 @@ describe('making request based on filters', () => {
         ...fixtures,
       },
     }).as('has_playbook=true');
+    cy.intercept('**groups=Production**', {
+      statusCode: 201,
+      body: {
+        ...fixtures,
+      },
+    }).as('groups=Production');
     mountComponent(false);
   });
 
@@ -556,21 +588,23 @@ describe('pre-filled url search parameters', () => {
     }).as('getFeatureFlag');
 
     cy.mount(
-      <FlagProvider config={flagProviderConfig}>
-        <MemoryRouter
-          initialEntries={[`/recommendations?${urlParams}`]}
-          initialIndex={0}
-        >
-          <IntlProvider
-            locale={navigator.language.slice(0, 2)}
-            messages={messages}
+      <QueryClientProvider client={createTestQueryClient()}>
+        <FlagProvider config={flagProviderConfig}>
+          <MemoryRouter
+            initialEntries={[`/recommendations?${urlParams}`]}
+            initialIndex={0}
           >
-            <Provider store={initStore()}>
-              <RulesTable />
-            </Provider>
-          </IntlProvider>
-        </MemoryRouter>
-      </FlagProvider>,
+            <IntlProvider
+              locale={navigator.language.slice(0, 2)}
+              messages={messages}
+            >
+              <Provider store={initStore()}>
+                <RulesTable />
+              </Provider>
+            </IntlProvider>
+          </MemoryRouter>
+        </FlagProvider>
+      </QueryClientProvider>,
     );
 
     cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
@@ -883,6 +917,29 @@ describe('Conditional Filter', () => {
     hasChip('Systems impacted', '1 or more');
   });
 
+  it(`Workspace filter box correctly updates chips.`, () => {
+    // select Workspace filter
+    selectConditionalFilterOption('Workspace');
+
+    // select Production from group dropdown
+    cy.get('.ins-c-group-menu-toggle').click();
+    cy.get('ul[class=pf-v6-c-menu__list]')
+      .find('label')
+      .contains('Production')
+      .parent()
+      .find('input[type=checkbox]')
+      .check();
+
+    // check chips updated
+    hasChip('Workspace', 'Production');
+
+    // reset
+    cy.get('button').contains('Reset filters').click();
+
+    // check chips reset to defaults
+    cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should('have.length', 2);
+  });
+
   describe('URL string params safety', () => {
     const mountComponentWithUrl = (urlParams) => {
       let envContext = createTestEnvironmentContext();
@@ -897,34 +954,47 @@ describe('Conditional Filter', () => {
         body: { toggles: [] },
       }).as('getFeatureFlag');
 
+      cy.intercept('GET', '**/api/inventory/v1/groups*', {
+        statusCode: 200,
+        body: {
+          results: [
+            { id: 'ws-1', name: 'Production', host_count: 10 },
+            { id: 'ws-2', name: 'Staging', host_count: 5 },
+          ],
+          total: 2,
+        },
+      }).as('getInventoryGroups');
+
       cy.mount(
-        <FlagProvider config={flagProviderConfig}>
-          <EnvironmentContext.Provider value={envContext}>
-            <MemoryRouter
-              initialEntries={[`/recommendations?${urlParams}`]}
-              initialIndex={0}
-            >
-              <AccountStatContext.Provider
-                value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
+        <QueryClientProvider client={createTestQueryClient()}>
+          <FlagProvider config={flagProviderConfig}>
+            <EnvironmentContext.Provider value={envContext}>
+              <MemoryRouter
+                initialEntries={[`/recommendations?${urlParams}`]}
+                initialIndex={0}
               >
-                <IntlProvider
-                  locale={navigator.language.slice(0, 2)}
-                  messages={messages}
+                <AccountStatContext.Provider
+                  value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
                 >
-                  <Provider store={initStore()}>
-                    <Routes>
-                      <Route
-                        key={'Recommendations'}
-                        path="*"
-                        element={<RulesTable isTabActive={true} />}
-                      />
-                    </Routes>
-                  </Provider>
-                </IntlProvider>
-              </AccountStatContext.Provider>
-            </MemoryRouter>
-          </EnvironmentContext.Provider>
-        </FlagProvider>,
+                  <IntlProvider
+                    locale={navigator.language.slice(0, 2)}
+                    messages={messages}
+                  >
+                    <Provider store={initStore()}>
+                      <Routes>
+                        <Route
+                          key={'Recommendations'}
+                          path="*"
+                          element={<RulesTable isTabActive={true} />}
+                        />
+                      </Routes>
+                    </Provider>
+                  </IntlProvider>
+                </AccountStatContext.Provider>
+              </MemoryRouter>
+            </EnvironmentContext.Provider>
+          </FlagProvider>
+        </QueryClientProvider>,
       );
     };
 
@@ -1303,34 +1373,47 @@ describe('URL parameter synchronization', () => {
       win.history.pushState({}, '', `/recommendations?${urlParams}`);
     });
 
+    cy.intercept('GET', '**/api/inventory/v1/groups*', {
+      statusCode: 200,
+      body: {
+        results: [
+          { id: 'ws-1', name: 'Production', host_count: 10 },
+          { id: 'ws-2', name: 'Staging', host_count: 5 },
+        ],
+        total: 2,
+      },
+    }).as('getInventoryGroups');
+
     cy.mount(
-      <FlagProvider config={flagProviderConfig}>
-        <EnvironmentContext.Provider value={envContext}>
-          <MemoryRouter
-            initialEntries={[`/recommendations?${urlParams}`]}
-            initialIndex={0}
-          >
-            <AccountStatContext.Provider
-              value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
+      <QueryClientProvider client={createTestQueryClient()}>
+        <FlagProvider config={flagProviderConfig}>
+          <EnvironmentContext.Provider value={envContext}>
+            <MemoryRouter
+              initialEntries={[`/recommendations?${urlParams}`]}
+              initialIndex={0}
             >
-              <IntlProvider
-                locale={navigator.language.slice(0, 2)}
-                messages={messages}
+              <AccountStatContext.Provider
+                value={{ hasEdgeDevices: false, edgeQuerySuccess: true }}
               >
-                <Provider store={initStore()}>
-                  <Routes>
-                    <Route
-                      key={'Recommendations'}
-                      path="*"
-                      element={<RulesTable isTabActive={true} />}
-                    />
-                  </Routes>
-                </Provider>
-              </IntlProvider>
-            </AccountStatContext.Provider>
-          </MemoryRouter>
-        </EnvironmentContext.Provider>
-      </FlagProvider>,
+                <IntlProvider
+                  locale={navigator.language.slice(0, 2)}
+                  messages={messages}
+                >
+                  <Provider store={initStore()}>
+                    <Routes>
+                      <Route
+                        key={'Recommendations'}
+                        path="*"
+                        element={<RulesTable isTabActive={true} />}
+                      />
+                    </Routes>
+                  </Provider>
+                </IntlProvider>
+              </AccountStatContext.Provider>
+            </MemoryRouter>
+          </EnvironmentContext.Provider>
+        </FlagProvider>
+      </QueryClientProvider>,
     );
   };
 
@@ -1627,6 +1710,53 @@ describe('Permission-based UI Controls', () => {
       );
       cy.get('button[aria-label="Export"]').should('not.exist');
       cy.get('button[aria-label="Kebab toggle"]').should('not.exist');
+    });
+  });
+
+  describe('Workspace filter integration', () => {
+    it('passes workspace query parameter to rule API when selectedGroups is populated in Redux', () => {
+      cy.intercept('GET', '**/api/insights/v1/rule/*', (req) => {
+        expect(req.query.groups).to.equal('Production,Staging');
+        req.reply({
+          statusCode: 200,
+          body: fixtures,
+        });
+      }).as('getRulesWithWorkspace');
+
+      const store = initStore();
+      store.dispatch({
+        type: 'filters/updateGroups',
+        payload: ['Production', 'Staging'],
+      });
+
+      mountComponent({ customStore: store });
+
+      cy.wait('@getRulesWithWorkspace');
+    });
+
+    it('passes workspace query parameter to rule API when local workspace filter is typed and submitted', () => {
+      cy.intercept('GET', '**/api/insights/v1/rule/*', (req) => {
+        if (req.query.groups === 'Production') {
+          req.reply({
+            statusCode: 200,
+            body: fixtures,
+          });
+        }
+      }).as('getRulesLocalWorkspace');
+
+      mountComponent();
+
+      selectConditionalFilterOption('Workspace');
+      cy.get('.ins-c-group-menu-toggle').click();
+      cy.get('ul[class=pf-v6-c-menu__list]')
+        .find('label')
+        .contains('Production')
+        .parent()
+        .find('input[type=checkbox]')
+        .check();
+
+      cy.wait('@getRulesLocalWorkspace');
+      hasChip('Workspace', 'Production');
     });
   });
 });
