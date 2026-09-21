@@ -1,6 +1,6 @@
 import App from './App';
 import PropTypes from 'prop-types';
-import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/index';
+import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations';
 import { Provider } from 'react-redux';
 import React, { useMemo } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -27,6 +27,6 @@ const AppEntry = ({ logger }) => {
 };
 
 AppEntry.propTypes = {
-  logger: PropTypes.function,
+  logger: PropTypes.func,
 };
 export default AppEntry;

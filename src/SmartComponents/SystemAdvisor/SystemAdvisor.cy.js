@@ -10,6 +10,7 @@ import {
   CONDITIONAL_FILTER,
   MENU_ITEM,
   PT_BULK_SELECT,
+  PT_BULK_SELECT_CHECKBOX,
   PT_BULK_SELECT_LIST,
   SORTING_ORDERS,
   TABLE,
@@ -254,7 +255,7 @@ describe('system rules table', () => {
   describe('BulkSelector', () => {
     it(`The Bulk selector shows the correct number of systems selected.`, () => {
       // check that empty
-      cy.get(PT_BULK_SELECT).should('have.text', '');
+      cy.get(PT_BULK_SELECT_CHECKBOX).parent().should('have.text', '');
 
       // select a couple
       //  but only ones that can be selected
@@ -263,44 +264,44 @@ describe('system rules table', () => {
       });
 
       // check that it shows correct number
-      cy.get(PT_BULK_SELECT).should('have.text', '3 selected');
+      cy.get(PT_BULK_SELECT_CHECKBOX)
+        .parent()
+        .should('have.text', '3 selected');
 
       // Select None - click the bulk select dropdown toggle
-      cy.get(PT_BULK_SELECT)
-        .parent()
-        .find('.pf-v6-c-menu-toggle__controls')
-        .click();
+      cy.get(PT_BULK_SELECT).click();
       cy.get(PT_BULK_SELECT_LIST).contains('Select none').click();
 
       // check that none selected
-      cy.get(PT_BULK_SELECT).should('have.text', '');
+      cy.get(PT_BULK_SELECT_CHECKBOX).parent().should('have.text', '');
 
       // Select All - click the bulk select dropdown toggle
-      cy.get(PT_BULK_SELECT)
-        .parent()
-        .find('.pf-v6-c-menu-toggle__controls')
-        .click();
+      cy.get(PT_BULK_SELECT).click();
       cy.get(PT_BULK_SELECT_LIST).contains('Select all').click();
 
       // check that all selected
-      cy.get(PT_BULK_SELECT).should('have.text', '7 selected');
+      cy.get(PT_BULK_SELECT_CHECKBOX)
+        .parent()
+        .should('have.text', '7 selected');
 
-      // click the bulk select to deselect
-      cy.get(PT_BULK_SELECT).click();
+      // click the bulk select checkbox to deselect
+      cy.get(PT_BULK_SELECT_CHECKBOX).click();
 
       // check that none selected
-      cy.get(PT_BULK_SELECT).should('have.text', '');
+      cy.get(PT_BULK_SELECT_CHECKBOX).parent().should('have.text', '');
 
       // select some
       cy.get('.pf-v6-c-table__tbody').then((rows) => {
         selectRandomEnabledRows({ rows: rows, numberOfRowsToSelect: 3 });
       });
 
-      // click the bulk select to select all
-      cy.get(PT_BULK_SELECT).click();
+      // click the bulk select checkbox to select all
+      cy.get(PT_BULK_SELECT_CHECKBOX).click();
 
       // check that all selected
-      cy.get(PT_BULK_SELECT).should('have.text', '7 selected');
+      cy.get(PT_BULK_SELECT_CHECKBOX)
+        .parent()
+        .should('have.text', '7 selected');
     });
   });
 

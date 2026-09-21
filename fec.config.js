@@ -30,9 +30,6 @@ module.exports = {
         ]
       : []),
   ],
-  output: {
-    publicPath: 'auto',
-  },
   moduleFederation: {
     exclude: ['@unleash/proxy-client-react'],
     shared: [
