@@ -12,10 +12,10 @@ jobs:
     steps:
       - name: Cleanup PR branch cache
         run: |
-          echo "Cleaning up cache for PR #${{ github.event.pull_request.number }}"
-          echo "Branch: ${{ github.head_ref }}"
+          echo "Cleaning up cache for PR #${PR_NUMBER}"
+          echo "Branch: ${HEAD_REF}"
 
-          for ref in "refs/pull/${{ github.event.pull_request.number }}/merge" "refs/heads/${{ github.head_ref }}"; do
+          for ref in "refs/pull/${PR_NUMBER}/merge" "refs/heads/${HEAD_REF}"; do
             echo "Trying ref: $ref"
             gh cache list --ref "$ref" --json id,ref --jq '.[] | "\(.id) \(.ref)"' | while read cache_id cache_ref; do
               echo "Deleting cache ID: $cache_id (ref: $cache_ref)"
@@ -23,8 +23,8 @@ jobs:
             done
           done
 
-          echo "Deleting caches with exact scope match: ${{ github.head_ref }}"
-          gh cache list --json id,key --jq --arg SCOPE "scope=${{ github.head_ref }}" '.[] | select(.key | test("^" + $SCOPE + "(,|$)")) | .id' | while read cache_id; do
+          echo "Deleting caches with exact scope match: ${HEAD_REF}"
+          gh cache list --json id,key | jq --arg SCOPE "${HEAD_REF}" '.[] | select(.key | split(",") | any(. == "scope=" + $SCOPE)) | .id' | while read cache_id; do
             echo "Deleting scoped cache ID: $cache_id"
             gh cache delete "$cache_id" || echo "Failed to delete cache $cache_id, continuing..."
           done
@@ -33,3 +33,5 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_REF: ${{ github.head_ref }}
