@@ -336,6 +336,35 @@ describe('downloadHelper', () => {
         },
       );
     });
+
+    it('gives local filters.groups precedence over global selectedGroups', async () => {
+      const mockData = 'test';
+      mockAxios.get.mockResolvedValue(mockData);
+
+      await downloadHelper(
+        'hits',
+        'csv',
+        { rule_status: 'enabled', groups: ['local-group'] },
+        [],
+        undefined,
+        mockDispatch,
+        BASE_URL,
+        undefined,
+        mockAddNotification,
+        mockAxios,
+        ['global-group'],
+      );
+
+      expect(mockAxios.get).toHaveBeenCalledWith(
+        `${BASE_URL}/export/hits.csv`,
+        {
+          params: {
+            rule_status: 'enabled',
+            groups: ['local-group'],
+          },
+        },
+      );
+    });
   });
 
   describe('Success Notifications', () => {

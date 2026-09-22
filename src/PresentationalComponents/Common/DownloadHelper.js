@@ -49,7 +49,7 @@ const downloadHelper = async (
 ) => {
   try {
     let options = selectedTags?.length && { tags: selectedTags };
-    if (selectedGroups?.length) {
+    if (selectedGroups?.length && !filters?.groups?.length) {
       options = {
         ...options,
         groups: Array.isArray(selectedGroups)

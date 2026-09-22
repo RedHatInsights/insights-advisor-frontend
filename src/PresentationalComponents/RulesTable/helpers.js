@@ -106,44 +106,51 @@ export const urlFilterBuilder = (
   setFilters,
   filters,
 ) => {
-  let sortingValues = Object.values(sortIndices);
-  const paramsObject = paramParser();
-  delete paramsObject.tags;
+  const sortingValues = Object.values(sortIndices);
+  const { tags: _tags, ...paramsObject } = paramParser();
 
-  if (Array.isArray(paramsObject.sort)) {
-    if (
-      !sortingValues?.includes(paramsObject.sort[0]) ||
-      !sortingValues?.includes(`-${paramsObject.sort[0]}`)
-    ) {
-      paramsObject.sort = '-total_risk';
-    }
-  } else if (!sortingValues?.includes(paramsObject.sort)) {
+  const sortParam = Array.isArray(paramsObject.sort)
+    ? paramsObject.sort[0]
+    : paramsObject.sort;
+
+  if (
+    !sortingValues?.includes(sortParam) &&
+    !sortingValues?.includes(`-${sortParam}`)
+  ) {
     paramsObject.sort = '-total_risk';
   }
-  paramsObject.text === undefined
-    ? setSearchText('')
-    : setSearchText(paramsObject.text);
-  paramsObject.has_playbook !== undefined &&
-    !Array.isArray(paramsObject.has_playbook) &&
-    (paramsObject.has_playbook = [`${paramsObject.has_playbook}`]);
-  paramsObject.incident !== undefined &&
-    !Array.isArray(paramsObject.incident) &&
-    (paramsObject.incident = [`${paramsObject.incident}`]);
-  paramsObject.offset === undefined
-    ? (paramsObject.offset = 0)
-    : (paramsObject.offset = Number(paramsObject.offset[0]));
-  paramsObject.limit === undefined
-    ? (paramsObject.limit = 20)
-    : (paramsObject.limit = Number(paramsObject.limit[0]));
-  paramsObject.reboot !== undefined &&
-    !Array.isArray(paramsObject.reboot) &&
-    (paramsObject.reboot = [`${paramsObject.reboot}`]);
-  paramsObject.impacting !== undefined &&
-    !Array.isArray(paramsObject.impacting) &&
-    (paramsObject.impacting = [`${paramsObject.impacting}`]);
-  paramsObject.groups !== undefined &&
-    !Array.isArray(paramsObject.groups) &&
-    (paramsObject.groups = [`${paramsObject.groups}`]);
+
+  setSearchText(paramsObject.text || '');
+
+  const asArray = (val) =>
+    val === undefined ? undefined : Array.isArray(val) ? val : [`${val}`];
+
+  if (paramsObject.has_playbook !== undefined) {
+    paramsObject.has_playbook = asArray(paramsObject.has_playbook);
+  }
+  if (paramsObject.incident !== undefined) {
+    paramsObject.incident = asArray(paramsObject.incident);
+  }
+  if (paramsObject.reboot !== undefined) {
+    paramsObject.reboot = asArray(paramsObject.reboot);
+  }
+  if (paramsObject.impacting !== undefined) {
+    paramsObject.impacting = asArray(paramsObject.impacting);
+  }
+  if (paramsObject.groups !== undefined) {
+    paramsObject.groups = asArray(paramsObject.groups);
+  }
+
+  const asNumber = (val, fallback) => {
+    if (val === undefined) return fallback;
+    const raw = Array.isArray(val) ? val[0] : val;
+    const parsed = Number(raw);
+    return Number.isNaN(parsed) ? fallback : parsed;
+  };
+
+  paramsObject.offset = asNumber(paramsObject.offset, 0);
+  paramsObject.limit = asNumber(paramsObject.limit, 20);
+
   setFilters({ ...filters, ...paramsObject });
 };
 

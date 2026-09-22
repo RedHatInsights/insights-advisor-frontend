@@ -54,12 +54,53 @@ describe('useWorkspaces hook', () => {
     });
 
     expect(mockGet).toHaveBeenCalledWith('/api/inventory/v1/groups', {
-      params: { per_page: 100, group_type: 'standard' },
+      params: { per_page: 100, page: 1, group_type: 'standard' },
     });
 
     expect(result.current.data).toEqual([
       { id: 'ws-1', label: 'Production', value: 'Production', hostCount: 12 },
       { id: 'ws-2', label: 'Staging', value: 'Staging', hostCount: 4 },
+    ]);
+  });
+
+  it('paginates across multiple pages to fetch all workspaces', async () => {
+    mockGet
+      .mockResolvedValueOnce({
+        results: [{ id: 'ws-1', name: 'Page 1 Group', host_count: 10 }],
+        total: 2,
+      })
+      .mockResolvedValueOnce({
+        results: [{ id: 'ws-2', name: 'Page 2 Group', host_count: 5 }],
+        total: 2,
+      });
+
+    const wrapper = createWrapper();
+    const { result } = renderHook(() => useWorkspaces(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(mockGet).toHaveBeenNthCalledWith(1, '/api/inventory/v1/groups', {
+      params: { per_page: 100, page: 1, group_type: 'standard' },
+    });
+    expect(mockGet).toHaveBeenNthCalledWith(2, '/api/inventory/v1/groups', {
+      params: { per_page: 100, page: 2, group_type: 'standard' },
+    });
+
+    expect(result.current.data).toEqual([
+      {
+        id: 'ws-1',
+        label: 'Page 1 Group',
+        value: 'Page 1 Group',
+        hostCount: 10,
+      },
+      {
+        id: 'ws-2',
+        label: 'Page 2 Group',
+        value: 'Page 2 Group',
+        hostCount: 5,
+      },
     ]);
   });
 
@@ -87,16 +128,17 @@ describe('useWorkspaces hook', () => {
     ]);
   });
 
-  it('returns empty array when api fails', async () => {
+  it('propagates error when API fails', async () => {
     mockGet.mockRejectedValueOnce(new Error('Network error'));
 
     const wrapper = createWrapper();
     const { result } = renderHook(() => useWorkspaces(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
+      expect(result.current.isError).toBe(true);
     });
 
-    expect(result.current.data).toEqual([]);
+    expect(result.current.error).toBeDefined();
+    expect(result.current.error.message).toBe('Network error');
   });
 });

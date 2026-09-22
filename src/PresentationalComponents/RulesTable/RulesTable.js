@@ -59,7 +59,13 @@ import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/fronten
 import { useFeatureFlag } from '../../Utilities/Hooks';
 import useWorkspaces from '../../Services/hooks/useWorkspaces';
 
-const RulesTable = ({ isTabActive, pathway, onRuleChange, defaultFilters }) => {
+const RulesTable = ({
+  isTabActive,
+  pathway,
+  topic,
+  onRuleChange,
+  defaultFilters,
+}) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
@@ -101,6 +107,7 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange, defaultFilters }) => {
   const options = {
     ...globalFilterParams,
     ...(pathway ? { pathway } : {}),
+    ...(topic ? { topic } : {}),
   };
 
   const workloadParams = workloadArrayQueryBuilder(workloadFilter || []);
@@ -469,6 +476,7 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange, defaultFilters }) => {
 RulesTable.propTypes = {
   isTabActive: PropTypes.bool,
   pathway: PropTypes.string,
+  topic: PropTypes.string,
   onRuleChange: PropTypes.func,
   defaultFilters: PropTypes.object,
 };

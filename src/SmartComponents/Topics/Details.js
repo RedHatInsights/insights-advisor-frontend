@@ -72,7 +72,6 @@ const Details = () => {
     const initiaRecFilters = { ...recFilters };
     dispatch(
       updateRecFilters({
-        topic: topicId,
         ...getDefaultImpactingFilter(hasEdgeDevices),
         rule_status: 'enabled',
         sort: `-total_risk`,
@@ -131,7 +130,7 @@ const Details = () => {
               <Title headingLevel="h3" size="2xl" className="pf-v6-u-mb-lg">
                 {intl.formatMessage(messages.recommendations)}
               </Title>
-              <RulesTable />
+              <RulesTable topic={topicId} />
             </React.Fragment>
           ) : (
             <MessageState
