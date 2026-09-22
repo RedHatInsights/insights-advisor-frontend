@@ -81,8 +81,8 @@ jobs:
       - name: Prepare cache scope
         id: cache-scope
         run: |
-          # Replace comma and equals (CSV delimiters) with hyphens to prevent injection
-          SANITIZED_REF=$(echo "${REF_NAME}" | tr ',=' '-')
+          # Replace comma, equals, CR, and LF (CSV delimiters and control chars) with hyphens to prevent injection
+          SANITIZED_REF=$(echo "${REF_NAME}" | tr ',=\r\n' '-')
 
           # Save sanitized branch name as cache scope
           echo "scope=${SANITIZED_REF}" >> $GITHUB_OUTPUT
