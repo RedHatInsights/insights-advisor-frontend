@@ -49,17 +49,9 @@ const testGetCallArguments = (expectedGetUrl, expectedOptions) => {
   });
 };
 
-// --- Helper for common defaultGetEntities assertions (Post assertion removed) ---
-const testDefaultGetEntitiesCalls = () => {
-  expect(defaultGetEntities).toHaveBeenCalledWith(
-    ['edge.id-1', 'edge.id-2'],
-    {
-      fields: { system_profile: ['operating_system'] },
-      hasItems: true,
-      per_page: 10,
-    },
-    true,
-  );
+// getEntities no longer calls defaultGetEntities (Inventory API eliminated)
+const testDefaultGetEntitiesNotCalled = () => {
+  expect(defaultGetEntities).not.toHaveBeenCalled();
 };
 
 describe('getEntities', () => {
@@ -130,14 +122,14 @@ describe('getEntities', () => {
       `${MOCKED_RULES_FETCH_URL}${encodeURI('test-rule')}/systems_detail/`,
       { limit: 10, name: 'test-name', offset: 0, sort: '-last-seen' },
     );
-    testDefaultGetEntitiesCalls();
+    testDefaultGetEntitiesNotCalled();
     expect(handleRefreshMock).toHaveBeenCalledWith(expect.any(Object));
     expect(setCurPageIdsMock).toHaveBeenCalledWith(['edge.id-1', 'edge.id-2']);
     expect(setTotalMock).toHaveBeenCalledWith(2);
     expect(setFullFiltersMock).toHaveBeenCalledWith(expect.any(Object));
   });
 
-  test('uses group info from inventory API when enforce_edge_groups set to false', async () => {
+  test('uses group info from advisor API workspaces', async () => {
     mockAxios.get.mockImplementation(() =>
       Promise.resolve(advisorRecommendationData),
     ); // Ensure GET returns data for systemIDs
@@ -183,10 +175,10 @@ describe('getEntities', () => {
       `${MOCKED_RULES_FETCH_URL}${encodeURI('test-rule')}/systems_detail/`,
       { limit: 10, name: 'test-name', offset: 0, sort: '-last-seen' },
     );
-    testDefaultGetEntitiesCalls();
+    testDefaultGetEntitiesNotCalled();
   });
 
-  test('enforces group info from edge API when enforce_edge_groups set to true', async () => {
+  test('groups come from advisor workspaces regardless of edge API settings', async () => {
     mockAxios.get.mockImplementation(() =>
       Promise.resolve(advisorRecommendationData),
     ); // Ensure GET returns data for systemIDs
@@ -239,8 +231,7 @@ describe('getEntities', () => {
       `${MOCKED_RULES_FETCH_URL}${encodeURI('test-rule')}/systems_detail/`,
       { limit: 10, name: 'test-name', offset: 0, sort: '-last-seen' },
     );
-    // Assert defaultGetEntities calls (Post assertion removed)
-    testDefaultGetEntitiesCalls();
+    testDefaultGetEntitiesNotCalled();
   });
 
   test('Should fetch hybrid data for pathways', async () => {
@@ -304,8 +295,7 @@ describe('getEntities', () => {
       sort: '-last-seen',
       pathway: 'test-pathway',
     });
-    // Assert defaultGetEntities calls (Post assertion removed)
-    testDefaultGetEntitiesCalls();
+    testDefaultGetEntitiesNotCalled();
     expect(handleRefreshMock).toHaveBeenCalledWith(expect.any(Object));
     expect(setCurPageIdsMock).toHaveBeenCalledWith(['edge.id-1', 'edge.id-2']);
     expect(setTotalMock).toHaveBeenCalledWith(2);

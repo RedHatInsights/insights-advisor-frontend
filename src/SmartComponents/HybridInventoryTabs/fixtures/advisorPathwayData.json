@@ -1,7 +1,15 @@
 {
   "data": [
-    { "system_uuid": "edge.id-1", "pathwayName": "test-pathway-1" },
-    { "system_uuid": "edge.id-2", "pathwayName": "test-pathway-2" }
+    {
+      "system_uuid": "edge.id-1",
+      "pathwayName": "test-pathway-1",
+      "workspaces": [{ "id": "inventory-group.id-1", "name": "inventory-group-1" }]
+    },
+    {
+      "system_uuid": "edge.id-2",
+      "pathwayName": "test-pathway-2",
+      "workspaces": [{ "id": "inventory-group.id-2", "name": "inventory-group-2" }]
+    }
   ],
   "meta": { "count": 2 }
 }

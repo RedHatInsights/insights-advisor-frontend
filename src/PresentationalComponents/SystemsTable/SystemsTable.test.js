@@ -675,8 +675,8 @@ describe('Systems', () => {
     });
   });
 
-  describe('Systems with last_seen null filtering', () => {
-    it('filters out systems with last_seen null', async () => {
+  describe('Systems with last_seen null (no Inventory filtering)', () => {
+    it('includes all systems regardless of last_seen value', async () => {
       const mockData = createMockSystemsResponse({
         count: 3,
         total: 3,
@@ -689,13 +689,7 @@ describe('Systems', () => {
 
       render(<ComponentWithContext Component={SystemsTable} />);
       const inventoryTableProps = InventoryTable.mock.calls[0][0];
-      const mockDefaultGetEntities = jest.fn().mockResolvedValue({
-        results: [
-          { id: mockData.data[0].system_uuid },
-          { id: mockData.data[2].system_uuid },
-        ],
-        total: 2,
-      });
+      const mockDefaultGetEntities = jest.fn();
 
       const result = await inventoryTableProps.getEntities(
         [],
@@ -704,16 +698,12 @@ describe('Systems', () => {
         mockDefaultGetEntities,
       );
 
-      expect(mockDefaultGetEntities).toHaveBeenCalledWith(
-        [mockData.data[0].system_uuid, mockData.data[2].system_uuid],
-        expect.any(Object),
-        true,
-      );
-      expect(result.results).toHaveLength(2);
-      expect(result.total).toBe(2);
+      expect(mockDefaultGetEntities).not.toHaveBeenCalled();
+      expect(result.results).toHaveLength(3);
+      expect(result.total).toBe(3);
     });
 
-    it('adjusts total count when filtering systems', async () => {
+    it('uses meta.count as total without adjustment', async () => {
       const mockData = createMockSystemsResponse({
         count: 5,
         total: 100,
@@ -726,10 +716,7 @@ describe('Systems', () => {
 
       render(<ComponentWithContext Component={SystemsTable} />);
       const inventoryTableProps = InventoryTable.mock.calls[0][0];
-      const mockDefaultGetEntities = jest.fn().mockResolvedValue({
-        results: [],
-        total: 0,
-      });
+      const mockDefaultGetEntities = jest.fn();
 
       const result = await inventoryTableProps.getEntities(
         [],
@@ -738,10 +725,10 @@ describe('Systems', () => {
         mockDefaultGetEntities,
       );
 
-      expect(result.total).toBe(98);
+      expect(result.total).toBe(100);
     });
 
-    it('skips Inventory API call when all systems have last_seen null', async () => {
+    it('returns all systems even when all have last_seen null', async () => {
       const mockData = createMockSystemsResponse({
         count: 3,
         total: 3,
@@ -764,20 +751,17 @@ describe('Systems', () => {
       );
 
       expect(mockDefaultGetEntities).not.toHaveBeenCalled();
-      expect(result.results).toHaveLength(0);
-      expect(result.total).toBe(0);
+      expect(result.results).toHaveLength(3);
+      expect(result.total).toBe(3);
     });
 
-    it('handles 404 errors from Inventory API gracefully', async () => {
+    it('does not call defaultGetEntities (Inventory API eliminated)', async () => {
       const mockData = mockScenarios.allSystems();
       mockAxiosGet.mockResolvedValue(mockData);
 
       render(<ComponentWithContext Component={SystemsTable} />);
       const inventoryTableProps = InventoryTable.mock.calls[0][0];
-      const mockDefaultGetEntities = jest.fn().mockRejectedValue({
-        response: { status: 404 },
-        message: 'Not found',
-      });
+      const mockDefaultGetEntities = jest.fn();
 
       const result = await inventoryTableProps.getEntities(
         [],
@@ -786,30 +770,9 @@ describe('Systems', () => {
         mockDefaultGetEntities,
       );
 
+      expect(mockDefaultGetEntities).not.toHaveBeenCalled();
       expect(result.results).toHaveLength(mockData.data.length);
       expect(result.total).toBe(mockData.meta.count);
-    });
-
-    it('rethrows non-404 errors from Inventory API', async () => {
-      const mockData = mockScenarios.allSystems();
-      mockAxiosGet.mockResolvedValue(mockData);
-
-      render(<ComponentWithContext Component={SystemsTable} />);
-      const inventoryTableProps = InventoryTable.mock.calls[0][0];
-      const serverError = {
-        response: { status: 500 },
-        message: 'Internal server error',
-      };
-      const mockDefaultGetEntities = jest.fn().mockRejectedValue(serverError);
-
-      await expect(
-        inventoryTableProps.getEntities(
-          [],
-          mockGetEntitiesConfig,
-          true,
-          mockDefaultGetEntities,
-        ),
-      ).rejects.toEqual(serverError);
     });
   });
 });
