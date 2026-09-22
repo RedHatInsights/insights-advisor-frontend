@@ -15,6 +15,10 @@ jobs:
           echo "Cleaning up cache for PR #${PR_NUMBER}"
           echo "Branch: ${HEAD_REF}"
 
+          # Sanitize branch name to match how it's stored in cache (commas/equals replaced with hyphens)
+          SANITIZED_REF=$(echo "${HEAD_REF}" | tr ',=' '-')
+          echo "Sanitized scope: ${SANITIZED_REF}"
+
           for ref in "refs/pull/${PR_NUMBER}/merge" "refs/heads/${HEAD_REF}"; do
             echo "Trying ref: $ref"
             gh cache list --limit 1000 --ref "$ref" --json id,ref --jq '.[] | "\(.id) \(.ref)"' | while read cache_id cache_ref; do
@@ -23,8 +27,8 @@ jobs:
             done
           done
 
-          echo "Deleting caches with exact scope match: ${HEAD_REF}"
-          gh cache list --limit 1000 --json id,key | jq --arg SCOPE "${HEAD_REF}" '.[] | select(.key | split(",") | any(. == "scope=" + $SCOPE)) | .id' | while read cache_id; do
+          echo "Deleting caches with exact scope match: ${SANITIZED_REF}"
+          gh cache list --limit 1000 --json id,key | jq --arg SCOPE "${SANITIZED_REF}" '.[] | select(.key | split(",") | any(. == "scope=" + $SCOPE)) | .id' | while read cache_id; do
             echo "Deleting scoped cache ID: $cache_id"
             gh cache delete "$cache_id" || echo "Failed to delete cache $cache_id, continuing..."
           done
