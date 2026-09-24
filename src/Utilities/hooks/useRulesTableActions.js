@@ -1,8 +1,9 @@
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { useStateCallbacks } from 'bastilian-tabletools';
 import { useIntl } from 'react-intl';
 import messages from '../../Messages';
 import useEnableRule from './useEnableRule';
+import { EnvironmentContext } from '../../App';
 
 /**
  * Hook for RulesTable action resolver
@@ -22,6 +23,7 @@ import useEnableRule from './useEnableRule';
  */
 const useRulesTableActions = ({ onDisableClick, onRuleChange, refetch }) => {
   const intl = useIntl();
+  const envContext = useContext(EnvironmentContext);
   const {
     current: { reload },
   } = useStateCallbacks();
@@ -41,6 +43,10 @@ const useRulesTableActions = ({ onDisableClick, onRuleChange, refetch }) => {
 
   const actionResolver = useCallback(
     (rowData) => {
+      if (envContext && envContext.isDisableRecEnabled === false) {
+        return [];
+      }
+
       const { item } = rowData;
 
       if (!item) {
@@ -66,7 +72,7 @@ const useRulesTableActions = ({ onDisableClick, onRuleChange, refetch }) => {
             },
       ];
     },
-    [intl, onDisableClick, handleEnableClick],
+    [intl, envContext, onDisableClick, handleEnableClick],
   );
 
   return { actionResolver };

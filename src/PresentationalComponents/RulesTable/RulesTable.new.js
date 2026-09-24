@@ -28,7 +28,12 @@ import { toExportParams } from '../../Utilities/tableSerializers';
  * Inner component that renders the Rules table with BaseTableToolsTable
  * Handles data fetching, expandable rows, and enable/disable actions
  */
-const RulesTableInner = ({ isTabActive, pathway, topic, onRuleChange }) => {
+const RulesTableInner = ({
+  isTabActive = true,
+  pathway,
+  topic,
+  onRuleChange,
+}) => {
   const envContext = useContext(EnvironmentContext);
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -145,10 +150,10 @@ const RulesTableInner = ({ isTabActive, pathway, topic, onRuleChange }) => {
         sortBy: { index: 3, direction: 'desc' }, // Total Risk
         detailsComponent: RuleDetailsWrapper,
         detailsProps: { fullWidth: true },
-        actionResolver,
+        ...(envContext?.isDisableRecEnabled ? { actionResolver } : {}),
       },
     }),
-    [activeFilters, actionResolver],
+    [activeFilters, actionResolver, envContext?.isDisableRecEnabled],
   );
 
   return (
@@ -200,7 +205,12 @@ RulesTableInner.propTypes = {
  * @param {Function} props.onRuleChange - Optional callback when rule status changes
  * @returns {React.Element}
  */
-const RulesTableNew = ({ isTabActive, pathway, topic, onRuleChange }) => {
+const RulesTableNew = ({
+  isTabActive = true,
+  pathway,
+  topic,
+  onRuleChange,
+}) => {
   return (
     <TableStateProvider>
       <RulesTableInner

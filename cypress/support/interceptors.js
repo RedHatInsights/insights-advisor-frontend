@@ -55,7 +55,7 @@ export const featureFlagInterceptor = (enabledFlags = []) => {
   }));
 
   return cy
-    .intercept('GET', '/feature_flags*', {
+    .intercept('GET', '**/feature_flags*', {
       statusCode: 200,
       body: { toggles },
     })
@@ -70,7 +70,7 @@ export const featureFlagInterceptor = (enabledFlags = []) => {
  */
 export const rulesTableApiInterceptor = (fixtures) => {
   return cy
-    .intercept('GET', '/api/insights/v1/rule/*', (req) => {
+    .intercept('GET', /\/api\/insights\/v1\/rule.*/, (req) => {
       const url = new URL(req.url);
       let filteredData = [...fixtures.data];
 
