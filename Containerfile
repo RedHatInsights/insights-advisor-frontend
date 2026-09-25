@@ -18,6 +18,11 @@ COPY --chown=default . .
 
 ARG NPM_BUILD_SCRIPT=""
 ARG PACKAGE_JSON_PATH=package.json
+# IOP flag must be declared so --build-arg IOP=true reaches universal_build.sh's
+# `npm run build`; fec.config.js applies patchFederationForIop + IoP asset paths
+# only when process.env.IOP === 'true'.
+ARG IOP=false
+ENV IOP=${IOP}
 ENV APP_NAME="advisor-frontend"
 RUN universal_build.sh
 
