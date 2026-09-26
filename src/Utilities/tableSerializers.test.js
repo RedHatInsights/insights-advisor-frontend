@@ -2,6 +2,7 @@ import {
   paginationSerialiser,
   sortSerialiser,
   filtersSerialiser,
+  toExportParams,
 } from './tableSerializers';
 
 describe('paginationSerialiser', () => {
@@ -378,6 +379,75 @@ describe('filtersSerialiser', () => {
         key1: 'value1',
         key2: 'value2',
         fromPrevious: 'value1',
+      });
+    });
+  });
+
+  describe('toExportParams', () => {
+    it('returns empty object for empty or undefined input', () => {
+      expect(toExportParams()).toEqual({});
+      expect(toExportParams({})).toEqual({});
+    });
+
+    it('converts camelCase keys to snake_case', () => {
+      const input = {
+        ruleStatus: 'enabled',
+        hasPlaybook: 'true',
+      };
+      expect(toExportParams(input)).toEqual({
+        rule_status: 'enabled',
+        has_playbook: 'true',
+      });
+    });
+
+    it('converts array values to comma-separated strings', () => {
+      const input = {
+        totalRisk: ['4', '3'],
+        category: ['1', '2'],
+      };
+      expect(toExportParams(input)).toEqual({
+        total_risk: '4,3',
+        category: '1,2',
+      });
+    });
+
+    it('preserves single-item arrays as strings', () => {
+      const input = {
+        resRisk: ['1'],
+      };
+      expect(toExportParams(input)).toEqual({
+        res_risk: '1',
+      });
+    });
+
+    it('ignores undefined, null, and empty string values', () => {
+      const input = {
+        ruleStatus: 'enabled',
+        emptyVal: '',
+        nullVal: null,
+        undefinedVal: undefined,
+      };
+      expect(toExportParams(input)).toEqual({
+        rule_status: 'enabled',
+      });
+    });
+
+    it('handles mixed complex filter objects', () => {
+      const input = {
+        ruleStatus: 'enabled',
+        impacting: 'true',
+        totalRisk: ['4', '3', '2'],
+        text: 'kernel',
+        incident: 'true',
+        reboot: 'false',
+      };
+      expect(toExportParams(input)).toEqual({
+        rule_status: 'enabled',
+        impacting: 'true',
+        total_risk: '4,3,2',
+        text: 'kernel',
+        incident: 'true',
+        reboot: 'false',
       });
     });
   });
