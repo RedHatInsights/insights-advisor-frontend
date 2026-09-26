@@ -237,6 +237,16 @@ export default defineMessages({
     description: 'Abbreviated as N/A, text equivalent, Not Applicable',
     defaultMessage: 'N/A',
   },
+  workspace: {
+    id: 'workspace',
+    description: 'Workspace filter category title',
+    defaultMessage: 'Workspace',
+  },
+  filterByWorkspace: {
+    id: 'filterByWorkspace',
+    description: 'Placeholder for workspace filter input',
+    defaultMessage: 'Filter by workspace...',
+  },
   rulesTableFilterInputText: {
     id: 'rulestable.filter.inputtext',
     description: 'Search text placeholder for recommendation table',

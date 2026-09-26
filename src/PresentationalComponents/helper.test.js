@@ -316,6 +316,64 @@ describe('createOptions', () => {
       ).tags,
     ).toEqual(['tagFilter1/tagKey1=tag1', 'tagFilter1/tagKey2=tag2']);
   });
+
+  it('returns a groups prop from selectedGroups when hostGroupFilter is absent', () => {
+    const selectedGroups = ['workspace-prod', 'workspace-stage'];
+
+    expect(
+      createOptions(
+        advisorFilters,
+        page,
+        per_page,
+        sort,
+        pathway,
+        {},
+        selectedTags,
+        workloads,
+        systemsPage,
+        selectedGroups,
+      ).groups,
+    ).toEqual('workspace-prod,workspace-stage');
+  });
+
+  it('handles selectedGroups as a string', () => {
+    const selectedGroups = 'workspace-single';
+
+    expect(
+      createOptions(
+        advisorFilters,
+        page,
+        per_page,
+        sort,
+        pathway,
+        {},
+        selectedTags,
+        workloads,
+        systemsPage,
+        selectedGroups,
+      ).groups,
+    ).toEqual('workspace-single');
+  });
+
+  it('prefers local hostGroupFilter over selectedGroups when both are present', () => {
+    const hostGroupFilter = ['local-group-1', 'local-group-2'];
+    const selectedGroups = ['global-group'];
+
+    expect(
+      createOptions(
+        advisorFilters,
+        page,
+        per_page,
+        sort,
+        pathway,
+        { hostGroupFilter },
+        selectedTags,
+        workloads,
+        systemsPage,
+        selectedGroups,
+      ).groups,
+    ).toEqual('local-group-1,local-group-2');
+  });
 });
 
 describe('createSortParam test', () => {

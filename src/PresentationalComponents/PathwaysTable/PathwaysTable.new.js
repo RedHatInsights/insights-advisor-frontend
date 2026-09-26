@@ -10,29 +10,34 @@ import useAdvisorTableDefaults from '../../Utilities/useAdvisorTableDefaults';
 
 /**
  * Inner component that renders the Pathways table with bastilian-tabletools
- * Handles data fetching with external filters (tags/workloads) integration
+ * Handles data fetching with external filters (tags/workspaces/workloads) integration
  *
  * @component
  * @param {object} props - Component props
  * @param {boolean} props.isTabActive - Whether the tab is currently active (controls data fetching)
- * @param {string[]} props.selectedTags - Array of selected tag names from global filter
- * @param {object} props.workloads - Workloads object from global filter { [key]: { isSelected: boolean } }
+ * @param {string[]} [props.selectedTags] - Array of selected tag names from global filter
+ * @param {string[]} [props.selectedGroups] - Array of selected workspace names from global filter
+ * @param {object} [props.workloads] - Workloads object from global filter { [key]: { isSelected: boolean } }
  * @returns {React.Element} TableToolsTable component with pathways data
  */
-const PathwaysTableInner = ({ isTabActive, selectedTags, workloads }) => {
+const PathwaysTableInner = ({
+  isTabActive,
+  selectedTags,
+  selectedGroups,
+  workloads,
+}) => {
   const advisorTableDefaults = useAdvisorTableDefaults({ columns, filters });
   const filterConfig = useMemo(() => ({ filterConfig: filters }), []);
 
-  /**
-   * Build additional API parameters from global filters (tags/workloads)
-   * These are merged with table state (pagination, sort, filters) in usePathwaysQuery
-   *
-   * Result format: { tags: 'tag1,tag2', SAP: true, ... }
-   */
   const additionalParams = useMemo(() => {
     let params = {};
     if (selectedTags?.length) {
       params.tags = selectedTags.join(',');
+    }
+    if (selectedGroups?.length) {
+      params.groups = Array.isArray(selectedGroups)
+        ? selectedGroups.join(',')
+        : selectedGroups;
     }
     if (workloads) {
       params = {
@@ -41,7 +46,7 @@ const PathwaysTableInner = ({ isTabActive, selectedTags, workloads }) => {
       };
     }
     return params;
-  }, [selectedTags, workloads]);
+  }, [selectedTags, selectedGroups, workloads]);
 
   const { data, loading } = usePathwaysQuery({
     useTableState: true,
@@ -77,6 +82,7 @@ const PathwaysTableInner = ({ isTabActive, selectedTags, workloads }) => {
 PathwaysTableInner.propTypes = {
   isTabActive: PropTypes.bool,
   selectedTags: PropTypes.array,
+  selectedGroups: PropTypes.array,
   workloads: PropTypes.object,
 };
 
@@ -100,6 +106,7 @@ PathwaysTableInner.propTypes = {
  */
 const PathwaysTableNew = ({ isTabActive }) => {
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
+  const selectedGroups = useSelector(({ filters }) => filters.selectedGroups);
   const workloads = useSelector(({ filters }) => filters.workloads);
 
   return (
@@ -107,6 +114,7 @@ const PathwaysTableNew = ({ isTabActive }) => {
       <PathwaysTableInner
         isTabActive={isTabActive}
         selectedTags={selectedTags}
+        selectedGroups={selectedGroups}
         workloads={workloads}
       />
     </TableStateProvider>

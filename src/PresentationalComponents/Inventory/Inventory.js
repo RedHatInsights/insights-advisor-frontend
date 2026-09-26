@@ -38,6 +38,7 @@ const Inventory = ({
   afterDisableFn,
   pathway,
   selectedTags,
+  selectedGroups,
   workloads,
   permsExport,
   exportTable,
@@ -524,77 +525,8 @@ const Inventory = ({
           }}
           customFilters={{
             advisorFilters: filters,
-          }}
-          showTags={envContext.loadChromeless ? false : showTags}
-          getEntities={fetchSystems}
-          actionsConfig={getActionsConfig()}
-          {...toolbarProps}
-          onLoad={({
-            mergeWithEntities,
-            INVENTORY_ACTION_TYPES,
-            mergeWithDetail,
-          }) => {
-            store.replaceReducer(
-              updateReducers({
-                ...mergeWithEntities(
-                  systemReducer([], INVENTORY_ACTION_TYPES),
-                  {
-                    page: Number(filters.offset / filters.limit + 1 || 1),
-                    perPage: Number(filters.limit || 20),
-                  },
-                ),
-                ...mergeWithDetail(),
-              }),
-            );
-          }}
-          exportConfig={
-            permsExport && {
-              onSelect: (_e, fileType) =>
-                downloadReport(
-                  exportTable,
-                  fileType,
-                  { rule_id: rule.rule_id, ...filters },
-                  selectedTags,
-                  workloads,
-                  dispatch,
-                  envContext.BASE_URL,
-                  filters?.display_name,
-                  addNotification,
-                  axios,
-                ),
-              isDisabled: !permsExport || entities?.rows?.length === 0,
-              tooltipText: permsExport
-                ? intl.formatMessage(messages.exportData)
-                : intl.formatMessage(messages.permsAction),
-            }
-          }
-          axios={axios}
-        />
-      ) : (
-        <InventoryTable
-          id={'tablesContainer'}
-          ouiaId={'inventory-table'}
-          hasCheckbox
-          initialLoading
-          autoRefresh
-          hideFilters={{
-            all: true,
-            name: false,
-            tags: false,
-            operatingSystem: false,
-            hostGroupFilter: false,
-            ...(isWorkloadFilterEnabled && { workloadFilter: false }),
-          }}
-          activeFiltersConfig={activeFiltersConfig}
-          columns={(defaultColumns) => createColumns(defaultColumns)}
-          tableProps={{
-            variant: TableVariant.compact,
-            ...tableProps,
-            ...bulkSelectTableProps,
-          }}
-          customFilters={{
-            advisorFilters: filters,
             selectedTags,
+            selectedGroups,
             workloads,
           }}
           showTags={envContext.loadChromeless ? false : showTags}
@@ -633,6 +565,81 @@ const Inventory = ({
                   filters?.display_name,
                   addNotification,
                   axios,
+                  selectedGroups,
+                ),
+              isDisabled: !permsExport || entities?.rows?.length === 0,
+              tooltipText: permsExport
+                ? intl.formatMessage(messages.exportData)
+                : intl.formatMessage(messages.permsAction),
+            }
+          }
+          axios={axios}
+        />
+      ) : (
+        <InventoryTable
+          id={'tablesContainer'}
+          ouiaId={'inventory-table'}
+          hasCheckbox
+          initialLoading
+          autoRefresh
+          hideFilters={{
+            all: true,
+            name: false,
+            tags: false,
+            operatingSystem: false,
+            hostGroupFilter: false,
+            ...(isWorkloadFilterEnabled && { workloadFilter: false }),
+          }}
+          activeFiltersConfig={activeFiltersConfig}
+          columns={(defaultColumns) => createColumns(defaultColumns)}
+          tableProps={{
+            variant: TableVariant.compact,
+            ...tableProps,
+            ...bulkSelectTableProps,
+          }}
+          customFilters={{
+            advisorFilters: filters,
+            selectedTags,
+            selectedGroups,
+            workloads,
+          }}
+          showTags={envContext.loadChromeless ? false : showTags}
+          getEntities={fetchSystems}
+          actionsConfig={getActionsConfig()}
+          {...toolbarProps}
+          onLoad={({
+            mergeWithEntities,
+            INVENTORY_ACTION_TYPES,
+            mergeWithDetail,
+          }) => {
+            store.replaceReducer(
+              updateReducers({
+                ...mergeWithEntities(
+                  systemReducer([], INVENTORY_ACTION_TYPES),
+                  {
+                    page: Number(filters.offset / filters.limit + 1 || 1),
+                    perPage: Number(filters.limit || 20),
+                  },
+                ),
+                ...mergeWithDetail(),
+              }),
+            );
+          }}
+          exportConfig={
+            permsExport && {
+              onSelect: (_e, fileType) =>
+                downloadReport(
+                  exportTable,
+                  fileType,
+                  { rule_id: rule.rule_id, ...filters },
+                  selectedTags,
+                  workloads,
+                  dispatch,
+                  envContext.BASE_URL,
+                  filters?.display_name,
+                  addNotification,
+                  axios,
+                  selectedGroups,
                 ),
               isDisabled: !permsExport || entities?.rows?.length === 0,
               tooltipText: permsExport
@@ -652,6 +659,7 @@ Inventory.propTypes = {
   afterDisableFn: PropTypes.func,
   pathway: PropTypes.object,
   selectedTags: PropTypes.any,
+  selectedGroups: PropTypes.any,
   workloads: PropTypes.any,
   permsExport: PropTypes.bool,
   exportTable: PropTypes.string,

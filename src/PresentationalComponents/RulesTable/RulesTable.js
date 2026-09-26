@@ -22,7 +22,7 @@ import {
   filterFetchBuilder,
   urlBuilder,
   workloadArrayQueryBuilder,
-  workloadQueryBuilder,
+  buildGlobalFilterParams,
 } from '../Common/Tables';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -57,15 +57,24 @@ import { SkeletonTable } from '@patternfly/react-component-groups';
 import { EnvironmentContext } from '../../App';
 import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { useFeatureFlag } from '../../Utilities/Hooks';
+import useWorkspaces from '../../Services/hooks/useWorkspaces';
 
-const RulesTable = ({ isTabActive, pathway, onRuleChange, defaultFilters }) => {
+const RulesTable = ({
+  isTabActive,
+  pathway,
+  topic,
+  onRuleChange,
+  defaultFilters,
+}) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
   const cols = getColumns(intl);
   const axios = useAxiosWithPlatformInterceptors();
+  const { data: workspaces = [] } = useWorkspaces();
 
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
+  const selectedGroups = useSelector(({ filters }) => filters.selectedGroups);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const filters = useSelector(({ filters }) => filters.recState);
 
@@ -74,6 +83,7 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange, defaultFilters }) => {
   const [sortBy, setSortBy] = useState({});
   const [filterBuilding, setFilterBuilding] = useState(true);
   const [searchText, setSearchText] = useState(filters?.text || '');
+  const [workspaceSearch, setWorkspaceSearch] = useState('');
   const [disableRuleOpen, setDisableRuleOpen] = useState(false);
   const [selectedRule, setSelectedRule] = useState({});
   const [viewSystemsModalOpen, setViewSystemsModalOpen] = useState(false);
@@ -86,10 +96,18 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange, defaultFilters }) => {
   // Strip workload before filterFetchBuilder — it must be sent as repeated params, not comma-joined
   const { workload: workloadFilter, ...filtersWithoutWorkload } = filters;
 
+  const globalFilterParams = buildGlobalFilterParams({
+    selectedTags,
+    selectedGroups: !filtersWithoutWorkload?.groups?.length
+      ? selectedGroups
+      : undefined,
+    workloads,
+  });
+
   const options = {
-    ...(selectedTags?.length ? { tags: selectedTags.join(',') } : {}),
-    ...(workloads ? workloadQueryBuilder(workloads) : {}),
+    ...globalFilterParams,
     ...(pathway ? { pathway } : {}),
+    ...(topic ? { topic } : {}),
   };
 
   const workloadParams = workloadArrayQueryBuilder(workloadFilter || []);
@@ -120,7 +138,7 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange, defaultFilters }) => {
       urlBuilder(filters, selectedTags);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, selectedTags, workloads]);
+  }, [filters, selectedTags, workloads, selectedGroups]);
 
   const onSort = (_event, index, direction) => {
     const orderParam = `${direction === 'asc' ? '' : '-'}${sortIndices[index]}`;
@@ -307,6 +325,7 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange, defaultFilters }) => {
                 '',
                 addNotification,
                 axios,
+                selectedGroups,
               ),
             tooltipText: intl.formatMessage(messages.exportData),
           }
@@ -321,6 +340,9 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange, defaultFilters }) => {
               toggleRulesDisabled,
               intl,
               isWorkloadFilterEnabled,
+              workspaces,
+              workspaceSearch,
+              setWorkspaceSearch,
             ),
             impactingFilterDef,
           ],
@@ -454,6 +476,7 @@ const RulesTable = ({ isTabActive, pathway, onRuleChange, defaultFilters }) => {
 RulesTable.propTypes = {
   isTabActive: PropTypes.bool,
   pathway: PropTypes.string,
+  topic: PropTypes.string,
   onRuleChange: PropTypes.func,
   defaultFilters: PropTypes.object,
 };

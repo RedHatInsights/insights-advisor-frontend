@@ -419,6 +419,11 @@ export const FILTER_CATEGORIES = {
       { label: 'Satellite', value: 'satellite' },
     ],
   },
+  groups: {
+    type: conditionalFilterType.group,
+    title: 'workspace',
+    urlParam: 'groups',
+  },
 };
 
 export const getImpactingFitlerItems = (hasEdgeDevices) =>

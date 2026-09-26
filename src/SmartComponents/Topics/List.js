@@ -8,11 +8,12 @@ import TopicsTable from '../../PresentationalComponents/TopicsTable/TopicsTable'
 import messages from '../../Messages';
 import useTopicsQuery from '../../Services/hooks/useTopicsQuery';
 import { useSelector } from 'react-redux';
-import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
+import { buildGlobalFilterParams } from '../../PresentationalComponents/Common/Tables';
 import { EnvironmentContext } from '../../App';
 
 const List = () => {
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
+  const selectedGroups = useSelector(({ filters }) => filters.selectedGroups);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const envContext = useContext(EnvironmentContext);
 
@@ -20,16 +21,10 @@ const List = () => {
     envContext.updateDocumentTitle('Topics - Advisor');
   }, [envContext]);
 
-  const params = useMemo(() => {
-    let options = {};
-    if (selectedTags?.length) {
-      options.tags = selectedTags.join(',');
-    }
-    if (workloads) {
-      options = { ...options, ...workloadQueryBuilder(workloads) };
-    }
-    return options;
-  }, [selectedTags, workloads]);
+  const params = useMemo(
+    () => buildGlobalFilterParams({ selectedTags, selectedGroups, workloads }),
+    [selectedTags, selectedGroups, workloads],
+  );
 
   const { data, loading, error } = useTopicsQuery({ params });
 
