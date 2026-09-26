@@ -98,7 +98,7 @@
     "@redhat-cloud-services/frontend-components-remediations": "^4.11.11",
     "@redhat-cloud-services/frontend-components-translations": "^4.5.8",
     "@redhat-cloud-services/frontend-components-utilities": "^7.5.7",
-    "@redhat-cloud-services/insights-client": "^3.0.0",
+    "@redhat-cloud-services/insights-client": "^4.0.13",
     "@redhat-cloud-services/javascript-clients-shared": "^2.0.16",
     "@reduxjs/toolkit": "^2.2.5",
     "@scalprum/react-core": "^0.13.3",
