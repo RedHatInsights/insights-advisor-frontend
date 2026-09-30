@@ -404,7 +404,7 @@ const Inventory = ({
         const cleanFilters = {
           sort: filters.sort,
           limit: filters.limit,
-          offset: filters.offset,
+          offset: 0,
         };
         setFilters(cleanFilters);
         !pathway && urlBuilder(cleanFilters, selectedTags);
@@ -418,12 +418,12 @@ const Inventory = ({
               : '',
           };
           if (newFilter[item.urlParam].length > 0) {
-            const updated = { ...filters, ...newFilter };
+            const updated = { ...filters, ...newFilter, offset: 0 };
             setFilters(updated);
             !pathway && urlBuilder(updated, selectedTags);
           } else {
             removeFilterParam(item.urlParam);
-            const updated = { ...filters };
+            const updated = { ...filters, offset: 0 };
             delete updated[item.urlParam];
             !pathway && urlBuilder(updated, selectedTags);
           }

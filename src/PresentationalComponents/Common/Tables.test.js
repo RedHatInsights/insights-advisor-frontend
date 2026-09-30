@@ -146,6 +146,19 @@ describe('pruneFilters', () => {
     ]);
   });
 
+  it('creates Name chip for text array filter (from paramParser)', () => {
+    const filters = { text: ['kernel'] };
+    const result = pruneFilters(filters, SFC);
+
+    expect(result).toEqual([
+      {
+        category: 'Name',
+        chips: [{ name: 'kernel', value: 'kernel' }],
+        urlParam: 'text',
+      },
+    ]);
+  });
+
   it('skips whitespace-only and empty search values', () => {
     const filters = { name: '   ', text: '', display_name: null };
     const result = pruneFilters(filters, SFC);
