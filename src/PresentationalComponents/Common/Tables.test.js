@@ -1,4 +1,4 @@
-import { pruneFilters, workloadArrayQueryBuilder } from './Tables';
+import { pruneFilters, urlBuilder, workloadArrayQueryBuilder } from './Tables';
 
 jest.mock(
   '@redhat-cloud-services/frontend-components-utilities/helpers',
@@ -228,5 +228,34 @@ describe('toSearchChip', () => {
       urlParam: 'display_name',
       chips: [{ name: 'host-01', value: 'host-01' }],
     });
+  });
+});
+
+describe('urlBuilder', () => {
+  let replaceStateSpy;
+
+  beforeEach(() => {
+    replaceStateSpy = jest
+      .spyOn(window.history, 'replaceState')
+      .mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    replaceStateSpy.mockRestore();
+  });
+
+  it('includes selectedTags passed as second argument into URL search params', () => {
+    const filters = { limit: 20, offset: 0 };
+    const selectedTags = ['env/prod=true', 'namespace/app=advisor'];
+
+    urlBuilder(filters, selectedTags);
+
+    expect(replaceStateSpy).toHaveBeenCalledWith(
+      null,
+      null,
+      expect.stringContaining(
+        'tags=env%2Fprod%3Dtrue%2Cnamespace%2Fapp%3Dadvisor',
+      ),
+    );
   });
 });

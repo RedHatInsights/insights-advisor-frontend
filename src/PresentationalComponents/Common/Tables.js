@@ -4,7 +4,7 @@ import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
 
 // Builds returns url params from table filters, pushes to url if history object is passed
-export const urlBuilder = (filters = {}) => {
+export const urlBuilder = (filters = {}, selectedTags) => {
   const url = new URL(window.location);
   const queryString = `${Object.keys(filters)
     .map(
@@ -21,8 +21,12 @@ export const urlBuilder = (filters = {}) => {
   params.get('reports_shown') === 'undefined' && params.delete('reports_shown');
   params.get('pathway') && params.delete('pathway');
 
-  filters?.tags?.length
-    ? params.set('tags', filters.tags)
+  const tagsToSet = selectedTags?.length ? selectedTags : filters?.tags;
+  tagsToSet?.length
+    ? params.set(
+        'tags',
+        Array.isArray(tagsToSet) ? tagsToSet.join() : tagsToSet,
+      )
     : params.delete('tags');
   window.history.replaceState(
     null,
