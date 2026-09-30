@@ -51,6 +51,7 @@ export const useGetEntities =
       filters,
       workloads,
       selectedTags,
+      selectedGroups,
     } = config;
     const sort = createSortParam(orderBy, orderDirection);
     let options = createOptions(
@@ -62,6 +63,8 @@ export const useGetEntities =
       filters,
       selectedTags,
       workloads,
+      false,
+      selectedGroups,
     );
     handleRefresh(options);
     const allDetails = {

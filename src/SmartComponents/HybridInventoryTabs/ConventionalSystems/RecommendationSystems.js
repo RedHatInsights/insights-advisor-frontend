@@ -13,6 +13,7 @@ const ConventionalSystems = ({
   ...props
 }) => {
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
+  const selectedGroups = useSelector(({ filters }) => filters.selectedGroups);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const envContext = useContext(EnvironmentContext);
   const actionResolver = useActionResolver(
@@ -30,6 +31,7 @@ const ConventionalSystems = ({
       rule={rule}
       afterDisableFn={afterDisableFn}
       selectedTags={selectedTags}
+      selectedGroups={selectedGroups}
       workloads={workloads}
       permsExport={envContext.isExportEnabled}
       exportTable="systems"

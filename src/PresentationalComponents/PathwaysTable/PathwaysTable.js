@@ -45,6 +45,7 @@ const PathwaysTable = ({ isTabActive }) => {
   const { search } = useLocation();
 
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
+  const selectedGroups = useSelector(({ filters }) => filters.selectedGroups);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const filters = useSelector(({ filters }) => filters.pathState);
   const setFilters = (filters) => dispatch(updatePathFilters(filters));
@@ -53,6 +54,15 @@ const PathwaysTable = ({ isTabActive }) => {
     (options = {
       ...options,
       ...{ tags: selectedTags.join(',') },
+    });
+  selectedGroups?.length &&
+    (options = {
+      ...options,
+      ...{
+        groups: Array.isArray(selectedGroups)
+          ? selectedGroups.join(',')
+          : selectedGroups,
+      },
     });
   workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
   const {
@@ -237,7 +247,7 @@ const PathwaysTable = ({ isTabActive }) => {
       urlBuilder(filters, selectedTags);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, selectedTags, workloads]);
+  }, [filters, selectedTags, workloads, selectedGroups]);
 
   useEffect(() => {
     if (isTabActive && search && filterBuilding) {
