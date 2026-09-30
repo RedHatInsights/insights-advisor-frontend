@@ -161,7 +161,6 @@ const Inventory = ({
         const associatedRuleDetails = (
           await axios.get(
             `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
-            { params: { name: filters.name } },
           )
         )?.playbook_count;
         setRulesPlaybookCount(associatedRuleDetails);
@@ -402,11 +401,13 @@ const Inventory = ({
     filters: buildFilterChips(),
     onDelete: (_e, itemsToRemove, isAll) => {
       if (isAll) {
-        setFilters({
+        const cleanFilters = {
           sort: filters.sort,
           limit: filters.limit,
           offset: filters.offset,
-        });
+        };
+        setFilters(cleanFilters);
+        !pathway && urlBuilder(cleanFilters, selectedTags);
       } else {
         itemsToRemove.map((item) => {
           const newFilter = {
@@ -416,9 +417,16 @@ const Inventory = ({
                 )
               : '',
           };
-          newFilter[item.urlParam].length > 0
-            ? setFilters({ ...filters, ...newFilter })
-            : removeFilterParam(item.urlParam);
+          if (newFilter[item.urlParam].length > 0) {
+            const updated = { ...filters, ...newFilter };
+            setFilters(updated);
+            !pathway && urlBuilder(updated, selectedTags);
+          } else {
+            removeFilterParam(item.urlParam);
+            const updated = { ...filters };
+            delete updated[item.urlParam];
+            !pathway && urlBuilder(updated, selectedTags);
+          }
         });
       }
     },

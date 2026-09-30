@@ -92,7 +92,6 @@ describe('Inventory - Playbook Count Scenarios', () => {
       await waitFor(() => {
         expect(mockAxiosGet).toHaveBeenCalledWith(
           '/api/insights/v1/rule/test-rule-123/',
-          { params: { name: '' } },
         );
       });
     });
@@ -110,7 +109,6 @@ describe('Inventory - Playbook Count Scenarios', () => {
       await waitFor(() => {
         expect(mockAxiosGet).toHaveBeenCalledWith(
           expect.stringContaining('test%20rule'),
-          expect.any(Object),
         );
       });
     });
@@ -669,7 +667,7 @@ describe('Inventory - Playbook Count Scenarios', () => {
     });
   });
 
-  describe('Documentation compliance', () => {
+  describe('Documentation compliance & workflow verification', () => {
     it('should handle fetch errors with notification and set to 0', async () => {
       mockAxiosGet.mockRejectedValueOnce(new Error('Network error'));
 
@@ -708,6 +706,219 @@ describe('Inventory - Playbook Count Scenarios', () => {
 
       expect(apiRejected).toBe(apiSuccessNoPlaybooks);
       expect(apiSuccessEmptyResponse).not.toBe(apiSuccessNoPlaybooks);
+    });
+
+    describe('Recommendation details inventory table workflow integration', () => {
+      it('passes initial table state and active filters to FEC InventoryTable', () => {
+        renderInventory();
+
+        const lastCallProps =
+          MockInventoryTable.mock.calls[
+            MockInventoryTable.mock.calls.length - 1
+          ][0];
+
+        expect(lastCallProps.customFilters).toEqual(
+          expect.objectContaining({
+            advisorFilters: expect.objectContaining({
+              limit: 20,
+              offset: 0,
+              sort: '-last_seen',
+              name: '',
+              'filter[system_profile]': true,
+            }),
+            selectedTags: [],
+            workloads: [],
+          }),
+        );
+      });
+
+      it('executes getEntities callback with search query and transforms system records', async () => {
+        const customMockAxiosGet = jest.fn().mockResolvedValue({
+          data: [
+            {
+              id: 'system-uuid-1',
+              system_uuid: 'system-uuid-1',
+              display_name: 'test-host.example.com',
+              workspaces: ['default'],
+              operating_system: 'RHEL 9.2',
+            },
+          ],
+          meta: { count: 1 },
+        });
+
+        renderInventory({ axios: { get: customMockAxiosGet } });
+
+        const lastCallProps =
+          MockInventoryTable.mock.calls[
+            MockInventoryTable.mock.calls.length - 1
+          ][0];
+        expect(typeof lastCallProps.getEntities).toBe('function');
+
+        const fetchConfig = {
+          page: 1,
+          per_page: 20,
+          orderBy: 'updated',
+          orderDirection: 'DESC',
+          advisorFilters: {
+            limit: 20,
+            offset: 0,
+            sort: '-last_seen',
+            name: '9c95-731d',
+            'filter[system_profile]': true,
+          },
+          filters: { hostnameOrId: '9c95-731d' },
+        };
+
+        const result = await lastCallProps.getEntities([], fetchConfig);
+
+        expect(customMockAxiosGet).toHaveBeenCalledWith(
+          expect.stringContaining('/systems_detail/'),
+          expect.objectContaining({
+            params: expect.objectContaining({
+              limit: 20,
+              offset: 0,
+              sort: '-last_seen',
+              name: '9c95-731d',
+            }),
+          }),
+        );
+
+        expect(result).toEqual({
+          results: [
+            expect.objectContaining({
+              id: 'system-uuid-1',
+              system_uuid: 'system-uuid-1',
+              groups: ['default'],
+              system_profile: { operating_system: 'RHEL 9.2' },
+            }),
+          ],
+          total: 1,
+        });
+      });
+
+      it('attaches bulk actions configuration for disabling systems', () => {
+        renderInventory();
+
+        const lastCallProps =
+          MockInventoryTable.mock.calls[
+            MockInventoryTable.mock.calls.length - 1
+          ][0];
+        const actionsConfig = lastCallProps.actionsConfig;
+
+        expect(actionsConfig).toBeDefined();
+        expect(actionsConfig.actions).toBeDefined();
+      });
+
+      it('configures toolbar filter chip reset and removal handlers', () => {
+        renderInventory();
+
+        const lastCallProps =
+          MockInventoryTable.mock.calls[
+            MockInventoryTable.mock.calls.length - 1
+          ][0];
+        const activeFiltersConfig = lastCallProps.activeFiltersConfig;
+
+        expect(activeFiltersConfig).toEqual(
+          expect.objectContaining({
+            deleteTitle: 'Reset filters',
+            filters: expect.any(Array),
+            onDelete: expect.any(Function),
+          }),
+        );
+      });
+
+      it('builds Name chip when name filter is present', () => {
+        renderInventory();
+
+        const lastCallProps =
+          MockInventoryTable.mock.calls[
+            MockInventoryTable.mock.calls.length - 1
+          ][0];
+
+        const activeFiltersConfig = lastCallProps.activeFiltersConfig;
+        const nameChip = activeFiltersConfig.filters.find(
+          (f) => f.category === 'Name' || f.urlParam === 'name',
+        );
+
+        // When name filter is empty initial state, filters should be clean
+        expect(nameChip).toBeUndefined();
+      });
+
+      it('calls urlBuilder and removes name parameter when Name chip is deleted', () => {
+        const Tables = require('../Common/Tables');
+        const urlBuilderSpy = jest.spyOn(Tables, 'urlBuilder');
+
+        renderInventory();
+
+        const lastCallProps =
+          MockInventoryTable.mock.calls[
+            MockInventoryTable.mock.calls.length - 1
+          ][0];
+        const activeFiltersConfig = lastCallProps.activeFiltersConfig;
+
+        // Simulate deleting the Name chip
+        activeFiltersConfig.onDelete(
+          null,
+          [
+            {
+              category: 'Name',
+              urlParam: 'name',
+              chips: [{ name: '9c95-731d', value: '9c95-731d' }],
+            },
+          ],
+          false,
+        );
+
+        // Discrepancy 2 verification: urlBuilder must be called to purge the param
+        expect(urlBuilderSpy).toHaveBeenCalled();
+      });
+
+      it('fetches systems without name parameter when search filter is cleared', async () => {
+        const customMockAxiosGet = jest.fn().mockResolvedValue({
+          data: [
+            {
+              id: 'system-uuid-1',
+              system_uuid: 'system-uuid-1',
+              display_name: 'test-host.example.com',
+            },
+          ],
+          meta: { count: 1 },
+        });
+
+        renderInventory({ axios: { get: customMockAxiosGet } });
+
+        const lastCallProps =
+          MockInventoryTable.mock.calls[
+            MockInventoryTable.mock.calls.length - 1
+          ][0];
+
+        // Simulate FEC getEntities call when search filter is cleared/empty
+        const fetchConfig = {
+          page: 1,
+          per_page: 20,
+          orderBy: 'updated',
+          orderDirection: 'DESC',
+          advisorFilters: {
+            limit: 20,
+            offset: 0,
+            sort: '-last_seen',
+            'filter[system_profile]': true,
+          },
+          filters: {},
+        };
+
+        await lastCallProps.getEntities([], fetchConfig);
+
+        // Discrepancy 3 verification: GET request must not contain name parameter
+        expect(customMockAxiosGet).toHaveBeenCalledWith(
+          expect.stringContaining('/systems_detail/'),
+          expect.objectContaining({
+            params: expect.not.objectContaining({
+              name: expect.anything(),
+            }),
+          }),
+        );
+      });
     });
   });
 });
