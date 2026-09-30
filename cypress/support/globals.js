@@ -35,6 +35,27 @@ export const rulesTableColumns = [
   },
 ];
 
+export const rulesTableColumnsNew = [
+  {
+    title: intl.formatMessage(messages.name),
+  },
+  {
+    title: intl.formatMessage(messages.modified),
+  },
+  {
+    title: intl.formatMessage(messages.category),
+  },
+  {
+    title: intl.formatMessage(messages.totalRisk),
+  },
+  {
+    title: intl.formatMessage(messages.systems),
+  },
+  {
+    title: intl.formatMessage(messages.remediation),
+  },
+];
+
 export const CATEGORIES = {
   Security: ['security'],
   Availability: ['availability'],

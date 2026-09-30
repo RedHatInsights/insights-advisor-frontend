@@ -1,3 +1,5 @@
+import snakeCase from 'lodash/snakeCase';
+
 /**
  * Converts TableToolsTable pagination state to Advisor API format
  * @param {object} state - { page: number, perPage: number }
@@ -85,3 +87,16 @@ export const filtersSerialiser = (state, filters) => {
     return params;
   }, {});
 };
+
+/**
+ * Converts table filter parameters to snake_case query format for the backend export endpoint
+ * @param {object} params - Table filter params (e.g., { ruleStatus: 'enabled', totalRisk: ['4', '3'] })
+ * @returns {object} - Backend-compatible query params (e.g., { rule_status: 'enabled', total_risk: '4,3' })
+ */
+export const toExportParams = (params = {}) =>
+  Object.entries(params).reduce((acc, [key, val]) => {
+    if (val !== undefined && val !== null && val !== '') {
+      acc[snakeCase(key)] = Array.isArray(val) ? val.join(',') : val;
+    }
+    return acc;
+  }, {});
