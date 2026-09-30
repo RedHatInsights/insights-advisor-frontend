@@ -125,66 +125,88 @@ export const paramParser = () => {
 export const capitalize = (string) =>
   string[0].toUpperCase() + string.substring(1);
 
-export const pruneFilters = (localFilters, filterCategories) => {
+const SEARCH_KEYS = new Set(['text', 'name', 'display_name']);
+
+/**
+ * Resolves the display label for an active filter value.
+ *
+ * @param {string} key - Filter URL parameter identifier (e.g. 'rhel_version', 'hits').
+ * @param {string|number} value - Selected filter value.
+ * @param {object} [category] - Category definition with values lookup array.
+ * @param {Array<{value: string, label?: string, text?: string}>} [category.values] - Filter options.
+ * @returns {string} Formatted label or string fallback for the chip.
+ */
+export const resolveChipLabel = (key, value, category) => {
+  if (key === SYSTEM_FILTER_CATEGORIES.rhel_version.urlParam) {
+    return `RHEL ${value}`;
+  }
+  const match = category?.values?.find(
+    (v) => String(v.value) === String(value),
+  );
+  return match?.text || match?.label || String(value);
+};
+
+/**
+ * Transforms a category filter entry into a PatternFly toolbar chip descriptor.
+ *
+ * @param {string} key - Filter key from local filters state.
+ * @param {string|number|Array<string|number>} value - Single value or array of selected values.
+ * @param {object} category - Category definition from SYSTEM_FILTER_CATEGORIES.
+ * @param {string} category.title - Category title.
+ * @param {string} category.urlParam - Query parameter key for API requests.
+ * @param {Array<object>} [category.values] - Filter item options.
+ * @returns {{category: string, urlParam: string, chips: Array<{name: string, value: string|number}>}} Structured category chip object.
+ */
+export const toCategoryChip = (key, value, category) => {
+  const values = Array.isArray(value) ? value : [value];
+  return {
+    category: capitalize(category.title),
+    chips: values.map((v) => ({
+      name: resolveChipLabel(key, v, category),
+      value: v,
+    })),
+    urlParam: category.urlParam,
+  };
+};
+
+/**
+ * Transforms a search text filter entry into a PatternFly toolbar chip descriptor.
+ *
+ * @param {string} key - Search URL parameter identifier ('text', 'name', or 'display_name').
+ * @param {string} value - Non-empty search query string.
+ * @returns {{category: 'Name', urlParam: string, chips: Array<{name: string, value: string}>}} Structured search chip object.
+ */
+export const toSearchChip = (key, value) => ({
+  category: 'Name',
+  chips: [{ name: value, value }],
+  urlParam: key,
+});
+
+/**
+ * Prunes and transforms active table filters into PatternFly toolbar filter chips.
+ *
+ * Consumed by table components (e.g. `Inventory.js`, `PathwaysTable.js`, `SystemsTable.js`)
+ * to populate `activeFiltersConfig.filters` for PatternFly's `PrimaryToolbar`.
+ *
+ * @param {Record<string, any>} [localFilters={}] - Local component filter state.
+ * @param {Record<string, object>} [filterCategories={}] - Dictionary mapping filter keys to category configs.
+ * @returns {Array<{category: string, urlParam: string, chips: Array<{name: string, value: any}>}>} Array of chip descriptors.
+ */
+export const pruneFilters = (localFilters = {}, filterCategories = {}) => {
   const prunedFilters = Object.entries(localFilters);
-  return prunedFilters.length > 0
-    ? prunedFilters.reduce((arr, item) => {
-        if (filterCategories[item[0]]) {
-          const category = filterCategories[item[0]];
-          const chips = Array.isArray(item[1])
-            ? item[1].map((value) => {
-                if (
-                  item[0] === SYSTEM_FILTER_CATEGORIES.rhel_version.urlParam
-                ) {
-                  return {
-                    name: `RHEL ${value}`,
-                    value,
-                  };
-                } else {
-                  const selectedCategoryValue = category.values.find(
-                    (values) => values.value === String(value),
-                  );
-                  return selectedCategoryValue
-                    ? {
-                        name:
-                          selectedCategoryValue.text ||
-                          selectedCategoryValue.label,
-                        value,
-                      }
-                    : { name: value, value };
-                }
-              })
-            : [
-                {
-                  name:
-                    category.values?.find(
-                      (values) => values.value === String(item[1]),
-                    )?.label ?? String(item[1]),
-                  value: item[1],
-                },
-              ];
-          return [
-            ...arr,
-            {
-              category: capitalize(category.title),
-              chips,
-              urlParam: category.urlParam,
-            },
-          ];
-        } else if (item[0] === 'text') {
-          return [
-            ...arr,
-            {
-              category: 'Name',
-              chips: [{ name: item[1], value: item[1] }],
-              urlParam: item[0],
-            },
-          ];
-        } else {
-          return arr;
-        }
-      }, [])
-    : [];
+  return prunedFilters.flatMap(([key, value]) => {
+    if (filterCategories[key]) {
+      return [toCategoryChip(key, value, filterCategories[key])];
+    }
+    if (
+      SEARCH_KEYS.has(key) &&
+      typeof value === 'string' &&
+      value.trim().length > 0
+    ) {
+      return [toSearchChip(key, value)];
+    }
+    return [];
+  });
 };
 
 // builds workload query filter (Global tag filter)
