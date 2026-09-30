@@ -198,12 +198,13 @@ export const pruneFilters = (localFilters = {}, filterCategories = {}) => {
     if (filterCategories[key]) {
       return [toCategoryChip(key, value, filterCategories[key])];
     }
+    const valString = Array.isArray(value) ? value.join(',') : value;
     if (
       SEARCH_KEYS.has(key) &&
-      typeof value === 'string' &&
-      value.trim().length > 0
+      typeof valString === 'string' &&
+      valString.trim().length > 0
     ) {
-      return [toSearchChip(key, value)];
+      return [toSearchChip(key, valString)];
     }
     return [];
   });

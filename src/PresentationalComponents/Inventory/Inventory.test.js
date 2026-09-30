@@ -871,6 +871,10 @@ describe('Inventory - Playbook Count Scenarios', () => {
 
         // Discrepancy 2 verification: urlBuilder must be called to purge the param
         expect(urlBuilderSpy).toHaveBeenCalled();
+        expect(urlBuilderSpy).toHaveBeenCalledWith(
+          expect.objectContaining({ offset: 0 }),
+          expect.anything(),
+        );
       });
 
       it('fetches systems without name parameter when search filter is cleared', async () => {
