@@ -35,9 +35,37 @@ LOCAL_APPS=inventory:8003~http npm run start:proxy
 ```
 
 ## IOP mode
-To run Advisor in IOP mode, follow the [IOP mode instructions](https://github.com/RedHatInsights/frontend-development-proxy#iop-mode) in the frontend-development-proxy repository.
 
-You can start the local IOP proxy with `npm run start:proxy:iop` (requires `IOP_URL` to be set).
+IOP (Insights on Premises) mode develops Advisor for deployment on Satellite/Foreman. Use this to test against a real Satellite instance locally.
+
+**Prerequisites:**
+
+Ensure your `/etc/hosts` includes:
+```
+127.0.0.1 iop.foo.redhat.com
+::1 iop.foo.redhat.com
+```
+
+**Start the dev server:**
+
+```bash
+IOP_URL=https://your-satellite-instance.example.com npm run start:proxy:iop
+```
+
+This command:
+1. Creates a symlink at `dist/assets/apps -> ../apps` (enables correct asset serving)
+2. Starts Caddy reverse proxy on `https://iop.foo.redhat.com:1337`
+3. Routes requests to your local webpack dev server
+4. Serves built files with hot reload support
+
+**Access the app:**
+- Open `https://iop.foo.redhat.com:1337` — you'll be redirected to login
+- Caddy automatically trusts self-signed certificates (for development only)
+
+**Troubleshooting:**
+- Seeing old code? Hard refresh: `Cmd+Shift+R`
+- Getting 404s? Restart dev server: `Ctrl+C` then `npm run start:proxy:iop`
+- Build not updating? Verify webpack is running (look for `[BUILD]` in logs)
 
 ## Testing
 Travis is used to test the build for this code.
