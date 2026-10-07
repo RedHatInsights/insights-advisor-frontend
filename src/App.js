@@ -72,6 +72,14 @@ const App = () => {
   );
 };
 
+/**
+ * RBAC v1 branch of the permission split. Builds the environment context from
+ * {@link useHccEnvironmentContext} (Chrome `getUserPermissions`) and provides it
+ * to {@link App} via {@link EnvironmentContext}. Rendered when the
+ * `advisor.kessel_enabled` feature flag is off.
+ *
+ *  @returns {React.ReactElement} `App` wrapped in an RBAC v1 environment context.
+ */
 const AppWithRbacV1Context = () => {
   const envContext = useHccEnvironmentContext();
   return (
@@ -81,6 +89,14 @@ const AppWithRbacV1Context = () => {
   );
 };
 
+/**
+ * Kessel branch of the permission split. Builds the environment context from
+ * {@link useKesselEnvironmentContext} (Kessel self-access check) and provides it
+ * to {@link App} via {@link EnvironmentContext}. Rendered when the
+ * `advisor.kessel_enabled` feature flag is on.
+ *
+ *  @returns {React.ReactElement} `App` wrapped in a Kessel environment context.
+ */
 const AppWithKesselContext = () => {
   const envContext = useKesselEnvironmentContext();
   return (
@@ -90,6 +106,14 @@ const AppWithKesselContext = () => {
   );
 };
 
+/**
+ * Chooses the permission backend once Unleash flags are ready. Waits for
+ * `flagsReady` (showing a spinner meanwhile) to avoid a race where RBAC v1 is
+ * called during flag loading, then renders {@link AppWithKesselContext} when
+ * `advisor.kessel_enabled` is on or {@link AppWithRbacV1Context} when it is off.
+ *
+ *  @returns {React.ReactElement} Loading spinner, or the flag-selected context wrapper.
+ */
 const AppWithContextProviders = () => {
   const { flagsReady } = useFlagsStatus();
   const isKesselEnabled = useFeatureFlag('advisor.kessel_enabled');
@@ -105,6 +129,15 @@ const AppWithContextProviders = () => {
   return isKesselEnabled ? <AppWithKesselContext /> : <AppWithRbacV1Context />;
 };
 
+/**
+ * Standalone (HCC) application root and default export. Mounts the Kessel
+ * `AccessCheck.Provider` (base URL `window.location.origin`, API path
+ * {@link KESSEL_API_BASE_URL}) so the Kessel client is available regardless of
+ * flag state, then delegates the RBAC v1 / Kessel choice to
+ * {@link AppWithContextProviders}.
+ *
+ *  @returns {React.ReactElement} The fully wrapped Advisor application.
+ */
 const AppWithHccContext = () => {
   return (
     <AccessCheck.Provider
