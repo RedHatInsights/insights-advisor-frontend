@@ -2,6 +2,17 @@
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/RedhatInsights/insights-advisor-frontend/test.yml?branch=master)](https://github.com/github/RedHatInsights/insights-advisor-frontend//actions/workflows/test.yml) [![codecov](https://codecov.io/github/RedHatInsights/insights-advisor-frontend/branch/master/graph/badge.svg?token=g9fj8a4SW9)](https://codecov.io/github/RedHatInsights/insights-advisor-frontend)
 
+## Documentation
+
+Additional documentation lives in the [`docs/`](docs/) directory:
+
+- [Testing Guide](docs/TESTING.md) - Testing patterns, principles, and pitfalls
+- [Kessel Permissions](docs/kessel-permissions.md) - RBAC v1 vs Kessel migration guide
+- [RBAC v1 Kessel Analysis](docs/rbac-v1-kessel-analysis.md) - Detailed RBAC v1 to Kessel analysis
+- [IOP Integration](docs/IOP-INTEGRATION.md) - Insights Orchestration Platform integration
+- [OS Filter Integration](docs/os-filter-integration.md) - Operating system filter integration
+- [Remediation Button Details](docs/remediation-button-details.md) - Remediation button implementation flows
+
 ## First time setup
 1. Make sure you have [Node.js](https://nodejs.org/en/) version >= 18 installed
 2. Run [script to patch your `/etc/hosts`](https://github.com/RedHatInsights/insights-proxy/blob/master/scripts/patch-etc-hosts.sh)
@@ -141,21 +152,30 @@ Clone the required repositories:
 3. **Access the app** at https://stage.foo.redhat.com:1337/insights/advisor
 
 ## Testing
-Travis is used to test the build for this code.
-- `npm run test` will run tests.
-- `npm run lint` will run all linters.
+[GitHub Actions](https://github.com/RedHatInsights/insights-advisor-frontend/actions) is used to test the build for this code. The [`Test runner` workflow](.github/workflows/test.yml) runs on every push and pull request to `master`, running the linters, commitlint, `npm run ci:verify` (Jest and Cypress tests), and the production build.
+
+Locally, run the Jest unit tests with `npm run test` and the Cypress component tests with `npm run test:ct`.
+
+- `npm run test` - run Jest unit tests.
+- `npm run test:jest` - run Jest unit tests in verbose mode (UTC timezone).
+- `npm run test:local` - run Jest unit tests without collecting coverage (faster).
+- `npm run test:coverage` - run tests and generate a coverage report.
+- `npm run test:ct` - run Cypress component tests (headless).
+- `npm run test:openct` - open the Cypress component test runner (interactive).
+- `npm run lint` - run all linters (JS + SASS).
 
 Before opening a pull request, you can run `npm run verify:local` to make sure your changes pass automated tests (Jest and Cypress) and linter (both JS and CSS linters).
 
 ## Deploying
-The app uses containerized builds which are configured in [`app-interface`](https://gitlab.cee.redhat.com/service/app-interface/-/blob/master/data/services/insights/advisor/deploy.yml).
+Deployments are driven by the `advisor-frontend` resource template in [`app-interface`](https://gitlab.cee.redhat.com/service/app-interface/-/blob/master/data/services/insights/advisor/deploy.yml).
 
-| Push to branch in this repo  | Updated branch in build repo  | Environment       | Available at
-| :--------------------------- | :---------------------------- | :---------------- | :-----------
-| master                       | stage-beta                    | stage beta        | master branch
-| master-stable                | stage-stable                  | stage stable      | master branch
-| prod-beta                    | prod-beta                     | production beta   | up to the commit configured in `app-interface`
-| prod-stable                  | prod-stable                   | production stable | up to the commit configured in `app-interface`
+- **Stage**: The stage targets track the `master` branch, so every commit merged to `master` in this repo is automatically built and deployed to the stage environment.
+- **Production**: The production targets are pinned to a specific commit (`ref`) in `deploy.yml`. To release to production, open a merge request in `app-interface` that updates the production `ref` to the desired commit SHA from this repo.
+
+| Environment | Deployed commit                             | How it updates                                   |
+| :---------- | :------------------------------------------ | :----------------------------------------------- |
+| stage       | latest commit on `master`                   | automatically on every merge to `master`         |
+| production  | the commit `ref` configured in `deploy.yml` | manually, via a merge request to `app-interface` |
 
 ## Internationalization
 

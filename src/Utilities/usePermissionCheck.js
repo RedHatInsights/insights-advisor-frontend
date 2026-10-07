@@ -4,6 +4,15 @@ import { PERMISSIONS, KESSEL_RELATIONS } from '../AppConstants';
 import { useRbac } from './Hooks';
 import { useDefaultWorkspace } from './useDefaultWorkspace';
 
+/**
+ * RBAC v1 permission check for Advisor recommendations.
+ * Reads the user's `advisor` permissions from Chrome and derives the
+ * export / disable-recommendation / view-recommendations capability flags.
+ * Used when the Kessel migration flag is off.
+ *
+ *  @returns {[boolean, boolean, boolean, boolean]} Tuple of
+ *    `[canExport, canDisableRec, canViewRecs, isLoading]`.
+ */
 export const useRbacV1Permissions = () => {
   const [[canExport, canDisableRec, canViewRecs], isLoading] = useRbac([
     PERMISSIONS.export,
@@ -14,6 +23,17 @@ export const useRbacV1Permissions = () => {
   return [canExport, canDisableRec, canViewRecs, isLoading];
 };
 
+/**
+ * Kessel permission check for Advisor recommendations.
+ * Resolves the default workspace, then runs a single bulk self-access check for the
+ * export / disable-recommendation / view-recommendations relations against that
+ * workspace (reporter `rbac`). Used when the Kessel migration flag is on.
+ * Returns all-false while the workspace resolves, and all-false if the workspace
+ * cannot be resolved or the check errors.
+ *
+ *  @returns {[boolean, boolean, boolean, boolean]} Tuple of
+ *    `[canExport, canDisableRec, canViewRecs, isLoading]`.
+ */
 export const useKesselPermissions = () => {
   const { workspaceId, isLoading: workspaceLoading } = useDefaultWorkspace();
 

@@ -9,9 +9,33 @@ Advisor supports two permission systems controlled by the `advisor.kessel_enable
 
 ## Feature Flag
 
-**Flag name**: `advisor.kessel_enabled`  
-**Managed by**: Unleash  
+**Flag name**: `advisor.kessel_enabled`
+**Managed by**: Unleash
 **Default**: `false` (uses RBAC v1)
+
+## Provider Hierarchy
+
+The standalone (HCC) entry point in `src/App.js` wraps the app in the Kessel
+access-check provider, waits for feature flags, then branches to the matching
+environment context:
+
+```
+AppWithHccContext                       (default export)
+└─ AccessCheck.Provider                 (baseUrl=window.location.origin,
+│                                        apiPath=KESSEL_API_BASE_URL)
+   └─ AppWithContextProviders           (waits for flagsReady, reads
+      │                                  useFeatureFlag('advisor.kessel_enabled'))
+      ├─ AppWithKesselContext           (flag on → useKesselEnvironmentContext)
+      │  └─ EnvironmentContext.Provider
+      │     └─ App
+      └─ AppWithRbacV1Context           (flag off → useHccEnvironmentContext)
+         └─ EnvironmentContext.Provider
+            └─ App
+```
+
+`AccessCheck.Provider` is always mounted so the Kessel client is available
+regardless of flag state; only the context hook that supplies permission flags
+differs between the two branches.
 
 ## Permission Hooks
 
@@ -28,6 +52,14 @@ const [[canExport, canDisableRec, canViewRecs], isLoading] = useRbac([
 ```
 
 **API Call**: `GET /api/rbac/v1/access/?application=advisor&limit=1000`
+
+**Wildcard handling**: `useRbac` compares each required permission against the
+user's granted permissions with `matchPermissions` (`src/Utilities/Hooks.js`).
+The two colon-delimited strings must have the same number of segments, and each
+segment matches when it is equal **or** either side is the wildcard `*`. So a
+granted `advisor:*:*` satisfies a required `advisor:exports:read`, and a granted
+`advisor:exports:*` satisfies `advisor:exports:read`. Kessel relations are exact
+strings and have no wildcard semantics.
 
 ### Kessel (New)
 
@@ -68,6 +100,46 @@ const envContext = useKesselEnvironmentContext();
 
 **Returns**: Identical interface to `useHccEnvironmentContext`, but permissions come from Kessel
 
+## Permission Constants
+
+Defined in `src/AppConstants.js`. RBAC v1 uses `PERMISSIONS` (colon-delimited
+`application:resource:operation`); Kessel uses the matching `KESSEL_RELATIONS`.
+
+| Capability | `PERMISSIONS` (RBAC v1) | `KESSEL_RELATIONS` (Kessel) |
+|------------|-------------------------|-----------------------------|
+| Export | `advisor:exports:read` | `advisor_exports_view` |
+| Disable recommendation | `advisor:disable-recommendations:write` | `advisor_disable_recommendations_edit` |
+| View recommendations | `advisor:recommendation-results:read` | `advisor_recommendation_results_view_assigned` |
+
+**Kessel API base path**: `KESSEL_API_BASE_URL = '/api/kessel/v1beta2'` (passed as
+`apiPath` to `AccessCheck.Provider`).
+
+**Schema source of truth**: The `KESSEL_RELATIONS` values mirror the `v2_perm`
+entries in Advisor's Kessel schema, which maps each v1 permission to its v2
+relation:
+[`configs/prod/schemas/src/advisor.ksl`](https://github.com/RedHatInsights/rbac-config/blob/master/configs/prod/schemas/src/advisor.ksl)
+in `RedHatInsights/rbac-config`. Keep this table in sync with that file when
+relations change.
+
+## API Endpoints
+
+| Purpose | Method & path |
+|---------|---------------|
+| RBAC v1 access list | `GET /api/rbac/v1/access/?application=advisor&limit=1000` |
+| Default workspace (Kessel resource id) | `GET /api/rbac/v2/workspaces/?type=default&with_ancestry=true` |
+| Kessel bulk self-access check | `POST /api/kessel/v1beta2/checkselfbulk` |
+
+- RBAC v1 is reached through Chrome's `getUserPermissions('advisor')`
+  (`useRbac` in `src/Utilities/Hooks.js`).
+- `useDefaultWorkspace` (`src/Utilities/useDefaultWorkspace.js`) calls
+  `fetchDefaultWorkspace` from `@project-kessel/react-kessel-access-check` to
+  resolve the workspace id used as the Kessel resource id. The result is cached
+  at module scope so it is fetched once per page load.
+- `useKesselPermissions` (`src/Utilities/usePermissionCheck.js`) runs a single
+  bulk `useSelfAccessCheck` for all three relations against that workspace
+  (`resourceType: 'workspace'`, `reporter: { type: 'rbac' }`). Requests are sent
+  under the `KESSEL_API_BASE_URL` configured on `AccessCheck.Provider`.
+
 ## Components with Feature Flag Support
 
 ### App.js (Main Application)
@@ -78,7 +150,11 @@ const AppWithContextProviders = () => {
   const isKesselEnabled = useFeatureFlag('advisor.kessel_enabled');
 
   if (!flagsReady) {
-    return null;
+    return (
+      <Bullseye>
+        <Spinner size="xl" />
+      </Bullseye>
+    );
   }
 
   return isKesselEnabled ? <AppWithKesselContext /> : <AppWithRbacV1Context />;
