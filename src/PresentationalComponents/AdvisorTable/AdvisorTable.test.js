@@ -6,117 +6,68 @@ import {
   sortSerialiser,
   filtersSerialiser,
 } from '../../Utilities/tableSerializers';
+import { useFeatureFlag } from '../../Utilities/Hooks';
 
 // Mock bastilian-tabletools to avoid PatternFly/JSDOM CSS issues
 jest.mock('bastilian-tabletools', () => ({
-  TableToolsTable: jest.fn(() => <div data-testid="table-tools-table" />),
+  BaseTableToolsTable: jest.fn(() => (
+    <div data-testid="base-table-tools-table" />
+  )),
+}));
+
+jest.mock('../../Utilities/Hooks', () => ({
+  ...jest.requireActual('../../Utilities/Hooks'),
+  useFeatureFlag: jest.fn(() => false),
 }));
 
 describe('AdvisorTable', () => {
-  const { TableToolsTable } = require('bastilian-tabletools');
+  const { BaseTableToolsTable } = require('bastilian-tabletools');
 
   beforeEach(() => {
     jest.clearAllMocks();
+    useFeatureFlag.mockReturnValue(false);
   });
 
-  it('passes serializers to TableToolsTable', () => {
+  it('passes props and advisor defaults to BaseTableToolsTable', () => {
+    const props = {
+      items: [{ id: 1 }],
+      columns: [{ title: 'Test' }],
+      total: 1,
+      loading: false,
+    };
+    render(<AdvisorTable {...props} />);
+
+    expect(BaseTableToolsTable).toHaveBeenCalledWith(
+      expect.objectContaining({
+        props: expect.objectContaining(props),
+        defaults: expect.objectContaining({
+          options: expect.objectContaining({
+            debug: false,
+            variant: 'compact',
+            isStickyHeader: true,
+            perPage: 20,
+            serialisers: {
+              pagination: paginationSerialiser,
+              sort: sortSerialiser,
+              filters: filtersSerialiser,
+            },
+          }),
+        }),
+      }),
+      expect.anything(),
+    );
+  });
+
+  it('enables debug option when advisor.debug feature flag is active', () => {
+    useFeatureFlag.mockReturnValue(true);
     render(<AdvisorTable items={[]} columns={[]} total={0} />);
 
-    expect(TableToolsTable).toHaveBeenCalledWith(
+    expect(BaseTableToolsTable).toHaveBeenCalledWith(
       expect.objectContaining({
-        items: [],
-        columns: [],
-        total: 0,
-        options: expect.objectContaining({
-          serialisers: {
-            pagination: paginationSerialiser,
-            sort: sortSerialiser,
-            filters: filtersSerialiser,
-          },
-        }),
-      }),
-      expect.anything(),
-    );
-  });
-
-  it('merges custom options with serializers', () => {
-    const customOptions = {
-      pagination: true,
-      exportable: { columns: [] },
-    };
-
-    render(
-      <AdvisorTable
-        items={[]}
-        columns={[]}
-        total={0}
-        options={customOptions}
-      />,
-    );
-
-    expect(TableToolsTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        options: expect.objectContaining({
-          pagination: true,
-          exportable: { columns: [] },
-          serialisers: {
-            pagination: paginationSerialiser,
-            sort: sortSerialiser,
-            filters: filtersSerialiser,
-          },
-        }),
-      }),
-      expect.anything(),
-    );
-  });
-
-  it('passes through all other props', () => {
-    render(
-      <AdvisorTable
-        items={[{ id: 1 }]}
-        columns={[{ title: 'Test' }]}
-        total={1}
-        loading={false}
-        filters={{ filterConfig: [] }}
-      />,
-    );
-
-    expect(TableToolsTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        items: [{ id: 1 }],
-        columns: [{ title: 'Test' }],
-        total: 1,
-        loading: false,
-        filters: { filterConfig: [] },
-      }),
-      expect.anything(),
-    );
-  });
-
-  it('deep merges custom serializers without wiping defaults', () => {
-    const customPaginationSerializer = jest.fn();
-
-    render(
-      <AdvisorTable
-        items={[]}
-        columns={[]}
-        total={0}
-        options={{
-          serialisers: {
-            pagination: customPaginationSerializer,
-          },
-        }}
-      />,
-    );
-
-    expect(TableToolsTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        options: expect.objectContaining({
-          serialisers: {
-            pagination: customPaginationSerializer,
-            sort: sortSerialiser,
-            filters: filtersSerialiser,
-          },
+        defaults: expect.objectContaining({
+          options: expect.objectContaining({
+            debug: true,
+          }),
         }),
       }),
       expect.anything(),
