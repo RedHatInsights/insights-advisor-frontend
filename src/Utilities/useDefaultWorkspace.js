@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { fetchDefaultWorkspace } from '@project-kessel/react-kessel-access-check';
 
 /**
- * Module-level cache of the in-flight/resolved default-workspace promise, so the
- * workspace is fetched only once and shared across all hook consumers.
+ * Module-level cache of the in-flight/resolved default-workspace promise, so a
+ * successful fetch runs once and is shared across all hook consumers. A rejected
+ * fetch clears this cache (see {@link resetDefaultWorkspaceCache}), so the next
+ * consumer starts a fresh fetch and retries.
  *
  *  @type {Promise<{ id: string }>|null}
  */
@@ -21,8 +23,9 @@ export const resetDefaultWorkspaceCache = () => {
 
 /**
  * Resolve the current user's default workspace id, used as the resource id for
- * Kessel self-access checks. The underlying fetch is memoized at module scope
- * (see {@link resetDefaultWorkspaceCache}) so it runs once per page load.
+ * Kessel self-access checks. A successful fetch is memoized at module scope so it
+ * runs once per page load and is shared across consumers; a failed fetch clears
+ * the cache (see {@link resetDefaultWorkspaceCache}) so a later consumer retries.
  *
  *  @returns {{ workspaceId: (string|null), isLoading: boolean, error: (Error|null) }}
  *    Workspace id (null until resolved or on failure), loading state, and any fetch error.

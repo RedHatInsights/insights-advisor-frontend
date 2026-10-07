@@ -20,7 +20,19 @@ export const useRbacV1Permissions = () => {
     PERMISSIONS.viewRecs,
   ]);
 
-  return [canExport, canDisableRec, canViewRecs, isLoading];
+  // While loading, useRbac yields empty arrays (which are truthy) for each
+  // permission. Coerce to booleans so callers never read an unresolved
+  // permission as granted, matching the documented boolean tuple.
+  if (isLoading) {
+    return [false, false, false, true];
+  }
+
+  return [
+    Boolean(canExport),
+    Boolean(canDisableRec),
+    Boolean(canViewRecs),
+    false,
+  ];
 };
 
 /**

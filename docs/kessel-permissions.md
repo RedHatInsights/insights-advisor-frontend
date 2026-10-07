@@ -133,8 +133,9 @@ relations change.
   (`useRbac` in `src/Utilities/Hooks.js`).
 - `useDefaultWorkspace` (`src/Utilities/useDefaultWorkspace.js`) calls
   `fetchDefaultWorkspace` from `@project-kessel/react-kessel-access-check` to
-  resolve the workspace id used as the Kessel resource id. The result is cached
-  at module scope so it is fetched once per page load.
+  resolve the workspace id used as the Kessel resource id. A successful result is
+  cached at module scope so it is fetched once per page load and shared across
+  consumers; a failed fetch clears the cache, so the next consumer retries.
 - `useKesselPermissions` (`src/Utilities/usePermissionCheck.js`) runs a single
   bulk `useSelfAccessCheck` for all three relations against that workspace
   (`resourceType: 'workspace'`, `reporter: { type: 'rbac' }`). Requests are sent
