@@ -1,6 +1,6 @@
 import './_Details.scss';
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, lazy, Suspense } from 'react';
 import {
   Content,
   ContentVariants,
@@ -11,7 +11,6 @@ import { Label } from '@patternfly/react-core/dist/esm/components/Label/Label';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import { PageHeader } from '@redhat-cloud-services/frontend-components/PageHeader';
-import RulesTable from '../../PresentationalComponents/RulesTable/RulesTable';
 import StarIcon from '@patternfly/react-icons/dist/esm/icons/star-icon';
 
 import TimesCircleIcon from '@patternfly/react-icons/dist/esm/icons/times-circle-icon';
@@ -20,7 +19,7 @@ import { Truncate } from '@redhat-cloud-services/frontend-components/Truncate';
 import messages from '../../Messages';
 import { updateRecFilters } from '../../Services/Filters';
 import { useDispatch } from 'react-redux';
-import { useFetchTopic } from '../../Services/apiClient';
+import { useTopicQuery } from '../../Services/apiClient';
 import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -28,6 +27,20 @@ import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tabl
 import { getDefaultImpactingFilter } from '../../PresentationalComponents/RulesTable/helpers';
 import { AccountStatContext } from '../../ZeroStateWrapper';
 import { EnvironmentContext } from '../../App';
+import { useFeatureFlag } from '../../Utilities/Hooks';
+
+const RulesTable = lazy(
+  () =>
+    import(
+      /* webpackChunkName: 'RulesTable' */ '../../PresentationalComponents/RulesTable/RulesTable'
+    ),
+);
+const RulesTableNew = lazy(
+  () =>
+    import(
+      /* webpackChunkName: 'RulesTableNew' */ '../../PresentationalComponents/RulesTable/RulesTable.new'
+    ),
+);
 
 const Details = () => {
   const intl = useIntl();
@@ -40,46 +53,37 @@ const Details = () => {
   let options = selectedTags?.length && { tags: selectedTags };
   workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
   const hasEdgeDevices = useContext(AccountStatContext);
-  const fetchTopic = useFetchTopic();
+  const useNewRulesTable = useFeatureFlag('advisor-tabletools-migration');
 
-  const [topic, setTopic] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [isFetching, setIsFetching] = useState(false);
-  const [isError, setIsError] = useState(false);
-
-  useEffect(() => {
-    const loadTopic = async () => {
-      setIsFetching(true);
-      try {
-        const data = await fetchTopic(topicId, options);
-        setTopic(data);
-        setIsError(false);
-      } catch (error) {
-        setIsError(error);
-      } finally {
-        setIsLoading(false);
-        setIsFetching(false);
-      }
-    };
-    loadTopic();
-  }, [fetchTopic, topicId, JSON.stringify(options)]);
+  const {
+    data: topic = {},
+    isLoading,
+    isFetching,
+    isError,
+  } = useTopicQuery(topicId, options);
 
   useEffect(() => {
     const initiaRecFilters = { ...recFilters };
-    dispatch(
-      updateRecFilters({
-        topic: topicId,
-        ...getDefaultImpactingFilter(hasEdgeDevices),
-        rule_status: 'enabled',
-        sort: `-total_risk`,
-        limit: 10,
-        offset: 0,
-      }),
-    );
+    if (!useNewRulesTable) {
+      dispatch(
+        updateRecFilters({
+          topic: topicId,
+          ...getDefaultImpactingFilter(hasEdgeDevices),
+          rule_status: 'enabled',
+          sort: `-total_risk`,
+          limit: 10,
+          offset: 0,
+        }),
+      );
+    }
 
-    return () => dispatch(updateRecFilters(initiaRecFilters));
+    return () => {
+      if (!useNewRulesTable) {
+        dispatch(updateRecFilters(initiaRecFilters));
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [useNewRulesTable]);
 
   useEffect(() => {
     if (topic && topic.name) {
@@ -127,7 +131,13 @@ const Details = () => {
               <Title headingLevel="h3" size="2xl" className="pf-v6-u-mb-lg">
                 {intl.formatMessage(messages.recommendations)}
               </Title>
-              <RulesTable />
+              <Suspense fallback={<Loading />}>
+                {useNewRulesTable ? (
+                  <RulesTableNew topic={topicId} isTabActive={true} />
+                ) : (
+                  <RulesTable />
+                )}
+              </Suspense>
             </React.Fragment>
           ) : (
             <MessageState

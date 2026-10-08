@@ -11,6 +11,7 @@ import { hasChip, itExportsDataToFile } from '../../../cypress/utils/table';
 import { createTestEnvironmentContext } from '../../../cypress/support/globals';
 import messages from '../../../locales/translations.json';
 import FlagProvider from '@unleash/proxy-client-react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const DEFAULT_API_BASE_PATH = '/api/insights/v1';
 
@@ -63,28 +64,38 @@ const mountComponent = (hasEdgeDevices, envContextOverrides = {}) => {
     },
   ).as('rules_table_initial_call');
 
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
   cy.mount(
-    <FlagProvider
-      config={{
-        url: 'http://localhost:8002/feature_flags',
-        clientKey: 'abc',
-        appName: 'abc',
-      }}
-    >
-      <EnvironmentContext.Provider value={finalEnvContext}>
-        <MemoryRouter initialEntries={['/topics/123']}>
-          <AccountStatContext.Provider value={{ hasEdgeDevices }}>
-            <IntlProvider messages={messages} defaultLocale="en" locale="en">
-              <Provider store={initStore()}>
-                <Routes>
-                  <Route path="topics/:id" element={<Details />}></Route>
-                </Routes>
-              </Provider>
-            </IntlProvider>
-          </AccountStatContext.Provider>
-        </MemoryRouter>
-      </EnvironmentContext.Provider>
-    </FlagProvider>,
+    <QueryClientProvider client={queryClient}>
+      <FlagProvider
+        config={{
+          url: 'http://localhost:8002/feature_flags',
+          clientKey: 'abc',
+          appName: 'abc',
+        }}
+      >
+        <EnvironmentContext.Provider value={finalEnvContext}>
+          <MemoryRouter initialEntries={['/topics/123']}>
+            <AccountStatContext.Provider value={{ hasEdgeDevices }}>
+              <IntlProvider messages={messages} defaultLocale="en" locale="en">
+                <Provider store={initStore()}>
+                  <Routes>
+                    <Route path="topics/:id" element={<Details />}></Route>
+                  </Routes>
+                </Provider>
+              </IntlProvider>
+            </AccountStatContext.Provider>
+          </MemoryRouter>
+        </EnvironmentContext.Provider>
+      </FlagProvider>
+    </QueryClientProvider>,
   );
 };
 

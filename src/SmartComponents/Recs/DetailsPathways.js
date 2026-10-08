@@ -26,7 +26,7 @@ import { Timestamp } from '@patternfly/react-core';
 import Loading from '../../PresentationalComponents/Loading/Loading';
 import RuleLabels from '../../PresentationalComponents/Labels/RuleLabels';
 import messages from '../../Messages';
-import { useGetPathwayQuery } from '../../Services/Pathways';
+import { usePathwayQuery } from '../../Services/apiClient';
 import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
@@ -35,11 +35,18 @@ import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 import { systemsCheck } from './helpers';
 import { EnvironmentContext } from '../../App';
 import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
+import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const RulesTable = lazy(
   () =>
     import(
       /* webpackChunkName: 'RulesTable' */ '../../PresentationalComponents/RulesTable/RulesTable'
+    ),
+);
+const RulesTableNew = lazy(
+  () =>
+    import(
+      /* webpackChunkName: 'RulesTableNew' */ '../../PresentationalComponents/RulesTable/RulesTable.new'
     ),
 );
 
@@ -53,6 +60,7 @@ const PathwayDetails = () => {
   const workloads = useSelector(({ filters }) => filters.workloads);
   const recFilters = useSelector(({ filters }) => filters.recState);
   const sysFilters = useSelector(({ filters }) => filters.sysState);
+  const useNewRulesTable = useFeatureFlag('advisor-tabletools-migration');
 
   const [conventionalSystemsCount, setConventionalSystemsCount] = useState(0);
   const [areCountsLoading, setCountsLoading] = useState(true);
@@ -64,10 +72,10 @@ const PathwayDetails = () => {
       ...{ tags: selectedTags.join(',') },
     });
   workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
-  const { data: pathway = {}, isFetching } = useGetPathwayQuery({
-    ...options,
-    slug: pathwayName,
-  });
+  const { data: pathway = {}, isFetching } = usePathwayQuery(
+    pathwayName,
+    options,
+  );
   const { pathname } = useLocation();
 
   const [activeTab, setActiveTab] = useState(
@@ -112,13 +120,15 @@ const PathwayDetails = () => {
     const initiaRecFilters = { ...recFilters };
     const initiaSysFilters = { ...sysFilters };
     const defaultFilters = { pathway: pathwayName, limit: 20, offset: 0 };
-    dispatch(
-      updateRecFilters({
-        ...defaultFilters,
-        sort: 'category',
-        impacting: true,
-      }),
-    );
+    if (!useNewRulesTable) {
+      dispatch(
+        updateRecFilters({
+          ...defaultFilters,
+          sort: 'category',
+          impacting: true,
+        }),
+      );
+    }
     dispatch(
       updateSysFilters({
         ...defaultFilters,
@@ -126,11 +136,13 @@ const PathwayDetails = () => {
     );
     scrollDown();
     return () => {
-      dispatch(updateRecFilters(initiaRecFilters));
+      if (!useNewRulesTable) {
+        dispatch(updateRecFilters(initiaRecFilters));
+      }
       dispatch(updateSysFilters(initiaSysFilters));
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [useNewRulesTable]);
 
   useEffect(() => {
     if (
@@ -214,7 +226,14 @@ const PathwayDetails = () => {
               <Loading />
             ) : (
               <Suspense fallback={<Loading />}>
-                <RulesTable pathway={pathwayName} />
+                {useNewRulesTable ? (
+                  <RulesTableNew
+                    pathway={pathwayName}
+                    isTabActive={activeTab === 0}
+                  />
+                ) : (
+                  <RulesTable pathway={pathwayName} />
+                )}
               </Suspense>
             )}
           </Tab>
