@@ -3,11 +3,13 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/RedhatInsights/insights-advisor-frontend/test.yml?branch=master)](https://github.com/github/RedHatInsights/insights-advisor-frontend//actions/workflows/test.yml) [![codecov](https://codecov.io/github/RedHatInsights/insights-advisor-frontend/branch/master/graph/badge.svg?token=g9fj8a4SW9)](https://codecov.io/github/RedHatInsights/insights-advisor-frontend)
 
 ## First time setup
+
 1. Make sure you have [Node.js](https://nodejs.org/en/) version >= 18 installed
 2. Run [script to patch your `/etc/hosts`](https://github.com/RedHatInsights/insights-proxy/blob/master/scripts/patch-etc-hosts.sh)
 3. Make sure you are using [Red Hat proxy](http://hdn.corp.redhat.com/proxy.pac)
 
 ## Running locally
+
 1. Install dependencies with `npm install`
 2. Run development server with `npm run start:proxy`
 3. Local version of the app will be available at https://stage.foo.redhat.com:1337/insights/advisor/
@@ -35,42 +37,83 @@ LOCAL_APPS=inventory:8003~http npm run start:proxy
 ```
 
 ## IOP mode
-To run Advisor in IOP mode, follow the [IOP mode instructions](https://github.com/RedHatInsights/frontend-development-proxy#iop-mode) in the frontend-development-proxy repository.
 
-You can start the local IOP proxy with `npm run start:proxy:iop` (requires `IOP_URL` to be set).
+IOP (Insights on Premises) mode develops Advisor for deployment on Satellite/Foreman. Use this to test against a real Satellite instance locally.
+
+**Prerequisites:**
+
+Ensure your `/etc/hosts` includes:
+
+```
+127.0.0.1 iop.foo.redhat.com
+::1 iop.foo.redhat.com
+```
+
+**Start the dev server:**
+
+```bash
+IOP_URL=https://your-satellite-instance.example.com npm run start:proxy:iop
+```
+
+This command:
+
+1. Creates a symlink at `dist/assets/apps -> ../apps` (enables correct asset serving)
+2. Starts Caddy reverse proxy on `https://iop.foo.redhat.com:1337`
+3. Routes requests to your local webpack dev server
+4. Serves built files with hot reload support
+
+**Access the app:**
+
+- Open `https://iop.foo.redhat.com:1337` — you'll be redirected to login
+- Caddy automatically trusts self-signed certificates (for development only)
+
+**Troubleshooting:**
+
+- Seeing old code? Hard refresh: `Cmd+Shift+R`
+- Getting 404s? Restart dev server: `Ctrl+C` then `npm run start:proxy:iop`
+- Build not updating? Verify webpack is running (look for `[BUILD]` in logs)
 
 ## Testing
+
 Travis is used to test the build for this code.
+
 - `npm run test` will run tests.
 - `npm run lint` will run all linters.
 
 Before opening a pull request, you can run `npm run verify:local` to make sure your changes pass automated tests (Jest and Cypress) and linter (both JS and CSS linters).
 
 ## Deploying
+
 The app uses containerized builds which are configured in [`app-interface`](https://gitlab.cee.redhat.com/service/app-interface/-/blob/master/data/services/insights/advisor/deploy.yml).
 
-| Push to branch in this repo  | Updated branch in build repo  | Environment       | Available at
-| :--------------------------- | :---------------------------- | :---------------- | :-----------
-| master                       | stage-beta                    | stage beta        | master branch
-| master-stable                | stage-stable                  | stage stable      | master branch
-| prod-beta                    | prod-beta                     | production beta   | up to the commit configured in `app-interface`
-| prod-stable                  | prod-stable                   | production stable | up to the commit configured in `app-interface`
+| Push to branch in this repo | Updated branch in build repo | Environment       | Available at                                   |
+| :-------------------------- | :--------------------------- | :---------------- | :--------------------------------------------- |
+| master                      | stage-beta                   | stage beta        | master branch                                  |
+| master-stable               | stage-stable                 | stage stable      | master branch                                  |
+| prod-beta                   | prod-beta                    | production beta   | up to the commit configured in `app-interface` |
+| prod-stable                 | prod-stable                  | production stable | up to the commit configured in `app-interface` |
 
 ## Internationalization
 
 ### Translation keys
+
 Translation keys are saved in [`messages.js`](https://github.com/RedHatInsights/insights-advisor-frontend/blob/master/src/Messages.js).
 
 ### Generating translation keys
+
 Each time you add a new translation keys you need to run `npm run translations`, which will automatically generate JSON files for every language into [`locales/`](https://github.com/RedHatInsights/insights-advisor-frontend/tree/master/locales) folder based on the entries in the [`messages.js`](https://github.com/RedHatInsights/insights-advisor-frontend/blob/master/src/Messages.js).
 
 ### Using translated strings
+
 There are two ways to use translated strings:
+
 1. With `intl.formatMessage(messages.messageId)`
 2. With `<FormattedMessage {...messages.messageId}/>`
 
 ## Design System
+
 This project uses [Patternfly React](https://github.com/patternfly/patternfly-react).
 
 ## Insights Components
+
 This app imports components from [Insights Front-end Components library](https://github.com/RedHatInsights/frontend-components). ESI tags are used to import [Insights Chrome](https://github.com/RedHatInsights/insights-chrome) which takes care of the header, sidebar, and footer.
