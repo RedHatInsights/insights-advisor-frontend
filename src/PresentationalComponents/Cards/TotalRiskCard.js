@@ -45,6 +45,21 @@ export const TotalRiskCard = (props) => {
     cats.length > 1
       ? categories.map((cat) => cat.name).join(', ')
       : cats[0]?.name;
+
+  const riskCounts = [
+    critical_risk_count,
+    high_risk_count,
+    medium_risk_count,
+    low_risk_count,
+  ].map((count) => Number(count) || 0);
+
+  const maxRisk = Math.max(...riskCounts);
+
+  const tickStep = Math.max(5, Math.ceil(maxRisk / 20) * 5);
+  const yAxisMax = tickStep * 4;
+
+  const yAxisTicks = Array.from({ length: 4 }, (_, i) => (i + 1) * tickStep);
+
   return (
     <Card
       isFlat
@@ -66,6 +81,7 @@ export const TotalRiskCard = (props) => {
                     constrainToVisibleArea
                   />
                 }
+                domain={{ y: [0, yAxisMax] }}
                 domainPadding={{
                   x: [20, 15],
                 }}
@@ -79,7 +95,7 @@ export const TotalRiskCard = (props) => {
                 }}
               >
                 <ChartAxis />
-                <ChartAxis dependentAxis showGrid />
+                <ChartAxis dependentAxis showGrid tickValues={yAxisTicks} />
                 <ChartGroup>
                   <ChartBar
                     barWidth={16}
