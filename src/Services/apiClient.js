@@ -2,6 +2,7 @@ import { APIFactory } from '@redhat-cloud-services/javascript-clients-shared';
 import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import * as insightsApi from '@redhat-cloud-services/insights-client';
 import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 /**
  * Helper to flatten nested params structure to match insights-client API
@@ -78,7 +79,7 @@ export const fetchPathways = async (axios, params = {}) => {
 export const fetchPathway = async (axios, slug, options = {}) => {
   const api = APIFactory(window.location.origin, insightsApi, { axios });
   const response = await api.pathwayRetrieve({ slug, ...options });
-  return response.data;
+  return response.data || response;
 };
 
 /**
@@ -111,7 +112,7 @@ export const fetchTopics = async (axios, options = {}) => {
 export const fetchTopic = async (axios, topicId, options = {}) => {
   const api = APIFactory(window.location.origin, insightsApi, { axios });
   const response = await api.topicRetrieve({ slug: topicId, ...options });
-  return response;
+  return response.data || response;
 };
 
 /**
@@ -154,4 +155,38 @@ export const useFetchTopic = () => {
     () => (topicId, options) => fetchTopic(axios, topicId, options),
     [axios],
   );
+};
+
+/**
+ * TanStack Query hook to fetch a single pathway by slug
+ * @param {string} slug - Pathway slug
+ * @param {object} options - Query parameters
+ * @param {object} queryOptions - TanStack useQuery options
+ * @returns {object} - useQuery result
+ */
+export const usePathwayQuery = (slug, options = {}, queryOptions = {}) => {
+  const fetchPathway = useFetchPathway();
+  return useQuery({
+    queryKey: ['pathway', slug, options],
+    queryFn: () => fetchPathway(slug, options),
+    enabled: Boolean(slug),
+    ...queryOptions,
+  });
+};
+
+/**
+ * TanStack Query hook to fetch a single topic by slug
+ * @param {string} topicId - Topic slug/ID
+ * @param {object} options - Query parameters
+ * @param {object} queryOptions - TanStack useQuery options
+ * @returns {object} - useQuery result
+ */
+export const useTopicQuery = (topicId, options = {}, queryOptions = {}) => {
+  const fetchTopic = useFetchTopic();
+  return useQuery({
+    queryKey: ['topic', topicId, options],
+    queryFn: () => fetchTopic(topicId, options),
+    enabled: Boolean(topicId),
+    ...queryOptions,
+  });
 };
