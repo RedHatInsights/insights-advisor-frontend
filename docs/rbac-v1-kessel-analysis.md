@@ -1,15 +1,28 @@
 # RBAC v1 Calls with Kessel Feature Flag Enabled - Analysis
 
-**Date**: 2026-04-29  
+**Date**: 2026-04-29
 **Issue**: Advisor app making RBAC v1 calls even when `advisor.kessel_enabled` feature flag is enabled
+
+---
+
+> **STATUS UPDATE**: The SystemDetail bug described below (Priority 1 / P0) has
+> been **RESOLVED**. `src/Modules/SystemDetail.js` now implements the recommended
+> flag-based pattern (`SystemDetailWithRbacV1` / `SystemDetailWithKessel`,
+> selected inside `SystemDetailWithContextProviders` after `flagsReady`, wrapped
+> in `AccessCheck.Provider`). See the current, correct documentation in
+> [kessel-permissions.md](./kessel-permissions.md). The InventoryTable /
+> IOPInventoryTable items remain open for verification. This document is retained
+> as the original root-cause analysis for historical context.
 
 ---
 
 ## Executive Summary
 
-The Advisor frontend has a **critical bug** where RBAC v1 calls can still be made even when the Kessel feature flag is enabled. The root cause is **inconsistent context provider usage** in the SystemDetail federated module.
+> **Historical** — the SystemDetail portion of this summary is now resolved (see status update above).
 
-**Severity**: HIGH - This bypasses Kessel permissions and uses legacy RBAC v1, potentially causing permission mismatches.
+The Advisor frontend had a **critical bug** where RBAC v1 calls could still be made even when the Kessel feature flag was enabled. The root cause was **inconsistent context provider usage** in the SystemDetail federated module.
+
+**Severity**: HIGH - This bypassed Kessel permissions and used legacy RBAC v1, potentially causing permission mismatches.
 
 ---
 
@@ -185,9 +198,9 @@ isKesselEnabled = useFeatureFlag('advisor.kessel_enabled')
 ```javascript
 export const useRbacV1Permissions = () => {
   const [[canExport, canDisableRec, canViewRecs], isLoading] = useRbac([
-    PERMISSIONS.export,        // 'advisor:*:export'
-    PERMISSIONS.disableRec,    // 'advisor:*:disable'
-    PERMISSIONS.viewRecs,      // 'advisor:*:read'
+    PERMISSIONS.export,        // 'advisor:exports:read'
+    PERMISSIONS.disableRec,    // 'advisor:disable-recommendations:write'
+    PERMISSIONS.viewRecs,      // 'advisor:recommendation-results:read'
   ]);
   return [canExport, canDisableRec, canViewRecs, isLoading];
 };
@@ -210,9 +223,9 @@ export const useKesselPermissions = () => {
   
   const params = getKesselAccessCheckParams({
     requiredPermissions: [
-      KESSEL_RELATIONS.export,      // 'advisor_export'
-      KESSEL_RELATIONS.disableRec,  // 'advisor_disable'
-      KESSEL_RELATIONS.viewRecs,    // 'advisor_view'
+      KESSEL_RELATIONS.export,      // 'advisor_exports_view'
+      KESSEL_RELATIONS.disableRec,  // 'advisor_disable_recommendations_edit'
+      KESSEL_RELATIONS.viewRecs,    // 'advisor_recommendation_results_view_assigned'
     ],
     resourceIdOrIds: workspaceId,
     options: {
@@ -462,7 +475,7 @@ This will help identify unexpected RBAC v1 calls in production.
 
 | Component | RBAC v1 Risk | Status | Priority |
 |-----------|--------------|--------|----------|
-| SystemDetail Module | ✅ CONFIRMED | Always uses RBAC v1 | P0 - CRITICAL |
+| SystemDetail Module | ✅ RESOLVED | Now flag-based (fixed) | P0 - DONE |
 | InventoryTable | ⚠️ LIKELY | Needs verification | P1 - HIGH |
 | IOPInventoryTable | ⚠️ POSSIBLE | Needs investigation | P2 - MEDIUM |
 | Main App Routes | ✅ CORRECT | Working as expected | - |

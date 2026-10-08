@@ -38,15 +38,30 @@ describe('usePermissionCheck', () => {
       expect(result.current).toEqual([true, false, true, false]);
     });
 
-    it('should handle loading state', () => {
+    it('should return all-false flags with isLoading true while loading', () => {
+      // Mirror the real useRbac, which yields a truthy empty array per
+      // permission while loading. The hook must short-circuit to all-false
+      // so these never leak out as granted.
       Hooks.useRbac.mockReturnValue([
-        [false, false, false],
+        [[], [], []],
         true, // isLoading
       ]);
 
       const { result } = renderHook(() => useRbacV1Permissions());
 
       expect(result.current).toEqual([false, false, false, true]);
+    });
+
+    it('should coerce truthy/falsy permission values to booleans once loaded', () => {
+      // Guard against non-boolean truthy/falsy values leaking out unchanged.
+      Hooks.useRbac.mockReturnValue([
+        [[{}], 0, 'yes'],
+        false, // isLoading
+      ]);
+
+      const { result } = renderHook(() => useRbacV1Permissions());
+
+      expect(result.current).toEqual([true, false, true, false]);
     });
 
     it('should call useRbac with correct permissions', () => {

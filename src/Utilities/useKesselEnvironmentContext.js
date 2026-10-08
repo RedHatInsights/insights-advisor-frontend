@@ -3,6 +3,16 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { BASE_URL } from '../AppConstants';
 import { useKesselPermissions } from './usePermissionCheck';
 
+/**
+ * Builds the Advisor environment context for the Kessel-enabled runtime.
+ * Derives the recommendation capability flags from {@link useKesselPermissions}
+ * and combines them with Chrome helpers, feature toggles, and API base URLs into
+ * a single memoized context object consumed by the shared Advisor components.
+ *
+ *  @returns {object} Environment context including `isLoading`, the permission
+ *    flags (`isExportEnabled`, `isDisableRecEnabled`, `isAllowedToViewRec`),
+ *    feature display toggles, Chrome helpers, and API URLs.
+ */
 export const useKesselEnvironmentContext = () => {
   const chrome = useChrome();
 
