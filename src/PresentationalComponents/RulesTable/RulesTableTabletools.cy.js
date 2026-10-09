@@ -21,6 +21,12 @@ import {
   removeAllFilterChipsPf6,
   selectConditionalFilterOption,
 } from '../../../cypress/utils/table';
+import {
+  waitForTableTools,
+  expandAllRows,
+  collapseAllRows,
+  RULES_TABLE_ROOT,
+} from '../../../cypress/utils/tabletools';
 
 import {
   checkPaginationTotal,
@@ -85,19 +91,6 @@ const mountComponent = (props = {}, envContextOverrides = {}) => {
   );
 };
 
-const expandAll = () => {
-  cy.get('thead th button[aria-label="Expand all rows"]').click();
-};
-
-const collapseAll = () => {
-  cy.get('thead th button[aria-label="Expand all rows"]').click();
-};
-
-const waitForTable = () => {
-  cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
-  cy.get(ROOT).should('exist');
-};
-
 const filtersConfNew = {
   ...filtersConf,
   status: {
@@ -119,7 +112,7 @@ const DEFAULT_FILTERS = {
   status: 'Enabled',
 };
 const TABLE_HEADERS = _.map(rulesTableColumnsNew, (it) => it.title);
-const ROOT = 'table[data-ouia-component-id=rules-table]';
+const ROOT = RULES_TABLE_ROOT;
 const CRITICAL_TOOLTIP_CONTENT =
   'The total risk of this remediation is critical, based on the combination of likelihood and impact to remediate.';
 const IMPORTANT_TOOLTIP_CONTENT =
@@ -130,7 +123,7 @@ describe('RulesTable (TableTools Implementation)', () => {
     beforeEach(() => {
       rulesTableApiInterceptor(fixtures);
       mountComponent();
-      waitForTable();
+      waitForTableTools();
     });
 
     it('renders toolbar and table with 6 data columns', () => {
@@ -171,7 +164,7 @@ describe('RulesTable (TableTools Implementation)', () => {
       hasChip('Name', 'test');
       cy.get('button').contains('Reset filters').should('exist');
       cy.get('button').contains('Reset filters').click();
-      waitForTable();
+      waitForTableTools();
       cy.get('button').contains('Reset filters').should('not.exist');
     });
   });
@@ -180,7 +173,7 @@ describe('RulesTable (TableTools Implementation)', () => {
     beforeEach(() => {
       rulesTableApiInterceptor(fixtures);
       mountComponent();
-      waitForTable();
+      waitForTableTools();
     });
 
     it('links recommendation name and systems count to detail page', () => {
@@ -197,7 +190,7 @@ describe('RulesTable (TableTools Implementation)', () => {
     beforeEach(() => {
       rulesTableApiInterceptor(fixtures);
       mountComponent();
-      waitForTable();
+      waitForTableTools();
     });
 
     it('shows expand all button in table header', () => {
@@ -205,25 +198,12 @@ describe('RulesTable (TableTools Implementation)', () => {
     });
 
     it('expands all rows via header chevron', () => {
-      expandAll();
-      checkRowCounts(DEFAULT_ROW_COUNT * 2);
-      cy.get('thead th button[aria-label="Expand all rows"]').should(
-        'have.attr',
-        'aria-expanded',
-        'true',
-      );
+      expandAllRows(DEFAULT_ROW_COUNT);
     });
 
     it('collapses all rows via header chevron', () => {
-      expandAll();
-      checkRowCounts(DEFAULT_ROW_COUNT * 2);
-      collapseAll();
-      checkRowCounts(DEFAULT_ROW_COUNT);
-      cy.get('thead th button[aria-label="Expand all rows"]').should(
-        'have.attr',
-        'aria-expanded',
-        'false',
-      );
+      expandAllRows(DEFAULT_ROW_COUNT);
+      collapseAllRows(DEFAULT_ROW_COUNT);
     });
 
     it('expands and collapses a single row showing RuleDetails content', () => {
@@ -253,7 +233,7 @@ describe('RulesTable (TableTools Implementation)', () => {
     beforeEach(() => {
       rulesTableApiInterceptor(fixtures);
       mountComponent();
-      waitForTable();
+      waitForTableTools();
     });
 
     it('clearing chips and clicking Reset filters restores default filters', () => {
@@ -262,7 +242,7 @@ describe('RulesTable (TableTools Implementation)', () => {
       checkPaginationTotal(fixtures.meta.count);
 
       cy.get('button').contains('Reset filters').click();
-      waitForTable();
+      waitForTableTools();
       hasChip('Systems impacted', '1 or more');
       hasChip('Status', 'Enabled');
       cy.get('.ins-c-chip-filters .pf-v6-c-label-group').should(
@@ -276,7 +256,7 @@ describe('RulesTable (TableTools Implementation)', () => {
 
       it(`applies ${selectorText} filter and issues API request with ${urlParam}`, () => {
         removeAllFilterChipsPf6();
-        waitForTable();
+        waitForTableTools();
 
         const testValue = values[0];
 
@@ -296,32 +276,32 @@ describe('RulesTable (TableTools Implementation)', () => {
     beforeEach(() => {
       rulesTableApiInterceptor(fixtures);
       mountComponent();
-      waitForTable();
+      waitForTableTools();
     });
 
     it('sorts by Name ascending and descending', () => {
       cy.get('th').contains('Name').click();
-      waitForTable();
+      waitForTableTools();
       cy.tableIsSortedBy('Name', 'ascending');
 
       cy.get('th').contains('Name').click();
-      waitForTable();
+      waitForTableTools();
       cy.tableIsSortedBy('Name', 'descending');
     });
 
     it('sorts by Systems count', () => {
       cy.get('th').contains('Systems').click();
-      waitForTable();
+      waitForTableTools();
       cy.tableIsSortedBy('Systems', 'ascending');
     });
 
     it('resets sort direction to ascending when clicking another column', () => {
       cy.get('th').contains('Total risk').click();
-      waitForTable();
+      waitForTableTools();
       cy.tableIsSortedBy('Total risk', 'ascending');
 
       cy.get('th').contains('Name').click();
-      waitForTable();
+      waitForTableTools();
       cy.tableIsSortedBy('Name', 'ascending');
       cy.get('th')
         .contains('Total risk')
@@ -334,7 +314,7 @@ describe('RulesTable (TableTools Implementation)', () => {
     beforeEach(() => {
       rulesTableApiInterceptor(fixtures);
       mountComponent();
-      waitForTable();
+      waitForTableTools();
     });
 
     it('shows Incident tooltip on hover', () => {
@@ -374,7 +354,7 @@ describe('RulesTable (TableTools Implementation)', () => {
     it('opens disable modal, inputs justification, submits, and triggers API', () => {
       mountComponent({}, { isDisableRecEnabled: true });
       cy.wait('@getDefaultRules');
-      waitForTable();
+      waitForTableTools();
 
       cy.clickOnRowKebab(
         'Reboot fails when there is no "kernelopts" option in the grubenv',
@@ -406,7 +386,7 @@ describe('RulesTable (TableTools Implementation)', () => {
     it('opens disable modal and cancels without submitting', () => {
       mountComponent({}, { isDisableRecEnabled: true });
       cy.wait('@getDefaultRules');
-      waitForTable();
+      waitForTableTools();
 
       cy.clickOnRowKebab(
         'Reboot fails when there is no "kernelopts" option in the grubenv',
@@ -421,7 +401,7 @@ describe('RulesTable (TableTools Implementation)', () => {
     it('hides kebab menu when isDisableRecEnabled is false', () => {
       mountComponent({}, { isDisableRecEnabled: false });
       cy.wait('@getDefaultRules');
-      waitForTable();
+      waitForTableTools();
 
       cy.get('button[aria-label="Kebab toggle"]').should('not.exist');
     });
@@ -438,7 +418,7 @@ describe('RulesTable (TableTools Implementation)', () => {
     it('renders export button and downloads report when isExportEnabled is true', () => {
       mountComponent({}, { isExportEnabled: true });
       cy.wait('@getDefaultRules');
-      waitForTable();
+      waitForTableTools();
 
       itExportsDataToFile(fixtures.data, 'Insights-Advisor_hits--');
     });
@@ -446,7 +426,7 @@ describe('RulesTable (TableTools Implementation)', () => {
     it('hides export button when isExportEnabled is false', () => {
       mountComponent({}, { isExportEnabled: false });
       cy.wait('@getDefaultRules');
-      waitForTable();
+      waitForTableTools();
 
       cy.get('button[aria-label="Export"]').should('not.exist');
     });
