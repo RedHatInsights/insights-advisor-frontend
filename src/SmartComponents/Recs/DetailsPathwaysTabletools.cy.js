@@ -251,8 +251,6 @@ describe('Pathway Details (TableTools Implementation)', () => {
       waitForTable();
     });
 
-    it('exports data to CSV', () => {
-      itExportsDataToFile(fixtures.data, 'Insights-Advisor_hits--');
-    });
+    itExportsDataToFile(fixtures.data, 'Insights-Advisor_hits--');
   });
 });

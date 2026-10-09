@@ -122,7 +122,7 @@ const Details = () => {
             </Content>
           </React.Fragment>
         )}
-        {isFetching || (isLoading && <Loading />)}
+        {(isFetching || isLoading) && <Loading />}
       </PageHeader>
       <section className="pf-v6-l-page__main-section pf-v6-c-page__main-section">
         <React.Fragment>

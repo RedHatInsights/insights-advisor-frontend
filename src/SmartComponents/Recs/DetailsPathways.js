@@ -72,10 +72,13 @@ const PathwayDetails = () => {
       ...{ tags: selectedTags.join(',') },
     });
   workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
-  const { data: pathway = {}, isFetching } = usePathwayQuery(
-    pathwayName,
-    options,
-  );
+  const {
+    data: pathway = {},
+    isLoading,
+    isFetching,
+  } = usePathwayQuery(pathwayName, options, {
+    refetchOnWindowFocus: false,
+  });
   const { pathname } = useLocation();
 
   const [activeTab, setActiveTab] = useState(
@@ -163,7 +166,7 @@ const PathwayDetails = () => {
 
   return (
     <React.Fragment>
-      {isFetching ? (
+      {isLoading ? (
         <Loading />
       ) : (
         <React.Fragment>
@@ -207,7 +210,6 @@ const PathwayDetails = () => {
           </section>
         </React.Fragment>
       )}
-      {isFetching && <Loading />}
       <section className="pf-v6-u-px-lg pf-v6-u-pb-lg">
         <Tabs
           className="adv__background--global-100"
@@ -222,7 +224,7 @@ const PathwayDetails = () => {
               </TabTitleText>
             }
           >
-            {isFetching ? (
+            {isLoading ? (
               <Loading />
             ) : (
               <Suspense fallback={<Loading />}>
@@ -245,7 +247,7 @@ const PathwayDetails = () => {
               </TabTitleText>
             }
           >
-            {isFetching ? (
+            {isLoading ? (
               <Loading />
             ) : (
               <Suspense fallback={<Loading />}>
