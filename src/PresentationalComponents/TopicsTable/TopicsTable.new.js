@@ -44,6 +44,7 @@ const TopicsTableNew = ({ props }) => {
       filters={{ filterConfig: filters }}
       options={{
         pagination: false,
+        perPage: topics.length,
         sortBy: {
           index: 1,
           direction: 'desc',
