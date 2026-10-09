@@ -20,9 +20,16 @@ import {
   itExportsDataToFile,
   removeAllFilterChipsPf6,
 } from '../../../cypress/utils/table';
+import {
+  waitForTableTools,
+  expandAllRows,
+  collapseAllRows,
+  checkTableToolsHeaders,
+  checkTotalRiskRowOrder,
+  RULES_TABLE_ROOT,
+} from '../../../cypress/utils/tabletools';
 
 import {
-  checkRowCounts,
   CONDITIONAL_FILTER,
   TOOLBAR,
 } from '@redhat-cloud-services/frontend-components-utilities';
@@ -122,39 +129,16 @@ const mountComponent = (envContextOverrides = {}, pathwayOverrides = {}) => {
   );
 };
 
-const ROOT = 'table[data-ouia-component-id=rules-table]';
+const ROOT = RULES_TABLE_ROOT;
 const TABLE_HEADERS = _.map(rulesTableColumnsNew, (it) => it.title);
 const DEFAULT_ROW_COUNT = 20;
-
-const checkDataHeaders = (expectedHeaders) => {
-  cy.get(`${ROOT} th[scope="col"]`)
-    .then(($els) =>
-      _.map(Cypress.$.makeArray($els), 'innerText')
-        .map((text) => text.trim())
-        .filter(Boolean),
-    )
-    .should('deep.equal', expectedHeaders);
-};
-
-const waitForTable = () => {
-  cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
-  cy.get(ROOT).should('exist');
-};
-
-const expandAll = () => {
-  cy.get('thead th button[aria-label="Expand all rows"]').click();
-};
-
-const collapseAll = () => {
-  cy.get('thead th button[aria-label="Expand all rows"]').click();
-};
 
 describe('Pathway Details (TableTools Implementation)', () => {
   describe('defaults and rendering', () => {
     beforeEach(() => {
       rulesTableApiInterceptor(fixtures);
       mountComponent();
-      waitForTable();
+      waitForTableTools();
     });
 
     it('renders pathway title and table with 6 columns', () => {
@@ -164,7 +148,7 @@ describe('Pathway Details (TableTools Implementation)', () => {
       );
       cy.get(TOOLBAR).should('have.length', 1);
       cy.get(ROOT).should('have.length', 1);
-      checkDataHeaders(TABLE_HEADERS);
+      checkTableToolsHeaders(TABLE_HEADERS);
     });
 
     it(`pagination defaults to ${DEFAULT_ROW_COUNT} rows`, () => {
@@ -180,6 +164,7 @@ describe('Pathway Details (TableTools Implementation)', () => {
 
     it('defaults to sorting by Total risk descending', () => {
       cy.tableIsSortedBy('Total risk', 'descending');
+      checkTotalRiskRowOrder('descending');
     });
 
     it('applies default filters (Status: Enabled, Systems impacted: 1 or more)', () => {
@@ -196,10 +181,10 @@ describe('Pathway Details (TableTools Implementation)', () => {
 
     it('displays Reset filters button when filters deviate from default', () => {
       removeAllFilterChipsPf6();
-      waitForTable();
+      waitForTableTools();
       cy.get('button').contains('Reset filters').should('exist');
       cy.get('button').contains('Reset filters').click();
-      waitForTable();
+      waitForTableTools();
       hasChip('Status', 'Enabled');
       hasChip('Systems impacted', '1 or more');
       cy.get('button').contains('Reset filters').should('not.exist');
@@ -210,7 +195,7 @@ describe('Pathway Details (TableTools Implementation)', () => {
     beforeEach(() => {
       rulesTableApiInterceptor(fixtures);
       mountComponent();
-      waitForTable();
+      waitForTableTools();
     });
 
     it('shows expand all button in table header', () => {
@@ -218,29 +203,12 @@ describe('Pathway Details (TableTools Implementation)', () => {
     });
 
     it('expands all rows via header chevron', () => {
-      expandAll();
-      cy.get('thead th button[aria-label="Expand all rows"]').should(
-        'have.attr',
-        'aria-expanded',
-        'true',
-      );
-      checkRowCounts(DEFAULT_ROW_COUNT * 2);
+      expandAllRows(DEFAULT_ROW_COUNT);
     });
 
     it('collapses all rows via header chevron', () => {
-      expandAll();
-      cy.get('thead th button[aria-label="Expand all rows"]').should(
-        'have.attr',
-        'aria-expanded',
-        'true',
-      );
-      collapseAll();
-      cy.get('thead th button[aria-label="Expand all rows"]').should(
-        'have.attr',
-        'aria-expanded',
-        'false',
-      );
-      checkRowCounts(DEFAULT_ROW_COUNT);
+      expandAllRows(DEFAULT_ROW_COUNT);
+      collapseAllRows(DEFAULT_ROW_COUNT);
     });
   });
 
@@ -248,9 +216,11 @@ describe('Pathway Details (TableTools Implementation)', () => {
     beforeEach(() => {
       rulesTableApiInterceptor(fixtures);
       mountComponent();
-      waitForTable();
+      waitForTableTools();
     });
 
-    itExportsDataToFile(fixtures.data, 'Insights-Advisor_hits--');
+    it('exports data to CSV', () => {
+      itExportsDataToFile(fixtures.data, 'Insights-Advisor_hits--');
+    });
   });
 });
