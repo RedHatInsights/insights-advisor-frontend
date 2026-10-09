@@ -92,47 +92,65 @@ export const messageMapping = () => {
   };
 };
 
+/**
+ * Parses query parameters from URL and updates recommendation filter state.
+ *
+ * @param {Object} sortIndices - Mapping of table column indices to sort field names.
+ * @param {Function} setSearchText - State setter for search input text.
+ * @param {Function} setFilters - Redux/State dispatcher for table filters.
+ * @param {Object} filters - Current active filter state.
+ */
 export const urlFilterBuilder = (
   sortIndices,
   setSearchText,
   setFilters,
   filters,
 ) => {
-  let sortingValues = Object.values(sortIndices);
-  const paramsObject = paramParser();
-  delete paramsObject.tags;
+  const sortingValues = Object.values(sortIndices);
+  const { tags: _tags, ...paramsObject } = paramParser();
 
-  if (Array.isArray(paramsObject.sort)) {
-    if (
-      !sortingValues?.includes(paramsObject.sort[0]) ||
-      !sortingValues?.includes(`-${paramsObject.sort[0]}`)
-    ) {
-      paramsObject.sort = '-total_risk';
-    }
-  } else if (!sortingValues?.includes(paramsObject.sort)) {
+  const sortParam = Array.isArray(paramsObject.sort)
+    ? paramsObject.sort[0]
+    : paramsObject.sort;
+
+  if (
+    !sortingValues?.includes(sortParam) &&
+    !sortingValues?.includes(`-${sortParam}`)
+  ) {
     paramsObject.sort = '-total_risk';
   }
-  paramsObject.text === undefined
-    ? setSearchText('')
-    : setSearchText(paramsObject.text);
-  paramsObject.has_playbook !== undefined &&
-    !Array.isArray(paramsObject.has_playbook) &&
-    (paramsObject.has_playbook = [`${paramsObject.has_playbook}`]);
-  paramsObject.incident !== undefined &&
-    !Array.isArray(paramsObject.incident) &&
-    (paramsObject.incident = [`${paramsObject.incident}`]);
-  paramsObject.offset === undefined
-    ? (paramsObject.offset = 0)
-    : (paramsObject.offset = Number(paramsObject.offset[0]));
-  paramsObject.limit === undefined
-    ? (paramsObject.limit = 20)
-    : (paramsObject.limit = Number(paramsObject.limit[0]));
-  paramsObject.reboot !== undefined &&
-    !Array.isArray(paramsObject.reboot) &&
-    (paramsObject.reboot = [`${paramsObject.reboot}`]);
-  paramsObject.impacting !== undefined &&
-    !Array.isArray(paramsObject.impacting) &&
-    (paramsObject.impacting = [`${paramsObject.impacting}`]);
+
+  setSearchText(paramsObject.text || '');
+
+  const asArray = (val) =>
+    val === undefined ? undefined : Array.isArray(val) ? val : [`${val}`];
+
+  if (paramsObject.has_playbook !== undefined) {
+    paramsObject.has_playbook = asArray(paramsObject.has_playbook);
+  }
+  if (paramsObject.incident !== undefined) {
+    paramsObject.incident = asArray(paramsObject.incident);
+  }
+  if (paramsObject.reboot !== undefined) {
+    paramsObject.reboot = asArray(paramsObject.reboot);
+  }
+  if (paramsObject.impacting !== undefined) {
+    paramsObject.impacting = asArray(paramsObject.impacting);
+  }
+  if (paramsObject.groups !== undefined) {
+    paramsObject.groups = asArray(paramsObject.groups);
+  }
+
+  const asNumber = (val, fallback) => {
+    if (val === undefined) return fallback;
+    const raw = Array.isArray(val) ? val[0] : val;
+    const parsed = Number(raw);
+    return Number.isNaN(parsed) ? fallback : parsed;
+  };
+
+  paramsObject.offset = asNumber(paramsObject.offset, 0);
+  paramsObject.limit = asNumber(paramsObject.limit, 20);
+
   setFilters({ ...filters, ...paramsObject });
 };
 
@@ -200,6 +218,21 @@ export const removeFilterParam = (
   setFilters(filter);
 };
 
+/**
+ * Builds the conditional filter items array for the Recommendations table toolbar.
+ *
+ * @param {Object} filters - Active filter state.
+ * @param {Function} setFilters - Function to update active filter state.
+ * @param {string} searchText - Current search box text value.
+ * @param {Function} setSearchText - Function to update search box text value.
+ * @param {Function} toggleRulesDisabled - Handler for toggling enabled/disabled rule status.
+ * @param {Object} intl - React-intl instance for string localization.
+ * @param {boolean} [isWorkloadFilterEnabled=false] - Whether workload filtering is enabled.
+ * @param {Array<Object>} [workspaces=[]] - List of available workspaces from Host Inventory.
+ * @param {string} [workspaceSearch=''] - Current search text in the workspace filter dropdown.
+ * @param {Function} [setWorkspaceSearch=() => {}] - State setter for workspace search text.
+ * @returns {Array<Object>} ConditionalFilter configuration items for PrimaryToolbar.
+ */
 export const filterConfigItems = (
   filters,
   setFilters,
@@ -208,12 +241,36 @@ export const filterConfigItems = (
   toggleRulesDisabled,
   intl,
   isWorkloadFilterEnabled = false,
+  workspaces = [],
+  workspaceSearch = '',
+  setWorkspaceSearch = () => {},
 ) => {
   const addFilterParam = (param, values) => {
     values.length > 0
       ? setFilters({ ...filters, offset: 0, ...{ [param]: values } })
       : removeFilterParam(param, filters, setFilters, setSearchText);
   };
+
+  const activeGroups = Array.isArray(filters.groups)
+    ? filters.groups
+    : filters.groups
+      ? [filters.groups]
+      : [];
+
+  const filteredWorkspaces = workspaceSearch
+    ? workspaces.filter((ws) =>
+        (ws.label || ws.name || ws.value || '')
+          .toLowerCase()
+          .includes(workspaceSearch.toLowerCase()),
+      )
+    : workspaces;
+
+  const workspaceGroupItems = filteredWorkspaces.map((ws) => ({
+    id: ws.id || ws.value || ws.name,
+    label: ws.label || ws.name,
+    value: ws.value || ws.name,
+    type: 'checkbox',
+  }));
 
   return [
     {
@@ -330,6 +387,46 @@ export const filterConfigItems = (
         onChange: (_event, value) => toggleRulesDisabled(value),
         value: `${filters.rule_status}`,
         items: FC.rule_status.values,
+      },
+    },
+    {
+      label: FC.groups.title,
+      type: conditionalFilterType.group,
+      id: FC.groups.urlParam,
+      value: `group-${FC.groups.urlParam}`,
+      filterValues: {
+        isFilterable: true,
+        filterBy: workspaceSearch,
+        onFilter: (value) => setWorkspaceSearch(value),
+        placeholder: intl.formatMessage(messages.filterByWorkspace),
+        groups: [
+          {
+            type: 'checkbox',
+            label: intl.formatMessage(messages.workspace),
+            value: 'workspaces',
+            items: workspaceGroupItems,
+          },
+        ],
+        selected: {
+          workspaces: activeGroups.reduce(
+            (acc, name) => ({ ...acc, [name]: true }),
+            {},
+          ),
+        },
+        onChange: (_event, selectedValues) => {
+          const selectedNames = Object.entries(selectedValues?.workspaces || {})
+            .filter(([, isChecked]) => Boolean(isChecked))
+            .map(([name]) => name);
+
+          selectedNames.length > 0
+            ? addFilterParam(FC.groups.urlParam, selectedNames)
+            : removeFilterParam(
+                FC.groups.urlParam,
+                filters,
+                setFilters,
+                setSearchText,
+              );
+        },
       },
     },
     ...(isWorkloadFilterEnabled

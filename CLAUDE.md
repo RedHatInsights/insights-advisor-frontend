@@ -10,6 +10,7 @@ React-based frontend for Red Hat Insights Advisor, providing system recommendati
 ## Quick Links
 
 - **[Testing Guide](docs/TESTING.md)** - Testing patterns, principles, and pitfalls
+- **[Rules Table Filter Integration](docs/rules-table-filter-integration.md)** - Filter categories, URL sync, workspace pagination, and backend scoping
 - **[Remediation Button Details](docs/remediation-button-details.md)** - Detailed implementation flows
 - **[IOP Integration](docs/IOP-INTEGRATION.md)** - Insights Orchestration Platform integration
 - **[Kessel Permissions](docs/kessel-permissions.md)** - RBAC v1 vs Kessel migration guide

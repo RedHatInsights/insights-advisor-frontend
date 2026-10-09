@@ -1,4 +1,8 @@
-import { pruneFilters, workloadArrayQueryBuilder } from './Tables';
+import {
+  pruneFilters,
+  workloadArrayQueryBuilder,
+  buildGlobalFilterParams,
+} from './Tables';
 
 jest.mock(
   '@redhat-cloud-services/frontend-components-utilities/helpers',
@@ -47,6 +51,57 @@ describe('workloadArrayQueryBuilder', () => {
 
   it('returns {} when called with no argument (default parameter)', () => {
     expect(workloadArrayQueryBuilder()).toEqual({});
+  });
+});
+
+describe('buildGlobalFilterParams', () => {
+  it('returns {} when no filters are passed', () => {
+    expect(buildGlobalFilterParams()).toEqual({});
+  });
+
+  it('formats selectedTags array into comma-separated tags string', () => {
+    expect(
+      buildGlobalFilterParams({ selectedTags: ['env=prod', 'app=db'] }),
+    ).toEqual({
+      tags: 'env=prod,app=db',
+    });
+  });
+
+  it('formats selectedGroups array into comma-separated groups string', () => {
+    expect(
+      buildGlobalFilterParams({
+        selectedGroups: ['Workspace 1', 'Workspace 2'],
+      }),
+    ).toEqual({
+      groups: 'Workspace 1,Workspace 2',
+    });
+  });
+
+  it('handles selectedGroups as a string', () => {
+    expect(
+      buildGlobalFilterParams({ selectedGroups: 'SingleWorkspace' }),
+    ).toEqual({
+      groups: 'SingleWorkspace',
+    });
+  });
+
+  it('combines tags, groups, and workloads', () => {
+    const {
+      generateFilter,
+    } = require('@redhat-cloud-services/frontend-components-utilities/helpers');
+    generateFilter.mockReturnValueOnce({ 'workloads[SAP]': true });
+
+    const result = buildGlobalFilterParams({
+      selectedTags: ['tag1'],
+      selectedGroups: ['group1'],
+      workloads: { SAP: { isSelected: true } },
+    });
+
+    expect(result).toEqual({
+      tags: 'tag1',
+      groups: 'group1',
+      'workloads[SAP]': true,
+    });
   });
 });
 
@@ -100,6 +155,29 @@ describe('pruneFilters', () => {
     const result = pruneFilters(filters, SFC);
 
     expect(result).toEqual([]);
+  });
+
+  it('creates chips for groups filter with title Workspace', () => {
+    const categories = {
+      groups: {
+        type: 'group',
+        title: 'workspace',
+        urlParam: 'groups',
+      },
+    };
+    const filters = { groups: ['Production', 'Staging'] };
+    const result = pruneFilters(filters, categories);
+
+    expect(result).toEqual([
+      {
+        category: 'Workspace',
+        chips: [
+          { name: 'Production', value: 'Production' },
+          { name: 'Staging', value: 'Staging' },
+        ],
+        urlParam: 'groups',
+      },
+    ]);
   });
 
   it('returns empty array for empty filters', () => {

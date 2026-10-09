@@ -48,6 +48,7 @@ const SystemsTable = ({ defaultFilters }) => {
   const store = useStore();
   const { search } = useLocation();
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
+  const selectedGroups = useSelector(({ filters }) => filters.selectedGroups);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const filters = useSelector(({ filters }) => filters.sysState);
   const setFilters = (filters) => dispatch(updateSysFilters(filters));
@@ -267,6 +268,7 @@ const SystemsTable = ({ defaultFilters }) => {
           },
           workloads,
           selectedTags,
+          selectedGroups,
         }}
         columns={(defaultColumns) => createColumns(defaultColumns, columns)}
         onLoad={({
@@ -306,6 +308,7 @@ const SystemsTable = ({ defaultFilters }) => {
             selectedTags,
             workloads,
             true,
+            selectedGroups,
           );
 
           const localWorkloadFilter = filters?.workloadFilter;
@@ -379,6 +382,7 @@ const SystemsTable = ({ defaultFilters }) => {
               filters.display_name,
               addNotification,
               axios,
+              selectedGroups,
             ),
           extraItems: [
             <li

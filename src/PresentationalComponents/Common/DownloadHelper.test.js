@@ -259,7 +259,7 @@ describe('downloadHelper', () => {
         'csv',
         {},
         [],
-        ['SAP'],
+        { SAP: { isSelected: true } },
         mockDispatch,
         BASE_URL,
         undefined,
@@ -267,7 +267,6 @@ describe('downloadHelper', () => {
         mockAxios,
       );
 
-      expect(workloadQueryBuilder).toHaveBeenCalledWith(['SAP']);
       expect(mockAxios.get).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
@@ -275,6 +274,95 @@ describe('downloadHelper', () => {
             'workloads[SAP]': true,
           }),
         }),
+      );
+    });
+  });
+
+  describe('Workspace Filter Handling', () => {
+    it('includes groups query param when selectedGroups array is provided', async () => {
+      const mockData = 'test';
+      mockAxios.get.mockResolvedValue(mockData);
+
+      await downloadHelper(
+        'hits',
+        'csv',
+        { rule_status: 'enabled' },
+        [],
+        undefined,
+        mockDispatch,
+        BASE_URL,
+        undefined,
+        mockAddNotification,
+        mockAxios,
+        ['group-a', 'group-b'],
+      );
+
+      expect(mockAxios.get).toHaveBeenCalledWith(
+        `${BASE_URL}/export/hits.csv`,
+        {
+          params: {
+            rule_status: 'enabled',
+            groups: 'group-a,group-b',
+          },
+        },
+      );
+    });
+
+    it('includes groups query param when selectedGroups string is provided', async () => {
+      const mockData = 'test';
+      mockAxios.get.mockResolvedValue(mockData);
+
+      await downloadHelper(
+        'hits',
+        'json',
+        { rule_status: 'enabled' },
+        [],
+        undefined,
+        mockDispatch,
+        BASE_URL,
+        undefined,
+        mockAddNotification,
+        mockAxios,
+        'group-single',
+      );
+
+      expect(mockAxios.get).toHaveBeenCalledWith(
+        `${BASE_URL}/export/hits.json`,
+        {
+          params: {
+            rule_status: 'enabled',
+            groups: 'group-single',
+          },
+        },
+      );
+    });
+
+    it('gives local filters.groups precedence over global selectedGroups', async () => {
+      const mockData = 'test';
+      mockAxios.get.mockResolvedValue(mockData);
+
+      await downloadHelper(
+        'hits',
+        'csv',
+        { rule_status: 'enabled', groups: ['local-group'] },
+        [],
+        undefined,
+        mockDispatch,
+        BASE_URL,
+        undefined,
+        mockAddNotification,
+        mockAxios,
+        ['global-group'],
+      );
+
+      expect(mockAxios.get).toHaveBeenCalledWith(
+        `${BASE_URL}/export/hits.csv`,
+        {
+          params: {
+            rule_status: 'enabled',
+            groups: ['local-group'],
+          },
+        },
       );
     });
   });

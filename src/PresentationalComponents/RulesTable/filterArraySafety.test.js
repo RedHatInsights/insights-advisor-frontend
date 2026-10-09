@@ -223,5 +223,26 @@ describe('RulesTable Filters - Array Safety Fix', () => {
       expect(Array.isArray(filterConfig.filterValues.value)).toBe(true);
       expect(filterConfig.filterValues.value).toEqual(['true']);
     });
+
+    it('should create valid group filter config with ensured array values', () => {
+      const filters = { groups: 'Production' };
+      const safeValues = ensureArray(filters.groups);
+
+      const filterConfig = {
+        type: conditionalFilterType.group,
+        filterValues: {
+          selected: {
+            workspaces: safeValues.reduce(
+              (acc, name) => ({ ...acc, [name]: true }),
+              {},
+            ),
+          },
+        },
+      };
+
+      expect(filterConfig.filterValues.selected).toEqual({
+        workspaces: { Production: true },
+      });
+    });
   });
 });

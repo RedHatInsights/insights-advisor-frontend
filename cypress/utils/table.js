@@ -52,6 +52,17 @@ function cypressApplyFilters(filters, filtersConf) {
     // fill appropriate filter
     if (item.type === 'input') {
       cy.get('input[data-ouia-component-id=ConditionalFilter]').type(value);
+    } else if (item.type === 'group') {
+      cy.get('.ins-c-group-menu-toggle').click();
+      value.forEach((it) => {
+        cy.get('ul[class=pf-v6-c-menu__list]')
+          .find('label')
+          .contains(it)
+          .parent()
+          .find('input[type=checkbox]')
+          .check();
+      });
+      cy.get('.ins-c-group-menu-toggle').click();
     } else if (item.type === 'checkbox') {
       cy.get('[class*=pf-v6-c-menu-toggle][aria-label="Options menu"]').click();
       value.forEach((it) => {

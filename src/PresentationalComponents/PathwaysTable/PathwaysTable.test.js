@@ -342,7 +342,9 @@ jest.spyOn(Tables, 'urlBuilder').mockImplementation(jest.fn());
 jest
   .spyOn(Tables, 'filterFetchBuilder')
   .mockImplementation((filters) => filters);
-jest.spyOn(Tables, 'workloadQueryBuilder').mockImplementation(() => ({}));
+jest
+  .spyOn(Tables, 'workloadQueryBuilder')
+  .mockImplementation((w) => (w?.SAP ? { 'workloads[SAP]': true } : {}));
 jest.spyOn(Tables, 'paramParser').mockImplementation(() => ({}));
 
 jest.spyOn(Tables, 'pruneFilters').mockImplementation((filters) => {
@@ -795,7 +797,7 @@ describe('PathwaysTable - Original Implementation', () => {
     });
   });
 
-  it('should handle workloads filter integration', async () => {
+  it('should handle workloads filter integration', () => {
     const storeState = {
       ...initialStoreState,
       filters: {
@@ -804,13 +806,14 @@ describe('PathwaysTable - Original Implementation', () => {
       },
     };
 
-    Tables.workloadQueryBuilder.mockReturnValue({ workload_SAP: true });
+    Tables.workloadQueryBuilder.mockReturnValue({ 'workloads[SAP]': true });
 
     renderComponent(storeState);
 
-    await waitFor(() => {
-      expect(Tables.workloadQueryBuilder).toHaveBeenCalledWith({ SAP: true });
-    });
+    expect(Tables.workloadQueryBuilder).toHaveBeenCalledWith({ SAP: true });
+    expect(mockUseGetPathwaysQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ 'workloads[SAP]': true }),
+    );
   });
 
   it('should handle selectedTags filter integration', async () => {
@@ -828,6 +831,26 @@ describe('PathwaysTable - Original Implementation', () => {
       expect(mockUseGetPathwaysQuery).toHaveBeenCalledWith(
         expect.objectContaining({
           tags: 'tag1,tag2',
+        }),
+      );
+    });
+  });
+
+  it('should handle selectedGroups filter integration', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        selectedGroups: ['workspace1', 'workspace2'],
+      },
+    };
+
+    renderComponent(storeState);
+
+    await waitFor(() => {
+      expect(mockUseGetPathwaysQuery).toHaveBeenCalledWith(
+        expect.objectContaining({
+          groups: 'workspace1,workspace2',
         }),
       );
     });
@@ -1133,12 +1156,34 @@ describe('PathwaysTable - New Implementation (TableToolsTable)', () => {
       },
     };
 
-    Tables.workloadQueryBuilder.mockReturnValue({ workload_SAP: true });
+    Tables.workloadQueryBuilder.mockReturnValue({ 'workloads[SAP]': true });
 
     renderComponent(storeState, true, '', true);
 
     await waitFor(() => {
       expect(Tables.workloadQueryBuilder).toHaveBeenCalledWith({ SAP: true });
+    });
+  });
+
+  it('should handle selectedGroups integration', async () => {
+    const storeState = {
+      ...initialStoreState,
+      filters: {
+        ...initialStoreState.filters,
+        selectedGroups: ['workspace1', 'workspace2'],
+      },
+    };
+
+    renderComponent(storeState, true, '', true);
+
+    await waitFor(() => {
+      expect(mockUseQueryWithUtilities).toHaveBeenCalledWith(
+        expect.objectContaining({
+          enabled: true,
+          useTableState: true,
+          fetchFn: expect.any(Function),
+        }),
+      );
     });
   });
 

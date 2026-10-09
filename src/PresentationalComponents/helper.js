@@ -22,6 +22,21 @@ export const buildOsFilter = (osFilter = {}) => {
   return osVersions;
 };
 
+/**
+ * Builds and normalizes query options for Advisor systems and report endpoints.
+ *
+ * @param {Object} advisorFilters - Advisor-specific filters.
+ * @param {number} page - Current 1-based page number.
+ * @param {number} per_page - Page size limit.
+ * @param {string} sort - Sort parameter string.
+ * @param {Object} [pathway] - Pathway context object.
+ * @param {Object} [filters] - General table filters (e.g. hostname, OS, hostGroupFilter).
+ * @param {string[]|string} [selectedTags] - Selected tag filters from Redux.
+ * @param {Object} [workloads] - Selected workload filters from Redux.
+ * @param {boolean} [systemsPage] - Whether the query is for the systems list page.
+ * @param {string[]|string} [selectedGroups] - Selected workspace filters from Redux.
+ * @returns {Object} Serialized query parameters for the API.
+ */
 export const createOptions = (
   advisorFilters,
   page,
@@ -32,6 +47,7 @@ export const createOptions = (
   selectedTags,
   workloads,
   systemsPage,
+  selectedGroups,
 ) => {
   const osFilter = filters.osFilter && buildOsFilter(filters.osFilter);
   // RHINENG-11227: remove system incident filter if it has multiple elements, which will be both
@@ -69,6 +85,13 @@ export const createOptions = (
     ...(filters?.hostGroupFilter?.length && {
       groups: filters.hostGroupFilter.join(','),
     }),
+    ...(selectedGroups?.length > 0 && !filters?.hostGroupFilter?.length
+      ? {
+          groups: Array.isArray(selectedGroups)
+            ? selectedGroups.join(',')
+            : selectedGroups,
+        }
+      : {}),
     ...(filters.tagFilters?.length && buildTagFilter(filters.tagFilters)),
     ...(workloads ? workloadQueryBuilder(workloads) : {}),
     ...(selectedTags?.length > 0 ? { tags: selectedTags.join(',') } : {}),
