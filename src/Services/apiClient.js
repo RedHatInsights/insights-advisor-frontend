@@ -170,6 +170,35 @@ export const useFetchTopic = () => {
 };
 
 /**
+ * Fetch system reports for a specific inventory host ID
+ * @param {object} axios - Axios instance with platform interceptors
+ * @param {string} inventoryId - Inventory UUID
+ * @param {object} options - Query parameters
+ * @returns {Promise<object>} - API response normalized to { data, meta }
+ */
+export const fetchSystemReports = async (axios, inventoryId, options = {}) => {
+  const api = APIFactory(window.location.origin, insightsApi, { axios });
+  const response = await api.systemReportsList({
+    uuid: inventoryId,
+    ...options,
+  });
+  return normalizeResponse(response);
+};
+
+/**
+ * Hook to fetch system reports from the API with bound axios instance
+ * @returns {Function} - fetchSystemReports function with axios pre-bound
+ */
+export const useFetchSystemReports = () => {
+  const axios = useAxiosWithPlatformInterceptors();
+  return useMemo(
+    () => (inventoryId, options) =>
+      fetchSystemReports(axios, inventoryId, options),
+    [axios],
+  );
+};
+
+/**
  * TanStack Query hook to fetch a single pathway by slug
  * @param {string} slug - Pathway slug
  * @param {object} options - Query parameters
@@ -199,6 +228,27 @@ export const useTopicQuery = (topicId, options = {}, queryOptions = {}) => {
     queryKey: ['topic', topicId, options],
     queryFn: () => fetchTopic(topicId, options),
     enabled: Boolean(topicId),
+    ...queryOptions,
+  });
+};
+
+/**
+ * TanStack Query hook to fetch system reports by inventory ID
+ * @param {string} inventoryId - Host inventory UUID
+ * @param {object} options - API query parameters
+ * @param {object} queryOptions - TanStack useQuery options
+ * @returns {object} - useQuery result
+ */
+export const useSystemReportsQuery = (
+  inventoryId,
+  options = {},
+  queryOptions = {},
+) => {
+  const fetchReports = useFetchSystemReports();
+  return useQuery({
+    queryKey: ['systemReports', inventoryId, options],
+    queryFn: () => fetchReports(inventoryId, options),
+    enabled: Boolean(inventoryId),
     ...queryOptions,
   });
 };
