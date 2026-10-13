@@ -32,7 +32,19 @@ const flattenParams = (params = {}) => {
  * @returns {object} - Normalized { data: [...], meta: { count: number } }
  */
 const normalizeResponse = (response) => {
-  // Standard API response with data and meta
+  if (!response) {
+    return { data: [], meta: { count: 0 } };
+  }
+
+  // Raw array returned directly by axios platform interceptor
+  if (Array.isArray(response)) {
+    return {
+      data: response,
+      meta: { count: response.length },
+    };
+  }
+
+  // Standard API response with data and meta inside response.data
   if (response.data?.data && response.data?.meta) {
     return response.data;
   }
@@ -45,7 +57,7 @@ const normalizeResponse = (response) => {
     };
   }
 
-  // Fallback for Cypress/test environments: just the data array
+  // Fallback for array inside response.data
   if (Array.isArray(response.data)) {
     return {
       data: response.data,
@@ -53,7 +65,7 @@ const normalizeResponse = (response) => {
     };
   }
 
-  return response.data;
+  return response.data ?? response;
 };
 
 /**

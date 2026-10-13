@@ -123,6 +123,7 @@ const PathwayDetails = () => {
     const initiaRecFilters = { ...recFilters };
     const initiaSysFilters = { ...sysFilters };
     const defaultFilters = { pathway: pathwayName, limit: 20, offset: 0 };
+    // TODO: [TableTools Migration] Remove legacy Redux filter synchronization once old RulesTable is retired
     if (!useNewRulesTable) {
       dispatch(
         updateRecFilters({
@@ -139,6 +140,7 @@ const PathwayDetails = () => {
     );
     scrollDown();
     return () => {
+      // TODO: [TableTools Migration] Remove legacy Redux filter synchronization once old RulesTable is retired
       if (!useNewRulesTable) {
         dispatch(updateRecFilters(initiaRecFilters));
       }
@@ -228,6 +230,7 @@ const PathwayDetails = () => {
               <Loading />
             ) : (
               <Suspense fallback={<Loading />}>
+                {/* TODO: [TableTools Migration] Remove legacy RulesTable fallback once old RulesTable is retired */}
                 {useNewRulesTable ? (
                   <RulesTableNew
                     pathway={pathwayName}

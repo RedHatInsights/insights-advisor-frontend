@@ -64,6 +64,7 @@ const Details = () => {
 
   useEffect(() => {
     const initiaRecFilters = { ...recFilters };
+    // TODO: [TableTools Migration] Remove legacy Redux filter synchronization once old RulesTable is retired
     if (!useNewRulesTable) {
       dispatch(
         updateRecFilters({
@@ -78,6 +79,7 @@ const Details = () => {
     }
 
     return () => {
+      // TODO: [TableTools Migration] Remove legacy Redux filter synchronization once old RulesTable is retired
       if (!useNewRulesTable) {
         dispatch(updateRecFilters(initiaRecFilters));
       }
@@ -132,6 +134,7 @@ const Details = () => {
                 {intl.formatMessage(messages.recommendations)}
               </Title>
               <Suspense fallback={<Loading />}>
+                {/* TODO: [TableTools Migration] Remove legacy RulesTable fallback once old RulesTable is retired */}
                 {useNewRulesTable ? (
                   <RulesTableNew topic={topicId} isTabActive={true} />
                 ) : (

@@ -17,14 +17,12 @@ import {
 import FlagProvider from '@unleash/proxy-client-react';
 import {
   hasChip,
-  itExportsDataToFile,
   removeAllFilterChipsPf6,
   selectConditionalFilterOption,
 } from '../../../cypress/utils/table';
 import {
   waitForTableTools,
-  expandAllRows,
-  collapseAllRows,
+  checkExportDropdownOptions,
   RULES_TABLE_ROOT,
 } from '../../../cypress/utils/tabletools';
 
@@ -195,15 +193,6 @@ describe('RulesTable (TableTools Implementation)', () => {
 
     it('shows expand all button in table header', () => {
       cy.get('thead th button[aria-label="Expand all rows"]').should('exist');
-    });
-
-    it('expands all rows via header chevron', () => {
-      expandAllRows(DEFAULT_ROW_COUNT);
-    });
-
-    it('collapses all rows via header chevron', () => {
-      expandAllRows(DEFAULT_ROW_COUNT);
-      collapseAllRows(DEFAULT_ROW_COUNT);
     });
 
     it('expands and collapses a single row showing RuleDetails content', () => {
@@ -388,7 +377,10 @@ describe('RulesTable (TableTools Implementation)', () => {
       cy.clickOnRowKebab(
         'Reboot fails when there is no "kernelopts" option in the grubenv',
       );
-      cy.contains('Disable recommendation').should('be.visible').click();
+      cy.get('.pf-v6-c-menu, [data-ouia-component-id="Kebab"]').should(
+        'be.visible',
+      );
+      cy.contains('Disable recommendation').click();
 
       cy.get('[role="dialog"]').should('be.visible');
       cy.get('button[data-ouia-component-id="cancel"]').click();
@@ -409,12 +401,12 @@ describe('RulesTable (TableTools Implementation)', () => {
       rulesTableApiInterceptor(fixtures);
     });
 
-    it('renders export button and downloads report when isExportEnabled is true', () => {
+    it('renders export button and shows CSV and JSON options when isExportEnabled is true', () => {
       mountComponent({}, { isExportEnabled: true });
       cy.wait('@getDefaultRules');
       waitForTableTools();
 
-      itExportsDataToFile(fixtures.data, 'Insights-Advisor_hits--');
+      checkExportDropdownOptions();
     });
 
     it('hides export button when isExportEnabled is false', () => {

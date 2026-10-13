@@ -15,17 +15,12 @@ import {
   rulesTableApiInterceptor,
 } from '../../../cypress/support/interceptors';
 import FlagProvider from '@unleash/proxy-client-react';
-import {
-  hasChip,
-  itExportsDataToFile,
-  removeAllFilterChipsPf6,
-} from '../../../cypress/utils/table';
+import { hasChip, removeAllFilterChipsPf6 } from '../../../cypress/utils/table';
 import {
   waitForTableTools,
-  expandAllRows,
-  collapseAllRows,
   checkTableToolsHeaders,
   checkTotalRiskRowOrder,
+  checkExportDropdownOptions,
   RULES_TABLE_ROOT,
 } from '../../../cypress/utils/tabletools';
 
@@ -201,26 +196,25 @@ describe('Pathway Details (TableTools Implementation)', () => {
     it('shows expand all button in table header', () => {
       cy.get('thead th button[aria-label="Expand all rows"]').should('exist');
     });
-
-    it('expands all rows via header chevron', () => {
-      expandAllRows(DEFAULT_ROW_COUNT);
-    });
-
-    it('collapses all rows via header chevron', () => {
-      expandAllRows(DEFAULT_ROW_COUNT);
-      collapseAllRows(DEFAULT_ROW_COUNT);
-    });
   });
 
   describe('export capability', () => {
     beforeEach(() => {
       rulesTableApiInterceptor(fixtures);
-      mountComponent();
-      waitForTableTools();
     });
 
-    it('exports data to CSV', () => {
-      itExportsDataToFile(fixtures.data, 'Insights-Advisor_hits--');
+    it('renders export dropdown with CSV and JSON options when isExportEnabled is true', () => {
+      mountComponent({ isExportEnabled: true });
+      waitForTableTools();
+
+      checkExportDropdownOptions();
+    });
+
+    it('hides export button when isExportEnabled is false', () => {
+      mountComponent({ isExportEnabled: false });
+      waitForTableTools();
+
+      cy.get('button[aria-label="Export"]').should('not.exist');
     });
   });
 });

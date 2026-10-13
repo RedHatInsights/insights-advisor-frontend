@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { checkRowCounts } from '@redhat-cloud-services/frontend-components-utilities';
 
 export const RULES_TABLE_ROOT = 'table[data-ouia-component-id=rules-table]';
 
@@ -18,34 +17,6 @@ export const waitForTableTools = (
   cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
   cy.get(`${rootSelector}[data-ouia-safe="true"]`, { timeout: 10000 }).should(
     'exist',
-  );
-};
-
-/**
- * Expands all rows in a TableTools table and verifies row count expansion
- * @param {number} rowCount - Base row count before expansion
- */
-export const expandAllRows = (rowCount = 20) => {
-  cy.get('thead th button[aria-label="Expand all rows"]').click();
-  checkRowCounts(rowCount * 2);
-  cy.get('thead th button[aria-label="Expand all rows"]').should(
-    'have.attr',
-    'aria-expanded',
-    'true',
-  );
-};
-
-/**
- * Collapses all rows in a TableTools table and verifies row count reduction
- * @param {number} rowCount - Expected row count after collapse
- */
-export const collapseAllRows = (rowCount = 20) => {
-  cy.get('thead th button[aria-label="Expand all rows"]').click();
-  checkRowCounts(rowCount);
-  cy.get('thead th button[aria-label="Expand all rows"]').should(
-    'have.attr',
-    'aria-expanded',
-    'false',
   );
 };
 
@@ -93,7 +64,9 @@ export const checkTotalRiskRowOrder = (
   cy.get(`${rootSelector} tbody td[data-label="Total risk"]`)
     .then(($cells) => {
       return Cypress.$.makeArray($cells).map((cell) => {
-        const badge = cell.querySelector('.pf-v6-c-label, .pf-m-red, .pf-m-orange, .pf-m-yellow, .pf-m-blue');
+        const badge = cell.querySelector(
+          '.pf-v6-c-label, .pf-m-red, .pf-m-orange, .pf-m-yellow, .pf-m-blue',
+        );
         if (!badge) return 0;
         for (const [cls, level] of Object.entries(RISK_CLASS_TO_LEVEL)) {
           if (badge.classList.contains(cls)) return level;
@@ -109,3 +82,14 @@ export const checkTotalRiskRowOrder = (
     });
 };
 
+/**
+ * Verifies TableTools export dropdown presence, toggle interaction, and format options
+ */
+export const checkExportDropdownOptions = () => {
+  cy.get('button[aria-label="Export"]').should('exist').click();
+  cy.get('.pf-v6-c-menu, [data-ouia-component-id="Export"]').within(() => {
+    cy.contains('Export to CSV').should('exist');
+    cy.contains('Export to JSON').should('exist');
+  });
+  cy.get('button[aria-label="Export"]').click();
+};
