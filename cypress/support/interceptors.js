@@ -179,6 +179,13 @@ export const rulesTableApiInterceptor = (fixtures) => {
       // Use original meta count if only defaults, otherwise use filtered count
       const metaCount = hasExtraFilters ? totalCount : fixtures.meta.count;
 
+      if (
+        url.searchParams.get('impacting') === 'true' &&
+        url.searchParams.get('rule_status') === 'enabled'
+      ) {
+        req.alias = 'getDefaultRules';
+      }
+
       req.reply({
         statusCode: 200,
         body: {
@@ -192,4 +199,75 @@ export const rulesTableApiInterceptor = (fixtures) => {
       });
     })
     .as('getRules');
+};
+
+/**
+ * Smart API interceptor for PathwaysTable that filters fixture data based on query params
+ * Matches production API behavior for filtering pathways
+ * @param {Object} fixtures - The fixture data to filter
+ * @returns {Cypress.Chainable}
+ */
+export const pathwaysTableApiInterceptor = (fixtures) => {
+  return cy
+    .intercept('GET', /\/api\/insights\/v1\/pathway.*/, (req) => {
+      const url = new URL(req.url);
+      let filteredData = [...(fixtures.data || fixtures)];
+
+      // Text filter (name / description search)
+      if (url.searchParams.get('text')) {
+        const text = url.searchParams.get('text').toLowerCase();
+        filteredData = filteredData.filter(
+          (item) =>
+            item.name?.toLowerCase().includes(text) ||
+            item.description?.toLowerCase().includes(text),
+        );
+      }
+
+      // Category filter (array of category IDs)
+      if (url.searchParams.has('category')) {
+        const categories = url.searchParams.getAll('category');
+        filteredData = filteredData.filter((item) =>
+          item.categories?.some((cat) => categories.includes(String(cat.id))),
+        );
+      }
+
+      // Incident filter (has_incident boolean)
+      if (url.searchParams.has('has_incident')) {
+        const hasIncident = url.searchParams.get('has_incident') === 'true';
+        filteredData = filteredData.filter(
+          (item) => item.has_incident === hasIncident,
+        );
+      }
+
+      // Reboot filter (reboot_required boolean)
+      if (url.searchParams.has('reboot_required')) {
+        const reboot = url.searchParams.get('reboot_required') === 'true';
+        filteredData = filteredData.filter(
+          (item) => item.reboot_required === reboot,
+        );
+      }
+
+      // Default settled request detection (when table state finishes initial mount)
+      if (url.searchParams.has('sort') && url.searchParams.has('limit')) {
+        req.alias = 'getDefaultPathways';
+      }
+
+      const totalCount = filteredData.length;
+      const metaCount = fixtures.meta ? fixtures.meta.count : totalCount;
+
+      req.reply({
+        statusCode: 200,
+        body: fixtures.meta
+          ? {
+              ...fixtures,
+              data: filteredData,
+              meta: {
+                ...fixtures.meta,
+                count: metaCount,
+              },
+            }
+          : filteredData,
+      });
+    })
+    .as('getPathways');
 };
