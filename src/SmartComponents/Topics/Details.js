@@ -58,9 +58,8 @@ const Details = () => {
   const {
     data: topic = {},
     isLoading,
-    isFetching,
     isError,
-  } = useTopicQuery(topicId, options);
+  } = useTopicQuery(topicId, options, { refetchOnWindowFocus: false });
 
   useEffect(() => {
     const initiaRecFilters = { ...recFilters };
@@ -97,7 +96,7 @@ const Details = () => {
     <React.Fragment>
       <PageHeader>
         {topic?.name && <Breadcrumbs current={topic?.name} ouiaId="details" />}
-        {!isFetching && (
+        {!isLoading && (
           <React.Fragment>
             <Title headingLevel="h3" size="2xl" className="pf-v6-u-mb-lg">
               {topic.name}
@@ -124,7 +123,7 @@ const Details = () => {
             </Content>
           </React.Fragment>
         )}
-        {(isFetching || isLoading) && <Loading />}
+        {isLoading && <Loading />}
       </PageHeader>
       <section className="pf-v6-l-page__main-section pf-v6-c-page__main-section">
         <React.Fragment>

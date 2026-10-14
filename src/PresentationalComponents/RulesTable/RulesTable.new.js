@@ -10,8 +10,23 @@ import RuleDetailsWrapper from './RuleDetailsWrapper';
 import useRulesTableActions from '../../Utilities/hooks/useRulesTableActions';
 import useDisableRuleModal from '../../Utilities/hooks/useDisableRuleModal';
 import DisableRule from '../Modals/DisableRule';
+import EmptyState from './Components/EmptyState';
 import { useFeatureFlag } from '../../Utilities/Hooks';
 import { EnvironmentContext } from '../../App';
+
+const RulesEmptyState = (props) => {
+  const {
+    current: { setFilter },
+  } = useStateCallbacks();
+
+  return (
+    <EmptyState
+      filters={{ rule_status: 'enabled' }}
+      toggleRulesDisabled={(status) => setFilter?.('status', [status])}
+      {...props}
+    />
+  );
+};
 
 /**
  * Inner component that renders the Rules table with BaseTableToolsTable
@@ -76,7 +91,7 @@ const RulesTableInner = ({
       filters: {
         filterConfig: activeFilters,
         activeFilters: {
-          status: ['enabled'], // From label "Status"
+          ...(!pathway ? { status: ['enabled'] } : {}),
           'systems-impacted': ['true'], // From label "Systems impacted"
         },
         useReset: true,
@@ -85,6 +100,9 @@ const RulesTableInner = ({
         sortBy: { index: 3, direction: 'desc' }, // Total Risk
         detailsComponent: RuleDetailsWrapper,
         detailsProps: { fullWidth: true },
+        variant: 'compact',
+        EmptyState: RulesEmptyState,
+        exportFilename: `Advisor_hits--${new Date().toISOString().replace(/[T:]/g, '-').split('.')[0]}-utc`,
         ...(envContext?.isDisableRecEnabled ? { actionResolver } : {}),
         exporter: envContext?.isExportEnabled
           ? async () => data?.data || []
@@ -94,6 +112,7 @@ const RulesTableInner = ({
     [
       activeFilters,
       actionResolver,
+      pathway,
       envContext?.isDisableRecEnabled,
       envContext?.isExportEnabled,
       data?.data,
@@ -105,6 +124,7 @@ const RulesTableInner = ({
       <AdvisorTable
         items={items}
         total={data?.meta?.total}
+        loading={loading}
         defaults={rulesDefaults}
         aria-label="rules-table"
         ouiaId="rules-table"

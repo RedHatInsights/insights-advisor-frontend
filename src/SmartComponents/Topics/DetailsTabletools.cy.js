@@ -178,14 +178,16 @@ describe('Topic Details (TableTools Implementation)', () => {
 
     it('renders export dropdown with CSV and JSON options when isExportEnabled is true', () => {
       mountComponent({ isExportEnabled: true });
-      waitForTableTools(RULES_TABLE_ROOT, '@getRules');
+      cy.wait('@topic_details_call');
+      waitForTableTools();
 
       checkExportDropdownOptions();
     });
 
     it('hides export button when isExportEnabled is false', () => {
       mountComponent({ isExportEnabled: false });
-      waitForTableTools(RULES_TABLE_ROOT, '@getRules');
+      cy.wait('@topic_details_call');
+      waitForTableTools();
 
       cy.get('button[aria-label="Export"]').should('not.exist');
     });

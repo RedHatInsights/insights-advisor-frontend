@@ -72,13 +72,13 @@ const PathwayDetails = () => {
       ...{ tags: selectedTags.join(',') },
     });
   workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
-  const {
-    data: pathway = {},
-    isLoading,
-    isFetching,
-  } = usePathwayQuery(pathwayName, options, {
-    refetchOnWindowFocus: false,
-  });
+  const { data: pathway = {}, isLoading } = usePathwayQuery(
+    pathwayName,
+    options,
+    {
+      refetchOnWindowFocus: false,
+    },
+  );
   const { pathname } = useLocation();
 
   const [activeTab, setActiveTab] = useState(
@@ -86,11 +86,11 @@ const PathwayDetails = () => {
   );
   useEffect(() => {
     pathway &&
-      !isFetching &&
+      !isLoading &&
       envContext.updateDocumentTitle(
         `${pathway.name} - ${messages.pathways.defaultMessage} - Advisor`,
       );
-  }, [envContext, pathway, pathname, isFetching]);
+  }, [envContext, pathway, pathname, isLoading]);
 
   const waitForElm = (selector) => {
     return new Promise((resolve) => {

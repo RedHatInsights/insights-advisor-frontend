@@ -302,7 +302,11 @@ describe('RulesTable (TableTools Implementation)', () => {
   describe('tooltips', () => {
     beforeEach(() => {
       rulesTableApiInterceptor(fixtures);
+      cy.intercept('GET', /\/api\/insights\/v1\/rule.*impacting=true.*/).as(
+        'getTooltipRules',
+      );
       mountComponent();
+      cy.wait('@getTooltipRules');
       waitForTableTools();
     });
 

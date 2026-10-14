@@ -38,6 +38,7 @@ export const Category = {
   Component: CategoryCell,
   sortable: 'category',
   exportKey: 'category',
+  renderExport: (category) => category?.name,
   props: { modifier: 'fitContent' },
 };
 
@@ -53,7 +54,7 @@ export const Systems = {
   title: 'Systems',
   Component: SystemsCell,
   sortable: 'impacted_count',
-  exportKey: 'impacted_count',
+  exportKey: 'impacted_systems_count',
   props: { modifier: 'fitContent' },
 };
 

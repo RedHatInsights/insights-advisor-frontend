@@ -162,8 +162,7 @@ describe('Pathway Details (TableTools Implementation)', () => {
       checkTotalRiskRowOrder('descending');
     });
 
-    it('applies default filters (Status: Enabled, Systems impacted: 1 or more)', () => {
-      hasChip('Status', 'Enabled');
+    it('applies default filters (Systems impacted: 1 or more)', () => {
       hasChip('Systems impacted', '1 or more');
     });
 
@@ -180,7 +179,6 @@ describe('Pathway Details (TableTools Implementation)', () => {
       cy.get('button').contains('Reset filters').should('exist');
       cy.get('button').contains('Reset filters').click();
       waitForTableTools();
-      hasChip('Status', 'Enabled');
       hasChip('Systems impacted', '1 or more');
       cy.get('button').contains('Reset filters').should('not.exist');
     });
