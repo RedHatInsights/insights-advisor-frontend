@@ -11,7 +11,10 @@ import {
   hasChip,
   selectConditionalFilterOption,
 } from '../../../cypress/utils/table';
-import { featureFlagInterceptor } from '../../../cypress/support/interceptors';
+import {
+  featureFlagInterceptor,
+  pathwaysTableApiInterceptor,
+} from '../../../cypress/support/interceptors';
 import FlagProvider from '@unleash/proxy-client-react';
 
 import {
@@ -75,12 +78,7 @@ const mountComponent = (enableTableTools = false) => {
 
 describe('Pathways table tests', () => {
   beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 200,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
+    pathwaysTableApiInterceptor(fixtures);
     mountComponent();
   });
 
@@ -95,7 +93,7 @@ describe('Pathways table tests', () => {
       checkTableHeaders(TABLE_HEADERS);
     });
     it('links to the pathway detail page', () => {
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
       cy.get('tbody tr:first [data-label=Name] a')
         .should('have.attr', 'href')
@@ -117,7 +115,7 @@ describe('Pathways table tests', () => {
 
   describe('Sorting', () => {
     beforeEach(() => {
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
     });
 
@@ -134,7 +132,7 @@ describe('Pathways table tests', () => {
 
     it('sorts by Name in descending order', () => {
       cy.get('th').contains('Name').click();
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('th').contains('Name').click();
 
       cy.get('th')
@@ -158,7 +156,7 @@ describe('Pathways table tests', () => {
 
     it('sorts by Systems in descending order', () => {
       cy.get('th').contains('Systems').click();
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('th').contains('Systems').click();
 
       cy.get('th')
@@ -194,7 +192,7 @@ describe('Pathways table tests', () => {
         .closest('th')
         .find('button.pf-v6-c-table__button')
         .click({ force: true });
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
 
       cy.get('th')
@@ -287,7 +285,7 @@ describe('Pathways table tests', () => {
 
   describe('Tooltips', () => {
     beforeEach(() => {
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
     });
 
@@ -341,7 +339,7 @@ describe('Pathways table tests', () => {
 
   describe('content display', () => {
     it('displays the first pathway from fixtures', () => {
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
       const firstPathway = fixtures.data[0];
       cy.contains('td', firstPathway.name).should('exist');
@@ -349,7 +347,7 @@ describe('Pathways table tests', () => {
 
     fixtures.data.slice(0, 5).forEach((pathway, index) => {
       it(`displays pathway ${index + 1}: "${pathway.name}"`, () => {
-        cy.wait('@call');
+        cy.wait('@getPathways');
         cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
         cy.contains('td', pathway.name).should('exist');
 
@@ -370,7 +368,7 @@ describe('Pathways table tests', () => {
 
   describe('category labels display', () => {
     it('displays CategoryLabel component', () => {
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
       cy.get('td[data-label="Category"]')
         .first()
@@ -379,14 +377,14 @@ describe('Pathways table tests', () => {
     });
 
     it('displays category labels with correct styling', () => {
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
       cy.get('td[data-label="Category"] .pf-v6-c-label').should('exist');
     });
 
     fixtures.data.slice(0, 3).forEach((pathway, index) => {
       it(`displays category label for pathway ${index + 1}`, () => {
-        cy.wait('@call');
+        cy.wait('@getPathways');
         cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
         if (pathway.categories?.length > 0) {
           cy.get('tbody tr')
@@ -400,13 +398,13 @@ describe('Pathways table tests', () => {
 
   describe('systems count display', () => {
     it('displays systems count as clickable link', () => {
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
       cy.get('td[data-label="Systems"] a').should('exist');
     });
 
     it('displays correct systems count for each pathway', () => {
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
       fixtures.data.slice(0, 3).forEach((pathway, index) => {
         cy.get('tbody tr')
@@ -419,7 +417,7 @@ describe('Pathways table tests', () => {
 
   describe('reboot status display', () => {
     it('displays reboot status for all pathways', () => {
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
       cy.get('td[data-label="Reboot"]').should(
         'have.length',
@@ -428,7 +426,7 @@ describe('Pathways table tests', () => {
     });
 
     it('displays reboot required status correctly', () => {
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
       const pathwayRequiringReboot = fixtures.data.find(
         (p) => p.reboot_required === true,
@@ -439,7 +437,7 @@ describe('Pathways table tests', () => {
     });
 
     it('displays not required status correctly', () => {
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
       const pathwayNotRequiringReboot = fixtures.data.find(
         (p) => p.reboot_required === false,
@@ -452,7 +450,7 @@ describe('Pathways table tests', () => {
 
   describe('recommendation level display', () => {
     it('displays RecommendationLevel component', () => {
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
       cy.get('td[data-label="Recommendation level"]')
         .first()
@@ -461,7 +459,7 @@ describe('Pathways table tests', () => {
     });
 
     it('displays recommendation level for all pathways', () => {
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
       // Verify each row has exactly one recommendation level label
       cy.get('tbody tr').each(($row) => {
@@ -473,7 +471,7 @@ describe('Pathways table tests', () => {
 
     fixtures.data.slice(0, 3).forEach((pathway, index) => {
       it(`displays recommendation level for pathway ${index + 1} (level: ${pathway.recommendation_level})`, () => {
-        cy.wait('@call');
+        cy.wait('@getPathways');
         cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
         cy.get('tbody tr')
           .eq(index)
@@ -489,7 +487,7 @@ describe('Pathways table tests', () => {
         (p) => p.has_incident === true,
       );
       if (pathwayWithIncident) {
-        cy.wait('@call');
+        cy.wait('@getPathways');
         cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
         cy.get('td[data-label="Name"]')
           .find('.pf-v6-c-label')
@@ -503,7 +501,7 @@ describe('Pathways table tests', () => {
         (p) => p.has_incident === true,
       );
       if (pathwayWithIncident) {
-        cy.wait('@call');
+        cy.wait('@getPathways');
         cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
         cy.get('td[data-label="Name"] .pf-v6-c-label').should(
           'have.class',
@@ -515,7 +513,7 @@ describe('Pathways table tests', () => {
 
   describe('data attributes', () => {
     beforeEach(() => {
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
     });
 
@@ -542,7 +540,7 @@ describe('Pathways table tests', () => {
 
   describe('responsive behavior', () => {
     beforeEach(() => {
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
     });
 
@@ -706,17 +704,12 @@ describe('Pathways table tests', () => {
 
 describe('feature flag toggle', () => {
   beforeEach(() => {
-    cy.intercept('*', {
-      statusCode: 200,
-      body: {
-        ...fixtures,
-      },
-    }).as('call');
+    pathwaysTableApiInterceptor(fixtures);
   });
 
   it('renders with tabletools when feature flag is enabled', () => {
     mountComponent(true);
-    cy.wait('@call');
+    cy.wait('@getPathways');
     cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
     cy.get(ROOT).should('have.length', 1);
     cy.contains(fixtures.data[0].name).should('be.visible');
@@ -725,7 +718,7 @@ describe('feature flag toggle', () => {
 
   it('renders original implementation when feature flag is disabled', () => {
     mountComponent(false);
-    cy.wait('@call');
+    cy.wait('@getPathways');
     cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
     cy.get(ROOT).should('have.length', 1);
     cy.contains(fixtures.data[0].name).should('be.visible');
@@ -776,13 +769,13 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
         statusCode: 200,
         body: responseBody,
       });
-    }).as('call');
+    }).as('getPathways');
   });
 
   describe('table basics', () => {
     it('renders table with correct structure', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get(ROOT).should('exist');
       cy.get('[data-ouia-component-id="pathways-table"]').should('exist');
       cy.contains(fixtures.data[0].name).should('be.visible');
@@ -790,14 +783,14 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
 
     it('displays correct number of rows', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get(`${ROOT} tbody tr`).should('have.length.at.least', 1);
       cy.get(`${ROOT} tbody tr`).should('have.length.at.most', ROWS_SHOWN);
     });
 
     it('links to pathway detail page', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       const firstPathway = getSortedFixtures()[0];
       cy.contains(firstPathway.name)
         .should('have.attr', 'href')
@@ -808,9 +801,9 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
   describe('sorting', () => {
     it('sorts by Name ascending', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get(`${ROOT} th`).contains('Name').click();
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get(`${ROOT} tbody tr`)
         .first()
         .should('contain', 'Application update');
@@ -818,11 +811,11 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
 
     it('sorts by Name descending', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get(`${ROOT} th`).contains('Name').click();
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get(`${ROOT} th`).contains('Name').click();
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get(`${ROOT} tbody tr`)
         .first()
         .should('contain', 'Web server hardening');
@@ -830,15 +823,15 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
 
     it('sorts by Systems ascending', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get(`${ROOT} th`).contains('Systems').click();
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get(`${ROOT} tbody tr`).should('have.length.at.least', 1);
     });
 
     it('renders table with default sort', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get(`${ROOT} tbody tr`).should('have.length.at.least', 1);
     });
   });
@@ -846,7 +839,7 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
   describe('filtering', () => {
     it('table supports filtering', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get(ROOT).should('exist');
     });
   });
@@ -854,13 +847,13 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
   describe('pagination', () => {
     it('displays pagination controls', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[data-ouia-component-type="PF6/Pagination"]').should('exist');
     });
 
     it('shows correct total count', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[data-ouia-component-type="PF6/Pagination"]').should(
         'contain',
         fixtures.meta.count,
@@ -869,7 +862,7 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
 
     it('pagination is present', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('[data-ouia-component-type="PF6/Pagination"]').should('exist');
     });
   });
@@ -877,7 +870,7 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
   describe('content display', () => {
     it('displays pathway names', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       getSortedFixtures()
         .slice(0, 5)
         .forEach((pathway) => {
@@ -887,13 +880,13 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
 
     it('displays category labels', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get('.pf-v6-c-label').should('have.length.at.least', 1);
     });
 
     it('displays systems count with formatting', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       const firstPathway = getSortedFixtures()[0];
       cy.contains(firstPathway.impacted_systems_count.toLocaleString()).should(
         'exist',
@@ -902,13 +895,13 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
 
     it('displays reboot required status', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.contains(/Required|Not required/).should('exist');
     });
 
     it('displays recommendation level content', () => {
       mountComponent(true);
-      cy.wait('@call');
+      cy.wait('@getPathways');
       cy.get(`${ROOT} tbody tr`).first().should('exist');
     });
   });
