@@ -23,6 +23,16 @@ import { createTestEnvironmentContext } from '../../../cypress/support/globals';
 import { AccountStatContext } from '../../ZeroStateWrapper';
 import { EnvironmentContext } from '../../App';
 import FlagProvider from '@unleash/proxy-client-react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const createTestQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
 
 /**
  * Mounts the List component with optional URL parameters
@@ -33,6 +43,7 @@ const mountComponent = (
     hasEdgeDevices = false,
     urlParams = '',
     initialPath = '/recommendations',
+    customStore,
   } = {},
   envContextOverrides = {},
 ) => {
@@ -51,31 +62,36 @@ const mountComponent = (
   }
 
   cy.mount(
-    <FlagProvider
-      config={{
-        url: 'http://localhost:8002/feature_flags',
-        clientKey: 'abc',
-        appName: 'abc',
-      }}
-    >
-      <EnvironmentContext.Provider value={finalEnvContext}>
-        <MemoryRouter initialEntries={[initialPath]}>
-          <AccountStatContext.Provider value={{ hasEdgeDevices }}>
-            <IntlProvider
-              locale={navigator.language.slice(0, 2)}
-              messages={messages}
-            >
-              <Provider store={initStore()}>
-                <Routes>
-                  <Route path="/recommendations" element={<List />} />
-                  <Route path="/recommendations/pathways" element={<List />} />
-                </Routes>
-              </Provider>
-            </IntlProvider>
-          </AccountStatContext.Provider>
-        </MemoryRouter>
-      </EnvironmentContext.Provider>
-    </FlagProvider>,
+    <QueryClientProvider client={createTestQueryClient()}>
+      <FlagProvider
+        config={{
+          url: 'http://localhost:8002/feature_flags',
+          clientKey: 'abc',
+          appName: 'abc',
+        }}
+      >
+        <EnvironmentContext.Provider value={finalEnvContext}>
+          <MemoryRouter initialEntries={[initialPath]}>
+            <AccountStatContext.Provider value={{ hasEdgeDevices }}>
+              <IntlProvider
+                locale={navigator.language.slice(0, 2)}
+                messages={messages}
+              >
+                <Provider store={customStore || initStore()}>
+                  <Routes>
+                    <Route path="/recommendations" element={<List />} />
+                    <Route
+                      path="/recommendations/pathways"
+                      element={<List />}
+                    />
+                  </Routes>
+                </Provider>
+              </IntlProvider>
+            </AccountStatContext.Provider>
+          </MemoryRouter>
+        </EnvironmentContext.Provider>
+      </FlagProvider>
+    </QueryClientProvider>,
   );
 };
 
@@ -93,6 +109,17 @@ describe('List Component Integration', () => {
       statusCode: 200,
       body: { toggles: [] },
     }).as('getFeatureFlag');
+
+    cy.intercept('GET', '**/api/inventory/v1/groups*', {
+      statusCode: 200,
+      body: {
+        results: [
+          { id: 'ws-1', name: 'Production', host_count: 10 },
+          { id: 'ws-2', name: 'Staging', host_count: 5 },
+        ],
+        total: 2,
+      },
+    }).as('getInventoryGroups');
 
     cy.intercept('GET', '/api/insights/v1/stats/overview/', {
       statusCode: 200,
@@ -522,6 +549,7 @@ describe('List Component Integration', () => {
 
       cy.contains('[role="tab"]', 'Pathways').click();
       cy.wait('@getPathways');
+      cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
 
       cy.get('table[aria-label="pathways-table"]').should('exist');
 
@@ -548,6 +576,7 @@ describe('List Component Integration', () => {
 
       cy.contains('[role="tab"]', 'Pathways').click();
       cy.wait('@getPathways');
+      cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
 
       cy.get('table[aria-label="pathways-table"]').should('be.visible');
 
@@ -747,6 +776,7 @@ describe('List Component Integration', () => {
 
       cy.contains('[role="tab"]', 'Pathways').click();
       cy.wait('@getPathways');
+      cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
 
       cy.get('table[aria-label="pathways-table"]').should('be.visible');
 
@@ -817,6 +847,8 @@ describe('List Component Integration', () => {
 
       cy.contains('[role="tab"]', 'Pathways').click();
       cy.wait('@getPathways');
+      cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
+
       cy.get('table[aria-label="pathways-table"]').should('exist');
       cy.contains('[role="tab"]', 'Pathways').should(
         'have.attr',
@@ -874,6 +906,44 @@ describe('List Component Integration', () => {
       cy.contains('[role="tab"]', 'Recommendations').click();
 
       cy.get('.pf-v6-c-label-group').contains('test').should('not.exist');
+    });
+  });
+
+  describe('Workspace filter integration', () => {
+    it('passes workspace filter to Overview stats and RulesTable when selectedGroups is in Redux', () => {
+      cy.intercept('GET', '**/api/insights/v1/stats/overview/*', (req) => {
+        expect(req.query.groups).to.equal('Workspace-A,Workspace-B');
+        req.reply({
+          statusCode: 200,
+          body: {
+            critical: 2,
+            important: 4,
+            moderate: 6,
+            low: 8,
+            incidents: 1,
+            pathways: 3,
+          },
+        });
+      }).as('getOverviewWithWorkspace');
+
+      cy.intercept('GET', '**/api/insights/v1/rule/*', (req) => {
+        expect(req.query.groups).to.equal('Workspace-A,Workspace-B');
+        req.reply({
+          statusCode: 200,
+          body: recommendations,
+        });
+      }).as('getRulesWithWorkspace');
+
+      const store = initStore();
+      store.dispatch({
+        type: 'filters/updateGroups',
+        payload: ['Workspace-A', 'Workspace-B'],
+      });
+
+      mountComponent({ customStore: store });
+
+      cy.wait('@getOverviewWithWorkspace');
+      cy.wait('@getRulesWithWorkspace');
     });
   });
 });

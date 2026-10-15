@@ -18,9 +18,11 @@ import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+import React from 'react';
 import '@patternfly/patternfly/patternfly.scss';
 import { mount } from 'cypress/react';
 import '@cypress/code-coverage/support';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Manually set up webpack share scopes for Cypress environment
 if (!window.__webpack_share_scopes__) {
@@ -29,7 +31,22 @@ if (!window.__webpack_share_scopes__) {
   };
 }
 
-Cypress.Commands.add('mount', mount);
+Cypress.Commands.add('mount', (component, options) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
+  return mount(
+    <QueryClientProvider client={queryClient}>
+      {component}
+    </QueryClientProvider>,
+    options,
+  );
+});
 
 // Example use:
 // cy.mount(<MyComponent />)

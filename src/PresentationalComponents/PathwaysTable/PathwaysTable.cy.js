@@ -40,7 +40,7 @@ const getSortedFixtures = () => {
   );
 };
 
-const mountComponent = (enableTableTools = false) => {
+const mountComponent = (enableTableTools = false, customStore) => {
   if (enableTableTools) {
     featureFlagInterceptor(['advisor-tabletools-migration']);
   } else {
@@ -58,7 +58,7 @@ const mountComponent = (enableTableTools = false) => {
     >
       <MemoryRouter>
         <IntlProvider locale={navigator.language.slice(0, 2)}>
-          <Provider store={initStore()}>
+          <Provider store={customStore || initStore()}>
             <Routes>
               <Route
                 key={'Recommendations Pathways'}
@@ -75,7 +75,7 @@ const mountComponent = (enableTableTools = false) => {
 
 describe('Pathways table tests', () => {
   beforeEach(() => {
-    cy.intercept('*', {
+    cy.intercept('GET', '**/api/insights/v1/pathway/**', {
       statusCode: 200,
       body: {
         ...fixtures,
@@ -86,17 +86,20 @@ describe('Pathways table tests', () => {
 
   describe('defaults', () => {
     it('The Pathways table renders', () => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
       cy.get(ROOT).should('have.length', 1);
     });
     it('renders toolbar', () => {
       cy.get(TOOLBAR).should('have.length', 1);
     });
     it('renders table header', () => {
+      cy.wait('@call');
       checkTableHeaders(TABLE_HEADERS);
     });
     it('links to the pathway detail page', () => {
       cy.wait('@call');
-      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
       cy.get('tbody tr:first [data-label=Name] a')
         .should('have.attr', 'href')
         .and('include', `/recommendations/pathways/${fixtures.data[0].slug}`);
@@ -108,6 +111,8 @@ describe('Pathways table tests', () => {
 
   describe('defaults', () => {
     it(`The amount of rows shown is ${ROWS_SHOWN}`, () => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
       cy.get('.pf-v6-c-menu-toggle__text')
         .find('b')
         .eq(0)
@@ -118,7 +123,7 @@ describe('Pathways table tests', () => {
   describe('Sorting', () => {
     beforeEach(() => {
       cy.wait('@call');
-      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
     });
 
     it('sorts by Name in ascending order', () => {
@@ -170,7 +175,11 @@ describe('Pathways table tests', () => {
     });
 
     it('sorts by Recommendation level in ascending order', () => {
-      cy.get('th').contains('Recommendation level').click();
+      cy.get('th')
+        .contains('Recommendation level')
+        .closest('th')
+        .find('button.pf-v6-c-table__button')
+        .click({ force: true });
 
       cy.get('th')
         .contains('Recommendation level')
@@ -187,7 +196,7 @@ describe('Pathways table tests', () => {
         .closest('th')
         .find('button.pf-v6-c-table__button')
         .click({ force: true });
-      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
 
       cy.get('th')
         .contains('Recommendation level')
@@ -195,7 +204,7 @@ describe('Pathways table tests', () => {
         .find('button.pf-v6-c-table__button')
         .click({ force: true });
       cy.wait('@call');
-      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
 
       cy.get('th')
         .contains('Recommendation level')
@@ -288,7 +297,7 @@ describe('Pathways table tests', () => {
   describe('Tooltips', () => {
     beforeEach(() => {
       cy.wait('@call');
-      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
     });
 
     it(`Recommendation level tooltip displays the correct content.`, () => {
@@ -309,7 +318,8 @@ describe('Pathways table tests', () => {
   describe('Multiple categories get abbreviated', () => {
     it('Multiple categories get abbreviated', () => {
       // for each row
-      cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
       cy.get('tbody [data-ouia-component-type="PF6/TableRow"]').then((rows) => {
         Array.from(rows).forEach((row) => {
           cy.wrap(row)
@@ -326,6 +336,11 @@ describe('Pathways table tests', () => {
   });
 
   describe('table structure', () => {
+    beforeEach(() => {
+      cy.wait('@call');
+      cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
+    });
+
     it('renders table with correct ARIA label', () => {
       cy.get(ROOT).should('have.attr', 'aria-label', 'pathways-table');
     });
@@ -599,7 +614,7 @@ describe('Pathways table tests', () => {
     it('loads with has_incident=true string param and verifies checkbox is selected', () => {
       const urlParams = 'has_incident=true';
 
-      cy.intercept('GET', '**/pathways/?*', {
+      cy.intercept('GET', '**/pathway/*', {
         statusCode: 200,
         body: { ...fixtures },
       }).as('call');
@@ -623,7 +638,7 @@ describe('Pathways table tests', () => {
     it('loads with category=2 string param and verifies checkbox is selected', () => {
       const urlParams = 'category=2';
 
-      cy.intercept('GET', '**/pathways/?*', {
+      cy.intercept('GET', '**/pathway/*', {
         statusCode: 200,
         body: { ...fixtures },
       }).as('call');
@@ -647,7 +662,7 @@ describe('Pathways table tests', () => {
     it('loads with reboot_required=true string param and verifies checkbox is selected', () => {
       const urlParams = 'reboot_required=true';
 
-      cy.intercept('GET', '**/pathways/?*', {
+      cy.intercept('GET', '**/pathway/*', {
         statusCode: 200,
         body: { ...fixtures },
       }).as('call');
@@ -706,7 +721,7 @@ describe('Pathways table tests', () => {
 
 describe('feature flag toggle', () => {
   beforeEach(() => {
-    cy.intercept('*', {
+    cy.intercept('GET', '**/pathway/*', {
       statusCode: 200,
       body: {
         ...fixtures,
@@ -717,7 +732,7 @@ describe('feature flag toggle', () => {
   it('renders with tabletools when feature flag is enabled', () => {
     mountComponent(true);
     cy.wait('@call');
-    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+    cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
     cy.get(ROOT).should('have.length', 1);
     cy.contains(fixtures.data[0].name).should('be.visible');
     cy.get('[data-ouia-component-id="pathways-table"]').should('exist');
@@ -726,7 +741,7 @@ describe('feature flag toggle', () => {
   it('renders original implementation when feature flag is disabled', () => {
     mountComponent(false);
     cy.wait('@call');
-    cy.get('[aria-label="Loading"]', { timeout: 5000 }).should('not.exist');
+    cy.get('[aria-label="Loading"]', { timeout: 10000 }).should('not.exist');
     cy.get(ROOT).should('have.length', 1);
     cy.contains(fixtures.data[0].name).should('be.visible');
     cy.get('.pf-v6-c-toolbar').should('exist');
@@ -910,6 +925,28 @@ describe('Pathways table with TableTools (feature flag enabled)', () => {
       mountComponent(true);
       cy.wait('@call');
       cy.get(`${ROOT} tbody tr`).first().should('exist');
+    });
+  });
+
+  describe('Workspace filter integration', () => {
+    it('passes workspace filter to pathway API when selectedGroups is in Redux', () => {
+      cy.intercept('GET', '**/api/insights/v1/pathway/*', (req) => {
+        expect(req.query.groups).to.equal('Production,Staging');
+        req.reply({
+          statusCode: 200,
+          body: fixtures,
+        });
+      }).as('getPathwaysWithWorkspace');
+
+      const store = initStore();
+      store.dispatch({
+        type: 'filters/updateGroups',
+        payload: ['Production', 'Staging'],
+      });
+
+      mountComponent(false, store);
+
+      cy.wait('@getPathwaysWithWorkspace');
     });
   });
 });

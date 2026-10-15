@@ -24,7 +24,7 @@ import { useFetchTopic } from '../../Services/apiClient';
 import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
+import { buildGlobalFilterParams } from '../../PresentationalComponents/Common/Tables';
 import { getDefaultImpactingFilter } from '../../PresentationalComponents/RulesTable/helpers';
 import { AccountStatContext } from '../../ZeroStateWrapper';
 import { EnvironmentContext } from '../../App';
@@ -34,11 +34,15 @@ const Details = () => {
   const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
+  const selectedGroups = useSelector(({ filters }) => filters.selectedGroups);
   const workloads = useSelector(({ filters }) => filters.workloads);
   const recFilters = useSelector(({ filters }) => filters.recState);
   const topicId = useParams().id;
-  let options = selectedTags?.length && { tags: selectedTags };
-  workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
+  const options = buildGlobalFilterParams({
+    selectedTags,
+    selectedGroups,
+    workloads,
+  });
   const hasEdgeDevices = useContext(AccountStatContext);
   const fetchTopic = useFetchTopic();
 
@@ -68,7 +72,6 @@ const Details = () => {
     const initiaRecFilters = { ...recFilters };
     dispatch(
       updateRecFilters({
-        topic: topicId,
         ...getDefaultImpactingFilter(hasEdgeDevices),
         rule_status: 'enabled',
         sort: `-total_risk`,
@@ -127,7 +130,7 @@ const Details = () => {
               <Title headingLevel="h3" size="2xl" className="pf-v6-u-mb-lg">
                 {intl.formatMessage(messages.recommendations)}
               </Title>
-              <RulesTable />
+              <RulesTable topic={topicId} />
             </React.Fragment>
           ) : (
             <MessageState

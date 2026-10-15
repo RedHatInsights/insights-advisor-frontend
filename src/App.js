@@ -2,7 +2,7 @@ import './App.scss';
 
 import React, { useEffect, useContext, createContext } from 'react';
 import { batch, useDispatch } from 'react-redux';
-import { updateTags, updateWorkloads } from './Services/Filters';
+import { updateTags, updateWorkloads, updateGroups } from './Services/Filters';
 import MessageState from './PresentationalComponents/MessageState/MessageState';
 import OutageAlert from './PresentationalComponents/OutageAlert/OutageAlert';
 import { AdvisorRoutes } from './Routes';
@@ -27,7 +27,7 @@ const App = () => {
     envContext?.globalFilterScope?.('insights');
 
     envContext.on('GLOBAL_FILTER_UPDATE', ({ data }) => {
-      const [workloads, , encodedTags] = envContext?.mapGlobalFilter?.(
+      const [workloads, groups, encodedTags] = envContext?.mapGlobalFilter?.(
         data,
         true,
         true,
@@ -47,6 +47,7 @@ const App = () => {
       batch(() => {
         dispatch(updateWorkloads(workloads));
         dispatch(updateTags(selectedTags));
+        dispatch(updateGroups(groups || []));
       });
     });
   }, [envContext, dispatch]);

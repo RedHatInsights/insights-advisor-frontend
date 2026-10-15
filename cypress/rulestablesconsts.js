@@ -131,6 +131,14 @@ const filtersConf = {
     urlValue: (it) =>
       encodeURIComponent(_.map(it, (x) => IMPACTING[x]).join(',')),
   },
+  workspace: {
+    selectorText: 'Workspace',
+    values: [['Production']],
+    type: 'group',
+    filterFunc: (it, _value) => true,
+    urlParam: 'groups',
+    urlValue: (it) => (Array.isArray(it) ? it.join(',') : it).replace(/ /g, '+'),
+  },
 };
 
 export { filtersConf };

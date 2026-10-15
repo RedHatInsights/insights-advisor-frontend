@@ -29,7 +29,7 @@ import messages from '../../Messages';
 import { useGetPathwayQuery } from '../../Services/Pathways';
 import { useIntl } from 'react-intl';
 import { useParams } from 'react-router-dom';
-import { workloadQueryBuilder } from '../../PresentationalComponents/Common/Tables';
+import { buildGlobalFilterParams } from '../../PresentationalComponents/Common/Tables';
 import { useLocation } from 'react-router-dom';
 import HybridInventory from '../HybridInventoryTabs/HybridInventoryTabs';
 import { systemsCheck } from './helpers';
@@ -49,6 +49,7 @@ const PathwayDetails = () => {
   const dispatch = useDispatch();
   const envContext = useContext(EnvironmentContext);
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
+  const selectedGroups = useSelector(({ filters }) => filters.selectedGroups);
   const axios = useAxiosWithPlatformInterceptors();
   const workloads = useSelector(({ filters }) => filters.workloads);
   const recFilters = useSelector(({ filters }) => filters.recState);
@@ -57,13 +58,11 @@ const PathwayDetails = () => {
   const [conventionalSystemsCount, setConventionalSystemsCount] = useState(0);
   const [areCountsLoading, setCountsLoading] = useState(true);
 
-  let options = {};
-  selectedTags?.length &&
-    (options = {
-      ...options,
-      ...{ tags: selectedTags.join(',') },
-    });
-  workloads && (options = { ...options, ...workloadQueryBuilder(workloads) });
+  const options = buildGlobalFilterParams({
+    selectedTags,
+    selectedGroups,
+    workloads,
+  });
   const { data: pathway = {}, isFetching } = useGetPathwayQuery({
     ...options,
     slug: pathwayName,
@@ -233,6 +232,7 @@ const PathwayDetails = () => {
                 <HybridInventory
                   pathway={pathway}
                   selectedTags={selectedTags}
+                  selectedGroups={selectedGroups}
                   workloads={workloads}
                   tabPathname={`/insights/advisor/recommendations/pathways/${pathwayName}`}
                   conventionalSystemsCount={conventionalSystemsCount}

@@ -15,6 +15,7 @@ export const filtersInitialState = {
   },
   sysState: { sort: '-last_seen', limit: 20, offset: 0 },
   selectedTags: [],
+  selectedGroups: [],
   workloads: {},
 };
 
@@ -34,6 +35,9 @@ const filters = createSlice({
     updateTags(state, action) {
       state.selectedTags = action.payload;
     },
+    updateGroups(state, action) {
+      state.selectedGroups = action.payload;
+    },
     updateWorkloads(state, action) {
       state.workloads = action.payload;
     },
@@ -45,6 +49,7 @@ export const {
   updateSysFilters,
   updatePathFilters,
   updateTags,
+  updateGroups,
   updateWorkloads,
 } = filters.actions;
 

@@ -1,4 +1,5 @@
-import { filterConfigItems } from './helpers';
+import { filterConfigItems, urlFilterBuilder } from './helpers';
+import { paramParser } from '../Common/Tables';
 
 // --- Module mocks (must precede imports that pull them transitively) ---
 
@@ -21,6 +22,11 @@ jest.mock('../../AppConstants', () => ({
       urlParam: 'rule_status',
       type: 'checkbox',
       values: [],
+    },
+    groups: {
+      title: 'workspace',
+      urlParam: 'groups',
+      type: 'group',
     },
     workload: {
       title: 'Workload',
@@ -61,6 +67,7 @@ jest.mock(
       checkbox: 'checkbox',
       text: 'text',
       custom: 'custom',
+      group: 'group',
     },
   }),
 );
@@ -231,5 +238,165 @@ describe('filterConfigItems – workload filter', () => {
       { label: 'Microsoft SQL', value: 'mssql' },
       { label: 'Satellite', value: 'satellite' },
     ]);
+  });
+});
+
+describe('filterConfigItems – workspace filter', () => {
+  const mockWorkspaces = [
+    { id: 'ws-1', label: 'Production', value: 'Production', hostCount: 10 },
+    { id: 'ws-2', label: 'Staging', value: 'Staging', hostCount: 5 },
+  ];
+
+  it('includes workspace group filter in filterConfigItems', () => {
+    const result = filterConfigItems(
+      filters,
+      setFilters,
+      '',
+      setSearchText,
+      toggleRulesDisabled,
+      intl,
+      false,
+      mockWorkspaces,
+    );
+    const workspaceItem = result.find((item) => item.id === 'groups');
+    expect(workspaceItem).toBeDefined();
+    expect(workspaceItem.type).toBe('group');
+    expect(workspaceItem.label).toBe('workspace');
+    expect(workspaceItem.filterValues.isFilterable).toBe(true);
+    expect(workspaceItem.filterValues.groups[0].items).toEqual([
+      {
+        id: 'ws-1',
+        label: 'Production',
+        value: 'Production',
+        type: 'checkbox',
+      },
+      {
+        id: 'ws-2',
+        label: 'Staging',
+        value: 'Staging',
+        type: 'checkbox',
+      },
+    ]);
+  });
+
+  it('filters workspace items when workspaceSearch is provided', () => {
+    const mockSetWorkspaceSearch = jest.fn();
+    const result = filterConfigItems(
+      filters,
+      setFilters,
+      '',
+      setSearchText,
+      toggleRulesDisabled,
+      intl,
+      false,
+      mockWorkspaces,
+      'prod',
+      mockSetWorkspaceSearch,
+    );
+    const workspaceItem = result.find((item) => item.id === 'groups');
+    expect(workspaceItem.filterValues.filterBy).toBe('prod');
+    expect(workspaceItem.filterValues.groups[0].items).toEqual([
+      {
+        id: 'ws-1',
+        label: 'Production',
+        value: 'Production',
+        type: 'checkbox',
+      },
+    ]);
+
+    workspaceItem.filterValues.onFilter('stag');
+    expect(mockSetWorkspaceSearch).toHaveBeenCalledWith('stag');
+  });
+
+  it('calls setFilters with groups array when workspace checkbox is selected', () => {
+    const result = filterConfigItems(
+      filters,
+      setFilters,
+      '',
+      setSearchText,
+      toggleRulesDisabled,
+      intl,
+      false,
+      mockWorkspaces,
+    );
+    const workspaceItem = result.find((item) => item.id === 'groups');
+    workspaceItem.filterValues.onChange(
+      {},
+      {
+        workspaces: {
+          Production: true,
+          Staging: true,
+        },
+      },
+    );
+
+    expect(setFilters).toHaveBeenCalledWith(
+      expect.objectContaining({
+        groups: ['Production', 'Staging'],
+        offset: 0,
+      }),
+    );
+  });
+
+  it('removes groups filter when all workspace checkboxes are unselected', () => {
+    const result = filterConfigItems(
+      { ...filters, groups: ['Production'] },
+      setFilters,
+      '',
+      setSearchText,
+      toggleRulesDisabled,
+      intl,
+      false,
+      mockWorkspaces,
+    );
+    const workspaceItem = result.find((item) => item.id === 'groups');
+    workspaceItem.filterValues.onChange(
+      {},
+      {
+        workspaces: {
+          Production: false,
+        },
+      },
+    );
+
+    expect(setFilters).toHaveBeenCalledWith(
+      expect.not.objectContaining({
+        groups: expect.anything(),
+      }),
+    );
+  });
+});
+
+describe('urlFilterBuilder', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('normalizes groups query param from string to array', () => {
+    paramParser.mockReturnValueOnce({
+      groups: 'Production',
+    });
+
+    urlFilterBuilder({}, setSearchText, setFilters, {});
+
+    expect(setFilters).toHaveBeenCalledWith(
+      expect.objectContaining({
+        groups: ['Production'],
+      }),
+    );
+  });
+
+  it('preserves groups query param when already an array', () => {
+    paramParser.mockReturnValueOnce({
+      groups: ['Production', 'Staging'],
+    });
+
+    urlFilterBuilder({}, setSearchText, setFilters, {});
+
+    expect(setFilters).toHaveBeenCalledWith(
+      expect.objectContaining({
+        groups: ['Production', 'Staging'],
+      }),
+    );
   });
 });
