@@ -362,9 +362,6 @@ describe('RulesTable (TableTools Implementation)', () => {
   describe('row actions and modals', () => {
     beforeEach(() => {
       rulesTableApiInterceptor(fixtures);
-      cy.intercept('GET', /\/api\/insights\/v1\/rule.*impacting=true.*/).as(
-        'getDefaultRules',
-      );
       cy.intercept('POST', '**/api/insights/v1/ack/', {
         statusCode: 200,
         body: {},
@@ -430,9 +427,6 @@ describe('RulesTable (TableTools Implementation)', () => {
   describe('export controls and permissions', () => {
     beforeEach(() => {
       rulesTableApiInterceptor(fixtures);
-      cy.intercept('GET', /\/api\/insights\/v1\/rule.*impacting=true.*/).as(
-        'getDefaultRules',
-      );
     });
 
     it('renders export button and downloads report when isExportEnabled is true', () => {
