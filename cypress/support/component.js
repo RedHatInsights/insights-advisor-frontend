@@ -63,9 +63,13 @@ global.window.__scalprum__ = {
       modules: {
         './RemediationButton': {
           __esModule: true,
-          default: ({ children }) => {
+          default: ({ children, isDisabled }) => {
             const React = require('react');
-            return React.createElement('button', {}, children);
+            return React.createElement(
+              'button',
+              { disabled: Boolean(isDisabled) },
+              children,
+            );
           },
         },
       },

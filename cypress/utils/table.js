@@ -133,7 +133,7 @@ function selectRandomEnabledRows({ rows, numberOfRowsToSelect }) {
 
 const itExportsDataToFile = (jsonData, filenamePrefix) => {
   it('exports data to JSON and CSV files', () => {
-    cy.clock(Date.now());
+    cy.clock(Date.now(), ['Date']);
 
     // the toggle of the export dropdown has aria-label of "Export"
     // the actual dropdown has ouiaId of "Export"
