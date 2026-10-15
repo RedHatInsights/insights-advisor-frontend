@@ -58,7 +58,7 @@ const RulesTableInner = ({
   } = useStateCallbacks();
 
   // Fetch recommendations data with table state integration
-  const { data, loading, refetch } = useRecsQuery({
+  const { data, loading, refetch, exporter } = useRecsQuery({
     useTableState: true,
     skip: !isTabActive,
     params: additionalParams,
@@ -100,13 +100,10 @@ const RulesTableInner = ({
         sortBy: { index: 3, direction: 'desc' }, // Total Risk
         detailsComponent: RuleDetailsWrapper,
         detailsProps: { fullWidth: true },
-        variant: 'compact',
         EmptyState: RulesEmptyState,
         exportFilename: `Advisor_hits--${new Date().toISOString().replace(/[T:]/g, '-').split('.')[0]}-utc`,
         ...(envContext?.isDisableRecEnabled ? { actionResolver } : {}),
-        exporter: envContext?.isExportEnabled
-          ? async () => data?.data || []
-          : undefined,
+        exporter: envContext?.isExportEnabled ? exporter : undefined,
       },
     }),
     [
@@ -115,7 +112,7 @@ const RulesTableInner = ({
       pathway,
       envContext?.isDisableRecEnabled,
       envContext?.isExportEnabled,
-      data?.data,
+      exporter,
     ],
   );
 
@@ -125,6 +122,7 @@ const RulesTableInner = ({
         items={items}
         total={data?.meta?.total}
         loading={loading}
+        variant="compact"
         defaults={rulesDefaults}
         aria-label="rules-table"
         ouiaId="rules-table"

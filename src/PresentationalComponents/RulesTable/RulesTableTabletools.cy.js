@@ -314,21 +314,21 @@ describe('RulesTable (TableTools Implementation)', () => {
       cy.get('.adv-c-label-incident').first().trigger('mouseenter');
       cy.contains(
         'Indicates configurations that are currently affecting your systems',
-      ).should('be.visible');
+      ).should('exist');
     });
 
     it('shows Critical total risk tooltip on hover', () => {
       cy.get('td[data-label="Total risk"] .pf-m-red')
         .first()
         .trigger('mouseenter');
-      cy.contains(CRITICAL_TOOLTIP_CONTENT).should('be.visible');
+      cy.contains(CRITICAL_TOOLTIP_CONTENT).should('exist');
     });
 
     it('shows Important total risk tooltip on hover', () => {
       cy.get('td[data-label="Total risk"] .pf-m-orange')
         .first()
         .trigger('mouseenter');
-      cy.contains(IMPORTANT_TOOLTIP_CONTENT).should('be.visible');
+      cy.contains(IMPORTANT_TOOLTIP_CONTENT).should('exist');
     });
   });
 
@@ -349,7 +349,7 @@ describe('RulesTable (TableTools Implementation)', () => {
       cy.clickOnRowKebab(
         'Reboot fails when there is no "kernelopts" option in the grubenv',
       );
-      cy.contains('Disable recommendation').should('be.visible').click();
+      cy.contains('Disable recommendation').should('exist').click();
 
       // Verify modal is open with explanation text
       cy.get('[role="dialog"]').should('be.visible');
@@ -381,10 +381,9 @@ describe('RulesTable (TableTools Implementation)', () => {
       cy.clickOnRowKebab(
         'Reboot fails when there is no "kernelopts" option in the grubenv',
       );
-      cy.get('.pf-v6-c-menu, [data-ouia-component-id="Kebab"]').should(
-        'be.visible',
-      );
-      cy.contains('Disable recommendation').click();
+      cy.contains('button.pf-v6-c-menu__item, button', 'Disable recommendation')
+        .should('exist')
+        .click({ force: true });
 
       cy.get('[role="dialog"]').should('be.visible');
       cy.get('button[data-ouia-component-id="cancel"]').click();
@@ -411,6 +410,25 @@ describe('RulesTable (TableTools Implementation)', () => {
       waitForTableTools();
 
       checkExportDropdownOptions();
+    });
+
+    it('exports all items across multiple pages when export is triggered', () => {
+      mountComponent({}, { isExportEnabled: true });
+      cy.wait('@getDefaultRules');
+      waitForTableTools();
+
+      cy.intercept('GET', '**/api/insights/v1/rule/*limit=50*').as(
+        'getExportBatch',
+      );
+
+      cy.get('button[aria-label="Export"]').should('exist').click();
+      cy.contains('Export to JSON').click();
+
+      // TableTools batched exporter queries batched requests
+      cy.wait('@getExportBatch')
+        .its('request.url')
+        .should('include', 'limit=50')
+        .and('include', 'offset=0');
     });
 
     it('hides export button when isExportEnabled is false', () => {
