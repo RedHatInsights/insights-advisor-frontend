@@ -107,26 +107,26 @@ describe('pruneFilters', () => {
     expect(result).toEqual([]);
   });
 
-  it('creates Name chip for name string filter', () => {
+  it('creates Display name chip for name string filter', () => {
     const filters = { name: '9c95-731d' };
     const result = pruneFilters(filters, SFC);
 
     expect(result).toEqual([
       {
-        category: 'Name',
+        category: 'Display name',
         chips: [{ name: '9c95-731d', value: '9c95-731d' }],
         urlParam: 'name',
       },
     ]);
   });
 
-  it('creates Name chip for display_name string filter', () => {
+  it('creates Display name chip for display_name string filter', () => {
     const filters = { display_name: 'test-host' };
     const result = pruneFilters(filters, SFC);
 
     expect(result).toEqual([
       {
-        category: 'Name',
+        category: 'Display name',
         chips: [{ name: 'test-host', value: 'test-host' }],
         urlParam: 'display_name',
       },
@@ -222,11 +222,19 @@ describe('toCategoryChip', () => {
 describe('toSearchChip', () => {
   const { toSearchChip } = require('./Tables');
 
-  it('creates search chip with Name category and provided urlParam', () => {
+  it('creates search chip with Display name category for name/display_name and provided urlParam', () => {
     expect(toSearchChip('display_name', 'host-01')).toEqual({
-      category: 'Name',
+      category: 'Display name',
       urlParam: 'display_name',
       chips: [{ name: 'host-01', value: 'host-01' }],
+    });
+  });
+
+  it('creates search chip with Name category for text urlParam', () => {
+    expect(toSearchChip('text', 'kernel')).toEqual({
+      category: 'Name',
+      urlParam: 'text',
+      chips: [{ name: 'kernel', value: 'kernel' }],
     });
   });
 });

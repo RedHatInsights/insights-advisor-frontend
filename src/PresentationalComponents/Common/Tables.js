@@ -178,10 +178,10 @@ export const toCategoryChip = (key, value, category) => {
  *
  * @param {string} key - Search URL parameter identifier ('text', 'name', or 'display_name').
  * @param {string} value - Non-empty search query string.
- * @returns {{category: 'Name', urlParam: string, chips: Array<{name: string, value: string}>}} Structured search chip object.
+ * @returns {{category: string, urlParam: string, chips: Array<{name: string, value: string}>}} Structured search chip object.
  */
 export const toSearchChip = (key, value) => ({
-  category: 'Name',
+  category: key === 'text' ? 'Name' : 'Display name',
   chips: [{ name: value, value }],
   urlParam: key,
 });

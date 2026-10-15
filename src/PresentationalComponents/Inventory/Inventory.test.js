@@ -827,7 +827,7 @@ describe('Inventory - Playbook Count Scenarios', () => {
         );
       });
 
-      it('builds Name chip when name filter is present', () => {
+      it('does not build custom Display name chip since FEC InventoryTable manages it', () => {
         renderInventory();
 
         const lastCallProps =
@@ -837,14 +837,13 @@ describe('Inventory - Playbook Count Scenarios', () => {
 
         const activeFiltersConfig = lastCallProps.activeFiltersConfig;
         const nameChip = activeFiltersConfig.filters.find(
-          (f) => f.category === 'Name' || f.urlParam === 'name',
+          (f) => f.category === 'Display name' || f.urlParam === 'name',
         );
 
-        // When name filter is empty initial state, filters should be clean
         expect(nameChip).toBeUndefined();
       });
 
-      it('calls urlBuilder and removes name parameter when Name chip is deleted', () => {
+      it('calls urlBuilder and removes name parameter when Display name chip is deleted', () => {
         const Tables = require('../Common/Tables');
         const urlBuilderSpy = jest.spyOn(Tables, 'urlBuilder');
 
@@ -856,12 +855,12 @@ describe('Inventory - Playbook Count Scenarios', () => {
           ][0];
         const activeFiltersConfig = lastCallProps.activeFiltersConfig;
 
-        // Simulate deleting the Name chip
+        // Simulate deleting the Display name chip
         activeFiltersConfig.onDelete(
           null,
           [
             {
-              category: 'Name',
+              category: 'Display name',
               urlParam: 'name',
               chips: [{ name: '9c95-731d', value: '9c95-731d' }],
             },
@@ -875,6 +874,50 @@ describe('Inventory - Playbook Count Scenarios', () => {
           expect.objectContaining({ offset: 0 }),
           expect.anything(),
         );
+      });
+
+      it('hydrates initial filter state from URL query parameters (RHINENG-30086)', () => {
+        window.history.pushState(
+          {},
+          '',
+          '/insights/advisor/recommendations/rule_id?limit=50&offset=10&sort=display_name&name=my-system&rhel_version=9.10',
+        );
+
+        try {
+          renderInventory();
+
+          const lastCallProps =
+            MockInventoryTable.mock.calls[
+              MockInventoryTable.mock.calls.length - 1
+            ][0];
+
+          expect(lastCallProps.customFilters).toEqual(
+            expect.objectContaining({
+              advisorFilters: expect.objectContaining({
+                limit: ['50'],
+                offset: ['10'],
+                sort: ['display_name'],
+                name: ['my-system'],
+                rhel_version: ['9.10'],
+              }),
+              filters: [{ value: 'hostname_or_id', filter: 'my-system' }],
+            }),
+          );
+
+          const activeFilters = lastCallProps.activeFiltersConfig.filters;
+          // Name and OS chips are not in activeFiltersConfig because FEC handles them directly
+          expect(
+            activeFilters.find(
+              (f) =>
+                f.category === 'Display name' ||
+                f.category === 'Operating system' ||
+                f.urlParam === 'name' ||
+                f.urlParam === 'rhel_version',
+            ),
+          ).toBeUndefined();
+        } finally {
+          window.history.pushState({}, '', '/');
+        }
       });
 
       it('fetches systems without name parameter when search filter is cleared', async () => {
