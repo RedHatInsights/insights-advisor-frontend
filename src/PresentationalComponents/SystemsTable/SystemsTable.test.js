@@ -755,24 +755,32 @@ describe('Systems', () => {
       expect(result.total).toBe(3);
     });
 
-    it('does not call defaultGetEntities (Inventory API eliminated)', async () => {
+    it('preserves display_name search query on initial cold load', async () => {
       const mockData = mockScenarios.allSystems();
       mockAxiosGet.mockResolvedValue(mockData);
 
       render(<ComponentWithContext Component={SystemsTable} />);
       const inventoryTableProps = InventoryTable.mock.calls[0][0];
-      const mockDefaultGetEntities = jest.fn();
 
-      const result = await inventoryTableProps.getEntities(
+      await inventoryTableProps.getEntities(
         [],
-        mockGetEntitiesConfig,
+        {
+          ...mockGetEntitiesConfig,
+          advisorFilters: { display_name: 'cold-load-box' },
+          filters: {},
+        },
         true,
-        mockDefaultGetEntities,
+        jest.fn(),
       );
 
-      expect(mockDefaultGetEntities).not.toHaveBeenCalled();
-      expect(result.results).toHaveLength(mockData.data.length);
-      expect(result.total).toBe(mockData.meta.count);
+      expect(mockAxiosGet).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          params: expect.objectContaining({
+            display_name: 'cold-load-box',
+          }),
+        }),
+      );
     });
   });
 });

@@ -5,7 +5,7 @@ import {
   FILTER_CATEGORIES as FC,
   NO_SYSTEMS_REASONS,
 } from '../../AppConstants';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { TableVariant } from '@patternfly/react-table';
 import {
   filterFetchBuilder,
@@ -55,6 +55,7 @@ const SystemsTable = ({ defaultFilters }) => {
   const isWorkloadFilterEnabled = useFeatureFlag('advisor.workloads');
   const [filterBuilding, setFilterBuilding] = useState(true);
   const [fetchError, setFetchError] = useState(false);
+  const initialRequestDoneRef = useRef(false);
   const addNotification = useAddNotification();
   const axios = useAxiosWithPlatformInterceptors();
 
@@ -277,7 +278,8 @@ const SystemsTable = ({ defaultFilters }) => {
           store.replaceReducer(
             updateReducers({
               ...mergeWithEntities(systemReducer([], INVENTORY_ACTION_TYPES), {
-                page: Number(filters.offset / filters.limit + 1 || 1),
+                page:
+                  Math.floor(Number(filters.offset / filters.limit || 0)) + 1,
                 perPage: Number(filters.limit || 20),
               }),
               ...mergeWithDetail(),
@@ -295,6 +297,8 @@ const SystemsTable = ({ defaultFilters }) => {
             workloads,
           } = config;
           const sort = createSortParam(orderBy, orderDirection);
+          const isInitialMount = !initialRequestDoneRef.current;
+          initialRequestDoneRef.current = true;
 
           let options = createOptions(
             advisorFilters,
@@ -306,6 +310,7 @@ const SystemsTable = ({ defaultFilters }) => {
             selectedTags,
             workloads,
             true,
+            isInitialMount,
           );
 
           const localWorkloadFilter = filters?.workloadFilter;

@@ -710,4 +710,33 @@ describe('Inventory - Playbook Count Scenarios', () => {
       expect(apiSuccessEmptyResponse).not.toBe(apiSuccessNoPlaybooks);
     });
   });
+
+  describe('Navigation search reset', () => {
+    it('resets advisorFilters on rule change so previous search does not carry over', async () => {
+      const { rerender } = renderInventory({ rule: { rule_id: 'RULE_ONE' } });
+      const lastIndex = MockInventoryTable.mock.calls.length - 1;
+      const firstCall = MockInventoryTable.mock.calls[lastIndex][0];
+      expect(firstCall.customFilters.advisorFilters.name).toBe('');
+
+      rerender(
+        <ComponentWithContext
+          Component={Inventory}
+          props={{
+            rule: { rule_id: 'RULE_TWO' },
+            axios: { get: mockAxiosGet },
+            selectedTags: [],
+            workloads: [],
+          }}
+          contextValue={{
+            RULES_FETCH_URL: '/api/insights/v1/rule/',
+            BASE_URL: '/api/insights/v1',
+          }}
+        />,
+      );
+
+      const nextIndex = MockInventoryTable.mock.calls.length - 1;
+      const secondCall = MockInventoryTable.mock.calls[nextIndex][0];
+      expect(secondCall.customFilters.advisorFilters.name).toBe('');
+    });
+  });
 });
