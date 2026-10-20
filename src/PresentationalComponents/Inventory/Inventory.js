@@ -1,6 +1,12 @@
 import './_Inventory.scss';
 
-import React, { useEffect, useState, useCallback, useContext } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useContext,
+  useRef,
+} from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import { pruneFilters, urlBuilder } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
@@ -11,6 +17,7 @@ import {
   iopResolutionsMapper,
   impactedDateColumn,
   lastSeenColumn,
+  parseInitialInventoryFilters,
 } from './helpers';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
@@ -48,13 +55,26 @@ const Inventory = ({
   const store = useStore();
   const intl = useIntl();
   const dispatch = useDispatch();
+  const urlParams = parseInitialInventoryFilters(pathway);
+
   const [filters, setFilters] = useState({
     limit: 20,
     offset: 0,
     sort: '-last_seen',
     name: '',
     'filter[system_profile]': true,
+    ...urlParams,
   });
+
+  const rawSearchName =
+    (!pathway ? filters?.name : filters?.display_name) || '';
+  const searchName = Array.isArray(rawSearchName)
+    ? rawSearchName[0]
+    : rawSearchName;
+
+  const initialFiltersRef = useRef(
+    searchName ? [{ value: 'hostname_or_id', filter: searchName }] : [],
+  );
   const [fullFilters, setFullFilters] = useState();
   const [total, setTotal] = useState(0);
   const entities = useSelector(({ entities }) => entities || {});
@@ -75,21 +95,29 @@ const Inventory = ({
   const [rulesPlaybookCount, setRulesPlaybookCount] = useState(-1);
   const [resolutions, setResolutions] = useState([]);
 
+  /**
+   * Synchronizes table state updates directly to browser URL query parameters.
+   * Avoids updating React component state in a loop, preventing FEC InventoryTable re-renders.
+   *
+   * @param {Object} options Resolved table options containing active pagination, sort, and search filters
+   */
   const handleRefresh = (options) => {
     /* Rec table doesn't use the same sorting params as sys table, switching between the two results in the rec table blowing up cuz its trying to
     read the endpoint with incorrect sorting params, if we hold of on updating the sysable url params when using the this component in pathways, it
     solves this issue for the time being*/
-    const { name, display_name } = options;
+    if (pathway) {
+      return;
+    }
     const refreshedFilters = {
       ...options,
-      ...(name && {
-        name,
-      }),
-      ...(display_name && {
-        display_name,
-      }),
     };
-    !pathway && urlBuilder(refreshedFilters, selectedTags);
+    if (!options.name) {
+      delete refreshedFilters.name;
+    }
+    if (!options.display_name) {
+      delete refreshedFilters.display_name;
+    }
+    urlBuilder(refreshedFilters, selectedTags);
   };
   const grabPageIds = () => {
     return curPageIds || [];
@@ -524,6 +552,7 @@ const Inventory = ({
           }}
           customFilters={{
             advisorFilters: filters,
+            filters: initialFiltersRef.current,
           }}
           showTags={envContext.loadChromeless ? false : showTags}
           getEntities={fetchSystems}
@@ -594,6 +623,7 @@ const Inventory = ({
           }}
           customFilters={{
             advisorFilters: filters,
+            filters: initialFiltersRef.current,
             selectedTags,
             workloads,
           }}

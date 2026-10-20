@@ -8,6 +8,7 @@ import {
   iopResolutionsMapper,
   lastSeenColumn,
   impactedDateColumn,
+  parseInitialInventoryFilters,
 } from './helpers';
 import { createOptions, createSortParam } from '../helper';
 import Qs from 'qs';
@@ -31,11 +32,53 @@ jest.mock('../Common/Tables', () => ({
   workloadArrayQueryBuilder: jest.fn((filter) =>
     filter?.length ? { workload: filter } : {},
   ),
+  paramParser: jest.fn(() => ({})),
 }));
 
 describe('Inventory helpers', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe('parseInitialInventoryFilters', () => {
+    it('returns empty object when isPathway is true', () => {
+      const mockParser = jest.fn(() => ({ name: ['test-host'] }));
+      const result = parseInitialInventoryFilters(true, mockParser);
+      expect(result).toEqual({});
+      expect(mockParser).not.toHaveBeenCalled();
+    });
+
+    it('unwraps array query parameters to typed numbers and strings', () => {
+      const mockParser = jest.fn(() => ({
+        limit: ['50'],
+        offset: ['100'],
+        sort: ['-last_seen'],
+        name: ['my-system'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result).toEqual({
+        limit: 50,
+        offset: 100,
+        sort: '-last_seen',
+        name: 'my-system',
+      });
+    });
+
+    it('unwraps display_name when present', () => {
+      const mockParser = jest.fn(() => ({
+        display_name: ['my-display-system'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result).toEqual({
+        display_name: 'my-display-system',
+      });
+    });
+
+    it('handles empty query parameters without errors', () => {
+      const mockParser = jest.fn(() => ({}));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result).toEqual({});
+    });
   });
 
   describe('paginatedRequestHelper', () => {
