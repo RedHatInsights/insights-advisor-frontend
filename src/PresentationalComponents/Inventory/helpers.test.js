@@ -9,6 +9,7 @@ import {
   lastSeenColumn,
   impactedDateColumn,
   parseInitialInventoryFilters,
+  resolveColumnSortIndex,
 } from './helpers';
 import { createOptions, createSortParam } from '../helper';
 import Qs from 'qs';
@@ -70,6 +71,41 @@ describe('Inventory helpers', () => {
       }));
       const result = parseInitialInventoryFilters(false, mockParser);
       expect(result.limit).toBeUndefined();
+    });
+
+    it('rejects positive fractional limit', () => {
+      const mockParser = jest.fn(() => ({
+        limit: ['20.5'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result.limit).toBeUndefined();
+    });
+
+    it('normalizes offset to a valid page boundary when not divisible by limit', () => {
+      const mockParser = jest.fn(() => ({
+        limit: ['20'],
+        offset: ['10'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result.limit).toBe(20);
+      expect(result.offset).toBe(0);
+    });
+
+    it('normalizes offset using default limit 20 when limit is not specified', () => {
+      const mockParser = jest.fn(() => ({
+        offset: ['25'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result.limit).toBeUndefined();
+      expect(result.offset).toBe(20);
+    });
+
+    it('ignores negative offset', () => {
+      const mockParser = jest.fn(() => ({
+        offset: ['-10'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result.offset).toBeUndefined();
     });
 
     it('preserves other filter parameters like rhel_version and groups', () => {
@@ -174,6 +210,31 @@ describe('Inventory helpers', () => {
         },
       );
       expect(systemsData).toEqual(mockData);
+    });
+
+    it('passes isInitialRequest to createOptions', async () => {
+      const mockOptions = { page: 1, per_page: 20 };
+      createOptions.mockReturnValue(mockOptions);
+      mockAxiosGet.mockResolvedValue({ data: [], meta: { count: 0 } });
+
+      await paginatedRequestHelper({
+        ...mockConfig,
+        rule: { rule_id: 'RULE_1' },
+        isInitialRequest: true,
+      });
+
+      expect(createOptions).toHaveBeenCalledWith(
+        mockConfig.advisorFilters,
+        mockConfig.page,
+        mockConfig.per_page,
+        mockConfig.sort,
+        undefined,
+        mockConfig.filters,
+        mockConfig.selectedTags,
+        mockConfig.workloads,
+        false,
+        true,
+      );
     });
 
     it('encodes rule_id in URL', async () => {
@@ -761,6 +822,54 @@ describe('Inventory helpers', () => {
         [],
         false,
         true,
+      );
+    });
+
+    it('uses createSortParam on subsequent requests when initialRequestDoneRef is true', async () => {
+      const mockFetchedSystems = {
+        data: [],
+        meta: { count: 0 },
+      };
+      mockAxiosGet.mockResolvedValue(mockFetchedSystems);
+      createSortParam.mockReturnValue('-rhel_version');
+
+      const initialRequestDoneRef = { current: true };
+      const fetchEntities = getEntities(
+        mockHandleRefresh,
+        null,
+        mockSetCurPageIds,
+        mockSetTotal,
+        [],
+        mockSetFullFilters,
+        {},
+        rule,
+        RULES_FETCH_URL,
+        SYSTEMS_FETCH_URL,
+        mockAxios,
+        initialRequestDoneRef,
+      );
+
+      const configWithSort = {
+        ...config,
+        orderBy: 'operating_system',
+        orderDirection: 'DESC',
+        advisorFilters: { sort: 'display_name' },
+      };
+
+      await fetchEntities([], configWithSort, true, mockDefaultGetEntities);
+
+      expect(createSortParam).toHaveBeenCalledWith('operating_system', 'DESC');
+      expect(createOptions).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.any(Number),
+        expect.any(Number),
+        '-rhel_version',
+        null,
+        expect.any(Object),
+        expect.anything(),
+        expect.anything(),
+        false,
+        false,
       );
     });
 
@@ -1760,6 +1869,34 @@ describe('Inventory helpers', () => {
         expect(React.isValidElement(view)).toBe(true);
         expect(view.props.date).toBe(date);
         expect(view.props.label).toBe('First impacted: ');
+      });
+    });
+
+    describe('resolveColumnSortIndex', () => {
+      it('returns index 1 for display_name and name', () => {
+        expect(resolveColumnSortIndex('display_name')).toBe(1);
+        expect(resolveColumnSortIndex('name')).toBe(1);
+      });
+
+      it('returns index 3 for last_seen without groups/tags, and 5 with groups/tags', () => {
+        expect(resolveColumnSortIndex('last_seen', false)).toBe(3);
+        expect(resolveColumnSortIndex('updated', false)).toBe(3);
+        expect(resolveColumnSortIndex('last_seen', true)).toBe(5);
+        expect(resolveColumnSortIndex('updated', true)).toBe(5);
+      });
+
+      it('returns index 2 for groups when enabled, undefined when disabled', () => {
+        expect(resolveColumnSortIndex('groups', true)).toBe(2);
+        expect(resolveColumnSortIndex('group_name', true)).toBe(2);
+        expect(resolveColumnSortIndex('groups', false)).toBeUndefined();
+      });
+
+      it('returns index 4 for impacted_date without groups/tags, 6 with groups/tags, undefined for pathway', () => {
+        expect(resolveColumnSortIndex('impacted_date', false, false)).toBe(4);
+        expect(resolveColumnSortIndex('impacted_date', true, false)).toBe(6);
+        expect(
+          resolveColumnSortIndex('impacted_date', false, true),
+        ).toBeUndefined();
       });
     });
   });

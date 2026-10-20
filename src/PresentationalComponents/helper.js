@@ -23,19 +23,14 @@ export const buildOsFilter = (osFilter = {}) => {
 };
 
 /**
- * Resolves the active text search query between FEC InventoryTable and initial Advisor filters.
- * FEC toolbar state is authoritative once active; otherwise falls back to initial URL query on mount.
+ * Resolves the active text search query between FEC InventoryTable and Advisor filters.
+ * FEC toolbar state is authoritative once active; otherwise falls back to Advisor filter search.
  *
  * @param {Object} filters FEC inventory filters object
  * @param {Object} advisorFilters Advisor filters object
- * @param {boolean} [isInitialMount=false] Whether this is the initial cold load request
  * @returns {string} Trimmed search query string, or empty string
  */
-export const resolveSearchQuery = (
-  filters = {},
-  advisorFilters = {},
-  isInitialMount = false,
-) => {
+export const resolveSearchQuery = (filters = {}, advisorFilters = {}) => {
   const isFecSearchActive =
     typeof filters?.hostnameOrId === 'string' ||
     (filters && Object.prototype.hasOwnProperty.call(filters, 'hostnameOrId'));
@@ -44,17 +39,13 @@ export const resolveSearchQuery = (
     return (filters?.hostnameOrId || '').trim();
   }
 
-  if (isInitialMount) {
-    const rawAdvisorSearch =
-      advisorFilters?.name || advisorFilters?.display_name || '';
-    const initialSearch = Array.isArray(rawAdvisorSearch)
-      ? rawAdvisorSearch[0]
-      : rawAdvisorSearch;
+  const rawAdvisorSearch =
+    advisorFilters?.name || advisorFilters?.display_name || '';
+  const initialSearch = Array.isArray(rawAdvisorSearch)
+    ? rawAdvisorSearch[0]
+    : rawAdvisorSearch;
 
-    return (initialSearch || '').trim();
-  }
-
-  return '';
+  return (initialSearch || '').trim();
 };
 
 /**
@@ -70,7 +61,6 @@ export const resolveSearchQuery = (
  * @param {Array<string>} [selectedTags] List of selected tag strings
  * @param {Object} [workloads] Workload filter selections
  * @param {boolean} [systemsPage] Truthy if rendering within the Systems page context
- * @param {boolean} [isInitialMount=false] Whether this is the initial cold load request
  * @returns {Object} Serialized query parameters for API request
  */
 export const createOptions = (
@@ -83,7 +73,6 @@ export const createOptions = (
   selectedTags,
   workloads,
   systemsPage,
-  isInitialMount = false,
 ) => {
   const osFilter = filters?.osFilter && buildOsFilter(filters.osFilter);
   // RHINENG-11227: remove system incident filter if it has multiple elements, which will be both
@@ -98,20 +87,38 @@ export const createOptions = (
     ...restAdvisorFilters
   } = advisorFilters || {};
 
-  const resolvedSearch = resolveSearchQuery(
-    filters,
-    advisorFilters,
-    isInitialMount,
-  );
   const searchParamKey = !pathway && !systemsPage ? 'name' : 'display_name';
+  const isFecSearchActive =
+    typeof filters?.hostnameOrId === 'string' ||
+    (filters && Object.prototype.hasOwnProperty.call(filters, 'hostnameOrId'));
 
-  const resolvedRhelVersion = filters?.osFilter
+  const searchOptions = {};
+  if (isFecSearchActive) {
+    const fecSearch = (filters?.hostnameOrId || '').trim();
+    if (fecSearch) {
+      searchOptions[searchParamKey] = fecSearch;
+    }
+  } else {
+    const unwrapSearch = (val) => (Array.isArray(val) ? val[0] : val);
+    const nameSearch = unwrapSearch(advisorFilters?.name);
+    const displayNameSearch = unwrapSearch(advisorFilters?.display_name);
+
+    if (nameSearch && String(nameSearch).trim()) {
+      searchOptions.name = String(nameSearch).trim();
+    } else if (displayNameSearch && String(displayNameSearch).trim()) {
+      searchOptions.display_name = String(displayNameSearch).trim();
+    }
+  }
+
+  const resolvedRhelVersion = osFilter?.length
     ? osFilter
     : advisorRhelVersion?.length
       ? advisorRhelVersion
       : undefined;
 
-  const resolvedGroups = filters?.hostGroupFilter || advisorGroups;
+  const resolvedGroups = filters?.hostGroupFilter?.length
+    ? filters.hostGroupFilter
+    : advisorGroups;
 
   const options = {
     ...restAdvisorFilters,
@@ -123,7 +130,7 @@ export const createOptions = (
     limit: per_page,
     offset: page * per_page - per_page,
     sort: sort,
-    ...(resolvedSearch && { [searchParamKey]: resolvedSearch }),
+    ...searchOptions,
     ...(resolvedGroups?.length && {
       groups: Array.isArray(resolvedGroups)
         ? resolvedGroups.join(',')

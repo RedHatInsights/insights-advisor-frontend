@@ -18,6 +18,7 @@ import {
   impactedDateColumn,
   lastSeenColumn,
   parseInitialInventoryFilters,
+  resolveColumnSortIndex,
 } from './helpers';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
@@ -55,7 +56,12 @@ const Inventory = ({
   const store = useStore();
   const intl = useIntl();
   const dispatch = useDispatch();
+  const envContext = useContext(EnvironmentContext) || {};
   const urlParams = parseInitialInventoryFilters(pathway);
+
+  const currentEntityKey = rule?.rule_id || pathway?.slug || '';
+  const [prevEntityKey, setPrevEntityKey] = useState(currentEntityKey);
+  const initialRequestDoneRef = useRef(false);
 
   const [filters, setFilters] = useState({
     limit: 20,
@@ -65,6 +71,20 @@ const Inventory = ({
     'filter[system_profile]': true,
     ...urlParams,
   });
+
+  if (prevEntityKey !== currentEntityKey) {
+    setPrevEntityKey(currentEntityKey);
+    initialRequestDoneRef.current = false;
+    const nextUrlParams = parseInitialInventoryFilters(pathway);
+    setFilters({
+      limit: 20,
+      offset: 0,
+      sort: '-last_seen',
+      name: '',
+      'filter[system_profile]': true,
+      ...nextUrlParams,
+    });
+  }
 
   useEffect(() => {
     const nextUrlParams = parseInitialInventoryFilters(pathway);
@@ -78,14 +98,14 @@ const Inventory = ({
     });
   }, [rule?.rule_id, pathway?.slug, pathway]);
 
-  const rawSearchName = filters?.name || filters?.display_name || '';
-  const searchName = Array.isArray(rawSearchName)
-    ? rawSearchName[0]
-    : rawSearchName;
-
-  const initialFiltersRef = useRef(
-    searchName ? [{ value: 'hostname_or_id', filter: searchName }] : [],
-  );
+  const initialFilters = React.useMemo(() => {
+    const _entityKey = rule?.rule_id || pathway?.slug;
+    const rawSearch = _entityKey
+      ? urlParams?.name || urlParams?.display_name || ''
+      : '';
+    const search = Array.isArray(rawSearch) ? rawSearch[0] : rawSearch;
+    return search ? [{ value: 'hostname_or_id', filter: search }] : [];
+  }, [rule?.rule_id, pathway?.slug, urlParams?.name, urlParams?.display_name]);
 
   const initialSortBy = React.useMemo(() => {
     if (!filters.sort) {
@@ -98,15 +118,20 @@ const Inventory = ({
       (sortField === 'rhel_version' && 'operating_system') ||
       (sortField === 'group_name' && 'groups') ||
       sortField;
+    const index = resolveColumnSortIndex(
+      sortField,
+      envContext.displayGroupsTagsColumns,
+      Boolean(pathway),
+    );
     return {
+      ...(index !== undefined && { index }),
       key,
       direction: isDesc ? 'desc' : 'asc',
     };
-  }, [filters.sort]);
+  }, [filters.sort, envContext.displayGroupsTagsColumns, pathway]);
   const [fullFilters, setFullFilters] = useState();
   const [total, setTotal] = useState(0);
   const entities = useSelector(({ entities }) => entities || {});
-  const envContext = useContext(EnvironmentContext);
   const addNotification = useAddNotification();
   const isWorkloadFilterEnabled = useFeatureFlag('advisor.workloads');
 
@@ -176,6 +201,7 @@ const Inventory = ({
     envContext.RULES_FETCH_URL,
     envContext.SYSTEMS_FETCH_URL,
     axios,
+    initialRequestDoneRef,
   );
 
   // Ensures rows are marked as selected, runs the check on remediation Status
@@ -582,7 +608,7 @@ const Inventory = ({
           }}
           customFilters={{
             advisorFilters: filters,
-            filters: initialFiltersRef.current,
+            filters: initialFilters,
           }}
           showTags={envContext.loadChromeless ? false : showTags}
           getEntities={fetchSystems}
@@ -598,7 +624,9 @@ const Inventory = ({
                 ...mergeWithEntities(
                   systemReducer([], INVENTORY_ACTION_TYPES),
                   {
-                    page: Number(filters.offset / filters.limit + 1 || 1),
+                    page:
+                      Math.floor(Number(filters.offset / filters.limit || 0)) +
+                      1,
                     perPage: Number(filters.limit || 20),
                     ...(initialSortBy && { sortBy: initialSortBy }),
                   },
@@ -656,7 +684,7 @@ const Inventory = ({
           }}
           customFilters={{
             advisorFilters: filters,
-            filters: initialFiltersRef.current,
+            filters: initialFilters,
             selectedTags,
             workloads,
           }}
@@ -674,7 +702,9 @@ const Inventory = ({
                 ...mergeWithEntities(
                   systemReducer([], INVENTORY_ACTION_TYPES),
                   {
-                    page: Number(filters.offset / filters.limit + 1 || 1),
+                    page:
+                      Math.floor(Number(filters.offset / filters.limit || 0)) +
+                      1,
                     perPage: Number(filters.limit || 20),
                     ...(initialSortBy && { sortBy: initialSortBy }),
                   },

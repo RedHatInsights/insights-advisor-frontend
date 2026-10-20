@@ -42,12 +42,18 @@ export const parseInitialInventoryFilters = (
   const parsedLimit = params?.limit ? Number(params.limit[0]) : NaN;
   const parsedOffset = params?.offset ? Number(params.offset[0]) : NaN;
 
+  const validLimit =
+    Number.isInteger(parsedLimit) && parsedLimit > 0 ? parsedLimit : undefined;
+  const effectiveLimit = validLimit || 20;
+  const validOffset =
+    Number.isFinite(parsedOffset) && parsedOffset >= 0
+      ? Math.floor(parsedOffset / effectiveLimit) * effectiveLimit
+      : undefined;
+
   return {
     ...restParams,
-    ...(Number.isFinite(parsedLimit) &&
-      parsedLimit > 0 && { limit: parsedLimit }),
-    ...(Number.isFinite(parsedOffset) &&
-      parsedOffset >= 0 && { offset: parsedOffset }),
+    ...(validLimit !== undefined && { limit: validLimit }),
+    ...(validOffset !== undefined && { offset: validOffset }),
     ...(params?.sort && { sort: params.sort[0] }),
     ...(rawName !== null && rawName !== undefined
       ? { name: rawName }
@@ -99,6 +105,7 @@ export const paginatedRequestHelper = async ({
   RULES_FETCH_URL,
   SYSTEMS_FETCH_URL,
   axios,
+  isInitialRequest = false,
 }) => {
   let options = createOptions(
     advisorFilters,
@@ -109,6 +116,8 @@ export const paginatedRequestHelper = async ({
     filters,
     selectedTags,
     workloads,
+    false,
+    isInitialRequest,
   );
 
   // Local workload filter (separate from the global Chrome workload filter handled by createOptions above)
@@ -213,8 +222,8 @@ export const getEntities = (
   RULES_FETCH_URL,
   SYSTEMS_FETCH_URL,
   axios,
+  initialRequestDoneRef = { current: false },
 ) => {
-  let initialRequestDone = false;
   return async (_items, config) => {
     const {
       per_page,
@@ -227,7 +236,7 @@ export const getEntities = (
       selectedTags,
     } = config;
 
-    const isInitialRequest = !initialRequestDone;
+    const isInitialRequest = !initialRequestDoneRef.current;
     const sort =
       isInitialRequest && advisorFilters?.sort
         ? advisorFilters.sort
@@ -245,7 +254,7 @@ export const getEntities = (
       false,
       isInitialRequest,
     );
-    initialRequestDone = true;
+    initialRequestDoneRef.current = true;
     handleRefresh(options);
     const allDetails = {
       ...config,
@@ -256,6 +265,7 @@ export const getEntities = (
       RULES_FETCH_URL,
       SYSTEMS_FETCH_URL,
       axios,
+      isInitialRequest,
     };
     setFullFilters(allDetails);
     const fetchedSystems = await paginatedRequestHelper(allDetails);
@@ -420,4 +430,38 @@ export const impactedDateColumn = {
   renderFunc: (impacted_date) => (
     <RelativeTimeWithTooltip date={impacted_date} label="First impacted: " />
   ),
+};
+
+const SORT_KEY_ALIASES = {
+  updated: 'last_seen',
+  rhel_version: 'system_profile',
+  operating_system: 'system_profile',
+  group_name: 'groups',
+  name: 'display_name',
+};
+
+/**
+ * Resolves the 0-based column index in PatternFly table headers for the active sort field.
+ * Accounts for the checkbox column at index 0 when hasCheckbox is enabled.
+ *
+ * @param {string} sortField Field name from API sort parameter (e.g. 'last_seen', 'display_name')
+ * @param {boolean} [displayGroupsTagsColumns=false] Whether groups and tags columns are present
+ * @param {boolean} [isPathway=false] Whether rendering in Pathway details context
+ * @returns {number|undefined} 0-based table column index, or undefined if unknown
+ */
+export const resolveColumnSortIndex = (
+  sortField,
+  displayGroupsTagsColumns = false,
+  isPathway = false,
+) => {
+  const columnKeys = [
+    'display_name',
+    ...(displayGroupsTagsColumns ? ['groups', 'tags'] : []),
+    'system_profile',
+    'last_seen',
+    ...(!isPathway ? ['impacted_date'] : []),
+  ];
+  const targetKey = SORT_KEY_ALIASES[sortField] || sortField;
+  const colIndex = columnKeys.indexOf(targetKey);
+  return colIndex !== -1 ? colIndex + 1 : undefined;
 };
