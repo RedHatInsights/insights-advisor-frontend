@@ -66,8 +66,19 @@ const Inventory = ({
     ...urlParams,
   });
 
-  const rawSearchName =
-    (!pathway ? filters?.name : filters?.display_name) || '';
+  useEffect(() => {
+    const nextUrlParams = parseInitialInventoryFilters(pathway);
+    setFilters({
+      limit: 20,
+      offset: 0,
+      sort: '-last_seen',
+      name: '',
+      'filter[system_profile]': true,
+      ...nextUrlParams,
+    });
+  }, [rule?.rule_id, pathway?.slug, pathway]);
+
+  const rawSearchName = filters?.name || filters?.display_name || '';
   const searchName = Array.isArray(rawSearchName)
     ? rawSearchName[0]
     : rawSearchName;
@@ -75,6 +86,23 @@ const Inventory = ({
   const initialFiltersRef = useRef(
     searchName ? [{ value: 'hostname_or_id', filter: searchName }] : [],
   );
+
+  const initialSortBy = React.useMemo(() => {
+    if (!filters.sort) {
+      return undefined;
+    }
+    const isDesc = filters.sort.startsWith('-');
+    const sortField = isDesc ? filters.sort.slice(1) : filters.sort;
+    const key =
+      (sortField === 'last_seen' && 'updated') ||
+      (sortField === 'rhel_version' && 'operating_system') ||
+      (sortField === 'group_name' && 'groups') ||
+      sortField;
+    return {
+      key,
+      direction: isDesc ? 'desc' : 'asc',
+    };
+  }, [filters.sort]);
   const [fullFilters, setFullFilters] = useState();
   const [total, setTotal] = useState(0);
   const entities = useSelector(({ entities }) => entities || {});
@@ -526,6 +554,7 @@ const Inventory = ({
       )}
       {envContext.loadChromeless ? (
         <AsyncComponent
+          key={rule?.rule_id || pathway?.slug || 'iop-inventory'}
           scope="inventory"
           module="./IOPInventoryTable"
           store={store}
@@ -548,6 +577,7 @@ const Inventory = ({
             variant: TableVariant.compact,
             ...tableProps,
             ...bulkSelectTableProps,
+            ...(initialSortBy && { sortBy: initialSortBy }),
             envContext: envContext,
           }}
           customFilters={{
@@ -570,6 +600,7 @@ const Inventory = ({
                   {
                     page: Number(filters.offset / filters.limit + 1 || 1),
                     perPage: Number(filters.limit || 20),
+                    ...(initialSortBy && { sortBy: initialSortBy }),
                   },
                 ),
                 ...mergeWithDetail(),
@@ -601,6 +632,7 @@ const Inventory = ({
         />
       ) : (
         <InventoryTable
+          key={rule?.rule_id || pathway?.slug || 'inventory'}
           id={'tablesContainer'}
           ouiaId={'inventory-table'}
           hasCheckbox
@@ -620,6 +652,7 @@ const Inventory = ({
             variant: TableVariant.compact,
             ...tableProps,
             ...bulkSelectTableProps,
+            ...(initialSortBy && { sortBy: initialSortBy }),
           }}
           customFilters={{
             advisorFilters: filters,
@@ -643,6 +676,7 @@ const Inventory = ({
                   {
                     page: Number(filters.offset / filters.limit + 1 || 1),
                     perPage: Number(filters.limit || 20),
+                    ...(initialSortBy && { sortBy: initialSortBy }),
                   },
                 ),
                 ...mergeWithDetail(),
