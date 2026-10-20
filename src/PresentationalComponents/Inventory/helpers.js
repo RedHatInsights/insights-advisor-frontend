@@ -1,10 +1,34 @@
-import { workloadArrayQueryBuilder } from '../Common/Tables';
+import { workloadArrayQueryBuilder, paramParser } from '../Common/Tables';
 import { createOptions, createSortParam, getCsrfTokenHeader } from '../helper';
 import LastSeenColumnHeader from '../../Utilities/LastSeenColumnHeader';
 import { fitContent } from '@patternfly/react-table';
 import React from 'react';
 import { RelativeTimeWithTooltip } from '../../Utilities/dateHelpers';
 import Qs from 'qs';
+
+/**
+ * Unwraps URL query parameters into strongly typed initial filter values.
+ *
+ * @param {boolean} isPathway Whether current view is for pathways
+ * @param {Function} [parser=paramParser] Parser function returning query params
+ * @returns {Object} Normalized initial filter options
+ */
+export const parseInitialInventoryFilters = (
+  isPathway,
+  parser = paramParser,
+) => {
+  if (isPathway) {
+    return {};
+  }
+  const params = parser();
+  return {
+    ...(params.limit && { limit: Number(params.limit[0]) }),
+    ...(params.offset && { offset: Number(params.offset[0]) }),
+    ...(params.sort && { sort: params.sort[0] }),
+    ...(params.name && { name: params.name[0] }),
+    ...(params.display_name && { display_name: params.display_name[0] }),
+  };
+};
 
 /**
  * Fetches systems data based on the currently set filters.
