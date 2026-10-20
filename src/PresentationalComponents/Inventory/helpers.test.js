@@ -64,7 +64,39 @@ describe('Inventory helpers', () => {
       });
     });
 
-    it('unwraps display_name when present', () => {
+    it('ignores invalid non-positive or negative limit', () => {
+      const mockParser = jest.fn(() => ({
+        limit: ['-20'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result.limit).toBeUndefined();
+    });
+
+    it('preserves other filter parameters like rhel_version and groups', () => {
+      const mockParser = jest.fn(() => ({
+        rhel_version: ['9.0', '9.1'],
+        groups: ['production'],
+        incident: ['true'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result.rhel_version).toEqual(['9.0', '9.1']);
+      expect(result.groups).toEqual(['production']);
+      expect(result.incident).toEqual(['true']);
+    });
+
+    it('reads raw text values for name and display_name preserving commas and booleans', () => {
+      const mockParser = jest.fn(() => ({}));
+      const searchString = '?name=host,1&display_name=true';
+      const result = parseInitialInventoryFilters(
+        false,
+        mockParser,
+        searchString,
+      );
+      expect(result.name).toBe('host,1');
+      expect(result.display_name).toBe('true');
+    });
+
+    it('unwraps display_name when present in parser fallback', () => {
       const mockParser = jest.fn(() => ({
         display_name: ['my-display-system'],
       }));
@@ -685,6 +717,51 @@ describe('Inventory helpers', () => {
       expect(mockSetTotal).toHaveBeenCalledWith(2);
       expect(entitiesData.total).toBe(2);
       expect(entitiesData.results).toHaveLength(2);
+    });
+
+    it('preserves advisorFilters.sort on initial request', async () => {
+      const mockFetchedSystems = {
+        data: [],
+        meta: { count: 0 },
+      };
+      mockAxiosGet.mockResolvedValue(mockFetchedSystems);
+
+      const fetchEntities = getEntities(
+        mockHandleRefresh,
+        null,
+        mockSetCurPageIds,
+        mockSetTotal,
+        [],
+        mockSetFullFilters,
+        {},
+        rule,
+        RULES_FETCH_URL,
+        SYSTEMS_FETCH_URL,
+        mockAxios,
+      );
+
+      const configWithSort = {
+        ...config,
+        orderBy: 'updated',
+        orderDirection: 'DESC',
+        advisorFilters: { sort: 'display_name' },
+      };
+
+      await fetchEntities([], configWithSort, true, mockDefaultGetEntities);
+
+      expect(createOptions).toHaveBeenNthCalledWith(
+        1,
+        { sort: 'display_name' },
+        1,
+        20,
+        'display_name',
+        null,
+        {},
+        [],
+        [],
+        false,
+        true,
+      );
     });
 
     it('marks selected items correctly', async () => {

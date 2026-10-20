@@ -8,25 +8,61 @@ import Qs from 'qs';
 
 /**
  * Unwraps URL query parameters into strongly typed initial filter values.
+ * Validates numeric bounds for pagination (positive limit, non-negative offset),
+ * reads raw search text preserving commas and literal booleans, and preserves
+ * remaining filter parameters (rhel_version, groups, incident, etc.).
  *
  * @param {boolean} isPathway Whether current view is for pathways
  * @param {Function} [parser=paramParser] Parser function returning query params
+ * @param {string} [searchString] Optional raw query string (defaults to window.location.search)
  * @returns {Object} Normalized initial filter options
  */
 export const parseInitialInventoryFilters = (
   isPathway,
   parser = paramParser,
+  searchString = typeof window !== 'undefined' ? window.location?.search : '',
 ) => {
   if (isPathway) {
     return {};
   }
   const params = parser();
+  const {
+    limit: _rawLimit,
+    offset: _rawOffset,
+    sort: _rawSort,
+    name: _rawNameParam,
+    display_name: _rawDisplayNameParam,
+    ...restParams
+  } = params || {};
+
+  const rawParams = searchString ? new URLSearchParams(searchString) : null;
+  const rawName = rawParams?.get('name');
+  const rawDisplayName = rawParams?.get('display_name');
+
+  const parsedLimit = params?.limit ? Number(params.limit[0]) : NaN;
+  const parsedOffset = params?.offset ? Number(params.offset[0]) : NaN;
+
   return {
-    ...(params.limit && { limit: Number(params.limit[0]) }),
-    ...(params.offset && { offset: Number(params.offset[0]) }),
-    ...(params.sort && { sort: params.sort[0] }),
-    ...(params.name && { name: params.name[0] }),
-    ...(params.display_name && { display_name: params.display_name[0] }),
+    ...restParams,
+    ...(Number.isFinite(parsedLimit) &&
+      parsedLimit > 0 && { limit: parsedLimit }),
+    ...(Number.isFinite(parsedOffset) &&
+      parsedOffset >= 0 && { offset: parsedOffset }),
+    ...(params?.sort && { sort: params.sort[0] }),
+    ...(rawName !== null && rawName !== undefined
+      ? { name: rawName }
+      : params?.name && {
+          name: Array.isArray(params.name)
+            ? params.name[0]
+            : String(params.name),
+        }),
+    ...(rawDisplayName !== null && rawDisplayName !== undefined
+      ? { display_name: rawDisplayName }
+      : params?.display_name && {
+          display_name: Array.isArray(params.display_name)
+            ? params.display_name[0]
+            : String(params.display_name),
+        }),
   };
 };
 
@@ -165,21 +201,21 @@ export const fetchAllPathwayRules = async (axios, baseUrl, pathwaySlug) => {
  * @param {Object} axios Axios instance for making requests
  * @returns {Function} Async function that fetches and processes entities
  */
-export const getEntities =
-  (
-    handleRefresh,
-    pathway,
-    setCurPageIds,
-    setTotal,
-    selectedIds,
-    setFullFilters,
-    fullFilters,
-    rule,
-    RULES_FETCH_URL,
-    SYSTEMS_FETCH_URL,
-    axios,
-  ) =>
-  async (_items, config) => {
+export const getEntities = (
+  handleRefresh,
+  pathway,
+  setCurPageIds,
+  setTotal,
+  selectedIds,
+  setFullFilters,
+  fullFilters,
+  rule,
+  RULES_FETCH_URL,
+  SYSTEMS_FETCH_URL,
+  axios,
+) => {
+  let initialRequestDone = false;
+  return async (_items, config) => {
     const {
       per_page,
       page,
@@ -190,7 +226,12 @@ export const getEntities =
       workloads,
       selectedTags,
     } = config;
-    const sort = createSortParam(orderBy, orderDirection);
+
+    const isInitialRequest = !initialRequestDone;
+    const sort =
+      isInitialRequest && advisorFilters?.sort
+        ? advisorFilters.sort
+        : createSortParam(orderBy, orderDirection);
 
     let options = createOptions(
       advisorFilters,
@@ -201,7 +242,10 @@ export const getEntities =
       filters,
       selectedTags,
       workloads,
+      false,
+      isInitialRequest,
     );
+    initialRequestDone = true;
     handleRefresh(options);
     const allDetails = {
       ...config,
@@ -237,6 +281,7 @@ export const getEntities =
       total: totalCount,
     });
   };
+};
 
 /**
  * Fetches data in batches across all pages.

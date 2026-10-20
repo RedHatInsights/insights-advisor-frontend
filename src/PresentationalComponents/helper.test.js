@@ -333,6 +333,7 @@ describe('createOptions', () => {
       selectedTags,
       workloads,
       systemsPage,
+      true,
     );
     expect(options.name).toBe('cold-host');
   });
@@ -422,24 +423,28 @@ describe('resolveSearchQuery', () => {
   });
 
   it('falls back to advisorFilters.name on cold load when FEC filters has no hostnameOrId key', () => {
-    expect(resolveSearchQuery({}, { name: 'cold-load-host' })).toBe(
+    expect(resolveSearchQuery({}, { name: 'cold-load-host' }, true)).toBe(
       'cold-load-host',
     );
   });
 
   it('unwraps array advisorFilters.name on cold load', () => {
-    expect(resolveSearchQuery({}, { name: ['cold-load-host'] })).toBe(
+    expect(resolveSearchQuery({}, { name: ['cold-load-host'] }, true)).toBe(
       'cold-load-host',
     );
   });
 
-  it('falls back to advisorFilters.display_name if name is not present', () => {
-    expect(resolveSearchQuery({}, { display_name: 'display-host' })).toBe(
+  it('falls back to advisorFilters.display_name if name is not present on cold load', () => {
+    expect(resolveSearchQuery({}, { display_name: 'display-host' }, true)).toBe(
       'display-host',
     );
   });
 
+  it('does not fall back to advisorFilters post-mount (e.g. after Reset filters)', () => {
+    expect(resolveSearchQuery({}, { name: 'stale-host' }, false)).toBe('');
+  });
+
   it('returns empty string when neither FEC nor advisorFilters have search text', () => {
-    expect(resolveSearchQuery({}, {})).toBe('');
+    expect(resolveSearchQuery({}, {}, true)).toBe('');
   });
 });

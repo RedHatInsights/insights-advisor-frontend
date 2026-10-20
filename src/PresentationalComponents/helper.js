@@ -24,13 +24,18 @@ export const buildOsFilter = (osFilter = {}) => {
 
 /**
  * Resolves the active text search query between FEC InventoryTable and initial Advisor filters.
- * FEC toolbar state is authoritative once active; otherwise falls back to initial URL query.
+ * FEC toolbar state is authoritative once active; otherwise falls back to initial URL query on mount.
  *
  * @param {Object} filters FEC inventory filters object
  * @param {Object} advisorFilters Advisor filters object
+ * @param {boolean} [isInitialMount=false] Whether this is the initial cold load request
  * @returns {string} Trimmed search query string, or empty string
  */
-export const resolveSearchQuery = (filters = {}, advisorFilters = {}) => {
+export const resolveSearchQuery = (
+  filters = {},
+  advisorFilters = {},
+  isInitialMount = false,
+) => {
   const isFecSearchActive =
     typeof filters?.hostnameOrId === 'string' ||
     (filters && Object.prototype.hasOwnProperty.call(filters, 'hostnameOrId'));
@@ -39,13 +44,17 @@ export const resolveSearchQuery = (filters = {}, advisorFilters = {}) => {
     return (filters?.hostnameOrId || '').trim();
   }
 
-  const rawAdvisorSearch =
-    advisorFilters?.name || advisorFilters?.display_name || '';
-  const initialSearch = Array.isArray(rawAdvisorSearch)
-    ? rawAdvisorSearch[0]
-    : rawAdvisorSearch;
+  if (isInitialMount) {
+    const rawAdvisorSearch =
+      advisorFilters?.name || advisorFilters?.display_name || '';
+    const initialSearch = Array.isArray(rawAdvisorSearch)
+      ? rawAdvisorSearch[0]
+      : rawAdvisorSearch;
 
-  return (initialSearch || '').trim();
+    return (initialSearch || '').trim();
+  }
+
+  return '';
 };
 
 /**
@@ -61,6 +70,7 @@ export const resolveSearchQuery = (filters = {}, advisorFilters = {}) => {
  * @param {Array<string>} [selectedTags] List of selected tag strings
  * @param {Object} [workloads] Workload filter selections
  * @param {boolean} [systemsPage] Truthy if rendering within the Systems page context
+ * @param {boolean} [isInitialMount=false] Whether this is the initial cold load request
  * @returns {Object} Serialized query parameters for API request
  */
 export const createOptions = (
@@ -73,6 +83,7 @@ export const createOptions = (
   selectedTags,
   workloads,
   systemsPage,
+  isInitialMount = false,
 ) => {
   const osFilter = filters?.osFilter && buildOsFilter(filters.osFilter);
   // RHINENG-11227: remove system incident filter if it has multiple elements, which will be both
@@ -83,28 +94,40 @@ export const createOptions = (
     rhel_version: advisorRhelVersion,
     name: _advisorName,
     display_name: _advisorDisplayName,
+    groups: advisorGroups,
     ...restAdvisorFilters
   } = advisorFilters || {};
 
-  const resolvedSearch = resolveSearchQuery(filters, advisorFilters);
+  const resolvedSearch = resolveSearchQuery(
+    filters,
+    advisorFilters,
+    isInitialMount,
+  );
   const searchParamKey = !pathway && !systemsPage ? 'name' : 'display_name';
+
+  const resolvedRhelVersion = filters?.osFilter
+    ? osFilter
+    : advisorRhelVersion?.length
+      ? advisorRhelVersion
+      : undefined;
+
+  const resolvedGroups = filters?.hostGroupFilter || advisorGroups;
 
   const options = {
     ...restAdvisorFilters,
-    ...(advisorRhelVersion?.length && {
-      rhel_version: Array.isArray(advisorRhelVersion)
-        ? advisorRhelVersion.join(',')
-        : advisorRhelVersion,
+    ...(resolvedRhelVersion?.length && {
+      rhel_version: Array.isArray(resolvedRhelVersion)
+        ? resolvedRhelVersion.join(',')
+        : resolvedRhelVersion,
     }),
     limit: per_page,
     offset: page * per_page - per_page,
     sort: sort,
     ...(resolvedSearch && { [searchParamKey]: resolvedSearch }),
-    ...(osFilter?.length && {
-      rhel_version: osFilter.join(','),
-    }),
-    ...(filters?.hostGroupFilter?.length && {
-      groups: filters.hostGroupFilter.join(','),
+    ...(resolvedGroups?.length && {
+      groups: Array.isArray(resolvedGroups)
+        ? resolvedGroups.join(',')
+        : resolvedGroups,
     }),
     ...(filters.tagFilters?.length && buildTagFilter(filters.tagFilters)),
     ...(workloads ? workloadQueryBuilder(workloads) : {}),
