@@ -22,52 +22,119 @@ export const buildOsFilter = (osFilter = {}) => {
   return osVersions;
 };
 
+/**
+ * Resolves the active text search query between FEC InventoryTable and Advisor filters.
+ * FEC toolbar state is authoritative once active; otherwise falls back to Advisor filter search.
+ *
+ * @param {Object} filters FEC inventory filters object
+ * @param {Object} advisorFilters Advisor filters object
+ * @returns {string} Trimmed search query string, or empty string
+ */
+export const resolveSearchQuery = (filters = {}, advisorFilters = {}) => {
+  const isFecSearchActive =
+    typeof filters?.hostnameOrId === 'string' ||
+    (filters && Object.prototype.hasOwnProperty.call(filters, 'hostnameOrId'));
+
+  if (isFecSearchActive) {
+    return (filters?.hostnameOrId || '').trim();
+  }
+
+  const rawAdvisorSearch =
+    advisorFilters?.name || advisorFilters?.display_name || '';
+  const initialSearch = Array.isArray(rawAdvisorSearch)
+    ? rawAdvisorSearch[0]
+    : rawAdvisorSearch;
+
+  return (initialSearch || '').trim();
+};
+
+/**
+ * Constructs an API query parameters object by merging Advisor filter state,
+ * FEC InventoryTable filters, pagination, tags, and workloads.
+ *
+ * @param {Object} advisorFilters Initial/active filters from Advisor state (URL params, incident, rhel_version)
+ * @param {number} page Current table page index (1-based)
+ * @param {number} per_page Number of items to display per page
+ * @param {string} sort Formatted API sort parameter (e.g., '-last_seen')
+ * @param {boolean|Object} pathway Truthy if rendering within Pathway details context
+ * @param {Object} [filters={}] FEC InventoryTable filter configuration (hostnameOrId, osFilter, hostGroupFilter, tagFilters)
+ * @param {Array<string>} [selectedTags] List of selected tag strings
+ * @param {Object} [workloads] Workload filter selections
+ * @param {boolean} [systemsPage] Truthy if rendering within the Systems page context
+ * @returns {Object} Serialized query parameters for API request
+ */
 export const createOptions = (
   advisorFilters,
   page,
   per_page,
   sort,
   pathway,
-  filters,
+  filters = {},
   selectedTags,
   workloads,
   systemsPage,
 ) => {
-  const osFilter = filters.osFilter && buildOsFilter(filters.osFilter);
+  const osFilter = filters?.osFilter && buildOsFilter(filters.osFilter);
   // RHINENG-11227: remove system incident filter if it has multiple elements, which will be both
   // 'true' and 'false', because it will result in a 400 BadRequest from the API
-  advisorFilters.incident?.length > 1 && delete advisorFilters.incident;
-  const { rhel_version: advisorRhelVersion, ...restAdvisorFilters } =
-    advisorFilters;
+  advisorFilters?.incident?.length > 1 && delete advisorFilters.incident;
+
+  const {
+    rhel_version: advisorRhelVersion,
+    name: _advisorName,
+    display_name: _advisorDisplayName,
+    groups: advisorGroups,
+    ...restAdvisorFilters
+  } = advisorFilters || {};
+
+  const searchParamKey = !pathway && !systemsPage ? 'name' : 'display_name';
+  const isFecSearchActive =
+    typeof filters?.hostnameOrId === 'string' ||
+    (filters && Object.prototype.hasOwnProperty.call(filters, 'hostnameOrId'));
+
+  const searchOptions = {};
+  if (isFecSearchActive) {
+    const fecSearch = (filters?.hostnameOrId || '').trim();
+    if (fecSearch) {
+      searchOptions[searchParamKey] = fecSearch;
+    }
+  } else {
+    const unwrapSearch = (val) => (Array.isArray(val) ? val[0] : val);
+    const nameSearch = unwrapSearch(advisorFilters?.name);
+    const displayNameSearch = unwrapSearch(advisorFilters?.display_name);
+
+    if (nameSearch && String(nameSearch).trim()) {
+      searchOptions.name = String(nameSearch).trim();
+    } else if (displayNameSearch && String(displayNameSearch).trim()) {
+      searchOptions.display_name = String(displayNameSearch).trim();
+    }
+  }
+
+  const resolvedRhelVersion = osFilter?.length
+    ? osFilter
+    : advisorRhelVersion?.length
+      ? advisorRhelVersion
+      : undefined;
+
+  const resolvedGroups = filters?.hostGroupFilter?.length
+    ? filters.hostGroupFilter
+    : advisorGroups;
+
   const options = {
     ...restAdvisorFilters,
-    ...(advisorRhelVersion?.length && {
-      rhel_version: Array.isArray(advisorRhelVersion)
-        ? advisorRhelVersion.join(',')
-        : advisorRhelVersion,
+    ...(resolvedRhelVersion?.length && {
+      rhel_version: Array.isArray(resolvedRhelVersion)
+        ? resolvedRhelVersion.join(',')
+        : resolvedRhelVersion,
     }),
     limit: per_page,
     offset: page * per_page - per_page,
     sort: sort,
-    ...(filters?.hostnameOrId &&
-      !pathway &&
-      !systemsPage && {
-        name: filters?.hostnameOrId,
-      }),
-    ...(filters?.hostnameOrId &&
-      !pathway &&
-      systemsPage && {
-        display_name: filters?.hostnameOrId,
-      }),
-    ...(filters.hostnameOrId &&
-      pathway && {
-        display_name: filters?.hostnameOrId,
-      }),
-    ...(osFilter?.length && {
-      rhel_version: osFilter.join(','),
-    }),
-    ...(filters?.hostGroupFilter?.length && {
-      groups: filters.hostGroupFilter.join(','),
+    ...searchOptions,
+    ...(resolvedGroups?.length && {
+      groups: Array.isArray(resolvedGroups)
+        ? resolvedGroups.join(',')
+        : resolvedGroups,
     }),
     ...(filters.tagFilters?.length && buildTagFilter(filters.tagFilters)),
     ...(workloads ? workloadQueryBuilder(workloads) : {}),

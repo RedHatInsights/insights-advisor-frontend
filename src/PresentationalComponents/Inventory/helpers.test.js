@@ -8,6 +8,8 @@ import {
   iopResolutionsMapper,
   lastSeenColumn,
   impactedDateColumn,
+  parseInitialInventoryFilters,
+  resolveColumnSortIndex,
 } from './helpers';
 import { createOptions, createSortParam } from '../helper';
 import Qs from 'qs';
@@ -31,11 +33,120 @@ jest.mock('../Common/Tables', () => ({
   workloadArrayQueryBuilder: jest.fn((filter) =>
     filter?.length ? { workload: filter } : {},
   ),
+  paramParser: jest.fn(() => ({})),
 }));
 
 describe('Inventory helpers', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe('parseInitialInventoryFilters', () => {
+    it('returns empty object when isPathway is true', () => {
+      const mockParser = jest.fn(() => ({ name: ['test-host'] }));
+      const result = parseInitialInventoryFilters(true, mockParser);
+      expect(result).toEqual({});
+      expect(mockParser).not.toHaveBeenCalled();
+    });
+
+    it('unwraps array query parameters to typed numbers and strings', () => {
+      const mockParser = jest.fn(() => ({
+        limit: ['50'],
+        offset: ['100'],
+        sort: ['-last_seen'],
+        name: ['my-system'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result).toEqual({
+        limit: 50,
+        offset: 100,
+        sort: '-last_seen',
+        name: 'my-system',
+      });
+    });
+
+    it('ignores invalid non-positive or negative limit', () => {
+      const mockParser = jest.fn(() => ({
+        limit: ['-20'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result.limit).toBeUndefined();
+    });
+
+    it('rejects positive fractional limit', () => {
+      const mockParser = jest.fn(() => ({
+        limit: ['20.5'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result.limit).toBeUndefined();
+    });
+
+    it('normalizes offset to a valid page boundary when not divisible by limit', () => {
+      const mockParser = jest.fn(() => ({
+        limit: ['20'],
+        offset: ['10'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result.limit).toBe(20);
+      expect(result.offset).toBe(0);
+    });
+
+    it('normalizes offset using default limit 20 when limit is not specified', () => {
+      const mockParser = jest.fn(() => ({
+        offset: ['25'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result.limit).toBeUndefined();
+      expect(result.offset).toBe(20);
+    });
+
+    it('ignores negative offset', () => {
+      const mockParser = jest.fn(() => ({
+        offset: ['-10'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result.offset).toBeUndefined();
+    });
+
+    it('preserves other filter parameters like rhel_version and groups', () => {
+      const mockParser = jest.fn(() => ({
+        rhel_version: ['9.0', '9.1'],
+        groups: ['production'],
+        incident: ['true'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result.rhel_version).toEqual(['9.0', '9.1']);
+      expect(result.groups).toEqual(['production']);
+      expect(result.incident).toEqual(['true']);
+    });
+
+    it('reads raw text values for name and display_name preserving commas and booleans', () => {
+      const mockParser = jest.fn(() => ({}));
+      const searchString = '?name=host,1&display_name=true';
+      const result = parseInitialInventoryFilters(
+        false,
+        mockParser,
+        searchString,
+      );
+      expect(result.name).toBe('host,1');
+      expect(result.display_name).toBe('true');
+    });
+
+    it('unwraps display_name when present in parser fallback', () => {
+      const mockParser = jest.fn(() => ({
+        display_name: ['my-display-system'],
+      }));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result).toEqual({
+        display_name: 'my-display-system',
+      });
+    });
+
+    it('handles empty query parameters without errors', () => {
+      const mockParser = jest.fn(() => ({}));
+      const result = parseInitialInventoryFilters(false, mockParser);
+      expect(result).toEqual({});
+    });
   });
 
   describe('paginatedRequestHelper', () => {
@@ -99,6 +210,31 @@ describe('Inventory helpers', () => {
         },
       );
       expect(systemsData).toEqual(mockData);
+    });
+
+    it('passes isInitialRequest to createOptions', async () => {
+      const mockOptions = { page: 1, per_page: 20 };
+      createOptions.mockReturnValue(mockOptions);
+      mockAxiosGet.mockResolvedValue({ data: [], meta: { count: 0 } });
+
+      await paginatedRequestHelper({
+        ...mockConfig,
+        rule: { rule_id: 'RULE_1' },
+        isInitialRequest: true,
+      });
+
+      expect(createOptions).toHaveBeenCalledWith(
+        mockConfig.advisorFilters,
+        mockConfig.page,
+        mockConfig.per_page,
+        mockConfig.sort,
+        undefined,
+        mockConfig.filters,
+        mockConfig.selectedTags,
+        mockConfig.workloads,
+        false,
+        true,
+      );
     });
 
     it('encodes rule_id in URL', async () => {
@@ -642,6 +778,99 @@ describe('Inventory helpers', () => {
       expect(mockSetTotal).toHaveBeenCalledWith(2);
       expect(entitiesData.total).toBe(2);
       expect(entitiesData.results).toHaveLength(2);
+    });
+
+    it('preserves advisorFilters.sort on initial request', async () => {
+      const mockFetchedSystems = {
+        data: [],
+        meta: { count: 0 },
+      };
+      mockAxiosGet.mockResolvedValue(mockFetchedSystems);
+
+      const fetchEntities = getEntities(
+        mockHandleRefresh,
+        null,
+        mockSetCurPageIds,
+        mockSetTotal,
+        [],
+        mockSetFullFilters,
+        {},
+        rule,
+        RULES_FETCH_URL,
+        SYSTEMS_FETCH_URL,
+        mockAxios,
+      );
+
+      const configWithSort = {
+        ...config,
+        orderBy: 'updated',
+        orderDirection: 'DESC',
+        advisorFilters: { sort: 'display_name' },
+      };
+
+      await fetchEntities([], configWithSort, true, mockDefaultGetEntities);
+
+      expect(createOptions).toHaveBeenNthCalledWith(
+        1,
+        { sort: 'display_name' },
+        1,
+        20,
+        'display_name',
+        null,
+        {},
+        [],
+        [],
+        false,
+        true,
+      );
+    });
+
+    it('uses createSortParam on subsequent requests when initialRequestDoneRef is true', async () => {
+      const mockFetchedSystems = {
+        data: [],
+        meta: { count: 0 },
+      };
+      mockAxiosGet.mockResolvedValue(mockFetchedSystems);
+      createSortParam.mockReturnValue('-rhel_version');
+
+      const initialRequestDoneRef = { current: true };
+      const fetchEntities = getEntities(
+        mockHandleRefresh,
+        null,
+        mockSetCurPageIds,
+        mockSetTotal,
+        [],
+        mockSetFullFilters,
+        {},
+        rule,
+        RULES_FETCH_URL,
+        SYSTEMS_FETCH_URL,
+        mockAxios,
+        initialRequestDoneRef,
+      );
+
+      const configWithSort = {
+        ...config,
+        orderBy: 'operating_system',
+        orderDirection: 'DESC',
+        advisorFilters: { sort: 'display_name' },
+      };
+
+      await fetchEntities([], configWithSort, true, mockDefaultGetEntities);
+
+      expect(createSortParam).toHaveBeenCalledWith('operating_system', 'DESC');
+      expect(createOptions).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.any(Number),
+        expect.any(Number),
+        '-rhel_version',
+        null,
+        expect.any(Object),
+        expect.anything(),
+        expect.anything(),
+        false,
+        false,
+      );
     });
 
     it('marks selected items correctly', async () => {
@@ -1640,6 +1869,34 @@ describe('Inventory helpers', () => {
         expect(React.isValidElement(view)).toBe(true);
         expect(view.props.date).toBe(date);
         expect(view.props.label).toBe('First impacted: ');
+      });
+    });
+
+    describe('resolveColumnSortIndex', () => {
+      it('returns index 1 for display_name and name', () => {
+        expect(resolveColumnSortIndex('display_name')).toBe(1);
+        expect(resolveColumnSortIndex('name')).toBe(1);
+      });
+
+      it('returns index 3 for last_seen without groups/tags, and 5 with groups/tags', () => {
+        expect(resolveColumnSortIndex('last_seen', false)).toBe(3);
+        expect(resolveColumnSortIndex('updated', false)).toBe(3);
+        expect(resolveColumnSortIndex('last_seen', true)).toBe(5);
+        expect(resolveColumnSortIndex('updated', true)).toBe(5);
+      });
+
+      it('returns index 2 for groups when enabled, undefined when disabled', () => {
+        expect(resolveColumnSortIndex('groups', true)).toBe(2);
+        expect(resolveColumnSortIndex('group_name', true)).toBe(2);
+        expect(resolveColumnSortIndex('groups', false)).toBeUndefined();
+      });
+
+      it('returns index 4 for impacted_date without groups/tags, 6 with groups/tags, undefined for pathway', () => {
+        expect(resolveColumnSortIndex('impacted_date', false, false)).toBe(4);
+        expect(resolveColumnSortIndex('impacted_date', true, false)).toBe(6);
+        expect(
+          resolveColumnSortIndex('impacted_date', false, true),
+        ).toBeUndefined();
       });
     });
   });
