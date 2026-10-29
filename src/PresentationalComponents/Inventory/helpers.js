@@ -1,10 +1,76 @@
-import { workloadArrayQueryBuilder } from '../Common/Tables';
+import { workloadArrayQueryBuilder, paramParser } from '../Common/Tables';
 import { createOptions, createSortParam, getCsrfTokenHeader } from '../helper';
 import LastSeenColumnHeader from '../../Utilities/LastSeenColumnHeader';
 import { fitContent } from '@patternfly/react-table';
 import React from 'react';
 import { RelativeTimeWithTooltip } from '../../Utilities/dateHelpers';
 import Qs from 'qs';
+
+/**
+ * Unwraps URL query parameters into strongly typed initial filter values.
+ * Validates numeric bounds for pagination (positive limit, non-negative offset),
+ * reads raw search text preserving commas and literal booleans, and preserves
+ * remaining filter parameters (rhel_version, groups, incident, etc.).
+ *
+ * @param {boolean} isPathway Whether current view is for pathways
+ * @param {Function} [parser=paramParser] Parser function returning query params
+ * @param {string} [searchString] Optional raw query string (defaults to window.location.search)
+ * @returns {Object} Normalized initial filter options
+ */
+export const parseInitialInventoryFilters = (
+  isPathway,
+  parser = paramParser,
+  searchString = typeof window !== 'undefined' ? window.location?.search : '',
+) => {
+  if (isPathway) {
+    return {};
+  }
+  const params = parser();
+  const {
+    limit: _rawLimit,
+    offset: _rawOffset,
+    sort: _rawSort,
+    name: _rawNameParam,
+    display_name: _rawDisplayNameParam,
+    ...restParams
+  } = params || {};
+
+  const rawParams = searchString ? new URLSearchParams(searchString) : null;
+  const rawName = rawParams?.get('name');
+  const rawDisplayName = rawParams?.get('display_name');
+
+  const parsedLimit = params?.limit ? Number(params.limit[0]) : NaN;
+  const parsedOffset = params?.offset ? Number(params.offset[0]) : NaN;
+
+  const validLimit =
+    Number.isInteger(parsedLimit) && parsedLimit > 0 ? parsedLimit : undefined;
+  const effectiveLimit = validLimit || 20;
+  const validOffset =
+    Number.isFinite(parsedOffset) && parsedOffset >= 0
+      ? Math.floor(parsedOffset / effectiveLimit) * effectiveLimit
+      : undefined;
+
+  return {
+    ...restParams,
+    ...(validLimit !== undefined && { limit: validLimit }),
+    ...(validOffset !== undefined && { offset: validOffset }),
+    ...(params?.sort && { sort: params.sort[0] }),
+    ...(rawName !== null && rawName !== undefined
+      ? { name: rawName }
+      : params?.name && {
+          name: Array.isArray(params.name)
+            ? params.name[0]
+            : String(params.name),
+        }),
+    ...(rawDisplayName !== null && rawDisplayName !== undefined
+      ? { display_name: rawDisplayName }
+      : params?.display_name && {
+          display_name: Array.isArray(params.display_name)
+            ? params.display_name[0]
+            : String(params.display_name),
+        }),
+  };
+};
 
 /**
  * Fetches systems data based on the currently set filters.
@@ -39,6 +105,7 @@ export const paginatedRequestHelper = async ({
   RULES_FETCH_URL,
   SYSTEMS_FETCH_URL,
   axios,
+  isInitialRequest = false,
 }) => {
   let options = createOptions(
     advisorFilters,
@@ -49,6 +116,8 @@ export const paginatedRequestHelper = async ({
     filters,
     selectedTags,
     workloads,
+    false,
+    isInitialRequest,
   );
 
   // Local workload filter (separate from the global Chrome workload filter handled by createOptions above)
@@ -141,21 +210,21 @@ export const fetchAllPathwayRules = async (axios, baseUrl, pathwaySlug) => {
  * @param {Object} axios Axios instance for making requests
  * @returns {Function} Async function that fetches and processes entities
  */
-export const getEntities =
-  (
-    handleRefresh,
-    pathway,
-    setCurPageIds,
-    setTotal,
-    selectedIds,
-    setFullFilters,
-    fullFilters,
-    rule,
-    RULES_FETCH_URL,
-    SYSTEMS_FETCH_URL,
-    axios,
-  ) =>
-  async (_items, config) => {
+export const getEntities = (
+  handleRefresh,
+  pathway,
+  setCurPageIds,
+  setTotal,
+  selectedIds,
+  setFullFilters,
+  fullFilters,
+  rule,
+  RULES_FETCH_URL,
+  SYSTEMS_FETCH_URL,
+  axios,
+  initialRequestDoneRef = { current: false },
+) => {
+  return async (_items, config) => {
     const {
       per_page,
       page,
@@ -166,7 +235,12 @@ export const getEntities =
       workloads,
       selectedTags,
     } = config;
-    const sort = createSortParam(orderBy, orderDirection);
+
+    const isInitialRequest = !initialRequestDoneRef.current;
+    const sort =
+      isInitialRequest && advisorFilters?.sort
+        ? advisorFilters.sort
+        : createSortParam(orderBy, orderDirection);
 
     let options = createOptions(
       advisorFilters,
@@ -177,7 +251,10 @@ export const getEntities =
       filters,
       selectedTags,
       workloads,
+      false,
+      isInitialRequest,
     );
+    initialRequestDoneRef.current = true;
     handleRefresh(options);
     const allDetails = {
       ...config,
@@ -188,6 +265,7 @@ export const getEntities =
       RULES_FETCH_URL,
       SYSTEMS_FETCH_URL,
       axios,
+      isInitialRequest,
     };
     setFullFilters(allDetails);
     const fetchedSystems = await paginatedRequestHelper(allDetails);
@@ -213,6 +291,7 @@ export const getEntities =
       total: totalCount,
     });
   };
+};
 
 /**
  * Fetches data in batches across all pages.
@@ -351,4 +430,38 @@ export const impactedDateColumn = {
   renderFunc: (impacted_date) => (
     <RelativeTimeWithTooltip date={impacted_date} label="First impacted: " />
   ),
+};
+
+const SORT_KEY_ALIASES = {
+  updated: 'last_seen',
+  rhel_version: 'system_profile',
+  operating_system: 'system_profile',
+  group_name: 'groups',
+  name: 'display_name',
+};
+
+/**
+ * Resolves the 0-based column index in PatternFly table headers for the active sort field.
+ * Accounts for the checkbox column at index 0 when hasCheckbox is enabled.
+ *
+ * @param {string} sortField Field name from API sort parameter (e.g. 'last_seen', 'display_name')
+ * @param {boolean} [displayGroupsTagsColumns=false] Whether groups and tags columns are present
+ * @param {boolean} [isPathway=false] Whether rendering in Pathway details context
+ * @returns {number|undefined} 0-based table column index, or undefined if unknown
+ */
+export const resolveColumnSortIndex = (
+  sortField,
+  displayGroupsTagsColumns = false,
+  isPathway = false,
+) => {
+  const columnKeys = [
+    'display_name',
+    ...(displayGroupsTagsColumns ? ['groups', 'tags'] : []),
+    'system_profile',
+    'last_seen',
+    ...(!isPathway ? ['impacted_date'] : []),
+  ];
+  const targetKey = SORT_KEY_ALIASES[sortField] || sortField;
+  const colIndex = columnKeys.indexOf(targetKey);
+  return colIndex !== -1 ? colIndex + 1 : undefined;
 };
