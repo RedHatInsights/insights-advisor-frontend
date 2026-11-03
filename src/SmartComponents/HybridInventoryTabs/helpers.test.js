@@ -7,7 +7,7 @@ import advisorRecommendationData from './fixtures/advisorRecommendationData.json
 import edgeData from './fixtures/edgeData.json';
 import { updateReducers } from '../../Store';
 import { getEntities } from '../../PresentationalComponents/Inventory/helpers';
-import { fitContent } from '@patternfly/react-table';
+import { fitContent, sortable } from '@patternfly/react-table';
 
 const mockAxios = {
   get: jest.fn(() => Promise.resolve({ data: [], meta: { count: 0 } })),
@@ -352,7 +352,7 @@ describe('mergeAppColumns', () => {
       key: 'last_seen',
       title: expect.any(Object),
       sortKey: 'last_seen',
-      transforms: [fitContent],
+      transforms: [sortable, fitContent],
       props: { width: 10 },
       dataLabel: 'Last seen',
       renderFunc: expect.any(Function),

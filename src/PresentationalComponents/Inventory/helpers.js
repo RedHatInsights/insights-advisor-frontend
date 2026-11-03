@@ -1,7 +1,7 @@
 import { workloadArrayQueryBuilder, paramParser } from '../Common/Tables';
 import { createOptions, createSortParam, getCsrfTokenHeader } from '../helper';
 import LastSeenColumnHeader from '../../Utilities/LastSeenColumnHeader';
-import { fitContent } from '@patternfly/react-table';
+import { fitContent, sortable } from '@patternfly/react-table';
 import React from 'react';
 import { RelativeTimeWithTooltip } from '../../Utilities/dateHelpers';
 import Qs from 'qs';
@@ -411,7 +411,7 @@ export const lastSeenColumn = {
   key: 'last_seen',
   title: <LastSeenColumnHeader />,
   sortKey: 'last_seen',
-  transforms: [fitContent],
+  transforms: [sortable, fitContent],
   props: { width: 10 },
   dataLabel: 'Last seen',
   renderFunc: (last_seen) =>

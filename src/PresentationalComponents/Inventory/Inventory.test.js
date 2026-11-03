@@ -739,4 +739,53 @@ describe('Inventory - Playbook Count Scenarios', () => {
       expect(secondCall.customFilters.advisorFilters.name).toBe('');
     });
   });
+
+  describe('Table sorting configuration', () => {
+    it('does not pass sortBy in tableProps so FEC controls active sorting', () => {
+      renderInventory({ rule: { rule_id: 'RULE_ONE' } });
+      const lastIndex = MockInventoryTable.mock.calls.length - 1;
+      const tableProps = MockInventoryTable.mock.calls[lastIndex][0].tableProps;
+      expect(tableProps.sortBy).toBeUndefined();
+    });
+
+    it('passes initialSortBy with key "last_seen" to onLoad reducer configuration', () => {
+      const mockReplaceReducer = jest.fn();
+      const customStore = {
+        getState: () => ({ entities: { columns: [], rows: [], total: 0 } }),
+        subscribe: jest.fn(),
+        dispatch: jest.fn(),
+        replaceReducer: mockReplaceReducer,
+      };
+
+      const mockMergeWithEntities = jest.fn((reducer, config) => ({
+        ...config,
+      }));
+      const mockMergeWithDetail = jest.fn(() => ({}));
+
+      renderInventory({
+        rule: { rule_id: 'RULE_ONE' },
+        store: customStore,
+      });
+
+      const lastIndex = MockInventoryTable.mock.calls.length - 1;
+      const onLoad = MockInventoryTable.mock.calls[lastIndex][0].onLoad;
+
+      onLoad({
+        mergeWithEntities: mockMergeWithEntities,
+        INVENTORY_ACTION_TYPES: {},
+        mergeWithDetail: mockMergeWithDetail,
+      });
+
+      expect(mockMergeWithEntities).toHaveBeenCalledWith(
+        expect.any(Function),
+        expect.objectContaining({
+          sortBy: {
+            index: expect.any(Number),
+            key: 'last_seen',
+            direction: 'desc',
+          },
+        }),
+      );
+    });
+  });
 });

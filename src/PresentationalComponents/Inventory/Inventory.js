@@ -114,7 +114,6 @@ const Inventory = ({
     const isDesc = filters.sort.startsWith('-');
     const sortField = isDesc ? filters.sort.slice(1) : filters.sort;
     const key =
-      (sortField === 'last_seen' && 'updated') ||
       (sortField === 'rhel_version' && 'operating_system') ||
       (sortField === 'group_name' && 'groups') ||
       sortField;
@@ -603,7 +602,6 @@ const Inventory = ({
             variant: TableVariant.compact,
             ...tableProps,
             ...bulkSelectTableProps,
-            ...(initialSortBy && { sortBy: initialSortBy }),
             envContext: envContext,
           }}
           customFilters={{
@@ -680,7 +678,6 @@ const Inventory = ({
             variant: TableVariant.compact,
             ...tableProps,
             ...bulkSelectTableProps,
-            ...(initialSortBy && { sortBy: initialSortBy }),
           }}
           customFilters={{
             advisorFilters: filters,

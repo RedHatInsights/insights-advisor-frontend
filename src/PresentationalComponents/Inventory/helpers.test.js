@@ -1827,6 +1827,7 @@ describe('Inventory helpers', () => {
         expect(lastSeenColumn.sortKey).toBe('last_seen');
         expect(lastSeenColumn.props.width).toBe(10);
         expect(lastSeenColumn.transforms).toBeDefined();
+        expect(lastSeenColumn.transforms.length).toBe(2);
       });
 
       it('has a title component', () => {
