@@ -2,7 +2,7 @@ import './_Inventory.scss';
 
 import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
-import { pruneFilters, urlBuilder } from '../Common/Tables';
+import { pruneFilters, urlBuilder, paramParser } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import {
   getEntities,
@@ -54,6 +54,7 @@ const Inventory = ({
     sort: '-last_seen',
     name: '',
     'filter[system_profile]': true,
+    ...(!pathway && paramParser()),
   });
   const [fullFilters, setFullFilters] = useState();
   const [total, setTotal] = useState(0);
@@ -79,16 +80,11 @@ const Inventory = ({
     /* Rec table doesn't use the same sorting params as sys table, switching between the two results in the rec table blowing up cuz its trying to
     read the endpoint with incorrect sorting params, if we hold of on updating the sysable url params when using the this component in pathways, it
     solves this issue for the time being*/
-    const { name, display_name } = options;
     const refreshedFilters = {
+      ...filters,
       ...options,
-      ...(name && {
-        name,
-      }),
-      ...(display_name && {
-        display_name,
-      }),
     };
+    setFilters(refreshedFilters);
     !pathway && urlBuilder(refreshedFilters, selectedTags);
   };
   const grabPageIds = () => {
@@ -161,7 +157,6 @@ const Inventory = ({
         const associatedRuleDetails = (
           await axios.get(
             `${envContext.RULES_FETCH_URL}${encodeURI(rule.rule_id)}/`,
-            { params: { name: filters.name } },
           )
         )?.playbook_count;
         setRulesPlaybookCount(associatedRuleDetails);
@@ -393,6 +388,9 @@ const Inventory = ({
     delete localFilters.sort;
     delete localFilters.offset;
     delete localFilters.limit;
+    delete localFilters.name;
+    delete localFilters.display_name;
+    delete localFilters.rhel_version;
 
     return pruneFilters(localFilters, SFC);
   };
@@ -402,11 +400,13 @@ const Inventory = ({
     filters: buildFilterChips(),
     onDelete: (_e, itemsToRemove, isAll) => {
       if (isAll) {
-        setFilters({
+        const cleanFilters = {
           sort: filters.sort,
           limit: filters.limit,
-          offset: filters.offset,
-        });
+          offset: 0,
+        };
+        setFilters(cleanFilters);
+        !pathway && urlBuilder(cleanFilters, selectedTags);
       } else {
         itemsToRemove.map((item) => {
           const newFilter = {
@@ -416,9 +416,16 @@ const Inventory = ({
                 )
               : '',
           };
-          newFilter[item.urlParam].length > 0
-            ? setFilters({ ...filters, ...newFilter })
-            : removeFilterParam(item.urlParam);
+          if (newFilter[item.urlParam].length > 0) {
+            const updated = { ...filters, ...newFilter, offset: 0 };
+            setFilters(updated);
+            !pathway && urlBuilder(updated, selectedTags);
+          } else {
+            removeFilterParam(item.urlParam);
+            const updated = { ...filters, offset: 0 };
+            delete updated[item.urlParam];
+            !pathway && urlBuilder(updated, selectedTags);
+          }
         });
       }
     },
@@ -484,6 +491,13 @@ const Inventory = ({
       });
     return { actions };
   };
+
+  const searchName =
+    (Array.isArray(filters?.name) ? filters.name[0] : filters?.name) ||
+    (Array.isArray(filters?.display_name)
+      ? filters.display_name[0]
+      : filters?.display_name) ||
+    '';
 
   return (
     <React.Fragment>
@@ -594,6 +608,9 @@ const Inventory = ({
           }}
           customFilters={{
             advisorFilters: filters,
+            filters: searchName
+              ? [{ value: 'hostname_or_id', filter: searchName }]
+              : [],
             selectedTags,
             workloads,
           }}
