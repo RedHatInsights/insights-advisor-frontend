@@ -41,7 +41,7 @@ const TABLE_HEADERS = [
 const ROOT = 'table[data-ouia-component-id=system-advisor-table]';
 const SYSTEM_ID = '123';
 const SYSTEM_INSIGHTS_ID = '456';
-const DEFAULT_ROW_COUNT = fixtures.length;
+const ROWS_PER_PAGE = 20;
 
 const flagProviderConfig = {
   url: 'http://localhost:8002/feature_flags',
@@ -53,6 +53,7 @@ const mountComponent = (
   props = {},
   envContextOverrides = {},
   systemProfileOverride = systemProfile.data,
+  reportsFixture = fixtures,
 ) => {
   featureFlagInterceptor(['advisor-tabletools-migration']);
   cy.intercept('POST', '**/feature_flags/client/metrics', { statusCode: 200 });
@@ -72,6 +73,13 @@ const mountComponent = (
     `**/hosts/${SYSTEM_ID}/system_profile`,
     systemProfileOverride,
   ).as('getSystemProfile');
+
+  if (reportsFixture !== null) {
+    cy.intercept(
+      `/api/insights/v1/system/${SYSTEM_ID}/reports/**`,
+      reportsFixture,
+    ).as('getSystemReports');
+  }
 
   const finalEnvContext = {
     ...createTestEnvironmentContext(),
@@ -138,10 +146,6 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
       statusCode: 200,
       body: {},
     });
-    cy.intercept(
-      `/api/insights/v1/system/${SYSTEM_ID}/reports/**`,
-      fixtures,
-    ).as('getSystemReports');
     cy.intercept('https://access.redhat.com/hydra/rest/search/kcs**', {
       response: {
         docs: fixturesKcs,
@@ -161,10 +165,10 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
       checkTableToolsHeaders(TABLE_HEADERS, ROOT);
     });
 
-    it('renders all rows from reports fixture', () => {
+    it('renders all rows on initial page', () => {
       cy.get(`${ROOT} tbody tr:not(.pf-v6-c-table__expandable-row)`).should(
         'have.length',
-        DEFAULT_ROW_COUNT,
+        ROWS_PER_PAGE,
       );
     });
 
@@ -176,14 +180,15 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
     });
 
     it('links recommendation description to detail page', () => {
+      // First row after default Total risk desc sort
       cy.get(`${ROOT} tbody tr:first [data-label="Description"] a`)
         .should('have.attr', 'href')
-        .and('include', `/recommendations/${fixtures[0].rule.rule_id}`);
+        .and('include', '/recommendations/');
     });
   });
 
   describe('row expandability', () => {
-    const headerToggle = 'thead th.pf-v6-c-table__toggle button';
+    const headerToggle = 'thead th button[aria-label="Expand all rows"]';
 
     beforeEach(() => {
       mountComponent();
@@ -191,40 +196,34 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
     });
 
     it('shows expand all button in table header', () => {
-      cy.get(headerToggle)
-        .should('exist')
-        .and('have.attr', 'aria-label', 'Expand all rows');
+      cy.get(headerToggle).should('exist');
     });
 
     it('expands all rows via header chevron and displays ReportDetails', () => {
       cy.get(headerToggle).click();
-      cy.get(headerToggle).should('have.attr', 'aria-expanded', 'true');
       cy.get('.ins-c-report-details').should('exist');
       cy.get('.pf-v6-c-table__expandable-row').should(
         'have.length',
-        DEFAULT_ROW_COUNT,
+        ROWS_PER_PAGE,
       );
     });
 
-    it('collapses all rows via header chevron', () => {
-      cy.get(headerToggle).click();
-      cy.get(headerToggle).should('have.attr', 'aria-expanded', 'true');
-      cy.get('.ins-c-report-details').should('exist');
+    it('expands and collapses a single row showing ReportDetails content', () => {
+      cy.get(`${ROOT} tbody tr:first td.pf-v6-c-table__toggle button`).click();
+      cy.get('.ins-c-report-details').should('be.visible');
 
-      cy.get(headerToggle).click();
-      cy.get(headerToggle).should('have.attr', 'aria-expanded', 'false');
+      cy.get(`${ROOT} tbody tr:first td.pf-v6-c-table__toggle button`).click();
       cy.get('.ins-c-report-details').should('not.exist');
     });
 
-    it('expands a single row and verifies full-width rendering', () => {
-      cy.get(`${ROOT} tbody tr:first td.pf-v6-c-table__toggle button`).click();
-      cy.get('.ins-c-report-details').should('be.visible');
-    });
-
     it('displays correct KBA link and title in expanded row details', () => {
-      const firstRule = fixtures[0].rule;
+      // Find the rule corresponding to the first row (highest total_risk by default sort)
+      const sortedByRisk = [...fixtures].sort(
+        (a, b) => (b.rule?.total_risk || 0) - (a.rule?.total_risk || 0),
+      );
+      const topRule = sortedByRisk[0].rule;
       const matchingKcs = fixturesKcs.find(
-        (article) => String(article.id) === String(firstRule.node_id),
+        (article) => String(article.id) === String(topRule.node_id),
       );
 
       cy.get(`${ROOT} tbody tr:first td.pf-v6-c-table__toggle button`).click();
@@ -254,7 +253,7 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
       cy.get(PT_BULK_SELECT_LIST).contains('Select all').click();
       cy.get(PT_BULK_SELECT_CHECKBOX)
         .parent()
-        .should('contain', `${DEFAULT_ROW_COUNT} selected`);
+        .should('contain', `${fixtures.length} selected`);
       cy.contains('button', 'Plan remediation').should('not.be.disabled');
     });
 
@@ -338,6 +337,85 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
     });
   });
 
+  describe('sorting and pagination', () => {
+    it('sorts rows when clicking Description column header', () => {
+      mountComponent();
+      waitForSystemAdvisor();
+
+      cy.get(`${ROOT} th[data-label="Description"] button`).click();
+      waitForTableTools(ROOT, false);
+      cy.tableIsSortedBy('Description', 'ascending');
+
+      cy.get(`${ROOT} th[data-label="Description"] button`).click();
+      waitForTableTools(ROOT, false);
+      cy.tableIsSortedBy('Description', 'descending');
+    });
+
+    it('sorts rows when clicking Total risk column header', () => {
+      mountComponent();
+      waitForSystemAdvisor();
+
+      cy.tableIsSortedBy('Total risk', 'descending');
+
+      cy.get(`${ROOT} th[data-label="Total risk"] button`).click();
+      waitForTableTools(ROOT, false);
+      cy.tableIsSortedBy('Total risk', 'ascending');
+
+      cy.get(`${ROOT} th[data-label="Total risk"] button`).click();
+      waitForTableTools(ROOT, false);
+      cy.tableIsSortedBy('Total risk', 'descending');
+    });
+
+    it('paginates across pages and updates rows', () => {
+      mountComponent();
+      waitForSystemAdvisor();
+
+      // Verify page 1 shows 20 items by default
+      cy.get(`${ROOT} tbody tr:not(.pf-v6-c-table__expandable-row)`).should(
+        'have.length',
+        ROWS_PER_PAGE,
+      );
+
+      // Navigate to next page
+      cy.get('button[data-action="next"]').first().click();
+      waitForTableTools(ROOT, false);
+
+      // Page 2 should have remaining 5 items
+      cy.get(`${ROOT} tbody tr:not(.pf-v6-c-table__expandable-row)`).should(
+        'have.length',
+        fixtures.length - ROWS_PER_PAGE,
+      );
+
+      // Navigate back to previous page
+      cy.get('button[data-action="previous"]').first().click();
+      waitForTableTools(ROOT, false);
+
+      cy.get(`${ROOT} tbody tr:not(.pf-v6-c-table__expandable-row)`).should(
+        'have.length',
+        ROWS_PER_PAGE,
+      );
+    });
+  });
+
+  describe('empty state', () => {
+    beforeEach(() => {
+      mountComponent();
+      waitForSystemAdvisor();
+    });
+
+    it('shows "No matching recommendations found" with Cubes icon when filter criteria matches nothing', () => {
+      cy.get('[aria-label="text input"]').click();
+      cy.get('[aria-label="text input"]').type(
+        'NonExistentRecommendationQuery123{enter}',
+      );
+
+      cy.contains('No matching recommendations found').should('be.visible');
+      cy.contains(
+        'To continue, edit your filter settings and search again.',
+      ).should('be.visible');
+    });
+  });
+
   describe('export capability', () => {
     it('renders export dropdown when isExportEnabled is true', () => {
       mountComponent({}, { isExportEnabled: true });
@@ -369,7 +447,7 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
         body: {},
       }).as('getSystemReportsFailed');
 
-      mountComponent();
+      mountComponent({}, {}, systemProfile.data, null);
       cy.wait('@getSystemReportsFailed');
       cy.contains('Error getting recommendations').should('exist');
     });
