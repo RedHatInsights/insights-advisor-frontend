@@ -105,7 +105,7 @@ export const paginatedRequestHelper = async ({
   RULES_FETCH_URL,
   SYSTEMS_FETCH_URL,
   axios,
-  isInitialRequest = false,
+  isInitialRequest,
 }) => {
   let options = createOptions(
     advisorFilters,

@@ -338,6 +338,23 @@ describe('createOptions', () => {
     expect(options.name).toBe('cold-host');
   });
 
+  it('drops advisorFilters.name after the initial request when FEC has no hostnameOrId key', () => {
+    const options = createOptions(
+      { name: 'removed-host' },
+      page,
+      per_page,
+      sort,
+      pathway,
+      {},
+      selectedTags,
+      workloads,
+      systemsPage,
+      false,
+    );
+    expect(options.name).toBeUndefined();
+    expect(options.display_name).toBeUndefined();
+  });
+
   it('falls back to advisorFilters.rhel_version when FEC filters.osFilter is an empty object', () => {
     const advisorFiltersWithRhel = {
       rhel_version: ['9.0', '9.1'],
@@ -378,6 +395,46 @@ describe('createOptions', () => {
         systemsPage,
       ).groups,
     ).toEqual('prod-group');
+  });
+
+  it('serializes multiple groups from advisorFilters into a comma-separated string', () => {
+    const advisorFiltersWithMultipleGroups = {
+      groups: ['advisor_1', 'advisor_2'],
+    };
+
+    expect(
+      createOptions(
+        advisorFiltersWithMultipleGroups,
+        page,
+        per_page,
+        sort,
+        pathway,
+        {},
+        selectedTags,
+        workloads,
+        systemsPage,
+      ).groups,
+    ).toEqual('advisor_1,advisor_2');
+  });
+
+  it('serializes tags from advisorFilters when selectedTags is empty', () => {
+    const advisorFiltersWithTags = {
+      tags: ['ns/key=value'],
+    };
+
+    expect(
+      createOptions(
+        advisorFiltersWithTags,
+        page,
+        per_page,
+        sort,
+        pathway,
+        {},
+        [],
+        workloads,
+        systemsPage,
+      ).tags,
+    ).toEqual(['ns/key=value']);
   });
 
   it('selects display_name when advisorFilters.name is empty string and display_name is non-empty', () => {

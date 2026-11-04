@@ -52,7 +52,7 @@ export const resolveSearchQuery = (filters = {}, advisorFilters = {}) => {
  * Constructs an API query parameters object by merging Advisor filter state,
  * FEC InventoryTable filters, pagination, tags, and workloads.
  *
- * @param {Object} advisorFilters Initial/active filters from Advisor state (URL params, incident, rhel_version)
+ * @param {Object} advisorFilters Initial/active filters from Advisor state (URL params, incident, rhel_version, groups)
  * @param {number} page Current table page index (1-based)
  * @param {number} per_page Number of items to display per page
  * @param {string} sort Formatted API sort parameter (e.g., '-last_seen')
@@ -61,7 +61,8 @@ export const resolveSearchQuery = (filters = {}, advisorFilters = {}) => {
  * @param {Array<string>} [selectedTags] List of selected tag strings
  * @param {Object} [workloads] Workload filter selections
  * @param {boolean} [systemsPage] Truthy if rendering within the Systems page context
- * @returns {Object} Serialized query parameters for API request
+ * @param {boolean} [isInitialRequest] False once the table has mounted; suppresses stale advisorFilters search fallback
+ * @returns {Object} Serialized query parameters for API request, containing limit, offset, sort, and mapped filter keys
  */
 export const createOptions = (
   advisorFilters,
@@ -73,6 +74,7 @@ export const createOptions = (
   selectedTags,
   workloads,
   systemsPage,
+  isInitialRequest,
 ) => {
   const osFilter = filters?.osFilter && buildOsFilter(filters.osFilter);
   // RHINENG-11227: remove system incident filter if it has multiple elements, which will be both
@@ -91,6 +93,7 @@ export const createOptions = (
   const isFecSearchActive =
     typeof filters?.hostnameOrId === 'string' ||
     (filters && Object.prototype.hasOwnProperty.call(filters, 'hostnameOrId'));
+  const shouldUseAdvisorSearch = isInitialRequest !== false;
 
   const searchOptions = {};
   if (isFecSearchActive) {
@@ -98,7 +101,7 @@ export const createOptions = (
     if (fecSearch) {
       searchOptions[searchParamKey] = fecSearch;
     }
-  } else {
+  } else if (shouldUseAdvisorSearch) {
     const unwrapSearch = (val) => (Array.isArray(val) ? val[0] : val);
     const nameSearch = unwrapSearch(advisorFilters?.name);
     const displayNameSearch = unwrapSearch(advisorFilters?.display_name);

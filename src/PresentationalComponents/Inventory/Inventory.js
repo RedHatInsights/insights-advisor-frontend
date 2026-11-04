@@ -29,6 +29,7 @@ import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import messages from '../../Messages';
 import { systemReducer } from '../../Store/AppReducer';
 import { updateReducers } from '../../Store';
+import { updateTags } from '../../Services/Filters';
 import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
@@ -463,10 +464,15 @@ const Inventory = ({
     ],
   );
 
-  const removeFilterParam = (param) => {
-    const filter = { ...filters, offset: 0 };
-    delete filter[param];
-    setFilters(filter);
+  const toFilterArray = (value) => {
+    if (!value) return [];
+    return Array.isArray(value) ? value : [value];
+  };
+
+  const formatTagChipLabel = (tag) => {
+    const str = String(tag);
+    const slashIndex = str.indexOf('/');
+    return slashIndex >= 0 ? str.slice(slashIndex + 1) : str;
   };
 
   const buildFilterChips = () => {
@@ -475,32 +481,124 @@ const Inventory = ({
     delete localFilters.offset;
     delete localFilters.limit;
 
-    return pruneFilters(localFilters, SFC);
+    const chips = pruneFilters(localFilters, SFC);
+
+    if (!localFilters.hostGroupFilter?.length) {
+      const groups = toFilterArray(localFilters.groups);
+      if (groups.length > 0) {
+        chips.push({
+          category: 'Workspace',
+          urlParam: 'groups',
+          chips: groups.map((group) => ({
+            name: group,
+            value: group,
+          })),
+        });
+      }
+    }
+
+    const tags = toFilterArray(localFilters.tags);
+    if (tags.length > 0) {
+      chips.push({
+        category: 'Tags',
+        urlParam: 'tags',
+        chips: tags.map((tag) => ({
+          name: formatTagChipLabel(tag),
+          value: tag,
+        })),
+      });
+    }
+
+    return chips;
+  };
+
+  const resolveChipUrlParam = (item) => {
+    if (item.urlParam) {
+      return item.urlParam;
+    }
+    if (item.type === 'textual') {
+      return pathway ? 'display_name' : 'name';
+    }
+    return undefined;
   };
 
   const activeFiltersConfig = {
     deleteTitle: intl.formatMessage(messages.resetFilters),
     filters: buildFilterChips(),
     onDelete: (_e, itemsToRemove, isAll) => {
+      let nextFilters;
+      let nextSelectedTags = selectedTags ? [...selectedTags] : [];
+      let didUpdateTags = false;
+
       if (isAll) {
-        setFilters({
+        nextFilters = {
           sort: filters.sort,
           limit: filters.limit,
-          offset: filters.offset,
-        });
+          offset: 0,
+        };
+        if (selectedTags?.length) {
+          nextSelectedTags = [];
+          didUpdateTags = true;
+        }
       } else {
-        itemsToRemove.map((item) => {
-          const newFilter = {
-            [item.urlParam]: Array.isArray(filters[item.urlParam])
-              ? filters[item.urlParam].filter(
-                  (value) => String(value) !== String(item.chips[0].value),
-                )
-              : '',
-          };
-          newFilter[item.urlParam].length > 0
-            ? setFilters({ ...filters, ...newFilter })
-            : removeFilterParam(item.urlParam);
+        nextFilters = { ...filters, offset: 0 };
+        (itemsToRemove || []).forEach((item) => {
+          const urlParam = resolveChipUrlParam(item);
+          if (!urlParam) {
+            return;
+          }
+          if (item.type === 'textual') {
+            delete nextFilters.name;
+            delete nextFilters.display_name;
+            return;
+          }
+          const currentValue = nextFilters[urlParam];
+          const removedValue = item.chips?.[0]?.value;
+
+          if (Array.isArray(currentValue) && removedValue !== undefined) {
+            const remainingValues = currentValue.filter(
+              (value) => String(value) !== String(removedValue),
+            );
+            if (remainingValues.length > 0) {
+              nextFilters[urlParam] = remainingValues;
+            } else {
+              delete nextFilters[urlParam];
+            }
+          } else {
+            delete nextFilters[urlParam];
+          }
+
+          if (urlParam === 'tags' && removedValue !== undefined) {
+            const normalize = (val) => {
+              try {
+                return decodeURIComponent(val);
+              } catch {
+                return val;
+              }
+            };
+            const removedDecoded = normalize(removedValue);
+            const filtered = nextSelectedTags.filter(
+              (t) => normalize(t) !== removedDecoded && t !== removedValue,
+            );
+            if (filtered.length !== nextSelectedTags.length) {
+              nextSelectedTags = filtered;
+              didUpdateTags = true;
+            }
+          }
         });
+      }
+
+      if (didUpdateTags) {
+        dispatch(updateTags(nextSelectedTags));
+      }
+
+      setFilters(nextFilters);
+      if (!pathway) {
+        urlBuilder(
+          nextSelectedTags?.length
+            ? { ...nextFilters, tags: nextSelectedTags }
+            : nextFilters,
+        );
       }
     },
   };
