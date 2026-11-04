@@ -13,14 +13,14 @@ import {
 export const Recommendation = {
   title: 'Description',
   Component: RecommendationCell,
-  sortable: 'description',
+  sortable: 'rule.description',
   props: { width: 40 },
 };
 
 export const Modified = {
   title: 'Modified',
   Component: ModifiedCell,
-  sortable: 'publish_date',
+  sortable: 'rule.publish_date',
   props: { modifier: 'fitContent' },
 };
 
@@ -34,14 +34,14 @@ export const FirstImpacted = {
 export const TotalRisk = {
   title: 'Total risk',
   Component: TotalRiskCell,
-  sortable: 'total_risk',
+  sortable: 'rule.total_risk',
   props: { modifier: 'fitContent' },
 };
 
 export const Remediation = {
   title: 'Remediation type',
   Component: RemediationCell,
-  sortable: 'playbook_count',
+  sortable: 'resolution.has_playbook',
   props: { modifier: 'fitContent' },
 };
 

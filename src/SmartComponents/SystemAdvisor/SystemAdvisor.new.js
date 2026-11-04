@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import { Spinner } from '@patternfly/react-core';
+import { SkeletonTable } from '@patternfly/react-component-groups';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
@@ -17,11 +18,11 @@ import NotConnected from '@redhat-cloud-services/frontend-components/NotConnecte
 import RemediationButton from '@redhat-cloud-services/frontend-components-remediations/RemediationButton';
 import {
   TableStateProvider,
+  StaticTableToolsTable,
   useFullTableState,
   useStateCallbacks,
 } from 'bastilian-tabletools';
 
-import AdvisorTable from '../../PresentationalComponents/AdvisorTable/AdvisorTable';
 import columns from './Columns';
 import filters from './Filters';
 import SystemAdvisorReportDetails from './SystemAdvisorReportDetails';
@@ -31,8 +32,10 @@ import messages from '../../Messages';
 import { toExportParams } from '../../Utilities/tableSerializers';
 import { useSystemReportsQuery } from '../../Services/apiClient';
 import { isAbortError } from './helpers';
-import { InventoryReportFetchFailed } from './EmptyStates';
-import { RULE_CATEGORIES } from '../../AppConstants';
+import {
+  InventoryReportFetchFailed,
+  NoMatchingRecommendations,
+} from './EmptyStates';
 
 /**
  * Inner component for SystemAdvisor using TableTools and AdvisorTable composition.
@@ -44,6 +47,8 @@ const SystemAdvisorInner = ({
   hostName,
   ...props
 }) => {
+  const systemId =
+    inventoryId || entity?.id || response?.insights_attributes?.uuid;
   const intl = useIntl();
   const dispatch = useDispatch();
   const addNotification = useAddNotification();
@@ -71,8 +76,9 @@ const SystemAdvisorInner = ({
   const {
     data: reportsResponse,
     isLoading: isReportsLoading,
+    isFetching: isReportsFetching,
     isError: isReportsError,
-  } = useSystemReportsQuery(inventoryId, undefined, {
+  } = useSystemReportsQuery(systemId, undefined, {
     refetchOnWindowFocus: false,
   });
 
@@ -85,68 +91,28 @@ const SystemAdvisorInner = ({
       : reportsResponse.data || [];
   }, [reportsResponse]);
 
-  // Transform reports into table items with itemId
+  // Transform reports into table items with id and itemId
   const allItems = useMemo(() => {
-    return rawReports.map((report) => ({
-      ...report,
-      itemId:
-        report.rule?.rule_id || `${report.rule_id}-${report.impacted_date}`,
-    }));
-  }, [rawReports]);
-
-  // Client-side filtering
-  const filteredItems = useMemo(() => {
-    const activeFilters = serialisedFilters || {};
-    const textSearch = activeFilters.text?.trim()?.toLowerCase() || '';
-
-    return allItems.filter((item) => {
-      const rule = item.rule || {};
-
-      // Text search by rule description
-      if (textSearch && !rule.description?.toLowerCase().includes(textSearch)) {
-        return false;
-      }
-
-      // Total risk filter
-      if (
-        activeFilters.total_risk?.length &&
-        !activeFilters.total_risk.map(String).includes(String(rule.total_risk))
-      ) {
-        return false;
-      }
-
-      // Category filter
-      if (activeFilters.category?.length) {
-        const itemCategory =
-          RULE_CATEGORIES[rule.category?.name?.toLowerCase()];
-        if (
-          !activeFilters.category
-            .map(String)
-            .includes(String(itemCategory || rule.category?.id))
-        ) {
-          return false;
-        }
-      }
-
-      // Has playbook filter
-      if (
-        activeFilters.has_playbook !== undefined &&
-        String(item.resolution?.has_playbook) !==
-          String(activeFilters.has_playbook)
-      ) {
-        return false;
-      }
-
-      return true;
+    return rawReports.map((report) => {
+      const id =
+        report.rule?.rule_id || `${report.rule_id}-${report.impacted_date}`;
+      return {
+        ...report,
+        id,
+        itemId: id,
+      };
     });
-  }, [allItems, serialisedFilters]);
+  }, [rawReports]);
 
   // Fetch host system profile
   useEffect(() => {
     const fetchProfile = async () => {
+      if (!systemId) {
+        return;
+      }
       try {
         const profileData = await axios.get(
-          `${envContext?.INVENTORY_BASE_URL || '/api/inventory/v1'}/hosts/${inventoryId}/system_profile`,
+          `${envContext?.INVENTORY_BASE_URL || '/api/inventory/v1'}/hosts/${systemId}/system_profile`,
           {
             headers: { credentials: 'include' },
             signal: abortControllerRef.current.signal,
@@ -166,7 +132,7 @@ const SystemAdvisorInner = ({
       }
     };
     fetchProfile();
-  }, [inventoryId, axios, envContext?.INVENTORY_BASE_URL]);
+  }, [systemId, axios, envContext?.INVENTORY_BASE_URL]);
 
   // Fetch KBA details for expandable rows
   useEffect(() => {
@@ -213,11 +179,11 @@ const SystemAdvisorInner = ({
 
   // Selected Ansible-eligible rules for remediation
   const selectedAnsibleRules = useMemo(() => {
-    return filteredItems.filter(
+    return allItems.filter(
       (item) =>
         selectedItemIds.includes(item.itemId) && item.resolution?.has_playbook,
     );
-  }, [filteredItems, selectedItemIds]);
+  }, [allItems, selectedItemIds]);
 
   const processRemediation = useCallback(
     (rules) => {
@@ -226,9 +192,9 @@ const SystemAdvisorInner = ({
         id: `advisor:${r.rule?.rule_id || r.itemId}`,
         description: r.rule?.description,
       }));
-      return issues.length ? { issues, systems: [inventoryId] } : false;
+      return issues.length ? { issues, systems: [systemId] } : false;
     },
-    [inventoryId],
+    [systemId],
   );
 
   const onRemediationCreated = useCallback(
@@ -310,11 +276,6 @@ const SystemAdvisorInner = ({
   const allItemsRef = useRef([]);
   allItemsRef.current = allItems;
 
-  const itemIdsInTable = useCallback(
-    async () => allItemsRef.current.map((item) => item.itemId),
-    [],
-  );
-
   const detailsComponentProps = useMemo(
     () => ({
       kbaDetails: kbaDetailsData,
@@ -334,32 +295,33 @@ const SystemAdvisorInner = ({
     [envContext?.isExportEnabled, intl, onExport],
   );
 
-  const tableDefaults = useMemo(
+  const tableOptions = useMemo(
     () => ({
-      columns,
-      filters: {
-        filterConfig: filters,
+      pagination: true,
+      perPage: 20,
+      sortBy: {
+        index: 3,
+        direction: 'desc',
       },
-      options: {
-        detailsComponent: SystemAdvisorReportDetails,
-        detailsComponentProps,
-        detailsProps: { fullWidth: true },
-        canCollapseAll: true,
-        onSelect: true,
-        dedicatedAction: RemediationAction,
-        itemIdsInTable,
-        exporter: envContext?.isExportEnabled
-          ? async (_state, _fullState, format) => {
-              onExport(null, format);
-              return null; // Return null so TableTools downloadItems is skipped
-            }
-          : undefined,
-      },
+      variant: 'compact',
+      isStickyHeader: true,
+      detailsComponent: SystemAdvisorReportDetails,
+      detailsComponentProps,
+      detailsProps: { fullWidth: true },
+      canCollapseAll: true,
+      onSelect: true,
+      dedicatedAction: RemediationAction,
+      EmptyState: NoMatchingRecommendations,
+      exporter: envContext?.isExportEnabled
+        ? async (_state, _fullState, format) => {
+            onExport(null, format);
+            return null; // Return null so TableTools downloadItems is skipped
+          }
+        : undefined,
     }),
     [
       detailsComponentProps,
       RemediationAction,
-      itemIdsInTable,
       envContext?.isExportEnabled,
       onExport,
     ],
@@ -370,20 +332,30 @@ const SystemAdvisorInner = ({
     [exportConfig],
   );
 
-  if (isReportsError && !isReportsLoading) {
+  if (isReportsLoading) {
+    return (
+      <SkeletonTable columns={columns.map((c) => c.title)} variant="compact" />
+    );
+  }
+
+  if (isReportsError) {
     return <InventoryReportFetchFailed entity={entity} />;
   }
 
+  const isSafe = !isReportsLoading && !isReportsFetching;
+
   return (
-    <AdvisorTable
-      items={filteredItems}
-      total={filteredItems.length}
-      loading={isReportsLoading}
-      defaults={tableDefaults}
+    <StaticTableToolsTable
+      items={allItems}
+      columns={columns}
+      filters={{ filterConfig: filters }}
+      options={tableOptions}
       toolbarProps={toolbarProps}
       aria-label="system-advisor-table"
       ouiaId="system-advisor-table"
-      data-ouia-safe={!isReportsLoading}
+      variant="compact"
+      isStickyHeader
+      data-ouia-safe={isSafe}
       {...props}
     />
   );
@@ -395,7 +367,7 @@ SystemAdvisorInner.propTypes = {
     id: PropTypes.string,
     display_name: PropTypes.string,
   }),
-  inventoryId: PropTypes.string.isRequired,
+  inventoryId: PropTypes.string,
   response: PropTypes.shape({
     insights_attributes: PropTypes.shape({
       uuid: PropTypes.string,

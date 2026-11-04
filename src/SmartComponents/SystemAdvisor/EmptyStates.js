@@ -2,6 +2,7 @@ import React from 'react';
 import ChartSpikeIcon from '@patternfly/react-icons/dist/esm/icons/chart-spike-icon';
 import CheckIcon from '@patternfly/react-icons/dist/esm/icons/check-icon';
 import TimesCircleIcon from '@patternfly/react-icons/dist/esm/icons/times-circle-icon';
+import CubesIcon from '@patternfly/react-icons/dist/esm/icons/cubes-icon';
 import {
   Bullseye,
   Button,
@@ -12,11 +13,17 @@ import {
 import MessageState from '../../PresentationalComponents/MessageState/MessageState';
 import PropTypes from 'prop-types';
 
+/**
+ * Empty state displayed when active filters match 0 recommendation reports.
+ *
+ * @returns {JSX.Element} Empty state with "No matching recommendations found"
+ */
 export const NoMatchingRecommendations = () => (
   <Bullseye>
     <MessageState
+      icon={CubesIcon}
       title="No matching recommendations found"
-      text={`To continue, edit your filter settings and search again.`}
+      text="To continue, edit your filter settings and search again."
     />
   </Bullseye>
 );
