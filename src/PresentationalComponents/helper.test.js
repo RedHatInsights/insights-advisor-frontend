@@ -1,4 +1,9 @@
-import { sortTopics, createOptions, createSortParam } from './helper';
+import {
+  sortTopics,
+  createOptions,
+  createSortParam,
+  resolveSearchQuery,
+} from './helper';
 import fixtures from '../../cypress/fixtures/topics.json';
 
 describe('sortTopics test', () => {
@@ -316,6 +321,168 @@ describe('createOptions', () => {
       ).tags,
     ).toEqual(['tagFilter1/tagKey1=tag1', 'tagFilter1/tagKey2=tag2']);
   });
+
+  it('cold load preserves advisorFilters.name when filters has no hostnameOrId', () => {
+    const options = createOptions(
+      { name: 'cold-host' },
+      page,
+      per_page,
+      sort,
+      pathway,
+      {},
+      selectedTags,
+      workloads,
+      systemsPage,
+      true,
+    );
+    expect(options.name).toBe('cold-host');
+  });
+
+  it('drops advisorFilters.name after the initial request when FEC has no hostnameOrId key', () => {
+    const options = createOptions(
+      { name: 'removed-host' },
+      page,
+      per_page,
+      sort,
+      pathway,
+      {},
+      selectedTags,
+      workloads,
+      systemsPage,
+      false,
+    );
+    expect(options.name).toBeUndefined();
+    expect(options.display_name).toBeUndefined();
+  });
+
+  it('falls back to advisorFilters.rhel_version when FEC filters.osFilter is an empty object', () => {
+    const advisorFiltersWithRhel = {
+      rhel_version: ['9.0', '9.1'],
+    };
+
+    expect(
+      createOptions(
+        advisorFiltersWithRhel,
+        page,
+        per_page,
+        sort,
+        pathway,
+        { osFilter: {} },
+        selectedTags,
+        workloads,
+        SID,
+        systemsPage,
+      ).rhel_version,
+    ).toEqual('9.0,9.1');
+  });
+
+  it('falls back to advisorFilters.groups when FEC filters.hostGroupFilter is an empty array', () => {
+    const advisorFiltersWithGroups = {
+      groups: ['prod-group'],
+    };
+
+    expect(
+      createOptions(
+        advisorFiltersWithGroups,
+        page,
+        per_page,
+        sort,
+        pathway,
+        { hostGroupFilter: [] },
+        selectedTags,
+        workloads,
+        SID,
+        systemsPage,
+      ).groups,
+    ).toEqual('prod-group');
+  });
+
+  it('serializes multiple groups from advisorFilters into a comma-separated string', () => {
+    const advisorFiltersWithMultipleGroups = {
+      groups: ['advisor_1', 'advisor_2'],
+    };
+
+    expect(
+      createOptions(
+        advisorFiltersWithMultipleGroups,
+        page,
+        per_page,
+        sort,
+        pathway,
+        {},
+        selectedTags,
+        workloads,
+        systemsPage,
+      ).groups,
+    ).toEqual('advisor_1,advisor_2');
+  });
+
+  it('serializes tags from advisorFilters when selectedTags is empty', () => {
+    const advisorFiltersWithTags = {
+      tags: ['ns/key=value'],
+    };
+
+    expect(
+      createOptions(
+        advisorFiltersWithTags,
+        page,
+        per_page,
+        sort,
+        pathway,
+        {},
+        [],
+        workloads,
+        systemsPage,
+      ).tags,
+    ).toEqual(['ns/key=value']);
+  });
+
+  it('selects display_name when advisorFilters.name is empty string and display_name is non-empty', () => {
+    const options = createOptions(
+      { name: '', display_name: 'fallback-display-host' },
+      page,
+      per_page,
+      sort,
+      pathway,
+      {},
+      selectedTags,
+      workloads,
+      systemsPage,
+    );
+    expect(options.display_name).toBe('fallback-display-host');
+    expect(options.name).toBeUndefined();
+  });
+
+  it('drops name filter when FEC chip is removed (hostnameOrId undefined)', () => {
+    const options = createOptions(
+      { name: 'cold-host' },
+      page,
+      per_page,
+      sort,
+      pathway,
+      { hostnameOrId: undefined },
+      selectedTags,
+      workloads,
+      systemsPage,
+    );
+    expect(options.name).toBeUndefined();
+  });
+
+  it('uses display_name when pathway is truthy', () => {
+    const options = createOptions(
+      {},
+      page,
+      per_page,
+      sort,
+      true,
+      { hostnameOrId: 'pathway-host' },
+      selectedTags,
+      workloads,
+      systemsPage,
+    );
+    expect(options.display_name).toBe('pathway-host');
+    expect(options.name).toBeUndefined();
+  });
 });
 
 describe('createSortParam test', () => {
@@ -348,5 +515,59 @@ describe('createSortParam test', () => {
     expect(sortAsc).toBe('misc');
     const sortDesc = createSortParam('misc', 'misc');
     expect(sortDesc).toBe('-misc');
+  });
+});
+
+describe('resolveSearchQuery', () => {
+  it('returns trimmed FEC hostnameOrId when provided as string', () => {
+    expect(
+      resolveSearchQuery({ hostnameOrId: '  my-host  ' }, { name: 'old-host' }),
+    ).toBe('my-host');
+  });
+
+  it('returns empty string when FEC hostnameOrId is explicitly cleared to empty string', () => {
+    expect(resolveSearchQuery({ hostnameOrId: '' }, { name: 'old-host' })).toBe(
+      '',
+    );
+  });
+
+  it('returns empty string when FEC hostnameOrId is explicitly cleared to undefined on chip removal', () => {
+    expect(
+      resolveSearchQuery({ hostnameOrId: undefined }, { name: 'old-host' }),
+    ).toBe('');
+  });
+
+  it('falls back to advisorFilters.name on cold load when FEC filters has no hostnameOrId key', () => {
+    expect(resolveSearchQuery({}, { name: 'cold-load-host' }, true)).toBe(
+      'cold-load-host',
+    );
+  });
+
+  it('unwraps array advisorFilters.name on cold load', () => {
+    expect(resolveSearchQuery({}, { name: ['cold-load-host'] }, true)).toBe(
+      'cold-load-host',
+    );
+  });
+
+  it('falls back to advisorFilters.display_name if name is not present on cold load', () => {
+    expect(resolveSearchQuery({}, { display_name: 'display-host' }, true)).toBe(
+      'display-host',
+    );
+  });
+
+  it('preserves advisorFilters search when FEC filters has no hostnameOrId key (Hybrid caller)', () => {
+    expect(resolveSearchQuery({}, { name: 'hybrid-search-host' }, false)).toBe(
+      'hybrid-search-host',
+    );
+  });
+
+  it('preserves advisorFilters display_name when FEC filters has no hostnameOrId key', () => {
+    expect(
+      resolveSearchQuery({}, { display_name: 'hybrid-display-host' }, false),
+    ).toBe('hybrid-display-host');
+  });
+
+  it('returns empty string when neither FEC nor advisorFilters have search text', () => {
+    expect(resolveSearchQuery({}, {}, true)).toBe('');
   });
 });

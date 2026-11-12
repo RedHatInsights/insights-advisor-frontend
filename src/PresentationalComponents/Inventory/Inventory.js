@@ -1,6 +1,12 @@
 import './_Inventory.scss';
 
-import React, { useEffect, useState, useCallback, useContext } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useContext,
+  useRef,
+} from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import { pruneFilters, urlBuilder } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
@@ -11,6 +17,8 @@ import {
   iopResolutionsMapper,
   impactedDateColumn,
   lastSeenColumn,
+  parseInitialInventoryFilters,
+  resolveColumnSortIndex,
 } from './helpers';
 import DisableRule from '../../PresentationalComponents/Modals/DisableRule';
 import { InventoryTable } from '@redhat-cloud-services/frontend-components/Inventory';
@@ -21,6 +29,7 @@ import { SYSTEM_FILTER_CATEGORIES as SFC } from '../../AppConstants';
 import messages from '../../Messages';
 import { systemReducer } from '../../Store/AppReducer';
 import { updateReducers } from '../../Store';
+import { updateTags } from '../../Services/Filters';
 import { useIntl } from 'react-intl';
 import downloadReport from '../Common/DownloadHelper';
 import useBulkSelect from './Hooks/useBulkSelect';
@@ -48,17 +57,81 @@ const Inventory = ({
   const store = useStore();
   const intl = useIntl();
   const dispatch = useDispatch();
+  const envContext = useContext(EnvironmentContext) || {};
+  const urlParams = parseInitialInventoryFilters(pathway);
+
+  const currentEntityKey = rule?.rule_id || pathway?.slug || '';
+  const [prevEntityKey, setPrevEntityKey] = useState(currentEntityKey);
+  const initialRequestDoneRef = useRef(false);
+
   const [filters, setFilters] = useState({
     limit: 20,
     offset: 0,
     sort: '-last_seen',
     name: '',
     'filter[system_profile]': true,
+    ...urlParams,
   });
+
+  if (prevEntityKey !== currentEntityKey) {
+    setPrevEntityKey(currentEntityKey);
+    initialRequestDoneRef.current = false;
+    const nextUrlParams = parseInitialInventoryFilters(pathway);
+    setFilters({
+      limit: 20,
+      offset: 0,
+      sort: '-last_seen',
+      name: '',
+      'filter[system_profile]': true,
+      ...nextUrlParams,
+    });
+  }
+
+  useEffect(() => {
+    const nextUrlParams = parseInitialInventoryFilters(pathway);
+    setFilters({
+      limit: 20,
+      offset: 0,
+      sort: '-last_seen',
+      name: '',
+      'filter[system_profile]': true,
+      ...nextUrlParams,
+    });
+  }, [rule?.rule_id, pathway?.slug, pathway]);
+
+  const initialFilters = React.useMemo(() => {
+    const _entityKey = rule?.rule_id || pathway?.slug;
+    const rawSearch = _entityKey
+      ? urlParams?.name || urlParams?.display_name || ''
+      : '';
+    const search = Array.isArray(rawSearch) ? rawSearch[0] : rawSearch;
+    return search ? [{ value: 'hostname_or_id', filter: search }] : [];
+  }, [rule?.rule_id, pathway?.slug, urlParams?.name, urlParams?.display_name]);
+
+  const initialSortBy = React.useMemo(() => {
+    if (!filters.sort) {
+      return undefined;
+    }
+    const isDesc = filters.sort.startsWith('-');
+    const sortField = isDesc ? filters.sort.slice(1) : filters.sort;
+    const key =
+      (sortField === 'rhel_version' && 'operating_system') ||
+      (sortField === 'group_name' && 'groups') ||
+      sortField;
+    const index = resolveColumnSortIndex(
+      sortField,
+      envContext.displayGroupsTagsColumns,
+      Boolean(pathway),
+    );
+    return {
+      ...(index !== undefined && { index }),
+      key,
+      direction: isDesc ? 'desc' : 'asc',
+    };
+  }, [filters.sort, envContext.displayGroupsTagsColumns, pathway]);
   const [fullFilters, setFullFilters] = useState();
   const [total, setTotal] = useState(0);
   const entities = useSelector(({ entities }) => entities || {});
-  const envContext = useContext(EnvironmentContext);
   const addNotification = useAddNotification();
   const isWorkloadFilterEnabled = useFeatureFlag('advisor.workloads');
 
@@ -75,21 +148,29 @@ const Inventory = ({
   const [rulesPlaybookCount, setRulesPlaybookCount] = useState(-1);
   const [resolutions, setResolutions] = useState([]);
 
+  /**
+   * Synchronizes table state updates directly to browser URL query parameters.
+   * Avoids updating React component state in a loop, preventing FEC InventoryTable re-renders.
+   *
+   * @param {Object} options Resolved table options containing active pagination, sort, and search filters
+   */
   const handleRefresh = (options) => {
     /* Rec table doesn't use the same sorting params as sys table, switching between the two results in the rec table blowing up cuz its trying to
     read the endpoint with incorrect sorting params, if we hold of on updating the sysable url params when using the this component in pathways, it
     solves this issue for the time being*/
-    const { name, display_name } = options;
+    if (pathway) {
+      return;
+    }
     const refreshedFilters = {
       ...options,
-      ...(name && {
-        name,
-      }),
-      ...(display_name && {
-        display_name,
-      }),
     };
-    !pathway && urlBuilder(refreshedFilters, selectedTags);
+    if (!options.name) {
+      delete refreshedFilters.name;
+    }
+    if (!options.display_name) {
+      delete refreshedFilters.display_name;
+    }
+    urlBuilder(refreshedFilters, selectedTags);
   };
   const grabPageIds = () => {
     return curPageIds || [];
@@ -120,6 +201,7 @@ const Inventory = ({
     envContext.RULES_FETCH_URL,
     envContext.SYSTEMS_FETCH_URL,
     axios,
+    initialRequestDoneRef,
   );
 
   // Ensures rows are marked as selected, runs the check on remediation Status
@@ -382,10 +464,15 @@ const Inventory = ({
     ],
   );
 
-  const removeFilterParam = (param) => {
-    const filter = { ...filters, offset: 0 };
-    delete filter[param];
-    setFilters(filter);
+  const toFilterArray = (value) => {
+    if (!value) return [];
+    return Array.isArray(value) ? value : [value];
+  };
+
+  const formatTagChipLabel = (tag) => {
+    const str = String(tag);
+    const slashIndex = str.indexOf('/');
+    return slashIndex >= 0 ? str.slice(slashIndex + 1) : str;
   };
 
   const buildFilterChips = () => {
@@ -394,32 +481,124 @@ const Inventory = ({
     delete localFilters.offset;
     delete localFilters.limit;
 
-    return pruneFilters(localFilters, SFC);
+    const chips = pruneFilters(localFilters, SFC);
+
+    if (!localFilters.hostGroupFilter?.length) {
+      const groups = toFilterArray(localFilters.groups);
+      if (groups.length > 0) {
+        chips.push({
+          category: 'Workspace',
+          urlParam: 'groups',
+          chips: groups.map((group) => ({
+            name: group,
+            value: group,
+          })),
+        });
+      }
+    }
+
+    const tags = toFilterArray(localFilters.tags);
+    if (tags.length > 0) {
+      chips.push({
+        category: 'Tags',
+        urlParam: 'tags',
+        chips: tags.map((tag) => ({
+          name: formatTagChipLabel(tag),
+          value: tag,
+        })),
+      });
+    }
+
+    return chips;
+  };
+
+  const resolveChipUrlParam = (item) => {
+    if (item.urlParam) {
+      return item.urlParam;
+    }
+    if (item.type === 'textual') {
+      return pathway ? 'display_name' : 'name';
+    }
+    return undefined;
   };
 
   const activeFiltersConfig = {
     deleteTitle: intl.formatMessage(messages.resetFilters),
     filters: buildFilterChips(),
     onDelete: (_e, itemsToRemove, isAll) => {
+      let nextFilters;
+      let nextSelectedTags = selectedTags ? [...selectedTags] : [];
+      let didUpdateTags = false;
+
       if (isAll) {
-        setFilters({
+        nextFilters = {
           sort: filters.sort,
           limit: filters.limit,
-          offset: filters.offset,
-        });
+          offset: 0,
+        };
+        if (selectedTags?.length) {
+          nextSelectedTags = [];
+          didUpdateTags = true;
+        }
       } else {
-        itemsToRemove.map((item) => {
-          const newFilter = {
-            [item.urlParam]: Array.isArray(filters[item.urlParam])
-              ? filters[item.urlParam].filter(
-                  (value) => String(value) !== String(item.chips[0].value),
-                )
-              : '',
-          };
-          newFilter[item.urlParam].length > 0
-            ? setFilters({ ...filters, ...newFilter })
-            : removeFilterParam(item.urlParam);
+        nextFilters = { ...filters, offset: 0 };
+        (itemsToRemove || []).forEach((item) => {
+          const urlParam = resolveChipUrlParam(item);
+          if (!urlParam) {
+            return;
+          }
+          if (item.type === 'textual') {
+            delete nextFilters.name;
+            delete nextFilters.display_name;
+            return;
+          }
+          const currentValue = nextFilters[urlParam];
+          const removedValue = item.chips?.[0]?.value;
+
+          if (Array.isArray(currentValue) && removedValue !== undefined) {
+            const remainingValues = currentValue.filter(
+              (value) => String(value) !== String(removedValue),
+            );
+            if (remainingValues.length > 0) {
+              nextFilters[urlParam] = remainingValues;
+            } else {
+              delete nextFilters[urlParam];
+            }
+          } else {
+            delete nextFilters[urlParam];
+          }
+
+          if (urlParam === 'tags' && removedValue !== undefined) {
+            const normalize = (val) => {
+              try {
+                return decodeURIComponent(val);
+              } catch {
+                return val;
+              }
+            };
+            const removedDecoded = normalize(removedValue);
+            const filtered = nextSelectedTags.filter(
+              (t) => normalize(t) !== removedDecoded && t !== removedValue,
+            );
+            if (filtered.length !== nextSelectedTags.length) {
+              nextSelectedTags = filtered;
+              didUpdateTags = true;
+            }
+          }
         });
+      }
+
+      if (didUpdateTags) {
+        dispatch(updateTags(nextSelectedTags));
+      }
+
+      setFilters(nextFilters);
+      if (!pathway) {
+        urlBuilder(
+          nextSelectedTags?.length
+            ? { ...nextFilters, tags: nextSelectedTags }
+            : nextFilters,
+        );
       }
     },
   };
@@ -498,6 +677,7 @@ const Inventory = ({
       )}
       {envContext.loadChromeless ? (
         <AsyncComponent
+          key={rule?.rule_id || pathway?.slug || 'iop-inventory'}
           scope="inventory"
           module="./IOPInventoryTable"
           store={store}
@@ -524,6 +704,7 @@ const Inventory = ({
           }}
           customFilters={{
             advisorFilters: filters,
+            filters: initialFilters,
           }}
           showTags={envContext.loadChromeless ? false : showTags}
           getEntities={fetchSystems}
@@ -539,8 +720,11 @@ const Inventory = ({
                 ...mergeWithEntities(
                   systemReducer([], INVENTORY_ACTION_TYPES),
                   {
-                    page: Number(filters.offset / filters.limit + 1 || 1),
+                    page:
+                      Math.floor(Number(filters.offset / filters.limit || 0)) +
+                      1,
                     perPage: Number(filters.limit || 20),
+                    ...(initialSortBy && { sortBy: initialSortBy }),
                   },
                 ),
                 ...mergeWithDetail(),
@@ -572,6 +756,7 @@ const Inventory = ({
         />
       ) : (
         <InventoryTable
+          key={rule?.rule_id || pathway?.slug || 'inventory'}
           id={'tablesContainer'}
           ouiaId={'inventory-table'}
           hasCheckbox
@@ -594,6 +779,7 @@ const Inventory = ({
           }}
           customFilters={{
             advisorFilters: filters,
+            filters: initialFilters,
             selectedTags,
             workloads,
           }}
@@ -611,8 +797,11 @@ const Inventory = ({
                 ...mergeWithEntities(
                   systemReducer([], INVENTORY_ACTION_TYPES),
                   {
-                    page: Number(filters.offset / filters.limit + 1 || 1),
+                    page:
+                      Math.floor(Number(filters.offset / filters.limit || 0)) +
+                      1,
                     perPage: Number(filters.limit || 20),
+                    ...(initialSortBy && { sortBy: initialSortBy }),
                   },
                 ),
                 ...mergeWithDetail(),

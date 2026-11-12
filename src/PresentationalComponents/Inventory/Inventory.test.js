@@ -1,6 +1,6 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { render, waitFor } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import configureStore from 'redux-mock-store';
 import Inventory from './Inventory';
 import { ComponentWithContext } from '../../Utilities/TestingUtilities';
@@ -44,13 +44,15 @@ const defaultRule = {
 };
 
 const renderInventory = (props = {}, contextValue = {}) => {
-  const store = mockStore({
-    entities: {
-      columns: [],
-      rows: [],
-      total: 0,
-    },
-  });
+  const store =
+    props.store ||
+    mockStore({
+      entities: {
+        columns: [],
+        rows: [],
+        total: 0,
+      },
+    });
 
   const defaultProps = {
     rule: defaultRule,
@@ -708,6 +710,474 @@ describe('Inventory - Playbook Count Scenarios', () => {
 
       expect(apiRejected).toBe(apiSuccessNoPlaybooks);
       expect(apiSuccessEmptyResponse).not.toBe(apiSuccessNoPlaybooks);
+    });
+  });
+
+  describe('Navigation search reset', () => {
+    it('resets advisorFilters on rule change so previous search does not carry over', async () => {
+      const { rerender } = renderInventory({ rule: { rule_id: 'RULE_ONE' } });
+      const lastIndex = MockInventoryTable.mock.calls.length - 1;
+      const firstCall = MockInventoryTable.mock.calls[lastIndex][0];
+      expect(firstCall.customFilters.advisorFilters.name).toBe('');
+
+      rerender(
+        <ComponentWithContext
+          Component={Inventory}
+          props={{
+            rule: { rule_id: 'RULE_TWO' },
+            axios: { get: mockAxiosGet },
+            selectedTags: [],
+            workloads: [],
+          }}
+          contextValue={{
+            RULES_FETCH_URL: '/api/insights/v1/rule/',
+            BASE_URL: '/api/insights/v1',
+          }}
+        />,
+      );
+
+      const nextIndex = MockInventoryTable.mock.calls.length - 1;
+      const secondCall = MockInventoryTable.mock.calls[nextIndex][0];
+      expect(secondCall.customFilters.advisorFilters.name).toBe('');
+    });
+  });
+
+  describe('Table sorting configuration', () => {
+    it('does not pass sortBy in tableProps so FEC controls active sorting', () => {
+      renderInventory({ rule: { rule_id: 'RULE_ONE' } });
+      const lastIndex = MockInventoryTable.mock.calls.length - 1;
+      const tableProps = MockInventoryTable.mock.calls[lastIndex][0].tableProps;
+      expect(tableProps.sortBy).toBeUndefined();
+    });
+
+    it('passes initialSortBy with key "last_seen" to onLoad reducer configuration', () => {
+      const mockReplaceReducer = jest.fn();
+      const customStore = {
+        getState: () => ({ entities: { columns: [], rows: [], total: 0 } }),
+        subscribe: jest.fn(),
+        dispatch: jest.fn(),
+        replaceReducer: mockReplaceReducer,
+      };
+
+      const mockMergeWithEntities = jest.fn((reducer, config) => ({
+        ...config,
+      }));
+      const mockMergeWithDetail = jest.fn(() => ({}));
+
+      renderInventory({
+        rule: { rule_id: 'RULE_ONE' },
+        store: customStore,
+      });
+
+      const lastIndex = MockInventoryTable.mock.calls.length - 1;
+      const onLoad = MockInventoryTable.mock.calls[lastIndex][0].onLoad;
+
+      onLoad({
+        mergeWithEntities: mockMergeWithEntities,
+        INVENTORY_ACTION_TYPES: {},
+        mergeWithDetail: mockMergeWithDetail,
+      });
+
+      expect(mockMergeWithEntities).toHaveBeenCalledWith(
+        expect.any(Function),
+        expect.objectContaining({
+          sortBy: {
+            index: expect.any(Number),
+            key: 'last_seen',
+            direction: 'desc',
+          },
+        }),
+      );
+    });
+  });
+
+  describe('Filter chip removal URL synchronization', () => {
+    beforeEach(() => {
+      window.history.replaceState(
+        null,
+        '',
+        '/?limit=20&offset=0&sort=-last_seen&filter%5Bsystem_profile%5D=true&name=3D%20',
+      );
+    });
+
+    afterEach(() => {
+      window.history.replaceState(null, '', '/');
+    });
+
+    it('removes the name filter from the URL when the FEC text chip is deleted', async () => {
+      mockAxiosGet.mockResolvedValue({ playbook_count: 0 });
+
+      renderInventory();
+
+      await waitFor(() => {
+        expect(MockInventoryTable).toHaveBeenCalled();
+      });
+
+      const lastCall =
+        MockInventoryTable.mock.calls[MockInventoryTable.mock.calls.length - 1];
+      const lastProps = lastCall[0];
+      expect(lastProps.activeFiltersConfig.filters).toEqual([]);
+
+      act(() => {
+        lastProps.activeFiltersConfig.onDelete(
+          {},
+          [
+            {
+              category: 'Display name',
+              type: 'textual',
+              chips: [{ name: '3D ' }],
+            },
+          ],
+          false,
+        );
+      });
+
+      expect(window.location.search).not.toContain('name=');
+      expect(window.location.search).not.toContain('display_name=');
+
+      await waitFor(() => {
+        const latestCall =
+          MockInventoryTable.mock.calls[
+            MockInventoryTable.mock.calls.length - 1
+          ];
+        const latestProps = latestCall[0];
+        expect(latestProps.customFilters.advisorFilters.name).toBeUndefined();
+        expect(latestProps.customFilters.filters).toEqual([]);
+      });
+    });
+
+    it('renders Workspace and Tags chips from URL and synchronizes URL on chip deletion', async () => {
+      window.history.replaceState(
+        null,
+        '',
+        '/?limit=20&offset=0&sort=-last_seen&filter%5Bsystem_profile%5D=true&groups=advisor_3ec817eb-b5db-4aa3-8786-ff3837f7c90f&tags=AacBhXapq%2FDWSBsyuF%3DALkkJjC',
+      );
+      mockAxiosGet.mockResolvedValue({ playbook_count: 0 });
+
+      renderInventory();
+
+      await waitFor(() => {
+        expect(MockInventoryTable).toHaveBeenCalled();
+      });
+
+      let lastCall =
+        MockInventoryTable.mock.calls[MockInventoryTable.mock.calls.length - 1];
+      let lastProps = lastCall[0];
+
+      expect(lastProps.activeFiltersConfig.filters).toEqual(
+        expect.arrayContaining([
+          {
+            category: 'Workspace',
+            urlParam: 'groups',
+            chips: [
+              {
+                name: 'advisor_3ec817eb-b5db-4aa3-8786-ff3837f7c90f',
+                value: 'advisor_3ec817eb-b5db-4aa3-8786-ff3837f7c90f',
+              },
+            ],
+          },
+          {
+            category: 'Tags',
+            urlParam: 'tags',
+            chips: [
+              {
+                name: 'DWSBsyuF=ALkkJjC',
+                value: 'AacBhXapq/DWSBsyuF=ALkkJjC',
+              },
+            ],
+          },
+        ]),
+      );
+
+      // Delete Workspace chip
+      act(() => {
+        lastProps.activeFiltersConfig.onDelete(
+          {},
+          [
+            {
+              category: 'Workspace',
+              urlParam: 'groups',
+              chips: [
+                {
+                  name: 'advisor_3ec817eb-b5db-4aa3-8786-ff3837f7c90f',
+                  value: 'advisor_3ec817eb-b5db-4aa3-8786-ff3837f7c90f',
+                },
+              ],
+            },
+          ],
+          false,
+        );
+      });
+
+      expect(window.location.search).not.toContain('groups=');
+      expect(window.location.search).toContain('tags=');
+
+      await waitFor(() => {
+        lastCall =
+          MockInventoryTable.mock.calls[
+            MockInventoryTable.mock.calls.length - 1
+          ];
+        lastProps = lastCall[0];
+        expect(lastProps.customFilters.advisorFilters.groups).toBeUndefined();
+      });
+
+      // Delete Tags chip
+      act(() => {
+        lastProps.activeFiltersConfig.onDelete(
+          {},
+          [
+            {
+              category: 'Tags',
+              urlParam: 'tags',
+              chips: [
+                {
+                  name: 'DWSBsyuF=ALkkJjC',
+                  value: 'AacBhXapq/DWSBsyuF=ALkkJjC',
+                },
+              ],
+            },
+          ],
+          false,
+        );
+      });
+
+      expect(window.location.search).not.toContain('tags=');
+
+      await waitFor(() => {
+        lastCall =
+          MockInventoryTable.mock.calls[
+            MockInventoryTable.mock.calls.length - 1
+          ];
+        lastProps = lastCall[0];
+        expect(lastProps.customFilters.advisorFilters.tags).toBeUndefined();
+      });
+    });
+
+    it('clears all filters and resets URL when isAll is triggered', async () => {
+      window.history.replaceState(
+        null,
+        '',
+        '/?limit=20&offset=40&sort=-last_seen&filter%5Bsystem_profile%5D=true&groups=advisor_123&tags=ns%2Fk%3Dv',
+      );
+      mockAxiosGet.mockResolvedValue({ playbook_count: 0 });
+
+      renderInventory();
+
+      await waitFor(() => {
+        expect(MockInventoryTable).toHaveBeenCalled();
+      });
+
+      const lastCall =
+        MockInventoryTable.mock.calls[MockInventoryTable.mock.calls.length - 1];
+      const lastProps = lastCall[0];
+
+      act(() => {
+        lastProps.activeFiltersConfig.onDelete({}, [], true);
+      });
+
+      expect(window.location.search).not.toContain('groups=');
+      expect(window.location.search).not.toContain('tags=');
+      expect(window.location.search).toContain('offset=0');
+    });
+
+    it('handles multiple tags, preserving remaining tags in state and URL on single tag deletion', async () => {
+      window.history.replaceState(
+        null,
+        '',
+        '/?limit=20&offset=0&sort=-last_seen&filter%5Bsystem_profile%5D=true&tags=ns1%2Fkey1%3Dval1,ns2%2Fkey2%3Dval2',
+      );
+      mockAxiosGet.mockResolvedValue({ playbook_count: 0 });
+
+      renderInventory();
+
+      await waitFor(() => {
+        expect(MockInventoryTable).toHaveBeenCalled();
+      });
+
+      let lastCall =
+        MockInventoryTable.mock.calls[MockInventoryTable.mock.calls.length - 1];
+      let lastProps = lastCall[0];
+
+      expect(lastProps.activeFiltersConfig.filters).toEqual(
+        expect.arrayContaining([
+          {
+            category: 'Tags',
+            urlParam: 'tags',
+            chips: [
+              { name: 'key1=val1', value: 'ns1/key1=val1' },
+              { name: 'key2=val2', value: 'ns2/key2=val2' },
+            ],
+          },
+        ]),
+      );
+
+      // Delete only the first tag chip
+      act(() => {
+        lastProps.activeFiltersConfig.onDelete(
+          {},
+          [
+            {
+              category: 'Tags',
+              urlParam: 'tags',
+              chips: [{ name: 'key1=val1', value: 'ns1/key1=val1' }],
+            },
+          ],
+          false,
+        );
+      });
+
+      expect(window.location.search).not.toContain('key1%3Dval1');
+      expect(window.location.search).toContain('key2%3Dval2');
+
+      await waitFor(() => {
+        lastCall =
+          MockInventoryTable.mock.calls[
+            MockInventoryTable.mock.calls.length - 1
+          ];
+        lastProps = lastCall[0];
+        expect(lastProps.customFilters.advisorFilters.tags).toEqual([
+          'ns2/key2=val2',
+        ]);
+      });
+    });
+
+    it('handles multiple groups, preserving remaining groups in state and URL on single group deletion', async () => {
+      window.history.replaceState(
+        null,
+        '',
+        '/?limit=20&offset=0&sort=-last_seen&filter%5Bsystem_profile%5D=true&groups=advisor_grp1,advisor_grp2',
+      );
+      mockAxiosGet.mockResolvedValue({ playbook_count: 0 });
+
+      renderInventory();
+
+      await waitFor(() => {
+        expect(MockInventoryTable).toHaveBeenCalled();
+      });
+
+      let lastCall =
+        MockInventoryTable.mock.calls[MockInventoryTable.mock.calls.length - 1];
+      let lastProps = lastCall[0];
+
+      expect(lastProps.activeFiltersConfig.filters).toEqual(
+        expect.arrayContaining([
+          {
+            category: 'Workspace',
+            urlParam: 'groups',
+            chips: [
+              { name: 'advisor_grp1', value: 'advisor_grp1' },
+              { name: 'advisor_grp2', value: 'advisor_grp2' },
+            ],
+          },
+        ]),
+      );
+
+      // Delete the first group chip
+      act(() => {
+        lastProps.activeFiltersConfig.onDelete(
+          {},
+          [
+            {
+              category: 'Workspace',
+              urlParam: 'groups',
+              chips: [{ name: 'advisor_grp1', value: 'advisor_grp1' }],
+            },
+          ],
+          false,
+        );
+      });
+
+      expect(window.location.search).not.toContain('advisor_grp1');
+      expect(window.location.search).toContain('advisor_grp2');
+
+      await waitFor(() => {
+        lastCall =
+          MockInventoryTable.mock.calls[
+            MockInventoryTable.mock.calls.length - 1
+          ];
+        lastProps = lastCall[0];
+        expect(lastProps.customFilters.advisorFilters.groups).toEqual([
+          'advisor_grp2',
+        ]);
+      });
+    });
+
+    it('dispatches updateTags to synchronize Redux selectedTags on tag chip deletion and reset', async () => {
+      window.history.replaceState(
+        null,
+        '',
+        '/?limit=20&offset=0&sort=-last_seen&filter%5Bsystem_profile%5D=true&tags=ns1%2Fkey1%3Dval1,ns2%2Fkey2%3Dval2',
+      );
+      mockAxiosGet.mockResolvedValue({ playbook_count: 0 });
+
+      const customStore = mockStore({
+        entities: { columns: [], rows: [], total: 0 },
+      });
+
+      renderInventory({
+        store: customStore,
+        selectedTags: ['ns1/key1=val1', 'ns2/key2=val2'],
+      });
+
+      await waitFor(() => {
+        expect(MockInventoryTable).toHaveBeenCalled();
+      });
+
+      const lastCall =
+        MockInventoryTable.mock.calls[MockInventoryTable.mock.calls.length - 1];
+      const lastProps = lastCall[0];
+
+      // Delete first tag
+      act(() => {
+        lastProps.activeFiltersConfig.onDelete(
+          {},
+          [
+            {
+              category: 'Tags',
+              urlParam: 'tags',
+              chips: [{ name: 'key1=val1', value: 'ns1/key1=val1' }],
+            },
+          ],
+          false,
+        );
+      });
+
+      const actions = customStore.getActions();
+      expect(actions).toContainEqual(
+        expect.objectContaining({
+          type: 'filters/updateTags',
+          payload: ['ns2/key2=val2'],
+        }),
+      );
+    });
+
+    it('formats tag label correctly when tag does not contain a namespace slash', async () => {
+      window.history.replaceState(
+        null,
+        '',
+        '/?limit=20&offset=0&sort=-last_seen&filter%5Bsystem_profile%5D=true&tags=unscoped_tag',
+      );
+      mockAxiosGet.mockResolvedValue({ playbook_count: 0 });
+
+      renderInventory();
+
+      await waitFor(() => {
+        expect(MockInventoryTable).toHaveBeenCalled();
+      });
+
+      const lastCall =
+        MockInventoryTable.mock.calls[MockInventoryTable.mock.calls.length - 1];
+      const lastProps = lastCall[0];
+
+      expect(lastProps.activeFiltersConfig.filters).toEqual(
+        expect.arrayContaining([
+          {
+            category: 'Tags',
+            urlParam: 'tags',
+            chips: [{ name: 'unscoped_tag', value: 'unscoped_tag' }],
+          },
+        ]),
+      );
     });
   });
 });
