@@ -35,6 +35,7 @@ import { isAbortError } from './helpers';
 import {
   InventoryReportFetchFailed,
   NoMatchingRecommendations,
+  NoRecommendations,
 } from './EmptyStates';
 
 /**
@@ -342,7 +343,15 @@ const SystemAdvisorInner = ({
     return <InventoryReportFetchFailed entity={entity} />;
   }
 
-  const isSafe = !isReportsLoading && !isReportsFetching;
+  if (rawReports.length === 0) {
+    return <NoRecommendations />;
+  }
+
+  const isSafe =
+    !isReportsLoading &&
+    !isReportsFetching &&
+    !isSystemProfileLoading &&
+    !kbaLoading;
 
   return (
     <StaticTableToolsTable

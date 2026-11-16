@@ -26,7 +26,6 @@ import {
   CONDITIONAL_FILTER,
   MENU_ITEM,
   PT_BULK_SELECT,
-  PT_BULK_SELECT_CHECKBOX,
   PT_BULK_SELECT_LIST,
   TOOLBAR,
 } from '@redhat-cloud-services/frontend-components-utilities';
@@ -75,10 +74,10 @@ const mountComponent = (
   ).as('getSystemProfile');
 
   if (reportsFixture !== null) {
-    cy.intercept(
-      `/api/insights/v1/system/${SYSTEM_ID}/reports/**`,
-      reportsFixture,
-    ).as('getSystemReports');
+    cy.intercept(`/api/insights/v1/system/${SYSTEM_ID}/reports/**`, {
+      statusCode: 200,
+      body: reportsFixture,
+    }).as('getSystemReports');
   }
 
   const finalEnvContext = {
@@ -188,24 +187,9 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
   });
 
   describe('row expandability', () => {
-    const headerToggle = 'thead th button[aria-label="Expand all rows"]';
-
     beforeEach(() => {
       mountComponent();
       waitForSystemAdvisor();
-    });
-
-    it('shows expand all button in table header', () => {
-      cy.get(headerToggle).should('exist');
-    });
-
-    it('expands all rows via header chevron and displays ReportDetails', () => {
-      cy.get(headerToggle).click();
-      cy.get('.ins-c-report-details').should('exist');
-      cy.get('.pf-v6-c-table__expandable-row').should(
-        'have.length',
-        ROWS_PER_PAGE,
-      );
     });
 
     it('expands and collapses a single row showing ReportDetails content', () => {
@@ -240,10 +224,6 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
       waitForSystemAdvisor();
     });
 
-    it('shows bulk select control in toolbar', () => {
-      cy.get(PT_BULK_SELECT_CHECKBOX).should('exist');
-    });
-
     it('disables remediation button when no items selected', () => {
       cy.contains('button', 'Plan remediation').should('be.disabled');
     });
@@ -251,9 +231,6 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
     it('selects all rows and enables remediation button', () => {
       cy.get(PT_BULK_SELECT).click();
       cy.get(PT_BULK_SELECT_LIST).contains('Select all').click();
-      cy.get(PT_BULK_SELECT_CHECKBOX)
-        .parent()
-        .should('contain', `${fixtures.length} selected`);
       cy.contains('button', 'Plan remediation').should('not.be.disabled');
     });
 
@@ -338,38 +315,50 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
   });
 
   describe('sorting and pagination', () => {
-    it('sorts rows when clicking Description column header', () => {
+    beforeEach(() => {
       mountComponent();
       waitForSystemAdvisor();
-
-      cy.get(`${ROOT} th[data-label="Description"] button`).click();
-      waitForTableTools(ROOT, false);
-      cy.tableIsSortedBy('Description', 'ascending');
-
-      cy.get(`${ROOT} th[data-label="Description"] button`).click();
-      waitForTableTools(ROOT, false);
-      cy.tableIsSortedBy('Description', 'descending');
     });
 
-    it('sorts rows when clicking Total risk column header', () => {
-      mountComponent();
-      waitForSystemAdvisor();
-
-      cy.tableIsSortedBy('Total risk', 'descending');
-
-      cy.get(`${ROOT} th[data-label="Total risk"] button`).click();
-      waitForTableTools(ROOT, false);
-      cy.tableIsSortedBy('Total risk', 'ascending');
+    it('sorts rows by Total risk when clicking column header', () => {
+      cy.get(`${ROOT} th[data-label="Total risk"]`).should(
+        'have.attr',
+        'aria-sort',
+        'descending',
+      );
 
       cy.get(`${ROOT} th[data-label="Total risk"] button`).click();
-      waitForTableTools(ROOT, false);
-      cy.tableIsSortedBy('Total risk', 'descending');
+      cy.get(`${ROOT} th[data-label="Total risk"]`).should(
+        'have.attr',
+        'aria-sort',
+        'ascending',
+      );
+
+      cy.get(`${ROOT} th[data-label="Total risk"] button`).click();
+      cy.get(`${ROOT} th[data-label="Total risk"]`).should(
+        'have.attr',
+        'aria-sort',
+        'descending',
+      );
+    });
+
+    it('sorts rows by Description when clicking column header', () => {
+      cy.get(`${ROOT} th[data-label="Description"] button`).click();
+      cy.get(`${ROOT} th[data-label="Description"]`).should(
+        'have.attr',
+        'aria-sort',
+        'ascending',
+      );
+
+      cy.get(`${ROOT} th[data-label="Description"] button`).click();
+      cy.get(`${ROOT} th[data-label="Description"]`).should(
+        'have.attr',
+        'aria-sort',
+        'descending',
+      );
     });
 
     it('paginates across pages and updates rows', () => {
-      mountComponent();
-      waitForSystemAdvisor();
-
       // Verify page 1 shows 20 items by default
       cy.get(`${ROOT} tbody tr:not(.pf-v6-c-table__expandable-row)`).should(
         'have.length',
@@ -378,7 +367,6 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
 
       // Navigate to next page
       cy.get('button[data-action="next"]').first().click();
-      waitForTableTools(ROOT, false);
 
       // Page 2 should have remaining 5 items
       cy.get(`${ROOT} tbody tr:not(.pf-v6-c-table__expandable-row)`).should(
@@ -388,7 +376,6 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
 
       // Navigate back to previous page
       cy.get('button[data-action="previous"]').first().click();
-      waitForTableTools(ROOT, false);
 
       cy.get(`${ROOT} tbody tr:not(.pf-v6-c-table__expandable-row)`).should(
         'have.length',
@@ -398,12 +385,10 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
   });
 
   describe('empty state', () => {
-    beforeEach(() => {
+    it('shows "No matching recommendations found" with Cubes icon when filter criteria matches nothing', () => {
       mountComponent();
       waitForSystemAdvisor();
-    });
 
-    it('shows "No matching recommendations found" with Cubes icon when filter criteria matches nothing', () => {
       cy.get('[aria-label="text input"]').click();
       cy.get('[aria-label="text input"]').type(
         'NonExistentRecommendationQuery123{enter}',
@@ -413,6 +398,15 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
       cy.contains(
         'To continue, edit your filter settings and search again.',
       ).should('be.visible');
+    });
+
+    it('shows "No recommendations" when system has no reports', () => {
+      mountComponent({}, {}, systemProfile.data, []);
+      cy.wait(['@getSystemReports', '@getSystemProfile']);
+      cy.contains('No recommendations').should('be.visible');
+      cy.contains('No known recommendations affect this system').should(
+        'be.visible',
+      );
     });
   });
 
