@@ -1,9 +1,8 @@
-name: Cleanup stale caches
+name: Cleanup PR cache
 
 on:
   schedule:
-    # Run once daily at 02:00 UTC
-    - cron: '0 2 * * *'
+    - cron: '0 0 * * *'
   workflow_dispatch:
 
 jobs:
@@ -13,68 +12,86 @@ jobs:
       actions: write
       pull-requests: read
     steps:
-      - name: Cleanup stale and closed PR caches
+      - name: Cleanup closed PR caches
         run: |
-          echo "Starting cache cleanup..."
-          PAGE=1
+          set -euo pipefail
+
+          echo "Fetching all existing caches..."
+          ALL_CACHES=$(gh api --paginate "/repos/${GH_REPO}/actions/caches" \
+            --jq '.actions_caches[] | {id: .id, key: .key, ref: .ref}' | jq -s '.')
+
+          TOTAL_CACHES=$(echo "$ALL_CACHES" | jq 'length')
+          echo "Total caches in repository: $TOTAL_CACHES"
+
+          if [ "$TOTAL_CACHES" -eq 0 ]; then
+            echo "No caches found. Exiting."
+            exit 0
+          fi
+
+          echo "Fetching closed and merged pull requests..."
+          CLOSED_PRS=$(gh pr list --repo "$GH_REPO" --state closed --limit 100 --json number,headRefName,headRepositoryOwner)
+
+          OPEN_PR_BRANCHES=$(gh pr list --repo "$GH_REPO" --state open --limit 100 --json headRefName --jq '.[].headRefName' | sort -u)
+
+          CACHES_TO_DELETE=()
+
+          while read -r pr; do
+            [ -z "$pr" ] && continue
+            PR_NUM=$(echo "$pr" | jq -r '.number')
+            HEAD_REF=$(echo "$pr" | jq -r '.headRefName')
+
+            SKIP_BRANCH=false
+            if echo "$OPEN_PR_BRANCHES" | grep -qx "$HEAD_REF"; then
+              SKIP_BRANCH=true
+            fi
+
+            # Match PR merge ref: refs/pull/<PR>/merge
+            PULL_REF="refs/pull/${PR_NUM}/merge"
+            PULL_CACHE_IDS=$(echo "$ALL_CACHES" | jq -r --arg ref "$PULL_REF" '.[] | select(.ref == $ref) | .id')
+            for cid in $PULL_CACHE_IDS; do
+              [ -n "$cid" ] && CACHES_TO_DELETE+=("$cid")
+            done
+
+            # Match sanitized scope key from container-publish.yaml
+            if [ -n "$HEAD_REF" ] && [ "$SKIP_BRANCH" = false ]; then
+              SANITIZED_REF=$(echo "${HEAD_REF}" | tr ',=\r\n' '-')
+              SCOPED_CACHE_IDS=$(echo "$ALL_CACHES" | jq -r --arg scope "$SANITIZED_REF" \
+                '.[] | select(.key | split(",") | any(. == "scope=" + $scope)) | .id')
+
+              for cid in $SCOPED_CACHE_IDS; do
+                [ -n "$cid" ] && CACHES_TO_DELETE+=("$cid")
+              done
+            fi
+          done < <(echo "$CLOSED_PRS" | jq -c '.[]')
+
+          UNIQUE_CACHE_IDS=($(printf "%s\n" "${CACHES_TO_DELETE[@]}" | sort -u))
+          echo "Identified ${#UNIQUE_CACHE_IDS[@]} cache(s) eligible for cleanup."
+
           DELETED=0
           FAILED=0
 
-          while true; do
-            echo "Fetching cache page $PAGE..."
-            RESPONSE=$(gh api "/repos/${GH_REPO}/actions/caches?per_page=100&page=${PAGE}" 2>/dev/null || echo "{}")
-            COUNT=$(echo "$RESPONSE" | jq -r '.actions_caches | length // 0')
+          for cid in "${UNIQUE_CACHE_IDS[@]}"; do
+            [ -z "$cid" ] && continue
+            echo "Deleting cache ID: $cid"
 
-            if [ "$COUNT" -eq 0 ]; then
-              break
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+              -X DELETE \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              "https://api.github.com/repos/${GH_REPO}/actions/caches/${cid}")
+
+            if [ "$HTTP_CODE" -eq 204 ] || [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 404 ]; then
+              DELETED=$((DELETED + 1))
+            else
+              echo "ERROR: Failed to delete cache $cid (HTTP $HTTP_CODE)"
+              FAILED=$((FAILED + 1))
             fi
-
-            while read -r cache; do
-              [ -z "$cache" ] && continue
-              CACHE_ID=$(echo "$cache" | jq -r '.id')
-              CACHE_REF=$(echo "$cache" | jq -r '.ref')
-
-              # Handle PR merge refs: refs/pull/<number>/merge
-              if [[ "$CACHE_REF" =~ refs/pull/([0-9]+)/merge ]]; then
-                PR_NUM="${BASH_REMATCH[1]}"
-
-                # Fetch PR details reliably: state and headRefName
-                PR_DATA=$(gh pr view "$PR_NUM" --repo "$GH_REPO" --json state,headRefName 2>/dev/null || echo "{}")
-                PR_STATE=$(echo "$PR_DATA" | jq -r '.state // "UNKNOWN"')
-                HEAD_REF=$(echo "$PR_DATA" | jq -r '.headRefName // ""')
-
-                if [[ "$PR_STATE" == "CLOSED" || "$PR_STATE" == "MERGED" ]]; then
-                  echo "PR #$PR_NUM is $PR_STATE. Deleting PR cache ID: $CACHE_ID (ref: $CACHE_REF)"
-                  if gh cache delete "$CACHE_ID"; then
-                    DELETED=$((DELETED + 1))
-                  else
-                    echo "ERROR: Failed to delete cache $CACHE_ID"
-                    FAILED=$((FAILED + 1))
-                  fi
-
-                  # Also clean up matching head branch cache if it exists and branch isn't master
-                  if [ -n "$HEAD_REF" ] && [ "$HEAD_REF" != "master" ]; then
-                    gh cache list --limit 100 --ref "refs/heads/${HEAD_REF}" --json id --jq '.[].id' 2>/dev/null | while read -r branch_cache_id; do
-                      if [ -n "$branch_cache_id" ]; then
-                        echo "Deleting associated head branch cache: $branch_cache_id (branch: $HEAD_REF)"
-                        if gh cache delete "$branch_cache_id"; then
-                          DELETED=$((DELETED + 1))
-                        else
-                          FAILED=$((FAILED + 1))
-                        fi
-                      fi
-                    done
-                  fi
-                fi
-              fi
-            done < <(echo "$RESPONSE" | jq -c '.actions_caches[]')
-
-            PAGE=$((PAGE + 1))
           done
 
-          echo "Cache cleanup finished: $DELETED deleted, $FAILED failed."
+          echo "Cleanup finished: $DELETED deleted, $FAILED failed."
+
           if [ "$FAILED" -gt 0 ]; then
-            echo "Encountered $FAILED deletion failure(s)."
+            echo "Workflow failed with $FAILED deletion error(s)."
             exit 1
           fi
         env:
