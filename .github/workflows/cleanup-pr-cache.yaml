@@ -1,8 +1,10 @@
-name: Cleanup PR cache
+name: Cleanup stale caches
 
 on:
-  pull_request_target:
-    types: [closed]
+  schedule:
+    # Run once daily at 02:00 UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
 
 jobs:
   cleanup:
@@ -10,32 +12,27 @@ jobs:
     permissions:
       actions: write
     steps:
-      - name: Cleanup PR branch cache
+      - name: Cleanup stale and closed PR caches
         run: |
-          echo "Cleaning up cache for PR #${PR_NUMBER}"
-          echo "Branch: ${HEAD_REF}"
+          echo "Fetching cache list..."
+          gh cache list --limit 1000 --json id,ref,key | jq -c '.[]' | while read -r cache; do
+            CACHE_ID=$(echo "$cache" | jq -r '.id')
+            CACHE_REF=$(echo "$cache" | jq -r '.ref')
+            CACHE_KEY=$(echo "$cache" | jq -r '.key')
 
-          # Sanitize branch name to match how it's stored in cache (commas/equals replaced with hyphens)
-          SANITIZED_REF=$(echo "${HEAD_REF}" | tr ',=' '-')
-          echo "Sanitized scope: ${SANITIZED_REF}"
+            # Handle PR merge refs: refs/pull/<number>/merge
+            if [[ "$CACHE_REF" =~ refs/pull/([0-9]+)/merge ]]; then
+              PR_NUM="${BASH_REMATCH[1]}"
+              PR_STATE=$(gh pr view "$PR_NUM" --repo "$GH_REPO" --json state --jq .state 2>/dev/null || echo "NOT_FOUND")
 
-          for ref in "refs/pull/${PR_NUMBER}/merge" "refs/heads/${HEAD_REF}"; do
-            echo "Trying ref: $ref"
-            gh cache list --limit 1000 --ref "$ref" --json id,ref --jq '.[] | "\(.id) \(.ref)"' | while read cache_id cache_ref; do
-              echo "Deleting cache ID: $cache_id (ref: $cache_ref)"
-              gh cache delete "$cache_id" || echo "Failed to delete cache $cache_id, continuing..."
-            done
+              if [[ "$PR_STATE" == "CLOSED" || "$PR_STATE" == "MERGED" || "$PR_STATE" == "NOT_FOUND" ]]; then
+                echo "PR #$PR_NUM is $PR_STATE. Deleting cache ID: $CACHE_ID (ref: $CACHE_REF)"
+                gh cache delete "$CACHE_ID" || true
+              fi
+            fi
           done
 
-          echo "Deleting caches with exact scope match: ${SANITIZED_REF}"
-          gh cache list --limit 1000 --json id,key | jq --arg SCOPE "${SANITIZED_REF}" '.[] | select(.key | split(",") | any(. == "scope=" + $SCOPE)) | .id' | while read cache_id; do
-            echo "Deleting scoped cache ID: $cache_id"
-            gh cache delete "$cache_id" || echo "Failed to delete cache $cache_id, continuing..."
-          done
-
-          echo "Cache cleanup completed."
+          echo "Scheduled cache cleanup completed."
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_REF: ${{ github.head_ref }}
