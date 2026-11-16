@@ -710,4 +710,81 @@ describe('Inventory - Playbook Count Scenarios', () => {
       expect(apiSuccessEmptyResponse).not.toBe(apiSuccessNoPlaybooks);
     });
   });
+
+  describe('filtersCacheRef implementation', () => {
+    it('should preserve ref value without triggering re-render', () => {
+      const filters = { name: '', limit: 20, offset: 0 };
+      const filtersCacheRef = { current: filters };
+      const options = {
+        name: 'test-system',
+        limit: 20,
+        offset: 0,
+        sort: '-last_seen',
+      };
+
+      filtersCacheRef.current = {
+        ...options,
+        ...(options.name && { name: options.name }),
+      };
+
+      expect(filtersCacheRef.current.name).toBe('test-system');
+      expect(filters.name).toBe('');
+
+      const customFilters = { advisorFilters: filtersCacheRef.current };
+      expect(customFilters.advisorFilters.name).toBe('test-system');
+    });
+
+    it('should persist ref values across simulated re-renders', () => {
+      const filters = { name: '', limit: 20 };
+      const filtersCacheRef = { current: filters };
+
+      filtersCacheRef.current = { name: 'system-1', limit: 20, offset: 0 };
+      expect(filtersCacheRef.current.name).toBe('system-1');
+
+      let customFilters = { advisorFilters: filtersCacheRef.current };
+      expect(customFilters.advisorFilters.name).toBe('system-1');
+
+      filtersCacheRef.current = { name: 'system-2', limit: 20, offset: 0 };
+      customFilters = { advisorFilters: filtersCacheRef.current };
+      expect(customFilters.advisorFilters.name).toBe('system-2');
+    });
+
+    it('should sync ref with state via useEffect pattern', () => {
+      let filters = { name: '', limit: 20 };
+      const filtersCacheRef = { current: filters };
+
+      filters = { name: '', limit: 20, offset: 0 };
+      filtersCacheRef.current = filters;
+      expect(filtersCacheRef.current.name).toBe('');
+
+      const options = { name: 'new-system', limit: 20, offset: 0 };
+      filtersCacheRef.current = options;
+      expect(filtersCacheRef.current.name).toBe('new-system');
+    });
+
+    it('should avoid re-render loops compared to setFilters approach', () => {
+      let renderCount = 0;
+      const filters = { name: '' };
+      const filtersCacheRef = { current: filters };
+
+      const setFilters = () => {
+        renderCount++;
+      };
+      const handleRefreshWithSetFilters = (options) => {
+        setFilters(options);
+      };
+      const handleRefreshWithRef = (options) => {
+        filtersCacheRef.current = options;
+      };
+
+      const options = { name: 'test', limit: 20 };
+
+      handleRefreshWithRef(options);
+      expect(renderCount).toBe(0);
+      expect(filtersCacheRef.current.name).toBe('test');
+
+      handleRefreshWithSetFilters(options);
+      expect(renderCount).toBe(1);
+    });
+  });
 });

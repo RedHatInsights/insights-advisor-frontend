@@ -1,6 +1,12 @@
 import './_Inventory.scss';
 
-import React, { useEffect, useState, useCallback, useContext } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useContext,
+  useRef,
+} from 'react';
 import { TableVariant, sortable, wrappable } from '@patternfly/react-table';
 import { pruneFilters, urlBuilder } from '../Common/Tables';
 import { useDispatch, useSelector, useStore } from 'react-redux';
@@ -55,6 +61,17 @@ const Inventory = ({
     name: '',
     'filter[system_profile]': true,
   });
+
+  // This ref holds the latest filter values from handleRefresh and is read by customFilters
+  // When FEC InventoryTable auto-refreshes (e.g., after disabling a system), it reads
+  // the current filter values from this ref instead of stale state
+  const filtersCacheRef = useRef(filters);
+
+  // Sync ref with filters state when state changes (e.g., chip deletion, reset)
+  useEffect(() => {
+    filtersCacheRef.current = filters;
+  }, [filters]);
+
   const [fullFilters, setFullFilters] = useState();
   const [total, setTotal] = useState(0);
   const entities = useSelector(({ entities }) => entities || {});
@@ -90,6 +107,11 @@ const Inventory = ({
       }),
     };
     !pathway && urlBuilder(refreshedFilters, selectedTags);
+
+    // This allows FEC InventoryTable to read current filter values when it auto-refreshes
+    // (e.g., after disabling a system), preventing filter state loss
+    // Using ref mutation instead of setFilters() avoids re-render loops
+    filtersCacheRef.current = refreshedFilters;
   };
   const grabPageIds = () => {
     return curPageIds || [];
@@ -523,7 +545,7 @@ const Inventory = ({
             envContext: envContext,
           }}
           customFilters={{
-            advisorFilters: filters,
+            advisorFilters: filtersCacheRef.current,
           }}
           showTags={envContext.loadChromeless ? false : showTags}
           getEntities={fetchSystems}
@@ -593,7 +615,7 @@ const Inventory = ({
             ...bulkSelectTableProps,
           }}
           customFilters={{
-            advisorFilters: filters,
+            advisorFilters: filtersCacheRef.current,
             selectedTags,
             workloads,
           }}
