@@ -11,28 +11,72 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: write
+      pull-requests: read
     steps:
       - name: Cleanup stale and closed PR caches
         run: |
-          echo "Fetching cache list..."
-          gh cache list --limit 1000 --json id,ref,key | jq -c '.[]' | while read -r cache; do
-            CACHE_ID=$(echo "$cache" | jq -r '.id')
-            CACHE_REF=$(echo "$cache" | jq -r '.ref')
-            CACHE_KEY=$(echo "$cache" | jq -r '.key')
+          echo "Starting cache cleanup..."
+          PAGE=1
+          DELETED=0
+          FAILED=0
 
-            # Handle PR merge refs: refs/pull/<number>/merge
-            if [[ "$CACHE_REF" =~ refs/pull/([0-9]+)/merge ]]; then
-              PR_NUM="${BASH_REMATCH[1]}"
-              PR_STATE=$(gh pr view "$PR_NUM" --repo "$GH_REPO" --json state --jq .state 2>/dev/null || echo "NOT_FOUND")
+          while true; do
+            echo "Fetching cache page $PAGE..."
+            RESPONSE=$(gh api "/repos/${GH_REPO}/actions/caches?per_page=100&page=${PAGE}" 2>/dev/null || echo "{}")
+            COUNT=$(echo "$RESPONSE" | jq -r '.actions_caches | length // 0')
 
-              if [[ "$PR_STATE" == "CLOSED" || "$PR_STATE" == "MERGED" || "$PR_STATE" == "NOT_FOUND" ]]; then
-                echo "PR #$PR_NUM is $PR_STATE. Deleting cache ID: $CACHE_ID (ref: $CACHE_REF)"
-                gh cache delete "$CACHE_ID" || true
-              fi
+            if [ "$COUNT" -eq 0 ]; then
+              break
             fi
+
+            while read -r cache; do
+              [ -z "$cache" ] && continue
+              CACHE_ID=$(echo "$cache" | jq -r '.id')
+              CACHE_REF=$(echo "$cache" | jq -r '.ref')
+
+              # Handle PR merge refs: refs/pull/<number>/merge
+              if [[ "$CACHE_REF" =~ refs/pull/([0-9]+)/merge ]]; then
+                PR_NUM="${BASH_REMATCH[1]}"
+
+                # Fetch PR details reliably: state and headRefName
+                PR_DATA=$(gh pr view "$PR_NUM" --repo "$GH_REPO" --json state,headRefName 2>/dev/null || echo "{}")
+                PR_STATE=$(echo "$PR_DATA" | jq -r '.state // "UNKNOWN"')
+                HEAD_REF=$(echo "$PR_DATA" | jq -r '.headRefName // ""')
+
+                if [[ "$PR_STATE" == "CLOSED" || "$PR_STATE" == "MERGED" ]]; then
+                  echo "PR #$PR_NUM is $PR_STATE. Deleting PR cache ID: $CACHE_ID (ref: $CACHE_REF)"
+                  if gh cache delete "$CACHE_ID"; then
+                    DELETED=$((DELETED + 1))
+                  else
+                    echo "ERROR: Failed to delete cache $CACHE_ID"
+                    FAILED=$((FAILED + 1))
+                  fi
+
+                  # Also clean up matching head branch cache if it exists and branch isn't master
+                  if [ -n "$HEAD_REF" ] && [ "$HEAD_REF" != "master" ]; then
+                    gh cache list --limit 100 --ref "refs/heads/${HEAD_REF}" --json id --jq '.[].id' 2>/dev/null | while read -r branch_cache_id; do
+                      if [ -n "$branch_cache_id" ]; then
+                        echo "Deleting associated head branch cache: $branch_cache_id (branch: $HEAD_REF)"
+                        if gh cache delete "$branch_cache_id"; then
+                          DELETED=$((DELETED + 1))
+                        else
+                          FAILED=$((FAILED + 1))
+                        fi
+                      fi
+                    done
+                  fi
+                fi
+              fi
+            done < <(echo "$RESPONSE" | jq -c '.actions_caches[]')
+
+            PAGE=$((PAGE + 1))
           done
 
-          echo "Scheduled cache cleanup completed."
+          echo "Cache cleanup finished: $DELETED deleted, $FAILED failed."
+          if [ "$FAILED" -gt 0 ]; then
+            echo "Encountered $FAILED deletion failure(s)."
+            exit 1
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
