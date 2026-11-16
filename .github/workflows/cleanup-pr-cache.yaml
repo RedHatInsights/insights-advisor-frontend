@@ -1,41 +1,99 @@
 name: Cleanup PR cache
 
 on:
-  pull_request_target:
-    types: [closed]
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   cleanup:
     runs-on: ubuntu-latest
     permissions:
       actions: write
+      pull-requests: read
     steps:
-      - name: Cleanup PR branch cache
+      - name: Cleanup closed PR caches
         run: |
-          echo "Cleaning up cache for PR #${PR_NUMBER}"
-          echo "Branch: ${HEAD_REF}"
+          set -euo pipefail
 
-          # Sanitize branch name to match how it's stored in cache (commas/equals replaced with hyphens)
-          SANITIZED_REF=$(echo "${HEAD_REF}" | tr ',=' '-')
-          echo "Sanitized scope: ${SANITIZED_REF}"
+          echo "Fetching all existing caches..."
+          ALL_CACHES=$(gh api --paginate "/repos/${GH_REPO}/actions/caches" \
+            --jq '.actions_caches[] | {id: .id, key: .key, ref: .ref}' | jq -s '.')
 
-          for ref in "refs/pull/${PR_NUMBER}/merge" "refs/heads/${HEAD_REF}"; do
-            echo "Trying ref: $ref"
-            gh cache list --limit 1000 --ref "$ref" --json id,ref --jq '.[] | "\(.id) \(.ref)"' | while read cache_id cache_ref; do
-              echo "Deleting cache ID: $cache_id (ref: $cache_ref)"
-              gh cache delete "$cache_id" || echo "Failed to delete cache $cache_id, continuing..."
+          TOTAL_CACHES=$(echo "$ALL_CACHES" | jq 'length')
+          echo "Total caches in repository: $TOTAL_CACHES"
+
+          if [ "$TOTAL_CACHES" -eq 0 ]; then
+            echo "No caches found. Exiting."
+            exit 0
+          fi
+
+          echo "Fetching closed and merged pull requests..."
+          CLOSED_PRS=$(gh pr list --repo "$GH_REPO" --state closed --limit 100 --json number,headRefName,headRepositoryOwner)
+
+          OPEN_PR_BRANCHES=$(gh pr list --repo "$GH_REPO" --state open --limit 100 --json headRefName --jq '.[].headRefName' | sort -u)
+
+          CACHES_TO_DELETE=()
+
+          while read -r pr; do
+            [ -z "$pr" ] && continue
+            PR_NUM=$(echo "$pr" | jq -r '.number')
+            HEAD_REF=$(echo "$pr" | jq -r '.headRefName')
+
+            SKIP_BRANCH=false
+            if echo "$OPEN_PR_BRANCHES" | grep -qx "$HEAD_REF"; then
+              SKIP_BRANCH=true
+            fi
+
+            # Match PR merge ref: refs/pull/<PR>/merge
+            PULL_REF="refs/pull/${PR_NUM}/merge"
+            PULL_CACHE_IDS=$(echo "$ALL_CACHES" | jq -r --arg ref "$PULL_REF" '.[] | select(.ref == $ref) | .id')
+            for cid in $PULL_CACHE_IDS; do
+              [ -n "$cid" ] && CACHES_TO_DELETE+=("$cid")
             done
+
+            # Match sanitized scope key from container-publish.yaml
+            if [ -n "$HEAD_REF" ] && [ "$SKIP_BRANCH" = false ]; then
+              SANITIZED_REF=$(echo "${HEAD_REF}" | tr ',=\r\n' '-')
+              SCOPED_CACHE_IDS=$(echo "$ALL_CACHES" | jq -r --arg scope "$SANITIZED_REF" \
+                '.[] | select(.key | split(",") | any(. == "scope=" + $scope)) | .id')
+
+              for cid in $SCOPED_CACHE_IDS; do
+                [ -n "$cid" ] && CACHES_TO_DELETE+=("$cid")
+              done
+            fi
+          done < <(echo "$CLOSED_PRS" | jq -c '.[]')
+
+          UNIQUE_CACHE_IDS=($(printf "%s\n" "${CACHES_TO_DELETE[@]}" | sort -u))
+          echo "Identified ${#UNIQUE_CACHE_IDS[@]} cache(s) eligible for cleanup."
+
+          DELETED=0
+          FAILED=0
+
+          for cid in "${UNIQUE_CACHE_IDS[@]}"; do
+            [ -z "$cid" ] && continue
+            echo "Deleting cache ID: $cid"
+
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+              -X DELETE \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              "https://api.github.com/repos/${GH_REPO}/actions/caches/${cid}")
+
+            if [ "$HTTP_CODE" -eq 204 ] || [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 404 ]; then
+              DELETED=$((DELETED + 1))
+            else
+              echo "ERROR: Failed to delete cache $cid (HTTP $HTTP_CODE)"
+              FAILED=$((FAILED + 1))
+            fi
           done
 
-          echo "Deleting caches with exact scope match: ${SANITIZED_REF}"
-          gh cache list --limit 1000 --json id,key | jq --arg SCOPE "${SANITIZED_REF}" '.[] | select(.key | split(",") | any(. == "scope=" + $SCOPE)) | .id' | while read cache_id; do
-            echo "Deleting scoped cache ID: $cache_id"
-            gh cache delete "$cache_id" || echo "Failed to delete cache $cache_id, continuing..."
-          done
+          echo "Cleanup finished: $DELETED deleted, $FAILED failed."
 
-          echo "Cache cleanup completed."
+          if [ "$FAILED" -gt 0 ]; then
+            echo "Workflow failed with $FAILED deletion error(s)."
+            exit 1
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_REF: ${{ github.head_ref }}
