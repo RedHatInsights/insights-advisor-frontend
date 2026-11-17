@@ -179,13 +179,6 @@ export const rulesTableApiInterceptor = (fixtures) => {
       // Use original meta count if only defaults, otherwise use filtered count
       const metaCount = hasExtraFilters ? totalCount : fixtures.meta.count;
 
-      if (
-        url.searchParams.get('impacting') === 'true' &&
-        url.searchParams.get('rule_status') === 'enabled'
-      ) {
-        req.alias = 'getDefaultRules';
-      }
-
       req.reply({
         statusCode: 200,
         body: {

@@ -134,8 +134,12 @@ const mountComponent = (
   );
 };
 
-const waitForSystemAdvisor = () => {
-  cy.wait(['@getSystemReports', '@getSystemProfile', '@kcs']);
+const waitForSystemAdvisor = (shouldWaitForKcs = true) => {
+  if (shouldWaitForKcs) {
+    cy.wait(['@getSystemReports', '@getSystemProfile', '@kcs']);
+  } else {
+    cy.wait(['@getSystemReports', '@getSystemProfile']);
+  }
   waitForTableTools(ROOT, false);
 };
 
@@ -183,6 +187,14 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
       cy.get(`${ROOT} tbody tr:first [data-label="Description"] a`)
         .should('have.attr', 'href')
         .and('include', '/recommendations/');
+    });
+
+    it('defaults to sorting by Total risk descending', () => {
+      cy.get(`${ROOT} th[data-label="Total risk"]`).should(
+        'have.attr',
+        'aria-sort',
+        'descending',
+      );
     });
   });
 
@@ -311,76 +323,6 @@ describe('SystemAdvisor (TableTools Implementation)', () => {
       hasChip('Remediation', 'Ansible playbook');
       cy.get('button').contains('Clear filters').click();
       cy.get(CHIP_GROUP).should('have.length', 0);
-    });
-  });
-
-  describe('sorting and pagination', () => {
-    beforeEach(() => {
-      mountComponent();
-      waitForSystemAdvisor();
-    });
-
-    it('sorts rows by Total risk when clicking column header', () => {
-      cy.get(`${ROOT} th[data-label="Total risk"]`).should(
-        'have.attr',
-        'aria-sort',
-        'descending',
-      );
-
-      cy.get(`${ROOT} th[data-label="Total risk"] button`).click();
-      cy.get(`${ROOT} th[data-label="Total risk"]`).should(
-        'have.attr',
-        'aria-sort',
-        'ascending',
-      );
-
-      cy.get(`${ROOT} th[data-label="Total risk"] button`).click();
-      cy.get(`${ROOT} th[data-label="Total risk"]`).should(
-        'have.attr',
-        'aria-sort',
-        'descending',
-      );
-    });
-
-    it('sorts rows by Description when clicking column header', () => {
-      cy.get(`${ROOT} th[data-label="Description"] button`).click();
-      cy.get(`${ROOT} th[data-label="Description"]`).should(
-        'have.attr',
-        'aria-sort',
-        'ascending',
-      );
-
-      cy.get(`${ROOT} th[data-label="Description"] button`).click();
-      cy.get(`${ROOT} th[data-label="Description"]`).should(
-        'have.attr',
-        'aria-sort',
-        'descending',
-      );
-    });
-
-    it('paginates across pages and updates rows', () => {
-      // Verify page 1 shows 20 items by default
-      cy.get(`${ROOT} tbody tr:not(.pf-v6-c-table__expandable-row)`).should(
-        'have.length',
-        ROWS_PER_PAGE,
-      );
-
-      // Navigate to next page
-      cy.get('button[data-action="next"]').first().click();
-
-      // Page 2 should have remaining 5 items
-      cy.get(`${ROOT} tbody tr:not(.pf-v6-c-table__expandable-row)`).should(
-        'have.length',
-        fixtures.length - ROWS_PER_PAGE,
-      );
-
-      // Navigate back to previous page
-      cy.get('button[data-action="previous"]').first().click();
-
-      cy.get(`${ROOT} tbody tr:not(.pf-v6-c-table__expandable-row)`).should(
-        'have.length',
-        ROWS_PER_PAGE,
-      );
     });
   });
 

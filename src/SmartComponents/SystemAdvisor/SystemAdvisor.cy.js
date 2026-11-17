@@ -26,8 +26,16 @@ import { INVENTORY_BASE_URL } from '../../AppConstants';
 import systemProfile from '../../../cypress/fixtures/systemProfile.json';
 import { selectRandomEnabledRows } from '../../../cypress/utils/table';
 import { Button } from '@patternfly/react-core';
+import FlagProvider from '@unleash/proxy-client-react';
 import { EnvironmentContext } from '../../App';
 import { createTestEnvironmentContext } from '../../../cypress/support/globals';
+import { featureFlagInterceptor } from '../../../cypress/support/interceptors';
+
+const flagProviderConfig = {
+  url: 'http://localhost:8002/feature_flags',
+  clientKey: 'abc',
+  appName: 'abc',
+};
 
 const TABLE_HEADERS = [
   'Description',
@@ -50,6 +58,20 @@ const SYSTEM_INSIGHTS_ID = '456';
 //NEED TO BE UPDATED
 
 const mountComponent = (envContextOverrides = {}, IopRemediationModal) => {
+  featureFlagInterceptor([]);
+  cy.intercept('POST', '**/feature_flags/client/metrics', { statusCode: 200 });
+  cy.intercept('GET', '**/feature_flags*', {
+    statusCode: 200,
+    body: {
+      toggles: [
+        {
+          name: 'advisor-tabletools-migration',
+          enabled: false,
+        },
+      ],
+    },
+  }).as('getFeatureFlag');
+
   let envContext = createTestEnvironmentContext();
   const finalEnvContext = {
     ...envContext,
@@ -57,26 +79,28 @@ const mountComponent = (envContextOverrides = {}, IopRemediationModal) => {
   };
 
   cy.mount(
-    <EnvironmentContext.Provider value={finalEnvContext}>
-      <Wrapper>
-        <SystemAdvisor
-          entity={{
-            id: SYSTEM_ID,
-            insights_id: SYSTEM_INSIGHTS_ID,
-          }}
-          inventoryId={SYSTEM_ID}
-          IopRemediationModal={IopRemediationModal}
-          props={{
-            response: {
-              insights_attributes: {
-                uuid: '12345',
+    <FlagProvider config={flagProviderConfig}>
+      <EnvironmentContext.Provider value={finalEnvContext}>
+        <Wrapper>
+          <SystemAdvisor
+            entity={{
+              id: SYSTEM_ID,
+              insights_id: SYSTEM_INSIGHTS_ID,
+            }}
+            inventoryId={SYSTEM_ID}
+            IopRemediationModal={IopRemediationModal}
+            props={{
+              response: {
+                insights_attributes: {
+                  uuid: '12345',
+                },
               },
-            },
-            hostName: 'hohohostname',
-          }}
-        />
-      </Wrapper>
-    </EnvironmentContext.Provider>,
+              hostName: 'hohohostname',
+            }}
+          />
+        </Wrapper>
+      </EnvironmentContext.Provider>
+    </FlagProvider>,
   );
 };
 
@@ -282,7 +306,7 @@ describe('system rules table', () => {
       // check that all selected
       cy.get(PT_BULK_SELECT_CHECKBOX)
         .parent()
-        .should('have.text', '7 selected');
+        .should('have.text', '19 selected');
 
       // click the bulk select checkbox to deselect
       cy.get(PT_BULK_SELECT_CHECKBOX).click();
@@ -301,7 +325,7 @@ describe('system rules table', () => {
       // check that all selected
       cy.get(PT_BULK_SELECT_CHECKBOX)
         .parent()
-        .should('have.text', '7 selected');
+        .should('have.text', '19 selected');
     });
   });
 
