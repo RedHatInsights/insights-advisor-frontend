@@ -44,6 +44,8 @@ import DownloadPlaybookButton from '../../Utilities/DownloadPlaybookButton';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/';
 import useAdvisorReports from './useAdvisorReports';
 import { InventoryReportFetchFailed } from './EmptyStates';
+import SystemAdvisorNew from './SystemAdvisor.new';
+import { useFeatureFlag } from '../../Utilities/Hooks';
 
 const BaseSystemAdvisor = ({
   entity,
@@ -747,10 +749,23 @@ BaseSystemAdvisor.propTypes = {
   hostName: PropTypes.string.isRequired,
 };
 
-const SystemAdvisor = ({ ...props }) => {
-  const entity = useSelector(({ entityDetails }) => entityDetails.entity);
+const SystemAdvisor = ({ entity: propEntity, ...props }) => {
+  const storeEntity = useSelector(({ entityDetails }) => entityDetails?.entity);
+  const entity = propEntity || storeEntity;
+  const useNewTable = useFeatureFlag('advisor-tabletools-migration');
 
-  return <BaseSystemAdvisor {...props} entity={entity} />;
+  return useNewTable ? (
+    <SystemAdvisorNew {...props} entity={entity} />
+  ) : (
+    <BaseSystemAdvisor {...props} entity={entity} />
+  );
+};
+
+SystemAdvisor.propTypes = {
+  entity: PropTypes.shape({
+    insights_id: PropTypes.string,
+    id: PropTypes.string,
+  }),
 };
 
 export default SystemAdvisor;
