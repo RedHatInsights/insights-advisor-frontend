@@ -11,7 +11,6 @@ import PropTypes from 'prop-types';
 import { Spinner } from '@patternfly/react-core';
 import { SkeletonTable } from '@patternfly/react-component-groups';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
 import { useAxiosWithPlatformInterceptors } from '@redhat-cloud-services/frontend-components-utilities/interceptors';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications';
 import NotConnected from '@redhat-cloud-services/frontend-components/NotConnected';
@@ -27,9 +26,7 @@ import columns from './Columns';
 import filters from './Filters';
 import SystemAdvisorReportDetails from './SystemAdvisorReportDetails';
 import { EnvironmentContext } from '../../App';
-import downloadReport from '../../PresentationalComponents/Common/DownloadHelper';
 import messages from '../../Messages';
-import { toExportParams } from '../../Utilities/tableSerializers';
 import { useSystemReportsQuery } from '../../Services/apiClient';
 import { isAbortError } from './helpers';
 import {
@@ -51,14 +48,10 @@ const SystemAdvisorInner = ({
   const systemId =
     inventoryId || entity?.id || response?.insights_attributes?.uuid;
   const intl = useIntl();
-  const dispatch = useDispatch();
   const addNotification = useAddNotification();
   const axios = useAxiosWithPlatformInterceptors();
   const envContext = useContext(EnvironmentContext);
   const abortControllerRef = useRef(new AbortController());
-
-  const selectedTags = useSelector(({ filters: f }) => f?.selectedTags);
-  const workloads = useSelector(({ filters: f }) => f?.workloads);
 
   const callbacksRef = useStateCallbacks();
   const fullTableState = useFullTableState();
@@ -70,8 +63,6 @@ const SystemAdvisorInner = ({
   const [kbaLoading, setKbaLoading] = useState(false);
   const [systemProfile, setSystemProfile] = useState({});
   const [isSystemProfileLoading, setSystemProfileLoading] = useState(true);
-
-  const serialisedFilters = fullTableState?.serialisedTableState?.filters;
 
   // Fetch reports data via TanStack Query
   const {
@@ -240,60 +231,12 @@ const SystemAdvisorInner = ({
     onRemediationCreated,
   ]);
 
-  const onExport = useCallback(
-    (_e, fileType) => {
-      const format =
-        typeof fileType === 'string'
-          ? fileType
-          : typeof _e === 'string'
-            ? _e
-            : 'csv';
-      const exportFilters = toExportParams(serialisedFilters);
-      downloadReport(
-        'hits',
-        format,
-        exportFilters,
-        selectedTags,
-        workloads,
-        dispatch,
-        envContext?.BASE_URL,
-        entity?.display_name,
-        addNotification,
-        axios,
-      );
-    },
-    [
-      serialisedFilters,
-      selectedTags,
-      workloads,
-      dispatch,
-      envContext?.BASE_URL,
-      entity?.display_name,
-      addNotification,
-      axios,
-    ],
-  );
-
-  const allItemsRef = useRef([]);
-  allItemsRef.current = allItems;
-
   const detailsComponentProps = useMemo(
     () => ({
       kbaDetails: kbaDetailsData,
       kbaLoading,
     }),
     [kbaDetailsData, kbaLoading],
-  );
-
-  const exportConfig = useMemo(
-    () =>
-      envContext?.isExportEnabled
-        ? {
-            tooltipText: intl.formatMessage(messages.exportData),
-            onSelect: onExport,
-          }
-        : undefined,
-    [envContext?.isExportEnabled, intl, onExport],
   );
 
   const tableOptions = useMemo(
@@ -313,24 +256,10 @@ const SystemAdvisorInner = ({
       onSelect: true,
       dedicatedAction: RemediationAction,
       EmptyState: NoMatchingRecommendations,
-      exporter: envContext?.isExportEnabled
-        ? async (_state, _fullState, format) => {
-            onExport(null, format);
-            return null; // Return null so TableTools downloadItems is skipped
-          }
-        : undefined,
+      enableExport: Boolean(envContext?.isExportEnabled),
+      exportFilename: `Advisor_hits--${new Date().toISOString().replace(/[T:]/g, '-').split('.')[0]}-utc`,
     }),
-    [
-      detailsComponentProps,
-      RemediationAction,
-      envContext?.isExportEnabled,
-      onExport,
-    ],
-  );
-
-  const toolbarProps = useMemo(
-    () => (exportConfig ? { exportConfig } : undefined),
-    [exportConfig],
+    [detailsComponentProps, RemediationAction, envContext?.isExportEnabled],
   );
 
   if (isReportsLoading) {
@@ -359,7 +288,6 @@ const SystemAdvisorInner = ({
       columns={columns}
       filters={{ filterConfig: filters }}
       options={tableOptions}
-      toolbarProps={toolbarProps}
       aria-label="system-advisor-table"
       ouiaId="system-advisor-table"
       variant="compact"
