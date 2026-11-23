@@ -31,13 +31,12 @@ import {
   checkRowCounts,
   checkTableHeaders,
   CONDITIONAL_FILTER,
+  MENU_ITEM,
   TOOLBAR,
 } from '@redhat-cloud-services/frontend-components-utilities';
 
 import messages from '../../Messages';
 import { AccountStatContext } from '../../ZeroStateWrapper';
-import { cypressApplyFilters } from '../../../cypress/utils/table';
-import { filtersConf } from '../../../cypress/rulestablesconsts';
 import { EnvironmentContext } from '../../App';
 
 const flagProviderConfig = {
@@ -88,21 +87,6 @@ const mountComponent = (props = {}, envContextOverrides = {}) => {
     </FlagProvider>,
   );
 };
-
-const filtersConfNew = {
-  ...filtersConf,
-  status: {
-    selectorText: 'Status',
-    values: [['Enabled'], ['Disabled'], ['Red Hat Disabled']],
-    type: 'checkbox',
-    filterFunc: (it, value) => it.disabled === value.includes('Disabled'),
-    urlParam: 'rule_status',
-    urlValue: (it) =>
-      Array.isArray(it) ? it[0].toLowerCase() : it.toLowerCase(),
-  },
-};
-
-const filterApply = (filters) => cypressApplyFilters(filters, filtersConfNew);
 
 const DEFAULT_ROW_COUNT = 20;
 const DEFAULT_FILTERS = {
@@ -240,24 +224,32 @@ describe('RulesTable (TableTools Implementation)', () => {
       );
     });
 
-    Object.entries(filtersConfNew).forEach(([key, config]) => {
-      const { urlParam, values, urlValue, selectorText } = config;
+    it('applies Name text filter and issues API request with text parameter', () => {
+      cy.intercept('GET', '**/api/insights/v1/rule/*text=foobar*').as(
+        'textFilteredRequest',
+      );
+      selectConditionalFilterOption('Name');
+      cy.get('[aria-label="text input"]').click();
+      cy.get('[aria-label="text input"]').type('foobar{enter}');
 
-      it(`applies ${selectorText} filter and issues API request with ${urlParam}`, () => {
-        removeAllFilterChipsPf6();
-        waitForTableTools();
+      cy.wait('@textFilteredRequest')
+        .its('request.url')
+        .should('include', 'text=foobar');
+      hasChip('Name', 'foobar');
+    });
 
-        const testValue = values[0];
+    it('applies Total risk filter and issues API request with total_risk parameter', () => {
+      cy.intercept('GET', '**/api/insights/v1/rule/*total_risk=*').as(
+        'riskFilteredRequest',
+      );
+      selectConditionalFilterOption('Total risk');
+      cy.get(CONDITIONAL_FILTER).contains('Filter by total risk').click();
+      cy.get(MENU_ITEM).contains('Critical').click();
 
-        cy.intercept(
-          'GET',
-          `**/api/insights/v1/rule/*${urlParam}=${urlValue(testValue)}*`,
-        ).as('filteredRequest');
-        filterApply({ [key]: testValue });
-        cy.wait('@filteredRequest')
-          .its('request.url')
-          .should('include', `${urlParam}=${urlValue(testValue)}`);
-      });
+      cy.wait('@riskFilteredRequest')
+        .its('request.url')
+        .should('include', 'total_risk=4');
+      hasChip('Total risk', 'Critical');
     });
   });
 
@@ -343,7 +335,6 @@ describe('RulesTable (TableTools Implementation)', () => {
 
     it('opens disable modal, inputs justification, submits, and triggers API', () => {
       mountComponent({}, { isDisableRecEnabled: true });
-      cy.wait('@getDefaultRules');
       waitForTableTools();
 
       cy.clickOnRowKebab(
@@ -375,7 +366,6 @@ describe('RulesTable (TableTools Implementation)', () => {
 
     it('opens disable modal and cancels without submitting', () => {
       mountComponent({}, { isDisableRecEnabled: true });
-      cy.wait('@getDefaultRules');
       waitForTableTools();
 
       cy.clickOnRowKebab(
@@ -392,7 +382,6 @@ describe('RulesTable (TableTools Implementation)', () => {
 
     it('hides kebab menu when isDisableRecEnabled is false', () => {
       mountComponent({}, { isDisableRecEnabled: false });
-      cy.wait('@getDefaultRules');
       waitForTableTools();
 
       cy.get('button[aria-label="Kebab toggle"]').should('not.exist');
@@ -406,7 +395,6 @@ describe('RulesTable (TableTools Implementation)', () => {
 
     it('renders export button and shows CSV and JSON options when isExportEnabled is true', () => {
       mountComponent({}, { isExportEnabled: true });
-      cy.wait('@getDefaultRules');
       waitForTableTools();
 
       checkExportDropdownOptions();
@@ -414,7 +402,6 @@ describe('RulesTable (TableTools Implementation)', () => {
 
     it('exports all items across multiple pages when export is triggered', () => {
       mountComponent({}, { isExportEnabled: true });
-      cy.wait('@getDefaultRules');
       waitForTableTools();
 
       cy.intercept('GET', '**/api/insights/v1/rule/*limit=50*').as(
@@ -433,7 +420,6 @@ describe('RulesTable (TableTools Implementation)', () => {
 
     it('hides export button when isExportEnabled is false', () => {
       mountComponent({}, { isExportEnabled: false });
-      cy.wait('@getDefaultRules');
       waitForTableTools();
 
       cy.get('button[aria-label="Export"]').should('not.exist');
