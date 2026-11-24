@@ -21,7 +21,6 @@ import {
   TOTAL_RISK_LABEL,
 } from '../../AppConstants';
 import truncate from 'lodash/truncate';
-import { Text } from '@react-pdf/renderer';
 import { Content, Flex, FlexItem } from '@patternfly/react-core';
 import { InsightsLabel } from '@redhat-cloud-services/frontend-components/InsightsLabel';
 import {
@@ -172,12 +171,12 @@ const BuildExecReport = ({ asyncData }) => {
         {`Executive report: ${INSIGHTS_HEADER}`}
       </span>
       <br />
-      <Text style={{ fontSize: '12px' }}>
+      <span style={{ fontSize: '12px' }}>
         {EXEC_REPORT_HEADER(
           EXEC_REPORT_HEADER_SYSTEMS(statsSystems.total),
           EXEC_REPORT_HEADER_RISKS(statsReports.total),
         )}
-      </Text>
+      </span>
       <br />
       <br />
       <RecommendationCharts
@@ -194,9 +193,9 @@ const BuildExecReport = ({ asyncData }) => {
         pieLegend={categoryLegend}
         rows={categoryRows}
       />
-      <Text style={{ color: t_global_text_color_status_danger_default.value }}>
+      <span style={{ color: t_global_text_color_status_danger_default.value }}>
         {TOP_THREE_RULES_HEADER}
-      </Text>
+      </span>
       {topActiveRec.data.map((rule, key) => (
         <Flex style={{ paddingTop: '24px' }} key={key}>
           <Flex direction={{ default: 'column' }}>

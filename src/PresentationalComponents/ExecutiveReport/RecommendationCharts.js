@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { POUND_OF_RECS } from '../../AppConstants';
-import { Text } from '@react-pdf/renderer';
 import { ChartPie } from '@patternfly/react-charts/victory';
 import { Flex, FlexItem } from '@patternfly/react-core';
 import {
@@ -31,9 +30,9 @@ const RecommendationCharts = ({
 }) => {
   return (
     <React.Fragment>
-      <Text style={{ color: t_global_text_color_status_danger_default.value }}>
+      <span style={{ color: t_global_text_color_status_danger_default.value }}>
         {header}
-      </Text>
+      </span>
       <Flex defaultspaceItems={{ default: 'spaceItemsLg' }}>
         <FlexItem style={{ width: '40%' }}>
           <Table
