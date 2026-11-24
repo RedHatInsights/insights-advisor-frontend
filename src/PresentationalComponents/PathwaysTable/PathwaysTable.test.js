@@ -176,10 +176,16 @@ jest.mock('bastilian-tabletools', () => {
     children: PropTypes.node,
   };
 
+  const QueryProviderWithUtilities = ({ children }) => children;
+  QueryProviderWithUtilities.propTypes = {
+    children: PropTypes.node,
+  };
+
   return {
     TableToolsTable,
     StaticTableToolsTable,
     TableStateProvider,
+    QueryProviderWithUtilities,
     useQueryWithUtilities: (...args) => mockUseQueryWithUtilities(...args),
     useSerialisedTableState: () => mockTableState,
   };

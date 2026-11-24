@@ -20,6 +20,7 @@ import {
   StaticTableToolsTable,
   useFullTableState,
   useStateCallbacks,
+  QueryProviderWithUtilities,
 } from 'bastilian-tabletools';
 
 import columns from './Columns';
@@ -316,15 +317,17 @@ SystemAdvisorInner.propTypes = {
 /**
  * SystemAdvisorNew - Container wrapping SystemAdvisorInner in TableStateProvider
  */
-const SystemAdvisorNew = ({ entity, ...props }) => {
+const SystemAdvisorNew = ({ entity, queryClient, ...props }) => {
   if (entity?.insights_id === null) {
     return <NotConnected />;
   }
 
   return (
-    <TableStateProvider>
-      <SystemAdvisorInner entity={entity} {...props} />
-    </TableStateProvider>
+    <QueryProviderWithUtilities {...(queryClient ? { queryClient } : {})}>
+      <TableStateProvider>
+        <SystemAdvisorInner entity={entity} {...props} />
+      </TableStateProvider>
+    </QueryProviderWithUtilities>
   );
 };
 
@@ -333,6 +336,7 @@ SystemAdvisorNew.propTypes = {
     insights_id: PropTypes.string,
     id: PropTypes.string,
   }),
+  queryClient: PropTypes.object,
 };
 
 export default SystemAdvisorNew;
