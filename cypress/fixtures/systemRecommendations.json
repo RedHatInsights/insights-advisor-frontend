@@ -385,5 +385,693 @@
       "has_playbook": true
     },
     "impacted_date": "2022-12-08T10:23:59.807Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_01|X99KLA_BUFFER_OVR_01",
+      "created_at": "2023-01-15T08:12:00.000Z",
+      "updated_at": "2023-02-10T14:22:10.000Z",
+      "description": "Network buffer allocation failure detected under high socket load",
+      "active": true,
+      "category": { "id": 2, "name": "Performance" },
+      "impact": { "name": "moderate", "impact": 2 },
+      "likelihood": 2,
+      "node_id": "300271",
+      "tags": "net mock-test",
+      "reboot_required": false,
+      "publish_date": "2023-01-20T10:00:00.000Z",
+      "summary": "Socket buffer pool exhaustion can cause incoming packet drops under heavy network traffic.\n",
+      "generic": "Review net.core.rmem_max and sysctl network buffer configurations.\n",
+      "reason": "Observed ring buffer overflow events on network interfaces during traffic spikes.\n",
+      "more_info": "Tune tcp_rmem and tcp_wmem parameters accordingly.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Increase net.core.rmem_max via sysctl tuning profile.\n",
+          "resolution_risk": { "name": "low", "risk": 1 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 2
+    },
+    "details": {
+      "cur": "4.18.0-372",
+      "rel": "4.18.0-425",
+      "rhel": "8.7",
+      "type": "rule",
+      "error_key": "X99KLA_BUFFER_OVR_01"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Increase net.core.rmem_max via sysctl tuning profile.\n",
+      "resolution_risk": { "name": "low", "risk": 1 },
+      "has_playbook": true
+    },
+    "impacted_date": "2023-01-22T04:15:30.000Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_02|Y88JLB_SCHED_LAT_02",
+      "created_at": "2023-02-01T11:05:00.000Z",
+      "updated_at": "2023-03-05T09:18:22.000Z",
+      "description": "CFS scheduler task group imbalance causing thread stalls",
+      "active": true,
+      "category": { "id": 1, "name": "Availability" },
+      "impact": { "name": "high", "impact": 3 },
+      "likelihood": 3,
+      "node_id": "300247",
+      "tags": "cgroups scheduler",
+      "reboot_required": true,
+      "publish_date": "2023-02-08T12:00:00.000Z",
+      "summary": "Misconfigured CPU quota bandwidth periods can throttle critical daemon threads.\n",
+      "generic": "Inspect systemd cgroup slice CPUQuota and CPUPeriod configurations.\n",
+      "reason": "CPU bandwidth controller throttled multi-threaded service workers prematurely.\n",
+      "more_info": "Adjust cpu.cfs_quota_us settings to prevent latency spikes.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Update systemd slice CPU quota definitions to avoid throttling.\n",
+          "resolution_risk": { "name": "medium", "risk": 2 },
+          "has_playbook": false
+        }
+      ],
+      "total_risk": 3
+    },
+    "details": {
+      "cur": "5.14.0-70",
+      "rel": "5.14.0-162",
+      "rhel": "9.0",
+      "type": "rule",
+      "error_key": "Y88JLB_SCHED_LAT_02"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Update systemd slice CPU quota definitions to avoid throttling.\n",
+      "resolution_risk": { "name": "medium", "risk": 2 },
+      "has_playbook": false
+    },
+    "impacted_date": "2023-02-12T16:40:00.000Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_03|Z77HMC_TLS_CIPHER_03",
+      "created_at": "2023-02-18T14:30:00.000Z",
+      "updated_at": "2023-03-12T08:45:00.000Z",
+      "description": "Deprecated TLS 1.0/1.1 protocol suites enabled on crypto policy",
+      "active": true,
+      "category": { "id": 3, "name": "Security" },
+      "impact": { "name": "critical", "impact": 4 },
+      "likelihood": 3,
+      "node_id": "300579",
+      "tags": "crypto security",
+      "reboot_required": false,
+      "publish_date": "2023-02-25T15:00:00.000Z",
+      "summary": "Legacy TLS ciphers expose encrypted communications to known downgrade vulnerabilities.\n",
+      "generic": "Switch crypto policies to DEFAULT or FUTURE profile.\n",
+      "reason": "System crypto policy permits CBC cipher suites with SHA-1 signatures.\n",
+      "more_info": "Execute update-crypto-policies --set DEFAULT to remediate.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Apply default system-wide cryptographic policies.\n",
+          "resolution_risk": { "name": "low", "risk": 1 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 4
+    },
+    "details": {
+      "cur": "20211116-1",
+      "rel": "20220815-1",
+      "rhel": "8.6",
+      "type": "rule",
+      "error_key": "Z77HMC_TLS_CIPHER_03"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Apply default system-wide cryptographic policies.\n",
+      "resolution_risk": { "name": "low", "risk": 1 },
+      "has_playbook": true
+    },
+    "impacted_date": "2023-02-28T09:00:00.000Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_04|W66GND_FS_INODE_04",
+      "created_at": "2023-03-01T10:15:00.000Z",
+      "updated_at": "2023-03-20T17:33:00.000Z",
+      "description": "Filesystem inode depletion imminent on root volume",
+      "active": true,
+      "category": { "id": 4, "name": "Stability" },
+      "impact": { "name": "high", "impact": 3 },
+      "likelihood": 2,
+      "node_id": "300877",
+      "tags": "storage fs",
+      "reboot_required": false,
+      "publish_date": "2023-03-08T11:00:00.000Z",
+      "summary": "Ext4/XFS metadata space over 90% utilization due to small temporary file accumulation.\n",
+      "generic": "Identify and clean up abandoned directory trees in /var/tmp and /tmp.\n",
+      "reason": "Inode count exceeds threshold with fewer than 5% free inodes remaining.\n",
+      "more_info": "Automate tmpfiles.d purging rules to clean ephemeral sockets.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Configure tmpfiles cleanup service to prune stale temporary files.\n",
+          "resolution_risk": { "name": "low", "risk": 1 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 2
+    },
+    "details": {
+      "cur": "1.45.6-2",
+      "rel": "1.45.6-5",
+      "rhel": "8.5",
+      "type": "rule",
+      "error_key": "W66GND_FS_INODE_04"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Configure tmpfiles cleanup service to prune stale temporary files.\n",
+      "resolution_risk": { "name": "low", "risk": 1 },
+      "has_playbook": true
+    },
+    "impacted_date": "2023-03-10T14:22:00.000Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_05|V55FME_NVME_TIMEOUT_05",
+      "created_at": "2023-03-15T07:45:00.000Z",
+      "updated_at": "2023-04-02T12:00:00.000Z",
+      "description": "NVMe drive controller command aborts under write pressure",
+      "active": true,
+      "category": { "id": 4, "name": "Stability" },
+      "impact": { "name": "critical", "impact": 4 },
+      "likelihood": 1,
+      "node_id": "300130",
+      "tags": "nvme kernel",
+      "reboot_required": true,
+      "publish_date": "2023-03-22T08:00:00.000Z",
+      "summary": "Controller timeout values on PCIe SSD arrays require driver firmware matching.\n",
+      "generic": "Update nvme driver options in modprobe.d with extended timeout values.\n",
+      "reason": "Host controller reset events recorded in kernel ring buffer during sync.\n",
+      "more_info": "Set nvme_core.default_ps_max_latency_us kernel boot parameter.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Add nvme_core latency parameters to GRUB kernel command line.\n",
+          "resolution_risk": { "name": "high", "risk": 3 },
+          "has_playbook": false
+        }
+      ],
+      "total_risk": 2
+    },
+    "details": {
+      "cur": "nvme-1.12",
+      "rel": "nvme-1.16",
+      "rhel": "8.8",
+      "type": "rule",
+      "error_key": "V55FME_NVME_TIMEOUT_05"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Add nvme_core latency parameters to GRUB kernel command line.\n",
+      "resolution_risk": { "name": "high", "risk": 3 },
+      "has_playbook": false
+    },
+    "impacted_date": "2023-03-25T18:10:00.000Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_06|U44ELD_MEM_LEAK_06",
+      "created_at": "2023-04-01T09:00:00.000Z",
+      "updated_at": "2023-04-18T16:15:00.000Z",
+      "description": "Slab unfreeable dentry cache growth causes kernel OOM",
+      "active": true,
+      "category": { "id": 2, "name": "Performance" },
+      "impact": { "name": "high", "impact": 3 },
+      "likelihood": 2,
+      "node_id": "300533",
+      "tags": "memory slab",
+      "reboot_required": false,
+      "publish_date": "2023-04-10T10:00:00.000Z",
+      "summary": "Repeated stat calls on missing files populate dentry negative caches uncontrollably.\n",
+      "generic": "Tune vm.vfs_cache_pressure to reclaim dentry objects more aggressively.\n",
+      "reason": "Dentry cache occupies more than 40% of available physical memory.\n",
+      "more_info": "Set vm.vfs_cache_pressure = 150 in /etc/sysctl.d/99-vfs.conf.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Configure vfs_cache_pressure sysctl parameter.\n",
+          "resolution_risk": { "name": "low", "risk": 1 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 3
+    },
+    "details": {
+      "cur": "4.18.0-305",
+      "rel": "4.18.0-372",
+      "rhel": "8.4",
+      "type": "rule",
+      "error_key": "U44ELD_MEM_LEAK_06"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Configure vfs_cache_pressure sysctl parameter.\n",
+      "resolution_risk": { "name": "low", "risk": 1 },
+      "has_playbook": true
+    },
+    "impacted_date": "2023-04-12T11:20:00.000Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_07|T33DKC_SELINUX_DENIAL_07",
+      "created_at": "2023-04-15T13:20:00.000Z",
+      "updated_at": "2023-05-01T10:00:00.000Z",
+      "description": "SELinux policy prevents container runtime socket binding",
+      "active": true,
+      "category": { "id": 3, "name": "Security" },
+      "impact": { "name": "moderate", "impact": 2 },
+      "likelihood": 3,
+      "node_id": "300821",
+      "tags": "selinux containers",
+      "reboot_required": false,
+      "publish_date": "2023-04-22T14:00:00.000Z",
+      "summary": "Container daemon socket transitions denied under targeted enforcement policy.\n",
+      "generic": "Install updated container-selinux policy package matching current CRI-O.\n",
+      "reason": "Audit logs show repeated avc: denied { connectto } for container socket.\n",
+      "more_info": "Upgrade container-selinux to version 2.189 or later.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Update container-selinux RPM to latest errata release.\n",
+          "resolution_risk": { "name": "low", "risk": 1 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 2
+    },
+    "details": {
+      "cur": "2.167.0-1",
+      "rel": "2.189.0-1",
+      "rhel": "8.6",
+      "type": "rule",
+      "error_key": "T33DKC_SELINUX_DENIAL_07"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Update container-selinux RPM to latest errata release.\n",
+      "resolution_risk": { "name": "low", "risk": 1 },
+      "has_playbook": true
+    },
+    "impacted_date": "2023-04-24T15:30:00.000Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_08|S22CJB_NTP_DRIFT_08",
+      "created_at": "2023-05-02T08:30:00.000Z",
+      "updated_at": "2023-05-19T11:45:00.000Z",
+      "description": "Chrony time synchronization offset exceeds cluster threshold",
+      "active": true,
+      "category": { "id": 1, "name": "Availability" },
+      "impact": { "name": "moderate", "impact": 2 },
+      "likelihood": 2,
+      "node_id": "300271",
+      "tags": "chrony ntp",
+      "reboot_required": false,
+      "publish_date": "2023-05-10T09:00:00.000Z",
+      "summary": "Clock jitter above 500ms degrades Raft consensus and Kerberos token validation.\n",
+      "generic": "Configure dedicated local NTP pool servers in /etc/chrony.conf.\n",
+      "reason": "Chrony tracking reports systemic offset drift from stratum 1 source.\n",
+      "more_info": "Add makestep directives to resync clock slewing safely.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Update chrony NTP server sources and restart service.\n",
+          "resolution_risk": { "name": "low", "risk": 1 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 1
+    },
+    "details": {
+      "cur": "3.5-2",
+      "rel": "4.2-1",
+      "rhel": "8.5",
+      "type": "rule",
+      "error_key": "S22CJB_NTP_DRIFT_08"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Update chrony NTP server sources and restart service.\n",
+      "resolution_risk": { "name": "low", "risk": 1 },
+      "has_playbook": true
+    },
+    "impacted_date": "2023-05-12T12:00:00.000Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_09|R11BIA_FIREWALL_PORT_09",
+      "created_at": "2023-05-20T10:00:00.000Z",
+      "updated_at": "2023-06-05T14:10:00.000Z",
+      "description": "Unrestricted management ports open on default firewalld zone",
+      "active": true,
+      "category": { "id": 3, "name": "Security" },
+      "impact": { "name": "critical", "impact": 4 },
+      "likelihood": 2,
+      "node_id": "300247",
+      "tags": "firewall network",
+      "reboot_required": false,
+      "publish_date": "2023-05-28T16:00:00.000Z",
+      "summary": "Cockpit web console and SSH listen on public network interface without rate limiting.\n",
+      "generic": "Restrict management services to internal VPN subnet zones.\n",
+      "reason": "Firewalld default zone 'public' exposes port 9090 to all inbound routes.\n",
+      "more_info": "Move external interface to drop or restricted zone.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Remove management service ports from public firewalld zone.\n",
+          "resolution_risk": { "name": "medium", "risk": 2 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 3
+    },
+    "details": {
+      "cur": "0.9.3-7",
+      "rel": "0.9.3-13",
+      "rhel": "8.7",
+      "type": "rule",
+      "error_key": "R11BIA_FIREWALL_PORT_09"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Remove management service ports from public firewalld zone.\n",
+      "resolution_risk": { "name": "medium", "risk": 2 },
+      "has_playbook": true
+    },
+    "impacted_date": "2023-05-30T07:15:00.000Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_10|Q00AHZ_SWAP_THRAS_10",
+      "created_at": "2023-06-01T07:20:00.000Z",
+      "updated_at": "2023-06-18T09:30:00.000Z",
+      "description": "Excessive anonymous page swapping degrading I/O throughput",
+      "active": true,
+      "category": { "id": 2, "name": "Performance" },
+      "impact": { "name": "high", "impact": 3 },
+      "likelihood": 1,
+      "node_id": "300579",
+      "tags": "vm swap",
+      "reboot_required": false,
+      "publish_date": "2023-06-08T11:00:00.000Z",
+      "summary": "Swappiness value configured too aggressively for mixed database workloads.\n",
+      "generic": "Reduce vm.swappiness parameter to prevent background dirty page eviction.\n",
+      "reason": "Kswapd daemon CPU usage spikes above 80% during transaction peaks.\n",
+      "more_info": "Set vm.swappiness = 10 in tuned profile.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Apply enterprise-storage tuned profile with lower swappiness.\n",
+          "resolution_risk": { "name": "low", "risk": 1 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 2
+    },
+    "details": {
+      "cur": "2.15-1",
+      "rel": "2.18-1",
+      "rhel": "8.6",
+      "type": "rule",
+      "error_key": "Q00AHZ_SWAP_THRAS_10"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Apply enterprise-storage tuned profile with lower swappiness.\n",
+      "resolution_risk": { "name": "low", "risk": 1 },
+      "has_playbook": true
+    },
+    "impacted_date": "2023-06-10T14:45:00.000Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_11|P99ZGY_LVM_METADATA_11",
+      "created_at": "2023-06-12T11:10:00.000Z",
+      "updated_at": "2023-07-02T13:40:00.000Z",
+      "description": "LVM volume group metadata area exhaustion risk",
+      "active": true,
+      "category": { "id": 4, "name": "Stability" },
+      "impact": { "name": "critical", "impact": 4 },
+      "likelihood": 2,
+      "node_id": "300877",
+      "tags": "lvm storage",
+      "reboot_required": false,
+      "publish_date": "2023-06-20T10:00:00.000Z",
+      "summary": "Repeated snapshot allocation without pruning saturates VG metadata ring buffers.\n",
+      "generic": "Increase volume group metadata size or archive obsolete snapshot tags.\n",
+      "reason": "Volume group vg00 metadata area usage exceeds 88% capacity.\n",
+      "more_info": "Execute vgcfgbackup and prune stale logical volume tags.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Archive and prune expired thin snapshot metadata.\n",
+          "resolution_risk": { "name": "medium", "risk": 2 },
+          "has_playbook": false
+        }
+      ],
+      "total_risk": 3
+    },
+    "details": {
+      "cur": "2.03.11-1",
+      "rel": "2.03.14-1",
+      "rhel": "8.5",
+      "type": "rule",
+      "error_key": "P99ZGY_LVM_METADATA_11"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Archive and prune expired thin snapshot metadata.\n",
+      "resolution_risk": { "name": "medium", "risk": 2 },
+      "has_playbook": false
+    },
+    "impacted_date": "2023-06-22T08:30:00.000Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_12|O88YFX_AUDIT_BACKLOG_12",
+      "created_at": "2023-07-01T09:40:00.000Z",
+      "updated_at": "2023-07-20T15:20:00.000Z",
+      "description": "Audit subsystem backlog limit overflow dropping security events",
+      "active": true,
+      "category": { "id": 3, "name": "Security" },
+      "impact": { "name": "high", "impact": 3 },
+      "likelihood": 3,
+      "node_id": "300130",
+      "tags": "audit logging",
+      "reboot_required": true,
+      "publish_date": "2023-07-10T12:00:00.000Z",
+      "summary": "Default audit backlog queue of 8192 records overflows during container startup bursts.\n",
+      "generic": "Increase audit_backlog_limit kernel boot argument to 32768.\n",
+      "reason": "Audit daemon recorded audit: backlog limit exceeded error codes.\n",
+      "more_info": "Update audit.rules buffer and backlog limit settings.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Update audit_backlog_limit in GRUB bootloader parameters.\n",
+          "resolution_risk": { "name": "low", "risk": 1 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 3
+    },
+    "details": {
+      "cur": "3.0-0.17",
+      "rel": "3.0.7-1",
+      "rhel": "8.6",
+      "type": "rule",
+      "error_key": "O88YFX_AUDIT_BACKLOG_12"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Update audit_backlog_limit in GRUB bootloader parameters.\n",
+      "resolution_risk": { "name": "low", "risk": 1 },
+      "has_playbook": true
+    },
+    "impacted_date": "2023-07-12T16:00:00.000Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_13|N77XEW_BONDING_FAIL_13",
+      "created_at": "2023-07-15T10:15:00.000Z",
+      "updated_at": "2023-08-01T11:00:00.000Z",
+      "description": "Network bonding interface failover misconfigured with ARP monitor",
+      "active": true,
+      "category": { "id": 1, "name": "Availability" },
+      "impact": { "name": "critical", "impact": 4 },
+      "likelihood": 2,
+      "node_id": "300533",
+      "tags": "network bonding",
+      "reboot_required": false,
+      "publish_date": "2023-07-22T08:00:00.000Z",
+      "summary": "Simultaneous use of miimon and arp_interval leads to bonding state flappings.\n",
+      "generic": "Standardize on MII monitoring for 802.3ad link aggregation configurations.\n",
+      "reason": "Slave interface dropped carrier without primary failover trigger.\n",
+      "more_info": "Remove arp_interval option from NetworkManager connection file.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Configure bonding master to use exclusively miimon carrier tracking.\n",
+          "resolution_risk": { "name": "medium", "risk": 2 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 3
+    },
+    "details": {
+      "cur": "nm-1.36.0",
+      "rel": "nm-1.40.0",
+      "rhel": "9.1",
+      "type": "rule",
+      "error_key": "N77XEW_BONDING_FAIL_13"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Configure bonding master to use exclusively miimon carrier tracking.\n",
+      "resolution_risk": { "name": "medium", "risk": 2 },
+      "has_playbook": true
+    },
+    "impacted_date": "2023-07-25T13:40:00.000Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_14|M66WDV_JOURNAL_DISK_14",
+      "created_at": "2023-08-01T08:00:00.000Z",
+      "updated_at": "2023-08-18T14:25:00.000Z",
+      "description": "Systemd-journald disk space quota allows uncontrolled /var/log expansion",
+      "active": true,
+      "category": { "id": 4, "name": "Stability" },
+      "impact": { "name": "moderate", "impact": 2 },
+      "likelihood": 3,
+      "node_id": "300821",
+      "tags": "systemd logging",
+      "reboot_required": false,
+      "publish_date": "2023-08-10T10:00:00.000Z",
+      "summary": "Unset SystemMaxUse directives permit journal files to consume up to 10% of root fs.\n",
+      "generic": "Define SystemMaxUse and SystemKeepFree in /etc/systemd/journald.conf.\n",
+      "reason": "System log volume utilization exceeds storage retention threshold.\n",
+      "more_info": "Cap persistent log consumption at 4GB.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Set SystemMaxUse=4G in journald configuration and restart service.\n",
+          "resolution_risk": { "name": "low", "risk": 1 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 2
+    },
+    "details": {
+      "cur": "239-58",
+      "rel": "239-68",
+      "rhel": "8.6",
+      "type": "rule",
+      "error_key": "M66WDV_JOURNAL_DISK_14"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Set SystemMaxUse=4G in journald configuration and restart service.\n",
+      "resolution_risk": { "name": "low", "risk": 1 },
+      "has_playbook": true
+    },
+    "impacted_date": "2023-08-12T09:10:00.000Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_15|L55VCU_KERB_REPLAY_15",
+      "created_at": "2023-08-15T12:00:00.000Z",
+      "updated_at": "2023-09-02T10:30:00.000Z",
+      "description": "Kerberos replay cache file locking contention on NFS root mounts",
+      "active": true,
+      "category": { "id": 1, "name": "Availability" },
+      "impact": { "name": "high", "impact": 3 },
+      "likelihood": 1,
+      "node_id": "300271",
+      "tags": "kerberos auth",
+      "reboot_required": false,
+      "publish_date": "2023-08-25T11:00:00.000Z",
+      "summary": "Storage of rcache files on network filesystems causes POSIX lock starvation.\n",
+      "generic": "Relocate KRB5RCACHEDIR to memory-backed tmpfs mount.\n",
+      "reason": "SSSD auth timeouts recorded due to rcache file locks held by krb5 libraries.\n",
+      "more_info": "Add KRB5RCACHEDIR=/dev/shm to environment configuration.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Configure SSSD systemd override to set local rcache path.\n",
+          "resolution_risk": { "name": "low", "risk": 1 },
+          "has_playbook": true
+        }
+      ],
+      "total_risk": 2
+    },
+    "details": {
+      "cur": "1.18.2-14",
+      "rel": "1.18.2-22",
+      "rhel": "8.4",
+      "type": "rule",
+      "error_key": "L55VCU_KERB_REPLAY_15"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Configure SSSD systemd override to set local rcache path.\n",
+      "resolution_risk": { "name": "low", "risk": 1 },
+      "has_playbook": true
+    },
+    "impacted_date": "2023-08-28T14:00:00.000Z"
+  },
+  {
+    "rule": {
+      "rule_id": "rnd_mock_rule_16|K44UBT_ZOMBIE_PROC_16",
+      "created_at": "2023-09-01T07:30:00.000Z",
+      "updated_at": "2023-09-20T16:00:00.000Z",
+      "description": "Orphaned child processes leaking PID entries in sub-cgroups",
+      "active": true,
+      "category": { "id": 4, "name": "Stability" },
+      "impact": { "name": "moderate", "impact": 2 },
+      "likelihood": 2,
+      "node_id": "300247",
+      "tags": "process pid",
+      "reboot_required": false,
+      "publish_date": "2023-09-10T12:00:00.000Z",
+      "summary": "Custom process monitor fails to reap exit status, exhausting kernel PID table.\n",
+      "generic": "Run containerized workloads with dumb-init or tini subreaper process.\n",
+      "reason": "Defunct process count exceeds 1500 in service slice.\n",
+      "more_info": "Set TasksMax directive on systemd service unit.\n",
+      "resolution_set": [
+        {
+          "system_type": 105,
+          "resolution": "Deploy init wrapper for service daemon and configure TasksMax.\n",
+          "resolution_risk": { "name": "low", "risk": 1 },
+          "has_playbook": false
+        }
+      ],
+      "total_risk": 1
+    },
+    "details": {
+      "cur": "1.0-4",
+      "rel": "1.2-1",
+      "rhel": "9.2",
+      "type": "rule",
+      "error_key": "K44UBT_ZOMBIE_PROC_16"
+    },
+    "resolution": {
+      "system_type": 105,
+      "resolution": "Deploy init wrapper for service daemon and configure TasksMax.\n",
+      "resolution_risk": { "name": "low", "risk": 1 },
+      "has_playbook": false
+    },
+    "impacted_date": "2023-09-12T10:15:00.000Z"
   }
 ]

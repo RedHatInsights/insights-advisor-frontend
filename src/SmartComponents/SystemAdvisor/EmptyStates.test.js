@@ -17,6 +17,11 @@ jest.mock('@patternfly/react-icons/dist/esm/icons/times-circle-icon', () => ({
   default: () => <svg data-testid="times-circle-icon" />,
 }));
 
+jest.mock('@patternfly/react-icons/dist/esm/icons/cubes-icon', () => ({
+  __esModule: true,
+  default: () => <svg data-testid="cubes-icon" />,
+}));
+
 import {
   NoMatchingRecommendations,
   NoRecommendations,
@@ -26,8 +31,9 @@ import {
 
 describe('EmptyStates', () => {
   describe('NoMatchingRecommendations', () => {
-    it('renders no matching recommendations message', () => {
+    it('renders no matching recommendations message with Cubes icon', () => {
       render(<NoMatchingRecommendations />);
+      expect(screen.getByTestId('cubes-icon')).toBeInTheDocument();
       expect(
         screen.getByText('No matching recommendations found'),
       ).toBeInTheDocument();

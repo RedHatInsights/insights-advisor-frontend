@@ -1,6 +1,10 @@
 import React, { useMemo, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { TableStateProvider, useStateCallbacks } from 'bastilian-tabletools';
+import {
+  TableStateProvider,
+  useStateCallbacks,
+  QueryProviderWithUtilities,
+} from 'bastilian-tabletools';
 import AdvisorTable from '../AdvisorTable/AdvisorTable';
 import columns from './Columns';
 import filters from './Filters';
@@ -171,16 +175,19 @@ const RulesTableNew = ({
   pathway,
   topic,
   onRuleChange,
+  queryClient,
 }) => {
   return (
-    <TableStateProvider>
-      <RulesTableInner
-        isTabActive={isTabActive}
-        pathway={pathway}
-        topic={topic}
-        onRuleChange={onRuleChange}
-      />
-    </TableStateProvider>
+    <QueryProviderWithUtilities {...(queryClient ? { queryClient } : {})}>
+      <TableStateProvider>
+        <RulesTableInner
+          isTabActive={isTabActive}
+          pathway={pathway}
+          topic={topic}
+          onRuleChange={onRuleChange}
+        />
+      </TableStateProvider>
+    </QueryProviderWithUtilities>
   );
 };
 
@@ -189,6 +196,7 @@ RulesTableNew.propTypes = {
   pathway: PropTypes.string,
   topic: PropTypes.string,
   onRuleChange: PropTypes.func,
+  queryClient: PropTypes.object,
 };
 
 export default RulesTableNew;
