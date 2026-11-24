@@ -1,5 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import RulesTableNew from './RulesTable.new';
 import { Provider } from 'react-redux';
 import { IntlProvider } from '@redhat-cloud-services/frontend-components-translations/';
@@ -62,29 +63,44 @@ const mountComponent = (props = {}, envContextOverrides = {}) => {
     body: { toggles: [] },
   }).as('getFeatureFlag');
 
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
   cy.mount(
-    <FlagProvider config={flagProviderConfig}>
-      <EnvironmentContext.Provider value={finalEnvContext}>
-        <MemoryRouter>
-          <AccountStatContext.Provider value={{ hasEdgeDevices }}>
-            <IntlProvider
-              locale={navigator.language.slice(0, 2)}
-              messages={messages}
-            >
-              <Provider store={initStore()}>
-                <Routes>
-                  <Route
-                    key={'Recommendations'}
-                    path="*"
-                    element={<RulesTableNew isTabActive={true} />}
-                  />
-                </Routes>
-              </Provider>
-            </IntlProvider>
-          </AccountStatContext.Provider>
-        </MemoryRouter>
-      </EnvironmentContext.Provider>
-    </FlagProvider>,
+    <QueryClientProvider client={queryClient}>
+      <FlagProvider config={flagProviderConfig}>
+        <EnvironmentContext.Provider value={finalEnvContext}>
+          <MemoryRouter>
+            <AccountStatContext.Provider value={{ hasEdgeDevices }}>
+              <IntlProvider
+                locale={navigator.language.slice(0, 2)}
+                messages={messages}
+              >
+                <Provider store={initStore()}>
+                  <Routes>
+                    <Route
+                      key={'Recommendations'}
+                      path="*"
+                      element={
+                        <RulesTableNew
+                          isTabActive={true}
+                          queryClient={queryClient}
+                        />
+                      }
+                    />
+                  </Routes>
+                </Provider>
+              </IntlProvider>
+            </AccountStatContext.Provider>
+          </MemoryRouter>
+        </EnvironmentContext.Provider>
+      </FlagProvider>
+    </QueryClientProvider>,
   );
 };
 

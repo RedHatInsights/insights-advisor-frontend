@@ -1,6 +1,10 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { TableToolsTable, TableStateProvider } from 'bastilian-tabletools';
+import {
+  TableToolsTable,
+  TableStateProvider,
+  QueryProviderWithUtilities,
+} from 'bastilian-tabletools';
 import { useSelector } from 'react-redux';
 import columns from './Columns';
 import filters from './Filters';
@@ -98,23 +102,26 @@ PathwaysTableInner.propTypes = {
  * @example
  * <PathwaysTableNew isTabActive={true} />
  */
-const PathwaysTableNew = ({ isTabActive }) => {
+const PathwaysTableNew = ({ isTabActive, queryClient }) => {
   const selectedTags = useSelector(({ filters }) => filters.selectedTags);
   const workloads = useSelector(({ filters }) => filters.workloads);
 
   return (
-    <TableStateProvider>
-      <PathwaysTableInner
-        isTabActive={isTabActive}
-        selectedTags={selectedTags}
-        workloads={workloads}
-      />
-    </TableStateProvider>
+    <QueryProviderWithUtilities {...(queryClient ? { queryClient } : {})}>
+      <TableStateProvider>
+        <PathwaysTableInner
+          isTabActive={isTabActive}
+          selectedTags={selectedTags}
+          workloads={workloads}
+        />
+      </TableStateProvider>
+    </QueryProviderWithUtilities>
   );
 };
 
 PathwaysTableNew.propTypes = {
   isTabActive: PropTypes.bool,
+  queryClient: PropTypes.object,
 };
 
 export default PathwaysTableNew;
